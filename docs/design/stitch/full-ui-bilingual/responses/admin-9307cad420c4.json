@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2746",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2E2ZmFhNzVjZDkyNDQ3OTFiMzJlODRlMjk3MDNmYmUxEgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/dfb6a67162fd4d369453966f22f4bb39"
+            },
+            "id": "9b0fe11e79f7449aa20f4090288c617a",
+            "name": "projects/9809859018179965476/screens/9b0fe11e79f7449aa20f4090288c617a",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XohCN3RcVRrX1Q4ZXT2imM7s09rcBBoxKTkg36vK4v8YTbN_2cy3L948GaR_atrXxtc9iu3-IEvxvRBMq8umYaFyHm-8A6dRkZXp52ZdQv1OH8cVegWIc_nJ03xcVQHx0vsGs6Wy8CbH8mRp9w_4YTFr6ZTsT3FB7SFvhdZ7H8Z6wX36iiLmKjwBbCBcniHf72yFUBCEX3v1ZLGRYm7mUzANbBRXIXCsteY8yoht4K01NnayUKZQByuw",
+              "name": "projects/9809859018179965476/files/bc0da27f51074b9380f72aafbc5e787a"
+            },
+            "theme": {},
+            "title": "ความเคลื่อนไหวสต็อก (StockMoves - /stock-moves)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบหน้า **\"ความเคลื่อนไหวสต็อก\" (/stock-moves)** สำหรับระบบ Commerce Operations Hub (admin-9307cad420c4) เรียบร้อยแล้วครับ\n\n### สรุปรายละเอียดการออกแบบและองค์ประกอบของหน้าจอ:\n1. **โครงสร้างและรูปแบบ Layout**:\n   - แถบนำทางด้านซ้าย 256px พร้อม 7 หมวดงานหลักตามข้อกำหนดของแพลตฟอร์ม (ไฮไลต์เมนูย่อย \"ความเคลื่อนไหวสต็อก\" ในหมวด *สินค้าและสต็อก*)\n   - ส่วนหัวด้านบน (Header) มี Breadcrumb, รหัสเส้นทาง `admin-9307cad420c4`, ป้ายกำกับ **ข้อมูลตัวอย่าง (Sample Data)**, ตัวสลับภาษา **ไทย / English**, และโปรไฟล์ผู้ใช้งานทีมปฏิบัติการ\n   - พื้นหลังแคนวาสสี `#f6f8fc`, การ์ดสีขาวขอบมน 12px, ขอบสี `#e1e7f0`, และสีหลักน้ำเงิน `#365cf5` พร้อมไวยากรณ์การเว้นวรรค 16/24/32px\n\n2. **ฟังก์ชันการเคลื่อนไหวสต็อก (Stock Movement Workflows)**:\n   - **4 ประเภทงานหลัก (Task Selector)**:\n     - **รับเข้า (Receive)**: เพิ่มสต็อกเข้าคลัง พร้อมคำอธิบายการคำนวณบวกยอดคงเหลือเดิม\n     - **ตรวจนับ (Count)**: ปรับยอดตามจำนวนที่นับได้จริง (แทนที่ยอดเดิม)\n     - **ปรับยอด (Adjust)**: รองรับเหตุผล เสียหาย (ลด), รับคืน (เพิ่ม), หรือแก้ไขยอด (+/−)\n     - **โอนย้าย (Transfer)**: แสดงตัวเลือกคลังต้นทางและคลังปลายทาง (จากคลัง / ไปคลัง)\n   - แบนเนอร์แจ้งเตือนข้อกำหนดคลังแพลตฟอร์ม vs ERP (คลังที่ดูแลโดยแพลตฟอร์มปรับได้ทันที ส่วนคลัง ERP จะถูกล็อกให้อ่านอย่างเดียวเพื่อรอการซิงก์)\n   - ฟอร์มบันทึกพร้อมการตรวจสอบข้อมูล (Validation), สถานะกำลังบันทึก… (Loading), และการยืนยันผลการบันทึกสำเร็จ\n   - แถบด้านขวาแสดงสรุปยอดคงเหลือแยกตามคลังของ SKU ที่เลือก และรายการประวัติการเคลื่อนไหวล่าสุด 5 รายการ\n\n3. **Bilingual & Data Catalogue Compliance**:\n   - บรรจุ Invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่มีครบทุกคีย์ใน catalogue ตามโจทย์ 100% (รวม placeholder `{0}` และข้อความระบบ)\n   - มีฟังก์ชันสลับภาษาไทย/อังกฤษที่ทำงานได้ทันที โดยคงชื่อเฉพาะ/รหัสทางเทคนิคและ SKU ไว้ตรงตามมาตรฐาน"
+    },
+    {
+      "suggestion": "ทดสอบการเลือกงาน 'โอนย้าย' เพื่อดูฟิลด์จากคลังและไปคลัง"
+    },
+    {
+      "suggestion": "สลับภาษาเป็น English เพื่อตรวจสอบการแปล UI ทั้งหมด"
+    },
+    {
+      "suggestion": "เชื่อมโยงเส้นทางไปยังหน้า สต็อกแยกตามคลัง (/erp/inventory-warehouse)"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "2549552324799807692"
+}

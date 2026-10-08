@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>รายงานยอดขาย - Commerce Platform (admin-267e9c1dd6d2)</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Noto Sans Thai and Noto Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-container": "#bc4600",
+            "on-background": "#0e1b32",
+            "secondary-container": "#d0e1fd",
+            "on-primary-fixed": "#001257",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-tertiary-container": "#ffebe4",
+            "surface-container-high": "#e0e8ff",
+            "primary-container": "#365cf5",
+            "on-secondary-fixed": "#0b1c31",
+            "on-error-container": "#93000a",
+            "tertiary": "#943500",
+            "surface-variant": "#d7e2ff",
+            "on-tertiary": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "on-surface-variant": "#444655",
+            "on-primary-fixed-variant": "#0034c0",
+            "inverse-surface": "#243048",
+            "on-primary": "#ffffff",
+            "tertiary-fixed": "#ffdbcd",
+            "surface": "#f9f9ff",
+            "surface-container-highest": "#d7e2ff",
+            "surface-dim": "#cddaf9",
+            "surface-container-low": "#f1f3ff",
+            "on-primary-container": "#ededff",
+            "surface-container-lowest": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "background": "#f9f9ff",
+            "outline": "#747687",
+            "surface-container": "#e8eeff",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
+            "primary-fixed": "#dde1ff",
+            "error": "#ba1a1a",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface-bright": "#f9f9ff",
+            "on-surface": "#0e1b32",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "primary": "#0a3fdc",
+            "on-tertiary-fixed": "#360f00",
+            "surface-tint": "#214ce7",
+            "outline-variant": "#c4c5d8",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "secondary": "#4f5f77",
+            "secondary-fixed": "#d3e3ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-secondary-fixed-variant": "#38485e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "gutter": "1rem",
+            "space-lg": "1.5rem",
+            "margin": "1.5rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "section-title": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-muted": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "caption": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-semibold": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "page-title": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-medium": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "table-header": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "card-title": ["Noto Sans Thai", "Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "section-title": [
+              "20px",
+              {
+                "lineHeight": "28px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "600"
+              }
+            ],
+            "label-muted": [
+              "13px",
+              {
+                "lineHeight": "18px",
+                "fontWeight": "400"
+              }
+            ],
+            "label-default": [
+              "13px",
+              {
+                "lineHeight": "18px",
+                "fontWeight": "500"
+              }
+            ],
+            "body-default": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "400"
+              }
+            ],
+            "caption": [
+              "11px",
+              {
+                "lineHeight": "16px",
+                "fontWeight": "500"
+              }
+            ],
+            "body-semibold": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "600"
+              }
+            ],
+            "page-title": [
+              "28px",
+              {
+                "lineHeight": "36px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "600"
+              }
+            ],
+            "body-medium": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "500"
+              }
+            ],
+            "table-header": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "0.02em",
+                "fontWeight": "600"
+              }
+            ],
+            "card-title": [
+              "16px",
+              {
+                "lineHeight": "24px",
+                "fontWeight": "600"
+              }
+            ]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .border-standard {
+      border: 1px solid #e1e7f0;
+    }
+    .border-divider {
+      border-color: #e1e7f0;
+    }
+    .text-ink {
+      color: #17243b;
+    }
+    .text-ink-secondary {
+      color: #52627a;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-on-surface antialiased bg-[#f6f8fc]">
+<!-- TopNavBar (Shared Component) -->
+<header class="fixed top-0 left-64 right-0 h-16 z-30 bg-surface-container-lowest border-b border-standard flex items-center justify-between px-6">
+<div class="flex items-center gap-4">
+<!-- Contextual Breadcrumb Navigation -->
+<nav class="flex items-center gap-2 text-label-default font-label-default text-ink-secondary">
+<span class="hover:text-primary cursor-pointer transition-colors">หน้าหลัก</span>
+<span class="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
+<span class="text-primary font-body-semibold">รายงานและข้อมูล</span>
+<span class="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
+<span class="text-ink font-body-semibold">รายงานยอดขาย</span>
+</nav>
+<!-- Route Badge & Sample Data Pill -->
+<div class="flex items-center gap-2 ml-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-caption font-caption bg-surface-container text-secondary font-mono">
+          admin-267e9c1dd6d2
+        </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-caption bg-[#fef9e7] text-[#b08900] font-semibold border border-[#fae29c]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="sample_badge">ข้อมูลตัวอย่าง / Sample data</span>
+</span>
+</div>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-3">
+<!-- Sync Status Indicator -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#e8f5ec] text-[#157347] text-caption font-caption">
+<span class="material-symbols-outlined text-[14px]">sync</span>
+<span>Jagota ERP Connected (Replica)</span>
+</div>
+<!-- Trailing Action: Bilingual Switcher -->
+<div class="inline-flex p-0.5 rounded-lg bg-[#f1f3ff] border border-standard">
+<button class="px-2.5 py-1 text-caption font-caption rounded font-semibold bg-white text-primary shadow-xs transition-all" id="lang-th" onclick="setLanguage('th')">
+          TH
+        </button>
+<button class="px-2.5 py-1 text-caption font-caption rounded font-medium text-secondary hover:text-ink transition-all" id="lang-en" onclick="setLanguage('en')">
+          EN
+        </button>
+</div>
+<!-- Icon Notification / Sync -->
+<button class="w-9 h-9 flex items-center justify-center rounded-lg border border-standard text-secondary hover:bg-surface-container-low transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-tertiary-container"></span>
+</button>
+<!-- Profile Avatar -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-standard">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center text-caption font-caption font-bold" title="Financial Reconciler">
+          FR
+        </div>
+<div class="flex flex-col">
+<span class="text-caption font-caption font-semibold leading-tight text-ink">Reconcile Lead</span>
+<span class="text-caption font-caption text-ink-secondary text-[10px]">Production v2.4</span>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed top-0 left-0 w-64 h-screen z-40 bg-surface-container-lowest border-r border-standard flex flex-col justify-between p-4">
+<div class="flex flex-col gap-5">
+<!-- Brand Logo & Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-bold shadow-sm">
+<span class="material-symbols-outlined text-[22px]">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-card-title font-card-title font-bold text-on-surface tracking-tight leading-tight">Commerce Platform</span>
+<span class="text-caption font-caption text-ink-secondary">Jagota ERP Connected</span>
+</div>
+</div>
+<!-- Navigation Links (7 Core Work Areas) -->
+<nav class="flex flex-col gap-1">
+<!-- 1: สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#marketing">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5: รายงานและข้อมูล (ACTIVE TAB) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-semibold border-l-4 border-primary transition-all duration-150" href="#reports">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span data-i18n="nav_reports">รายงานและข้อมูล</span>
+</a>
+<!-- 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#integrations">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- SideNavBar Footer -->
+<div class="pt-4 border-t border-standard flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#help">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+<span>ช่วยเหลือและคู่มือ</span>
+</a>
+<div class="px-3 py-1 flex items-center justify-between text-caption font-caption text-ink-secondary">
+<span>Node: cluster-bkk-02</span>
+<span class="inline-flex w-2 h-2 rounded-full bg-[#157347]"></span>
+</div>
+</div>
+</aside>
+<!-- Main Scroll Canvas -->
+<main class="ml-64 pt-16 min-h-screen">
+<div class="max-w-[1240px] mx-auto p-6 flex flex-col gap-6">
+<!-- 2. Page Header & Key Actions Section -->
+<section class="flex flex-col gap-4">
+<div class="flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<h1 class="text-page-title font-page-title text-ink font-bold tracking-tight" data-i18n="page_title">
+              รายงานยอดขาย
+            </h1>
+<span class="px-2 py-0.5 rounded text-caption font-caption font-bold bg-[#d7e2ff] text-primary">
+              josh
+            </span>
+<span class="px-2.5 py-0.5 rounded-full text-caption font-caption bg-[#fef9e7] text-[#b08900] font-semibold border border-[#fae29c]">
+              ข้อมูลตัวอย่าง / Sample data
+            </span>
+</div>
+<!-- Quick Actions & Status Info -->
+<div class="flex items-center gap-2">
+<span class="text-caption font-caption text-ink-secondary">Last replicated: 2 นาทีที่แล้ว</span>
+<button class="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-primary-container text-white text-label-default font-label-default font-semibold hover:bg-primary transition-colors shadow-xs" onclick="simulateRefresh()">
+<span class="material-symbols-outlined text-[18px]" id="refresh-icon">refresh</span>
+<span data-i18n="refresh_btn">Refresh</span>
+</button>
+</div>
+</div>
+<!-- Explanatory Subtext -->
+<p class="text-body-default font-body-default text-ink-secondary -mt-2">
+          ออเดอร์ที่จ่ายแล้ว (paid/preparing/shipped/delivered) · บาทรวม VAT หลังส่วนลด · อ่านจาก replica ของ josh
+        </p>
+<!-- Date Range Filter Bar Card -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-wrap items-center justify-between gap-4 shadow-xs">
+<!-- Preset Filter Buttons -->
+<div class="flex items-center gap-1.5">
+<button class="h-9 px-3 rounded-lg text-label-default font-label-default text-secondary hover:bg-surface-container-low transition-colors" onclick="setFilter(this)">
+              วันนี้
+            </button>
+<button class="h-9 px-3 rounded-lg text-label-default font-label-default text-secondary hover:bg-surface-container-low transition-colors" onclick="setFilter(this)">
+              เมื่อวาน
+            </button>
+<button class="h-9 px-3 rounded-lg text-label-default font-label-default font-semibold bg-surface-container text-primary border border-primary transition-colors" onclick="setFilter(this)">
+              สัปดาห์นี้
+            </button>
+<button class="h-9 px-3 rounded-lg text-label-default font-label-default text-secondary hover:bg-surface-container-low transition-colors" onclick="setFilter(this)">
+              เดือนนี้
+            </button>
+<button class="h-9 px-3 rounded-lg text-label-default font-label-default text-secondary hover:bg-surface-container-low transition-colors" onclick="setFilter(this)">
+              เดือนที่แล้ว
+            </button>
+<button class="h-9 px-3 rounded-lg text-label-default font-label-default text-secondary hover:bg-surface-container-low transition-colors" onclick="setFilter(this)">
+              กำหนดเอง
+            </button>
+</div>
+<!-- Date Input Fields & Quick Action -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-label-default font-label-default text-ink">
+<span class="text-ink-secondary" data-i18n="from_label">ตั้งแต่</span>
+<input class="h-9 px-2.5 rounded-lg border border-standard bg-white text-ink text-label-default font-label-default focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" type="date" value="2024-11-08"/>
+<span class="text-ink-secondary" data-i18n="to_label">ถึง</span>
+<input class="h-9 px-2.5 rounded-lg border border-standard bg-white text-ink text-label-default font-label-default focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" type="date" value="2024-11-14"/>
+</div>
+<button class="h-9 px-3 rounded-lg border border-standard bg-white text-label-default font-label-default font-medium text-ink hover:bg-surface-container-low transition-colors" data-i18n="now_btn">
+              ตอนนี้
+            </button>
+</div>
+</div>
+<!-- Sub-notice comparison line -->
+<div class="flex items-center gap-2 text-caption font-caption text-ink-secondary px-1">
+<span class="material-symbols-outlined text-[16px] text-outline">info</span>
+<span>· เทียบกับ</span>
+<span class="font-medium text-ink">ไม่มีข้อมูลช่วงก่อน</span>
+<span class="text-outline">·</span>
+<span>(ช่วงเวลาก่อนหน้าไม่มี snapshot ใน replica ฐานข้อมูล)</span>
+</div>
+</section>
+<!-- 3. Metric Summary KPI Cards Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<!-- Card 1: ยอดขาย -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-standard flex flex-col justify-between shadow-xs">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-ink-secondary" data-i18n="kpi_sales">ยอดขาย</span>
+<span class="material-symbols-outlined text-primary text-[20px]">payments</span>
+</div>
+<div class="mt-2">
+<div class="text-[24px] font-bold tracking-tight text-ink">฿1,482,950.00</div>
+<span class="text-caption font-caption text-ink-secondary mt-1 block">รวม VAT หลังส่วนลด</span>
+</div>
+<div class="mt-3 pt-2 border-t border-divider flex items-center justify-between text-caption font-caption">
+<span class="text-[#157347] font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +14.2%
+            </span>
+<span class="text-ink-secondary">vs เฉลี่ยรายวัน</span>
+</div>
+</div>
+<!-- Card 2: ออเดอร์ -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-standard flex flex-col justify-between shadow-xs">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-ink-secondary" data-i18n="kpi_orders">ออเดอร์</span>
+<span class="material-symbols-outlined text-primary text-[20px]">shopping_bag</span>
+</div>
+<div class="mt-2">
+<div class="text-[24px] font-bold tracking-tight text-ink">18 ออเดอร์</div>
+<span class="text-caption font-caption text-ink-secondary mt-1 block">ออเดอร์ที่จ่ายแล้ว</span>
+</div>
+<div class="mt-3 pt-2 border-t border-divider flex items-center justify-between text-caption font-caption">
+<span class="text-[#157347] font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 100% สำเร็จ
+            </span>
+<span class="text-ink-secondary">เฉลี่ย 2.5/วัน</span>
+</div>
+</div>
+<!-- Card 3: เฉลี่ยต่อออเดอร์ -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-standard flex flex-col justify-between shadow-xs">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-ink-secondary" data-i18n="kpi_aov">เฉลี่ยต่อออเดอร์</span>
+<span class="material-symbols-outlined text-primary text-[20px]">calculate</span>
+</div>
+<div class="mt-2">
+<div class="text-[24px] font-bold tracking-tight text-ink">฿82,386.11</div>
+<span class="text-caption font-caption text-ink-secondary mt-1 block">มูลค่าคำสั่งซื้อเฉลี่ย B2B</span>
+</div>
+<div class="mt-3 pt-2 border-t border-divider flex items-center justify-between text-caption font-caption">
+<span class="text-ink font-semibold">B2B Standard Tier</span>
+<span class="text-ink-secondary">Food Service</span>
+</div>
+</div>
+<!-- Card 4: ลูกค้าที่ซื้อ -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-standard flex flex-col justify-between shadow-xs">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-ink-secondary" data-i18n="kpi_buyers">ลูกค้าที่ซื้อ</span>
+<span class="material-symbols-outlined text-primary text-[20px]">apartment</span>
+</div>
+<div class="mt-2">
+<div class="text-[24px] font-bold tracking-tight text-ink">14 บริษัท</div>
+<span class="text-caption font-caption text-[#157347] font-medium mt-1 block">· ใหม่ 3 บริษัท</span>
+</div>
+<div class="mt-3 pt-2 border-t border-divider flex items-center justify-between text-caption font-caption">
+<span class="text-ink-secondary">Active Accounts:</span>
+<span class="text-ink font-semibold">14 / 32</span>
+</div>
+</div>
+<!-- Card 5: ส่วนลดรวม -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-standard flex flex-col justify-between shadow-xs">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-ink-secondary" data-i18n="kpi_discounts">ส่วนลดรวม</span>
+<span class="material-symbols-outlined text-tertiary text-[20px]">loyalty</span>
+</div>
+<div class="mt-2">
+<div class="text-[24px] font-bold tracking-tight text-error">-฿24,500.00</div>
+<span class="text-caption font-caption text-ink-secondary mt-1 block">โปรโมชัน &amp; Volume tier</span>
+</div>
+<div class="mt-3 pt-2 border-t border-divider flex items-center justify-between text-caption font-caption">
+<span class="text-ink-secondary">คิดเป็นสัดส่วน</span>
+<span class="text-ink font-semibold">1.62%</span>
+</div>
+</div>
+</section>
+<!-- Non-sales Notice / Exclusions strip -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Notice 1: รอชำระ / ยกเลิก -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex items-center justify-between shadow-xs">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-[#fef9e7] text-[#b08900] flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[22px]">pending_actions</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-body-semibold font-body-semibold text-ink">รอชำระ / ยกเลิก</span>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-[#fef9e7] text-[#b08900] font-semibold">
+                  2 ออเดอร์
+                </span>
+</div>
+<p class="text-caption font-caption text-ink-secondary mt-0.5">
+                ไม่นับเป็นยอดขาย · ออเดอร์ · ดูที่ Orders (josh)
+              </p>
+</div>
+</div>
+<a class="text-caption font-caption font-semibold text-primary hover:underline flex items-center gap-1" href="#orders-josh">
+<span>ไปที่รายการ</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<!-- Notice 2: คืนเงิน -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex items-center justify-between shadow-xs">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-secondary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[22px]">history</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-body-semibold font-body-semibold text-ink" data-i18n="refund_label">คืนเงิน</span>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-surface-container-high text-secondary font-semibold">
+                  ฿0.00
+                </span>
+</div>
+<p class="text-caption font-caption text-ink-secondary mt-0.5" data-i18n="no_refund_text">
+                ยังไม่มีข้อมูลคืนเงินใน commerce
+              </p>
+</div>
+</div>
+<span class="text-caption font-caption text-outline">สถานะปกติ</span>
+</div>
+</section>
+<!-- 4. Main Tabs Navigation Section -->
+<section class="flex flex-col gap-4">
+<div class="border-b border-standard flex items-center gap-6">
+<button class="pb-3 text-body-semibold font-body-semibold text-primary border-b-2 border-primary flex items-center gap-2 transition-all" id="tab-btn-sales" onclick="switchMainTab('sales')">
+<span class="material-symbols-outlined text-[20px]">insights</span>
+<span data-i18n="tab_sales">ยอดขาย</span>
+</button>
+<button class="pb-3 text-body-default font-body-default text-ink-secondary hover:text-ink flex items-center gap-2 transition-all" id="tab-btn-traffic" onclick="switchMainTab('traffic')">
+<span class="material-symbols-outlined text-[20px]">traffic</span>
+<span data-i18n="tab_traffic">Traffic</span>
+</button>
+<button class="pb-3 text-body-default font-body-default text-ink-secondary hover:text-ink flex items-center gap-2 transition-all" id="tab-btn-health" onclick="switchMainTab('health')">
+<span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+<span data-i18n="tab_health">Error และสุขภาพระบบ</span>
+</button>
+</div>
+<!-- ================= TAB 1: สินค้าขายดี (Sales & Products) ================= -->
+<div class="flex flex-col gap-4" id="tab-content-sales">
+<!-- Filter & Search Toolbar -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-3 flex-1">
+<div class="relative min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[20px] text-outline">search</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg border border-standard bg-white text-ink text-label-default font-label-default placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" id="sku-search" placeholder="ค้นหา SKU หรือชื่อสินค้า..." type="text"/>
+</div>
+<!-- หมวดหมู่ Dropdown -->
+<div class="flex items-center gap-2">
+<label class="text-caption font-caption text-ink-secondary font-medium">หมวดหมู่:</label>
+<select class="h-10 px-3 rounded-lg border border-standard bg-white text-ink text-label-default font-label-default focus:border-primary outline-none">
+<option value="all">ทั้งหมด (All Categories)</option>
+<option value="beef">เนื้อวัวนำเข้า (Imported Beef)</option>
+<option value="seafood">อาหารทะเลแช่แข็ง (Frozen Seafood)</option>
+<option value="dairy">ชีสและแดรี่ (Cheese &amp; Dairy)</option>
+<option value="truffle">ทรัฟเฟิลและเครื่องปรุง (Truffle &amp; Condiments)</option>
+</select>
+</div>
+<span class="text-caption font-caption text-ink-secondary">
+                · การค้นหาจะกรองข้อมูลในหน้านี้
+              </span>
+</div>
+<!-- Export Button -->
+<button class="h-10 px-4 rounded-lg border border-standard bg-white text-ink text-label-default font-label-default font-medium hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>ส่งออก CSV</span>
+</button>
+</div>
+<!-- Top Selling Products Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-standard overflow-hidden shadow-xs">
+<div class="px-5 py-3.5 bg-[#f6f8fc] border-b border-standard flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-card-title font-card-title font-semibold text-ink" data-i18n="table_title">สินค้าขายดี</span>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-surface-container-high text-primary font-bold">Top 10 SKUs</span>
+</div>
+<span class="text-caption font-caption text-ink-secondary">
+                เรียงตาม: ยอดขายสูงสุด (Total Revenue)
+              </span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-standard text-table-header font-table-header text-ink-secondary">
+<th class="py-3 px-4 w-32 font-semibold">SKU</th>
+<th class="py-3 px-4 font-semibold">สินค้า</th>
+<th class="py-3 px-4 w-44 font-semibold">หมวดหมู่</th>
+<th class="py-3 px-4 w-28 text-right font-semibold">จำนวน</th>
+<th class="py-3 px-4 w-24 text-right font-semibold">ครั้ง</th>
+<th class="py-3 px-4 w-40 text-right font-semibold">ยอดขาย</th>
+<th class="py-3 px-4 w-44 text-right font-semibold">ล่าสุด</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#eef2f7] text-body-default font-body-default text-ink">
+<!-- Row 1 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3.5 px-4 font-mono text-caption text-ink-secondary">JAG-BEEF-001</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[18px]">restaurant</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-ink">เนื้อวากิว A5 สตริปลอยด์ (Wagyu A5 Striploin 200g)</span>
+<span class="text-caption text-ink-secondary">Miyazaki Gyu · Frozen cut</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-ink-secondary">เนื้อวัวนำเข้า</td>
+<td class="py-3.5 px-4 text-right font-mono font-medium">142 ชิ้น</td>
+<td class="py-3.5 px-4 text-right font-mono">11</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-ink">฿426,000.00</td>
+<td class="py-3.5 px-4 text-right text-caption text-ink-secondary font-mono">14 พ.ย. 16:42</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3.5 px-4 font-mono text-caption text-ink-secondary">JAG-SEA-042</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[18px]">set_meal</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-ink">แซลมอนนอร์เวย์ สดฟิลเลต์ (Norwegian Salmon Fillet)</span>
+<span class="text-caption text-ink-secondary">Superior Grade · 4-5 kg/side</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-ink-secondary">อาหารทะเลสด</td>
+<td class="py-3.5 px-4 text-right font-mono font-medium">320 กก.</td>
+<td class="py-3.5 px-4 text-right font-mono">14</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-ink">฿288,000.00</td>
+<td class="py-3.5 px-4 text-right text-caption text-ink-secondary font-mono">14 พ.ย. 14:15</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3.5 px-4 font-mono text-caption text-ink-secondary">JAG-TRF-008</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[18px]">spa</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-ink">ซอสเห็ดทรัฟเฟิลดำผสมเห็ดแชมปิญอง (Black Truffle Salsa 500g)</span>
+<span class="text-caption text-ink-secondary">Urbani Tartufi · Italy</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-ink-secondary">ทรัฟเฟิลและเครื่องปรุง</td>
+<td class="py-3.5 px-4 text-right font-mono font-medium">96 กระปุก</td>
+<td class="py-3.5 px-4 text-right font-mono">9</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-ink">฿163,200.00</td>
+<td class="py-3.5 px-4 text-right text-caption text-ink-secondary font-mono">13 พ.ย. 18:05</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3.5 px-4 font-mono text-caption text-ink-secondary">JAG-CHE-019</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[18px]">lunch_dining</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-ink">พาร์มิจาโน เรจจาโน DOP 24 เดือน (Parmigiano Reggiano Wheel cut)</span>
+<span class="text-caption text-ink-secondary">Zanetti DOP 1kg</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-ink-secondary">ชีสและแดรี่</td>
+<td class="py-3.5 px-4 text-right font-mono font-medium">85 ชิ้น</td>
+<td class="py-3.5 px-4 text-right font-mono">8</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-ink">฿119,000.00</td>
+<td class="py-3.5 px-4 text-right text-caption text-ink-secondary font-mono">13 พ.ย. 11:20</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-[#f9fafc] transition-colors">
+<td class="py-3.5 px-4 font-mono text-caption text-ink-secondary">JAG-BEEF-088</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[18px]">kebab_dining</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-ink">เนื้อสันนอกออสเตรเลีย แบล็คแองกัส (AUS Black Angus Striploin MB3+)</span>
+<span class="text-caption text-ink-secondary">Grain-fed 150 days · Chilled</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-ink-secondary">เนื้อวัวนำเข้า</td>
+<td class="py-3.5 px-4 text-right font-mono font-medium">78 กก.</td>
+<td class="py-3.5 px-4 text-right font-mono">6</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-ink">฿109,200.00</td>
+<td class="py-3.5 px-4 text-right text-caption text-ink-secondary font-mono">12 พ.ย. 15:40</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="px-5 py-3.5 bg-white border-t border-standard flex items-center justify-between text-caption font-caption text-ink-secondary">
+<div>หน้า 1 จาก 1, แสดง 5 จาก 5 รายการ (กรองจาก 10 รายการต้นทาง)</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded border border-standard text-secondary hover:bg-surface-container-low transition-colors disabled:opacity-40" disabled="">ก่อนหน้า</button>
+<button class="px-2.5 py-1 rounded bg-primary text-white font-semibold">1</button>
+<button class="px-2.5 py-1 rounded border border-standard text-secondary hover:bg-surface-container-low transition-colors disabled:opacity-40" disabled="">ถัดไป</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= TAB 2: Traffic (Visitors & Funnel) ================= -->
+<div class="hidden flex flex-col gap-5" id="tab-content-traffic">
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col gap-1 shadow-xs">
+<span class="text-card-title font-card-title font-semibold text-ink" data-i18n="traffic_title">Traffic &amp; Customer Journey</span>
+<p class="text-body-default font-body-default text-ink-secondary">
+              ผู้เข้าชม การค้นหา และ funnel ของหน้าร้าน josh · อ่านจาก replica ของ josh
+            </p>
+</div>
+<!-- Traffic KPI Cards Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+<div class="bg-surface-container-lowest rounded-xl p-3.5 border border-standard">
+<span class="text-caption font-caption text-ink-secondary block">Sessions</span>
+<span class="text-[20px] font-bold text-ink font-mono mt-1 block">12,450</span>
+<span class="text-caption font-caption text-[#157347] font-semibold mt-1 block">↑ 8.4%</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-3.5 border border-standard">
+<span class="text-caption font-caption text-ink-secondary block">Visitors</span>
+<span class="text-[20px] font-bold text-ink font-mono mt-1 block">8,920</span>
+<span class="text-caption font-caption text-ink-secondary mt-1 block">Unique clients</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-3.5 border border-standard">
+<span class="text-caption font-caption text-ink-secondary block">Login แล้ว</span>
+<span class="text-[20px] font-bold text-ink font-mono mt-1 block">1,430</span>
+<span class="text-caption font-caption text-primary font-semibold mt-1 block">16.0% verified</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-3.5 border border-standard">
+<span class="text-caption font-caption text-ink-secondary block">ดูสินค้า</span>
+<span class="text-[20px] font-bold text-ink font-mono mt-1 block">6,890</span>
+<span class="text-caption font-caption text-ink-secondary mt-1 block">55.3% of sessions</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-3.5 border border-standard">
+<span class="text-caption font-caption text-ink-secondary block">ใส่ตะกร้า</span>
+<span class="text-[20px] font-bold text-ink font-mono mt-1 block">840</span>
+<span class="text-caption font-caption text-[#157347] font-semibold mt-1 block">12.1% intent</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-3.5 border border-standard">
+<span class="text-caption font-caption text-ink-secondary block">ซื้อ (Orders)</span>
+<span class="text-[20px] font-bold text-primary font-mono mt-1 block">312</span>
+<span class="text-caption font-caption text-primary font-semibold mt-1 block">37.1% basket conv</span>
+</div>
+</div>
+<!-- Funnel Visual Breakdown Card -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-standard shadow-xs flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="text-card-title font-card-title font-semibold text-ink">Funnel (sessions)</span>
+<span class="text-caption font-caption text-ink-secondary">Conversion rate ภาพรวม: 2.51%</span>
+</div>
+<!-- Conversion Progress Bars -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<!-- Stage 1 -->
+<div class="flex flex-col gap-1.5 p-3 rounded-lg bg-[#f6f8fc] border border-standard">
+<span class="text-caption font-caption text-ink-secondary">1. เข้าสู่ระบบ / Sessions</span>
+<span class="text-card-title font-card-title font-bold text-ink">12,450</span>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary rounded-full w-full"></div>
+</div>
+<span class="text-caption text-outline">100% เริ่มต้น</span>
+</div>
+<!-- Stage 2 -->
+<div class="flex flex-col gap-1.5 p-3 rounded-lg bg-[#f6f8fc] border border-standard">
+<span class="text-caption font-caption text-ink-secondary">2. ดูสินค้า (Product View)</span>
+<span class="text-card-title font-card-title font-bold text-ink">6,890</span>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[55%]"></div>
+</div>
+<span class="text-caption text-outline">55.3% จาก Sessions</span>
+</div>
+<!-- Stage 3 -->
+<div class="flex flex-col gap-1.5 p-3 rounded-lg bg-[#f6f8fc] border border-standard">
+<span class="text-caption font-caption text-ink-secondary">3. ใส่ตะกร้า (Add to Cart)</span>
+<span class="text-card-title font-card-title font-bold text-ink">840</span>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[12%]"></div>
+</div>
+<span class="text-caption text-outline">12.2% จากการดูสินค้า</span>
+</div>
+<!-- Stage 4 -->
+<div class="flex flex-col gap-1.5 p-3 rounded-lg bg-[#f6f8fc] border border-standard">
+<span class="text-caption font-caption text-ink-secondary">4. ซื้อสำเร็จ (Checkout)</span>
+<span class="text-card-title font-card-title font-bold text-ink">312</span>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-[#157347] rounded-full w-[37%]"></div>
+</div>
+<span class="text-caption text-[#157347] font-semibold">37.1% ปิดการขาย</span>
+</div>
+</div>
+</div>
+<!-- Traffic Breakdown Split (Daily Sessions, Platform & Keywords) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Platform Share -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col justify-between">
+<div>
+<span class="text-card-title font-card-title font-semibold text-ink">แยกตาม platform</span>
+<p class="text-caption text-ink-secondary mt-0.5">ประเภทอุปกรณ์ของลูกค้า B2B</p>
+<div class="mt-4 flex flex-col gap-3">
+<div>
+<div class="flex justify-between text-label-default font-medium">
+<span>Web Desktop (ร้านอาหาร/จัดซื้อ)</span>
+<span class="font-bold">68%</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full mt-1.5 overflow-hidden">
+<div class="w-[68%] h-full bg-primary"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-label-default font-medium">
+<span>Mobile Web / Tablet (เชฟหน้าครัว)</span>
+<span class="font-bold">32%</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full mt-1.5 overflow-hidden">
+<div class="w-[32%] h-full bg-secondary"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-3 border-t border-divider mt-4 text-caption text-ink-secondary">
+                Session เฉลี่ย: 6.8 นาที
+              </div>
+</div>
+<!-- Sessions รายวัน -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col">
+<span class="text-card-title font-card-title font-semibold text-ink">Sessions รายวัน</span>
+<p class="text-caption text-ink-secondary mt-0.5">ปริมาณทราฟฟิก 7 วันล่าสุด</p>
+<div class="flex items-end justify-between gap-1.5 h-36 mt-4 pt-4 border-b border-divider">
+<div class="flex flex-col items-center gap-1 flex-1">
+<div class="w-full bg-primary/20 hover:bg-primary h-20 rounded transition-all" title="8 พ.ย. : 1,620"></div>
+<span class="text-caption text-outline">08</span>
+</div>
+<div class="flex flex-col items-center gap-1 flex-1">
+<div class="w-full bg-primary/30 hover:bg-primary h-24 rounded transition-all" title="9 พ.ย. : 1,840"></div>
+<span class="text-caption text-outline">09</span>
+</div>
+<div class="flex flex-col items-center gap-1 flex-1">
+<div class="w-full bg-primary/20 hover:bg-primary h-16 rounded transition-all" title="10 พ.ย. : 1,320"></div>
+<span class="text-caption text-outline">10</span>
+</div>
+<div class="flex flex-col items-center gap-1 flex-1">
+<div class="w-full bg-primary/40 hover:bg-primary h-28 rounded transition-all" title="11 พ.ย. : 2,100"></div>
+<span class="text-caption text-outline">11</span>
+</div>
+<div class="flex flex-col items-center gap-1 flex-1">
+<div class="w-full bg-primary/50 hover:bg-primary h-32 rounded transition-all" title="12 พ.ย. : 2,450"></div>
+<span class="text-caption text-outline">12</span>
+</div>
+<div class="flex flex-col items-center gap-1 flex-1">
+<div class="w-full bg-primary h-28 rounded transition-all" title="13 พ.ย. : 2,020"></div>
+<span class="text-caption text-outline">13</span>
+</div>
+<div class="flex flex-col items-center gap-1 flex-1">
+<div class="w-full bg-primary h-16 rounded transition-all" title="14 พ.ย. : 1,100"></div>
+<span class="text-caption font-semibold text-primary">14</span>
+</div>
+</div>
+<div class="mt-2 text-caption text-ink-secondary text-right">ยอดสูงสุด: 12 พ.ย. (วันสั่งของเข้าร้าน)</div>
+</div>
+<!-- Top Search Keywords -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<span class="text-card-title font-card-title font-semibold text-ink">คำค้นยอดนิยม</span>
+<span class="text-caption text-[#c2333f] font-semibold bg-[#fdf2f2] px-2 py-0.5 rounded">ไม่เจอสินค้า 2 คำค้น</span>
+</div>
+<div class="mt-3 divide-y divide-[#eef2f7]">
+<div class="py-1.5 flex items-center justify-between text-caption font-caption">
+<span class="font-medium text-ink">1. วากิว A5</span>
+<span class="font-mono text-ink-secondary">642 ครั้ง</span>
+</div>
+<div class="py-1.5 flex items-center justify-between text-caption font-caption">
+<span class="font-medium text-ink">2. แซลมอน นอร์เวย์</span>
+<span class="font-mono text-ink-secondary">512 ครั้ง</span>
+</div>
+<div class="py-1.5 flex items-center justify-between text-caption font-caption">
+<span class="font-medium text-ink">3. น้ำมันทรัฟเฟิล</span>
+<span class="font-mono text-ink-secondary">380 ครั้ง</span>
+</div>
+<div class="py-1.5 flex items-center justify-between text-caption font-caption text-[#c2333f]">
+<span class="font-medium">4. หอยเชลล์ฮอกไกโด (0 ผลลัพธ์)</span>
+<span class="font-mono">145 ครั้ง</span>
+</div>
+<div class="py-1.5 flex items-center justify-between text-caption font-caption text-[#c2333f]">
+<span class="font-medium">5. คาเวียร์เบลูกา (0 ผลลัพธ์)</span>
+<span class="font-mono">88 ครั้ง</span>
+</div>
+</div>
+</div>
+<div class="pt-2 text-caption text-primary cursor-pointer hover:underline">
+                วิเคราะห์คำค้นที่ค้นหาไม่พบ (Keyword Gap) →
+              </div>
+</div>
+</div>
+</div>
+<!-- ================= TAB 3: Error & System Health ================= -->
+<div class="hidden flex flex-col gap-4" id="tab-content-health">
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col gap-1 shadow-xs">
+<span class="text-card-title font-card-title font-semibold text-ink">Error และสุขภาพระบบ</span>
+<p class="text-body-default font-body-default text-ink-secondary">
+              ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh
+            </p>
+</div>
+<!-- Status Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Health Card 1: Commerce Platform Core -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-body-semibold font-body-semibold text-ink">Commerce Core Engine</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-caption bg-[#e8f5ec] text-[#157347] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                  ปกติ
+                </span>
+</div>
+<p class="text-caption font-caption text-ink-secondary mt-2">
+                การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง (Queue latency &lt; 45ms)
+              </p>
+<div class="mt-4 pt-3 border-t border-divider flex items-center justify-between text-caption text-ink-secondary">
+<span>Uptime ล่าสุด: 99.98%</span>
+<span class="text-[#157347] font-bold">100% ตอบสนอง</span>
+</div>
+</div>
+<!-- Health Card 2: Platform Delivery Success -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-body-semibold font-body-semibold text-ink">ส่งข้อมูลถึง platform สำเร็จ</span>
+<span class="text-card-title font-bold font-mono text-[#157347]">100%</span>
+</div>
+<p class="text-caption font-caption text-ink-secondary mt-2">
+                Webhooks และ Event stream ส่งต่อไปยัง Kafka cluster ครบถ้วนทุกข้อความ
+              </p>
+<div class="mt-4 pt-3 border-t border-divider flex items-center justify-between text-caption text-ink-secondary">
+<span>ส่งไม่สำเร็จ (dead letter):</span>
+<span class="font-bold text-ink">0</span>
+</div>
+</div>
+<!-- Health Card 3: Jagota ERP Sync Error -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-body-semibold font-body-semibold text-ink">Jagota sync error</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-caption bg-[#e8f5ec] text-[#157347] font-semibold">
+                  0 รายการ
+                </span>
+</div>
+<p class="text-caption font-caption text-ink-secondary mt-2">
+                ส่งออเดอร์ไป Jagota ไม่สำเร็จ: 0 รายการ (ฐานข้อมูลหลักตอบรับทุกบันทึก)
+              </p>
+<div class="mt-4 pt-3 border-t border-divider flex items-center justify-between text-caption text-ink-secondary">
+<span>ERP Replica Lag:</span>
+<span class="font-mono text-ink">1.2 วินาที</span>
+</div>
+</div>
+<!-- Health Card 4: Payment Failures -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-body-semibold font-body-semibold text-ink">ชำระเงินไม่สำเร็จ</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-caption bg-[#fef9e7] text-[#b08900] font-semibold">
+                  2 รายการ
+                </span>
+</div>
+<p class="text-caption font-caption text-ink-secondary mt-2">
+                วงเงินเครดิตการค้า B2B ไม่เพียงพอ (Credit limit exceeded) รอพิจารณาอนุมัติ
+              </p>
+<div class="mt-4 pt-3 border-t border-divider flex items-center justify-between text-caption text-ink-secondary">
+<span>รอดำเนินการ: 2 บริษัท</span>
+<a class="text-primary hover:underline" href="#credit">ตรวจดูเคส →</a>
+</div>
+</div>
+<!-- Health Card 5: Dead Letter Queue -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-body-semibold font-body-semibold text-ink">ส่งไม่สำเร็จ (dead letter)</span>
+<span class="font-mono font-bold text-ink text-card-title">0</span>
+</div>
+<p class="text-caption font-caption text-ink-secondary mt-2">
+                ไม่มีข้อความที่ติดค้างในคิว Dead Letter Queue (DLQ ว่างเปล่า)
+              </p>
+<div class="mt-4 pt-3 border-t border-divider flex items-center justify-between text-caption text-ink-secondary">
+<span>Retry Count: 0</span>
+<span class="text-[#157347] font-medium">Clean</span>
+</div>
+</div>
+<!-- Health Card 6: Josh Replica Heartbeat -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-standard flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-body-semibold font-body-semibold text-ink">Josh Database Replica</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-caption bg-[#e8f5ec] text-[#157347] font-semibold">
+                  Active
+                </span>
+</div>
+<p class="text-caption font-caption text-ink-secondary mt-2">
+                การเชื่อมต่อ Read Replica หมายเลข josh-ro-01 มีความสมบูรณ์
+              </p>
+<div class="mt-4 pt-3 border-t border-divider flex items-center justify-between text-caption text-ink-secondary">
+<span>Ping latency: 12ms</span>
+<span class="text-ink-secondary font-mono">PostgreSQL 15</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom System Status & Diagnostic Footnote -->
+<footer class="mt-4 pt-4 border-t border-divider flex flex-wrap items-center justify-between text-caption font-caption text-ink-secondary gap-3">
+<div class="flex items-center gap-2">
+<span>Commerce Platform v2.4 (admin-267e9c1dd6d2)</span>
+<span>·</span>
+<span>Security Level: Tier 3 Enterprise</span>
+<span>·</span>
+<span class="text-ink font-semibold">Timezone: Asia/Bangkok (UTC+7)</span>
+</div>
+<div class="flex items-center gap-4">
+<a class="hover:text-primary transition-colors" href="#audit">Audit Logs</a>
+<a class="hover:text-primary transition-colors" href="#sla">SLA Monitoring</a>
+<a class="hover:text-primary transition-colors" href="#terms">Security Policy</a>
+</div>
+</footer>
+</div>
+</main>
+<!-- Interactive Logic: Tab Switching & Bilingual Demo -->
+<script>
+    // Tab Switching
+    function switchMainTab(tab) {
+      const tabs = ['sales', 'traffic', 'health'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const content = document.getElementById(`tab-content-${t}`);
+        if (t === tab) {
+          btn.className = "pb-3 text-body-semibold font-body-semibold text-primary border-b-2 border-primary flex items-center gap-2 transition-all";
+          content.classList.remove('hidden');
+        } else {
+          btn.className = "pb-3 text-body-default font-body-default text-ink-secondary hover:text-ink flex items-center gap-2 transition-all";
+          content.classList.add('hidden');
+        }
+      });
+    }
+
+    // Filter Buttons Toggle
+    function setFilter(el) {
+      const container = el.parentElement;
+      Array.from(container.children).forEach(btn => {
+        btn.className = "h-9 px-3 rounded-lg text-label-default font-label-default text-secondary hover:bg-surface-container-low transition-colors";
+      });
+      el.className = "h-9 px-3 rounded-lg text-label-default font-label-default font-semibold bg-surface-container text-primary border border-primary transition-colors";
+    }
+
+    // Refresh simulation
+    function simulateRefresh() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 700);
+    }
+
+    // Search filter mock
+    document.getElementById('sku-search').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#tab-content-sales tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+
+    // Bilingual switcher logic
+    let currentLang = 'th';
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-th');
+      const enBtn = document.getElementById('lang-en');
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 text-caption font-caption rounded font-semibold bg-white text-primary shadow-xs transition-all";
+        enBtn.className = "px-2.5 py-1 text-caption font-caption rounded font-medium text-secondary hover:text-ink transition-all";
+      } else {
+        enBtn.className = "px-2.5 py-1 text-caption font-caption rounded font-semibold bg-white text-primary shadow-xs transition-all";
+        thBtn.className = "px-2.5 py-1 text-caption font-caption rounded font-medium text-secondary hover:text-ink transition-all";
+      }
+
+      const transScript = document.getElementById('commerce-ui-translations');
+      if (transScript) {
+        const translations = JSON.parse(transScript.textContent);
+        const elements = document.querySelectorAll('[data-i18n]');
+        elements.forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (key === 'page_title' && translations["ยอดขาย"]) {
+            el.textContent = lang === 'en' ? "Sales Report" : "รายงานยอดขาย";
+          } else if (key === 'tab_sales' && translations["ยอดขาย"]) {
+            el.textContent = translations["ยอดขาย"][lang];
+          } else if (key === 'tab_traffic' && translations["Traffic"]) {
+            el.textContent = translations["Traffic"][lang];
+          } else if (key === 'refresh_btn' && translations["Refresh"]) {
+            el.textContent = translations["Refresh"][lang];
+          } else if (key === 'table_title' && translations["สินค้าขายดี"]) {
+            el.textContent = translations["สินค้าขายดี"][lang];
+          } else if (key === 'kpi_sales' && translations["ยอดขาย"]) {
+            el.textContent = translations["ยอดขาย"][lang];
+          } else if (key === 'kpi_orders' && translations["ออเดอร์"]) {
+            el.textContent = translations["ออเดอร์"][lang];
+          } else if (key === 'kpi_aov' && translations["เฉลี่ยต่อออเดอร์"]) {
+            el.textContent = translations["เฉลี่ยต่อออเดอร์"][lang];
+          } else if (key === 'kpi_buyers' && translations["ลูกค้าที่ซื้อ"]) {
+            el.textContent = translations["ลูกค้าที่ซื้อ"][lang];
+          } else if (key === 'kpi_discounts' && translations["ส่วนลดรวม"]) {
+            el.textContent = translations["ส่วนลดรวม"][lang];
+          } else if (key === 'refund_label' && translations["คืนเงิน"]) {
+            el.textContent = translations["คืนเงิน"][lang];
+          } else if (key === 'no_refund_text' && translations["ยังไม่มีข้อมูลคืนเงินใน commerce"]) {
+            el.textContent = translations["ยังไม่มีข้อมูลคืนเงินใน commerce"][lang];
+          } else if (key === 'sample_badge') {
+            el.textContent = lang === 'en' ? "Sample data" : "ข้อมูลตัวอย่าง / Sample data";
+          }
+        });
+      }
+    }
+  </script>
+<!-- CRITICAL EXPORT REQUIREMENT: Invisible translation catalogue JSON dictionary -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ยอดขาย": {
+      "th": "ยอดขาย",
+      "en": "Sales"
+    },
+    "Traffic": {
+      "th": "Traffic",
+      "en": "Traffic"
+    },
+    "Refresh": {
+      "th": "Refresh",
+      "en": "Refresh"
+    },
+    "ค้นหา": {
+      "th": "ค้นหา",
+      "en": "Search"
+    },
+    "SKU": {
+      "th": "SKU",
+      "en": "SKU"
+    },
+    "สินค้า": {
+      "th": "สินค้า",
+      "en": "Product"
+    },
+    "จำนวน": {
+      "th": "จำนวน",
+      "en": "Quantity"
+    },
+    "ครั้ง": {
+      "th": "ครั้ง",
+      "en": "Orders"
+    },
+    "ล่าสุด": {
+      "th": "ล่าสุด",
+      "en": "Latest"
+    },
+    "ตั้งแต่": {
+      "th": "ตั้งแต่",
+      "en": "From"
+    },
+    "ถึง": {
+      "th": "ถึง",
+      "en": "To"
+    },
+    "ตอนนี้": {
+      "th": "ตอนนี้",
+      "en": "Now"
+    },
+    "josh": {
+      "th": "josh",
+      "en": "josh"
+    },
+    "ไม่มีข้อมูลช่วงก่อน": {
+      "th": "ไม่มีข้อมูลช่วงก่อน",
+      "en": "No previous period data"
+    },
+    "ออเดอร์ที่จ่ายแล้ว (paid/preparing/shipped/delivered) · บาทรวม VAT หลังส่วนลด · อ่านจาก replica ของ josh": {
+      "th": "ออเดอร์ที่จ่ายแล้ว (paid/preparing/shipped/delivered) · บาทรวม VAT หลังส่วนลด · อ่านจาก replica ของ josh",
+      "en": "Paid orders (paid/preparing/shipped/delivered) · THB inc VAT after discount · read from josh replica"
+    },
+    "· เทียบกับ": {
+      "th": "· เทียบกับ",
+      "en": "· Compare to"
+    },
+    "ออเดอร์": {
+      "th": "ออเดอร์",
+      "en": "Orders"
+    },
+    "เฉลี่ยต่อออเดอร์": {
+      "th": "เฉลี่ยต่อออเดอร์",
+      "en": "Avg. Order Value"
+    },
+    "ลูกค้าที่ซื้อ": {
+      "th": "ลูกค้าที่ซื้อ",
+      "en": "Buying Customers"
+    },
+    "บริษัท · ใหม่": {
+      "th": "บริษัท · ใหม่",
+      "en": "Companies · New"
+    },
+    "ส่วนลดรวม": {
+      "th": "ส่วนลดรวม",
+      "en": "Total Discounts"
+    },
+    "รอชำระ / ยกเลิก": {
+      "th": "รอชำระ / ยกเลิก",
+      "en": "Pending / Cancelled"
+    },
+    "ไม่นับเป็นยอดขาย": {
+      "th": "ไม่นับเป็นยอดขาย",
+      "en": "Not counted as sales"
+    },
+    "ออเดอร์ · ดูที่ Orders (josh)": {
+      "th": "ออเดอร์ · ดูที่ Orders (josh)",
+      "en": "Orders · View in Orders (josh)"
+    },
+    "คืนเงิน": {
+      "th": "คืนเงิน",
+      "en": "Refunds"
+    },
+    "ยังไม่มีข้อมูลคืนเงินใน commerce": {
+      "th": "ยังไม่มีข้อมูลคืนเงินใน commerce",
+      "en": "No refund data in commerce yet"
+    },
+    "ไม่มีข้อมูลในช่วงนี้": {
+      "th": "ไม่มีข้อมูลในช่วงนี้",
+      "en": "No data in this period"
+    },
+    "สินค้าขายดี": {
+      "th": "สินค้าขายดี",
+      "en": "Top Selling Products"
+    },
+    "เลือกวันที่ให้ครบ": {
+      "th": "เลือกวันที่ให้ครบ",
+      "en": "Please select full date range"
+    },
+    "ผู้เข้าชม การค้นหา และ funnel ของหน้าร้าน josh · อ่านจาก replica ของ josh": {
+      "th": "ผู้เข้าชม การค้นหา และ funnel ของหน้าร้าน josh · อ่านจาก replica ของ josh",
+      "en": "Visitors, searches and funnel of josh storefront · read from josh replica"
+    },
+    "Sessions": {
+      "th": "Sessions",
+      "en": "Sessions"
+    },
+    "Visitors": {
+      "th": "Visitors",
+      "en": "Visitors"
+    },
+    "Login แล้ว": {
+      "th": "Login แล้ว",
+      "en": "Logged in"
+    },
+    "ดูสินค้า": {
+      "th": "ดูสินค้า",
+      "en": "Product Views"
+    },
+    "ใส่ตะกร้า": {
+      "th": "ใส่ตะกร้า",
+      "en": "Add to cart"
+    },
+    "ซื้อ": {
+      "th": "ซื้อ",
+      "en": "Purchase"
+    },
+    "Funnel (sessions)": {
+      "th": "Funnel (sessions)",
+      "en": "Funnel (sessions)"
+    },
+    "Sessions รายวัน": {
+      "th": "Sessions รายวัน",
+      "en": "Daily Sessions"
+    },
+    "แยกตาม platform": {
+      "th": "แยกตาม platform",
+      "en": "By Platform"
+    },
+    "คำค้นยอดนิยม": {
+      "th": "คำค้นยอดนิยม",
+      "en": "Top Searches"
+    },
+    "คำค้น": {
+      "th": "คำค้น",
+      "en": "Search Queries"
+    },
+    "ไม่เจอสินค้า": {
+      "th": "ไม่เจอสินค้า",
+      "en": "No products found"
+    },
+    "Error และสุขภาพระบบ": {
+      "th": "Error และสุขภาพระบบ",
+      "en": "Errors & System Health"
+    },
+    "ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh": {
+      "th": "ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh",
+      "en": "Is anything broken right now, and what failed recently across commerce and josh"
+    },
+    "ปกติ": {
+      "th": "ปกติ",
+      "en": "Normal"
+    },
+    "การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง": {
+      "th": "การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง",
+      "en": "Data sync to platform on time, no lagging queue"
+    },
+    "Commerce": {
+      "th": "Commerce",
+      "en": "Commerce"
+    },
+    "Jagota sync error": {
+      "th": "Jagota sync error",
+      "en": "Jagota sync error"
+    },
+    "กำหนดรูปแบบการตอบกลับของ chatbot": {
+      "th": "กำหนดรูปแบบการตอบกลับของ chatbot",
+      "en": "Configure chatbot response format"
+    },
+    "คน": {
+      "th": "คน",
+      "en": "People"
+    },
+    "งบ": {
+      "th": "งบ",
+      "en": "Budget"
+    },
+    "ชื่อเงื่อนไข (ตั้งเอง)": {
+      "th": "ชื่อเงื่อนไข (ตั้งเอง)",
+      "en": "Condition Name (Custom)"
+    },
+    "ดูร้านทั้งหมด": {
+      "th": "ดูร้านทั้งหมด",
+      "en": "View all stores"
+    },
+    "ทุกคนที่สมัครสำเร็จ": {
+      "th": "ทุกคนที่สมัครสำเร็จ",
+      "en": "Everyone who registered successfully"
+    },
+    "ประวัติการแก้ไข (History)": {
+      "th": "ประวัติการแก้ไข (History)",
+      "en": "Edit History"
+    },
+    "เพิ่ม Tier ใหม่": {
+      "th": "เพิ่ม Tier ใหม่",
+      "en": "Add New Tier"
+    },
+    "ไม่มี (correlate ไม่เจอ)": {
+      "th": "ไม่มี (correlate ไม่เจอ)",
+      "en": "None (correlation not found)"
+    },
+    "ยังไม่มีผู้ได้รับ — ระบบจะมอบให้อัตโนมัติเมื่อลูกค้าใช้คูปองต้นทางสำเร็จ": {
+      "th": "ยังไม่มีผู้ได้รับ — ระบบจะมอบให้อัตโนมัติเมื่อลูกค้าใช้คูปองต้นทางสำเร็จ",
+      "en": "No recipients yet — system will automatically grant once source coupon is redeemed"
+    },
+    "รันทดสอบ": {
+      "th": "รันทดสอบ",
+      "en": "Run Test"
+    },
+    "ลบขั้นที่ {0}": {
+      "th": "ลบขั้นที่ {0}",
+      "en": "Remove step {0}"
+    },
+    "และ (AND)": {
+      "th": "และ (AND)",
+      "en": "AND"
+    },
+    "สร้างรายการทดสอบ": {
+      "th": "สร้างรายการทดสอบ",
+      "en": "Create test item"
+    },
+    "หมวดหมู่": {
+      "th": "หมวดหมู่",
+      "en": "Categories"
+    },
+    "อ้างอิง ID จากหลักฐานด้านล่าง คั่นด้วย comma": {
+      "th": "อ้างอิง ID จากหลักฐานด้านล่าง คั่นด้วย comma",
+      "en": "Reference IDs from evidence below, comma separated"
+    },
+    "ยอดขาย{0}": {
+      "th": "ยอดขาย{0}",
+      "en": "Sales {0}"
+    },
+    "วันนี้": {
+      "th": "วันนี้",
+      "en": "Today"
+    },
+    "เมื่อวาน": {
+      "th": "เมื่อวาน",
+      "en": "Yesterday"
+    },
+    "สัปดาห์นี้": {
+      "th": "สัปดาห์นี้",
+      "en": "This week"
+    },
+    "เดือนนี้": {
+      "th": "เดือนนี้",
+      "en": "This month"
+    },
+    "เดือนที่แล้ว": {
+      "th": "เดือนที่แล้ว",
+      "en": "Last month"
+    },
+    "กำหนดเอง": {
+      "th": "กำหนดเอง",
+      "en": "Custom"
+    },
+    "ส่งข้อมูลถึง platform สำเร็จ": {
+      "th": "ส่งข้อมูลถึง platform สำเร็จ",
+      "en": "Data sent to platform successfully"
+    },
+    "ส่งไม่สำเร็จ (dead letter)": {
+      "th": "ส่งไม่สำเร็จ (dead letter)",
+      "en": "Failed to send (dead letter)"
+    },
+    "ชำระเงินไม่สำเร็จ": {
+      "th": "ชำระเงินไม่สำเร็จ",
+      "en": "Payment failed"
+    },
+    "ส่งออเดอร์ไป Jagota ไม่สำเร็จ": {
+      "th": "ส่งออเดอร์ไป Jagota ไม่สำเร็จ",
+      "en": "Failed to sync order to Jagota"
+    }
+  }
+  </script>
+</body></html>

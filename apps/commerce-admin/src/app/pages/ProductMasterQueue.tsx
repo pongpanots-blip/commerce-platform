@@ -1,13 +1,18 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import { useState } from 'react';
 import { Button, Checkbox, Empty, ErrorText, Hint, Page, PageHeader, Panel, PanelHead, SearchInput, Table, TBody, TD, TH, THead, TR } from '@cp/ui';
 import { MasterPending, productMastersApi, productPricesApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const LABEL: Record<string, string> = {
-  product_status: 'สถานะ', category_code: 'หมวด (รหัส)', brand_name: 'แบรนด์', selling_unit: 'หน่วยขาย', order_taking_unit: 'หน่วยสั่ง',
-  erp_ordering_units: 'หน่วยที่สั่งได้', pack_size: 'ขนาดแพ็ก', packaging_type: 'ชนิดแพ็ก', units_per_box: 'ต่อกล่อง', weight_per_unit: 'น้ำหนักต่อหน่วย',
-  vat_type: 'VAT', marketed_by: 'ผู้จัดจำหน่าย', product_type: 'ประเภท', order_taking_flag: 'สั่งล่วงหน้า', sup_code: 'supplier',
-  season_start: 'เริ่มฤดู', season_end: 'จบฤดู',
+  get product_status(){return __uiText("สถานะ");}, get category_code(){return __uiText("หมวด (รหัส)");}, get brand_name(){return __uiText("แบรนด์");}, get selling_unit(){return __uiText("หน่วยขาย");}, get order_taking_unit(){return __uiText("หน่วยสั่ง");},
+  get erp_ordering_units(){return __uiText("หน่วยที่สั่งได้");}, get pack_size(){return __uiText("ขนาดแพ็ก");}, get packaging_type(){return __uiText("ชนิดแพ็ก");}, get units_per_box(){return __uiText("ต่อกล่อง");}, get weight_per_unit(){return __uiText("น้ำหนักต่อหน่วย");},
+  get vat_type(){return __uiText("VAT");}, get marketed_by(){return __uiText("ผู้จัดจำหน่าย");}, get product_type(){return __uiText("ประเภท");}, get order_taking_flag(){return __uiText("สั่งล่วงหน้า");}, get sup_code(){return __uiText("supplier");},
+  get season_start(){return __uiText("เริ่มฤดู");}, get season_end(){return __uiText("จบฤดู");},
 };
 const show = (v: unknown) => (v == null || v === '' ? '—' : Array.isArray(v) ? v.join(', ') : String(v));
 const errText = (e: unknown) => (e instanceof Error ? e.message : String(e));
@@ -18,6 +23,7 @@ const errText = (e: unknown) => (e instanceof Error ? e.message : String(e));
  * (drafts) are still approved on the product page (josh).
  */
 export function ProductMasterQueue() {
+  __useUiLocale();
   const owned = useAsync(() => productPricesApi.ownership(), []);
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
@@ -38,22 +44,22 @@ export function ProductMasterQueue() {
 
   return (
     <Page>
-      <PageHeader title="คิวข้อมูลสินค้าจาก ERP" subtitle="หน่วย แพ็ก แบรนด์ VAT สถานะ หมวด การสั่งซื้อ ของสินค้าที่ขายอยู่ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · สินค้าใหม่ (draft) อนุมัติที่หน้าสินค้า" />
-      {owned.data && !isOwned && <Hint>ยังไม่ได้สลับ — คิวนี้ยังอยู่ที่ josh (COMMERCE_OWNS_PRODUCT_MASTER)</Hint>}
+      <PageHeader title={__uiText("คิวข้อมูลสินค้าจาก ERP")} subtitle={__uiText("หน่วย แพ็ก แบรนด์ VAT สถานะ หมวด การสั่งซื้อ ของสินค้าที่ขายอยู่ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · สินค้าใหม่ (draft) อนุมัติที่หน้าสินค้า")} />
+      {owned.data && !isOwned && <Hint>{__uiText("ยังไม่ได้สลับ — คิวนี้ยังอยู่ที่ josh (COMMERCE_OWNS_PRODUCT_MASTER)")}</Hint>}
       <ErrorText error={error ?? pending.error ?? null} />
       <form className="flex gap-2 items-end" onSubmit={(e) => { e.preventDefault(); setSearch(query.trim()); }}>
-        <div className="flex-1 max-w-sm"><SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="SKU" /></div>
-        <Button type="submit">ค้นหา</Button>
+        <div className="flex-1 max-w-sm"><SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={__uiText("SKU")} /></div>
+        <Button type="submit">{__uiText("ค้นหา")}</Button>
       </form>
       <Panel>
-        <PanelHead title={`รออนุมัติ (${pending.data?.length ?? 0})`} />
+        <PanelHead title={__uiText("รออนุมัติ ({0})", {"0": pending.data?.length ?? 0})} />
         <div className="px-4 py-2 flex gap-2">
-          <Button variant="primary" disabled={!isOwned || picked.size === 0} onClick={() => void act('approve')}>อนุมัติ {picked.size || ''}</Button>
-          <Button variant="danger-ghost" disabled={!isOwned || picked.size === 0} onClick={() => void act('reject')}>ไม่อนุมัติ</Button>
+          <Button variant="primary" disabled={!isOwned || picked.size === 0} onClick={() => void act('approve')}>{__uiText("อนุมัติ ")}{picked.size || ''}</Button>
+          <Button variant="danger-ghost" disabled={!isOwned || picked.size === 0} onClick={() => void act('reject')}>{__uiText("ไม่อนุมัติ")}</Button>
         </div>
         {pending.data?.length ? (
           <Table>
-            <THead><TR><TH /><TH>SKU</TH><TH>ERP เปลี่ยน (ตอนนี้ → ใหม่)</TH><TH>ERP ส่งเมื่อ</TH></TR></THead>
+            <THead><TR><TH /><TH>{__uiText("SKU")}</TH><TH>{__uiText("ERP เปลี่ยน (ตอนนี้ → ใหม่)")}</TH><TH>{__uiText("ERP ส่งเมื่อ")}</TH></TR></THead>
             <TBody>
               {pending.data.map((r: MasterPending) => (
                 <TR key={r.sku} selected={picked.has(r.sku)} onClick={() => toggle(r.sku)}>
@@ -65,12 +71,12 @@ export function ProductMasterQueue() {
                       return <div key={k} className={same ? 'text-on-surface-variant' : ''}>{LABEL[k] ?? k}: {show(r.current[k])} → {same ? show(v) : <strong>{show(v)}</strong>}</div>;
                     })}
                   </TD>
-                  <TD kind="time">{new Date(r.changed_at ?? r.received_at).toLocaleString('th-TH')}</TD>
+                  <TD kind="time">{new Date(r.changed_at ?? r.received_at).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}</TD>
                 </TR>
               ))}
             </TBody>
           </Table>
-        ) : <Empty>ไม่มีข้อมูลที่รออนุมัติ</Empty>}
+        ) : <Empty>{__uiText("ไม่มีข้อมูลที่รออนุมัติ")}</Empty>}
       </Panel>
     </Page>
   );

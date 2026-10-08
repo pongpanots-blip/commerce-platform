@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>การตลาด — Commerce Platform</title>
+<!-- Google Fonts: Noto Sans Thai & Public Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              canvas: "#f6f8fc",
+              border: "#e1e7f0",
+              primary: "#365cf5",
+              ink: "#17243b",
+              secondary: "#52627a",
+              success: "#157347",
+              warning: "#b08900",
+              error: "#c2333f"
+            }
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+            "card": "0.75rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Noto Sans Thai", "Public Sans", "sans-serif"],
+            display: ["Noto Sans Thai", "Public Sans", "sans-serif"],
+            body: ["Noto Sans Thai", "Public Sans", "sans-serif"],
+            label: ["Noto Sans Thai", "Public Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Public Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#f6f8fc] text-[#17243b] flex">
+<!-- ========================================================================= -->
+<!-- LEFT SIDEBAR (256px Fixed)                                                 -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 bg-white border-r border-[#e1e7f0] flex flex-col justify-between z-30 select-none">
+<div class="p-4 flex flex-col">
+<!-- App Header / Logo -->
+<div class="flex items-center gap-3 px-2 py-2 mb-4 border-b border-[#e1e7f0]/60 pb-3">
+<div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-sm font-bold text-[#17243b] font-headline tracking-tight truncate leading-tight">Commerce Platform</span>
+<span class="text-[11px] text-[#52627a] font-normal truncate mt-0.5">ระบบปฏิบัติการการค้า</span>
+</div>
+</div>
+<!-- Navigation Work Areas (7 Areas) -->
+<nav class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150 text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#52627a]">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150 text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#52627a]">shopping_cart</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150 text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#52627a]">group</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด (ACTIVE STATE) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#365cf5]/10 text-[#365cf5] font-semibold transition-colors duration-150 text-sm" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#365cf5]">campaign</span>
+<span class="flex-1">การตลาด</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150 text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#52627a]">bar_chart</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150 text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#52627a]">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150 text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[20px] text-[#52627a]">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="p-3 border-t border-[#e1e7f0] bg-slate-50/50">
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-[#52627a] hover:bg-white hover:text-[#17243b] hover:shadow-xs transition-colors duration-150 text-xs font-medium border border-transparent hover:border-[#e1e7f0]" href="#">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#52627a]">code</span>
+<span>นักพัฒนา &amp; API</span>
+</span>
+<span class="material-symbols-outlined text-[15px] text-[#52627a]">open_in_new</span>
+</a>
+<div class="px-3 pt-2 text-[11px] text-[#52627a] flex items-center justify-between">
+<span>Commerce Platform</span>
+<span class="font-mono text-[10px] bg-slate-200/80 px-1.5 py-0.5 rounded text-[#17243b]">v2.4</span>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE                                                             -->
+<!-- ========================================================================= -->
+<div class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TOP CONTEXTUAL HEADER -->
+<header class="sticky top-0 z-20 bg-white border-b border-[#e1e7f0] h-16 px-6">
+<div class="max-w-[1240px] mx-auto h-full flex items-center justify-between gap-4">
+<!-- Global Search Bar -->
+<div class="relative w-80 max-w-sm">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#52627a]">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-[#e1e7f0] rounded-md text-[#17243b] placeholder-[#52627a] focus:outline-none focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5] focus:bg-white transition-all" placeholder="ค้นหาข้อมูลระบบหรือเอกสาร..." type="text"/>
+</div>
+<!-- Trailing Utility Actions & User Profile -->
+<div class="flex items-center gap-3">
+<!-- Refresh -->
+<button class="w-8 h-8 flex items-center justify-center rounded-md border border-[#e1e7f0] bg-white text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 transition-colors" title="รีเฟรช">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+</button>
+<!-- Notifications with Alert Dot -->
+<button class="relative w-8 h-8 flex items-center justify-center rounded-md border border-[#e1e7f0] bg-white text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#c2333f] ring-2 ring-white"></span>
+</button>
+<!-- Help -->
+<button class="w-8 h-8 flex items-center justify-center rounded-md border border-[#e1e7f0] bg-white text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 transition-colors" title="คู่มือการใช้งาน">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+</button>
+<div class="h-6 w-px bg-[#e1e7f0] mx-0.5"></div>
+<!-- User Profile Pill -->
+<div class="flex items-center gap-2.5 pl-1 py-1 rounded-full bg-slate-50 border border-[#e1e7f0] pr-3 select-none">
+<div class="w-7 h-7 rounded-full bg-[#17243b] text-white flex items-center justify-center text-xs font-semibold">
+              สม
+            </div>
+<div class="flex flex-col text-left leading-tight">
+<span class="text-xs font-semibold text-[#17243b] truncate">สมชาย ปฏิบัติการ</span>
+<span class="text-[10px] text-[#52627a] font-mono truncate">somchai.p@commerce.internal</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTENT BODY (Max 1240px) -->
+<main class="flex-1 p-6 md:p-8">
+<div class="max-w-[1240px] mx-auto space-y-6">
+<!-- 1. BREADCRUMB -->
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs text-[#52627a]">
+<a class="hover:text-[#17243b] transition-colors" href="#">หน้าหลัก</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-[#17243b] font-medium">การตลาด</span>
+</nav>
+<!-- 2. PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#e1e7f0]">
+<div>
+<div class="flex items-center gap-2.5 flex-wrap">
+<h1 class="text-2xl md:text-[28px] font-bold text-[#17243b] tracking-tight font-headline">การตลาด</h1>
+<span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-[#365cf5]/10 text-[#365cf5]">
+                ศูนย์รวมงานปฏิบัติการ
+              </span>
+<span class="px-2 py-0.5 text-[11px] font-medium rounded border border-[#b08900]/30 bg-[#b08900]/10 text-[#b08900]">
+                ข้อมูลตัวอย่าง
+              </span>
+</div>
+<p class="text-sm text-[#52627a] mt-1.5">
+              วางแผนกลยุทธ์ จัดการแคมเปญและโปรโมชัน สื่อสารลูกค้า และติดตามผลการตลาด
+            </p>
+</div>
+<!-- Trailing Buttons -->
+<div class="flex items-center gap-2.5 shrink-0">
+<button class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-md bg-white border border-[#e1e7f0] text-[#17243b] hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+<span>รีเฟรช</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md bg-[#365cf5] text-white hover:bg-[#365cf5]/90 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>สร้างแคมเปญใหม่</span>
+</button>
+</div>
+</div>
+<!-- 3. CATEGORY SEARCH BAR -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-3 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="relative flex-1 max-w-xl">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#52627a]">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-[#e1e7f0] rounded-md text-[#17243b] placeholder-[#52627a] focus:outline-none focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5] focus:bg-white transition-all" placeholder="ค้นหาในหมวดการตลาด..." type="text"/>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-[#52627a] px-2 py-1">
+<span class="material-symbols-outlined text-[16px] text-[#52627a]">info</span>
+<span>ค้นหาเฉพาะงานในหมวดหมู่การตลาด</span>
+</div>
+</div>
+<!-- 4. FREQUENT LINKS BAR (งานที่ดำเนินการบ่อยประจำวัน) -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-xs font-bold text-[#52627a] uppercase tracking-wider font-headline">
+              งานที่ดำเนินการบ่อยประจำวัน
+            </h2>
+<span class="text-[11px] text-[#52627a]">เข้าถึงด่วนสำหรับการดำเนินงานรายวัน</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+<!-- Quick Card 1: จัดการแคมเปญ -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-4 flex flex-col justify-between hover:border-[#365cf5]/60 hover:shadow-sm transition-all group">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-lg bg-[#365cf5]/10 text-[#365cf5] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-[#365cf5]/10 text-[#365cf5]">แนะนำ</span>
+</div>
+<h3 class="text-sm font-bold text-[#17243b] group-hover:text-[#365cf5] transition-colors">จัดการแคมเปญ</h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2 leading-relaxed">
+                  ตรวจสอบและจัดการแคมเปญที่กำลังเปิดใช้งาน
+                </p>
+</div>
+<div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs font-medium text-[#365cf5]">เปิดรายการแคมเปญ</span>
+<span class="material-symbols-outlined text-[16px] text-[#365cf5] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Quick Card 2: สร้างคูปองส่วนลด -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-4 flex flex-col justify-between hover:border-[#365cf5]/60 hover:shadow-sm transition-all group">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-lg bg-amber-50 text-[#b08900] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">confirmation_number</span>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-[#b08900]/15 text-[#b08900]">โปรโมชัน</span>
+</div>
+<h3 class="text-sm font-bold text-[#17243b] group-hover:text-[#365cf5] transition-colors">สร้างคูปองส่วนลด</h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2 leading-relaxed">
+                  สร้างโค้ดส่วนลดและกำหนดเงื่อนไขการใช้งาน
+                </p>
+</div>
+<div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs font-medium text-[#365cf5]">สร้างคูปอง</span>
+<span class="material-symbols-outlined text-[16px] text-[#365cf5] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Quick Card 3: Template ข้อความ -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-4 flex flex-col justify-between hover:border-[#365cf5]/60 hover:shadow-sm transition-all group">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-lg bg-emerald-50 text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-[#157347]/15 text-[#157347]">เนื้อหา</span>
+</div>
+<h3 class="text-sm font-bold text-[#17243b] group-hover:text-[#365cf5] transition-colors">Template ข้อความ</h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2 leading-relaxed">
+                  จัดการข้อความแจ้งเตือนและเทมเพลตอีเมล
+                </p>
+</div>
+<div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs font-medium text-[#365cf5]">จัดการเทมเพลต</span>
+<span class="material-symbols-outlined text-[16px] text-[#365cf5] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Quick Card 4: คิวงานการตลาด -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-4 flex flex-col justify-between hover:border-[#365cf5]/60 hover:shadow-sm transition-all group">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="w-9 h-9 rounded-lg bg-slate-100 text-[#52627a] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">pending_actions</span>
+</div>
+<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-slate-200 text-[#52627a]">สถานะงาน</span>
+</div>
+<h3 class="text-sm font-bold text-[#17243b] group-hover:text-[#365cf5] transition-colors">คิวงานการตลาด</h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2 leading-relaxed">
+                  ตรวจสอบคิวการส่งข้อความและการประมวลผล
+                </p>
+</div>
+<div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs font-medium text-[#365cf5]">ดูคิวงาน</span>
+<span class="material-symbols-outlined text-[16px] text-[#365cf5] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. THREE-STEP PLANNING GUIDE -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-xs">
+<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#365cf5]">alt_route</span>
+<span class="text-xs font-bold text-[#17243b] font-headline uppercase tracking-wide">ขั้นตอนเริ่มวางแผนการตลาด</span>
+</div>
+<span class="text-[11px] text-[#52627a]">กระบวนการปฏิบัติงานมาตรฐาน (3 ขั้นตอน)</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Step 1 -->
+<div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/70 border border-[#e1e7f0]/80">
+<div class="w-6 h-6 rounded-full bg-[#365cf5] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                1
+              </div>
+<div class="min-w-0">
+<p class="text-xs font-bold text-[#17243b]">กำหนดกลุ่มเป้าหมาย (Segments)</p>
+<p class="text-[11px] text-[#52627a] mt-0.5 leading-relaxed">คัดกรองและแบ่งกลุ่มลูกค้าตามพฤติกรรมการสั่งซื้อ</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/70 border border-[#e1e7f0]/80">
+<div class="w-6 h-6 rounded-full bg-[#365cf5] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                2
+              </div>
+<div class="min-w-0">
+<p class="text-xs font-bold text-[#17243b]">เตรียมข้อความและโปรโมชัน (Creative &amp; Offers)</p>
+<p class="text-[11px] text-[#52627a] mt-0.5 leading-relaxed">สร้างคูปองและเทมเพลตสื่อสารพร้อมข้อความโปรโมชัน</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50/70 border border-[#e1e7f0]/80">
+<div class="w-6 h-6 rounded-full bg-[#365cf5] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                3
+              </div>
+<div class="min-w-0">
+<p class="text-xs font-bold text-[#17243b]">เปิดใช้งานและติดตามผล (Launch &amp; Tracking)</p>
+<p class="text-[11px] text-[#52627a] mt-0.5 leading-relaxed">ตั้งค่า Journey และตรวจวัดสถิติการส่งมอบข้อความ</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 6. FOUR TASK SECTIONS (2x2 STRUCTURED PANELS) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+<!-- Section 1: วางแผนและค้นคว้า -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs flex flex-col">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/40 rounded-t-xl">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-md bg-[#365cf5]/10 text-[#365cf5] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">explore</span>
+</div>
+<h3 class="text-sm font-bold text-[#17243b] font-headline">วางแผนและค้นคว้า</h3>
+</div>
+<span class="text-[11px] text-[#52627a]">5 เมนูการทำงาน</span>
+</div>
+<div class="p-3 divide-y divide-slate-100 flex-1">
+<!-- Item 1.1 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">วางแผนการเติบโต</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">กำหนดเป้าหมายและกลยุทธ์การขยายฐานผู้ซื้อ</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 1.2 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">แผนและปฏิทิน</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ปฏิทินแคมเปญและกำหนดการปล่อยโปรโมชันรายเดือน</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 1.3 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">งานวิจัยตลาด</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ฐานข้อมูลพฤติกรรมผู้บริโภคและแนวโน้มการค้า</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 1.4 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">ค้นหาตลาดร้านอาหาร</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">สำรวจโอกาสในกลุ่มธุรกิจอาหารและเครื่องดื่ม</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 1.5 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">ผู้ช่วยวิเคราะห์การตลาด</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ระบบวิเคราะห์โจทย์ทางการตลาดและข้อเสนอแนะ</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Section 2: แคมเปญและโปรโมชัน -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs flex flex-col">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/40 rounded-t-xl">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-md bg-amber-50 text-[#b08900] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">local_offer</span>
+</div>
+<h3 class="text-sm font-bold text-[#17243b] font-headline">แคมเปญและโปรโมชัน</h3>
+</div>
+<span class="text-[11px] text-[#52627a]">4 เมนูการทำงาน</span>
+</div>
+<div class="p-3 divide-y divide-slate-100 flex-1">
+<!-- Item 2.1 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<div class="flex items-center gap-2">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">แคมเปญ (Campaigns)</p>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-slate-100 text-[#52627a] font-mono">หลัก</span>
+</div>
+<p class="text-[11px] text-[#52627a] mt-0.5">จัดการแคมเปญโปรโมชันส่วนลดและกิจกรรมส่งเสริมการขาย</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 2.2 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">คูปอง (Coupons)</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">สร้างและจัดการรหัสคูปองส่วนลดตามเงื่อนไข</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 2.3 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">กลไกโปรโมชัน (Promotion mechanics)</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ตั้งค่าเงื่อนไข Bundle, Flash sale, และ Tier discounts</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 2.4 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">กลุ่มลูกค้าเป้าหมาย (Segments)</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">จัดกลุ่มลูกค้าตามประวัติการซื้อเพื่อการตลาดแบบเจาะจง</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Section 3: เนื้อหาและการสื่อสาร -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs flex flex-col">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/40 rounded-t-xl">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-md bg-emerald-50 text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+</div>
+<h3 class="text-sm font-bold text-[#17243b] font-headline">เนื้อหาและการสื่อสาร</h3>
+</div>
+<span class="text-[11px] text-[#52627a]">5 เมนูการทำงาน</span>
+</div>
+<div class="p-3 divide-y divide-slate-100 flex-1">
+<!-- Item 3.1 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">Template ข้อความ</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">แม่แบบข้อความ SMS, LINE, และข้อความอัตโนมัติ</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 3.2 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">อีเมลต้อนรับลีด</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ตั้งค่าชุดอีเมลสำหรับผู้มุ่งหวังและลูกค้าใหม่ (Onboarding)</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 3.3 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">Marketing links</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">จัดการลิงก์สำหรับแคมเปญภายนอกพร้อมพารามิเตอร์ UTM</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 3.4 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">Smart links</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ลิงก์ปลายทางแบบกำหนดเส้นทางอัตโนมัติตามอุปกรณ์</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 3.5 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">Push campaigns</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ส่งข้อความแจ้งเตือนแบบพุชไปยังแอปพลิเคชันลูกค้า</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Section 4: ติดตามผลและตั้งค่า -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs flex flex-col">
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/40 rounded-t-xl">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">analytics</span>
+</div>
+<h3 class="text-sm font-bold text-[#17243b] font-headline">ติดตามผลและตั้งค่า</h3>
+</div>
+<span class="text-[11px] text-[#52627a]">4 เมนูการทำงาน</span>
+</div>
+<div class="p-3 divide-y divide-slate-100 flex-1">
+<!-- Item 4.1 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">เส้นทางลูกค้า (Journey funnel)</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ตรวจสอบขั้นตอนการแปลงสภาพลูกค้าตาม Customer journey</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 4.2 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">สถิติการจัดส่งข้อความ (Notification delivery stats)</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ตรวจสอบอัตราการจัดส่ง สำเร็จ/ล้มเหลว ของข้อความ</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 4.3 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">คิวงานการตลาด</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">ติดตามคิวงานการส่งข้อความและรอบเวลาประมวลผล</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+<!-- Item 4.4 -->
+<a class="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-colors group" href="#">
+<div class="min-w-0 pr-3">
+<p class="text-xs font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">ตั้งค่าการตลาด</p>
+<p class="text-[11px] text-[#52627a] mt-0.5">กำหนดค่า Sender ID, โดเมนลิงก์, และการเชื่อมต่อผู้ให้บริการสื่อสาร</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- BOTTOM SYSTEM FOOTER STATUS BAR                                          -->
+<!-- ========================================================================= -->
+<footer class="bg-white border-t border-[#e1e7f0] py-2.5 px-6 select-none">
+<div class="max-w-[1240px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-[#52627a]">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#157347] animate-pulse"></span>
+<span>ระบบบันทึก Log การดำเนินงานทุกรายการตามสิทธิ์ของบัญชีเจ้าหน้าที่</span>
+</div>
+<div class="flex items-center gap-4">
+<span>เขตเวลา: <span class="font-mono text-[#17243b]">Asia/Bangkok (GMT+7)</span></span>
+<span class="text-slate-300">|</span>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>สถานะ API: <span class="text-[#157347] font-medium">พร้อมใช้งานปกติ</span></span>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

@@ -7,7 +7,10 @@ import BotTemplateBuilder, {
 } from '../../components/bot/BotTemplateBuilder';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CreateBotTemplate = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [schemaError, setSchemaError] = useState('');
@@ -22,7 +25,7 @@ const CreateBotTemplate = () => {
 
   const handleSubmit = async () => {
     if (!form.name) {
-      alert('กรุณากรอกชื่อ Template');
+      alert(__uiText("กรุณากรอกชื่อ Template"));
       return;
     }
     let schema: any;
@@ -32,13 +35,13 @@ const CreateBotTemplate = () => {
     try {
       schema = JSON.parse(form.schemaText);
     } catch {
-      setSchemaError('Schema ไม่ใช่ JSON ที่ถูกต้อง');
+      setSchemaError(__uiMessage("Schema ไม่ใช่ JSON ที่ถูกต้อง"));
       return;
     }
     try {
       example = JSON.parse(form.exampleText);
     } catch {
-      setExampleError('Example ไม่ใช่ JSON ที่ถูกต้อง');
+      setExampleError(__uiMessage("Example ไม่ใช่ JSON ที่ถูกต้อง"));
       return;
     }
     setSaving(true);
@@ -52,7 +55,7 @@ const CreateBotTemplate = () => {
       });
       navigate(ADMIN_ROUTES.botTemplates);
     } catch {
-      alert('เกิดข้อผิดพลาดในการบันทึก');
+      alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
     } finally {
       setSaving(false);
     }
@@ -60,8 +63,8 @@ const CreateBotTemplate = () => {
 
   return (
     <AdminInsertLayout
-      title="เพิ่ม Template"
-      subtitle="กำหนดรูปแบบการตอบกลับของ chatbot"
+      title={__uiText("เพิ่ม Template")}
+      subtitle={__uiText("กำหนดรูปแบบการตอบกลับของ chatbot")}
       backPath={ADMIN_ROUTES.botTemplates}
       saving={saving}
       onSave={handleSubmit}
@@ -78,3 +81,5 @@ const CreateBotTemplate = () => {
 };
 
 export default CreateBotTemplate;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

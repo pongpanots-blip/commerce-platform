@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KBank testing console - Commerce Platform Admin</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-highest": "#d7e2ff",
+            "on-surface-variant": "#444655",
+            "on-secondary-fixed": "#0b1c31",
+            "secondary-fixed": "#d3e3ff",
+            "surface": "#f9f9ff",
+            "primary-fixed": "#dde1ff",
+            "tertiary-fixed-dim": "#ffb597",
+            "primary": "#0a3fdc",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-primary": "#ffffff",
+            "on-error": "#ffffff",
+            "outline": "#747687",
+            "inverse-primary": "#b9c3ff",
+            "error": "#ba1a1a",
+            "secondary-fixed-dim": "#b7c7e3",
+            "primary-container": "#365cf5",
+            "surface-container": "#e8eeff",
+            "on-surface": "#0e1b32",
+            "inverse-on-surface": "#ecf0ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "error-container": "#ffdad6",
+            "surface-container-low": "#f1f3ff",
+            "surface-variant": "#d7e2ff",
+            "secondary": "#4f5f77",
+            "on-primary-fixed": "#001257",
+            "on-tertiary-container": "#ffebe4",
+            "on-secondary": "#ffffff",
+            "tertiary": "#943500",
+            "on-primary-container": "#ededff",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#243048",
+            "surface-container-high": "#e0e8ff",
+            "secondary-container": "#d0e1fd",
+            "surface-tint": "#214ce7",
+            "background": "#f9f9ff",
+            "tertiary-fixed": "#ffdbcd",
+            "tertiary-container": "#bc4600",
+            "outline-variant": "#c4c5d8",
+            "surface-dim": "#cddaf9",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-primary-fixed-variant": "#0034c0",
+            "surface-bright": "#f9f9ff",
+            "on-tertiary-fixed": "#360f00",
+            "on-background": "#0e1b32"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-md": "0.75rem",
+            "space-lg": "1rem",
+            "space-xl": "1.5rem",
+            "gutter-compact": "0.75rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "margin": "1.5rem",
+            "space-2xl": "2rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "table-cell": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-xl": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "numeric-data": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-lg": ["22px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "table-cell": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-xl": ["28px", { "lineHeight": "38px", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "numeric-data": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+            "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+  </style>
+</head>
+<body class="h-full text-on-surface bg-[#f6f8fc] antialiased flex">
+<!-- ==================== SIDE NAVIGATION BAR ==================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between py-4 px-3 select-none">
+<div class="flex flex-col">
+<!-- Header Brand -->
+<div class="flex items-center gap-3 px-3 py-2 mb-4">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-headline-md text-headline-md font-bold shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="hub">hub</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm text-primary tracking-tight font-bold">Commerce Admin</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant text-[11px] leading-tight">ศูนย์จัดการระบบพาณิชย์</div>
+</div>
+</div>
+<!-- Main Navigation Links -->
+<nav class="space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out" href="#inventory">
+<span class="material-symbols-outlined text-[18px]" data-icon="inventory_2">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน (ACTIVE STATE) -->
+<a class="flex items-center justify-between px-3 py-2 text-label-md font-label-md bg-surface-container-high text-primary font-semibold rounded-lg transition-colors duration-150 ease-in-out shadow-xs" href="#orders-finance">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="shopping_cart">shopping_cart</span>
+<span>ออเดอร์และการเงิน</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<!-- Sub-items indicator for Active Context -->
+<div class="pl-9 pr-2 py-1 space-y-1">
+<div class="flex items-center gap-2 text-body-sm font-body-sm text-primary font-medium bg-primary/10 px-2 py-1 rounded">
+<span class="w-1 h-1 rounded-full bg-primary"></span>
+<span>KBank Testing Console</span>
+</div>
+</div>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out" href="#customers">
+<span class="material-symbols-outlined text-[18px]" data-icon="support_agent">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out" href="#marketing">
+<span class="material-symbols-outlined text-[18px]" data-icon="campaign">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out" href="#reports">
+<span class="material-symbols-outlined text-[18px]" data-icon="monitoring">monitoring</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out" href="#integrations">
+<span class="material-symbols-outlined text-[18px]" data-icon="hub">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out" href="#settings">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom Footer -->
+<div class="space-y-2 pt-3 border-t border-outline-variant">
+<!-- Developer Portal CTA -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md transition-colors duration-150 ease-in-out" href="#developer-portal">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="code">code</span>
+<span class="font-medium">Developer Portal</span>
+</div>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150 ease-in-out" href="#help">
+<span class="material-symbols-outlined text-[18px]" data-icon="help">help</span>
+<span>ศูนย์ช่วยเหลือ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-label-md font-label-md text-error hover:bg-error-container/40 rounded-lg transition-colors duration-150 ease-in-out" href="#logout">
+<span class="material-symbols-outlined text-[18px]" data-icon="logout">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ==================== TOP NAVIGATION BAR ==================== -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-6">
+<!-- Left: Breadcrumb & Search -->
+<div class="flex items-center gap-5">
+<div class="flex items-center gap-2 text-body-md font-body-md text-on-surface-variant">
+<span class="hover:text-on-surface cursor-pointer">ออเดอร์และการเงิน</span>
+<span class="text-outline">/</span>
+<span class="text-on-surface font-semibold">KBank Testing Console</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-surface-container-high text-primary font-medium tracking-tight">admin-f8ac4326b131</span>
+</div>
+<!-- Quick Omni-Search Input -->
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-2.5 top-2 text-[18px] text-outline" data-icon="search">search</span>
+<input class="w-full h-8 pl-8 pr-3 text-body-sm font-body-sm bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container text-on-surface placeholder:text-outline transition-all" placeholder="ค้นหารายการ, TXN, Ref..." type="text"/>
+</div>
+</div>
+<!-- Right: Language Toggle & Admin Badges -->
+<div class="flex items-center gap-4">
+<!-- Thai / English Switcher -->
+<div class="flex items-center bg-[#edf2f9] p-0.5 rounded-full border border-outline-variant/60" id="lang-switch-container">
+<button class="px-2.5 py-0.5 rounded-full bg-white text-on-surface font-semibold text-[11px] shadow-sm transition-all" id="btn-th">ไทย</button>
+<button class="px-2.5 py-0.5 rounded-full text-secondary font-medium text-[11px] hover:text-on-surface transition-all" id="btn-en">English</button>
+</div>
+<!-- Icon Actions -->
+<button class="relative p-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary"></span>
+</button>
+<button class="p-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" title="ช่วยเหลือ">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+</button>
+<!-- Profile Section -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold text-xs">
+          OP
+        </div>
+<div class="hidden lg:block text-left">
+<div class="text-body-sm font-body-sm font-semibold text-on-surface leading-none">สมชาย บริการค้า</div>
+<div class="text-[11px] text-on-surface-variant font-normal leading-tight">Admin Operations</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== MAIN CONTENT CANVAS ==================== -->
+<main class="ml-64 mt-14 flex-1 min-h-[calc(100vh-3.5rem)] p-6 bg-[#f6f8fc] custom-scrollbar overflow-y-auto">
+<div class="max-w-[1240px] mx-auto space-y-6">
+<!-- Top Title, Badge & Actions -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-xl font-headline-xl text-[#17243b]">KBank Testing Console</h1>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+              ข้อมูลตัวอย่าง / Sample data
+            </span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">
+            Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway
+          </p>
+</div>
+<div class="flex items-center gap-2.5">
+<button class="group inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#365cf5] hover:bg-[#284cd4] active:bg-[#1e3eb8] text-white text-label-lg font-label-lg shadow-sm transition-all" id="btn-reconcile" title="รัน reconciler sweep ทันที เฉพาะแถวทดสอบเท่านั้น (is_test=true) ไม่แตะรายการเงินจริง">
+<span class="material-symbols-outlined text-[18px] group-hover:rotate-180 transition-transform duration-500" data-icon="sync">sync</span>
+<span>Reconcile now</span>
+</button>
+<button class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-white border border-[#e1e7f0] hover:bg-[#f6f8fc] text-[#17243b] text-label-lg font-label-lg shadow-sm transition-colors" id="btn-refresh">
+<span class="material-symbols-outlined text-[18px]" data-icon="refresh">refresh</span>
+<span>Refresh</span>
+</button>
+</div>
+</div>
+<!-- Security / Mode Banner Alert Card -->
+<div class="rounded-xl border border-[#fae392] bg-[#fdf8e6] p-4 flex items-start gap-3 shadow-xs">
+<span class="material-symbols-outlined text-[#b08900] text-[22px] shrink-0 mt-0.5" data-icon="warning">warning</span>
+<div class="text-body-sm font-body-sm text-[#735800] space-y-0.5">
+<span class="font-semibold text-[#544000]">Security Guardrail:</span>
+<span>Console นี้ปิดอยู่บน production เสมอ ยกเว้นตั้ง <code class="px-1.5 py-0.5 rounded bg-[#fae392]/60 text-[#3d2f00] font-mono text-xs font-bold">KBANK_TESTING_CONSOLE=true</code> — และทุก endpoint ปฏิเสธแถวที่ไม่ใช่รายการทดสอบ (is_test) เสมอ</span>
+</div>
+</div>
+<!-- Bento Grid Multi-Section Canvas -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- ==================== SECTION 1: TEST TRANSACTIONS ==================== -->
+<section class="lg:col-span-12 bg-white rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<div class="px-5 py-4 border-b border-[#e1e7f0] flex flex-wrap items-center justify-between gap-3 bg-[#ffffff]">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">1</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">1. Test transactions</h2>
+<span class="text-body-sm font-body-sm text-on-surface-variant font-normal">(4 รายการล่าสุด)</span>
+</div>
+<div class="text-body-sm font-body-sm text-secondary">
+              คลิกเพื่อเลือกเข้าสู่ตัวจำลอง Webhook หรือจำลองสถานะย้อนเวลา
+            </div>
+</div>
+<div class="p-5 grid grid-cols-1 xl:grid-cols-12 gap-6">
+<!-- Left: Transaction Table (7 columns) -->
+<div class="xl:col-span-8 overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-[#e1e7f0] text-secondary text-label-md font-label-md">
+<th class="py-2.5 px-3">สถานะ</th>
+<th class="py-2.5 px-3 text-right">จำนวนเงิน</th>
+<th class="py-2.5 px-3">Reference</th>
+<th class="py-2.5 px-3">Code</th>
+<th class="py-2.5 px-3">สร้างเมื่อ</th>
+<th class="py-2.5 px-3">อายุ</th>
+<th class="py-2.5 px-3 text-center">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-table-cell font-table-cell text-on-surface">
+<!-- Row 1 -->
+<tr class="hover:bg-[#f9fafc] transition-colors group">
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                        สำเร็จ
+                      </span>
+</td>
+<td class="py-3 px-3 text-right font-numeric-data font-semibold text-on-surface">฿1,500.00</td>
+<td class="py-3 px-3 font-mono text-xs text-secondary">REF-KB-9910</td>
+<td class="py-3 px-3">
+<span class="font-mono text-xs bg-[#e8eeff] text-primary px-1.5 py-0.5 rounded font-semibold">00</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(Authorized + success)</span>
+</td>
+<td class="py-3 px-3 text-on-surface-variant text-body-sm">5 นาทีที่แล้ว</td>
+<td class="py-3 px-3 text-on-surface-variant text-body-sm">5 นาที</td>
+<td class="py-3 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-xs rounded bg-surface-container-high hover:bg-primary-container hover:text-white text-primary font-medium transition-all" onclick="selectRowToSimulate('TXN-20250328-KB01', 1500, 'Authorized', 'REF-KB-9910')" title="เลือกแถวนี้เข้า Simulate notify">
+                          เลือกแถวนี้เข้า Simulate notify
+                        </button>
+<button class="p-1 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="backdatePrompt('TXN-20250328-KB01')" title="ย้อนเวลารายการ {0} (นาที)">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+<button class="p-1 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="triggerNotifySuccess('TXN-20250328-KB01')" title="Simulate success notify">
+<span class="material-symbols-outlined text-[16px]" data-icon="send">send</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#f9fafc] transition-colors group">
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8eeff] text-[#0a3fdc] border border-[#b9c3ff]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0a3fdc]"></span>
+                        Pre-Auth
+                      </span>
+</td>
+<td class="py-3 px-3 text-right font-numeric-data font-semibold text-on-surface">฿3,200.00</td>
+<td class="py-3 px-3 font-mono text-xs text-secondary">REF-KB-9912</td>
+<td class="py-3 px-3">
+<span class="font-mono text-xs bg-[#e8eeff] text-primary px-1.5 py-0.5 rounded font-semibold">01</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(Pre-Authorized + success)</span>
+</td>
+<td class="py-3 px-3 text-on-surface-variant text-body-sm">18 นาทีที่แล้ว</td>
+<td class="py-3 px-3 text-on-surface-variant text-body-sm">18 นาที</td>
+<td class="py-3 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-xs rounded bg-surface-container-high hover:bg-primary-container hover:text-white text-primary font-medium transition-all" onclick="selectRowToSimulate('TXN-20250328-KB02', 3200, 'Pre-Authorized', 'REF-KB-9912')" title="เลือกแถวนี้เข้า Simulate notify">
+                          เลือกแถวนี้เข้า Simulate notify
+                        </button>
+<button class="p-1 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="backdatePrompt('TXN-20250328-KB02')" title="ย้อนเวลารายการ {0} (นาที)">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+<button class="p-1 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="forceProcessing('TXN-20250328-KB02')" title="Force processing">
+<span class="material-symbols-outlined text-[16px]" data-icon="fast_forward">fast_forward</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#f9fafc] transition-colors group">
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#faecee] text-[#c2333f] border border-[#f1b3b8]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+                        Declined
+                      </span>
+</td>
+<td class="py-3 px-3 text-right font-numeric-data font-semibold text-on-surface">฿450.00</td>
+<td class="py-3 px-3 font-mono text-xs text-secondary">REF-KB-9915</td>
+<td class="py-3 px-3">
+<span class="font-mono text-xs bg-[#faecee] text-[#c2333f] px-1.5 py-0.5 rounded font-semibold">05</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(Declined)</span>
+</td>
+<td class="py-3 px-3 text-on-surface-variant text-body-sm">32 นาทีที่แล้ว</td>
+<td class="py-3 px-3 text-on-surface-variant text-body-sm">32 นาที</td>
+<td class="py-3 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-xs rounded bg-surface-container-high hover:bg-primary-container hover:text-white text-primary font-medium transition-all" onclick="selectRowToSimulate('TXN-20250328-KB03', 450, 'Declined', 'REF-KB-9915')" title="เลือกแถวนี้เข้า Simulate notify">
+                          เลือกแถวนี้เข้า Simulate notify
+                        </button>
+<button class="p-1 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="backdatePrompt('TXN-20250328-KB03')" title="ย้อนเวลารายการ {0} (นาที)">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-[#f9fafc] transition-colors group">
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#edf2f9] text-[#52627a] border border-[#e1e7f0]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#52627a]"></span>
+                        Voided
+                      </span>
+</td>
+<td class="py-3 px-3 text-right font-numeric-data font-semibold text-on-surface">฿8,900.00</td>
+<td class="py-3 px-3 font-mono text-xs text-secondary">REF-KB-9920</td>
+<td class="py-3 px-3">
+<span class="font-mono text-xs bg-[#edf2f9] text-[#52627a] px-1.5 py-0.5 rounded font-semibold">00</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(Voided)</span>
+</td>
+<td class="py-3 px-3 text-on-surface-variant text-body-sm">1 ชั่วโมงที่แล้ว</td>
+<td class="py-3 px-3 text-on-surface-variant text-body-sm">60 นาที</td>
+<td class="py-3 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-xs rounded bg-surface-container-high hover:bg-primary-container hover:text-white text-primary font-medium transition-all" onclick="selectRowToSimulate('TXN-20250328-KB04', 8900, 'Voided', 'REF-KB-9920')" title="เลือกแถวนี้เข้า Simulate notify">
+                          เลือกแถวนี้เข้า Simulate notify
+                        </button>
+<button class="p-1 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="backdatePrompt('TXN-20250328-KB04')" title="ย้อนเวลารายการ {0} (นาที)">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Right: Create Transaction & Sandbox QR Forms -->
+<div class="xl:col-span-4 space-y-4">
+<!-- Sub-card: Create manual test txn -->
+<div class="p-4 rounded-xl border border-[#e1e7f0] bg-[#f9fafc] space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-label-lg font-label-lg font-semibold text-on-surface">สร้างรายการทดสอบ (Direct Charge)</span>
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="credit_card">credit_card</span>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">จำนวนเงิน</label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-secondary font-mono text-xs">฿</span>
+<input class="w-full h-9 pl-7 pr-3 text-body-md font-body-md rounded-lg border border-[#e1e7f0] bg-white focus:outline-none focus:border-primary-container" id="inp-create-amount" type="number" value="1000.00"/>
+</div>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">Reference (ไม่บังคับ)</label>
+<input class="w-full h-9 px-3 text-body-md font-body-md rounded-lg border border-[#e1e7f0] bg-white focus:outline-none focus:border-primary-container" id="inp-create-ref" placeholder="เช่น REF-KB-TEST-01" type="text"/>
+</div>
+<button class="w-full h-9 rounded-lg bg-primary-container text-white text-label-md font-label-md font-semibold hover:bg-[#284cd4] transition-colors flex items-center justify-center gap-2" id="btn-create-test">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+<span id="btn-create-test-text">สร้างรายการทดสอบ</span>
+</button>
+</div>
+<!-- Sub-card: Real QR Sandbox -->
+<div class="p-4 rounded-xl border border-[#b7dfc8] bg-[#f6fbf8] space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-label-lg font-label-lg font-semibold text-[#157347] flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]" data-icon="qr_code_2">qr_code_2</span>
+                    สร้าง QR order จริง (sandbox)
+                  </span>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]">K-Payment</span>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-[#157347] mb-1">จำนวนเงิน (QR order)</label>
+<input class="w-full h-9 px-3 text-body-md font-body-md rounded-lg border border-[#b7dfc8] bg-white focus:outline-none focus:border-[#157347]" id="inp-qr-amount" type="number" value="500.00"/>
+</div>
+<p class="text-[11px] text-[#2c583f] leading-relaxed">
+                  เรียกธนาคาร sandbox จริง — ใช้เพื่อสแกนจ่ายด้วย Test Simulator สำหรับปิด KPG [1]
+                </p>
+<button class="w-full h-9 rounded-lg bg-[#157347] hover:bg-[#105937] text-white text-label-md font-label-md font-semibold transition-colors flex items-center justify-center gap-1.5" id="btn-create-qr">
+<span class="material-symbols-outlined text-[18px]" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span>สร้าง QR order จริง (sandbox)</span>
+</button>
+<!-- Sandbox QR Order Result Box -->
+<div class="p-2.5 rounded-lg bg-white border border-[#b7dfc8] text-xs font-mono space-y-1">
+<div class="flex justify-between items-center text-[#157347]">
+<span class="font-sans font-semibold">orderId:</span>
+<span class="font-bold">KBQ-20250328-0881</span>
+</div>
+<div class="flex justify-between items-center text-secondary">
+<span class="font-sans">referenceOrder:</span>
+<span>RO-8829103</span>
+</div>
+<div class="pt-1 mt-1 border-t border-[#edf2f9] flex items-center justify-between text-[11px] text-on-surface-variant font-sans">
+<span>QR PromptPay Raw:</span>
+<span class="text-primary hover:underline cursor-pointer flex items-center gap-0.5" onclick="alert('คัดลอก QR Raw Payload แล้ว')">
+<span class="material-symbols-outlined text-[14px]" data-icon="content_copy">content_copy</span> Copy
+                    </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== SECTION 2: SIMULATE NOTIFY ==================== -->
+<section class="lg:col-span-12 xl:col-span-6 bg-white rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col justify-between">
+<div>
+<div class="px-5 py-4 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">2</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">2. Simulate notify</h2>
+</div>
+<span class="px-2 py-0.5 text-xs rounded bg-surface-container font-mono text-primary font-medium">Webhook Tester</span>
+</div>
+<div class="p-5 space-y-4">
+<!-- Type switcher: charge or qr -->
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">ประเภทรายการ</label>
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center justify-center gap-2 h-9 border border-primary-container bg-surface-container rounded-lg cursor-pointer text-label-md font-label-md text-primary font-semibold">
+<input checked="" class="text-primary focus:ring-0" name="item_type" type="radio" value="charge"/>
+<span>charge</span>
+</label>
+<label class="flex items-center justify-center gap-2 h-9 border border-[#e1e7f0] bg-white rounded-lg cursor-pointer text-label-md font-label-md text-secondary hover:bg-[#f6f8fc]">
+<input class="text-primary focus:ring-0" name="item_type" type="radio" value="qr"/>
+<span>qr</span>
+</label>
+</div>
+</div>
+<!-- Two column parameters -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">สถานะธุรกรรม (transaction_state)</label>
+<select class="w-full h-9 px-3 text-body-md font-body-md rounded-lg border border-[#e1e7f0] bg-white focus:outline-none focus:border-primary-container" id="sel-txn-state">
+<option value="Authorized">สำเร็จ (Authorized + success)</option>
+<option value="Pre-Authorized">Pre-Authorized + success</option>
+<option value="Declined">Declined</option>
+<option value="Voided">Voided</option>
+</select>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">สถานะ (status)</label>
+<select class="w-full h-9 px-3 text-body-md font-body-md rounded-lg border border-[#e1e7f0] bg-white focus:outline-none focus:border-primary-container" id="sel-status">
+<option value="success">success</option>
+<option value="pending">pending</option>
+<option value="failed">failed</option>
+</select>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">จำนวนเงิน (ไม่บังคับ)</label>
+<input class="w-full h-9 px-3 text-body-md font-body-md rounded-lg border border-[#e1e7f0] bg-white focus:outline-none focus:border-primary-container" id="sel-amount" type="number" value="1500.00"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">โหมดจริง (livemode)</label>
+<select class="w-full h-9 px-3 text-body-md font-body-md rounded-lg border border-[#e1e7f0] bg-white focus:outline-none focus:border-primary-container" id="sel-livemode">
+<option value="false">false (Test / Sandbox)</option>
+<option value="true">true (Live mode)</option>
+</select>
+</div>
+</div>
+<!-- Tamper & Malformed Payload Simulator -->
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">จำลองข้อมูลผิดพลาด (tamper)</label>
+<select class="w-full h-9 px-3 text-body-md font-body-md rounded-lg border border-[#e1e7f0] bg-white focus:outline-none focus:border-primary-container" id="sel-tamper">
+<option value="none">tamper: ไม่มี (payload ถูกต้อง)</option>
+<option value="bad-checksum">bad-checksum (checksum ผิด)</option>
+<option value="no-checksum">no-checksum (ไม่มี checksum)</option>
+<option value="no-reference">no-reference</option>
+<option value="string-livemode">string-livemode (livemode ไม่ตรง)</option>
+<option value="amount-mismatch">ยอดไม่ตรง</option>
+</select>
+</div>
+<!-- Action buttons -->
+<div class="flex flex-col sm:flex-row items-center gap-2 pt-2">
+<button class="w-full sm:flex-1 h-9 rounded-lg bg-primary hover:bg-[#0034c0] active:bg-[#001257] text-white text-label-md font-label-md font-semibold flex items-center justify-center gap-2 transition-all" id="btn-fire-notify">
+<span class="material-symbols-outlined text-[18px]" data-icon="bolt">bolt</span>
+<span id="btn-fire-notify-text">ยิง Simulate notify</span>
+</button>
+<button class="w-full sm:w-auto h-9 px-3 rounded-lg border border-[#e1e7f0] hover:bg-[#f6f8fc] text-[#17243b] text-label-md font-label-md font-medium transition-colors flex items-center justify-center gap-1.5" id="btn-resend-notify" title="ยิง payload เดิมซ้ำอีกครั้ง (notify ซ้ำ)">
+<span class="material-symbols-outlined text-[16px]" data-icon="replay">replay</span>
+<span>notify ซ้ำ (resend เดิม)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Payload Viewer & Response Area -->
+<div class="p-5 border-t border-[#e1e7f0] bg-[#f9fafc] rounded-b-xl space-y-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-xs font-mono font-semibold text-secondary">Response</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]" id="resp-badge">
+                  httpStatus: 200 OK
+                </span>
+</div>
+<button class="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium" id="btn-copy-json">
+<span class="material-symbols-outlined text-[14px]" data-icon="content_copy">content_copy</span>
+<span>Copy JSON</span>
+</button>
+</div>
+<pre class="p-3 bg-[#0e1b32] text-[#e0e8ff] font-mono text-[11px] rounded-lg overflow-x-auto leading-relaxed border border-[#243048]" id="json-viewer">{
+  "id": "chrg_test_8f29ba04",
+  "object": "charge",
+  "amount": 150000,
+  "currency": "THB",
+  "transaction_state": "Authorized",
+  "status": "success",
+  "livemode": false,
+  "checksum": "a8f9c1e09dfa9807662c1248ff88",
+  "reference_order": "ORD-20250328-001"
+}</pre>
+</div>
+</section>
+<!-- ==================== SECTION 3: CERTIFICATION CHECKLIST ==================== -->
+<section class="lg:col-span-12 xl:col-span-6 bg-white rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col">
+<div class="px-5 py-4 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">3</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">3. Certification checklist</h2>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs px-2 py-0.5 rounded bg-surface-container text-primary font-medium">KPG &amp; Payment Link</span>
+</div>
+</div>
+<div class="p-5 flex-1 flex flex-col justify-between">
+<!-- Checklist Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-[#e1e7f0] text-secondary text-label-md font-label-md">
+<th class="py-2 px-3">Title</th>
+<th class="py-2 px-3">Code</th>
+<th class="py-2 px-3">ผล</th>
+<th class="py-2 px-3">Note &amp; สิ่งที่ควรทดสอบต่อ</th>
+<th class="py-2 px-3 text-right">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-table-cell font-table-cell">
+<!-- Checklist 1 -->
+<tr class="hover:bg-[#f9fafc]">
+<td class="py-2.5 px-3 font-medium text-on-surface">Direct Charge 3-D Secure</td>
+<td class="py-2.5 px-3 font-mono text-xs text-secondary">KPG-01</td>
+<td class="py-2.5 px-3">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f5ee] text-[#157347]">pass</span>
+</td>
+<td class="py-2.5 px-3 text-xs text-on-surface-variant">ผ่านการทดสอบ OTP simulator แล้ว</td>
+<td class="py-2.5 px-3 text-right">
+<select class="text-xs border border-[#e1e7f0] rounded px-1.5 py-0.5 bg-white text-secondary" onchange="updateChecklist('KPG-01', this.value)">
+<option selected="" value="pass">pass</option>
+<option value="fail">fail</option>
+<option value="not_tested">not_tested</option>
+<option value="na">na</option>
+</select>
+</td>
+</tr>
+<!-- Checklist 2 -->
+<tr class="hover:bg-[#f9fafc]">
+<td class="py-2.5 px-3 font-medium text-on-surface">QR Payment Static &amp; Dynamic</td>
+<td class="py-2.5 px-3 font-mono text-xs text-secondary">KPG-02</td>
+<td class="py-2.5 px-3">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f5ee] text-[#157347]">pass</span>
+</td>
+<td class="py-2.5 px-3 text-xs text-on-surface-variant">ยืนยัน callback เข้าสมบูรณ์</td>
+<td class="py-2.5 px-3 text-right">
+<select class="text-xs border border-[#e1e7f0] rounded px-1.5 py-0.5 bg-white text-secondary" onchange="updateChecklist('KPG-02', this.value)">
+<option selected="" value="pass">pass</option>
+<option value="fail">fail</option>
+<option value="not_tested">not_tested</option>
+<option value="na">na</option>
+</select>
+</td>
+</tr>
+<!-- Checklist 3 -->
+<tr class="hover:bg-[#f9fafc]">
+<td class="py-2.5 px-3 font-medium text-on-surface">Webhook Duplicate Handling</td>
+<td class="py-2.5 px-3 font-mono text-xs text-secondary">KPG-03</td>
+<td class="py-2.5 px-3">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f5ee] text-[#157347]">pass</span>
+</td>
+<td class="py-2.5 px-3 text-xs text-on-surface-variant">Idempotency ป้องกัน double-credit</td>
+<td class="py-2.5 px-3 text-right">
+<select class="text-xs border border-[#e1e7f0] rounded px-1.5 py-0.5 bg-white text-secondary" onchange="updateChecklist('KPG-03', this.value)">
+<option selected="" value="pass">pass</option>
+<option value="fail">fail</option>
+<option value="not_tested">not_tested</option>
+<option value="na">na</option>
+</select>
+</td>
+</tr>
+<!-- Checklist 4 -->
+<tr class="hover:bg-[#f9fafc]">
+<td class="py-2.5 px-3 font-medium text-on-surface">Bad Checksum &amp; Tamper</td>
+<td class="py-2.5 px-3 font-mono text-xs text-secondary">KPG-04</td>
+<td class="py-2.5 px-3">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f5ee] text-[#157347]">pass</span>
+</td>
+<td class="py-2.5 px-3 text-xs text-on-surface-variant">ปฏิเสธ HTTP 400 ชัดเจน</td>
+<td class="py-2.5 px-3 text-right">
+<select class="text-xs border border-[#e1e7f0] rounded px-1.5 py-0.5 bg-white text-secondary" onchange="updateChecklist('KPG-04', this.value)">
+<option selected="" value="pass">pass</option>
+<option value="fail">fail</option>
+<option value="not_tested">not_tested</option>
+<option value="na">na</option>
+</select>
+</td>
+</tr>
+<!-- Checklist 5 -->
+<tr class="hover:bg-[#f9fafc] bg-[#fffdfa]">
+<td class="py-2.5 px-3 font-medium text-on-surface">Pre-Auth Void &amp; Capture window</td>
+<td class="py-2.5 px-3 font-mono text-xs text-secondary">KPG-05</td>
+<td class="py-2.5 px-3">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#edf2f9] text-[#52627a]">not_tested</span>
+</td>
+<td class="py-2.5 px-3 text-xs text-on-surface-variant">
+<div class="text-[#b08900] font-medium">จำกัดผลได้แค่ not_tested/na</div>
+<div class="text-[11px] text-secondary">ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ not_tested หรือ na, ห้ามตั้ง pass/fail จนกว่าจะไล่ได้จริง</div>
+<div class="text-[11px] text-[#0a3fdc]">ต้องมีขา 'สร้างรายการชำระเงิน' ก่อน — รอรอบถัดไป</div>
+</td>
+<td class="py-2.5 px-3 text-right">
+<select class="text-xs border border-[#fae392] rounded px-1.5 py-0.5 bg-white text-[#735800]" onchange="updateChecklist('KPG-05', this.value)">
+<option selected="" value="not_tested">not_tested</option>
+<option value="na">na</option>
+<option disabled="" value="pass">pass (ห้ามในรอบ 1)</option>
+<option disabled="" value="fail">fail (ห้ามในรอบ 1)</option>
+</select>
+</td>
+</tr>
+<!-- Checklist 6 -->
+<tr class="hover:bg-[#f9fafc]">
+<td class="py-2.5 px-3 font-medium text-on-surface">Settlement &amp; Reconciler Sweep</td>
+<td class="py-2.5 px-3 font-mono text-xs text-secondary">KPG-06</td>
+<td class="py-2.5 px-3">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#edf2f9] text-[#52627a]">na</span>
+</td>
+<td class="py-2.5 px-3 text-xs text-secondary">
+                      ไล่ไม่ได้ในรอบ 1
+                    </td>
+<td class="py-2.5 px-3 text-right">
+<select class="text-xs border border-[#e1e7f0] rounded px-1.5 py-0.5 bg-white text-secondary" onchange="updateChecklist('KPG-06', this.value)">
+<option selected="" value="na">na</option>
+<option value="not_tested">not_tested</option>
+</select>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Result Feedback Notification Box -->
+<div class="mt-4 p-3 rounded-lg bg-[#e8eeff] border border-[#b9c3ff] flex items-center justify-between text-xs text-primary" id="checklist-feedback">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="task_alt">task_alt</span>
+<span id="checklist-status-msg">ผลการทดสอบ KPG Checklist: พร้อมส่งเอกสารรับรองรอบที่ 1</span>
+</div>
+<span class="font-mono text-[11px] text-secondary font-medium">4 PASS · 1 PENDING · 1 N/A</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- ==================== EMBEDDED TRANSLATIONS SCRIPT ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "สถานะ": { "th": "สถานะ", "en": "Status" },
+    "จำนวน": { "th": "จำนวน", "en": "Quantity" },
+    "สร้างเมื่อ": { "th": "สร้างเมื่อ", "en": "Created At" },
+    "Code": { "th": "Code", "en": "Code" },
+    "จัดการ": { "th": "จัดการ", "en": "Actions" },
+    "ผล": { "th": "ผล", "en": "Result" },
+    "นาที": { "th": "นาที", "en": "minutes" },
+    "กำลังสร้าง...": { "th": "กำลังสร้าง...", "en": "Creating..." },
+    "KBank Testing Console": { "th": "KBank Testing Console", "en": "KBank Testing Console" },
+    "สำเร็จ (Authorized + success)": { "th": "สำเร็จ (Authorized + success)", "en": "Authorized + success" },
+    "Pre-Authorized + success": { "th": "Pre-Authorized + success", "en": "Pre-Authorized + success" },
+    "Declined": { "th": "Declined", "en": "Declined" },
+    "Voided": { "th": "Voided", "en": "Voided" },
+    "checksum ผิด": { "th": "checksum ผิด", "en": "Bad checksum" },
+    "ไม่มี checksum": { "th": "ไม่มี checksum", "en": "Missing checksum" },
+    "livemode ไม่ตรง": { "th": "livemode ไม่ตรง", "en": "Mismatched livemode" },
+    "ยอดไม่ตรง": { "th": "ยอดไม่ตรง", "en": "Amount mismatch" },
+    "Reference": { "th": "Reference", "en": "Reference" },
+    "เลือกแถวนี้เข้า Simulate notify": { "th": "เลือกแถวนี้เข้า Simulate notify", "en": "Select row for simulate notify" },
+    "อายุ": { "th": "อายุ", "en": "Age" },
+    "Backdate": { "th": "Backdate", "en": "Backdate" },
+    "Force processing": { "th": "Force processing", "en": "Force processing" },
+    "Simulate success notify": { "th": "Simulate success notify", "en": "Simulate success notify" },
+    "Title": { "th": "Title", "en": "Title" },
+    "ต้องมีขา 'สร้างรายการชำระเงิน' ก่อน — รอรอบถัดไป": { "th": "ต้องมีขา 'สร้างรายการชำระเงิน' ก่อน — รอรอบถัดไป", "en": "Requires charge creation step — awaiting next cycle" },
+    "ไล่ไม่ได้ในรอบ 1": { "th": "ไล่ไม่ได้ในรอบ 1", "en": "Cannot run in cycle 1" },
+    "not_tested": { "th": "not_tested", "en": "not_tested" },
+    "pass": { "th": "pass", "en": "pass" },
+    "fail": { "th": "fail", "en": "fail" },
+    "na": { "th": "na", "en": "na" },
+    "ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ not_tested หรือ na, ห้ามตั้ง pass/fail จนกว่าจะไล่ได้จริง": { "th": "ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ not_tested หรือ na, ห้ามตั้ง pass/fail จนกว่าจะไล่ได้จริง", "en": "Unavailable in cycle 1 — select not_tested or na only, do not set pass/fail until actual run" },
+    "จำกัดผลได้แค่ not_tested/na": { "th": "จำกัดผลได้แค่ not_tested/na", "en": "Restricted to not_tested/na" },
+    "Note": { "th": "Note", "en": "Note" },
+    "Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway": { "th": "Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway", "en": "Manual QA console for K-Payment Gateway certification checklist" },
+    "Console นี้ปิดอยู่บน production เสมอ ยกเว้นตั้ง": { "th": "Console นี้ปิดอยู่บน production เสมอ ยกเว้นตั้ง", "en": "This console is always disabled in production unless set" },
+    "KBANK_TESTING_CONSOLE=true": { "th": "KBANK_TESTING_CONSOLE=true", "en": "KBANK_TESTING_CONSOLE=true" },
+    "— และทุก endpoint ปฏิเสธแถวที่ไม่ใช่รายการทดสอบ (is_test) เสมอ": { "th": "— และทุก endpoint ปฏิเสธแถวที่ไม่ใช่รายการทดสอบ (is_test) เสมอ", "en": "— and all endpoints strictly reject non-test (is_test=false) rows" },
+    "1. Test transactions": { "th": "1. Test transactions", "en": "1. Test transactions" },
+    "จำนวนเงิน": { "th": "จำนวนเงิน", "en": "Amount" },
+    "Reference (ไม่บังคับ)": { "th": "Reference (ไม่บังคับ)", "en": "Reference (optional)" },
+    "สร้างรายการทดสอบ": { "th": "สร้างรายการทดสอบ", "en": "Create test transaction" },
+    "จำนวนเงิน (QR order)": { "th": "จำนวนเงิน (QR order)", "en": "Amount (QR order)" },
+    "สร้าง QR order จริง (sandbox)": { "th": "สร้าง QR order จริง (sandbox)", "en": "Create real QR order (sandbox)" },
+    "เรียกธนาคาร sandbox จริง — ใช้เพื่อสแกนจ่ายด้วย Test Simulator สำหรับปิด KPG [1]": { "th": "เรียกธนาคาร sandbox จริง — ใช้เพื่อสแกนจ่ายด้วย Test Simulator สำหรับปิด KPG [1]", "en": "Calls real bank sandbox — scan & pay with Test Simulator to conclude KPG [1]" },
+    "orderId:": { "th": "orderId:", "en": "orderId:" },
+    "referenceOrder:": { "th": "referenceOrder:", "en": "referenceOrder:" },
+    "2. Simulate notify": { "th": "2. Simulate notify", "en": "2. Simulate notify" },
+    "ยิง payload เดิมซ้ำอีกครั้ง (notify ซ้ำ)": { "th": "ยิง payload เดิมซ้ำอีกครั้ง (notify ซ้ำ)", "en": "Resend original payload (repeat notify)" },
+    "notify ซ้ำ (resend เดิม)": { "th": "notify ซ้ำ (resend เดิม)", "en": "Resend notify (duplicate)" },
+    "สถานะธุรกรรม (transaction_state)": { "th": "สถานะธุรกรรม (transaction_state)", "en": "Transaction State (transaction_state)" },
+    "สถานะ (status)": { "th": "สถานะ (status)", "en": "Status (status)" },
+    "จำนวนเงิน (ไม่บังคับ)": { "th": "จำนวนเงิน (ไม่บังคับ)", "en": "Amount (optional)" },
+    "โหมดจริง (livemode)": { "th": "โหมดจริง (livemode)", "en": "Live Mode (livemode)" },
+    "ประเภทรายการ": { "th": "ประเภทรายการ", "en": "Item Type" },
+    "charge": { "th": "charge", "en": "charge" },
+    "qr": { "th": "qr", "en": "qr" },
+    "จำลองข้อมูลผิดพลาด (tamper)": { "th": "จำลองข้อมูลผิดพลาด (tamper)", "en": "Simulate tampering (tamper)" },
+    "tamper: ไม่มี (payload ถูกต้อง)": { "th": "tamper: ไม่มี (payload ถูกต้อง)", "en": "tamper: None (Valid payload)" },
+    "bad-checksum": { "th": "bad-checksum", "en": "bad-checksum" },
+    "no-checksum": { "th": "no-checksum", "en": "no-checksum" },
+    "no-reference": { "th": "no-reference", "en": "no-reference" },
+    "string-livemode": { "th": "string-livemode", "en": "string-livemode" },
+    "กำลังส่ง...": { "th": "กำลังส่ง...", "en": "Sending..." },
+    "ยิง Simulate notify": { "th": "ยิง Simulate notify", "en": "Fire Simulate Notify" },
+    "httpStatus:": { "th": "httpStatus:", "en": "httpStatus:" },
+    "Copy JSON": { "th": "Copy JSON", "en": "Copy JSON" },
+    "3. Certification checklist": { "th": "3. Certification checklist", "en": "3. Certification checklist" },
+    "Reconcile now": { "th": "Reconcile now", "en": "Reconcile now" },
+    "รัน reconciler sweep ทันที เฉพาะแถวทดสอบเท่านั้น (is_test=true) ไม่แตะรายการเงินจริง": { "th": "รัน reconciler sweep ทันที เฉพาะแถวทดสอบเท่านั้น (is_test=true) ไม่แตะรายการเงินจริง", "en": "Run immediate reconciler sweep on test rows only (is_test=true), strictly avoiding live transactions" },
+    "KPG": { "th": "KPG", "en": "KPG" },
+    "Payment Link": { "th": "Payment Link", "en": "Payment Link" },
+    "แก้วันที่แล้วบันทึก = ระบบเขียนวันที่ใหม่ทับทุกโปร หน้าโปร และแบนเนอร์ใน Campaign นี้": { "th": "แก้วันที่แล้วบันทึก = ระบบเขียนวันที่ใหม่ทับทุกโปร หน้าโปร และแบนเนอร์ใน Campaign นี้", "en": "Edit date & save = overwrite date across all promos, promo pages, and banners in this Campaign" },
+    "คลิกเพื่อเลือกไฟล์": { "th": "คลิกเพื่อเลือกไฟล์", "en": "Click to select file" },
+    "เช่น 250 มล. × 24 ขวด · ช่วงจะเทียบด้วยค่ากลาง": { "th": "เช่น 250 มล. × 24 ขวด · ช่วงจะเทียบด้วยค่ากลาง", "en": "e.g. 250 ml × 24 bottles · Range compares with median" },
+    "ต่อหน้า": { "th": "ต่อหน้า", "en": "per page" },
+    "บนซ้าย": { "th": "บนซ้าย", "en": "Top Left" },
+    "เปิดแผนที่": { "th": "เปิดแผนที่", "en": "Open map" },
+    "มีการแจกหรือใช้คูปองนี้แล้ว — เปลี่ยนรูปแบบรหัสไม่ได้": { "th": "มีการแจกหรือใช้คูปองนี้แล้ว — เปลี่ยนรูปแบบรหัสไม่ได้", "en": "Coupon distributed or redeemed — code pattern locked" },
+    "ยอด": { "th": "ยอด", "en": "Total" },
+    "ยืนยันลบรูปเก่าออกจาก S3? การลบนี้ไม่สามารถย้อนกลับได้": { "th": "ยืนยันลบรูปเก่าออกจาก S3? การลบนี้ไม่สามารถย้อนกลับได้", "en": "Confirm deletion of old image from S3? This action is irreversible" },
+    "รายการสินค้า (": { "th": "รายการสินค้า (", "en": "Item list (" },
+    "ลิงก์": { "th": "ลิงก์", "en": "Link" },
+    "เวลาเฉลี่ย": { "th": "เวลาเฉลี่ย", "en": "Avg time" },
+    "สิ่งที่ควรทดสอบต่อ": { "th": "สิ่งที่ควรทดสอบต่อ", "en": "Next steps to test" },
+    "แหล่งที่มา (utm_source)": { "th": "แหล่งที่มา (utm_source)", "en": "Source (utm_source)" },
+    "ผู้จัดจำหน่าย": { "th": "ผู้จัดจำหน่าย", "en": "Vendor / Supplier" },
+    "ผลการทดสอบ {0}": { "th": "ผลการทดสอบ {0}", "en": "Test result {0}" },
+    "ย้อนเวลารายการ {0} (นาที)": { "th": "ย้อนเวลารายการ {0} (นาที)", "en": "Backdate record {0} (minutes)" }
+  }
+  </script>
+<!-- ==================== INTERACTIVITY JAVASCRIPT ==================== -->
+<script>
+    // 1. Language Toggle Mechanism
+    const btnTh = document.getElementById('btn-th');
+    const btnEn = document.getElementById('btn-en');
+    let currentLang = 'th';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      if (lang === 'th') {
+        btnTh.className = 'px-2.5 py-0.5 rounded-full bg-white text-on-surface font-semibold text-[11px] shadow-sm transition-all';
+        btnEn.className = 'px-2.5 py-0.5 rounded-full text-secondary font-medium text-[11px] hover:text-on-surface transition-all';
+      } else {
+        btnEn.className = 'px-2.5 py-0.5 rounded-full bg-white text-on-surface font-semibold text-[11px] shadow-sm transition-all';
+        btnTh.className = 'px-2.5 py-0.5 rounded-full text-secondary font-medium text-[11px] hover:text-on-surface transition-all';
+      }
+    }
+    btnTh.addEventListener('click', () => setLanguage('th'));
+    btnEn.addEventListener('click', () => setLanguage('en'));
+
+    // 2. Row selection helper into Simulate Notify
+    function selectRowToSimulate(txnId, amount, state, ref) {
+      document.getElementById('sel-amount').value = (amount).toFixed(2);
+      document.getElementById('sel-txn-state').value = state;
+      updatePayloadPreview(txnId, amount * 100, state, 'success', false, ref);
+    }
+
+    function updatePayloadPreview(id = "chrg_test_8f29ba04", amountSatang = 150000, state = "Authorized", status = "success", livemode = false, ref = "ORD-20250328-001") {
+      const tamper = document.getElementById('sel-tamper').value;
+      let checksum = "a8f9c1e09dfa9807662c1248ff88";
+      let live = livemode;
+      let reference = ref;
+      let amt = amountSatang;
+
+      if (tamper === 'bad-checksum') checksum = "bad_checksum_00000000";
+      if (tamper === 'no-checksum') checksum = undefined;
+      if (tamper === 'no-reference') reference = undefined;
+      if (tamper === 'string-livemode') live = "false_as_string";
+      if (tamper === 'amount-mismatch') amt = 9999999;
+
+      const payload = {
+        id: id,
+        object: "charge",
+        amount: amt,
+        currency: "THB",
+        transaction_state: state,
+        status: status,
+        livemode: live,
+        checksum: checksum,
+        reference_order: reference
+      };
+
+      document.getElementById('json-viewer').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    // 3. Simulate Notify Fire Actions
+    const btnFire = document.getElementById('btn-fire-notify');
+    const btnFireText = document.getElementById('btn-fire-notify-text');
+    const respBadge = document.getElementById('resp-badge');
+
+    btnFire.addEventListener('click', () => {
+      btnFireText.textContent = "กำลังส่ง...";
+      btnFire.disabled = true;
+      setTimeout(() => {
+        btnFireText.textContent = "ยิง Simulate notify";
+        btnFire.disabled = false;
+
+        const tamper = document.getElementById('sel-tamper').value;
+        if (tamper === 'none') {
+          respBadge.textContent = "httpStatus: 200 OK";
+          respBadge.className = "px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]";
+        } else {
+          respBadge.textContent = "httpStatus: 400 Bad Request";
+          respBadge.className = "px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#faecee] text-[#c2333f] border border-[#f1b3b8]";
+        }
+      }, 700);
+    });
+
+    document.getElementById('btn-resend-notify').addEventListener('click', () => {
+      btnFire.click();
+    });
+
+    // 4. Create Transaction Action
+    const btnCreateTest = document.getElementById('btn-create-test');
+    const btnCreateTestText = document.getElementById('btn-create-test-text');
+    btnCreateTest.addEventListener('click', () => {
+      btnCreateTestText.textContent = "กำลังสร้าง...";
+      btnCreateTest.disabled = true;
+      setTimeout(() => {
+        btnCreateTestText.textContent = "สร้างรายการทดสอบ";
+        btnCreateTest.disabled = false;
+        alert("สร้างรายการทดสอบเรียบร้อย (จำลองแถวในหน่วยความจำ)");
+      }, 600);
+    });
+
+    // 5. Backdate and other row helper actions
+    function backdatePrompt(txn) {
+      const minutes = prompt(`ย้อนเวลารายการ ${txn} (นาที):`, "30");
+      if (minutes) {
+        alert(`รายการ ${txn} ถูกย้อนเวลาไปแล้ว ${minutes} นาที`);
+      }
+    }
+
+    function triggerNotifySuccess(txn) {
+      selectRowToSimulate(txn, 1500, 'Authorized', 'REF-SIM-99');
+      btnFire.click();
+    }
+
+    function forceProcessing(txn) {
+      alert(`Force processing สำหรับ ${txn} สำเร็จ`);
+    }
+
+    // 6. Copy JSON helper
+    document.getElementById('btn-copy-json').addEventListener('click', () => {
+      const text = document.getElementById('json-viewer').textContent;
+      navigator.clipboard.writeText(text);
+      alert("คัดลอก JSON แล้ว!");
+    });
+
+    // 7. Checklist update feedback
+    function updateChecklist(code, val) {
+      const feedback = document.getElementById('checklist-status-msg');
+      feedback.textContent = `ผลการทดสอบ ${code}: อัปเดตสถานะเป็น ${val}`;
+    }
+
+    // 8. Reconcile Sweep
+    document.getElementById('btn-reconcile').addEventListener('click', () => {
+      alert("รัน reconciler sweep ทันที เฉพาะแถวทดสอบเท่านั้น (is_test=true) ไม่แตะรายการเงินจริง");
+    });
+  </script>
+</body></html>

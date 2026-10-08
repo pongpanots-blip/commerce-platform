@@ -1,3 +1,4 @@
+import { uiText as __uiText } from '@cp/ui';
 import {
   fromBangkokInputValue,
   toBangkokInputValue,
@@ -84,10 +85,10 @@ const HIDDEN_REASON_TEXT: Record<NonNullable<CampaignCoupon['page_hidden_reason'
 export function couponKindLabel(
   coupon: Pick<CampaignCoupon, 'auto_apply'> & Partial<Pick<CampaignCoupon, 'distribution_type' | 'page_hidden_reason'>>,
 ) {
-  if (coupon.distribution_type && coupon.distribution_type !== 'public') return 'เฉพาะบุคคล';
-  if (coupon.page_hidden_reason === 'segment') return 'เฉพาะกลุ่ม';
-  if (coupon.auto_apply) return 'ใช้อัตโนมัติ';
-  return coupon.distribution_type === 'public' ? 'สาธารณะ' : '-';
+  if (coupon.distribution_type && coupon.distribution_type !== 'public') return __uiText("เฉพาะบุคคล");
+  if (coupon.page_hidden_reason === 'segment') return __uiText("เฉพาะกลุ่ม");
+  if (coupon.auto_apply) return __uiText("ใช้อัตโนมัติ");
+  return coupon.distribution_type === 'public' ? __uiText("สาธารณะ") : '-';
 }
 
 /**
@@ -113,3 +114,5 @@ export function pageContentNotices(campaign: Pick<CampaignDetail, 'mechanics' | 
     });
   return notices;
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

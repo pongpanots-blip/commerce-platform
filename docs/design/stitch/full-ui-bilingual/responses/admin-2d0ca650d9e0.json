@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2410",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzg5ZDY3NDg2ZmNlZDQwYjliN2QzMDljNjQyMzUyMTAxEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/7788e1c7a42a44a88fe16bb2927e13a8"
+            },
+            "id": "d8db08339ae24d6d8df695f098ef3e2e",
+            "name": "projects/18348214526789030153/screens/d8db08339ae24d6d8df695f098ef3e2e",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UmKJrQ1jx33IEOaOPGXUgGfYINsBXxGE8UiIBuP2cZTuiJBf4gelyQ1BGVF8EPxEEOx52zEoa9wKlRaJRu5TmDwvDOY06Eq8LUfM_IWLq9a-9lUv8xbKSp9Ti9EleLLsnRrBjtGT3CSzaqltie6Do29aYJLu4B5wry2S3uePdLSqKiZUBxrx6qqAsw0CbENvJzPQxCnPAnm8JMuX8ETDF_WtoLSgTBYI_8E3Kyw0TLPztPJ3C4Op_B3s6q",
+              "name": "projects/18348214526789030153/files/e3f625bc8d1347f5bf55ace2df91c60b"
+            },
+            "theme": {},
+            "title": "จัดการผู้ใช้ (All Users)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **\"จัดการผู้ใช้ (All Users)\"** รหัสเส้นทาง `admin-2d0ca650d9e0` (URL `/j/allusers`) ภายใต้หมวดหมู่ **ลูกค้าและบริการ** สำหรับระบบ **Commerce Platform** เสร็จสมบูรณ์แล้วครับ\n\n### รายละเอียดการออกแบบและองค์ประกอบสำคัญ:\n1. **โครงสร้างและ Design Tokens ตามมาตรฐาน:**\n   - แถบเมนูด้านข้าง (Sidebar) ขนาด 256px พร้อม 7 สายงานหลัก โดยเน้นสถานะ Active ที่กลุ่มงาน **ลูกค้าและบริการ** และเมนูย่อย **All Users (/j/allusers)**\n   - ความกว้างเนื้อหาหลัก 1240px พื้นหลังโทนสว่าง `#f6f8fc` ขอบการ์ด `#e1e7f0` และเน้นสีหลัก `#365cf5`\n   - ป้ายระบุสถานะต้นแบบ `ข้อมูลตัวอย่าง` (Sample data) แสดงเด่นชัดบน Header\n   - ฟอนต์ภาษาไทยและอังกฤษด้วย Noto Sans Thai จัดลำดับ Typographic hierarchy เหมาะสมสำหรับงาน Operations\n\n2. **ฟังก์ชันการทำงานของหน้าจอจัดการผู้ใช้:**\n   - **การ์ดสรุปเมตริก (KPI Summary):** จำนวนผู้ใช้งาน B2B ในหน้านี้ (5 บัญชี), สัดส่วนสมัครเสร็จสมบูรณ์ (4 บัญชี, 80%), บัญชีที่สมัครไม่เสร็จ/ค้างข้อมูลสาขา (1 บัญชี), และ Segment ลูกค้าที่ใช้งาน\n   - **แถบเครื่องมือค้นหาและตัวกรอง:** ช่องค้นหาหน้าปัจจุบันพร้อมปุ่มล้างคำค้นหา, เมนูดรอปดาวน์กรองตาม Segment (Wholesale, F&B, Retail), และแท็บสลับสถานะการสมัคร (ทั้งหมด, สมัครเสร็จ, สมัครไม่เสร็จ)\n   - **ตารางข้อมูลผู้ใช้และบริษัท (All Users Table):** แสดงรหัสลูกค้า (Cust Code & Legacy), ชื่อผู้ติดต่อ, เบอร์โทร, อีเมล, บริษัท (Company), เลขทะเบียนนิติบุคคล, สาขา (Branch), Cuisine / Type, บทบาท (Role), สถานะสมัคร พร้อมปุ่มเปิดดูรายละเอียด (View) และลิงก์ดู Dashboard ลูกค้า\n   - **ระบบโต้ตอบ (Modals & Actions):** \n     - Modal รายละเอียดลูกค้าแบบเจาะลึกพร้อมปุ่มปิดและรองรับการกดแป้นพิมพ์ `Escape`\n     - Modal เครื่องมือ (Tools) สำหรับการจัดการระดับระบบ\n     - ปุ่มจำลองการส่งออกไฟล์ CSV แสดงสถานะ `\"กำลัง Export...\"`\n   - **ระบบสองภาษา (Bilingual):** ตัวเลือกสลับภาษา `ไทย / English` ที่ใช้งานได้จริง และฝังข้อมูลพจนานุกรมแปลภาษา `<script id=\"commerce-ui-translations\" type=\"application/json\">` ครบทุกคำตามที่ระบุในข้อกำหนดอย่างสมบูรณ์"
+    },
+    {
+      "suggestion": "ดูตัวอย่างการแสดงผลภาษาอังกฤษ (English)"
+    },
+    {
+      "suggestion": "ทดสอบเปิดหน้าต่างแสดงรายละเอียดลูกค้า (View Detail Dialog)"
+    },
+    {
+      "suggestion": "เพิ่มตัวเลือกการกรองตามเงื่อนไขสาขาเพิ่มเติม"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "11833442940840009415"
+}

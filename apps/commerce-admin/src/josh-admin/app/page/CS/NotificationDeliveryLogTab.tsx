@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import {
   getNotificationDeliveryLog,
   type NotificationDeliveryChannel,
@@ -10,28 +13,30 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CHANNEL_OPTIONS = [
-  { value: '', label: 'ทุกช่องทาง' },
-  { value: 'push', label: 'Push' },
-  { value: 'inapp', label: 'ในแอป' },
-  { value: 'email', label: 'อีเมล' },
+  { value: '', get label(){return __uiText("ทุกช่องทาง");} },
+  { value: 'push', get label(){return __uiText("Push");} },
+  { value: 'inapp', get label(){return __uiText("ในแอป");} },
+  { value: 'email', get label(){return __uiText("อีเมล");} },
 ] as const;
 
 const STATUS_OPTIONS = [
-  { value: '', label: 'ทุกสถานะ' },
-  { value: 'sent', label: 'ส่งสำเร็จ' },
-  { value: 'skipped', label: 'ไม่ได้ส่ง' },
-  { value: 'failed', label: 'ล้มเหลว' },
+  { value: '', get label(){return __uiText("ทุกสถานะ");} },
+  { value: 'sent', get label(){return __uiText("ส่งสำเร็จ");} },
+  { value: 'skipped', get label(){return __uiText("ไม่ได้ส่ง");} },
+  { value: 'failed', get label(){return __uiText("ล้มเหลว");} },
 ] as const;
 
 /** แปลเหตุผลของระบบเป็นภาษาที่ทีมซัพพอร์ตใช้ตอบลูกค้าได้ทันที */
 const REASON_LABEL: Record<string, string> = {
-  type_disabled: 'ปิดการแจ้งเตือนประเภทนี้ไว้ทั้งระบบ',
-  channel_not_allowed: 'ไม่อนุญาตช่องทางนี้สำหรับการแจ้งเตือนประเภทนี้',
-  preference_off: 'ลูกค้าปิดรับช่องทางนี้เอง',
-  not_requested: 'ผู้เรียกเลือกส่งเฉพาะช่องทางอื่น',
-  duplicate: 'ซ้ำกับใบที่ส่งไปแล้ว',
-  not_configured: 'ยังไม่ได้ตั้งค่า OneSignal',
+  get type_disabled(){return __uiText("ปิดการแจ้งเตือนประเภทนี้ไว้ทั้งระบบ");},
+  get channel_not_allowed(){return __uiText("ไม่อนุญาตช่องทางนี้สำหรับการแจ้งเตือนประเภทนี้");},
+  get preference_off(){return __uiText("ลูกค้าปิดรับช่องทางนี้เอง");},
+  get not_requested(){return __uiText("ผู้เรียกเลือกส่งเฉพาะช่องทางอื่น");},
+  get duplicate(){return __uiText("ซ้ำกับใบที่ส่งไปแล้ว");},
+  get not_configured(){return __uiText("ยังไม่ได้ตั้งค่า OneSignal");},
 };
 
 const STATUS_STYLE: Record<NotificationDeliveryStatus, string> = {
@@ -42,7 +47,7 @@ const STATUS_STYLE: Record<NotificationDeliveryStatus, string> = {
 
 function formatDateTime(value: string | null): string {
   if (!value) return '—';
-  return new Date(value).toLocaleString('th-TH', {
+  return new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
     dateStyle: 'short',
     timeStyle: 'medium',
   });
@@ -58,6 +63,7 @@ function describeReason(reason: string | null): string {
  * ในแท็บภาพรวมตอบไม่ได้ ค้นด้วย userId แล้วอ่านคอลัมน์ "เหตุผล" ได้เลย
  */
 export default function NotificationDeliveryLogTab() {
+  __useUiLocale();
   const [userId, setUserId] = useState('');
   const [type, setType] = useState('');
   const [channel, setChannel] = useState<NotificationDeliveryChannel | ''>('');
@@ -81,7 +87,7 @@ export default function NotificationDeliveryLogTab() {
       } catch {
         setRows([]);
         setNextCursor(null);
-        setError('ไม่สามารถโหลด log การส่งได้');
+        setError(__uiMessage("ไม่สามารถโหลด log การส่งได้"));
       } finally {
         setLoading(false);
       }
@@ -108,14 +114,14 @@ export default function NotificationDeliveryLogTab() {
   const columns: TableColumn<NotificationDeliveryLogItem>[] = [
     {
       key: 'sentAt',
-      label: 'เวลา',
+      label: __uiText("เวลา"),
       render: (value: string) => (
         <span className="whitespace-nowrap text-xs">{formatDateTime(value)}</span>
       ),
     },
     {
       key: 'userId',
-      label: 'ผู้ใช้',
+      label: __uiText("ผู้ใช้"),
       render: (value: string) => (
         <Link
           to={ADMIN_ROUTES.userDetail(value)}
@@ -125,11 +131,11 @@ export default function NotificationDeliveryLogTab() {
         </Link>
       ),
     },
-    { key: 'type', label: 'ประเภท' },
-    { key: 'channel', label: 'ช่องทาง' },
+    { key: 'type', label: __uiText("ประเภท") },
+    { key: 'channel', label: __uiText("ช่องทาง") },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: NotificationDeliveryStatus) => (
         <span className={`rounded-full px-2 py-1 text-xs font-semibold ${STATUS_STYLE[value]}`}>
           {value}
@@ -138,14 +144,14 @@ export default function NotificationDeliveryLogTab() {
     },
     {
       key: 'reason',
-      label: 'เหตุผล',
+      label: __uiText("เหตุผล"),
       render: (value: string | null) => (
         <span className="text-xs text-gray-600">{describeReason(value)}</span>
       ),
     },
     {
       key: 'clickedAt',
-      label: 'กดเปิด',
+      label: __uiText("กดเปิด"),
       render: (value: string | null, row: NotificationDeliveryLogItem) =>
         value ? (
           <span className="text-xs text-gray-600">
@@ -162,7 +168,7 @@ export default function NotificationDeliveryLogTab() {
     <>
       <div className="mb-4 grid gap-2 md:grid-cols-2 lg:grid-cols-5">
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">รหัสผู้ใช้ (User ID)</span>
+          <span className="text-xs text-gray-500">{__uiText("รหัสผู้ใช้ (User ID)")}</span>
           <input
             className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
             value={userId}
@@ -170,18 +176,18 @@ export default function NotificationDeliveryLogTab() {
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">ประเภทการแจ้งเตือน</span>
+          <span className="text-xs text-gray-500">{__uiText("ประเภทการแจ้งเตือน")}</span>
           <input
             className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-            placeholder="ประเภท เช่น order_shipped"
+            placeholder={__uiText("ประเภท เช่น order_shipped")}
             value={type}
             onChange={(event) => setType(event.target.value)}
           />
         </label>
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">ช่องทาง</span>
+          <span className="text-xs text-gray-500">{__uiText("ช่องทาง")}</span>
           <Select
-            aria-label="ช่องทาง"
+            aria-label={__uiText("ช่องทาง")}
             value={channel}
             onChange={(event) => setChannel(event.target.value as NotificationDeliveryChannel | '')}
           >
@@ -193,9 +199,9 @@ export default function NotificationDeliveryLogTab() {
           </Select>
         </div>
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">สถานะ</span>
+          <span className="text-xs text-gray-500">{__uiText("สถานะ")}</span>
           <Select
-            aria-label="สถานะ"
+            aria-label={__uiText("สถานะ")}
             value={status}
             onChange={(event) => setStatus(event.target.value as NotificationDeliveryStatus | '')}
           >
@@ -211,21 +217,19 @@ export default function NotificationDeliveryLogTab() {
           className="self-end rounded-lg bg-primary px-4 py-2 text-sm text-white"
           onClick={applyFilters}
         >
-          ค้นหา
-        </button>
+          {__uiText("ค้นหา")}</button>
       </div>
 
-      {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
+      {error && <p className="mb-3 text-sm text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
 
       {loading ? (
-        <p className="text-sm text-gray-500">กำลังโหลด...</p>
+        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : (
         <>
           <Table columns={columns} data={rows} idKey="id" />
           {!rows.length && (
             <p className="mt-3 text-sm text-gray-400">
-              ไม่พบ log ในเงื่อนไขนี้ — log เริ่มเก็บตั้งแต่วันที่เปิดใช้ฟีเจอร์นี้ และเก็บย้อนหลัง 90 วัน
-            </p>
+              {__uiText("ไม่พบ log ในเงื่อนไขนี้ — log เริ่มเก็บตั้งแต่วันที่เปิดใช้ฟีเจอร์นี้ และเก็บย้อนหลัง 90 วัน")}</p>
           )}
           <div className="mt-4 flex items-center justify-end gap-2 text-sm">
             <button
@@ -240,8 +244,7 @@ export default function NotificationDeliveryLogTab() {
                 })
               }
             >
-              ก่อนหน้า
-            </button>
+              {__uiText("ก่อนหน้า")}</button>
             <button
               type="button"
               disabled={!nextCursor}
@@ -252,8 +255,7 @@ export default function NotificationDeliveryLogTab() {
                 setCursor(nextCursor);
               }}
             >
-              ถัดไป
-            </button>
+              {__uiText("ถัดไป")}</button>
           </div>
         </>
       )}

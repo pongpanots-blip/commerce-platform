@@ -1,5 +1,7 @@
 import React, { useState, useRef, useId } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface DragDropUploadProps {
   onFileSelect: (file: File) => void;
   accept?: string;
@@ -11,6 +13,7 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
   accept = "image/*,application/pdf",
   maxSizeMB = 5
 }) => {
+  __useUiLocale();
   const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const captionId = useId();
@@ -47,7 +50,7 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
   // ตรวจสอบขนาดและส่งไฟล์ออกไปให้หน้าหลักใช้งาน
   const validateAndProcessFile = (file: File) => {
     if (file.size > maxSizeMB * 1024 * 1024) {
-      alert(`ไฟล์ใหญ่เกินไป! ขนาดต้องไม่เกิน ${maxSizeMB}MB`);
+      alert(__uiText("ไฟล์ใหญ่เกินไป! ขนาดต้องไม่เกิน {0}MB", {"0": maxSizeMB}));
       return;
     }
     onFileSelect(file);
@@ -90,11 +93,9 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
         </svg>
 
         <p id={captionId} className="text-sm text-gray-600">
-          <span className="font-semibold text-primary hover:underline">คลิกเพื่อเลือกไฟล์</span> หรือลากไฟล์มาวางที่นี่
-        </p>
+          <span className="font-semibold text-primary hover:underline">{__uiText("คลิกเพื่อเลือกไฟล์")}</span> {__uiText(" หรือลากไฟล์มาวางที่นี่")}</p>
         <p className="text-xs text-gray-400">
-          รองรับไฟล์ตามประเภทที่กำหนด (สูงสุด {maxSizeMB}MB)
-        </p>
+          {__uiText("รองรับไฟล์ตามประเภทที่กำหนด (สูงสุด ")}{maxSizeMB}{__uiText("MB)")}</p>
       </div>
     </div>
   );

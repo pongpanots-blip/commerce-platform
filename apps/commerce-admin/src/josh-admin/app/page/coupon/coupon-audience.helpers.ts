@@ -1,3 +1,4 @@
+import { uiText as __uiText } from '@cp/ui';
 import {
   generateCouponEntitlementsFromSegment,
   importCouponEntitlements,
@@ -49,23 +50,23 @@ export const COUPON_AUDIENCE_MODES: Array<{
 }> = [
   {
     value: 'all',
-    label: 'ทุกคน (Public)',
-    hint: 'ไม่จำกัดกลุ่ม — ใครมีรหัสก็ใช้ได้',
+    get label() { return __uiText("ทุกคน (Public)"); },
+    get hint() { return __uiText("ไม่จำกัดกลุ่ม — ใครมีรหัสก็ใช้ได้"); },
   },
   {
     value: 'new_signup',
-    label: 'สมาชิกใหม่ (มอบอัตโนมัติเมื่อสมัคร)',
-    hint: 'ผู้ใช้ที่สมัครสำเร็จจะได้สิทธิ์ทันที — ไม่ต้องอัปโหลดรายชื่อ',
+    get label() { return __uiText("สมาชิกใหม่ (มอบอัตโนมัติเมื่อสมัคร)"); },
+    get hint() { return __uiText("ผู้ใช้ที่สมัครสำเร็จจะได้สิทธิ์ทันที — ไม่ต้องอัปโหลดรายชื่อ"); },
   },
   {
     value: 'segment',
-    label: 'ระบุ segment',
-    hint: 'เลือกจาก user segment ที่สร้างไว้ (รองรับ segment builder)',
+    get label() { return __uiText("ระบุ segment"); },
+    get hint() { return __uiText("เลือกจาก user segment ที่สร้างไว้ (รองรับ segment builder)"); },
   },
   {
     value: 'manual',
-    label: 'ระบุรายชื่อเอง',
-    hint: 'กำหนดรายชื่อเอง (CSV / user_id)',
+    get label() { return __uiText("ระบุรายชื่อเอง"); },
+    get hint() { return __uiText("กำหนดรายชื่อเอง (CSV / user_id)"); },
   },
 ];
 
@@ -137,13 +138,13 @@ export function describeCouponAudience(
 ): string {
   switch (form.mode) {
     case 'all':
-      return 'ทุกคน (Public)';
+      return __uiText("ทุกคน (Public)");
     case 'new_signup':
-      return 'สมาชิกใหม่ — มอบอัตโนมัติเมื่อสมัคร';
+      return __uiText("สมาชิกใหม่ — มอบอัตโนมัติเมื่อสมัคร");
     case 'segment':
-      return segmentName ? `Segment: ${segmentName}` : 'ระบุ segment';
+      return segmentName ? `Segment: ${segmentName}` : __uiText("ระบุ segment");
     case 'manual':
-      return 'ระบุรายชื่อเอง (CSV / user_id)';
+      return __uiText("ระบุรายชื่อเอง (CSV / user_id)");
     default:
       return '—';
   }
@@ -229,3 +230,5 @@ export async function saveCouponAudience(
 
   return { segmentId: form.segmentId, importSummary: null };
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

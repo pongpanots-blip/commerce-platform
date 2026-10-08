@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>API log ของ josh - Thai Ops Cockpit</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-high": "#e0e8ff",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "secondary-fixed": "#d3e3ff",
+            "surface-container-highest": "#d7e2ff",
+            "surface-container-low": "#f1f3ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "error": "#ba1a1a",
+            "on-primary-container": "#ededff",
+            "inverse-primary": "#b9c3ff",
+            "on-secondary-container": "#54647c",
+            "on-background": "#0e1b32",
+            "tertiary-fixed-dim": "#ffb597",
+            "primary-container": "#365cf5",
+            "inverse-surface": "#243048",
+            "background": "#f9f9ff",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed": "#360f00",
+            "secondary-fixed-dim": "#b7c7e3",
+            "primary-fixed": "#dde1ff",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-surface-variant": "#444655",
+            "surface-bright": "#f9f9ff",
+            "on-tertiary-container": "#ffebe4",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-dim": "#cddaf9",
+            "primary-fixed-dim": "#b9c3ff",
+            "inverse-on-surface": "#ecf0ff",
+            "outline": "#747687",
+            "tertiary-container": "#bc4600",
+            "surface-container": "#e8eeff",
+            "on-primary-fixed": "#001257",
+            "on-secondary-fixed": "#0b1c31",
+            "surface-variant": "#d7e2ff",
+            "on-surface": "#0e1b32",
+            "secondary": "#4f5f77",
+            "on-secondary": "#ffffff",
+            "outline-variant": "#c4c5d8",
+            "on-error": "#ffffff",
+            "surface-tint": "#214ce7",
+            "secondary-container": "#d0e1fd",
+            "surface": "#f9f9ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "tertiary": "#943500",
+            "primary": "#0a3fdc"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-xs": "0.25rem",
+            "margin": "2rem",
+            "gutter-mobile": "1rem",
+            "space-2xl": "2.5rem",
+            "margin-mobile": "1rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "gutter": "1.5rem"
+          },
+          fontFamily: {
+            "label-sm": ["\"Inter\", \"Noto Sans Thai\", sans-serif"],
+            "body-sm": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "headline-sm": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "label-md": ["\"Inter\", \"Noto Sans Thai\", sans-serif"],
+            "headline-lg-mobile": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "body-lg": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "body-md": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "code-sm": ["\"JetBrains Mono\", monospace"],
+            "headline-md": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "headline-lg": ["\"Noto Sans Thai\", \"Inter\", sans-serif"]
+          },
+          fontSize: {
+            "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }],
+            "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "label-md": ["13px", { lineHeight: "16px", fontWeight: "500" }],
+            "headline-lg-mobile": ["22px", { lineHeight: "30px", fontWeight: "700" }],
+            "body-lg": ["15px", { lineHeight: "22px", fontWeight: "400" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "code-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+            "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+            "headline-lg": ["28px", { lineHeight: "36px", fontWeight: "700" }]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 19px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased min-h-screen flex flex-col font-body-md text-body-md selection:bg-surface-container-high selection:text-primary">
+<!-- ==================== SIDEBAR COMPONENT ==================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant shadow-none">
+<div class="w-64 h-full flex flex-col justify-between p-3">
+<!-- Top Brand Anchor -->
+<div>
+<div class="px-3 py-3.5 mb-2 flex items-center gap-3 border-b border-outline-variant/60">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm shadow-sm">
+<span class="material-symbols-outlined" style="font-size: 22px;">hub</span>
+</div>
+<div class="overflow-hidden">
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight truncate leading-tight">Thai Ops Cockpit</h1>
+<p class="text-[11px] font-medium text-secondary truncate">ศูนย์บริหารจัดการร้านค้า</p>
+</div>
+</div>
+<!-- 7 Functional Domains (from Shared Components JSON) -->
+<nav class="space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface font-normal hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-secondary">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface font-normal hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-secondary">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface font-normal hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-secondary">support_agent</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface font-normal hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-secondary">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface font-normal hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-secondary">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE ITEM) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-medium border-l-[3px] border-primary cursor-pointer active:scale-[0.99] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-primary">sync_alt</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+<span class="ml-auto w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</a>
+<!-- Sub-routes under ระบบเชื่อมต่อ -->
+<div class="pl-9 pr-2 space-y-1 pt-1">
+<a class="block px-2.5 py-1.5 rounded-md text-[12.5px] font-medium bg-surface-container-high/60 text-primary" href="#">
+              API log ของ josh
+            </a>
+<a class="block px-2.5 py-1.5 rounded-md text-[12.5px] text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+              ERP log ของ josh
+            </a>
+<a class="block px-2.5 py-1.5 rounded-md text-[12.5px] text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+              Webhook Dispatcher
+            </a>
+</div>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface font-normal hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-secondary">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Profile / System State -->
+<div class="pt-3 border-t border-outline-variant/60">
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/50 flex items-center justify-between">
+<div class="flex items-center gap-2.5 overflow-hidden">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-xs shrink-0">
+              JS
+            </div>
+<div class="truncate">
+<p class="text-label-sm font-label-sm text-on-surface truncate">Josh Sync Bridge</p>
+<p class="text-[11px] text-secondary font-code-sm">v2.14.0-prod</p>
+</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" title="Operational Normal"></span>
+</div>
+</div>
+</div>
+</aside>
+<!-- ==================== TOP NAVIGATION BAR ==================== -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest border-b border-outline-variant shadow-sm pl-64">
+<div class="flex justify-between items-center h-16 px-8 w-full max-w-[1500px] mx-auto">
+<!-- Breadcrumb Navigation Link -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-label-md font-label-md">
+<span class="text-secondary font-normal hover:text-primary transition-colors cursor-pointer">ระบบเชื่อมต่อ</span>
+<span class="text-outline text-xs">/</span>
+<span class="text-primary font-medium" data-i18n-key="API log ของ josh">API log ของ josh</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+          Mongo Replica: Read-only
+        </span>
+</div>
+<!-- Trailing Controls & Bilingual Selector -->
+<div class="flex items-center gap-3">
+<!-- Sample data badge -->
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-surface-container text-on-surface-variant border border-outline-variant/70">
+<span class="material-symbols-outlined text-secondary" style="font-size: 15px;">data_object</span>
+<span>ข้อมูลตัวอย่าง</span>
+</span>
+<!-- Bilingual Selector (Interactive Toggle) -->
+<div class="flex items-center bg-surface-container-low p-0.5 rounded-lg border border-outline-variant/80">
+<button class="px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-primary shadow-xs transition-all" id="lang-btn-th" onclick="setLanguage('th')">
+            ไทย
+          </button>
+<span class="text-outline text-xs px-0.5">/</span>
+<button class="px-2.5 py-1 text-xs font-medium rounded-md text-secondary hover:text-on-surface transition-all" id="lang-btn-en" onclick="setLanguage('en')">
+            EN
+          </button>
+</div>
+<div class="h-5 w-px bg-outline-variant mx-1"></div>
+<!-- Trailing Icon Actions -->
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer active:scale-95 relative" title="Notifications">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
+</button>
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer active:scale-95" title="Help &amp; Docs">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<!-- Profile Avatar -->
+<div class="flex items-center gap-2 pl-2">
+<img alt="รูปโปรไฟล์ผู้ดูแลระบบ" class="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant" data-alt="Close-up professional headshot portrait of a focused Thai digital operations supervisor with neat attire, standing in a brightly lit modern corporate office environment with warm natural key light and high-key crisp back-office aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhKeOA3NtZBe12T2cB-xw9EF7FDYlJA_445SfFsW2MEp02i2CqyZooFUBlS59-_ad3RVy4xJ8ssCZ8ZWsztc58Z8jXSfFEzbx1e9ehwRq5bZXX8dKROYJqVCMbvSUzcy_ttSybCVMM9HP1P9QWMSztNTU46VDFLUBrLlebM-Wi3i6aNp4bEp4sZZgstsSE-Jon9ZdnBCWQcY5cJkKFt0_jqbvJxIKMgo4L-vbbUHBRNc_WaVi0dz7eW7mR_in_3d06cdNSZ5jpiLQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== MAIN CONTENT VIEWPORT ==================== -->
+<main class="pl-64 flex-1">
+<div class="max-w-[1260px] mx-auto px-8 py-7 space-y-6">
+<!-- 1. PAGE HEADER & PRIMARY ACTIONS -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight" data-i18n-key="API log ของ josh">
+              API log ของ josh
+            </h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              Live 24h Feed
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1 max-w-3xl" data-i18n-key='อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ "ERP log ของ josh"'>
+            อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ "ERP log ของ josh"
+          </p>
+</div>
+<!-- Action Controls -->
+<div class="flex items-center gap-2.5 self-start md:self-auto shrink-0">
+<!-- Time Range Selector -->
+<div class="relative">
+<select class="h-10 pl-3.5 pr-8 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer text-sm font-medium" id="time-range-select">
+<option value="24h">24 ชม. ล่าสุด (เรียลไทม์)</option>
+<option value="3d">3 วันที่ผ่านมา</option>
+<option value="7d">7 วัน (ขีดจำกัดประวัติ)</option>
+</select>
+</div>
+<!-- Refresh Button -->
+<button class="h-10 px-4 bg-primary text-on-primary hover:bg-[#0834b6] active:scale-95 transition-all rounded-lg font-medium text-sm flex items-center gap-2 shadow-sm" id="refresh-logs-btn" onclick="handleRefreshLogs()">
+<span class="material-symbols-outlined text-[18px]" id="refresh-spinner">refresh</span>
+<span data-i18n-key="Refresh">Refresh</span>
+</button>
+</div>
+</section>
+<!-- 2. BENTO METRICS OVERVIEW CARDS -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-5">
+<!-- Metric Card 1: Requests Per Hour -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-5 border border-[#e1e7f0] shadow-sm flex flex-col justify-between hover:border-outline transition-all">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary" data-i18n-key="Requests per hour">Requests per hour</span>
+<span class="material-symbols-outlined text-primary bg-surface-container p-1 rounded-md">speed</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold font-headline-lg tracking-tight text-on-surface" id="stat-req-count">14,250</span>
+<span class="text-xs text-secondary font-code-sm">req/hr</span>
+</div>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="inline-flex items-center text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +8.4%
+              </span>
+<span class="text-[12px] text-secondary">พีคช่วง 11:00 - 12:30 น.</span>
+</div>
+</div>
+<!-- Sparkline simulation -->
+<div class="h-8 flex items-end gap-1.5 pt-1">
+<div class="w-full bg-surface-container rounded-t h-4"></div>
+<div class="w-full bg-surface-container rounded-t h-5"></div>
+<div class="w-full bg-surface-container rounded-t h-7"></div>
+<div class="w-full bg-surface-container rounded-t h-6"></div>
+<div class="w-full bg-primary/70 rounded-t h-8"></div>
+<div class="w-full bg-primary rounded-t h-full"></div>
+<div class="w-full bg-surface-container-high rounded-t h-5"></div>
+</div>
+</div>
+<!-- Metric Card 2: Slowest Routes -->
+<div class="md:col-span-5 bg-surface-container-lowest rounded-xl p-5 border border-[#e1e7f0] shadow-sm hover:border-outline transition-all">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-md font-label-md text-secondary" data-i18n-key="Slowest routes">Slowest routes</span>
+<span class="text-[11px] font-code-sm text-secondary bg-surface-container-low px-2 py-0.5 rounded">p95 Latency</span>
+</div>
+<div class="space-y-2 mt-2">
+<div class="flex items-center justify-between text-xs py-1 px-2 rounded hover:bg-surface-container-low transition-colors">
+<span class="font-code-sm text-on-surface truncate max-w-[240px]" title="/v1/orders/sync-batch">/v1/orders/sync-batch</span>
+<div class="flex items-center gap-2">
+<span class="w-14 bg-surface-container rounded-full h-1.5 overflow-hidden">
+<span class="bg-amber-500 block h-full w-[84%]"></span>
+</span>
+<span class="font-code-sm font-semibold text-amber-600">840 ms</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs py-1 px-2 rounded hover:bg-surface-container-low transition-colors">
+<span class="font-code-sm text-on-surface truncate max-w-[240px]" title="/v1/inventory/reconcile">/v1/inventory/reconcile</span>
+<div class="flex items-center gap-2">
+<span class="w-14 bg-surface-container rounded-full h-1.5 overflow-hidden">
+<span class="bg-amber-500 block h-full w-[62%]"></span>
+</span>
+<span class="font-code-sm font-semibold text-amber-600">620 ms</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs py-1 px-2 rounded hover:bg-surface-container-low transition-colors">
+<span class="font-code-sm text-on-surface truncate max-w-[240px]" title="/v1/products/bulk">/v1/products/bulk</span>
+<div class="flex items-center gap-2">
+<span class="w-14 bg-surface-container rounded-full h-1.5 overflow-hidden">
+<span class="bg-primary block h-full w-[49%]"></span>
+</span>
+<span class="font-code-sm font-semibold text-secondary">490 ms</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Metric Card 3: Status & Health Distribution -->
+<div class="md:col-span-3 bg-surface-container-lowest rounded-xl p-5 border border-[#e1e7f0] shadow-sm hover:border-outline transition-all flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary" data-i18n-key="Status">Status</span>
+<span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Success 98.4%</span>
+</div>
+<div class="my-3 space-y-1.5">
+<div class="flex items-center justify-between text-xs">
+<span class="flex items-center gap-1.5 text-secondary">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span> 2xx OK
+              </span>
+<span class="font-code-sm font-semibold text-on-surface">98.4%</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="flex items-center gap-1.5 text-secondary">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span> 4xx Client Err
+              </span>
+<span class="font-code-sm font-semibold text-amber-600">1.2%</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="flex items-center gap-1.5 text-secondary">
+<span class="w-2 h-2 rounded-full bg-red-500"></span> 5xx Server Err
+              </span>
+<span class="font-code-sm font-semibold text-red-600">0.4%</span>
+</div>
+</div>
+<!-- Visual Stacked Bar -->
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden flex">
+<div class="bg-emerald-500 h-full w-[98.4%]"></div>
+<div class="bg-amber-400 h-full w-[1.2%]"></div>
+<div class="bg-red-500 h-full w-[0.4%]"></div>
+</div>
+</div>
+</section>
+<!-- 3. SEARCH & DENSE FILTER CONTROLS BAR -->
+<section class="bg-surface-container-lowest rounded-xl p-4 border border-[#e1e7f0] shadow-sm">
+<div class="flex flex-wrap items-center justify-between gap-3">
+<!-- Left: Search Box -->
+<div class="relative flex-1 min-w-[280px] max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary" style="font-size: 19px;">search</span>
+<input class="h-10 w-full pl-9 pr-8 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface placeholder:text-secondary/70 focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" id="filter-search" oninput="handleFilterChange()" placeholder="ค้นใน URL / message" type="text"/>
+<span class="absolute right-3 top-3 text-[10px] font-code-sm text-secondary bg-surface-container px-1 rounded border border-outline-variant/60">⌘K</span>
+</div>
+<!-- Middle & Right: Filter dropdowns -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- Method Filter -->
+<div class="flex items-center gap-1.5">
+<span class="text-xs text-secondary font-medium" data-i18n-key="Method">Method:</span>
+<select class="h-9 text-xs px-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-medium focus:border-primary focus:ring-0" id="filter-method" onchange="handleFilterChange()">
+<option value="ALL">All Methods</option>
+<option value="GET">GET</option>
+<option value="POST">POST</option>
+<option value="PUT">PUT</option>
+<option value="DELETE">DELETE</option>
+</select>
+</div>
+<!-- Status Filter -->
+<div class="flex items-center gap-1.5">
+<span class="text-xs text-secondary font-medium" data-i18n-key="Status">Status:</span>
+<select class="h-9 text-xs px-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-medium focus:border-primary focus:ring-0" id="filter-status" onchange="handleFilterChange()">
+<option value="ALL">All Status</option>
+<option value="200">200 OK</option>
+<option value="201">201 Created</option>
+<option value="400">400 Bad Request</option>
+<option value="500">500 Server Error</option>
+</select>
+</div>
+<!-- Source Filter (ที่มา) -->
+<div class="flex items-center gap-1.5">
+<span class="text-xs text-secondary font-medium" data-i18n-key="ที่มา">ที่มา:</span>
+<select class="h-9 text-xs px-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-medium focus:border-primary focus:ring-0" id="filter-source" onchange="handleFilterChange()">
+<option value="ALL">All Sources</option>
+<option value="ERP Bridge">ERP Bridge</option>
+<option value="Checkout API">Checkout API</option>
+<option value="Mobile BFF">Mobile BFF</option>
+<option value="POS Sync">POS Sync</option>
+</select>
+</div>
+<!-- Clear Action -->
+<button class="h-9 px-3 text-xs font-medium text-secondary hover:text-error hover:bg-error-container/30 border border-outline-variant rounded-lg transition-colors flex items-center gap-1" onclick="resetFilters()">
+<span class="material-symbols-outlined text-[16px]">clear_all</span>
+<span>ล้างรายการ</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 4. LOG ENTRIES DATA TABLE & CONTROLS -->
+<section class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<!-- Table Control Header -->
+<div class="px-5 py-3.5 border-b border-[#e1e7f0] flex flex-wrap items-center justify-between gap-3 bg-white">
+<div class="flex items-center gap-3">
+<h2 class="text-headline-sm font-headline-sm text-on-surface font-bold tracking-tight" data-i18n-key="Log entries">
+              Log entries
+            </h2>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container text-secondary" id="log-count-badge">
+              แสดง 25 รายการ · หน้า 1 จาก 18
+            </span>
+</div>
+<div class="flex items-center gap-3 text-xs text-secondary font-code-sm">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              Cluster Node: josh-replica-02
+            </span>
+<span class="text-outline">|</span>
+<span>Sync Latency: 12ms</span>
+</div>
+</div>
+<!-- Enterprise Responsive Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="log-table">
+<thead>
+<tr class="h-11 bg-[#f8fafc] border-b border-[#e1e7f0] text-secondary text-[12px] font-semibold tracking-wider uppercase">
+<th class="pl-5 pr-3 w-36" data-i18n-key="เวลา">เวลา</th>
+<th class="px-3 w-24" data-i18n-key="Method">Method</th>
+<th class="px-3 w-32" data-i18n-key="Status">Status</th>
+<th class="px-3" data-i18n-key="URL">URL</th>
+<th class="px-3 w-36" data-i18n-key="ที่มา">ที่มา</th>
+<th class="px-3 text-right w-24" data-i18n-key="ms">ms</th>
+<th class="pl-3 pr-5 text-right w-28" data-i18n-key="Payload">Payload</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-[13px] font-body-sm" id="log-table-body">
+<!-- Row 1: Sync batch order (200 OK) -->
+<tr class="hover:bg-[#f8fafc] transition-colors cursor-pointer group" onclick="openInspector(0)">
+<td class="pl-5 pr-3 py-3 font-code-sm text-secondary text-xs">
+                  14:32:04.812
+                </td>
+<td class="px-3 py-3">
+<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#e8f5ed] text-[#157347]">
+                    POST
+                  </span>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    200 OK
+                  </span>
+</td>
+<td class="px-3 py-3 font-code-sm text-on-surface">
+<div class="flex items-center gap-2">
+<span class="font-medium">/v1/orders/sync-batch</span>
+<span class="text-xs text-secondary">?channel=tiktok&amp;limit=50</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container text-secondary">
+                    ERP Bridge
+                  </span>
+</td>
+<td class="px-3 py-3 text-right font-code-sm text-secondary font-medium">
+                  342 ms
+                </td>
+<td class="pl-3 pr-5 py-3 text-right">
+<button class="px-2.5 py-1 text-xs font-medium rounded border border-outline-variant text-secondary group-hover:text-primary group-hover:border-primary transition-colors bg-white">
+                    Inspect
+                  </button>
+</td>
+</tr>
+<!-- Row 2: Inventory reconcile (High latency warning) -->
+<tr class="hover:bg-[#f8fafc] transition-colors cursor-pointer group" onclick="openInspector(1)">
+<td class="pl-5 pr-3 py-3 font-code-sm text-secondary text-xs">
+                  14:31:58.109
+                </td>
+<td class="px-3 py-3">
+<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#fef9e7] text-[#997404]">
+                    PUT
+                  </span>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    200 OK
+                  </span>
+</td>
+<td class="px-3 py-3 font-code-sm text-on-surface">
+<div class="flex items-center gap-2">
+<span class="font-medium">/v1/inventory/reconcile</span>
+<span class="text-xs text-secondary">?warehouse=WH-BKK01</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container text-secondary">
+                    POS Sync
+                  </span>
+</td>
+<td class="px-3 py-3 text-right font-code-sm text-amber-600 font-bold">
+                  890 ms
+                </td>
+<td class="pl-3 pr-5 py-3 text-right">
+<button class="px-2.5 py-1 text-xs font-medium rounded border border-outline-variant text-secondary group-hover:text-primary group-hover:border-primary transition-colors bg-white">
+                    Inspect
+                  </button>
+</td>
+</tr>
+<!-- Row 3: Product fetch (GET 200) -->
+<tr class="hover:bg-[#f8fafc] transition-colors cursor-pointer group" onclick="openInspector(2)">
+<td class="pl-5 pr-3 py-3 font-code-sm text-secondary text-xs">
+                  14:31:45.320
+                </td>
+<td class="px-3 py-3">
+<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#eef2ff] text-[#314bb5]">
+                    GET
+                  </span>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    200 OK
+                  </span>
+</td>
+<td class="px-3 py-3 font-code-sm text-on-surface">
+<div class="flex items-center gap-2">
+<span class="font-medium">/v1/products/sku-99201-th</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container text-secondary">
+                    Mobile BFF
+                  </span>
+</td>
+<td class="px-3 py-3 text-right font-code-sm text-secondary font-medium">
+                  84 ms
+                </td>
+<td class="pl-3 pr-5 py-3 text-right">
+<button class="px-2.5 py-1 text-xs font-medium rounded border border-outline-variant text-secondary group-hover:text-primary group-hover:border-primary transition-colors bg-white">
+                    Inspect
+                  </button>
+</td>
+</tr>
+<!-- Row 4: Client Error 400 Bad Request -->
+<tr class="hover:bg-[#f8fafc] transition-colors cursor-pointer group bg-amber-50/20" onclick="openInspector(3)">
+<td class="pl-5 pr-3 py-3 font-code-sm text-secondary text-xs">
+                  14:30:12.650
+                </td>
+<td class="px-3 py-3">
+<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#e8f5ed] text-[#157347]">
+                    POST
+                  </span>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fef9e7] text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+                    400 Bad Req
+                  </span>
+</td>
+<td class="px-3 py-3 font-code-sm text-on-surface">
+<div class="flex items-center gap-2">
+<span class="font-medium text-amber-900">/v1/checkout/session/init</span>
+<span class="text-xs text-amber-700 bg-amber-100/70 px-1 rounded">missing 'thai_id_hash'</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container text-secondary">
+                    Checkout API
+                  </span>
+</td>
+<td class="px-3 py-3 text-right font-code-sm text-secondary font-medium">
+                  112 ms
+                </td>
+<td class="pl-3 pr-5 py-3 text-right">
+<button class="px-2.5 py-1 text-xs font-medium rounded border border-amber-300 text-amber-800 group-hover:bg-amber-100 transition-colors bg-white">
+                    Inspect
+                  </button>
+</td>
+</tr>
+<!-- Row 5: 500 Server Error Database Timeout -->
+<tr class="hover:bg-[#f8fafc] transition-colors cursor-pointer group bg-red-50/25" onclick="openInspector(4)">
+<td class="pl-5 pr-3 py-3 font-code-sm text-secondary text-xs">
+                  14:28:44.004
+                </td>
+<td class="px-3 py-3">
+<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#fdf2f2] text-[#c2333f]">
+                    DELETE
+                  </span>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fdf2f2] text-[#c2333f]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+                    500 Error
+                  </span>
+</td>
+<td class="px-3 py-3 font-code-sm text-on-surface">
+<div class="flex items-center gap-2">
+<span class="font-medium text-red-900">/v1/cart/flush-expired</span>
+<span class="text-xs text-red-700 bg-red-100 px-1 rounded">LockTimeoutException</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container text-secondary">
+                    ERP Bridge
+                  </span>
+</td>
+<td class="px-3 py-3 text-right font-code-sm text-red-600 font-bold">
+                  1,420 ms
+                </td>
+<td class="pl-3 pr-5 py-3 text-right">
+<button class="px-2.5 py-1 text-xs font-medium rounded border border-red-300 text-red-700 group-hover:bg-red-100 transition-colors bg-white">
+                    Inspect
+                  </button>
+</td>
+</tr>
+<!-- Row 6: 201 Created webhook ack -->
+<tr class="hover:bg-[#f8fafc] transition-colors cursor-pointer group" onclick="openInspector(5)">
+<td class="pl-5 pr-3 py-3 font-code-sm text-secondary text-xs">
+                  14:27:19.498
+                </td>
+<td class="px-3 py-3">
+<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#e8f5ed] text-[#157347]">
+                    POST
+                  </span>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    201 Created
+                  </span>
+</td>
+<td class="px-3 py-3 font-code-sm text-on-surface">
+<div class="flex items-center gap-2">
+<span class="font-medium">/v1/webhooks/shopee/tracking-update</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container text-secondary">
+                    Checkout API
+                  </span>
+</td>
+<td class="px-3 py-3 text-right font-code-sm text-secondary font-medium">
+                  210 ms
+                </td>
+<td class="pl-3 pr-5 py-3 text-right">
+<button class="px-2.5 py-1 text-xs font-medium rounded border border-outline-variant text-secondary group-hover:text-primary group-hover:border-primary transition-colors bg-white">
+                    Inspect
+                  </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty State Container (Hidden by default, triggered on no filter match) -->
+<div class="hidden py-14 text-center" id="table-empty-state">
+<div class="w-12 h-12 mx-auto rounded-full bg-surface-container flex items-center justify-center text-secondary mb-3">
+<span class="material-symbols-outlined" style="font-size: 26px;">search_off</span>
+</div>
+<p class="text-sm font-semibold text-on-surface" data-i18n-key="ไม่มี log ในช่วงนี้">ไม่มี log ในช่วงนี้</p>
+<p class="text-xs text-secondary mt-1" data-i18n-key="No data">No data</p>
+</div>
+<!-- Pagination Controls -->
+<div class="px-5 py-3 border-t border-[#e1e7f0] flex items-center justify-between text-xs text-secondary">
+<div class="flex items-center gap-2">
+<span>แสดง 6 จาก 432 บันทึกล่าสุด</span>
+</div>
+<div class="flex items-center gap-1.5">
+<button class="px-3 py-1.5 rounded border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors disabled:opacity-50" disabled="">
+              ก่อนหน้า
+            </button>
+<button class="w-8 h-8 rounded bg-primary text-white font-medium">1</button>
+<button class="w-8 h-8 rounded hover:bg-surface-container transition-colors">2</button>
+<button class="w-8 h-8 rounded hover:bg-surface-container transition-colors">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="w-8 h-8 rounded hover:bg-surface-container transition-colors">18</button>
+<button class="px-3 py-1.5 rounded border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+              ถัดไป
+            </button>
+</div>
+</div>
+</section>
+<!-- 5. FOOTER LOG POLICY COMPLIANCE NOTE -->
+<footer class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60 flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary shrink-0 mt-0.5" style="font-size: 18px;">policy</span>
+<div class="text-xs leading-relaxed text-secondary">
+<span class="font-semibold text-on-surface">การเก็บบันทึกข้อมูล (Log Policy):</span>
+<span>ระบบเก็บประวัติการเรียก API ย้อนหลัง 7 วันตามข้อกำหนดความปลอดภัย หากต้องการดู log ระดับ packet จากฝั่ง SAP/ERP ให้เปิดเมนู </span>
+<a class="font-semibold text-primary underline hover:text-on-primary-fixed-variant" href="#">'ERP log ของ josh'</a>
+</div>
+</footer>
+</div>
+</main>
+<!-- ==================== INSPECT DRAWER (PAYLOAD INSPECTOR) ==================== -->
+<div class="fixed inset-0 bg-[#17243b]/40 backdrop-blur-[2px] z-50 hidden transition-opacity duration-200" id="inspector-overlay" onclick="closeInspector()"></div>
+<aside class="fixed top-0 right-0 h-screen w-full max-w-[560px] bg-white border-l border-[#e1e7f0] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between" id="inspector-drawer">
+<!-- Drawer Header -->
+<div class="p-5 border-b border-[#e1e7f0] flex items-center justify-between bg-surface-container-lowest">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#e8f5ed] text-[#157347]" id="drawer-method">POST</span>
+<h3 class="font-code-sm font-bold text-sm text-on-surface" id="drawer-title">/v1/orders/sync-batch</h3>
+<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]" id="drawer-status">200 OK</span>
+</div>
+<p class="text-[11px] text-secondary font-code-sm" id="drawer-timestamp">2025-05-18T14:32:04.812Z · Latency: 342ms</p>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" onclick="closeInspector()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Tab Strip -->
+<div class="px-5 border-b border-[#e1e7f0] flex gap-6 text-xs font-semibold bg-[#f8fafc]">
+<button class="py-3 border-b-2 border-primary text-primary transition-all flex items-center gap-1.5" data-i18n-key="Request" id="tab-btn-req" onclick="switchTab('req')">
+        Request
+      </button>
+<button class="py-3 border-b-2 border-transparent text-secondary hover:text-on-surface transition-all flex items-center gap-1.5" data-i18n-key="Response" id="tab-btn-res" onclick="switchTab('res')">
+        Response
+      </button>
+<button class="py-3 border-b-2 border-transparent text-secondary hover:text-on-surface transition-all flex items-center gap-1.5" data-i18n-key="Timeline" id="tab-btn-timeline" onclick="switchTab('timeline')">
+        Timeline
+      </button>
+<button class="py-3 border-b-2 border-transparent text-secondary hover:text-on-surface transition-all flex items-center gap-1.5" data-i18n-key="Error" id="tab-btn-error" onclick="switchTab('error')">
+        Error
+      </button>
+</div>
+<!-- Drawer Body Panels -->
+<div class="flex-1 overflow-y-auto p-5 custom-scrollbar font-code-sm text-xs space-y-4">
+<!-- Panel 1: Request -->
+<div class="space-y-4" id="panel-req">
+<div>
+<span class="text-[11px] font-bold text-secondary uppercase tracking-wider block mb-1.5">Headers</span>
+<pre class="bg-[#f8fafc] p-3 rounded-lg border border-[#e1e7f0] text-secondary leading-relaxed overflow-x-auto">Host: api.josh-ops.internal
+Authorization: Bearer *********41b2
+Content-Type: application/json
+X-Source-Caller: ERP-Bridge-v3
+X-Request-ID: req_01HX98M1AZQ90</pre>
+</div>
+<div>
+<span class="text-[11px] font-bold text-secondary uppercase tracking-wider block mb-1.5">JSON Payload (Request)</span>
+<pre class="bg-[#17243b] text-emerald-300 p-3.5 rounded-lg border border-outline-variant/30 leading-relaxed overflow-x-auto text-[11.5px]" id="drawer-payload-req">{
+  "batch_id": "BATCH-99410",
+  "channel": "tiktok_shop_th",
+  "orders": [
+    {
+      "order_id": "TH-TIK-9812401",
+      "sku": "SKU-99201-TH",
+      "qty": 2,
+      "total_thb": 1490.00,
+      "address_postal": "10110"
+    }
+  ]
+}</pre>
+</div>
+</div>
+<!-- Panel 2: Response -->
+<div class="space-y-4 hidden" id="panel-res">
+<div>
+<span class="text-[11px] font-bold text-secondary uppercase tracking-wider block mb-1.5">Response Headers</span>
+<pre class="bg-[#f8fafc] p-3 rounded-lg border border-[#e1e7f0] text-secondary leading-relaxed overflow-x-auto">HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Server: Kestrel/Josh-Gateway
+X-Execution-Node: replica-02-bkk</pre>
+</div>
+<div>
+<span class="text-[11px] font-bold text-secondary uppercase tracking-wider block mb-1.5">Response Body</span>
+<pre class="bg-[#17243b] text-emerald-300 p-3.5 rounded-lg border border-outline-variant/30 leading-relaxed overflow-x-auto text-[11.5px]" id="drawer-payload-res">{
+  "status": "success",
+  "synced_count": 1,
+  "errors": [],
+  "processing_duration_ms": 342,
+  "mongo_ref": "66487e491901fa1c"
+}</pre>
+</div>
+</div>
+<!-- Panel 3: Timeline -->
+<div class="space-y-3 hidden" id="panel-timeline">
+<span class="text-[11px] font-bold text-secondary uppercase tracking-wider block mb-1">Execution Steps</span>
+<div class="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#e1e7f0]">
+<div class="relative">
+<span class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-white"></span>
+<p class="font-semibold text-on-surface">Ingress from ERP Bridge</p>
+<p class="text-[11px] text-secondary">T+0ms · Gateway parsed authorization token</p>
+</div>
+<div class="relative">
+<span class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-white"></span>
+<p class="font-semibold text-on-surface">Mongo Replica Write Sync</p>
+<p class="text-[11px] text-secondary">T+218ms · Cluster replica ack received (josh-replica-02)</p>
+</div>
+<div class="relative">
+<span class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-white"></span>
+<p class="font-semibold text-on-surface">Dispatched 200 OK to Caller</p>
+<p class="text-[11px] text-secondary">T+342ms · Payload completed cleanly</p>
+</div>
+</div>
+</div>
+<!-- Panel 4: Error -->
+<div class="space-y-3 hidden" id="panel-error">
+<div class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800">
+<p class="font-bold text-xs" id="drawer-error-msg">No unhandled exceptions encountered.</p>
+<p class="text-[11px] text-red-700 mt-1">This request completed within standard tolerances or responded with intended HTTP code.</p>
+</div>
+</div>
+</div>
+<!-- Drawer Sticky Footer -->
+<div class="p-4 border-t border-[#e1e7f0] flex items-center justify-between bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<button class="px-3 py-2 text-xs font-medium rounded-lg border border-outline-variant hover:bg-surface-container transition-colors flex items-center gap-1.5 text-secondary" onclick="navigator.clipboard.writeText(document.getElementById('drawer-payload-req').innerText)">
+<span class="material-symbols-outlined text-[15px]">content_copy</span>
+<span>คัดลอก JSON</span>
+</button>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-surface-container text-primary hover:bg-surface-container-high transition-colors">
+          ส่งคำสั่งซื้อซ้ำ
+        </button>
+<button class="px-4 py-2 text-xs font-semibold rounded-lg bg-primary text-white hover:bg-[#0834b6] transition-colors" onclick="closeInspector()">
+          เสร็จสิ้น
+        </button>
+</div>
+</div>
+</aside>
+<!-- ==================== MANDATORY BILINGUAL TRANSLATION SCRIPT ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "API log ของ josh": {
+      "th": "API log ของ josh",
+      "en": "Josh API Logs"
+    },
+    "Refresh": {
+      "th": "Refresh",
+      "en": "Refresh"
+    },
+    "เวลา": {
+      "th": "เวลา",
+      "en": "Timestamp"
+    },
+    "ค้นหา": {
+      "th": "ค้นหา",
+      "en": "Search"
+    },
+    "Status": {
+      "th": "Status",
+      "en": "Status"
+    },
+    "Filters": {
+      "th": "Filters",
+      "en": "Filters"
+    },
+    "Error": {
+      "th": "Error",
+      "en": "Error"
+    },
+    "Response": {
+      "th": "Response",
+      "en": "Response"
+    },
+    "ms": {
+      "th": "ms",
+      "en": "ms"
+    },
+    "อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ \"ERP log ของ josh\"": {
+      "th": "อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ \"ERP log ของ josh\"",
+      "en": "Read-only replica from Josh Mongo (last 24 hrs, historical up to 7 days) · For incoming ERP traffic into Josh, view \"Josh ERP Logs\""
+    },
+    "ค้นใน URL / message": {
+      "th": "ค้นใน URL / message",
+      "en": "Search in URL / message"
+    },
+    "Requests per hour": {
+      "th": "Requests per hour",
+      "en": "Requests per hour"
+    },
+    "Slowest routes": {
+      "th": "Slowest routes",
+      "en": "Slowest routes"
+    },
+    "Route": {
+      "th": "Route",
+      "en": "Route"
+    },
+    "No data": {
+      "th": "No data",
+      "en": "No data"
+    },
+    "Log entries": {
+      "th": "Log entries",
+      "en": "Log entries"
+    },
+    "Method": {
+      "th": "Method",
+      "en": "Method"
+    },
+    "URL": {
+      "th": "URL",
+      "en": "URL"
+    },
+    "ที่มา": {
+      "th": "ที่มา",
+      "en": "Source"
+    },
+    "Timeline": {
+      "th": "Timeline",
+      "en": "Timeline"
+    },
+    "Payload": {
+      "th": "Payload",
+      "en": "Payload"
+    },
+    "Request": {
+      "th": "Request",
+      "en": "Request"
+    },
+    "ไม่มี log ในช่วงนี้": {
+      "th": "ไม่มี log ในช่วงนี้",
+      "en": "No logs in this timeframe"
+    },
+    "฿{0}": {
+      "th": "฿{0}",
+      "en": "THB {0}"
+    },
+    "เข้ากับอาหาร": {
+      "th": "เข้ากับอาหาร",
+      "en": "Pairs with food"
+    },
+    "แคมเปญ (utm_campaign)": {
+      "th": "แคมเปญ (utm_campaign)",
+      "en": "Campaign (utm_campaign)"
+    },
+    "ชื่อ Tier *": {
+      "th": "ชื่อ Tier *",
+      "en": "Tier Name *"
+    },
+    "ดูเงื่อนไขในหน้าโปร": {
+      "th": "ดูเงื่อนไขในหน้าโปร",
+      "en": "View terms in promo page"
+    },
+    "ทุก SKU ในโปรได้ราคานี้ตั้งแต่ชิ้นแรก": {
+      "th": "ทุก SKU ในโปรได้ราคานี้ตั้งแต่ชิ้นแรก",
+      "en": "All promo SKUs get this price from the first unit"
+    },
+    "ประเภทและส่วนลด": {
+      "th": "ประเภทและส่วนลด",
+      "en": "Category & Discount"
+    },
+    "เพิ่ม Segment": {
+      "th": "เพิ่ม Segment",
+      "en": "Add Segment"
+    },
+    "ไม่พบสินค้า — ลองคำค้นอื่น": {
+      "th": "ไม่พบสินค้า — ลองคำค้นอื่น",
+      "en": "No products found — Try another query"
+    },
+    "ยังไม่มีชื่อร้าน": {
+      "th": "ยังไม่มีชื่อร้าน",
+      "en": "No store name yet"
+    },
+    "ระบุสิ่งที่ต้องการให้ลูกค้าทำ พร้อมข้อเสนอที่ยืนยันแล้ว": {
+      "th": "ระบุสิ่งที่ต้องการให้ลูกค้าทำ พร้อมข้อเสนอที่ยืนยันแล้ว",
+      "en": "Specify desired customer action with verified offer"
+    },
+    "ลบ Preset ไม่สำเร็จ": {
+      "th": "ลบ Preset ไม่สำเร็จ",
+      "en": "Failed to delete Preset"
+    },
+    "เลือกหมวดหมู่ (": {
+      "th": "เลือกหมวดหมู่ (",
+      "en": "Select category ("
+    },
+    "สร้างเงื่อนไขเริ่ม Workflow": {
+      "th": "สร้างเงื่อนไขเริ่ม Workflow",
+      "en": "Create Workflow start condition"
+    },
+    "หน้าล็อกอิน": {
+      "th": "หน้าล็อกอิน",
+      "en": "Login Page"
+    },
+    "อัปโหลดรูปภาพได้สูงสุด {0} รูป": {
+      "th": "อัปโหลดรูปภาพได้สูงสุด {0} รูป",
+      "en": "Upload up to {0} images"
+    }
+  }
+  </script>
+<!-- ==================== LOG DATA & CLIENT LOGIC ==================== -->
+<script>
+    // Detailed record payloads for inspector drawer
+    const sampleRecords = [
+      {
+        method: "POST",
+        route: "/v1/orders/sync-batch",
+        status: "200 OK",
+        statusClass: "bg-[#e8f5ed] text-[#157347]",
+        methodClass: "bg-[#e8f5ed] text-[#157347]",
+        timestamp: "2025-05-18T14:32:04.812Z · Latency: 342ms",
+        source: "ERP Bridge",
+        req: JSON.stringify({ batch_id: "BATCH-99410", channel: "tiktok_shop_th", orders: [{ order_id: "TH-TIK-9812401", sku: "SKU-99201-TH", qty: 2, total_thb: 1490.00 }] }, null, 2),
+        res: JSON.stringify({ status: "success", synced_count: 1, errors: [], processing_duration_ms: 342, mongo_ref: "66487e491901fa1c" }, null, 2),
+        err: "None. All records committed to primary replica."
+      },
+      {
+        method: "PUT",
+        route: "/v1/inventory/reconcile",
+        status: "200 OK",
+        statusClass: "bg-[#e8f5ed] text-[#157347]",
+        methodClass: "bg-[#fef9e7] text-[#997404]",
+        timestamp: "2025-05-18T14:31:58.109Z · Latency: 890ms",
+        source: "POS Sync",
+        req: JSON.stringify({ warehouse: "WH-BKK01", reconcile_mode: "DELTA", items: [{ sku: "SKU-7721", system_stock: 40, physical_count: 38 }] }, null, 2),
+        res: JSON.stringify({ status: "success", delta_applied: true, duration_ms: 890 }, null, 2),
+        err: "Notice: Lock contention caused latency to exceed 500ms threshold."
+      },
+      {
+        method: "GET",
+        route: "/v1/products/sku-99201-th",
+        status: "200 OK",
+        statusClass: "bg-[#e8f5ed] text-[#157347]",
+        methodClass: "bg-[#eef2ff] text-[#314bb5]",
+        timestamp: "2025-05-18T14:31:45.320Z · Latency: 84ms",
+        source: "Mobile BFF",
+        req: "{ query: 'cache-first' }",
+        res: JSON.stringify({ sku: "SKU-99201-TH", name: "Organic Coconut Oil 500ml", price_thb: 290.00, stock: 124 }, null, 2),
+        err: "None."
+      },
+      {
+        method: "POST",
+        route: "/v1/checkout/session/init",
+        status: "400 Bad Req",
+        statusClass: "bg-[#fef9e7] text-[#b08900]",
+        methodClass: "bg-[#e8f5ed] text-[#157347]",
+        timestamp: "2025-05-18T14:30:12.650Z · Latency: 112ms",
+        source: "Checkout API",
+        req: JSON.stringify({ cart_token: "tok_abc992", customer_tax_type: "PERSONAL", missing: "thai_id_hash" }, null, 2),
+        res: JSON.stringify({ error: "BAD_REQUEST", code: "ERR_THAI_TAX_ID_REQUIRED", message: "thai_id_hash is required when customer_tax_type is PERSONAL" }, null, 2),
+        err: "ValidationError: Field 'thai_id_hash' missing from checkout schema submission."
+      },
+      {
+        method: "DELETE",
+        route: "/v1/cart/flush-expired",
+        status: "500 Error",
+        statusClass: "bg-[#fdf2f2] text-[#c2333f]",
+        methodClass: "bg-[#fdf2f2] text-[#c2333f]",
+        timestamp: "2025-05-18T14:28:44.004Z · Latency: 1420ms",
+        source: "ERP Bridge",
+        req: JSON.stringify({ threshold_hours: 48, purge_all: true }, null, 2),
+        res: JSON.stringify({ error: "INTERNAL_SERVER_ERROR", message: "Transaction lock timeout after 1400ms" }, null, 2),
+        err: "LockTimeoutException: MongoDB cluster node replica-02 failed to acquire write lease on collection 'carts'."
+      },
+      {
+        method: "POST",
+        route: "/v1/webhooks/shopee/tracking-update",
+        status: "201 Created",
+        statusClass: "bg-[#e8f5ed] text-[#157347]",
+        methodClass: "bg-[#e8f5ed] text-[#157347]",
+        timestamp: "2025-05-18T14:27:19.498Z · Latency: 210ms",
+        source: "Checkout API",
+        req: JSON.stringify({ tracking_no: "TH-KEX-99210", courier: "Kerry Express", status: "IN_TRANSIT" }, null, 2),
+        res: JSON.stringify({ acknowledged: true, queue_job_id: "job_9921b" }, null, 2),
+        err: "None."
+      }
+    ];
+
+    // Language toggle logic
+    let currentLang = 'th';
+    const translationDict = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-primary shadow-xs transition-all";
+        enBtn.className = "px-2.5 py-1 text-xs font-medium rounded-md text-secondary hover:text-on-surface transition-all";
+        document.documentElement.lang = "th";
+      } else {
+        enBtn.className = "px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-primary shadow-xs transition-all";
+        thBtn.className = "px-2.5 py-1 text-xs font-medium rounded-md text-secondary hover:text-on-surface transition-all";
+        document.documentElement.lang = "en";
+      }
+
+      // Update mapped DOM elements
+      document.querySelectorAll('[data-i18n-key]').forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (translationDict[key] && translationDict[key][lang]) {
+          el.textContent = translationDict[key][lang];
+        }
+      });
+
+      // Update placeholder
+      const searchInput = document.getElementById('filter-search');
+      if (searchInput) {
+        searchInput.placeholder = translationDict["ค้นใน URL / message"][lang];
+      }
+    }
+
+    // Refresh simulation
+    function handleRefreshLogs() {
+      const spinner = document.getElementById('refresh-spinner');
+      spinner.classList.add('animate-spin');
+      setTimeout(() => {
+        spinner.classList.remove('animate-spin');
+        const badge = document.getElementById('log-count-badge');
+        badge.classList.add('bg-emerald-100', 'text-emerald-800');
+        setTimeout(() => {
+          badge.classList.remove('bg-emerald-100', 'text-emerald-800');
+        }, 800);
+      }, 600);
+    }
+
+    // Inspector Drawer
+    function openInspector(index) {
+      const rec = sampleRecords[index] || sampleRecords[0];
+      document.getElementById('drawer-method').innerText = rec.method;
+      document.getElementById('drawer-method').className = `px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold ${rec.methodClass}`;
+      document.getElementById('drawer-title').innerText = rec.route;
+      document.getElementById('drawer-status').innerText = rec.status;
+      document.getElementById('drawer-status').className = `px-2 py-0.5 rounded-full text-xs font-semibold ${rec.statusClass}`;
+      document.getElementById('drawer-timestamp').innerText = rec.timestamp;
+      document.getElementById('drawer-payload-req').innerText = rec.req;
+      document.getElementById('drawer-payload-res').innerText = rec.res;
+      document.getElementById('drawer-error-msg').innerText = rec.err;
+
+      document.getElementById('inspector-overlay').classList.remove('hidden');
+      document.getElementById('inspector-drawer').classList.remove('translate-x-full');
+      switchTab('req');
+    }
+
+    function closeInspector() {
+      document.getElementById('inspector-drawer').classList.add('translate-x-full');
+      setTimeout(() => {
+        document.getElementById('inspector-overlay').classList.add('hidden');
+      }, 200);
+    }
+
+    function switchTab(tab) {
+      ['req', 'res', 'timeline', 'error'].forEach(t => {
+        document.getElementById(`panel-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-btn-${t}`);
+        btn.classList.remove('border-primary', 'text-primary');
+        btn.classList.add('border-transparent', 'text-secondary');
+      });
+
+      document.getElementById(`panel-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-btn-${tab}`);
+      activeBtn.classList.remove('border-transparent', 'text-secondary');
+      activeBtn.classList.add('border-primary', 'text-primary');
+    }
+
+    // Filtering logic
+    function handleFilterChange() {
+      const q = document.getElementById('filter-search').value.toLowerCase().trim();
+      const method = document.getElementById('filter-method').value;
+      const status = document.getElementById('filter-status').value;
+      const source = document.getElementById('filter-source').value;
+
+      const rows = document.querySelectorAll('#log-table-body tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        let matches = true;
+
+        if (q && !text.includes(q)) matches = false;
+        if (method !== 'ALL' && !text.includes(method.toLowerCase())) matches = false;
+        if (status !== 'ALL' && !text.includes(status.toLowerCase())) matches = false;
+        if (source !== 'ALL' && !text.includes(source.toLowerCase())) matches = false;
+
+        if (matches) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const emptyEl = document.getElementById('table-empty-state');
+      const tableEl = document.getElementById('log-table');
+      if (visibleCount === 0) {
+        emptyEl.classList.remove('hidden');
+      } else {
+        emptyEl.classList.add('hidden');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-method').value = 'ALL';
+      document.getElementById('filter-status').value = 'ALL';
+      document.getElementById('filter-source').value = 'ALL';
+      handleFilterChange();
+    }
+  </script>
+</body></html>

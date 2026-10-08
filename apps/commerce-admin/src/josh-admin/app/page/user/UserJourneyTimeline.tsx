@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import {
   getUserAnalyticsTimeline,
   type AnalyticsPlatform,
@@ -5,13 +8,15 @@ import {
 } from '@josh/shared-api';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type PlatformFilter = AnalyticsPlatform | 'all';
 
 const PLATFORM_OPTIONS: { value: PlatformFilter; label: string }[] = [
-  { value: 'all', label: 'ทั้งหมด' },
-  { value: 'web', label: 'Web' },
-  { value: 'ios', label: 'iOS' },
-  { value: 'android', label: 'Android' },
+  { value: 'all', get label(){return __uiText("ทั้งหมด");} },
+  { value: 'web', get label(){return __uiText("Web");} },
+  { value: 'ios', get label(){return __uiText("iOS");} },
+  { value: 'android', get label(){return __uiText("Android");} },
 ];
 
 const PLATFORM_BADGE_STYLES: Record<string, string> = {
@@ -32,7 +37,7 @@ function summarize(eventName: string, payload: Record<string, unknown>): string 
 }
 
 function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString('th-TH', {
+  return new Date(iso).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -52,6 +57,7 @@ type Props = {
 };
 
 export default function UserJourneyTimeline({ userId }: Props) {
+  __useUiLocale();
   const [platform, setPlatform] = useState<PlatformFilter>('all');
   const [items, setItems] = useState<AnalyticsTimelineItem[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -117,10 +123,9 @@ export default function UserJourneyTimeline({ userId }: Props) {
     <section className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-3">
         <div>
-          <h2 className="text-sm font-bold text-gray-800">Journey Timeline</h2>
+          <h2 className="text-sm font-bold text-gray-800">{__uiText("Journey Timeline")}</h2>
           <p className="mt-0.5 text-xs text-gray-500">
-            เหตุการณ์ย้อนหลัง {DEFAULT_RANGE_DAYS} วัน · รวมทุกอุปกรณ์ที่เชื่อมโยงกับผู้ใช้นี้
-          </p>
+            {__uiText("เหตุการณ์ย้อนหลัง ")}{DEFAULT_RANGE_DAYS} {__uiText(" วัน · รวมทุกอุปกรณ์ที่เชื่อมโยงกับผู้ใช้นี้")}</p>
         </div>
         <div className="flex gap-1">
           {PLATFORM_OPTIONS.map((option) => (
@@ -141,20 +146,19 @@ export default function UserJourneyTimeline({ userId }: Props) {
       </div>
 
       {loading ? (
-        <p className="p-4 text-xs text-gray-400">กำลังโหลด...</p>
+        <p className="p-4 text-xs text-gray-400">{__uiText("กำลังโหลด...")}</p>
       ) : error ? (
         <div className="flex items-center justify-between gap-3 p-4">
-          <p className="text-xs text-red-600">{error}</p>
+          <p className="text-xs text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>
           <button
             type="button"
             onClick={load}
             className="shrink-0 rounded-md border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-primary hover:bg-gray-50"
           >
-            ลองใหม่
-          </button>
+            {__uiText("ลองใหม่")}</button>
         </div>
       ) : items.length === 0 ? (
-        <p className="p-4 text-xs text-gray-400">ไม่มีเหตุการณ์ในช่วงที่เลือก</p>
+        <p className="p-4 text-xs text-gray-400">{__uiText("ไม่มีเหตุการณ์ในช่วงที่เลือก")}</p>
       ) : (
         <>
           <ul className="divide-y divide-gray-50">
@@ -186,7 +190,7 @@ export default function UserJourneyTimeline({ userId }: Props) {
           {cursor && (
             <div className="border-t border-gray-100 px-4 py-2 text-center">
               {loadMoreError && (
-                <p className="mb-2 text-xs text-red-600">{loadMoreError}</p>
+                <p className="mb-2 text-xs text-red-600">{(typeof (loadMoreError) === 'string' ? __uiText(loadMoreError) : loadMoreError)}</p>
               )}
               <button
                 type="button"
@@ -194,7 +198,7 @@ export default function UserJourneyTimeline({ userId }: Props) {
                 disabled={loadingMore}
                 className="text-xs font-semibold text-primary hover:underline disabled:opacity-50"
               >
-                {loadingMore ? 'กำลังโหลด...' : 'โหลดเพิ่มเติม'}
+                {loadingMore ? __uiText("กำลังโหลด...") : __uiText("โหลดเพิ่มเติม")}
               </button>
             </div>
           )}
@@ -203,3 +207,5 @@ export default function UserJourneyTimeline({ userId }: Props) {
     </section>
   );
 }
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

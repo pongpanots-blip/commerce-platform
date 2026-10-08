@@ -17,6 +17,8 @@ import {
 } from './coupon-audience.helpers';
 import { parseCouponRecipientCsv, rowsToImportPayload } from './coupon-import.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   value: CouponAudienceForm;
   onChange: (next: CouponAudienceForm) => void;
@@ -36,6 +38,7 @@ export function CouponAudienceFields({
   onCodeGenerationChange,
   codeGenerationLocked,
 }: Props) {
+  __useUiLocale();
   const location = useLocation();
   const stashDraftOnClick = useStashCouponDraftOnClick();
   const modeSelectId = React.useId();
@@ -119,13 +122,13 @@ export function CouponAudienceFields({
     try {
       const rows = parseCouponRecipientCsv(await file.text());
       if (rows.length === 0) {
-        setFileError('ไม่พบข้อมูลในไฟล์');
+        setFileError(__uiMessage("ไม่พบข้อมูลในไฟล์"));
         if (fileInputRef.current) fileInputRef.current.value = '';
         return;
       }
       patch({ recipientFile: { name: file.name, rows } });
     } catch {
-      setFileError('อ่านไฟล์ไม่สำเร็จ');
+      setFileError(__uiMessage("อ่านไฟล์ไม่สำเร็จ"));
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -141,7 +144,7 @@ export function CouponAudienceFields({
       <div>
         <Select
           id={modeSelectId}
-          label="รูปแบบกลุ่มเป้าหมาย"
+          label={__uiText("รูปแบบกลุ่มเป้าหมาย")}
           className="w-full"
           value={value.mode}
           disabled={disabled}
@@ -164,7 +167,7 @@ export function CouponAudienceFields({
         <div className="space-y-2">
           <Select
             id={segmentSelectId}
-            label="เลือก segment"
+            label={__uiText("เลือก segment")}
             className="w-full"
             value={value.segmentId ?? ''}
             disabled={disabled || loadingSegments}
@@ -173,7 +176,7 @@ export function CouponAudienceFields({
             }
           >
             <option value="">
-              {loadingSegments ? 'กำลังโหลด…' : '— เลือก segment —'}
+              {loadingSegments ? __uiText("กำลังโหลด…") : __uiText("— เลือก segment —")}
             </option>
             {options.map((segment) => (
               <option key={segment.id} value={segment.id}>
@@ -185,7 +188,7 @@ export function CouponAudienceFields({
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-500">
               {value.segmentId && memberCount != null
-                ? `ประมาณ ${memberCount.toLocaleString()} คน`
+                ? __uiText("ประมาณ {0} คน", {"0": memberCount.toLocaleString()})
                 : ''}
             </span>
             <Link
@@ -193,29 +196,24 @@ export function CouponAudienceFields({
               onClick={stashDraftOnClick}
               className="text-violet-700 hover:underline"
             >
-              + สร้าง segment ใหม่
-            </Link>
+              {__uiText("+ สร้าง segment ใหม่")}</Link>
           </div>
 
           <p className="text-xs text-gray-500">
-            ระบบจะตรวจว่าลูกค้ายังอยู่ใน segment ตอนใช้คูปอง
-          </p>
+            {__uiText("ระบบจะตรวจว่าลูกค้ายังอยู่ใน segment ตอนใช้คูปอง")}</p>
         </div>
       )}
 
       {value.mode === 'new_signup' && (
         <div className="rounded-lg border border-violet-200 bg-violet-50 px-3 py-3 text-xs text-violet-900">
-          ระบบจะมอบสิทธิ์คูปองให้<strong>ทุกคนที่สมัครสำเร็จ</strong>ทันที (email signup / Google ครั้งแรก)
-          — ไม่ต้องสร้างรายชื่อหรือ segment แยก
-        </div>
+          {__uiText("ระบบจะมอบสิทธิ์คูปองให้")}<strong>{__uiText("ทุกคนที่สมัครสำเร็จ")}</strong>{__uiText("ทันที (email signup / Google ครั้งแรก) — ไม่ต้องสร้างรายชื่อหรือ segment แยก")}</div>
       )}
 
       {value.mode === 'manual' && (
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-3">
             <label htmlFor={recipientFileId} className="text-xs text-gray-500">
-              ไฟล์รายชื่อ (CSV/TSV)
-            </label>
+              {__uiText("ไฟล์รายชื่อ (CSV/TSV)")}</label>
             <input
               id={recipientFileId}
               ref={fileInputRef}
@@ -233,29 +231,26 @@ export function CouponAudienceFields({
               download="coupon-recipients-template.csv"
               className="text-xs text-blue-600 hover:underline"
             >
-              ดาวน์โหลด template
-            </a>
+              {__uiText("ดาวน์โหลด template")}</a>
           </div>
           {fileError && (
             <p role="alert" className="text-xs text-red-600">
-              {fileError}
+              {(typeof (fileError) === 'string' ? __uiText(fileError) : fileError)}
             </p>
           )}
           {value.recipientFile && (
             <p className="flex items-center gap-2 text-xs text-gray-600">
-              ไฟล์ {value.recipientFile.name}: {value.recipientFile.rows.length} รายการ
-              <button
+              {__uiText("ไฟล์ ")}{value.recipientFile.name}: {value.recipientFile.rows.length} {__uiText(" รายการ")}<button
                 type="button"
                 className="text-blue-600 hover:underline"
                 disabled={disabled}
                 onClick={clearRecipientFile}
               >
-                ลบไฟล์
-              </button>
+                {__uiText("ลบไฟล์")}</button>
             </p>
           )}
           <Textarea
-            label="หรือวาง user_id / email / custcode (คั่นด้วย comma หรือขึ้นบรรทัดใหม่)"
+            label={__uiText("หรือวาง user_id / email / custcode (คั่นด้วย comma หรือขึ้นบรรทัดใหม่)")}
             rows={3}
             value={value.recipientText}
             disabled={disabled}
@@ -267,8 +262,8 @@ export function CouponAudienceFields({
             className={`text-xs ${recipientCount === 0 ? 'text-amber-700' : 'text-gray-500'}`}
           >
             {recipientCount === 0
-              ? 'ยังไม่มีรายชื่อ — คูปองนี้จะยังไม่มีใครใช้ได้จนกว่าจะเพิ่มรายชื่อ'
-              : `จะเพิ่ม ${recipientCount} รายชื่อเมื่อกดบันทึก`}
+              ? __uiText("ยังไม่มีรายชื่อ — คูปองนี้จะยังไม่มีใครใช้ได้จนกว่าจะเพิ่มรายชื่อ")
+              : __uiText("จะเพิ่ม {0} รายชื่อเมื่อกดบันทึก", {"0": recipientCount})}
           </p>
         </div>
       )}
@@ -278,11 +273,11 @@ export function CouponAudienceFields({
           checked={codeGeneration === 'unique_suffix'}
           disabled={disabled || codeGenerationLocked}
           onChange={(checked) => onCodeGenerationChange(checked ? 'unique_suffix' : 'shared')}
-          title="สร้างรหัสเฉพาะต่อคน (ต่อท้ายรหัสหลัก)"
+          title={__uiText("สร้างรหัสเฉพาะต่อคน (ต่อท้ายรหัสหลัก)")}
           description={
             codeGenerationLocked
-              ? 'มีการแจกหรือใช้คูปองนี้แล้ว — เปลี่ยนรูปแบบรหัสไม่ได้'
-              : 'ลูกค้าแต่ละคนได้รหัสไม่ซ้ำกัน เช่น SUMMER-7F3K'
+              ? __uiText("มีการแจกหรือใช้คูปองนี้แล้ว — เปลี่ยนรูปแบบรหัสไม่ได้")
+              : __uiText("ลูกค้าแต่ละคนได้รหัสไม่ซ้ำกัน เช่น SUMMER-7F3K")
           }
         />
       )}
@@ -291,3 +286,5 @@ export function CouponAudienceFields({
 }
 
 export default CouponAudienceFields;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

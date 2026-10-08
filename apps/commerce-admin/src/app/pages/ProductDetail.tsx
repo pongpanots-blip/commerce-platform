@@ -1,20 +1,25 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Page, PageHeader, Panel, PanelHead, Span,
+  Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, Span, Stack2,
   StatusChip, TBody, TD, TH, THead, TR, Table, Textarea, fmt,
 } from '@cp/ui';
-import { api, InventoryLevel, Paginated, Product, productsApi } from '../../lib/api';
+import { api, InventoryLevel, Paginated, Product, productsApi, stockApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Form = { sku: string; name: string; description: string };
 const toForm = (p: Product): Form => ({ sku: p.sku, name: p.name, description: p.description ?? '' });
 
 /** One commerce product: facts, edit (PATCH /products/:id) and stock per warehouse. */
 export function ProductDetail() {
+  __useUiLocale();
   const { id = '' } = useParams();
   const product = useAsync<Product>(() => productsApi.get(id), [id]);
   const inventory = useAsync(() => api.get<Paginated<InventoryLevel>>(`/inventory?productId=${encodeURIComponent(id)}&pageSize=100`), [id]);
+  const warehouses = useAsync(() => stockApi.warehouses(), []);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Form>({ sku: '', name: '', description: '' });
   const [busy, setBusy] = useState(false);
@@ -24,12 +29,12 @@ export function ProductDetail() {
   useEffect(() => { if (p) setForm(toForm(p)); }, [p]);
 
   async function save() {
-    if (!window.confirm(`Save changes to ${p?.sku}?`)) return;
+    if (!window.confirm(__uiText("บันทึกการแก้ไขสินค้า {0}?", {"0": p?.sku}))) return;
     setBusy(true);
     setError(null);
     try {
       await productsApi.update(id, { sku: form.sku.trim(), name: form.name.trim(), description: form.description.trim() || null });
-      setMsg('Saved');
+      setMsg(__uiMessage("บันทึกการแก้ไขสินค้าเรียบร้อยแล้ว"));
       setEditing(false);
       product.reload();
     } catch (err) {
@@ -41,72 +46,78 @@ export function ProductDetail() {
 
   const levels = inventory.data?.items ?? [];
   const totals = levels.reduce((t, l) => ({ qty: t.qty + Number(l.quantity), reserved: t.reserved + Number(l.reserved) }), { qty: 0, reserved: 0 });
+  function cancelEdit() {
+    if (busy) return;
+    setEditing(false);
+    if (p) setForm(toForm(p));
+    setError(null);
+  }
 
   return (
     <Page>
       <PageHeader
-        back={{ to: '/products', label: 'Products' }}
-        title={p?.name ?? 'Product'}
+        back={{ to: '/products', label: 'แคตตาล็อกแพลตฟอร์ม' }}
+        title={p?.name ?? __uiText("รายละเอียดสินค้า")}
         badge={p && <StatusChip status={p.status} />}
         subtitle={p && <span className="font-mono">{p.sku}</span>}
         actions={
           <>
-            {p && !editing && <Button icon="edit" onClick={() => setEditing(true)}>Edit</Button>}
-            <Button icon="refresh" onClick={() => { product.reload(); inventory.reload(); }}>Refresh</Button>
+            <Button icon="refresh" onClick={() => { product.reload(); inventory.reload(); warehouses.reload(); }}>{__uiText("รีเฟรช")}</Button>
+            {p && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขสินค้า")}</Button>}
           </>
         }
       />
 
-      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{msg}</Alert>}
+      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert>}
       <ErrorText error={product.error} />
 
       {product.loading && !p ? (
         <Loading />
       ) : p ? (
         <>
-          {editing ? (
-            <FormPanel title="Edit product" icon="edit" busy={busy} error={error} onSubmit={save} onCancel={() => { setEditing(false); setForm(toForm(p)); setError(null); }}>
-              <Field label="SKU"><Input required value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} /></Field>
-              <Field label="Name"><Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
-              <Span><Field label="Description"><Textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field></Span>
+          {editing && <Modal title={__uiText("แก้ไขสินค้า")} onClose={cancelEdit} width={640}>
+            <FormPanel title={__uiText("ข้อมูลสินค้า")} icon="edit" busy={busy} error={error} onSubmit={save} onCancel={cancelEdit}>
+              <Field label={__uiText("SKU")}><Input required value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} /></Field>
+              <Field label={__uiText("ชื่อสินค้า")}><Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
+              <Span><Field label={__uiText("รายละเอียด")}><Textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field></Span>
             </FormPanel>
-          ) : (
+          </Modal>}
             <Panel className="p-4">
               <KeyValueGrid
                 items={[
                   { label: 'SKU', value: p.sku, mono: true },
-                  { label: 'Fulfillment', value: p.fulfillmentMode ?? '—' },
-                  { label: 'Lead time', value: p.leadTimeDays !== null && p.leadTimeDays !== undefined ? `${p.leadTimeDays} days` : '—' },
-                  { label: 'Updated', value: p.updatedAt ? fmt.when(p.updatedAt) : '—' },
-                  { label: 'Description', value: p.description || '—', wide: true },
+                  { label: __uiText("รูปแบบจัดส่ง"), value: p.fulfillmentMode ?? '—' },
+                  { label: __uiText("ระยะเวลาเตรียมสินค้า"), value: p.leadTimeDays !== null && p.leadTimeDays !== undefined ? __uiText('{0} วัน', {'0': p.leadTimeDays}) : '—' },
+                  { label: __uiText("อัปเดตล่าสุด"), value: p.updatedAt ? fmt.when(p.updatedAt) : '—' },
+                  { label: __uiText("รายละเอียด"), value: p.description || '—', wide: true },
                 ]}
               />
             </Panel>
-          )}
 
           <Panel className="overflow-hidden">
             <PanelHead
               icon="warehouse"
-              title="Stock by warehouse"
-              sub={levels.length > 0 && `on hand ${fmt.num(totals.qty)} · reserved ${fmt.num(totals.reserved)} · available ${fmt.num(totals.qty - totals.reserved)}`}
+              title={__uiText("สต็อกแยกตามคลัง")}
+              sub={inventory.data && __uiText("แสดง {0} จาก {1} รายการ · ยอดในรายการที่แสดง: คงเหลือ {2} · จอง {3} · พร้อมใช้ {4}",{'0':levels.length,'1':inventory.data.total,'2':fmt.num(totals.qty),'3':fmt.num(totals.reserved),'4':fmt.num(totals.qty - totals.reserved)})}
             />
             <ErrorText error={inventory.error} />
             {inventory.loading && !inventory.data ? (
               <Loading />
-            ) : levels.length ? (
+            ) : inventory.error && !inventory.data ? null : levels.length ? (
               <Table>
                 <THead>
-                  <TH>Warehouse</TH>
-                  <TH right>Quantity</TH>
-                  <TH right>Reserved</TH>
-                  <TH right>Available</TH>
+                  <TH>{__uiText("คลังสินค้า")}</TH>
+                  <TH right>{__uiText("คงเหลือ")}</TH>
+                  <TH right>{__uiText("จองแล้ว")}</TH>
+                  <TH right>{__uiText("พร้อมใช้")}</TH>
                 </THead>
                 <TBody>
                   {levels.map((l) => {
                     const available = Number(l.quantity) - Number(l.reserved);
+                    const warehouse = warehouses.data?.find(item => item.id === l.warehouseId);
                     return (
                       <TR key={l.id}>
-                        <TD kind="mono">{l.warehouseId}</TD>
+                        <TD>{warehouse ? <Stack2 top={warehouse.name} bottom={warehouse.code} /> : <span className="font-mono">{l.warehouseId}</span>}</TD>
                         <TD kind="num">{fmt.num(l.quantity)}</TD>
                         <TD kind="num">{fmt.num(l.reserved)}</TD>
                         <TD kind="num" className={available <= 0 ? 'text-[#c2333f] font-semibold' : undefined}>{fmt.num(available)}</TD>
@@ -116,7 +127,7 @@ export function ProductDetail() {
                 </TBody>
               </Table>
             ) : (
-              <Empty icon="warehouse">No stock recorded</Empty>
+              <Empty icon="warehouse">{__uiText("ยังไม่มีสต็อกที่บันทึกไว้")}</Empty>
             )}
           </Panel>
         </>

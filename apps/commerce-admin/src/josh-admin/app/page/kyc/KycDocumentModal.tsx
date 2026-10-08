@@ -1,7 +1,11 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
 import { useState } from 'react';
 import { KYC_DOCUMENT_TYPES, KycQueueEntry } from './kyc.types';
 import { KycStatusBadge } from './KycStatusBadge';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   entry: KycQueueEntry;
   onClose: () => void;
@@ -9,7 +13,7 @@ type Props = {
 
 function formatTimestamp(iso?: string) {
   if (!iso) return null;
-  return new Date(iso).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+  return new Date(iso).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { dateStyle: 'medium', timeStyle: 'short' });
 }
 
 type ThumbnailProps = {
@@ -51,6 +55,7 @@ function DocumentThumbnail({ thumbnailUrl, label, placeholderLabel, isNone }: Th
 
 /** View-only document detail modal — no approve/reject actions. */
 export default function KycDocumentModal({ entry, onClose }: Props) {
+  __useUiLocale();
   return (
     <div
       className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4"
@@ -61,10 +66,10 @@ export default function KycDocumentModal({ entry, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-1 flex items-start justify-between">
-          <h2 className="text-base font-bold text-gray-800">เอกสารยืนยันตัวตน</h2>
+          <h2 className="text-base font-bold text-gray-800">{__uiText("เอกสารยืนยันตัวตน")}</h2>
           <button
             type="button"
-            aria-label="ปิด"
+            aria-label={__uiText("ปิด")}
             className="text-gray-400 hover:text-gray-600"
             onClick={onClose}
           >
@@ -96,17 +101,17 @@ export default function KycDocumentModal({ entry, onClose }: Props) {
                   />
                   <div className="min-w-0 flex-1 text-xs leading-relaxed text-gray-500">
                     {doc.status === 'none' ? (
-                      <span>ยังไม่มีการส่งเอกสารนี้</span>
+                      <span>{__uiText("ยังไม่มีการส่งเอกสารนี้")}</span>
                     ) : (
                       <>
-                        {doc.status === 'rejected' && decidedText && <span>ปฏิเสธเมื่อ {decidedText}</span>}
-                        {doc.status === 'approved' && decidedText && <span>ยืนยันเมื่อ {decidedText}</span>}
-                        {doc.status === 'pending' && submittedText && <span>ส่งเมื่อ {submittedText}</span>}
+                        {doc.status === 'rejected' && decidedText && <span>{__uiText("ปฏิเสธเมื่อ ")}{decidedText}</span>}
+                        {doc.status === 'approved' && decidedText && <span>{__uiText("ยืนยันเมื่อ ")}{decidedText}</span>}
+                        {doc.status === 'pending' && submittedText && <span>{__uiText("ส่งเมื่อ ")}{submittedText}</span>}
                       </>
                     )}
                     {doc.status === 'rejected' && doc.rejectionReason && (
                       <div className="mt-2 rounded-md border border-red-200 bg-red-50 px-2.5 py-2 text-xs text-red-800">
-                        <strong>เหตุผลที่ปฏิเสธ:</strong> {doc.rejectionReason}
+                        <strong>{__uiText("เหตุผลที่ปฏิเสธ:")}</strong> {doc.rejectionReason}
                       </div>
                     )}
                   </div>
@@ -117,8 +122,7 @@ export default function KycDocumentModal({ entry, onClose }: Props) {
         </div>
 
         <p className="mt-4 border-t border-gray-100 pt-3 text-[11px] text-gray-400">
-          การอนุมัติ/ปฏิเสธคำขอนี้ทำในระบบ CS-CRM แยกต่างหาก หน้านี้ใช้สำหรับดูเอกสารเท่านั้น
-        </p>
+          {__uiText("การอนุมัติ/ปฏิเสธคำขอนี้ทำในระบบ CS-CRM แยกต่างหาก หน้านี้ใช้สำหรับดูเอกสารเท่านั้น")}</p>
       </div>
     </div>
   );

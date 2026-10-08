@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thai Ops Cockpit - การเชื่อมต่อ AI (MCP)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface": "#f9f9ff",
+            "primary-fixed": "#dde1ff",
+            "on-surface-variant": "#444655",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-background": "#0e1b32",
+            "surface-container-highest": "#d7e2ff",
+            "inverse-surface": "#243048",
+            "tertiary-container": "#bc4600",
+            "secondary-fixed": "#d3e3ff",
+            "tertiary-fixed": "#ffdbcd",
+            "on-tertiary-fixed": "#360f00",
+            "secondary-container": "#d0e1fd",
+            "outline": "#747687",
+            "surface-dim": "#cddaf9",
+            "primary-container": "#365cf5",
+            "on-primary-fixed": "#001257",
+            "on-tertiary-container": "#ffebe4",
+            "error-container": "#ffdad6",
+            "on-primary": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "background": "#f9f9ff",
+            "on-secondary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "inverse-primary": "#b9c3ff",
+            "surface-container-high": "#e0e8ff",
+            "surface-tint": "#214ce7",
+            "surface-container-low": "#f1f3ff",
+            "on-secondary-fixed": "#0b1c31",
+            "error": "#ba1a1a",
+            "secondary": "#4f5f77",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-bright": "#f9f9ff",
+            "primary": "#0a3fdc",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-error-container": "#93000a",
+            "on-surface": "#0e1b32",
+            "surface-variant": "#d7e2ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-primary-container": "#ededff",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-error": "#ffffff",
+            "on-primary-fixed-variant": "#0034c0",
+            "surface-container": "#e8eeff",
+            "tertiary": "#943500",
+            "outline-variant": "#c4c5d8"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-lg": "1.5rem",
+            "gutter-mobile": "1rem",
+            "space-md": "1rem",
+            "gutter": "1.5rem",
+            "margin": "2rem",
+            "space-sm": "0.5rem",
+            "space-2xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "margin-mobile": "1rem"
+          },
+          "fontFamily": {
+            "label-sm": ["\"Inter, Noto Sans, sans-serif\""],
+            "body-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-lg-mobile": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans, sans-serif\""],
+            "headline-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "code-sm": ["\"JetBrains Mono, monospace\""],
+            "body-lg": ["\"Noto Sans, Inter, sans-serif\""]
+          },
+          "fontSize": {
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="h-full font-body-md text-on-surface bg-[#f6f8fc] antialiased flex flex-row selection:bg-[#eef2ff] selection:text-[#365cf5]">
+<!-- CRITICAL EXPORT REQUIREMENT: UI Translation Catalogue -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "AI connectors (MCP)": { "th": "AI connectors (MCP)", "en": "AI connectors (MCP)" },
+    "ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของ commerce ได้": { "th": "ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของ commerce ได้", "en": "Allow Claude or ChatGPT to read & summarize commerce analytics securely." },
+    "Refresh": { "th": "Refresh", "en": "Refresh" },
+    "ขั้นตอนการเชื่อมต่อ": { "th": "ขั้นตอนการเชื่อมต่อ", "en": "Setup Guide" },
+    "โหลดสถานะไม่สำเร็จ": { "th": "โหลดสถานะไม่สำเร็จ", "en": "Failed to load status" },
+    "MCP URL": { "th": "MCP URL", "en": "MCP URL" },
+    "MCP ยังไม่เปิดบนเซิร์ฟเวอร์นี้ — ตั้ง MCP_PUBLIC_URL (ดู docs/mcp.md)": { "th": "MCP ยังไม่เปิดบนเซิร์ฟเวอร์นี้ — ตั้ง MCP_PUBLIC_URL (ดู docs/mcp.md)", "en": "MCP is not active on this server — set MCP_PUBLIC_URL (see docs/mcp.md)" },
+    "AI ที่เชื่อมต่อ (ทุกบัญชี)": { "th": "AI ที่เชื่อมต่อ (ทุกบัญชี)", "en": "Connected AI (All Accounts)" },
+    "AI ที่เชื่อมต่อกับบัญชีของคุณ": { "th": "AI ที่เชื่อมต่อกับบัญชีของคุณ", "en": "Connected AI (Your Account)" },
+    "ยังไม่มี AI เชื่อมต่อ": { "th": "ยังไม่มี AI เชื่อมต่อ", "en": "No AI connectors linked yet" },
+    "แอป AI": { "th": "แอป AI", "en": "AI Application" },
+    "บัญชี": { "th": "บัญชี", "en": "Account" },
+    "สถานะ": { "th": "สถานะ", "en": "Status" },
+    "ใช้ล่าสุด": { "th": "ใช้ล่าสุด", "en": "Last Active" },
+    "เรียกข้อมูล": { "th": "เรียกข้อมูล", "en": "Requests" },
+    "เชื่อมครั้งแรก": { "th": "เชื่อมครั้งแรก", "en": "First Connected" },
+    "เชื่อมต่ออยู่": { "th": "เชื่อมต่ออยู่", "en": "Connected" },
+    "แก้ไขได้ (ต้องยืนยัน)": { "th": "แก้ไขได้ (ต้องยืนยัน)", "en": "Write Allowed (Confirm Required)" },
+    "อ่านอย่างเดียว": { "th": "อ่านอย่างเดียว", "en": "Read Only" },
+    "หมดอายุ / ยกเลิกแล้ว": { "th": "หมดอายุ / ยกเลิกแล้ว", "en": "Revoked / Expired" },
+    "ยกเลิก": { "th": "ยกเลิก", "en": "Revoke" },
+    "AI ทำอะไรไปบ้าง": { "th": "AI ทำอะไรไปบ้าง", "en": "Audit Trail & AI Actions" },
+    "ยังไม่มีการเรียกข้อมูล": { "th": "ยังไม่มีการเรียกข้อมูล", "en": "No function calls recorded yet" },
+    "เวลา": { "th": "เวลา", "en": "Timestamp" },
+    "สิ่งที่ทำ": { "th": "สิ่งที่ทำ", "en": "Action Executed" },
+    "เงื่อนไข": { "th": "เงื่อนไข", "en": "Parameters & Payload" },
+    "แก้ไข": { "th": "แก้ไข", "en": "Edit" },
+    "ขอดูตัวอย่าง ยังไม่ได้ทำ": { "th": "ขอดูตัวอย่าง ยังไม่ได้ทำ", "en": "Dry-run / Preview only (Not committed)" },
+    "เก็บต่อเลยตอนนี้": { "th": "เก็บต่อเลยตอนนี้", "en": "Collect & Retry Now" },
+    "ค้นหา SKU / สินค้า": { "th": "ค้นหา SKU / สินค้า", "en": "Search SKU / Product..." },
+    "เงื่อนไขเริ่ม Workflow": { "th": "เงื่อนไขเริ่ม Workflow", "en": "Workflow Trigger Conditions" },
+    "ชื่อฟิลด์": { "th": "ชื่อฟิลด์", "en": "Field Name" },
+    "ได้รับสูงสุดต่อคน (ครั้ง)": { "th": "ได้รับสูงสุดต่อคน (ครั้ง)", "en": "Max allocation per person (times)" },
+    "เทียบราคาราย SKU": { "th": "เทียบราคาราย SKU", "en": "Compare Price per SKU" },
+    "ป้ายโปร แถวที่ {0}": { "th": "ป้ายโปร แถวที่ {0}", "en": "Promotion tag row {0}" },
+    "เพิ่มรูปสำเร็จ": { "th": "เพิ่มรูปสำเร็จ", "en": "Image uploaded successfully" },
+    "ไม่มีรอบสั่งซื้อ": { "th": "ไม่มีรอบสั่งซื้อ", "en": "No purchase batch found" },
+    "ยังไม่มีรูปภาพหรือวิดีโอ": { "th": "ยังไม่มีรูปภาพหรือวิดีโอ", "en": "No images or video assets uploaded" },
+    "ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic": { "th": "ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic", "en": "Tiered volume pricing (buy 5+ discount) configured in Promotion Mechanic" },
+    "ลบรูปเก่าที่ถูกแทนที่ซ้ำจนกู้คืนไม่ได้แล้วออกจาก S3 — แต่ละช่องรูปเก็บรูปก่อนหน้าไว้ 1 ภาพเสมอ": { "th": "ลบรูปเก่าที่ถูกแทนที่ซ้ำจนกู้คืนไม่ได้แล้วออกจาก S3 — แต่ละช่องรูปเก็บรูปก่อนหน้าไว้ 1 ภาพเสมอ", "en": "Permanently purged overridden assets from S3 — retain single prior rollback snapshot per image slot." },
+    "วันที่เริ่ม/สิ้นสุดจะถูกรีเซ็ตเป็นค่าเริ่มต้น แก้ไขได้ในหน้าถัดไป": { "th": "วันที่เริ่ม/สิ้นสุดจะถูกรีเซ็ตเป็นค่าเริ่มต้น แก้ไขได้ในหน้าถัดไป", "en": "Start and end dates reset to defaults; configurable on the subsequent screen." },
+    "สลับไปใช้รูปนี้": { "th": "สลับไปใช้รูปนี้", "en": "Switch to this image" },
+    "หลักฐานจะตรวจจากรายงานนี้เมื่อบันทึก": { "th": "หลักฐานจะตรวจจากรายงานนี้เมื่อบันทึก", "en": "Verification audit is evaluated against this report upon commit." },
+    "โอกาสเพิ่มเติม": { "th": "โอกาสเพิ่มเติม", "en": "Additional Opportunities" },
+    "ยกเลิกการเชื่อมต่อ {0} ของ {1}? AI จะใช้ข้อมูลต่อไม่ได้ทันที ต้อง login ใหม่ถ้าจะใช้อีก": { "th": "ยกเลิกการเชื่อมต่อ {0} ของ {1}? AI จะใช้ข้อมูลต่อไม่ได้ทันที ต้อง login ใหม่ถ้าจะใช้อีก", "en": "Revoke connection for {0} owned by {1}? AI will immediately lose data access and must re-authenticate." },
+    "ค้นคลังเว็บคู่แข่ง": { "th": "ค้นคลังเว็บคู่แข่ง", "en": "Competitor warehouse crawl" },
+    "เว็บที่เก็บข้อมูล": { "th": "เว็บที่เก็บข้อมูล", "en": "Scraped Source Site" },
+    "โจทย์ research": { "th": "โจทย์ research", "en": "Research Topic" },
+    "รายงาน research": { "th": "รายงาน research", "en": "Research Synthesis Report" },
+    "แค็ตตาล็อก josh": { "th": "แค็ตตาล็อก josh", "en": "Josh Product Catalog" },
+    "สรุปข้อมูลจาก ERP": { "th": "สรุปข้อมูลจาก ERP", "en": "ERP Consolidated Summary" },
+    "สต็อกต่อคลัง": { "th": "สต็อกต่อคลัง", "en": "Stock per Warehouse Facility" },
+    "สร้างโจทย์ research": { "th": "สร้างโจทย์ research", "en": "Create Research Query" },
+    "สั่งรัน research": { "th": "สั่งรัน research", "en": "Execute Research Batch" },
+    "บันทึกราคาคู่แข่ง": { "th": "บันทึกราคาคู่แข่ง", "en": "Commit Competitor Pricing" },
+    "ส่ง event ซ้ำ": { "th": "ส่ง event ซ้ำ", "en": "Replay Webhook Event" },
+    "สั่งเริ่ม/หยุดเก็บข้อมูลเว็บ": { "th": "สั่งเริ่ม/หยุดเก็บข้อมูลเว็บ", "en": "Toggle Web Crawler Engine" },
+    "ปรับสต็อก": { "th": "ปรับสต็อก", "en": "Adjust Inventory Balance" }
+  }
+  </script>
+<!-- Side Navigation Bar (Shared Component JSON exact tokens) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-[#e1e7f0] shadow-none flex flex-col justify-between p-3 select-none">
+<div class="flex flex-col gap-4">
+<!-- Cockpit Header & Avatar -->
+<div class="flex items-center gap-3 px-3 py-2 border-b border-[#e1e7f0]/60 pb-3">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-white flex items-center justify-center font-bold text-headline-sm font-headline-sm tracking-tight shadow-sm">
+          TO
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface truncate tracking-tight">Thai Ops Cockpit</span>
+<span class="text-label-sm font-label-sm text-secondary truncate">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Navigation Tabs (7 Core Work Areas) -->
+<nav aria-label="Main Navigation" class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal font-label-md text-label-md" href="#inventory">
+<span class="material-symbols-outlined text-[20px] text-secondary">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal font-label-md text-label-md" href="#orders">
+<span class="material-symbols-outlined text-[20px] text-secondary">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal font-label-md text-label-md" href="#customers">
+<span class="material-symbols-outlined text-[20px] text-secondary">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal font-label-md text-label-md" href="#marketing">
+<span class="material-symbols-outlined text-[20px] text-secondary">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal font-label-md text-label-md" href="#reports">
+<span class="material-symbols-outlined text-[20px] text-secondary">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ [ACTIVE] -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-medium border-l-[3px] border-primary transition-colors duration-150 cursor-pointer active:scale-[0.99] font-label-md text-label-md" href="#integrations">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">sync_alt</span>
+<span class="font-medium text-[#0a3fdc]">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal font-label-md text-label-md" href="#settings">
+<span class="material-symbols-outlined text-[20px] text-secondary">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer / Environment Badge -->
+<div class="px-3 py-3 border-t border-[#e1e7f0]/70 flex flex-col gap-2">
+<div class="flex items-center justify-between text-xs text-secondary">
+<span class="inline-flex items-center gap-1.5 font-medium">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+          MCP Gateway Online
+        </span>
+<span class="font-code-sm text-code-sm text-[#747687]">v2.4-bkk</span>
+</div>
+<div class="text-[11px] text-[#747687] leading-relaxed">
+        TH-BKK Cluster #1 | Latency 18ms
+      </div>
+</div>
+</aside>
+<!-- Main Canvas Wrapper -->
+<div class="pl-64 flex-1 flex flex-col min-w-0 bg-[#f6f8fc]">
+<!-- Top Contextual App Bar (Matching JSON Spec & Styling) -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest border-b border-[#e1e7f0] shadow-sm flex items-center justify-between px-8">
+<!-- Breadcrumb & Route Context -->
+<div class="flex items-center gap-3">
+<nav class="flex items-center gap-2 text-body-md font-body-md text-secondary">
+<span class="hover:text-primary cursor-pointer transition-colors" data-i18n="category_name">ระบบเชื่อมต่อ</span>
+<span class="text-outline-variant font-medium">/</span>
+<span class="text-on-surface font-headline-sm font-semibold text-headline-sm" data-i18n="route_title">การเชื่อมต่อ AI</span>
+</nav>
+<span class="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eef2ff] text-[#365cf5] border border-[#d0e1fd]" data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</div>
+<!-- Trailing Controls Cluster -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher Pill -->
+<button class="h-9 px-3 rounded-lg border border-[#e1e7f0] bg-white text-on-surface hover:bg-[#f8fafc] text-label-md font-label-md font-medium flex items-center gap-1.5 transition-all shadow-xs" id="langToggleBtn" onclick="toggleLanguage()" title="สลับภาษา / Switch Language">
+<span class="material-symbols-outlined text-[18px] text-[#52627a]">translate</span>
+<span id="currentLangLabel">ไทย / EN</span>
+</button>
+<!-- Notification Bell -->
+<button class="w-9 h-9 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:text-on-surface hover:bg-[#f8fafc] flex items-center justify-center transition-all relative" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#365cf5]"></span>
+</button>
+<!-- Help Documentation Link -->
+<a class="w-9 h-9 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:text-on-surface hover:bg-[#f8fafc] flex items-center justify-center transition-all" href="#docs" title="เอกสารช่วยเหลือ (docs/mcp.md)">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</a>
+<!-- Divider -->
+<div class="h-6 w-px bg-[#e1e7f0]"></div>
+<!-- Admin Profile -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer group">
+<div class="w-9 h-9 rounded-full bg-[#d0e1fd] text-[#0a3fdc] font-semibold text-body-sm flex items-center justify-center border border-[#b9c3ff]">
+            สม
+          </div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold text-on-surface group-hover:text-primary transition-colors">สมชาย กิจเจริญ</span>
+<span class="text-[11px] text-secondary leading-tight">Admin • somchai.k@company.co.th</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[18px]">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Operational Stage (1240px Max Width Centered) -->
+<main class="flex-1 w-full max-w-[1240px] mx-auto p-8 flex flex-col gap-6">
+<!-- Page Headline & High-Level Actions -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg font-bold text-on-surface tracking-tight" data-i18n="AI connectors (MCP)">AI connectors (MCP)</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#e8f5ed] text-[#157347] border border-[#bbf7d0]">
+<span class="w-2 h-2 rounded-full bg-[#157347] animate-pulse"></span>
+<span class="font-semibold">SSE &amp; STDIO READY</span>
+</span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1" data-i18n="ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของ commerce ได้">
+            ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของ commerce ได้
+          </p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Refresh Button -->
+<button class="h-10 px-4 rounded-lg bg-white border border-[#e1e7f0] text-[#17243b] hover:bg-[#f1f5f9] text-label-md font-label-md font-medium inline-flex items-center gap-2 transition-all shadow-xs active:scale-95" onclick="triggerRefresh()">
+<span class="material-symbols-outlined text-[18px] text-[#52627a]" id="refreshIcon">refresh</span>
+<span data-i18n="Refresh">Refresh</span>
+</button>
+<!-- Setup Guide Action Button -->
+<button class="h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-[#2947d1] text-white text-label-md font-label-md font-medium inline-flex items-center gap-2 transition-all shadow-xs active:scale-95" onclick="openSetupModal()">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span data-i18n="ขั้นตอนการเชื่อมต่อ">ขั้นตอนการเชื่อมต่อ</span>
+</button>
+</div>
+</section>
+<!-- MCP Server Config / Status Panel Card -->
+<section class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm p-6 relative overflow-hidden">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2.5">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary font-semibold" data-i18n="MCP URL">MCP URL</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm font-medium bg-[#eef2ff] text-[#365cf5]">Endpoint v1</span>
+<span class="inline-flex items-center gap-1 text-[11px] text-[#157347] bg-[#e8f5ed] px-2 py-0.5 rounded font-medium">
+<span class="material-symbols-outlined text-[14px]">lock</span> TLS 1.3
+              </span>
+<span class="inline-flex items-center gap-1 text-[11px] text-[#52627a] bg-[#f1f5f9] px-2 py-0.5 rounded font-medium">
+<span class="material-symbols-outlined text-[14px]">shield</span> Sandboxed Read-only Default
+              </span>
+</div>
+<!-- URL Display and Copy Bar -->
+<div class="mt-2.5 flex items-center gap-2">
+<div class="flex-1 flex items-center bg-[#f8fafc] border border-[#e1e7f0] rounded-lg px-3 py-2 font-code-sm text-code-sm text-[#0e1b32] overflow-x-auto selection:bg-[#d0e1fd]">
+<span class="text-[#747687] select-none mr-1">$</span>
+<span id="mcpEndpoint">https://mcp.ops.internal/v1/sse?token=live_ops_99bf203a60e8d12048</span>
+</div>
+<button class="h-10 px-4 rounded-lg bg-white border border-[#e1e7f0] hover:bg-[#f1f5f9] text-[#17243b] text-label-md font-label-md font-medium flex items-center gap-1.5 shrink-0 transition-colors" onclick="copyMcpUrl()">
+<span class="material-symbols-outlined text-[18px] text-[#52627a]" id="copyIcon">content_copy</span>
+<span id="copyText">คัดลอก URL</span>
+</button>
+</div>
+</div>
+<!-- Documentation Quick Info -->
+<div class="lg:w-80 shrink-0 lg:border-l lg:border-[#e1e7f0] lg:pl-6 flex flex-col justify-center">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider">Protocol Status</span>
+<div class="mt-1 flex items-baseline gap-2">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">พร้อมใช้งาน (Active)</span>
+<span class="text-xs text-[#157347] font-semibold">100% SLA</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+              รองรับ Claude Desktop Client, ChatGPT Plugins &amp; Cursor Agent
+            </p>
+<a class="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#365cf5] hover:underline" href="#docs">
+<span>คู่มือการติดตั้ง docs/mcp.md</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Conditional Helper Notice Banner -->
+<div class="mt-4 pt-4 border-t border-[#e1e7f0] flex items-center justify-between text-xs text-secondary bg-[#f8fafc] -mx-6 -mb-6 px-6 py-3">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-[#52627a]">info</span>
+<span data-i18n="MCP ยังไม่เปิดบนเซิร์ฟเวอร์นี้ — ตั้ง MCP_PUBLIC_URL (ดู docs/mcp.md)">MCP ยังไม่เปิดบนเซิร์ฟเวอร์นี้ — ตั้ง MCP_PUBLIC_URL (ดู docs/mcp.md)</span>
+</div>
+<span class="font-code-sm text-[11px] text-[#747687]">PORT: 8089 • WORKERS: 4</span>
+</div>
+</section>
+<!-- Connected AI Applications Card -->
+<section class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<!-- Card Header & Navigation Tabs -->
+<div class="border-b border-[#e1e7f0] px-6 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-6">
+<button class="pb-3.5 text-label-md font-label-md font-semibold text-[#365cf5] border-b-2 border-[#365cf5] flex items-center gap-2" id="tabMyAccount" onclick="switchConnectorTab('mine')">
+<span data-i18n="AI ที่เชื่อมต่อกับบัญชีของคุณ">AI ที่เชื่อมต่อกับบัญชีของคุณ</span>
+<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-[#eef2ff] text-[#365cf5]">3</span>
+</button>
+<button class="pb-3.5 text-label-md font-label-md font-medium text-secondary hover:text-on-surface border-b-2 border-transparent flex items-center gap-2 transition-colors" id="tabAllAccounts" onclick="switchConnectorTab('all')">
+<span data-i18n="AI ที่เชื่อมต่อ (ทุกบัญชี)">AI ที่เชื่อมต่อ (ทุกบัญชี)</span>
+<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-[#f1f5f9] text-[#52627a]">8</span>
+</button>
+</div>
+<div class="pb-3 flex items-center gap-2 text-xs text-secondary">
+<span class="material-symbols-outlined text-[16px] text-[#157347]">verified_user</span>
+<span>ยืนยันสิทธิ์ด้วย OAuth2 &amp; Session Token</span>
+</div>
+</div>
+<!-- Connectors Table View -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="connectorsTable">
+<thead>
+<tr class="h-11 bg-[#f8fafc] text-[#52627a] text-xs font-semibold uppercase tracking-wider border-b border-[#e1e7f0]">
+<th class="px-6 py-2" data-i18n="แอป AI">แอป AI</th>
+<th class="px-4 py-2" data-i18n="บัญชี">บัญชี</th>
+<th class="px-4 py-2" data-i18n="สถานะ">สถานะ</th>
+<th class="px-4 py-2" data-i18n="เชื่อมครั้งแรก">เชื่อมครั้งแรก</th>
+<th class="px-4 py-2" data-i18n="ใช้ล่าสุด">ใช้ล่าสุด</th>
+<th class="px-4 py-2 text-right" data-i18n="เรียกข้อมูล">เรียกข้อมูล</th>
+<th class="px-6 py-2 text-right">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-sm font-body-sm text-on-surface">
+<!-- Record 1: Claude Desktop -->
+<tr class="h-[60px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#fef3c7] text-[#92400e] flex items-center justify-center font-bold text-xs border border-[#fde68a]">
+                      CL
+                    </div>
+<div>
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                        Claude Desktop
+                        <span class="px-1.5 py-0.2 rounded text-[10px] font-code-sm bg-[#f1f5f9] text-[#52627a]">v0.7.1</span>
+</div>
+<div class="text-[12px] text-secondary">Anthropic Local Client • SSE transport</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="font-medium text-on-surface">somchai.k@company.co.th</span>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#eef2ff] text-[#314bb5] border border-[#d0e1fd]" data-i18n="อ่านอย่างเดียว">
+<span class="material-symbols-outlined text-[13px]">visibility</span> อ่านอย่างเดียว
+                  </span>
+</td>
+<td class="px-4 py-3 text-secondary">12 ม.ค. 2025 (10:14)</td>
+<td class="px-4 py-3">
+<span class="font-medium text-on-surface">2 นาทีที่แล้ว</span>
+</td>
+<td class="px-4 py-3 text-right font-code-sm font-medium text-on-surface">
+                  1,482 ครั้ง
+                </td>
+<td class="px-6 py-3 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="h-8 px-2.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-on-surface transition-colors" data-i18n="แก้ไข" onclick="editPermission('Claude Desktop')">แก้ไข</button>
+<button class="h-8 px-2.5 rounded-lg border border-[#fca5a5]/40 bg-[#fdf2f2] hover:bg-[#fee2e2] text-xs font-medium text-[#c2333f] transition-colors" data-i18n="ยกเลิก" onclick="confirmRevoke('Claude Desktop', 'somchai.k@company.co.th')">ยกเลิก</button>
+</div>
+</td>
+</tr>
+<!-- Record 2: ChatGPT Team -->
+<tr class="h-[60px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#d1fae5] text-[#065f46] flex items-center justify-center font-bold text-xs border border-[#a7f3d0]">
+                      GPT
+                    </div>
+<div>
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                        ChatGPT Team
+                        <span class="px-1.5 py-0.2 rounded text-[10px] font-code-sm bg-[#e8f5ed] text-[#157347]">OAuth2</span>
+</div>
+<div class="text-[12px] text-secondary">Custom GPT Web • Commerce Co-pilot</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="font-medium text-on-surface">somchai.k@company.co.th</span>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#fef9e7] text-[#b08900] border border-[#fef08a]" data-i18n="แก้ไขได้ (ต้องยืนยัน)">
+<span class="material-symbols-outlined text-[13px]">edit_note</span> แก้ไขได้ (ต้องยืนยัน)
+                  </span>
+</td>
+<td class="px-4 py-3 text-secondary">03 ก.พ. 2025 (15:20)</td>
+<td class="px-4 py-3">
+<span class="font-medium text-on-surface">14 นาทีที่แล้ว</span>
+</td>
+<td class="px-4 py-3 text-right font-code-sm font-medium text-on-surface">
+                  842 ครั้ง
+                </td>
+<td class="px-6 py-3 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="h-8 px-2.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-on-surface transition-colors" data-i18n="แก้ไข" onclick="editPermission('ChatGPT Team')">แก้ไข</button>
+<button class="h-8 px-2.5 rounded-lg border border-[#fca5a5]/40 bg-[#fdf2f2] hover:bg-[#fee2e2] text-xs font-medium text-[#c2333f] transition-colors" data-i18n="ยกเลิก" onclick="confirmRevoke('ChatGPT Team', 'somchai.k@company.co.th')">ยกเลิก</button>
+</div>
+</td>
+</tr>
+<!-- Record 3: Cursor / Internal Ops Agent -->
+<tr class="h-[60px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#e0e7ff] text-[#3730a3] flex items-center justify-center font-bold text-xs border border-[#c7d2fe]">
+                      CR
+                    </div>
+<div>
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                        Cursor / Internal Ops Agent
+                        <span class="px-1.5 py-0.2 rounded text-[10px] font-code-sm bg-[#f1f5f9] text-[#52627a]">Stdio</span>
+</div>
+<div class="text-[12px] text-secondary">CLI / Developer Backend Automation</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="font-medium text-on-surface">somchai.k@company.co.th</span>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#eef2ff] text-[#314bb5] border border-[#d0e1fd]" data-i18n="อ่านอย่างเดียว">
+<span class="material-symbols-outlined text-[13px]">visibility</span> อ่านอย่างเดียว
+                  </span>
+</td>
+<td class="px-4 py-3 text-secondary">24 ม.ค. 2025 (09:00)</td>
+<td class="px-4 py-3">
+<span class="font-medium text-on-surface">3 ชั่วโมงที่แล้ว</span>
+</td>
+<td class="px-4 py-3 text-right font-code-sm font-medium text-on-surface">
+                  3,219 ครั้ง
+                </td>
+<td class="px-6 py-3 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="h-8 px-2.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-on-surface transition-colors" data-i18n="แก้ไข" onclick="editPermission('Cursor Ops Agent')">แก้ไข</button>
+<button class="h-8 px-2.5 rounded-lg border border-[#fca5a5]/40 bg-[#fdf2f2] hover:bg-[#fee2e2] text-xs font-medium text-[#c2333f] transition-colors" data-i18n="ยกเลิก" onclick="confirmRevoke('Cursor Ops Agent', 'somchai.k@company.co.th')">ยกเลิก</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty state placeholder (hidden initially, toggleable) -->
+<div class="hidden p-12 text-center flex-col items-center justify-center" id="emptyConnectorsNotice">
+<span class="material-symbols-outlined text-[48px] text-[#8c9bb0] mb-2">link_off</span>
+<p class="text-body-md font-semibold text-on-surface" data-i18n="ยังไม่มี AI เชื่อมต่อ">ยังไม่มี AI เชื่อมต่อ</p>
+<p class="text-body-sm text-secondary mt-1">เพิ่ม Connector ผ่าน Claude หรือสร้าง MCP Client ใหม่</p>
+</div>
+</section>
+<!-- AI Audit Trail / Activity Log Card -->
+<section class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden flex flex-col">
+<!-- Section Header -->
+<div class="p-6 border-b border-[#e1e7f0]">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[22px] text-[#365cf5]">manage_search</span>
+<h2 class="text-headline-md font-headline-md font-bold text-on-surface" data-i18n="AI ทำอะไรไปบ้าง">AI ทำอะไรไปบ้าง</h2>
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#e8f5ed] text-[#157347]">Audit Log 100%</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+                บันทึกการเรียกใช้ฟังก์ชัน (Tool Calls) ข้อมูลที่เข้าถึง และการจำลองผลลัพธ์เพื่อความโปร่งใสและตรวจสอบย้อนหลังได้ 100%
+              </p>
+</div>
+<div class="flex items-center gap-2 self-start md:self-auto">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#f8fafc] border border-[#e1e7f0] text-xs text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                บันทึกอัตโนมัติ (Live stream)
+              </span>
+</div>
+</div>
+<!-- Filter & Operational Search Bar -->
+<div class="mt-5 grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<!-- Search SKU / Keyword -->
+<div class="md:col-span-5 relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-[#8c9bb0]">search</span>
+<input class="w-full h-10 pl-9 pr-14 bg-white border border-[#e1e7f0] rounded-lg text-body-sm text-[#17243b] placeholder-[#8c9bb0] focus:outline-none focus:border-[#365cf5] transition-all" id="logSearchInput" placeholder="ค้นหา SKU / สินค้า" type="text"/>
+<span class="absolute right-3 top-2.5 text-[11px] font-code-sm text-[#8c9bb0] border border-[#e1e7f0] px-1 rounded">⌘K</span>
+</div>
+<!-- Action Type Filter -->
+<div class="md:col-span-4">
+<select class="w-full h-10 bg-white border border-[#e1e7f0] rounded-lg text-body-sm text-[#17243b] px-3 focus:outline-none focus:border-[#365cf5]">
+<option value="all">ทุกการกระทำ (All Actions)</option>
+<option value="get">GET (อ่านข้อมูล)</option>
+<option value="dry_run">DRY_RUN (จำลองผลลัพธ์)</option>
+<option value="draft">DRAFT (สร้างคำขอรอยืนยัน)</option>
+</select>
+</div>
+<!-- Helper Note Label & Inline Action -->
+<div class="md:col-span-3 flex items-center justify-between md:justify-end gap-3 text-xs text-secondary">
+<span class="italic text-[12px] text-[#747687]" title="Searches rendered buffer">ค้นหาในหน้านี้เท่านั้น</span>
+<button class="h-10 px-3.5 rounded-lg bg-[#365cf5]/10 hover:bg-[#365cf5]/15 text-[#365cf5] font-medium text-xs flex items-center gap-1.5 transition-colors border border-[#365cf5]/20" onclick="triggerImmediateFetch()">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span data-i18n="เก็บต่อเลยตอนนี้">เก็บต่อเลยตอนนี้</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Audit Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="auditTable">
+<thead>
+<tr class="h-11 bg-[#f8fafc] text-[#52627a] text-xs font-semibold uppercase tracking-wider border-b border-[#e1e7f0]">
+<th class="px-6 py-2" data-i18n="เวลา">เวลา</th>
+<th class="px-4 py-2">แอป AI &amp; บัญชี</th>
+<th class="px-4 py-2" data-i18n="สิ่งที่ทำ">สิ่งที่ทำ</th>
+<th class="px-4 py-2" data-i18n="เงื่อนไข">เงื่อนไข</th>
+<th class="px-6 py-2 text-right">ผลลัพธ์ / สถานะ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-sm font-body-sm text-on-surface">
+<!-- Tool Call 1: Daily Analytics -->
+<tr class="h-[54px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-6 py-3 font-code-sm text-code-sm text-secondary whitespace-nowrap">
+                  14:42:19
+                </td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface">Claude Desktop</span>
+<span class="text-xs text-secondary">(somchai.k)</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#eef2ff] text-[#314bb5]">GET</span>
+<span class="font-medium text-on-surface">อ่านสรุปยอดขายประจำวัน</span>
+</div>
+</td>
+<td class="px-4 py-3 font-code-sm text-code-sm text-secondary">
+<span class="bg-[#f1f5f9] px-2 py-0.5 rounded text-[12px] text-[#0e1b32]">date_range: "today"</span>
+</td>
+<td class="px-6 py-3 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 200 OK
+                  </span>
+<span class="ml-2 font-code-sm text-[11px] text-[#747687]">84ms</span>
+</td>
+</tr>
+<!-- Tool Call 2: Inventory SKU Check -->
+<tr class="h-[54px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-6 py-3 font-code-sm text-code-sm text-secondary whitespace-nowrap">
+                  14:38:05
+                </td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface">ChatGPT Team</span>
+<span class="text-xs text-secondary">(somchai.k)</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#eef2ff] text-[#314bb5]">GET</span>
+<span class="font-medium text-on-surface">ตรวจสอบสต็อก SKU</span>
+</div>
+</td>
+<td class="px-4 py-3 font-code-sm text-code-sm text-secondary">
+<span class="bg-[#f1f5f9] px-2 py-0.5 rounded text-[12px] text-[#0e1b32]">SKU: TH-9941 (WH-BKK-01)</span>
+</td>
+<td class="px-6 py-3 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]" data-i18n="อ่านอย่างเดียว">
+                    อ่านอย่างเดียว / 200 OK
+                  </span>
+<span class="ml-2 font-code-sm text-[11px] text-[#747687]">112ms</span>
+</td>
+</tr>
+<!-- Tool Call 3: Dry run preview -->
+<tr class="h-[54px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-6 py-3 font-code-sm text-code-sm text-secondary whitespace-nowrap">
+                  14:15:30
+                </td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface">ChatGPT Team</span>
+<span class="text-xs text-secondary">(somchai.k)</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#fef9e7] text-[#997404]">DRY_RUN</span>
+<span class="font-medium text-on-surface" data-i18n="ขอดูตัวอย่าง ยังไม่ได้ทำ">ขอดูตัวอย่าง ยังไม่ได้ทำ</span>
+</div>
+</td>
+<td class="px-4 py-3 font-code-sm text-code-sm text-secondary">
+<span class="bg-[#f1f5f9] px-2 py-0.5 rounded text-[12px] text-[#0e1b32]">batch_tagging: orders_pending</span>
+</td>
+<td class="px-6 py-3 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#fef9e7] text-[#b08900]">
+<span class="material-symbols-outlined text-[14px]">preview</span> จำลองผลลัพธ์ previewed
+                  </span>
+<span class="ml-2 font-code-sm text-[11px] text-[#747687]">310ms</span>
+</td>
+</tr>
+<!-- Tool Call 4: Draft Stock Adjustment -->
+<tr class="h-[54px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-6 py-3 font-code-sm text-code-sm text-secondary whitespace-nowrap">
+                  13:50:11
+                </td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface">Cursor Ops Agent</span>
+<span class="text-xs text-secondary">(somchai.k)</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#fdf2f2] text-[#c2333f]">DRAFT</span>
+<span class="font-medium text-on-surface">ดราฟต์การปรับยอดสต็อก</span>
+</div>
+</td>
+<td class="px-4 py-3 font-code-sm text-code-sm text-secondary">
+<span class="bg-[#f1f5f9] px-2 py-0.5 rounded text-[12px] text-[#0e1b32]">delta=-2, reason: damaged</span>
+</td>
+<td class="px-6 py-3 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eef2ff] text-[#365cf5]">
+<span class="material-symbols-outlined text-[14px]">pending_actions</span> สร้างดราฟต์สำเร็จ รอยืนยัน
+                  </span>
+<span class="ml-2 font-code-sm text-[11px] text-[#747687]">140ms</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="p-4 border-t border-[#e1e7f0] bg-white flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="text-xs text-secondary">
+            แสดง 4 รายการล่าสุดจากทั้งหมด 5,543 รายการ
+          </div>
+<div class="flex items-center gap-1">
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white hover:bg-[#f1f5f9] flex items-center justify-center text-xs text-secondary transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="h-8 w-8 rounded bg-[#365cf5] text-white text-xs font-medium flex items-center justify-center">1</button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-on-surface flex items-center justify-center">2</button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-on-surface flex items-center justify-center">3</button>
+<span class="px-2 text-xs text-secondary">...</span>
+<button class="h-8 px-2.5 rounded border border-[#e1e7f0] bg-white hover:bg-[#f1f5f9] text-xs font-medium text-on-surface flex items-center justify-center gap-1">
+<span>Next</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Confirmation Modal: Revoke Connector Dialog -->
+<div class="fixed inset-0 z-50 bg-[#17243b]/40 backdrop-blur-[2px] hidden items-center justify-center p-4" id="revokeModal">
+<div class="bg-white rounded-xl border border-[#e1e7f0] shadow-2xl max-w-lg w-full p-6 transform transition-all">
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-[#fdf2f2] text-[#c2333f] flex items-center justify-center shrink-0 border border-[#fca5a5]">
+<span class="material-symbols-outlined text-[22px]">warning</span>
+</div>
+<div class="flex-1">
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface">ยืนยันการยกเลิกการเชื่อมต่อ</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-2 leading-relaxed" id="revokeModalMessage">
+            ยกเลิกการเชื่อมต่อ Claude Desktop ของ somchai.k@company.co.th? AI จะใช้ข้อมูลต่อไม่ได้ทันที ต้อง login ใหม่ถ้าจะใช้อีก
+          </p>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-[#e1e7f0] flex items-center justify-end gap-3">
+<button class="h-10 px-4 rounded-lg bg-white border border-[#e1e7f0] hover:bg-[#f1f5f9] text-on-surface text-label-md font-label-md font-medium transition-colors" onclick="closeRevokeModal()">
+          ยกเลิก
+        </button>
+<button class="h-10 px-4 rounded-lg bg-[#c2333f] hover:bg-[#a52631] text-white text-label-md font-label-md font-medium transition-colors shadow-xs" onclick="executeRevoke()">
+          ยืนยันการเพิกถอนสิทธิ์
+        </button>
+</div>
+</div>
+</div>
+<!-- Interactive JavaScript -->
+<script>
+    // State management
+    let currentLanguage = 'th';
+    let targetRevokeApp = '';
+    let targetRevokeAccount = '';
+
+    // Translation Data Reader
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function toggleLanguage() {
+      currentLanguage = (currentLanguage === 'th') ? 'en' : 'th';
+      document.getElementById('currentLangLabel').textContent = currentLanguage === 'th' ? 'ไทย / EN' : 'EN / ไทย';
+
+      // Update DOM nodes with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][currentLanguage]) {
+          el.textContent = translations[key][currentLanguage];
+        }
+      });
+
+      // Special contextual placeholders
+      const searchInput = document.getElementById('logSearchInput');
+      if (searchInput) {
+        searchInput.placeholder = currentLanguage === 'th' ? 'ค้นหา SKU / สินค้า' : 'Search SKU / Product...';
+      }
+    }
+
+    function copyMcpUrl() {
+      const text = document.getElementById('mcpEndpoint').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const copyText = document.getElementById('copyText');
+        const copyIcon = document.getElementById('copyIcon');
+        copyText.textContent = currentLanguage === 'th' ? 'คัดลอกแล้ว!' : 'Copied!';
+        copyIcon.textContent = 'check';
+        setTimeout(() => {
+          copyText.textContent = currentLanguage === 'th' ? 'คัดลอก URL' : 'Copy URL';
+          copyIcon.textContent = 'content_copy';
+        }, 2000);
+      });
+    }
+
+    function triggerRefresh() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 700);
+    }
+
+    function triggerImmediateFetch() {
+      alert(currentLanguage === 'th' ? 'สั่งเก็บข้อมูลและตรวจสอบ Tool Call ทันทีเรียบร้อย' : 'Immediate tool call sweep initiated.');
+    }
+
+    function switchConnectorTab(type) {
+      const tabMine = document.getElementById('tabMyAccount');
+      const tabAll = document.getElementById('tabAllAccounts');
+      if (type === 'mine') {
+        tabMine.className = "pb-3.5 text-label-md font-label-md font-semibold text-[#365cf5] border-b-2 border-[#365cf5] flex items-center gap-2";
+        tabAll.className = "pb-3.5 text-label-md font-label-md font-medium text-secondary hover:text-on-surface border-b-2 border-transparent flex items-center gap-2 transition-colors";
+      } else {
+        tabAll.className = "pb-3.5 text-label-md font-label-md font-semibold text-[#365cf5] border-b-2 border-[#365cf5] flex items-center gap-2";
+        tabMine.className = "pb-3.5 text-label-md font-label-md font-medium text-secondary hover:text-on-surface border-b-2 border-transparent flex items-center gap-2 transition-colors";
+      }
+    }
+
+    function confirmRevoke(appName, accountName) {
+      targetRevokeApp = appName;
+      targetRevokeAccount = accountName;
+      const modal = document.getElementById('revokeModal');
+      const msg = document.getElementById('revokeModalMessage');
+
+      const rawTemplate = translations["ยกเลิกการเชื่อมต่อ {0} ของ {1}? AI จะใช้ข้อมูลต่อไม่ได้ทันที ต้อง login ใหม่ถ้าจะใช้อีก"][currentLanguage];
+      msg.textContent = rawTemplate.replace('{0}', appName).replace('{1}', accountName);
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeRevokeModal() {
+      const modal = document.getElementById('revokeModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function executeRevoke() {
+      closeRevokeModal();
+      alert((currentLanguage === 'th' ? 'เพิกถอนสิทธิ์สำเร็จ: ' : 'Revoked successfully: ') + targetRevokeApp);
+    }
+
+    function editPermission(appName) {
+      alert((currentLanguage === 'th' ? 'เปิดการแก้ไขสิทธิ์ของ ' : 'Editing permissions for ') + appName);
+    }
+
+    function openSetupModal() {
+      window.location.hash = "#setup-guide";
+      alert(currentLanguage === 'th' ? 'เปิดขั้นตอนการเชื่อมต่อ: docs/mcp.md' : 'Opening setup guide: docs/mcp.md');
+    }
+
+    // Keyboard accessibility for Modal Escape
+    document.addEventListener('keydown', function(event) {
+      if (event.key === "Escape") {
+        closeRevokeModal();
+      }
+    });
+  </script>
+</body></html>

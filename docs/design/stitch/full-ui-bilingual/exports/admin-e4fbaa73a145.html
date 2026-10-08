@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Siam Commerce Hub - สร้างแผน Growth (Research)</title>
+<!-- Google Fonts: Noto Sans & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface": "#f9f9ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "outline-variant": "#c4c5d8",
+            "surface-container-high": "#e0e8ff",
+            "primary-container": "#365cf5",
+            "on-tertiary-container": "#b7ffcf",
+            "on-secondary": "#ffffff",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#0034c0",
+            "surface-variant": "#d7e2ff",
+            "inverse-surface": "#243048",
+            "surface-container-highest": "#d7e2ff",
+            "surface-tint": "#214ce7",
+            "on-error": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed": "#002110",
+            "on-primary-container": "#ededff",
+            "tertiary-container": "#217b4e",
+            "tertiary": "#006139",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed": "#0b1c31",
+            "surface-container-low": "#f1f3ff",
+            "inverse-primary": "#b9c3ff",
+            "on-primary-fixed": "#001257",
+            "error": "#ba1a1a",
+            "secondary": "#4f5f77",
+            "on-background": "#0e1b32",
+            "surface-container": "#e8eeff",
+            "on-surface": "#0e1b32",
+            "surface-dim": "#cddaf9",
+            "primary-fixed": "#dde1ff",
+            "on-primary": "#ffffff",
+            "secondary-fixed": "#d3e3ff",
+            "primary": "#0a3fdc",
+            "surface-bright": "#f9f9ff",
+            "on-surface-variant": "#444655",
+            "on-secondary-container": "#54647c",
+            "background": "#f9f9ff",
+            "secondary-container": "#d0e1fd",
+            "outline": "#747687",
+            "on-secondary-fixed-variant": "#38485e",
+            "tertiary-fixed": "#9ef5be",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary-fixed-variant": "#00522f",
+            "tertiary-fixed-dim": "#82d8a3",
+            "secondary-fixed-dim": "#b7c7e3"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "margin-desktop": "1.5rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "display-lg": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "label-lg": ["Noto Sans"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #f6f8fc;
+      font-family: 'Noto Sans', sans-serif;
+      color: #0e1b32;
+    }
+    .material-symbols-outlined {
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .num-tabular {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Thin subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased flex min-h-screen">
+<!-- ========================================================================= -->
+<!-- SIDE NAVIGATION (Shared Component: SideNavBar)                            -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant flex flex-col justify-between p-space-md select-none transition-colors duration-150 ease-in-out">
+<div class="flex flex-col gap-y-4">
+<!-- App Brand Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm font-bold text-headline-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight" data-i18n="brand_title">สยาม คอมเมิร์ซ</span>
+<span class="text-label-sm font-label-sm text-secondary" data-i18n="brand_subtitle">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full mt-1 bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md py-2 px-3 rounded-lg border border-primary/20 flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span data-i18n="cta_new_record">สร้างรายการใหม่</span>
+</button>
+<!-- Operational Navigation Items (7 standard tabs from JSON) -->
+<nav class="flex flex-col gap-1 mt-2">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-md font-label-md" data-i18n="nav_inventory">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-label-md font-label-md" data-i18n="nav_orders">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md" data-i18n="nav_customers">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด (ACTIVE MATCH per hierarchy) -->
+<div class="flex flex-col">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low dark:bg-secondary text-primary dark:text-on-secondary font-headline-sm border-l-4 border-primary" href="#marketing">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="text-label-md font-label-md font-semibold text-primary" data-i18n="nav_marketing">การตลาด</span>
+</a>
+<!-- Nested Marketing Sublinks -->
+<div class="pl-9 pr-2 py-1 flex flex-col gap-1 mt-1 text-label-sm font-label-sm text-secondary">
+<a class="py-1 px-2 rounded font-semibold text-primary bg-primary-fixed/40 flex items-center justify-between" data-i18n="sub_growth_ws" href="#growth">
+<span>Growth Workspace</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="py-1 px-2 rounded hover:text-on-surface hover:bg-surface-container transition-colors" data-i18n="sub_workflows" href="#workflows">Marketing workflows</a>
+<a class="py-1 px-2 rounded hover:text-on-surface hover:bg-surface-container transition-colors" data-i18n="sub_ai_analyst" href="#ai-assistant">ผู้ช่วยวิเคราะห์การตลาด</a>
+<a class="py-1 px-2 rounded hover:text-on-surface hover:bg-surface-container transition-colors" data-i18n="sub_calendar" href="#calendar">แผนและปฏิทิน</a>
+</div>
+</div>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#analytics">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md" data-i18n="nav_analytics">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#hub">
+<span class="material-symbols-outlined">hub</span>
+<span class="text-label-md font-label-md" data-i18n="nav_hub">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md" data-i18n="nav_settings">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Links -->
+<div class="border-t border-outline-variant/60 pt-3 flex flex-col gap-1">
+<a class="flex items-center gap-2 px-space-md py-1.5 rounded-lg text-secondary hover:text-on-surface text-label-md font-label-md transition-colors" href="#help">
+<span class="material-symbols-outlined">help</span>
+<span data-i18n="footer_help">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-2 px-space-md py-1.5 rounded-lg text-error hover:bg-error-container/40 text-label-md font-label-md transition-colors" href="#logout">
+<span class="material-symbols-outlined">logout</span>
+<span data-i18n="footer_logout">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOP NAVIGATION BAR (Shared Component: TopNavBar)                         -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter-desktop transition-all duration-150 ease-in-out">
+<!-- Breadcrumb Context & Sample Data Status -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-label-md font-label-md text-secondary">
+<span data-i18n="top_bc_marketing">การตลาด</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-semibold" data-i18n="top_bc_sub">Growth Workspace</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold" data-i18n="top_bc_plan">แผนและปฏิทิน</span>
+</div>
+<!-- Sample data badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary text-label-sm font-label-sm font-semibold border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span data-i18n="top_sample_badge">ข้อมูลตัวอย่าง / Sample data</span>
+</span>
+</div>
+<!-- Right Controls: Language switch, Actions, Notifications & Profile -->
+<div class="flex items-center gap-4">
+<!-- Language Toggle Button -->
+<button class="flex items-center gap-1 px-2.5 py-1 text-label-sm font-label-sm rounded-lg border border-outline-variant bg-surface hover:bg-surface-container-low text-secondary transition-all" id="langToggleBtn">
+<span class="material-symbols-outlined text-[16px]">language</span>
+<span id="currentLangLabel">ไทย / English</span>
+</button>
+<!-- Notification Action -->
+<button class="relative p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" title="Notifications">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span>
+</button>
+<!-- Help Action -->
+<button class="p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" title="Help">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant/60"></div>
+<!-- User Profile Badge -->
+<div class="flex items-center gap-2.5 pl-1">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-bold text-label-md ring-1 ring-outline-variant">
+          SC
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="admin_user_role">แอดมินผู้ดูแล</span>
+<span class="text-label-sm font-label-sm text-secondary">admin-e4fbaa73a145</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CANVAS                                                     -->
+<!-- ========================================================================= -->
+<main class="ml-64 mt-16 flex-1 min-h-[calc(100vh-64px)] p-6 bg-[#f6f8fc]">
+<div class="max-w-[1240px] mx-auto flex flex-col gap-6">
+<!-- ===================================================================== -->
+<!-- PAGE TITLE & WORKSPACE HEADER ACTIONS                                 -->
+<!-- ===================================================================== -->
+<section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2 border-b border-outline-variant/50">
+<div>
+<div class="flex items-center gap-2 mb-1.5">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm font-semibold bg-surface-container-high text-primary border border-primary/20" data-i18n="badge_workspace">
+              Growth Workspace
+            </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm font-semibold bg-amber-100 text-amber-800 border border-amber-300" data-i18n="badge_draft_status">
+              ร่างใหม่
+            </span>
+<span class="text-label-sm font-label-sm text-secondary num-tabular">URL: /marketing/growth/plans/new</span>
+</div>
+<div class="flex items-baseline gap-3">
+<h1 class="text-display-lg font-display-lg text-on-surface tracking-tight" data-i18n="page_h1">Research / สร้างแผน Growth</h1>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1 max-w-2xl" data-i18n="page_description">
+            ร่างข้อเสนอและข้อความ ตรวจหลักฐาน แล้วอนุมัติ revision ก่อนสร้าง workflow ที่หยุดไว้
+          </p>
+</div>
+<!-- Sticky Header Operational Actions -->
+<div class="flex flex-wrap items-center gap-2">
+<button class="h-9 px-3.5 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md rounded-lg flex items-center gap-1.5 shadow-sm transition-all" id="btnReloadVersion" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span data-i18n="act_reload_version">โหลดเวอร์ชันล่าสุด</span>
+</button>
+<button class="h-9 px-4 bg-primary text-white hover:bg-primary/90 font-label-md text-label-md rounded-lg flex items-center gap-1.5 shadow-sm transition-all font-semibold" id="btnSaveDraft" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span data-i18n="act_save_draft">บันทึกร่าง</span>
+</button>
+<button class="h-9 px-3.5 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-md text-label-md rounded-lg flex items-center gap-1.5 shadow-sm transition-all" id="btnSubmitReview" type="button">
+<span class="material-symbols-outlined text-[18px]">send_and_archive</span>
+<span data-i18n="act_send_review">ส่งตรวจ</span>
+</button>
+<button class="h-9 px-3.5 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-tertiary hover:border-tertiary font-label-md text-label-md rounded-lg flex items-center gap-1.5 shadow-sm transition-all font-semibold" id="btnApproveRevision" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span data-i18n="act_approve_revision">อนุมัติ revision</span>
+</button>
+<button class="h-9 px-4 bg-secondary text-white hover:bg-secondary/90 font-label-md text-label-md rounded-lg flex items-center gap-1.5 shadow-sm transition-all" id="btnCreateWorkflow" type="button">
+<span class="material-symbols-outlined text-[18px]">alt_route</span>
+<span data-i18n="act_create_draft_workflow">สร้างร่าง workflow ที่หยุดไว้</span>
+</button>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- OPERATIONAL WARNING / STATUS ALERT BANNERS                            -->
+<!-- ===================================================================== -->
+<div class="flex flex-col gap-3">
+<!-- Critical Operational Guardrail Banner -->
+<div class="p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pause_circle</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2">
+<h4 class="text-headline-sm font-headline-sm font-semibold text-amber-900" data-i18n="alert_banner_title">แผนนี้ยังไม่พร้อมเปิดส่งอัตโนมัติ</h4>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-amber-200/80 text-amber-900 font-semibold" data-i18n="badge_strict_guardrail">Safety Locked</span>
+</div>
+<p class="text-body-sm font-body-sm text-amber-800 mt-0.5" data-i18n="alert_banner_desc">
+              การบันทึก อนุมัติ และสร้างร่างไม่ส่งข้อความ ระบบยังไม่บังคับสต็อก กำไร และงบ ณ เวลาส่ง จึงต้องหยุด workflow นี้ไว้
+            </p>
+</div>
+</div>
+<!-- Secondary Advisory Notices -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<!-- Unsaved Content Alert -->
+<div class="p-3.5 rounded-lg bg-blue-50 border border-blue-200 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">info</span>
+<p class="text-body-sm font-body-sm text-blue-950" data-i18n="notice_unsaved_warning">
+              มีเนื้อหาที่แก้แล้วยังไม่บันทึก บันทึกก่อนใช้ AI ส่งตรวจ อนุมัติ หรือสร้างร่าง workflow
+            </p>
+</div>
+<!-- Workflow Connection Status Notice -->
+<div class="p-3.5 rounded-lg bg-surface-container-lowest border border-outline-variant flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0">link_off</span>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="notice_unlinked_workflow">
+              ยังไม่เชื่อม workflow บันทึกและตรวจแผนได้ เมื่อต่อระบบแล้วจึงสร้างร่าง
+            </p>
+</div>
+</div>
+</div>
+<!-- ===================================================================== -->
+<!-- TWO-COLUMN RESPONSIVE FORM CANVAS (1240px Container)                   -->
+<!-- ===================================================================== -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- =================================================================== -->
+<!-- LEFT COLUMN: CORE PLANNING, COPY & EXPERIMENTATION (col-span-8)    -->
+<!-- =================================================================== -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- 1. CARD: แผนและข้อความ -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm">
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant/40">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface" data-i18n="card_plan_and_messages_title">แผนและข้อความ</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5" data-i18n="card_plan_and_messages_sub">
+                  ข้อความสองเวอร์ชันเป็นร่าง เลือกเวอร์ชันที่ทีมจะตรวจและใช้
+                </p>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary font-semibold border border-primary/20" data-i18n="status_draft_planning">
+                ขั้นตอน: ร่างแผนงาน
+              </span>
+</div>
+<!-- Core Plan Parameters Form -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+<!-- ชื่อแผน -->
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface mb-1" data-i18n="field_plan_name">ชื่อแผน <span class="text-error">*</span></label>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" id="planName" placeholder="เช่น ติดตามลูกค้าที่เลยรอบซื้อ" type="text" value="ติดตามลูกค้าที่เลยรอบซื้อ 45 วัน (Special Reactivation)"/>
+</div>
+<!-- ประเภทแผน -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1" data-i18n="field_plan_type">ประเภทแผน</label>
+<select class="w-full h-[38px] px-3 rounded-lg border border-outline-variant text-on-surface text-body-md bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+<option data-i18n="opt_type_reactivation" selected="">Reactivation (กู้คืนลูกค้าที่ไม่กลับมาซื้อ)</option>
+<option data-i18n="opt_type_cross_sell">Cross-sell / Upsell สินค้าเสริม</option>
+<option data-i18n="opt_type_vip_loyalty">VIP Loyalty &amp; Points Booster</option>
+<option data-i18n="opt_type_seasonal">เทศกาลและโปรโมชันเร่งด่วน</option>
+</select>
+</div>
+<!-- เจ้าของแผน (อีเมล) -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1" data-i18n="field_plan_owner">เจ้าของแผน (อีเมล) <span class="text-error">*</span></label>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" type="email" value="pimchanok.m@siamcommerce.co.th"/>
+</div>
+<!-- เป้าหมายและข้อเสนอที่ต้องตรวจ -->
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="field_plan_goal_offer">เป้าหมายและข้อเสนอที่ต้องตรวจ</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="field_plan_goal_offer_sub">ระบุสิ่งที่ต้องการให้ลูกค้าทำ พร้อมข้อเสนอที่ยืนยันแล้ว</span>
+<textarea class="w-full p-3 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" rows="2">กระตุ้นคำสั่งซื้อภายใน 7 วันด้วยคูปองลด 10% (ขั้นต่ำ 500 บาท) เน้นกลุ่มสกินแคร์ที่กำลังจะหมดสต็อกรอบเดิม</textarea>
+</div>
+<!-- วันที่วางแผนทำงาน -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="field_plan_target_date">วันที่วางแผนทำงาน</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="field_plan_target_date_sub">กำหนดการของทีม ยังไม่ตั้งเวลาส่งข้อความ</span>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" type="date" value="2025-04-05"/>
+</div>
+<!-- งบสูงสุดของแผน (บาท) -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="field_plan_budget">งบสูงสุดของแผน (บาท)</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1">งบประมาณสนับสนุนคูปองและ SMS</span>
+<div class="relative">
+<input class="w-full h-[38px] pl-3 pr-8 rounded-lg border border-outline-variant text-on-surface text-body-md num-tabular focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" type="number" value="15000"/>
+<span class="absolute right-3 top-2 text-label-sm font-label-sm text-secondary">฿</span>
+</div>
+</div>
+<!-- อัตรา contribution ขั้นต่ำ (%) -->
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="field_plan_min_contribution">อัตรา contribution ขั้นต่ำ (%)</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="field_plan_min_contribution_sub">เกณฑ์ของแผน ยังไม่บังคับตรวจ ณ เวลาส่ง</span>
+<div class="flex items-center gap-3">
+<input class="w-36 h-[38px] px-3 rounded-lg border border-outline-variant text-on-surface text-body-md num-tabular focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" step="0.1" type="number" value="22.5"/>
+<span class="text-body-sm font-body-sm text-secondary" data-i18n="sub_contribution_helper">ต้องรักษากำไรสุทธิหลังหักส่วนลดไม่ต่ำกว่าร้อยละที่ระบุ</span>
+</div>
+</div>
+</div>
+<!-- Message Variants A & B Toggle / Tabs -->
+<div class="mt-8 pt-5 border-t border-outline-variant/50">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<h4 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="heading_message_variants">ชุดข้อความทดลอง (Message Variants)</h4>
+<span class="text-label-sm font-label-sm text-secondary" data-i18n="sub_for_review">สำหรับตรวจ</span>
+</div>
+<!-- Version Selector Buttons -->
+<div class="inline-flex p-1 bg-surface-container rounded-lg border border-outline-variant/60">
+<button class="px-4 py-1.5 rounded-md font-label-md text-label-md bg-surface-container-lowest text-primary shadow-sm font-semibold transition-all" id="tabVariantA" onclick="switchVariant('A')" type="button">
+                    เวอร์ชัน A (เลือกใช้)
+                  </button>
+<button class="px-4 py-1.5 rounded-md font-label-md text-label-md text-secondary hover:text-on-surface transition-all" id="tabVariantB" onclick="switchVariant('B')" type="button">
+                    เวอร์ชัน B
+                  </button>
+</div>
+</div>
+<!-- Content for Variant A -->
+<div class="p-4 rounded-xl border-2 border-primary/40 bg-surface-container-low/40 flex flex-col gap-4" id="variantSectionA">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center font-bold text-label-sm">A</span>
+<span class="font-headline-sm text-headline-sm text-on-surface" data-i18n="var_a_title">เวอร์ชัน A: คูปองด่วน 7 วัน (เน้นความกระชับ)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-primary text-white font-semibold" data-i18n="badge_selected_for_review">เลือกสำหรับตรวจ</span>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1" data-i18n="lbl_msg_copy">เนื้อหาข้อความ (SMS / LINE Notification Template)</label>
+<textarea class="w-full p-3 rounded-lg border border-outline-variant bg-white text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" rows="3">คุณ {first_name} ครับ สกินแคร์ขวดโปรดของคุณหมดหรือยัง? สยาม คอมเมิร์ซ ขอมอบส่วนลดพิเศษ 10% รหัส [BACK10] เพื่อให้คุณดูแลผิวต่อเนื่อง ช้อปเลยภายใน 7 วันนี้: https://siam.cm/c/bk10</textarea>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="lbl_coupon_code">รหัสคูปอง (Coupon Code)</label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-white text-on-surface font-semibold text-body-md uppercase" type="text" value="BACK10"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="lbl_cta_label">ข้อความปุ่มดำเนินการ (CTA)</label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-white text-on-surface text-body-md" type="text" value="กลับมาสั่งซื้อทันที"/>
+</div>
+</div>
+</div>
+<!-- Content for Variant B (Initially Hidden) -->
+<div class="hidden p-4 rounded-xl border border-outline-variant bg-white flex flex-col gap-4" id="variantSectionB">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center font-bold text-label-sm">B</span>
+<span class="font-headline-sm text-headline-sm text-on-surface" data-i18n="var_b_title">เวอร์ชัน B: เน้นคุณประโยชน์และการดูแลต่อเนื่อง (Benefit-Led)</span>
+</div>
+<button class="px-2.5 py-1 rounded text-label-sm font-label-sm border border-primary text-primary hover:bg-primary hover:text-white transition-all font-semibold" data-i18n="btn_choose_version" onclick="selectVariantAsPrimary('B')" type="button">
+                    เลือกเวอร์ชันนี้
+                  </button>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1" data-i18n="lbl_msg_copy">เนื้อหาข้อความ</label>
+<textarea class="w-full p-3 rounded-lg border border-outline-variant bg-white text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" rows="3">อย่าปล่อยให้ผิวขาดการบำรุง! ถึงรอบเติมเซรั่มและกันแดดตัวเดิมแล้ว สยาม คอมเมิร์ซ เติมสต็อกพร้อมมอบโค้ด BACK10 รับส่วนลด 10% จัดส่งฟรีถึงบ้านคลิก: https://siam.cm/c/bk10b</textarea>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="lbl_coupon_code">รหัสคูปอง (Coupon Code)</label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-white text-on-surface font-semibold text-body-md uppercase" type="text" value="BACK10"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="lbl_cta_label">ข้อความปุ่มดำเนินการ (CTA)</label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-white text-on-surface text-body-md" type="text" value="เลือกสินค้าเพื่อรับส่วนลด"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. CARD: ผู้ช่วย AI ร่างข้อความ -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/40">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-surface-container-high text-primary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface" data-i18n="card_ai_title">ผู้ช่วย AI ร่างข้อความ</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="card_ai_sub">
+                    บันทึกร่างก่อน เพื่อให้ AI ใช้แผนและหลักฐานเวอร์ชันเดียวกับทีม
+                  </p>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-tertiary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Context Ready</span>
+</span>
+</div>
+<!-- AI Prompt Input -->
+<div class="mt-4 flex flex-col gap-2">
+<label class="text-label-md font-label-md text-on-surface" data-i18n="ai_instruction_lbl">คำสั่งสำหรับ AI</label>
+<div class="flex gap-2">
+<input class="flex-1 h-[38px] px-3 rounded-lg border border-outline-variant text-on-surface text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" id="aiInputPrompt" placeholder="เช่น ร่างสองข้อความที่ชัดเจน โดยใช้ข้อเสนอและหลักฐานที่ยืนยันแล้ว" type="text" value="ร่างสองข้อความที่ชัดเจน โดยใช้ข้อเสนอและหลักฐานที่ยืนยันแล้ว"/>
+<button class="h-[38px] px-4 bg-primary text-white hover:bg-primary/90 font-label-md text-label-md rounded-lg flex items-center gap-1.5 shrink-0 transition-all" id="btnDraftAi" type="button">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+<span data-i18n="btn_ai_generate" id="aiBtnText">ให้ AI ร่าง 2 เวอร์ชัน</span>
+</button>
+</div>
+</div>
+<!-- AI Output Preview Cards (Variant A & B) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+<!-- AI Output Card: Version A -->
+<div class="p-4 rounded-lg border border-outline-variant/80 bg-surface-container-low/30 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-md font-label-md font-semibold text-primary">AI Draft: เวอร์ชัน A (ตรงประเด็น)</span>
+<span class="text-label-sm font-label-sm text-secondary">Token: 142</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface italic bg-white p-2.5 rounded border border-outline-variant/60 mb-3">
+                    "คุณ {first_name} สกินแคร์ขวดโปรดหมดหรือยัง? มอบโค้ดพิเศษ BACK10 ลดทันที 10% ช้อปเลยภายใน 7 วันนี้"
+                  </p>
+<div class="text-body-sm font-body-sm text-secondary space-y-1">
+<p><strong class="text-on-surface" data-i18n="lbl_reason">เหตุผล:</strong> กระชับ ตรงกับพฤติกรรมลูกค้าที่เคยซื้อซ้ำรอบสั้น</p>
+<p><strong class="text-on-surface" data-i18n="lbl_reference">อ้างอิง:</strong> รายงานรอบซื้อสินค้าหมวด Skincare 2024</p>
+<p><strong class="text-on-surface" data-i18n="lbl_evidence_used">หลักฐานที่ใช้:</strong> Retention Analysis Segment #45D</p>
+</div>
+</div>
+<button class="mt-4 w-full py-1.5 px-2 bg-surface-container-lowest border border-primary text-primary hover:bg-primary hover:text-white rounded text-label-sm font-label-sm font-semibold transition-all" data-i18n="btn_apply_to_draft" onclick="applyAiDraft('A')" type="button">
+                  นำมาใส่ในร่างเพื่อแก้และบันทึก
+                </button>
+</div>
+<!-- AI Output Card: Version B -->
+<div class="p-4 rounded-lg border border-outline-variant/80 bg-surface-container-low/30 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-md font-label-md font-semibold text-secondary">AI Draft: เวอร์ชัน B (เน้นคุณประโยชน์)</span>
+<span class="text-label-sm font-label-sm text-secondary">Token: 156</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface italic bg-white p-2.5 rounded border border-outline-variant/60 mb-3">
+                    "อย่าปล่อยให้การดูแลผิวสะดุด! ถึงรอบเติมเซรั่มตัวโปรด รับโค้ด BACK10 ลด 10% พร้อมส่งฟรีเฉพาะ 7 วันนี้"
+                  </p>
+<div class="text-body-sm font-body-sm text-secondary space-y-1">
+<p><strong class="text-on-surface" data-i18n="lbl_reason">เหตุผล:</strong> กระตุ้น emotional need ในการบำรุงผิวอย่างต่อเนื่อง</p>
+<p><strong class="text-on-surface" data-i18n="lbl_reference">อ้างอิง:</strong> Voice of Customer survey Q1</p>
+<p><strong class="text-on-surface" data-i18n="lbl_evidence_used">หลักฐานที่ใช้:</strong> Cohort Retention Drops at Day 40-50</p>
+</div>
+</div>
+<button class="mt-4 w-full py-1.5 px-2 bg-surface-container-lowest border border-outline-variant hover:border-primary text-on-surface hover:text-primary rounded text-label-sm font-label-sm font-semibold transition-all" data-i18n="btn_apply_to_draft" onclick="applyAiDraft('B')" type="button">
+                  นำมาใส่ในร่างเพื่อแก้และบันทึก
+                </button>
+</div>
+</div>
+</div>
+<!-- 3. CARD: กลุ่มเป้าหมาย สินค้า และการทดลอง -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm">
+<div class="pb-3 border-b border-outline-variant/40 flex items-center justify-between">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface" data-i18n="card_target_exp_title">กลุ่มเป้าหมาย สินค้า และการทดลอง</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="card_target_exp_sub">กำหนดขอบเขตกลุ่มลูกค้า ตรวจสอบ Segment และป้องกันการทับซ้อนข้อความ</p>
+</div>
+<div class="flex gap-2">
+<button class="h-8 px-2.5 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-primary text-label-sm font-label-sm rounded flex items-center gap-1 transition-all" data-i18n="btn_check_segments" type="button">
+<span class="material-symbols-outlined text-[16px]">manage_search</span>
+                  ตรวจ Segments
+                </button>
+<button class="h-8 px-2.5 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-primary text-label-sm font-label-sm rounded flex items-center gap-1 transition-all" data-i18n="btn_check_templates" type="button">
+<span class="material-symbols-outlined text-[16px]">drafts</span>
+                  ตรวจ template ข้อความ
+                </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+<!-- Segment IDs -->
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="lbl_segment_ids">Segment IDs <span class="text-error">*</span></label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="sub_segment_ids">UUID เท่านั้น คั่นด้วย comma · ตรวจจากหน้า Segments · ระบุกลุ่มที่ยืนยันแล้วก่อนส่งตรวจ</span>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant font-mono text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" type="text" value="seg-8891-b3b, seg-9012-c4e"/>
+</div>
+<!-- Exclude segment IDs -->
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="lbl_exclude_segments">Exclude segment IDs</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="sub_exclude_segments">UUID เท่านั้น คั่นด้วย comma (เช่น ลูกค้าที่มีออเดอร์ใน 7 วัน หรือยกเลิกรับข่าวสาร)</span>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant font-mono text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" type="text" value="seg-optout-global, seg-churned-blocked"/>
+</div>
+<!-- SKU ที่ใช้ -->
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="lbl_skus">SKU ที่ใช้</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="sub_skus">คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง</span>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant font-mono text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" type="text" value="SKU-GLOW-50ML, SKU-CLEANSE-120ML, SKU-SERUM-HA"/>
+</div>
+<!-- ใช้ notification template เดิม (ไม่บังคับ) -->
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="lbl_notif_template">ใช้ notification template เดิม (ไม่บังคับ)</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n="sub_notif_template">เว้นว่างเพื่อสร้าง template จากข้อความที่เลือก หากระบุ key เนื้อหาต้องตรงกับเวอร์ชันที่อนุมัติ</span>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" placeholder="เช่น NOTIF_REACTIVATION_TH_V2 (เว้นว่างไว้หากยังไม่มี)" type="text"/>
+</div>
+<!-- Numeric Parameters: กลุ่มควบคุม, เว้นช่วง, conversion -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="lbl_control_group">กลุ่มควบคุม (%)</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1">Holdout Group เพื่อวัด Uplift</span>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant text-body-md num-tabular text-on-surface" max="50" min="0" type="number" value="10"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="lbl_contact_gap">เว้นช่วงติดต่อ (วัน)</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1">ป้องกันการส่งถี่เกินไป</span>
+<input class="w-full h-[38px] px-3 rounded-lg border border-outline-variant text-body-md num-tabular text-on-surface" min="1" type="number" value="14"/>
+</div>
+<div class="md:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface mb-0.5" data-i18n="lbl_conversion_window">ช่วงนับ conversion (วัน)</label>
+<span class="block text-label-sm font-label-sm text-secondary mb-1">ระยะเวลาบันทึกคำสั่งซื้อหลังจากได้รับข้อความ</span>
+<input class="w-36 h-[38px] px-3 rounded-lg border border-outline-variant text-body-md num-tabular text-on-surface" max="30" min="1" type="number" value="7"/>
+</div>
+</div>
+</div>
+<!-- 4. CARD: หลักฐานของแผน -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/40">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface" data-i18n="card_evidence_title">หลักฐานของแผน</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="card_evidence_sub">แผนนี้เชื่อม Research topic · หลักฐานจะตรวจจากรายงานนี้เมื่อบันทึก</p>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-secondary-container/50 text-on-secondary-fixed text-label-sm font-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span>Topic: RES-2025-REPURCHASE</span>
+</span>
+</div>
+<!-- Evidence / Facts Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+<div class="p-3.5 rounded-lg border border-outline-variant bg-surface-container-low/20">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-secondary mb-1">
+<span class="font-semibold text-primary">Fact 01: Retention Drop Off</span>
+<span class="num-tabular">ความเชื่อมั่น 94%</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface">
+                  ลูกค้าในกลุ่ม Skincare มักสั่งซื้อซ้ำเฉลี่ยที่ 35-42 วัน เมื่อพ้น 45 วัน อัตราการกลับมาสั่งซื้อลดลงฮวบเหลือเพียง 12%
+                </p>
+<div class="mt-2 text-label-sm font-label-sm text-secondary">
+<strong>Source:</strong> Data Lakehouse (Cohort Model 2024-Q4)
+                </div>
+</div>
+<div class="p-3.5 rounded-lg border border-outline-variant bg-surface-container-low/20">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-secondary mb-1">
+<span class="font-semibold text-primary">Fact 02: Voucher Elasticity</span>
+<span class="num-tabular">ความเชื่อมั่น 88%</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface">
+                  การให้คูปองลด 10% ให้ผลลัพธ์ Conversion สุทธิสูงกว่าคูปองลด 50 บาทคงที่ และรักษา Margin กำไรต่อออเดอร์ได้ดีกว่า
+                </p>
+<div class="mt-2 text-label-sm font-label-sm text-secondary">
+<strong>Source:</strong> A/B Experiment Exp-2024-Nov-Promo
+                </div>
+</div>
+</div>
+</div>
+<!-- 5. CARD: งานที่ทีมต้องรับต่อ -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/40">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface" data-i18n="card_team_tasks_title">งานที่ทีมต้องรับต่อ</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="card_team_tasks_sub">บันทึกงานที่ต้องดำเนินการหลังแผนงานได้รับการอนุมัติ</p>
+</div>
+<div class="flex gap-2">
+<button class="h-8 px-3 bg-surface-container-low hover:bg-surface-container text-primary font-label-sm text-label-sm rounded border border-primary/20 flex items-center gap-1 transition-all" data-i18n="btn_add_task" id="btnAddTask" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                  เพิ่มงาน
+                </button>
+<button class="h-8 px-3 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded text-secondary font-label-sm transition-all" data-i18n="btn_save_tasks" type="button">
+                  บันทึกงานของทีม
+                </button>
+</div>
+</div>
+<!-- Task Checklist Table -->
+<div class="overflow-x-auto mt-4">
+<table class="w-full text-left text-body-sm font-body-sm">
+<thead>
+<tr class="bg-surface-container-low text-secondary border-b border-outline-variant text-label-sm font-label-sm">
+<th class="py-2.5 px-3">งาน</th>
+<th class="py-2.5 px-3">เจ้าของงาน</th>
+<th class="py-2.5 px-3">กำหนดเสร็จ</th>
+<th class="py-2.5 px-3 text-center">สถานะ</th>
+<th class="py-2.5 px-3 text-right">การจัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40" id="taskListBody">
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-2.5 px-3 font-medium text-on-surface">สร้างโค้ดคูปอง BACK10 ในระบบการเงิน</td>
+<td class="py-2.5 px-3 text-secondary">somchai.p@siam.co.th</td>
+<td class="py-2.5 px-3 text-secondary num-tabular">04 เม.ย. 2025</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex px-2 py-0.5 rounded text-label-sm font-label-sm bg-tertiary/10 text-tertiary font-semibold">เสร็จแล้ว</span>
+</td>
+<td class="py-2.5 px-3 text-right">
+<button class="text-error hover:text-error/80 text-label-sm font-label-sm" onclick="this.closest('tr').remove()" type="button">ลบงาน</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-2.5 px-3 font-medium text-on-surface">เช็กสต็อกสินค้า SKU-GLOW-50ML ก่อนยิงแคมเปญ</td>
+<td class="py-2.5 px-3 text-secondary">inventory-ops@siam.co.th</td>
+<td class="py-2.5 px-3 text-secondary num-tabular">05 เม.ย. 2025</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex px-2 py-0.5 rounded text-label-sm font-label-sm bg-amber-100 text-amber-800 font-semibold">รอตรวจ</span>
+</td>
+<td class="py-2.5 px-3 text-right">
+<button class="text-error hover:text-error/80 text-label-sm font-label-sm" onclick="this.closest('tr').remove()" type="button">ลบงาน</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- 6. CARD: ประวัติ revision และการตรวจ -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm">
+<div class="pb-3 border-b border-outline-variant/40 flex items-center justify-between">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface" data-i18n="card_revision_history_title">ประวัติ revision และการตรวจ</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="card_revision_history_sub">ประวัติบันทึกการปรับปรุงเนื้อหาและการรับรองของหัวหน้างาน</p>
+</div>
+<span class="text-label-sm font-label-sm text-secondary num-tabular">รวม 3 เวอร์ชัน</span>
+</div>
+<div class="overflow-x-auto mt-4">
+<table class="w-full text-left text-body-sm font-body-sm">
+<thead>
+<tr class="bg-surface-container-low text-secondary border-b border-outline-variant text-label-sm font-label-sm">
+<th class="py-2.5 px-3">Revision</th>
+<th class="py-2.5 px-3">ผู้ทำรายการ</th>
+<th class="py-2.5 px-3">การเปลี่ยนแปลง</th>
+<th class="py-2.5 px-3">เวลา</th>
+<th class="py-2.5 px-3 text-right">สถานะ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40">
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-2.5 px-3 font-semibold text-primary num-tabular">rev-03 (ปัจจุบัน)</td>
+<td class="py-2.5 px-3 text-on-surface">pimchanok.m</td>
+<td class="py-2.5 px-3 text-secondary">ปรับเงื่อนไขคูปองขั้นต่ำ 500 บาท</td>
+<td class="py-2.5 px-3 text-secondary num-tabular">วันนี้ 14:20</td>
+<td class="py-2.5 px-3 text-right">
+<span class="inline-flex px-2 py-0.5 rounded text-label-sm font-label-sm bg-blue-100 text-blue-800 font-semibold">ร่างแก้</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-2.5 px-3 font-medium num-tabular">rev-02</td>
+<td class="py-2.5 px-3 text-on-surface">teerapat.k (Approver)</td>
+<td class="py-2.5 px-3 text-secondary">อนุมัติร่างข้อความ Variant A</td>
+<td class="py-2.5 px-3 text-secondary num-tabular">เมื่อวาน 17:05</td>
+<td class="py-2.5 px-3 text-right">
+<span class="inline-flex px-2 py-0.5 rounded text-label-sm font-label-sm bg-tertiary/10 text-tertiary font-semibold">อนุมัติแล้ว</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-2.5 px-3 font-medium num-tabular">rev-01</td>
+<td class="py-2.5 px-3 text-on-surface">pimchanok.m</td>
+<td class="py-2.5 px-3 text-secondary">สร้างโครงสร้างร่างแรกจากผล Research</td>
+<td class="py-2.5 px-3 text-secondary num-tabular">28 มี.ค. 2025</td>
+<td class="py-2.5 px-3 text-right">
+<span class="inline-flex px-2 py-0.5 rounded text-label-sm font-label-sm bg-slate-100 text-slate-700 font-semibold">สร้างแรกเริ่ม</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- =================================================================== -->
+<!-- RIGHT COLUMN: SIDEBAR DETAILS & INTEGRATION GUARDRAILS (col-span-4)-->
+<!-- =================================================================== -->
+<div class="lg:col-span-4 flex flex-col gap-6 sticky top-20">
+<!-- 1. CARD: รายละเอียดแผน -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<h3 class="text-headline-sm font-headline-sm text-on-surface pb-3 border-b border-outline-variant/40" data-i18n="card_plan_meta_title">
+              รายละเอียดแผน
+            </h3>
+<!-- Key metadata list -->
+<div class="space-y-3 mt-4 text-body-sm font-body-sm">
+<div class="flex items-center justify-between">
+<span class="text-secondary" data-i18n="meta_review_status">สถานะการตรวจ:</span>
+<span class="inline-flex px-2 py-0.5 rounded text-label-sm font-label-sm font-semibold bg-amber-100 text-amber-900 border border-amber-300" data-i18n="status_in_review">
+                  รอตรวจสอบ / In Review
+                </span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-secondary" data-i18n="meta_task_owner">เจ้าของงาน:</span>
+<span class="font-medium text-on-surface">pimchanok.m</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-secondary" data-i18n="meta_approver">ผู้อนุมัติ:</span>
+<span class="font-medium text-on-surface">teerapat.k (Marketing Lead)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-secondary" data-i18n="meta_approved_rev">revision ที่อนุมัติ:</span>
+<span class="font-mono text-primary font-semibold">rev-02</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-secondary" data-i18n="meta_last_edited">แก้ไขล่าสุด:</span>
+<span class="num-tabular text-on-surface">วันนี้ 14:20 น.</span>
+</div>
+</div>
+<!-- Sticky Guardrail Actions -->
+<div class="flex flex-col gap-2 mt-5 pt-4 border-t border-outline-variant/50">
+<button class="w-full py-2 bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant font-label-md text-label-md rounded-lg flex items-center justify-center gap-1.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">send_and_archive</span>
+<span data-i18n="act_send_review">ส่งตรวจ</span>
+</button>
+<button class="w-full py-2 bg-tertiary-container/15 hover:bg-tertiary-container/25 text-tertiary border border-tertiary/30 font-label-md text-label-md rounded-lg flex items-center justify-center gap-1.5 font-semibold transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span data-i18n="act_approve_revision">อนุมัติ revision</span>
+</button>
+<button class="w-full py-2.5 bg-primary text-white hover:bg-primary/90 font-label-md text-label-md rounded-lg flex items-center justify-center gap-1.5 font-semibold shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">alt_route</span>
+<span data-i18n="act_create_draft_workflow">สร้างร่าง workflow ที่หยุดไว้</span>
+</button>
+</div>
+<div class="mt-4 p-2.5 rounded bg-surface-container-low/40 border border-outline-variant/40 flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5 shrink-0">lock</span>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="note_read_policy">
+                แผนนี้อ่านได้ การแก้เนื้อหาและอนุมัติเป็นหน้าที่เจ้าของแผนหรือผู้ดูแล
+              </p>
+</div>
+</div>
+<!-- 2. CARD: ขั้นตอนของร่าง workflow -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<h3 class="text-headline-sm font-headline-sm text-on-surface pb-3 border-b border-outline-variant/40" data-i18n="card_stepper_title">
+              ขั้นตอนของร่าง workflow
+            </h3>
+<div class="mt-4 space-y-4">
+<!-- Step 1 -->
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center font-bold text-label-sm shrink-0">1</div>
+<div>
+<h5 class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="step_1_title">1. Trigger (ตัวกระตุ้น)</h5>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5" data-i18n="step_1_desc">
+                    คนที่ล็อกอินในช่วงเวลาที่ตั้งไว้ (และ/หรือใน segment เกิน 45 วัน)
+                  </p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center font-bold text-label-sm shrink-0">2</div>
+<div>
+<h5 class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="step_2_title">2. กลุ่มเป้าหมาย</h5>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5" data-i18n="step_2_desc">
+                    กรอง seg-8891-b3b และยกเว้นลูกค้าที่มีออเดอร์ใน 7 วัน
+                  </p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center font-bold text-label-sm shrink-0">3</div>
+<div>
+<h5 class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="step_3_title">3. ทดลองและความถี่</h5>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5" data-i18n="step_3_desc">
+                    Holdout 10% · เว้นช่วง 14 วันเพื่อป้องกัน message fatigue
+                  </p>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center font-bold text-label-sm shrink-0">4</div>
+<div>
+<h5 class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="step_4_title">4. ข้อความที่เลือก</h5>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5" data-i18n="step_4_desc">
+                    ผูกข้อความ Variant A (รหัส BACK10) พร้อมลิงก์ Deeplink
+                  </p>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. CARD: ตรวจ workflow ที่อาจสร้างแล้วก่อนทำต่อ -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center gap-2 pb-2 border-b border-outline-variant/40">
+<span class="material-symbols-outlined text-secondary text-[20px]">troubleshoot</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="card_dedup_title">
+                ตรวจ workflow ก่อนทำต่อ
+              </h3>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-3" data-i18n="card_dedup_desc">
+              ระบบไม่สร้างซ้ำอัตโนมัติ ให้ผู้ดูแลตรวจรายการ workflow แล้วเชื่อมร่างที่มี marker ของแผนนี้และสถานะ draft / paused
+            </p>
+<div class="mt-4 flex flex-col gap-2">
+<label class="text-label-sm font-label-sm font-medium text-on-surface" data-i18n="lbl_detected_wf">Workflow UUID ที่ตรวจพบ</label>
+<div class="flex gap-2">
+<input class="flex-1 h-[36px] px-2.5 rounded border border-outline-variant font-mono text-body-sm text-on-surface focus:border-primary outline-none" id="inputWorkflowUuid" placeholder="เช่น wf-9921-reactivation" type="text" value="wf-8821-reactivate-draft"/>
+<button class="h-[36px] px-3 bg-surface-container-low hover:bg-surface-container text-primary font-label-sm text-label-sm font-semibold rounded border border-primary/20 shrink-0 transition-all" data-i18n="btn_link_wf" id="btnLinkWorkflow" type="button">
+                  ตรวจและเชื่อมร่าง
+                </button>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-outline-variant/40 flex items-center justify-between">
+<a class="inline-flex items-center gap-1 text-label-sm font-label-sm text-primary font-semibold hover:underline" href="#workflows">
+<span data-i18n="link_audit_workflows">ตรวจรายการ workflow</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<span class="text-label-sm font-label-sm text-secondary num-tabular">สถานะ: พร้อมเชื่อมต่อ</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- TOAST NOTIFICATION CONTAINER (Lightweight micro-interactions)            -->
+<!-- ========================================================================= -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2.5 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-lg shadow-xl text-body-sm" id="toastNotification">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]" id="toastIcon">check_circle</span>
+<span id="toastMessage">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+</div>
+<!-- ========================================================================= -->
+<!-- TRANSLATIONS SCRIPT TAG (Exact required JSON schema)                      -->
+<!-- ========================================================================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "brand_title": { "th": "สยาม คอมเมิร์ซ", "en": "Siam Commerce Hub" },
+    "brand_subtitle": { "th": "ศูนย์จัดการระบบร้านค้า", "en": "Merchant Operations Center" },
+    "cta_new_record": { "th": "สร้างรายการใหม่", "en": "Create New Record" },
+    "nav_inventory": { "th": "สินค้าและสต็อก", "en": "Products & Stock" },
+    "nav_orders": { "th": "ออเดอร์และการเงิน", "en": "Orders & Finance" },
+    "nav_customers": { "th": "ลูกค้าและบริการ", "en": "Customers & Service" },
+    "nav_marketing": { "th": "การตลาด", "en": "Marketing" },
+    "sub_growth_ws": { "th": "Growth Workspace", "en": "Growth Workspace" },
+    "sub_workflows": { "th": "Marketing workflows", "en": "Marketing Workflows" },
+    "sub_ai_analyst": { "th": "ผู้ช่วยวิเคราะห์การตลาด", "en": "AI Marketing Analyst" },
+    "sub_calendar": { "th": "แผนและปฏิทิน", "en": "Plans & Calendar" },
+    "nav_analytics": { "th": "รายงานและข้อมูล", "en": "Reports & Analytics" },
+    "nav_hub": { "th": "ระบบเชื่อมต่อ", "en": "Integrations Hub" },
+    "nav_settings": { "th": "ตั้งค่าและทีมงาน", "en": "Settings & Team" },
+    "footer_help": { "th": "คู่มือใช้งาน", "en": "User Manual" },
+    "footer_logout": { "th": "ออกจากระบบ", "en": "Log Out" },
+    "top_bc_marketing": { "th": "การตลาด", "en": "Marketing" },
+    "top_bc_sub": { "th": "Growth Workspace", "en": "Growth Workspace" },
+    "top_bc_plan": { "th": "แผนและปฏิทิน", "en": "Plans & Calendar" },
+    "top_sample_badge": { "th": "ข้อมูลตัวอย่าง / Sample data", "en": "Sample Data / ตัวอย่าง" },
+    "admin_user_role": { "th": "แอดมินผู้ดูแล", "en": "System Administrator" },
+    "badge_workspace": { "th": "Growth Workspace", "en": "Growth Workspace" },
+    "badge_draft_status": { "th": "ร่างใหม่", "en": "New Draft" },
+    "page_h1": { "th": "Research / สร้างแผน Growth", "en": "Research / Create Growth Plan" },
+    "page_description": { "th": "ร่างข้อเสนอและข้อความ ตรวจหลักฐาน แล้วอนุมัติ revision ก่อนสร้าง workflow ที่หยุดไว้", "en": "Draft proposals and messages, verify evidence, and approve revisions before creating paused workflows." },
+    "act_reload_version": { "th": "โหลดเวอร์ชันล่าสุด", "en": "Reload Latest" },
+    "act_save_draft": { "th": "บันทึกร่าง", "en": "Save Draft" },
+    "act_send_review": { "th": "ส่งตรวจ", "en": "Submit for Review" },
+    "act_approve_revision": { "th": "อนุมัติ revision", "en": "Approve Revision" },
+    "act_create_draft_workflow": { "th": "สร้างร่าง workflow ที่หยุดไว้", "en": "Create Paused Workflow" },
+    "alert_banner_title": { "th": "แผนนี้ยังไม่พร้อมเปิดส่งอัตโนมัติ", "en": "This plan is not ready for automated delivery" },
+    "badge_strict_guardrail": { "th": "Safety Locked", "en": "Safety Locked" },
+    "alert_banner_desc": { "th": "การบันทึก อนุมัติ และสร้างร่างไม่ส่งข้อความ ระบบยังไม่บังคับสต็อก กำไร และงบ ณ เวลาส่ง จึงต้องหยุด workflow นี้ไว้", "en": "Saving, approving, or drafting does not send messages. Inventory, margin, and budget checks are unforced at trigger time; therefore, this workflow must remain paused." },
+    "notice_unsaved_warning": { "th": "มีเนื้อหาที่แก้แล้วยังไม่บันทึก บันทึกก่อนใช้ AI ส่งตรวจ อนุมัติ หรือสร้างร่าง workflow", "en": "You have unsaved edits. Save draft before running AI, submitting review, approving, or instantiating workflow." },
+    "notice_unlinked_workflow": { "th": "ยังไม่เชื่อม workflow บันทึกและตรวจแผนได้ เมื่อต่อระบบแล้วจึงสร้างร่าง", "en": "No workflow linked yet. You can save and audit plans; create the draft once integrated." },
+    "card_plan_and_messages_title": { "th": "แผนและข้อความ", "en": "Plan & Messages" },
+    "card_plan_and_messages_sub": { "th": "ข้อความสองเวอร์ชันเป็นร่าง เลือกเวอร์ชันที่ทีมจะตรวจและใช้", "en": "Both variants are drafts. Select which version the team will audit and use." },
+    "status_draft_planning": { "th": "ขั้นตอน: ร่างแผนงาน", "en": "Stage: Plan Drafting" },
+    "field_plan_name": { "th": "ชื่อแผน", "en": "Plan Name" },
+    "field_plan_type": { "th": "ประเภทแผน", "en": "Plan Type" },
+    "opt_type_reactivation": { "th": "Reactivation (กู้คืนลูกค้าที่ไม่กลับมาซื้อ)", "en": "Reactivation (Win-back lapsed buyers)" },
+    "opt_type_cross_sell": { "th": "Cross-sell / Upsell สินค้าเสริม", "en": "Cross-sell / Product Upsell" },
+    "opt_type_vip_loyalty": { "th": "VIP Loyalty & Points Booster", "en": "VIP Loyalty & Points Booster" },
+    "opt_type_seasonal": { "th": "เทศกาลและโปรโมชันเร่งด่วน", "en": "Flash Promotion & Holiday Campaign" },
+    "field_plan_owner": { "th": "เจ้าของแผน (อีเมล)", "en": "Plan Owner (Email)" },
+    "field_plan_goal_offer": { "th": "เป้าหมายและข้อเสนอที่ต้องตรวจ", "en": "Goal & Verified Offer" },
+    "field_plan_goal_offer_sub": { "th": "ระบุสิ่งที่ต้องการให้ลูกค้าทำ พร้อมข้อเสนอที่ยืนยันแล้ว", "en": "Specify customer conversion goal alongside validated proposition." },
+    "field_plan_target_date": { "th": "วันที่วางแผนทำงาน", "en": "Target Action Date" },
+    "field_plan_target_date_sub": { "th": "กำหนดการของทีม ยังไม่ตั้งเวลาส่งข้อความ", "en": "Internal team schedule; not delivery trigger timestamp." },
+    "field_plan_budget": { "th": "งบสูงสุดของแผน (บาท)", "en": "Max Plan Budget (THB)" },
+    "field_plan_min_contribution": { "th": "อัตรา contribution ขั้นต่ำ (%)", "en": "Min Contribution Margin (%)" },
+    "field_plan_min_contribution_sub": { "th": "เกณฑ์ของแผน ยังไม่บังคับตรวจ ณ เวลาส่ง", "en": "Strategic hurdle threshold; unforced guardrail at delivery." },
+    "sub_contribution_helper": { "th": "ต้องรักษากำไรสุทธิหลังหักส่วนลดไม่ต่ำกว่าร้อยละที่ระบุ", "en": "Must retain minimum net margin post-discount." },
+    "heading_message_variants": { "th": "ชุดข้อความทดลอง (Message Variants)", "en": "Message Variants (A/B)" },
+    "sub_for_review": { "th": "สำหรับตรวจ", "en": "For Verification" },
+    "var_a_title": { "th": "เวอร์ชัน A: คูปองด่วน 7 วัน (เน้นความกระชับ)", "en": "Version A: 7-Day Flash Voucher (Direct)" },
+    "badge_selected_for_review": { "th": "เลือกสำหรับตรวจ", "en": "Selected for Review" },
+    "lbl_msg_copy": { "th": "เนื้อหาข้อความ (SMS / LINE Notification Template)", "en": "Message Copy (SMS / LINE Notification Template)" },
+    "lbl_coupon_code": { "th": "รหัสคูปอง (Coupon Code)", "en": "Coupon Code" },
+    "lbl_cta_label": { "th": "ข้อความปุ่มดำเนินการ (CTA)", "en": "CTA Button Label" },
+    "var_b_title": { "th": "เวอร์ชัน B: เน้นคุณประโยชน์และการดูแลต่อเนื่อง (Benefit-Led)", "en": "Version B: Routine Continuity & Benefits" },
+    "btn_choose_version": { "th": "เลือกเวอร์ชันนี้", "en": "Select This Version" },
+    "card_ai_title": { "th": "ผู้ช่วย AI ร่างข้อความ", "en": "AI Copywriting Assistant" },
+    "card_ai_sub": { "th": "บันทึกร่างก่อน เพื่อให้ AI ใช้แผนและหลักฐานเวอร์ชันเดียวกับทีม", "en": "Save draft first so AI grounds on synchronized evidence." },
+    "ai_instruction_lbl": { "th": "คำสั่งสำหรับ AI", "en": "Instruction for AI" },
+    "btn_ai_generate": { "th": "ให้ AI ร่าง 2 เวอร์ชัน", "en": "Draft 2 Variants with AI" },
+    "lbl_reason": { "th": "เหตุผล:", "en": "Rationale:" },
+    "lbl_reference": { "th": "อ้างอิง:", "en": "Reference:" },
+    "lbl_evidence_used": { "th": "หลักฐานที่ใช้:", "en": "Evidence Used:" },
+    "btn_apply_to_draft": { "th": "นำมาใส่ในร่างเพื่อแก้และบันทึก", "en": "Insert into Draft to Edit" },
+    "card_target_exp_title": { "th": "กลุ่มเป้าหมาย สินค้า และการทดลอง", "en": "Targeting, SKUs & Experiment Setup" },
+    "card_target_exp_sub": { "th": "กำหนดขอบเขตกลุ่มลูกค้า ตรวจสอบ Segment และป้องกันการทับซ้อนข้อความ", "en": "Define segments, verify SKUs, and prevent cross-campaign collisions." },
+    "btn_check_segments": { "th": "ตรวจ Segments", "en": "Verify Segments" },
+    "btn_check_templates": { "th": "ตรวจ template ข้อความ", "en": "Audit Templates" },
+    "lbl_segment_ids": { "th": "Segment IDs", "en": "Segment IDs" },
+    "sub_segment_ids": { "th": "UUID เท่านั้น คั่นด้วย comma · ตรวจจากหน้า Segments · ระบุกลุ่มที่ยืนยันแล้วก่อนส่งตรวจ", "en": "UUIDs only, comma-separated · Match Segments register · Confirm before review." },
+    "lbl_exclude_segments": { "th": "Exclude segment IDs", "en": "Exclude Segment IDs" },
+    "sub_exclude_segments": { "th": "UUID เท่านั้น คั่นด้วย comma (เช่น ลูกค้าที่มีออเดอร์ใน 7 วัน หรือยกเลิกรับข่าวสาร)", "en": "UUIDs comma-separated (e.g. recent buyers or opted-out)." },
+    "lbl_skus": { "th": "SKU ที่ใช้", "en": "Campaign SKUs" },
+    "sub_skus": { "th": "คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง", "en": "Comma-separated · Must audit actual physical stock & prices." },
+    "lbl_notif_template": { "th": "ใช้ notification template เดิม (ไม่บังคับ)", "en": "Reuse Notification Template (Optional)" },
+    "sub_notif_template": { "th": "เว้นว่างเพื่อสร้าง template จากข้อความที่เลือก หากระบุ key เนื้อหาต้องตรงกับเวอร์ชันที่อนุมัติ", "en": "Leave blank to generate template from chosen copy; if specified, must match approved." },
+    "lbl_control_group": { "th": "กลุ่มควบคุม (%)", "en": "Holdout Control (%)" },
+    "lbl_contact_gap": { "th": "เว้นช่วงติดต่อ (วัน)", "en": "Contact Frequency Gap (Days)" },
+    "lbl_conversion_window": { "th": "ช่วงนับ conversion (วัน)", "en": "Conversion Window (Days)" },
+    "card_evidence_title": { "th": "หลักฐานของแผน", "en": "Plan Research & Evidence" },
+    "card_evidence_sub": { "th": "แผนนี้เชื่อม Research topic · หลักฐานจะตรวจจากรายงานนี้เมื่อบันทึก", "en": "Linked to Research topic · Validated against analytics upon save." },
+    "card_team_tasks_title": { "th": "งานที่ทีมต้องรับต่อ", "en": "Team Handover Tasks" },
+    "card_team_tasks_sub": { "th": "บันทึกงานที่ต้องดำเนินการหลังแผนงานได้รับการอนุมัติ", "en": "Checklist and operational assignments post-approval." },
+    "btn_add_task": { "th": "เพิ่มงาน", "en": "Add Task" },
+    "btn_save_tasks": { "th": "บันทึกงานของทีม", "en": "Save Team Tasks" },
+    "card_revision_history_title": { "th": "ประวัติ revision และการตรวจ", "en": "Revision History & Audit Trail" },
+    "card_revision_history_sub": { "th": "ประวัติบันทึกการปรับปรุงเนื้อหาและการรับรองของหัวหน้างาน", "en": "Immutable log of content modifications and manager approvals." },
+    "card_plan_meta_title": { "th": "รายละเอียดแผน", "en": "Plan Overview" },
+    "meta_review_status": { "th": "สถานะการตรวจ:", "en": "Review Status:" },
+    "status_in_review": { "th": "รอตรวจสอบ / In Review", "en": "In Review / รอตรวจสอบ" },
+    "meta_task_owner": { "th": "เจ้าของงาน:", "en": "Task Owner:" },
+    "meta_approver": { "th": "ผู้อนุมัติ:", "en": "Approver:" },
+    "meta_approved_rev": { "th": "revision ที่อนุมัติ:", "en": "Approved Revision:" },
+    "meta_last_edited": { "th": "แก้ไขล่าสุด:", "en": "Last Modified:" },
+    "note_read_policy": { "th": "แผนนี้อ่านได้ การแก้เนื้อหาและอนุมัติเป็นหน้าที่เจ้าของแผนหรือผู้ดูแล", "en": "Plan is readable across teams; editing and approval belong to plan owner and admin." },
+    "card_stepper_title": { "th": "ขั้นตอนของร่าง workflow", "en": "Workflow Stepper Stages" },
+    "step_1_title": { "th": "1. Trigger (ตัวกระตุ้น)", "en": "1. Trigger Criterion" },
+    "step_1_desc": { "th": "คนที่ล็อกอินในช่วงเวลาที่ตั้งไว้ (และ/หรือใน segment เกิน 45 วัน)", "en": "Users active in timeframe and/or matching segment threshold." },
+    "step_2_title": { "th": "2. กลุ่มเป้าหมาย", "en": "2. Target Audience" },
+    "step_2_desc": { "th": "กรอง seg-8891-b3b และยกเว้นลูกค้าที่มีออเดอร์ใน 7 วัน", "en": "Include seg-8891-b3b, exclude conversions within 7 days." },
+    "step_3_title": { "th": "3. ทดลองและความถี่", "en": "3. Experiment & Frequency" },
+    "step_3_desc": { "th": "Holdout 10% · เว้นช่วง 14 วันเพื่อป้องกัน message fatigue", "en": "Holdout 10% · 14-day contact gap preventing fatigue." },
+    "step_4_title": { "th": "4. ข้อความที่เลือก", "en": "4. Selected Message" },
+    "step_4_desc": { "th": "ผูกข้อความ Variant A (รหัส BACK10) พร้อมลิงก์ Deeplink", "en": "Bind Variant A template (Code: BACK10) with verified deeplink." },
+    "card_dedup_title": { "th": "ตรวจ workflow ก่อนทำต่อ", "en": "Check Existing Workflows" },
+    "card_dedup_desc": { "th": "ระบบไม่สร้างซ้ำอัตโนมัติ ให้ผู้ดูแลตรวจรายการ workflow แล้วเชื่อมร่างที่มี marker ของแผนนี้และสถานะ draft / paused", "en": "System prevents duplicate workflows. Audit existing records and attach paused draft with plan marker." },
+    "lbl_detected_wf": { "th": "Workflow UUID ที่ตรวจพบ", "en": "Discovered Workflow UUID" },
+    "btn_link_wf": { "th": "ตรวจและเชื่อมร่าง", "en": "Verify & Link" },
+    "link_audit_workflows": { "th": "ตรวจรายการ workflow", "en": "Audit Workflows List" }
+  }
+  </script>
+<!-- ========================================================================= -->
+<!-- INLINE VANILLA JAVASCRIPT MICRO-INTERACTIONS & LOCALIZATION               -->
+<!-- ========================================================================= -->
+<script>
+    let currentLanguage = 'th';
+    let activeVariant = 'A';
+
+    // Show Toast helper
+    function showToast(message, isSuccess = true) {
+      const toast = document.getElementById('toastNotification');
+      const msgElem = document.getElementById('toastMessage');
+      const iconElem = document.getElementById('toastIcon');
+
+      msgElem.textContent = message;
+      iconElem.textContent = isSuccess ? 'check_circle' : 'info';
+      iconElem.className = isSuccess
+        ? 'material-symbols-outlined text-tertiary-fixed text-[20px]'
+        : 'material-symbols-outlined text-primary-fixed text-[20px]';
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    // Switch Message Variant (A / B)
+    function switchVariant(variant) {
+      activeVariant = variant;
+      const tabA = document.getElementById('tabVariantA');
+      const tabB = document.getElementById('tabVariantB');
+      const secA = document.getElementById('variantSectionA');
+      const secB = document.getElementById('variantSectionB');
+
+      if (variant === 'A') {
+        tabA.className = "px-4 py-1.5 rounded-md font-label-md text-label-md bg-surface-container-lowest text-primary shadow-sm font-semibold transition-all";
+        tabB.className = "px-4 py-1.5 rounded-md font-label-md text-label-md text-secondary hover:text-on-surface transition-all";
+        secA.classList.remove('hidden');
+        secB.classList.add('hidden');
+      } else {
+        tabB.className = "px-4 py-1.5 rounded-md font-label-md text-label-md bg-surface-container-lowest text-primary shadow-sm font-semibold transition-all";
+        tabA.className = "px-4 py-1.5 rounded-md font-label-md text-label-md text-secondary hover:text-on-surface transition-all";
+        secB.classList.remove('hidden');
+        secA.classList.add('hidden');
+      }
+    }
+
+    // Select Variant as Primary
+    function selectVariantAsPrimary(variant) {
+      switchVariant(variant);
+      showToast(currentLanguage === 'th' ? `เลือกเวอร์ชัน ${variant} สำหรับการตรวจและใช้งานแล้ว` : `Selected Variant ${variant} for review.`);
+    }
+
+    // Apply AI Draft into edit boxes
+    function applyAiDraft(variant) {
+      if (variant === 'A') {
+        switchVariant('A');
+        showToast(currentLanguage === 'th' ? 'นำข้อความ AI Draft A ใส่ในร่างเพื่อปรับแต่งแล้ว' : 'Inserted AI Draft A into plan copy.');
+      } else {
+        switchVariant('B');
+        showToast(currentLanguage === 'th' ? 'นำข้อความ AI Draft B ใส่ในร่างเพื่อปรับแต่งแล้ว' : 'Inserted AI Draft B into plan copy.');
+      }
+    }
+
+    // Language Toggle Handling
+    const langToggleBtn = document.getElementById('langToggleBtn');
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      document.documentElement.lang = lang;
+      document.getElementById('currentLangLabel').textContent = lang === 'th' ? 'ไทย / English' : 'English / ไทย';
+
+      // Update all elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(elem => {
+        const key = elem.getAttribute('data-i18n');
+        if (translationsData[key] && translationsData[key][lang]) {
+          elem.textContent = translationsData[key][lang];
+        }
+      });
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      setLanguage(currentLanguage === 'th' ? 'en' : 'th');
+      showToast(currentLanguage === 'th' ? 'เปลี่ยนภาษาเป็น: ภาษาไทย' : 'Switched to English interface');
+    });
+
+    // Save Draft Simulation
+    document.getElementById('btnSaveDraft').addEventListener('click', () => {
+      const planName = document.getElementById('planName').value;
+      showToast(currentLanguage === 'th' ? `บันทึกร่าง "${planName.slice(0, 24)}..." เรียบร้อย (rev-03.1)` : 'Draft revision successfully saved.');
+    });
+
+    // Reload Latest Simulation
+    document.getElementById('btnReloadVersion').addEventListener('click', () => {
+      showToast(currentLanguage === 'th' ? 'โหลดข้อมูลล่าสุดจากเซิร์ฟเวอร์แล้ว (rev-03)' : 'Loaded latest synchronized revision.');
+    });
+
+    // Submit Review Simulation
+    document.getElementById('btnSubmitReview').addEventListener('click', () => {
+      showToast(currentLanguage === 'th' ? 'ส่งตรวจให้หัวหน้าทีม (teerapat.k) เรียบร้อย' : 'Submitted for supervisor review.');
+    });
+
+    // Approve Revision Simulation
+    document.getElementById('btnApproveRevision').addEventListener('click', () => {
+      showToast(currentLanguage === 'th' ? 'อนุมัติ revision ปัจจุบัน พร้อมนำไปตั้ง workflow' : 'Revision approved for workflow instantiation.');
+    });
+
+    // Create Workflow Simulation (Safety alert)
+    document.getElementById('btnCreateWorkflow').addEventListener('click', () => {
+      showToast(currentLanguage === 'th' ? 'สร้างร่าง workflow ที่หยุดไว้ (สถานะ Paused / Draft) สำเร็จ' : 'Paused draft workflow successfully provisioned.');
+    });
+
+    // Simulate AI Draft generation
+    const btnDraftAi = document.getElementById('btnDraftAi');
+    const aiBtnText = document.getElementById('aiBtnText');
+    btnDraftAi.addEventListener('click', () => {
+      aiBtnText.textContent = currentLanguage === 'th' ? 'กำลังร่าง…' : 'Drafting…';
+      btnDraftAi.disabled = true;
+      setTimeout(() => {
+        aiBtnText.textContent = currentLanguage === 'th' ? 'ให้ AI ร่าง 2 เวอร์ชัน' : 'Draft 2 Variants with AI';
+        btnDraftAi.disabled = false;
+        showToast(currentLanguage === 'th' ? 'AI วิเคราะห์หลักฐานและร่าง 2 เวอร์ชันเรียบร้อย' : 'AI generated 2 evidence-grounded copy variants.');
+      }, 1200);
+    });
+
+    // Link Workflow UUID
+    document.getElementById('btnLinkWorkflow').addEventListener('click', () => {
+      const uuid = document.getElementById('inputWorkflowUuid').value;
+      if (uuid) {
+        showToast(currentLanguage === 'th' ? `เชื่อมโยงร่าง workflow: ${uuid} สำเร็จ` : `Linked workflow draft: ${uuid}`);
+      }
+    });
+
+    // Add Task Row
+    document.getElementById('btnAddTask').addEventListener('click', () => {
+      const tbody = document.getElementById('taskListBody');
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-surface-container-low/30 transition-colors";
+      tr.innerHTML = `
+        <td class="py-2.5 px-3 font-medium text-on-surface">
+          <input type="text" placeholder="ระบุชื่องานใหม่..." class="w-full text-body-sm px-2 py-1 border border-outline-variant rounded focus:border-primary">
+        </td>
+        <td class="py-2.5 px-3 text-secondary">pimchanok.m</td>
+        <td class="py-2.5 px-3 text-secondary num-tabular">10 เม.ย. 2025</td>
+        <td class="py-2.5 px-3 text-center">
+          <span class="inline-flex px-2 py-0.5 rounded text-label-sm font-label-sm bg-blue-100 text-blue-800 font-semibold">รอดำเนินการ</span>
+        </td>
+        <td class="py-2.5 px-3 text-right">
+          <button type="button" class="text-error hover:text-error/80 text-label-sm font-label-sm" onclick="this.closest('tr').remove()">ลบงาน</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      showToast(currentLanguage === 'th' ? 'เพิ่มรายการงานใหม่แล้ว' : 'Added new task item.');
+    });
+  </script>
+</body></html>

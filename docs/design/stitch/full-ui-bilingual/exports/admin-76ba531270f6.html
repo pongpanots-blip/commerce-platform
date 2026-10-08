@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Siam Commerce - Template ข้อความ (Notify · Email · Popup Templates)</title>
+<!-- Google Fonts: Noto Sans & Noto Sans Thai -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "tertiary-container": "#217b4e",
+            "inverse-on-surface": "#ecf0ff",
+            "on-error-container": "#93000a",
+            "error": "#ba1a1a",
+            "on-tertiary-container": "#b7ffcf",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#82d8a3",
+            "secondary-fixed-dim": "#b7c7e3",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-variant": "#d7e2ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-secondary-fixed-variant": "#38485e",
+            "inverse-surface": "#243048",
+            "surface-container-low": "#f1f3ff",
+            "surface-container-high": "#e0e8ff",
+            "on-secondary-fixed": "#0b1c31",
+            "secondary-container": "#d0e1fd",
+            "tertiary-fixed": "#9ef5be",
+            "primary-fixed": "#dde1ff",
+            "background": "#f6f8fc",
+            "on-surface": "#17243b",
+            "surface-container-highest": "#d7e2ff",
+            "on-tertiary": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "on-tertiary-fixed": "#002110",
+            "surface-container": "#e8eeff",
+            "surface": "#f9f9ff",
+            "on-primary": "#ffffff",
+            "outline-variant": "#e1e7f0",
+            "primary-container": "#365cf5",
+            "on-surface-variant": "#52627a",
+            "on-tertiary-fixed-variant": "#00522f",
+            "error-container": "#ffdad6",
+            "tertiary": "#157347",
+            "surface-tint": "#214ce7",
+            "surface-bright": "#f9f9ff",
+            "on-primary-fixed": "#001257",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "surface-dim": "#cddaf9",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#17243b",
+            "secondary": "#52627a",
+            "primary": "#365cf5",
+            "secondary-fixed": "#d3e3ff",
+            "on-primary-container": "#ededff",
+            "outline": "#c4c5d8"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "margin-desktop": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "margin": "1rem",
+            "gutter": "1rem"
+          },
+          fontFamily: {
+            "body-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "display-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-md": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "data-tabular": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-sm": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-lg": ["Noto Sans Thai", "Noto Sans", "sans-serif"]
+          },
+          fontSize: {
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "headline-lg": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+            "body-sm": ["12px", { lineHeight: "18px", fontWeight: "400" }],
+            "display-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "label-md": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+            "data-tabular": ["13px", { lineHeight: "20px", fontWeight: "400" }],
+            "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "600" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "label-lg": ["14px", { lineHeight: "20px", fontWeight: "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col">
+<!-- ========================================================================= -->
+<!-- SIDEBAR NAVIGATION (SHARED COMPONENT JSON: SideNavBar)                      -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md">
+<!-- Top Branding & Navigation Area -->
+<div class="flex flex-col gap-space-md">
+<!-- Header / Logo -->
+<div class="flex items-center gap-3 px-space-sm py-space-xs">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[22px]">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight">สยาม คอมเมิร์ซ</span>
+<span class="text-body-sm font-body-sm text-secondary">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action / CTA -->
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2 px-space-md rounded-lg text-label-lg font-label-lg hover:bg-primary/90 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Navigation Tabs (7 tabs from JSON) -->
+<nav class="flex flex-col gap-1 mt-1">
+<!-- Tab 1: สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- Tab 2: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- Tab 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- Tab 4: การตลาด (ACTIVE MATCH - Style Active applied) -->
+<div class="flex flex-col">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary" href="#marketing">
+<span class="material-symbols-outlined text-[20px] fill-icon">campaign</span>
+<span class="text-label-md font-label-md font-semibold">การตลาด</span>
+</a>
+<!-- Marketing Sub-navigation -->
+<div class="ml-6 pl-3 border-l border-outline-variant my-1 flex flex-col gap-0.5">
+<a class="text-body-sm font-body-sm py-1 px-2 rounded text-secondary hover:text-on-surface transition-colors" href="#marketing-workflows">Marketing Workflows</a>
+<a class="text-body-sm font-body-sm py-1 px-2 rounded text-secondary hover:text-on-surface transition-colors" href="#growth-workspace">Growth Workspace</a>
+<a class="text-body-sm font-body-sm py-1 px-2 rounded bg-primary-fixed/40 text-primary font-medium transition-colors" href="#notify-templates">Template ข้อความ</a>
+</div>
+</div>
+<!-- Tab 5: รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#analytics">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- Tab 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#hub">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Tab 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Area (JSON: footer_tab_labels) -->
+<div class="border-t border-outline-variant pt-space-sm flex flex-col gap-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150" href="#help">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="text-label-md font-label-md">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-error hover:bg-error-container/30 transition-colors duration-150" href="#logout">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-label-md font-label-md">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOP APP BAR (SHARED COMPONENT JSON: TopNavBar)                            -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter-desktop">
+<!-- Left Context / Breadcrumb & Route Details -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<a class="text-secondary hover:text-primary text-body-sm font-body-sm" href="#marketing">การตลาด</a>
+<span class="text-outline text-xs">/</span>
+<span class="text-headline-sm font-headline-sm text-on-surface font-semibold">Notify · Email · Popup Templates</span>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono bg-surface-container text-secondary border border-outline-variant">
+        admin-76ba531270f6
+      </span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-low text-primary border border-primary/20">
+        ข้อมูลตัวอย่าง / Sample data
+      </span>
+</div>
+<!-- Right Controls -->
+<div class="flex items-center gap-4">
+<!-- Language Switcher Toggle -->
+<div class="flex items-center bg-surface-container-low border border-outline-variant rounded-lg p-0.5 text-label-md font-label-md">
+<button class="px-2.5 py-1 rounded bg-white text-primary font-semibold shadow-xs" type="button">ไทย</button>
+<button class="px-2.5 py-1 rounded text-secondary hover:text-on-surface" type="button">English</button>
+</div>
+<!-- Trailing Icon Actions -->
+<div class="flex items-center gap-1 border-l border-outline-variant pl-3">
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors relative" title="การแจ้งเตือน" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" title="ความช่วยเหลือ" type="button">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+</div>
+<!-- User Profile -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-semibold text-xs">
+          SC
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold leading-tight">แอดมินผู้ดูแลระบบ</span>
+<span class="text-[11px] text-secondary">Siam Commerce</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CANVAS                                                     -->
+<!-- ========================================================================= -->
+<main class="ml-64 mt-16 p-6 min-h-[calc(100vh-4rem)] flex justify-center">
+<div class="w-full max-w-[1240px] flex flex-col gap-6">
+<!-- Back Navigation & Page Header Action Bar -->
+<div class="flex flex-col gap-2">
+<a class="inline-flex items-center gap-1 text-label-md font-label-md text-secondary hover:text-primary transition-colors" href="#marketing-workflows">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+<span>← Marketing Workflows</span>
+</a>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mt-1">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface">Notify · Email · Popup Templates</h1>
+<p class="text-body-sm font-body-sm text-secondary mt-1 max-w-3xl">
+              สร้าง template แจ้งเตือน (push/in-app) · อีเมล HTML · หรือ popup · ใส่ตัวแปรได้ · popup ทำ variant ตาม segment ได้ — ใช้ใน step "แจ้งเตือน" / "แสดง Offer"
+            </p>
+</div>
+<!-- Action Buttons Group -->
+<div class="flex items-center flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-white hover:bg-surface-container-low text-on-surface text-label-md font-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-sm text-primary">add</span>
+<span>+ Template แจ้งเตือน</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-white hover:bg-surface-container-low text-on-surface text-label-md font-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-sm text-primary">add</span>
+<span>+ Template Email (HTML layout)</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-white hover:bg-surface-container-low text-on-surface text-label-md font-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-sm text-primary">add</span>
+<span>+ Template Popup (มีปุ่ม action)</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-white hover:bg-surface-container-low text-secondary text-label-md font-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>ประวัติการแก้ไข (ล่าสุด 20 ครั้ง)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- MASTER-DETAIL STUDIO CONTAINER -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT PANEL: Template List / Selector (Approx 340px / 4 cols) -->
+<div class="lg:col-span-4 bg-white rounded-xl border border-outline-variant flex flex-col overflow-hidden shadow-[0_1px_2px_rgba(23,36,59,0.04)]">
+<!-- Panel Header / Search & Filter -->
+<div class="p-3.5 border-b border-outline-variant flex flex-col gap-2.5 bg-surface-container-lowest">
+<!-- Search Input -->
+<div class="relative">
+<span class="material-symbols-outlined text-[18px] text-secondary absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none">search</span>
+<input class="w-full h-[36px] pl-9 pr-3 text-body-sm font-body-sm bg-surface-container-low/60 border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-secondary/70" placeholder="ค้นหา template..." type="text"/>
+</div>
+<!-- Filter Tabs -->
+<div class="flex items-center gap-1 overflow-x-auto pb-0.5 text-label-sm font-label-sm">
+<button class="px-2.5 py-1 rounded-md bg-on-surface text-white font-medium whitespace-nowrap" type="button">ทั้งหมด</button>
+<button class="px-2.5 py-1 rounded-md bg-surface-container text-secondary hover:text-on-surface whitespace-nowrap" type="button">แจ้งเตือน</button>
+<button class="px-2.5 py-1 rounded-md bg-surface-container text-secondary hover:text-on-surface whitespace-nowrap" type="button">Email</button>
+<button class="px-2.5 py-1 rounded-md bg-surface-container text-secondary hover:text-on-surface whitespace-nowrap" type="button">POPUP</button>
+<button class="px-2.5 py-1 rounded-md bg-surface-container text-secondary hover:text-on-surface whitespace-nowrap" type="button">แจ้งเตือน+EMAIL</button>
+</div>
+</div>
+<!-- Template Items List -->
+<div class="divide-y divide-outline-variant flex flex-col">
+<!-- Item 1: Selected / Active -->
+<div class="p-3.5 bg-primary/5 border-l-4 border-primary cursor-pointer hover:bg-primary/10 transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md font-semibold text-primary">โปรฝนตก push</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#157347]/10 text-[#157347]">ตรวจแล้ว</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1 line-clamp-1">
+                ☔ {{user_name}} ฝนตกแบบนี้ รับส่วนลดพิเศษ 15% ทันที!
+              </p>
+<div class="flex items-center gap-2 mt-2 text-[11px] text-secondary">
+<span class="inline-flex items-center gap-1 bg-surface-container px-1.5 py-0.5 rounded text-on-surface">
+<span class="material-symbols-outlined text-[13px] text-primary">notifications_active</span>
+<span>แจ้งเตือน / Push</span>
+</span>
+<span>• 2 variants</span>
+<span>• อัปเดต 2 ชม.ที่แล้ว</span>
+</div>
+</div>
+<!-- Item 2: Popup -->
+<div class="p-3.5 cursor-pointer hover:bg-surface-container-low/40 transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md font-semibold text-on-surface">Popup ฝนตก</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-secondary">ฉบับร่าง</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1 line-clamp-1">
+                แบนเนอร์ลดราคาวันฝนตก + ปุ่ม action "ไปใช้ที่ตะกร้า"
+              </p>
+<div class="flex items-center gap-2 mt-2 text-[11px] text-secondary">
+<span class="inline-flex items-center gap-1 bg-surface-container px-1.5 py-0.5 rounded text-on-surface">
+<span class="material-symbols-outlined text-[13px] text-amber-600">ad_units</span>
+<span>POPUP</span>
+</span>
+<span>• 1 variant</span>
+</div>
+</div>
+<!-- Item 3: System Template -->
+<div class="p-3.5 cursor-pointer hover:bg-surface-container-low/40 transition-colors bg-surface-container-low/20">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="text-label-md font-label-md font-semibold text-on-surface">ออเดอร์ชำระเงินสำเร็จ (order_paid)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-purple-100 text-purple-800">ระบบ</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1 line-clamp-1">
+                เทมเพลตระบบ — ใช้แจ้งเตือนออเดอร์/สต๊อกจริง แก้ข้อความได้ แต่ลบไม่ได้
+              </p>
+<div class="flex items-center gap-2 mt-2 text-[11px] text-secondary">
+<span class="inline-flex items-center gap-1 bg-surface-container px-1.5 py-0.5 rounded text-on-surface">
+<span class="material-symbols-outlined text-[13px] text-primary">mark_email_read</span>
+<span>แจ้งเตือน+EMAIL</span>
+</span>
+<span class="text-[#B08900] flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+<span>key ล็อก</span>
+</span>
+</div>
+</div>
+<!-- Item 4: Cart Abandoned -->
+<div class="p-3.5 cursor-pointer hover:bg-surface-container-low/40 transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md font-semibold text-on-surface">แจ้งเตือนตะกร้าค้าง (Cart Abandoned)</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#157347]/10 text-[#157347]">ใช้งานอยู่</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1 line-clamp-1">
+                คุณลืมของไว้ในตะกร้าหรือเปล่า? สินค้าบางรายการอาจหมด
+              </p>
+<div class="flex items-center gap-2 mt-2 text-[11px] text-secondary">
+<span class="inline-flex items-center gap-1 bg-surface-container px-1.5 py-0.5 rounded text-on-surface">
+<span class="material-symbols-outlined text-[13px] text-primary">notifications_active</span>
+<span>แจ้งเตือน</span>
+</span>
+<span>• 3 variants</span>
+</div>
+</div>
+</div>
+<!-- Panel Footer Notice -->
+<div class="p-3 bg-surface-container-low/50 border-t border-outline-variant text-[11px] text-secondary flex items-start gap-1.5">
+<span class="material-symbols-outlined text-sm text-[#B08900] mt-0.5">info</span>
+<span>เทมเพลตระบบลบไม่ได้ — ระบบแจ้งเตือนต้องใช้ key นี้เสมอ (แก้ข้อความได้)</span>
+</div>
+</div>
+<!-- RIGHT PANEL: Template Editor & Interactive Preview (Approx 860px / 8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- CARD 1: Editor Form & Segment Variants -->
+<div class="bg-white rounded-xl border border-outline-variant p-5 shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-5">
+<!-- Editor Top Header & Action Controls -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-outline-variant">
+<div class="flex-1 max-w-md">
+<label class="block text-label-sm font-label-sm text-secondary mb-1">
+                  ชื่อ template (ให้ทีมเห็นใน dropdown)
+                </label>
+<input class="w-full h-[38px] px-3 text-body-md font-body-md font-medium text-on-surface bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" id="templateNameInput" placeholder="เช่น โปรฝนตก push / เช่น Popup ฝนตก" type="text" value="โปรฝนตก push"/>
+</div>
+<!-- Top Save / Action Buttons -->
+<div class="flex items-center gap-2 self-end sm:self-center">
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-white hover:bg-surface-container-low text-secondary hover:text-error text-label-md font-label-md flex items-center gap-1 transition-colors" title="ลบ template" type="button">
+<span class="material-symbols-outlined text-sm">delete</span>
+<span>ลบ template</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-white hover:bg-surface-container-low text-on-surface text-label-md font-label-md transition-colors" type="button">
+                  ย้อนกลับ
+                </button>
+<button class="px-4 py-1.5 rounded-lg bg-primary hover:bg-[#2848D6] text-white text-label-md font-label-md font-semibold flex items-center gap-1.5 shadow-sm transition-all" id="btnSaveTemplate" type="button">
+<span class="material-symbols-outlined text-sm" id="btnSaveIcon">save</span>
+<span id="btnSaveLabel">บันทึก</span>
+</button>
+</div>
+</div>
+<!-- Segment Variant Navigation Tabs -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-1 p-1 bg-surface-container-low rounded-lg border border-outline-variant/60">
+<!-- Tab 1: Default -->
+<button class="px-3 py-1.5 rounded-md bg-white text-primary font-semibold text-label-md font-label-md shadow-xs flex items-center gap-1.5 border border-outline-variant/40" type="button">
+<span class="material-symbols-outlined text-[16px]">public</span>
+<span>ทุกคน (ค่าเริ่มต้น)</span>
+</button>
+<!-- Tab 2: VIP Gold Variant -->
+<button class="px-3 py-1.5 rounded-md text-secondary hover:text-on-surface text-label-md font-label-md flex items-center gap-1.5" type="button">
+<span>VIP Gold</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-primary/10 text-primary">variant</span>
+</button>
+<!-- Add Variant Action -->
+<button class="px-2.5 py-1.5 rounded-md text-primary hover:bg-white/60 text-label-md font-label-md flex items-center gap-1 font-medium transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>+ variant ตาม segment</span>
+</button>
+</div>
+<!-- Language Toggle for Content -->
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-secondary">ภาษาที่แก้ไข (push/in-app):</span>
+<div class="inline-flex rounded-lg border border-outline-variant p-0.5 bg-white text-label-sm font-label-sm">
+<button class="px-2.5 py-1 rounded bg-primary text-white font-medium" id="tabLangTh" type="button">ไทย (ต้นฉบับ)</button>
+<button class="px-2.5 py-1 rounded text-secondary hover:text-on-surface" id="tabLangEn" type="button">EN</button>
+</div>
+</div>
+</div>
+<!-- Segment Explanation Banner -->
+<div class="bg-surface-container-low/60 rounded-lg p-2.5 text-body-sm font-body-sm text-secondary flex items-start gap-2 border border-outline-variant/50">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">info</span>
+<div>
+<span class="font-medium text-on-surface">กำลังแก้ค่าเริ่มต้น</span> — ทุกคนที่ไม่เข้า variant ไหนเห็นแบบนี้
+                  <span class="text-[11px] block text-secondary mt-0.5">user ที่อยู่ใน segment นี้เห็นเนื้อหาชุดนี้แทนค่าเริ่มต้น (variant แรกที่ตรงชนะ · guest เห็นค่าเริ่มต้นเสมอ)</span>
+</div>
+</div>
+</div>
+<!-- Form Content Fields -->
+<div class="flex flex-col gap-4">
+<!-- Title Field -->
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="text-label-md font-label-md font-medium text-on-surface flex items-center gap-1">
+<span>หัวข้อแจ้งเตือน (ไทย — ต้นฉบับ, จำเป็นต้องกรอก)</span>
+<span class="text-error">*</span>
+</label>
+<span class="text-label-sm font-label-sm text-secondary">หัวข้อแจ้งเตือน (ใช้ตัวแปรได้)</span>
+</div>
+<input class="w-full h-[38px] px-3 text-body-md font-body-md text-on-surface bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" id="notifTitleInput" placeholder="เช่น {{user_name}} ฝนตกแบบนี้ รับส่วนลดเลย ☔" type="text" value="☔ {{user_name}} ฝนตกแบบนี้ รับส่วนลดพิเศษ 15% ทันที!"/>
+</div>
+<!-- Body Field -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                  ข้อความแจ้งเตือน
+                </label>
+<textarea class="w-full p-3 text-body-md font-body-md text-on-surface bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" id="notifBodyInput" placeholder="เช่น {{user_name}} ช้อปตอนนี้ลดพิเศษ" rows="3">สั่งอาหารอุ่นๆ ท่ามกลางสายฝน พร้อมคูปองส่วนลด RAINY15 เมื่อสั่งครบ 300 บาท ส่งฟรีถึงบ้านคุณ</textarea>
+</div>
+<!-- Dynamic Variable Chips Section -->
+<div class="bg-surface-container-low/40 rounded-lg p-3 border border-outline-variant/60 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm font-semibold text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">data_object</span>
+<span>ตัวแปร (คลิกเพื่อแทรก):</span>
+</span>
+<span class="text-[11px] text-secondary">คลิกเพื่อใส่ตัวแปรลงในตำแหน่งเคอร์เซอร์</span>
+</div>
+<div class="flex items-center flex-wrap gap-1.5" id="varChipsContainer">
+<button class="var-chip px-2.5 py-1 rounded bg-white border border-outline-variant text-[12px] font-mono font-medium text-primary hover:bg-primary hover:text-white transition-all shadow-2xs" data-var="{{user_name}}" type="button">
+                    {{user_name}}
+                  </button>
+<button class="var-chip px-2.5 py-1 rounded bg-white border border-outline-variant text-[12px] font-mono font-medium text-primary hover:bg-primary hover:text-white transition-all shadow-2xs" data-var="{{cart_total}}" type="button">
+                    {{cart_total}}
+                  </button>
+<button class="var-chip px-2.5 py-1 rounded bg-white border border-outline-variant text-[12px] font-mono font-medium text-primary hover:bg-primary hover:text-white transition-all shadow-2xs" data-var="{{coupon_code}}" type="button">
+                    {{coupon_code}}
+                  </button>
+<button class="var-chip px-2.5 py-1 rounded bg-white border border-outline-variant text-[12px] font-mono font-medium text-primary hover:bg-primary hover:text-white transition-all shadow-2xs" data-var="{{discount_amount}}" type="button">
+                    {{discount_amount}}
+                  </button>
+<button class="var-chip px-2.5 py-1 rounded bg-white border border-outline-variant text-[12px] font-mono font-medium text-primary hover:bg-primary hover:text-white transition-all shadow-2xs" data-var="{{order_id}}" type="button">
+                    {{order_id}}
+                  </button>
+</div>
+</div>
+<!-- Image Attachment Field -->
+<div>
+<label class="block text-label-md font-label-md font-medium text-on-surface mb-1">
+                  รูปภาพ (ไม่บังคับ)
+                </label>
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined text-secondary text-[18px] absolute left-3 top-1/2 -translate-y-1/2">link</span>
+<input class="w-full h-[38px] pl-9 pr-3 text-body-sm font-body-sm bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="imageUrlInput" placeholder="ใส่ URL รูปภาพ หรือ อัปโหลด" type="text" value="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?auto=format&amp;fit=crop&amp;w=600&amp;q=80"/>
+</div>
+<button class="px-3 h-[38px] rounded-lg border border-outline-variant bg-white hover:bg-surface-container text-secondary text-label-md font-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">cloud_upload</span>
+<span>เลือกไฟล์</span>
+</button>
+</div>
+</div>
+<!-- English Variant Notice Section (Visible when switching or informative collapse) -->
+<div class="hidden flex-col gap-3 p-3.5 border border-dashed border-outline-variant rounded-lg bg-surface-container-low/30" id="enFieldsSection">
+<div class="flex items-center justify-between text-label-sm font-label-sm font-medium text-secondary">
+<span>เนื้อหาภาษาอังกฤษ (English Translation Variant)</span>
+<span class="text-[11px] text-secondary">ช่องว่าง = ใช้ค่าไทยแทน</span>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1">หัวข้อแจ้งเตือน (EN) / Notification title</label>
+<input class="w-full h-[36px] px-3 text-body-sm bg-white border border-outline-variant rounded-lg" placeholder="e.g. ☔ Rainy Day treat! Enjoy 15% OFF now" type="text"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1">ข้อความ (EN) / Notification body</label>
+<textarea class="w-full p-2.5 text-body-sm bg-white border border-outline-variant rounded-lg" placeholder="e.g. Hot food delivery right to your door with code RAINY15" rows="2"></textarea>
+</div>
+<p class="text-[11px] text-secondary">เนื้อหาไทย (ต้นฉบับ) แก้ที่ช่องด้านบน — ค่า EN นี้แทนที่เฉพาะช่องที่กรอก ช่องว่าง = ใช้ค่าไทยแทน</p>
+</div>
+</div>
+</div>
+<!-- CARD 2: Realistic Interactive Mobile Notification Preview -->
+<div class="bg-white rounded-xl border border-outline-variant p-5 shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-4">
+<div class="flex items-center justify-between border-b border-outline-variant pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">preview</span>
+<span class="text-label-lg font-label-lg font-semibold text-on-surface">PREVIEW (ตัวแปรถูกแทนด้วยค่าตัวอย่าง)</span>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-secondary bg-surface-container px-2 py-0.5 rounded font-mono">
+<span>จำลองการแสดงผลบนอุปกรณ์ iOS / Android</span>
+</div>
+</div>
+<!-- Realistic Notification Canvas Device Container -->
+<div class="p-6 bg-slate-900/5 rounded-xl border border-slate-200 flex justify-center items-center">
+<!-- Mock Mobile Notification Card -->
+<div class="w-full max-w-[440px] bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_8px_24px_rgba(23,36,59,0.12)] border border-white/80 p-3.5 transition-all">
+<!-- Notification Header: App Icon & Title & Timestamp -->
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 rounded-md bg-primary text-white flex items-center justify-center font-bold text-[11px] shadow-xs">
+                      J
+                    </div>
+<span class="text-[12px] font-semibold text-slate-800 tracking-tight">JOSH · ตอนนี้</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-slate-400">expand_more</span>
+</div>
+<!-- Notification Content -->
+<div class="flex flex-col gap-1.5">
+<h4 class="text-[13px] font-bold text-slate-900 leading-snug" id="previewTitle">
+                    ☔ คุณสมชาย ฝนตกแบบนี้ รับส่วนลดพิเศษ 15% ทันที!
+                  </h4>
+<p class="text-[12px] text-slate-600 leading-relaxed" id="previewBody">
+                    สั่งอาหารอุ่นๆ ท่ามกลางสายฝน พร้อมคูปองส่วนลด RAINY15 เมื่อสั่งครบ 300 บาท ส่งฟรีถึงบ้านคุณ
+                  </p>
+<!-- Preview Banner Image -->
+<div class="mt-1 rounded-lg overflow-hidden border border-slate-100 max-h-40 bg-slate-100">
+<img class="w-full h-36 object-cover" data-alt="A cinematic rainy street atmosphere with droplets glistening on cafe window glass and cozy warm lights creating a soothing ambiance in modern commercial styling" id="previewImage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmjFDen9tqCYoOciO-EM-s9UVmvt2FT2ClwEsTwS4_8uwnfRTMkoAKw4R6CwkRDgsDAw-ZpwzDk1vxLbRLhR-0z9VvfbiHQkRm172pQWlzV3ihQTbtq_84UCsOQLJuFudT8mUx993E50pY8iIkexwLcx9R_MhX8xDYbq3_lwGpgMig8UwiJ13nvzJUAcFfeBGzPzGy8_lbLzwH5oRBi9ozad_4xY5AGVSenvRhpgyz8gNYTeQBmEfn1728OtXp2hetP5mSGZdR-nQ"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Footnote / System Specification -->
+<div class="text-body-sm font-body-sm text-secondary flex items-start gap-1.5 pt-1">
+<span class="material-symbols-outlined text-sm text-secondary mt-0.5">help_outline</span>
+<span>push แสดงหัวข้อ + ข้อความ + รูปใหญ่ · in-app เก็บรูปไว้ใน data · ตัวแปรจะถูกแทนด้วยข้อมูลลูกค้าจริงตอนส่ง</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- CRITICAL BILINGUAL SCRIPT REQUIREMENT (INVISIBLE EMBEDDED TRANSLATIONS)    -->
+<!-- ========================================================================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "route": "admin-76ba531270f6",
+    "url": "/j/marketing/notify-templates",
+    "title": {
+      "th": "Template ข้อความ",
+      "en": "Message Templates"
+    },
+    "brand_title": {
+      "th": "สยาม คอมเมิร์ซ",
+      "en": "Siam Commerce"
+    },
+    "brand_subtext": {
+      "th": "ศูนย์จัดการระบบร้านค้า",
+      "en": "Merchant Operations Center"
+    },
+    "page_title": {
+      "th": "Notify · Email · Popup Templates",
+      "en": "Notify · Email · Popup Templates"
+    },
+    "page_subtitle": {
+      "th": "สร้าง template แจ้งเตือน (push/in-app) · อีเมล HTML · หรือ popup · ใส่ตัวแปรได้ · popup ทำ variant ตาม segment ได้ — ใช้ใน step \"แจ้งเตือน\" / \"แสดง Offer\"",
+      "en": "Create push/in-app notification, HTML email, or popup templates with dynamic variables and segment variants — used in \"Notify\" or \"Show Offer\" steps"
+    },
+    "back_link": {
+      "th": "← Marketing Workflows",
+      "en": "← Marketing Workflows"
+    },
+    "btn_add_notify": {
+      "th": "+ Template แจ้งเตือน",
+      "en": "+ Notification Template"
+    },
+    "btn_add_email": {
+      "th": "+ Template Email (HTML layout)",
+      "en": "+ Email Template (HTML layout)"
+    },
+    "btn_add_popup": {
+      "th": "+ Template Popup (มีปุ่ม action)",
+      "en": "+ Popup Template (with action button)"
+    },
+    "btn_revision_history": {
+      "th": "ประวัติการแก้ไข (ล่าสุด 20 ครั้ง)",
+      "en": "Revision History (Last 20)"
+    },
+    "template_name_label": {
+      "th": "ชื่อ template (ให้ทีมเห็นใน dropdown)",
+      "en": "Template Name (Visible in dropdown)"
+    },
+    "template_name_placeholder": {
+      "th": "เช่น โปรฝนตก push",
+      "en": "e.g. Rainy Day Promo Push"
+    },
+    "default_everyone_tab": {
+      "th": "ทุกคน (ค่าเริ่มต้น)",
+      "en": "Everyone (Default)"
+    },
+    "default_everyone_subtext": {
+      "th": "กำลังแก้ค่าเริ่มต้น — ทุกคนที่ไม่เข้า variant ไหนเห็นแบบนี้",
+      "en": "Editing default — Users not matching any variant will see this"
+    },
+    "segment_variant_note": {
+      "th": "user ที่อยู่ใน segment นี้เห็นเนื้อหาชุดนี้แทนค่าเริ่มต้น (variant แรกที่ตรงชนะ · guest เห็นค่าเริ่มต้นเสมอ)",
+      "en": "Users in this segment see this variant instead of default (first matching variant wins · guests always see default)"
+    },
+    "btn_add_variant": {
+      "th": "+ variant ตาม segment",
+      "en": "+ Segment Variant"
+    },
+    "lang_edit_label": {
+      "th": "ภาษาที่แก้ไข (push/in-app)",
+      "en": "Editing Language (push/in-app)"
+    },
+    "field_title_th": {
+      "th": "หัวข้อแจ้งเตือน (ไทย — ต้นฉบับ, จำเป็นต้องกรอก)",
+      "en": "Notification Title (Thai — Master, Required)"
+    },
+    "field_title_vars": {
+      "th": "หัวข้อแจ้งเตือน (ใช้ตัวแปรได้)",
+      "en": "Notification Title (Supports variables)"
+    },
+    "field_body_th": {
+      "th": "ข้อความแจ้งเตือน",
+      "en": "Notification Body"
+    },
+    "field_image_optional": {
+      "th": "รูปภาพ (ไม่บังคับ)",
+      "en": "Image (Optional)"
+    },
+    "en_variant_note": {
+      "th": "เนื้อหาไทย (ต้นฉบับ) แก้ที่ช่องด้านบน — ค่า EN นี้แทนที่เฉพาะช่องที่กรอก ช่องว่าง = ใช้ค่าไทยแทน",
+      "en": "Master Thai content is edited above — English values override filled fields only; blank fields inherit Thai values"
+    },
+    "variables_insert_label": {
+      "th": "ตัวแปร (คลิกเพื่อแทรก)",
+      "en": "Variables (Click to insert)"
+    },
+    "preview_heading": {
+      "th": "PREVIEW (ตัวแปรถูกแทนด้วยค่าตัวอย่าง)",
+      "en": "PREVIEW (Variables replaced with sample data)"
+    },
+    "preview_footnote": {
+      "th": "push แสดงหัวข้อ + ข้อความ + รูปใหญ่ · in-app เก็บรูปไว้ใน data · ตัวแปรจะถูกแทนด้วยข้อมูลลูกค้าจริงตอนส่ง",
+      "en": "Push displays title + body + large image · In-app stores image in data payload · Variables will resolve with real customer data at send time"
+    },
+    "system_template_note": {
+      "th": "เทมเพลตระบบลบไม่ได้ — ระบบแจ้งเตือนต้องใช้ key นี้เสมอ (แก้ข้อความได้)",
+      "en": "System templates cannot be deleted — Notification triggers require this key (content is editable)"
+    },
+    "save_states": {
+      "idle": { "th": "บันทึก", "en": "Save" },
+      "saving": { "th": "กำลังบันทึก...", "en": "Saving..." },
+      "saved": { "th": "บันทึกแล้ว ✓", "en": "Saved ✓" }
+    }
+  }
+  </script>
+<!-- Interactive Logic for Real-Time Variable Insertion & Live Preview -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const titleInput = document.getElementById('notifTitleInput');
+      const bodyInput = document.getElementById('notifBodyInput');
+      const imageUrlInput = document.getElementById('imageUrlInput');
+      const previewTitle = document.getElementById('previewTitle');
+      const previewBody = document.getElementById('previewBody');
+      const previewImage = document.getElementById('previewImage');
+      const btnSave = document.getElementById('btnSaveTemplate');
+      const btnSaveLabel = document.getElementById('btnSaveLabel');
+      const btnSaveIcon = document.getElementById('btnSaveIcon');
+      const tabLangTh = document.getElementById('tabLangTh');
+      const tabLangEn = document.getElementById('tabLangEn');
+      const enFieldsSection = document.getElementById('enFieldsSection');
+
+      // Sample replacement values for preview simulation
+      const mockVars = {
+        '{{user_name}}': 'คุณสมชาย',
+        '{{cart_total}}': '฿450',
+        '{{coupon_code}}': 'RAINY15',
+        '{{discount_amount}}': '฿67.50',
+        '{{order_id}}': '#SC-98241'
+      };
+
+      function updatePreview() {
+        let rawTitle = titleInput.value || 'หัวข้อแจ้งเตือน';
+        let rawBody = bodyInput.value || 'ข้อความแจ้งเตือนจะแสดงที่นี่';
+
+        // Replace known variables for realistic live preview
+        for (const [token, val] of Object.entries(mockVars)) {
+          rawTitle = rawTitle.split(token).join(val);
+          rawBody = rawBody.split(token).join(val);
+        }
+
+        previewTitle.textContent = rawTitle;
+        previewBody.textContent = rawBody;
+
+        if (imageUrlInput.value.trim()) {
+          previewImage.src = imageUrlInput.value.trim();
+          previewImage.parentElement.style.display = 'block';
+        } else {
+          previewImage.parentElement.style.display = 'none';
+        }
+      }
+
+      // Input listeners
+      titleInput.addEventListener('input', updatePreview);
+      bodyInput.addEventListener('input', updatePreview);
+      imageUrlInput.addEventListener('input', updatePreview);
+
+      // Variable chips click insertion
+      const chips = document.querySelectorAll('.var-chip');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const varTag = chip.getAttribute('data-var');
+          // Insert into focused or body input by default
+          const target = document.activeElement === titleInput ? titleInput : bodyInput;
+          const start = target.selectionStart || target.value.length;
+          const end = target.selectionEnd || target.value.length;
+
+          target.value = target.value.substring(0, start) + varTag + target.value.substring(end);
+          target.focus();
+          target.setSelectionRange(start + varTag.length, start + varTag.length);
+          updatePreview();
+        });
+      });
+
+      // Language switcher tabs
+      tabLangTh.addEventListener('click', () => {
+        tabLangTh.className = "px-2.5 py-1 rounded bg-primary text-white font-medium";
+        tabLangEn.className = "px-2.5 py-1 rounded text-secondary hover:text-on-surface";
+        enFieldsSection.classList.add('hidden');
+      });
+
+      tabLangEn.addEventListener('click', () => {
+        tabLangEn.className = "px-2.5 py-1 rounded bg-primary text-white font-medium";
+        tabLangTh.className = "px-2.5 py-1 rounded text-secondary hover:text-on-surface";
+        enFieldsSection.classList.remove('hidden');
+        enFieldsSection.classList.add('flex');
+      });
+
+      // Save button micro-interaction
+      btnSave.addEventListener('click', () => {
+        btnSave.disabled = true;
+        btnSaveIcon.textContent = 'sync';
+        btnSaveIcon.classList.add('animate-spin');
+        btnSaveLabel.textContent = 'กำลังบันทึก...';
+
+        setTimeout(() => {
+          btnSaveIcon.classList.remove('animate-spin');
+          btnSaveIcon.textContent = 'check';
+          btnSaveLabel.textContent = 'บันทึกแล้ว ✓';
+          btnSave.classList.remove('bg-primary');
+          btnSave.classList.add('bg-tertiary');
+
+          setTimeout(() => {
+            btnSaveIcon.textContent = 'save';
+            btnSaveLabel.textContent = 'บันทึก';
+            btnSave.classList.remove('bg-tertiary');
+            btnSave.classList.add('bg-primary');
+            btnSave.disabled = false;
+          }, 2000);
+        }, 700);
+      });
+
+      // Initial run
+      updatePreview();
+    });
+  </script>
+</body></html>

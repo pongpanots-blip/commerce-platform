@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>เอกสาร API (API Documentation) - Commerce Platform DevPortal</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary": "#0a3fdc",
+            "on-primary-container": "#ededff",
+            "on-primary-fixed": "#001257",
+            "outline": "#747687",
+            "on-surface-variant": "#444655",
+            "tertiary": "#943500",
+            "on-primary": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-secondary-fixed-variant": "#38485e",
+            "inverse-primary": "#b9c3ff",
+            "primary-fixed": "#dde1ff",
+            "outline-variant": "#c4c5d8",
+            "on-error": "#ffffff",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-error-container": "#93000a",
+            "surface": "#f9f9ff",
+            "tertiary-fixed": "#ffdbcd",
+            "on-surface": "#0e1b32",
+            "tertiary-fixed-dim": "#ffb597",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-container-highest": "#d7e2ff",
+            "primary-container": "#365cf5",
+            "on-tertiary-fixed": "#360f00",
+            "error": "#ba1a1a",
+            "surface-bright": "#f9f9ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-secondary": "#ffffff",
+            "surface-dim": "#cddaf9",
+            "tertiary-container": "#bc4600",
+            "on-tertiary-container": "#ffebe4",
+            "error-container": "#ffdad6",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed": "#d3e3ff",
+            "inverse-surface": "#243048",
+            "background": "#f9f9ff",
+            "surface-container-low": "#f1f3ff",
+            "surface-tint": "#214ce7",
+            "surface-container-high": "#e0e8ff",
+            "surface-variant": "#d7e2ff",
+            "surface-container": "#e8eeff",
+            "on-secondary-container": "#54647c",
+            "on-background": "#0e1b32",
+            "surface-container-lowest": "#ffffff",
+            "secondary": "#4f5f77",
+            "secondary-container": "#d0e1fd",
+            "on-secondary-fixed": "#0b1c31"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "margin": "2rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "gutter": "1.5rem",
+            "gutter-sm": "1rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2.5rem",
+            "margin-mobile": "1rem"
+          },
+          "fontFamily": {
+            "code-sm": ["\"JetBrains Mono, monospace\""],
+            "body-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-md": ["\"Inter, Noto Sans, sans-serif\""],
+            "title-md": ["\"Inter, Noto Sans, sans-serif\""],
+            "label-sm": ["\"Inter, Noto Sans, sans-serif\""],
+            "body-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-lg": ["\"Inter, Noto Sans, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans, sans-serif\""],
+            "headline-sm": ["\"Inter, Noto Sans, sans-serif\""],
+            "headline-lg-mobile": ["\"Inter, Noto Sans, sans-serif\""]
+          },
+          "fontSize": {
+            "code-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+            "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col font-body-md text-on-surface bg-surface antialiased">
+<!-- Top Navigation Header (Derived from TopNavBar Shared Component) -->
+<header class="bg-surface-container-lowest sticky top-0 z-50 shadow-sm border-b border-outline-variant">
+<div class="w-full px-6 lg:px-12 flex justify-between items-center h-16 max-w-7xl mx-auto">
+<div class="flex items-center space-x-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-base shadow-sm">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</div>
+<div>
+<span class="text-title-md font-title-md font-semibold text-on-surface tracking-tight block">Commerce Platform DevPortal</span>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-2 pl-4 border-l border-outline-variant">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-fixed text-primary">v2.4 API</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono text-secondary bg-surface-container-low border border-outline-variant">portal-a2557b8d5a96</span>
+</div>
+</div>
+<!-- Navigation links & Trailing actions -->
+<nav class="hidden lg:flex items-center space-x-8">
+<a class="text-primary font-semibold border-b-2 border-primary pb-1 font-label-md text-label-md" data-i18n="API Documentation" href="#docs">API Documentation</a>
+<a class="text-secondary hover:text-on-surface transition-colors font-label-md text-label-md" data-i18n="API Reference" href="#api-ref">API Reference</a>
+<a class="text-secondary hover:text-on-surface transition-colors font-label-md text-label-md" data-i18n="System Status" href="#system-status">System Status</a>
+</nav>
+<div class="flex items-center space-x-3">
+<!-- Status Pill -->
+<div class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+<span data-i18n="status-operational">ระบบพร้อมใช้งานปกติ (All Systems Operational)</span>
+</div>
+<!-- Environment Selector -->
+<div class="relative hidden sm:flex items-center bg-surface-container-low rounded-lg p-0.5 border border-outline-variant text-xs">
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest shadow-sm font-medium text-primary" type="button">Sandbox</button>
+<button class="px-2.5 py-1 rounded text-secondary hover:text-on-surface transition-colors" type="button">Production</button>
+</div>
+<!-- Thai / English Switcher Toggle -->
+<button class="px-3 h-9 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-secondary hover:text-primary transition-all flex items-center gap-1.5 text-label-md font-label-md active:opacity-80" id="lang-toggle-btn" type="button">
+<span class="material-symbols-outlined text-base" data-icon="language">language</span>
+<span id="current-lang-label">ไทย / EN</span>
+</button>
+<a class="hidden md:inline-flex items-center justify-center px-4 h-10 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors shadow-sm active:opacity-80" href="#create-account">
+          Create Account
+        </a>
+</div>
+</div>
+</header>
+<!-- Main View Container: Sidebar + Docs Canvas -->
+<div class="flex-1 w-full max-w-7xl mx-auto flex px-4 lg:px-8 py-6 gap-6">
+<!-- 256px Developer Portal Sidebar -->
+<aside class="w-64 shrink-0 hidden md:block">
+<div class="sticky top-24 bg-surface-container-lowest rounded-xl border border-outline-variant p-4 space-y-6 shadow-sm">
+<!-- Portal Sub-brand -->
+<div class="pb-3 border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="developer_mode">developer_mode</span>
+<span class="font-title-md text-title-md text-on-surface">Developer Portal</span>
+</div>
+<span class="text-xs bg-surface-container-low text-secondary px-1.5 py-0.5 rounded font-mono">v2.4</span>
+</div>
+<!-- Primary Developer Portal Nav Links -->
+<nav class="space-y-1">
+<div class="text-xs font-semibold text-secondary uppercase tracking-wider px-2 py-1" data-i18n="portal_nav_header">Portal Console</div>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-body-sm font-body-sm text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" href="#status">
+<span class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span>
+<span data-i18n="nav_dashboard">ภาพรวมและสถานะ (Dashboard / Status)</span>
+</span>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-body-sm font-body-sm text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" href="#keys">
+<span class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-lg" data-icon="key">key</span>
+<span data-i18n="nav_keys">API Keys (คีย์ใช้งาน)</span>
+</span>
+<span class="inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-medium rounded-full bg-surface-container-high text-on-surface">2</span>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-body-sm font-body-sm text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" href="#webhooks">
+<span class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-lg" data-icon="webhook">webhook</span>
+<span data-i18n="nav_webhooks">Webhooks (เว็บฮุก)</span>
+</span>
+<span class="inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-medium rounded-full bg-surface-container-high text-on-surface">1</span>
+</a>
+<!-- Active Item: API Docs -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-body-sm font-body-sm bg-primary-container text-on-primary font-medium shadow-sm transition-colors" href="#docs">
+<span class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-lg" data-icon="menu_book">menu_book</span>
+<span data-i18n="nav_docs">เอกสาร &amp; อ้างอิง API (API Docs / Documentation)</span>
+</span>
+<span class="w-1.5 h-1.5 rounded-full bg-on-primary"></span>
+</a>
+</nav>
+<!-- Merchant Admin Sub-section (7 Modules) -->
+<div class="pt-4 border-t border-outline-variant space-y-2">
+<div class="flex items-center justify-between px-2">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider" data-i18n="merchant_os_title">ระบบปฏิบัติการหลัก (7 หมวด)</span>
+</div>
+<ul class="space-y-1 text-xs text-secondary pl-2">
+<li class="flex items-center gap-2 py-1 px-1.5 rounded hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span data-i18n="mod_products">สินค้าและสต็อก</span>
+</li>
+<li class="flex items-center gap-2 py-1 px-1.5 rounded hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span data-i18n="mod_orders">ออเดอร์และการเงิน</span>
+</li>
+<li class="flex items-center gap-2 py-1 px-1.5 rounded hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span data-i18n="mod_customers">ลูกค้าและบริการ</span>
+</li>
+<li class="flex items-center gap-2 py-1 px-1.5 rounded hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span data-i18n="mod_marketing">การตลาด</span>
+</li>
+<li class="flex items-center gap-2 py-1 px-1.5 rounded hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span data-i18n="mod_reports">รายงานและข้อมูล</span>
+</li>
+<li class="flex items-center gap-2 py-1 px-1.5 rounded hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span data-i18n="mod_integrations">ระบบเชื่อมต่อ</span>
+</li>
+<li class="flex items-center gap-2 py-1 px-1.5 rounded hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span data-i18n="mod_settings">ตั้งค่าและทีมงาน</span>
+</li>
+</ul>
+<div class="pt-2">
+<a class="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-primary hover:bg-surface-container-low rounded-lg transition-colors border border-dashed border-outline-variant" href="#merchant-console">
+<span data-i18n="open_merchant_console">ไปยังคอนโซลหลัก (Open Merchant Console)</span>
+<span class="material-symbols-outlined text-sm" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Screen Content Canvas -->
+<main class="flex-1 min-w-0 space-y-6">
+<!-- Breadcrumbs -->
+<nav class="flex items-center space-x-2 text-body-sm font-body-sm text-secondary">
+<span>Developer Portal</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface font-medium" data-i18n="API Documentation">เอกสาร API (API Documentation)</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary font-medium" data-i18n="Method">Method</span>
+</nav>
+<!-- Page Header -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface" data-i18n="API Documentation">เอกสาร API (API Documentation)</h1>
+<span class="bg-surface-container-low text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-outline-variant">REST v2.4</span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1" data-i18n="Storefront endpoints for building against the Commerce Platform.">
+            Storefront endpoints for building against the Commerce Platform.
+          </p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-body-sm text-secondary">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span data-i18n="sample_data_gateway">ข้อมูลตัวอย่าง (Sample Data): v2.4 Gateway</span>
+</div>
+<button class="inline-flex items-center gap-2 px-3.5 h-10 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md text-label-md transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-base" data-icon="api">api</span>
+<span data-i18n="Open Swagger">Open Swagger</span>
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="launch">launch</span>
+</button>
+</div>
+</div>
+<!-- Interactive API Explorer Banner / Notice Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm relative overflow-hidden">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md text-on-surface" data-i18n="Try live requests at">Try live requests at</span>
+<span class="font-semibold text-primary" data-i18n="Interactive API Explorer">Interactive API Explorer</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">
+<span data-i18n="Before sending requests, add your API key from the">Before sending requests, add your API key from the</span>
+<a class="text-primary font-medium underline" data-i18n="API Keys" href="#portal/keys">API Keys</a>
+<span data-i18n="page to the">page to the</span>
+<code class="bg-surface-container-low px-1.5 py-0.5 rounded text-primary font-mono text-xs" data-i18n="X-Api-Key">X-Api-Key</code>
+<span data-i18n="header.">header.</span>
+</p>
+</div>
+</div>
+<button class="shrink-0 px-4 h-10 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors shadow-sm flex items-center gap-2" type="button">
+<span data-i18n="Interactive API Explorer">Interactive API Explorer</span>
+<span class="material-symbols-outlined text-sm" data-icon="play_arrow">play_arrow</span>
+</button>
+</div>
+</div>
+<!-- Authentication Section -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="p-1.5 rounded-md bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="lock">lock</span>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">
+<span data-i18n="Authentication">Authentication</span> / <span data-i18n="X-Api-Key Header">X-Api-Key Header</span>
+</h2>
+</div>
+</div>
+<span class="px-2.5 py-1 text-xs rounded bg-surface-container-low text-secondary border border-outline-variant font-mono">Header Required</span>
+</div>
+<p class="text-body-md font-body-md text-secondary" data-i18n="Include your API key in the X-Api-Key header of every request:">
+          Include your API key in the X-Api-Key header of every request:
+        </p>
+<!-- Code Block Component -->
+<div class="rounded-lg border border-outline-variant bg-inverse-surface text-inverse-on-surface overflow-hidden">
+<div class="flex items-center justify-between px-4 py-2 bg-surface-container-high/10 border-b border-outline/30 text-xs text-outline-variant">
+<div class="flex items-center gap-2 font-mono">
+<span class="material-symbols-outlined text-xs" data-icon="terminal">terminal</span>
+<span data-i18n="cURL example">cURL example</span>
+</div>
+<button class="flex items-center gap-1.5 text-xs text-outline-variant hover:text-inverse-on-surface transition-colors py-1 px-2 rounded hover:bg-surface-container-high/20" id="copy-curl-btn" type="button">
+<span class="material-symbols-outlined text-xs" data-icon="content_copy">content_copy</span>
+<span id="copy-curl-text">Copy</span>
+</button>
+</div>
+<pre class="p-4 text-code-sm font-code-sm overflow-x-auto custom-scrollbar text-on-primary-container leading-relaxed"><code>curl -X GET "https://api.commerceplatform.co.th/v2.4/products?page=1&amp;pageSize=20" \
+  -H "X-Api-Key: pk_test_7f849b2c01994ad6" \
+  -H "Content-Type: application/json" \
+  -H "Accept-Language: th"</code></pre>
+</div>
+</section>
+<!-- Storefront Endpoints Table / Cards Section -->
+<section class="space-y-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="Storefront Endpoints">Storefront Endpoints</h2>
+<p class="text-body-sm font-body-sm text-secondary">Complete public HTTP operations available for web, native checkout, and mobile POS client integration.</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-secondary">Filter Method:</span>
+<span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">GET (5)</span>
+<span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">POST (2)</span>
+</div>
+</div>
+<!-- Endpoints List -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant overflow-hidden shadow-sm">
+<!-- Table Header -->
+<div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-low text-xs font-semibold text-secondary uppercase tracking-wider">
+<div class="col-span-2" data-i18n="Method">Method</div>
+<div class="col-span-4" data-i18n="Path">Path</div>
+<div class="col-span-5" data-i18n="Description">Description</div>
+<div class="col-span-1 text-right">Action</div>
+</div>
+<!-- Endpoint 1: Customers -->
+<div class="p-4 md:px-6 md:py-4 transition-colors hover:bg-surface/50">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<div class="md:col-span-2 flex items-center gap-1.5">
+<span class="px-2.5 py-1 text-xs font-bold font-mono rounded bg-blue-100 text-blue-800 border border-blue-200">GET</span>
+<span class="px-2 py-1 text-xs font-bold font-mono rounded bg-emerald-100 text-emerald-800 border border-emerald-200">POST</span>
+</div>
+<div class="md:col-span-4 flex items-center gap-2 font-mono text-code-sm font-code-sm text-on-surface">
+<span class="text-secondary select-none">/v2.4</span><span>/customers</span>
+<button class="text-secondary hover:text-primary transition-colors p-1" onclick="navigator.clipboard.writeText('/v2.4/customers')" title="Copy Path" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="md:col-span-5 text-body-sm font-body-sm text-secondary">
+<span data-i18n="Create/update customer (upsert by email or phone)">Create/update customer (upsert by email or phone)</span>
+<div class="flex gap-2 mt-1">
+<span class="text-[11px] bg-surface-container-low px-1.5 py-0.5 rounded text-secondary border border-outline-variant font-mono">query: email | phone</span>
+</div>
+</div>
+<div class="md:col-span-1 flex justify-start md:justify-end">
+<button class="text-primary hover:text-on-primary-fixed-variant text-xs font-medium flex items-center gap-1" type="button">
+<span>Try</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Endpoint 2: Products List -->
+<div class="p-4 md:px-6 md:py-4 transition-colors hover:bg-surface/50">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<div class="md:col-span-2 flex items-center">
+<span class="px-2.5 py-1 text-xs font-bold font-mono rounded bg-blue-100 text-blue-800 border border-blue-200">GET</span>
+</div>
+<div class="md:col-span-4 flex items-center gap-2 font-mono text-code-sm font-code-sm text-on-surface">
+<span class="text-secondary select-none">/v2.4</span><span>/products</span>
+<button class="text-secondary hover:text-primary transition-colors p-1" onclick="navigator.clipboard.writeText('/v2.4/products')" title="Copy Path" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="md:col-span-5 text-body-sm font-body-sm text-secondary">
+<span data-i18n="Product list (supports search, page, pageSize)">Product list (supports search, page, pageSize)</span>
+<div class="flex gap-2 mt-1">
+<span class="text-[11px] bg-surface-container-low px-1.5 py-0.5 rounded text-secondary border border-outline-variant font-mono">params: page, pageSize, search</span>
+</div>
+</div>
+<div class="md:col-span-1 flex justify-start md:justify-end">
+<button class="text-primary hover:text-on-primary-fixed-variant text-xs font-medium flex items-center gap-1" type="button">
+<span>Try</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Endpoint 3: Products Details -->
+<div class="p-4 md:px-6 md:py-4 transition-colors hover:bg-surface/50">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<div class="md:col-span-2 flex items-center">
+<span class="px-2.5 py-1 text-xs font-bold font-mono rounded bg-blue-100 text-blue-800 border border-blue-200">GET</span>
+</div>
+<div class="md:col-span-4 flex items-center gap-2 font-mono text-code-sm font-code-sm text-on-surface">
+<span class="text-secondary select-none">/v2.4</span><span>/products/{id}</span>
+<button class="text-secondary hover:text-primary transition-colors p-1" onclick="navigator.clipboard.writeText('/v2.4/products/{id}')" title="Copy Path" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="md:col-span-5 text-body-sm font-body-sm text-secondary">
+<span data-i18n="Product details by id">Product details by id</span>
+<div class="flex gap-2 mt-1">
+<span class="text-[11px] bg-surface-container-low px-1.5 py-0.5 rounded text-secondary border border-outline-variant font-mono">path: id (string)</span>
+</div>
+</div>
+<div class="md:col-span-1 flex justify-start md:justify-end">
+<button class="text-primary hover:text-on-primary-fixed-variant text-xs font-medium flex items-center gap-1" type="button">
+<span>Try</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Endpoint 4: Orders (POST) -->
+<div class="p-4 md:px-6 md:py-4 transition-colors hover:bg-surface/50">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<div class="md:col-span-2 flex items-center">
+<span class="px-2.5 py-1 text-xs font-bold font-mono rounded bg-emerald-100 text-emerald-800 border border-emerald-200">POST</span>
+</div>
+<div class="md:col-span-4 flex items-center gap-2 font-mono text-code-sm font-code-sm text-on-surface">
+<span class="text-secondary select-none">/v2.4</span><span>/orders</span>
+<button class="text-secondary hover:text-primary transition-colors p-1" onclick="navigator.clipboard.writeText('/v2.4/orders')" title="Copy Path" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="md:col-span-5 text-body-sm font-body-sm text-secondary">
+<span data-i18n="Create order + reserve stock in one request (requires Idempotency-Key)">Create order + reserve stock in one request (requires Idempotency-Key)</span>
+<div class="flex gap-2 mt-1">
+<span class="text-[11px] bg-tertiary-fixed text-on-tertiary-fixed-variant px-1.5 py-0.5 rounded font-mono font-medium">Header: Idempotency-Key</span>
+</div>
+</div>
+<div class="md:col-span-1 flex justify-start md:justify-end">
+<button class="text-primary hover:text-on-primary-fixed-variant text-xs font-medium flex items-center gap-1" type="button">
+<span>Try</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Endpoint 5: Payments Simulate (POST) -->
+<div class="p-4 md:px-6 md:py-4 transition-colors hover:bg-surface/50">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<div class="md:col-span-2 flex items-center">
+<span class="px-2.5 py-1 text-xs font-bold font-mono rounded bg-emerald-100 text-emerald-800 border border-emerald-200">POST</span>
+</div>
+<div class="md:col-span-4 flex items-center gap-2 font-mono text-code-sm font-code-sm text-on-surface">
+<span class="text-secondary select-none">/v2.4</span><span>/payments/simulate</span>
+<button class="text-secondary hover:text-primary transition-colors p-1" onclick="navigator.clipboard.writeText('/v2.4/payments/simulate')" title="Copy Path" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="md:col-span-5 text-body-sm font-body-sm text-secondary">
+<span data-i18n="Report simulated payment result (paid/failed)">Report simulated payment result (paid/failed)</span>
+<div class="flex gap-2 mt-1">
+<span class="text-[11px] bg-secondary-fixed text-on-secondary-fixed-variant px-1.5 py-0.5 rounded font-mono">sandbox-only</span>
+</div>
+</div>
+<div class="md:col-span-1 flex justify-start md:justify-end">
+<button class="text-primary hover:text-on-primary-fixed-variant text-xs font-medium flex items-center gap-1" type="button">
+<span>Try</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Endpoint 6: Order Details (GET) -->
+<div class="p-4 md:px-6 md:py-4 transition-colors hover:bg-surface/50">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<div class="md:col-span-2 flex items-center">
+<span class="px-2.5 py-1 text-xs font-bold font-mono rounded bg-blue-100 text-blue-800 border border-blue-200">GET</span>
+</div>
+<div class="md:col-span-4 flex items-center gap-2 font-mono text-code-sm font-code-sm text-on-surface">
+<span class="text-secondary select-none">/v2.4</span><span>/orders/{id}</span>
+<button class="text-secondary hover:text-primary transition-colors p-1" onclick="navigator.clipboard.writeText('/v2.4/orders/{id}')" title="Copy Path" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="md:col-span-5 text-body-sm font-body-sm text-secondary">
+<span data-i18n="Order details + fulfillment status">Order details + fulfillment status</span>
+<div class="flex gap-2 mt-1">
+<span class="text-[11px] bg-surface-container-low px-1.5 py-0.5 rounded text-secondary border border-outline-variant font-mono">path: id (uuid)</span>
+</div>
+</div>
+<div class="md:col-span-1 flex justify-start md:justify-end">
+<button class="text-primary hover:text-on-primary-fixed-variant text-xs font-medium flex items-center gap-1" type="button">
+<span>Try</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Endpoint 7: Customer Order History (GET) -->
+<div class="p-4 md:px-6 md:py-4 transition-colors hover:bg-surface/50">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<div class="md:col-span-2 flex items-center">
+<span class="px-2.5 py-1 text-xs font-bold font-mono rounded bg-blue-100 text-blue-800 border border-blue-200">GET</span>
+</div>
+<div class="md:col-span-4 flex items-center gap-2 font-mono text-code-sm font-code-sm text-on-surface">
+<span class="text-secondary select-none">/v2.4</span><span>/customers/{customerId}/orders</span>
+<button class="text-secondary hover:text-primary transition-colors p-1" onclick="navigator.clipboard.writeText('/v2.4/customers/{customerId}/orders')" title="Copy Path" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="md:col-span-5 text-body-sm font-body-sm text-secondary">
+<span data-i18n="Order history for customer (requires customerId)">Order history for customer (requires customerId)</span>
+<div class="flex gap-2 mt-1">
+<span class="text-[11px] bg-surface-container-low px-1.5 py-0.5 rounded text-secondary border border-outline-variant font-mono">path: customerId (string)</span>
+</div>
+</div>
+<div class="md:col-span-1 flex justify-start md:justify-end">
+<button class="text-primary hover:text-on-primary-fixed-variant text-xs font-medium flex items-center gap-1" type="button">
+<span>Try</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Additional Developer Integration Utilities & Tips Bento -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-3">
+<div class="flex items-center gap-2 text-on-surface font-title-md text-title-md">
+<span class="material-symbols-outlined text-primary" data-icon="tune">tune</span>
+<span data-i18n="ตั้งค่า">ตั้งค่า</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary">
+<span data-i18n="เงื่อนไขอื่น เช่น role, ยอดสั่งซื้อ, วันที่สมัคร">เงื่อนไขอื่น เช่น role, ยอดสั่งซื้อ, วันที่สมัคร</span>
+</p>
+<div class="flex items-center gap-2 pt-2 text-xs">
+<span class="px-2 py-1 rounded bg-surface-container-low text-secondary" data-i18n="ราคาสมาชิก">ราคาสมาชิก</span>
+<span class="px-2 py-1 rounded bg-surface-container-low text-secondary" data-i18n="บันทึกราคา">บันทึกราคา</span>
+<span class="px-2 py-1 rounded bg-surface-container-low text-secondary" data-i18n="ลำดับบนหน้าแรก">ลำดับบนหน้าแรก</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-3">
+<div class="flex items-center gap-2 text-on-surface font-title-md text-title-md">
+<span class="material-symbols-outlined text-primary" data-icon="verified_user">verified_user</span>
+<span data-i18n="Device &amp; Offer State">Device &amp; Offer State</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary">
+<span data-i18n="เช็กว่า device มีลิงก์ user หรือยัง, offer ถูก dismiss ไปหรือยัง, และ shop จะเห็นอะไรจาก">เช็กว่า device มีลิงก์ user หรือยัง, offer ถูก dismiss ไปหรือยัง, และ shop จะเห็นอะไรจาก</span>
+</p>
+<div class="flex items-center gap-2 pt-2 text-xs">
+<span class="px-2 py-1 rounded bg-surface-container-low text-secondary" data-i18n="แสดง Popup (โฆษณา)">แสดง Popup (โฆษณา)</span>
+<span class="px-2 py-1 rounded bg-surface-container-low text-secondary" data-i18n="ออร์แกนิก">ออร์แกนิก</span>
+<span class="px-2 py-1 rounded bg-surface-container-low text-secondary" data-i18n="เข้ากับอาหาร">เข้ากับอาหาร</span>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Footer Component (Identical to Shared Footer Component) -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant mt-12">
+<div class="w-full py-6 px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-4 max-w-7xl mx-auto">
+<div class="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
+<span class="text-label-sm font-label-sm font-semibold text-on-surface-variant">
+          © 2025 Commerce Platform Southeast Asia Pte. Ltd. All rights reserved. PCI-DSS Level 1 Certified.
+        </span>
+</div>
+<nav class="flex flex-wrap items-center justify-center gap-6">
+<a class="text-secondary hover:text-on-surface transition-colors font-label-sm text-label-sm" href="#security">Security Architecture</a>
+<a class="text-secondary hover:text-on-surface transition-colors font-label-sm text-label-sm" href="#compliance">Compliance &amp; PDPA</a>
+<a class="text-secondary hover:text-on-surface transition-colors font-label-sm text-label-sm" href="#terms">Developer Terms</a>
+<a class="text-secondary hover:text-on-surface transition-colors font-label-sm text-label-sm" href="#privacy">Privacy Policy</a>
+<a class="text-secondary hover:text-on-surface transition-colors font-label-sm text-label-sm" href="#api-status">API Status</a>
+</nav>
+</div>
+</footer>
+<!-- Hidden Translations Script Object (Mandatory Catalog Requirement) -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Method": {
+      "th": "เมธอด (Method)",
+      "en": "Method"
+    },
+    "Description": {
+      "th": "คำอธิบาย (Description)",
+      "en": "Description"
+    },
+    "API Keys": {
+      "th": "API Keys",
+      "en": "API Keys"
+    },
+    "Create/update customer (upsert by email or phone)": {
+      "th": "สร้างหรืออัปเดตข้อมูลลูกค้า (upsert ด้วยอีเมลหรือเบอร์โทรศัพท์)",
+      "en": "Create/update customer (upsert by email or phone)"
+    },
+    "Product list (supports search, page, pageSize)": {
+      "th": "รายการสินค้า (รองรับค้นหา, เลขหน้า, และขนาดหน้า)",
+      "en": "Product list (supports search, page, pageSize)"
+    },
+    "Product details by id": {
+      "th": "รายละเอียดสินค้าตามรหัส ID",
+      "en": "Product details by id"
+    },
+    "Create order + reserve stock in one request (requires Idempotency-Key)": {
+      "th": "สร้างคำสั่งซื้อและตัดสต็อกในคำขอเดียว (จำเป็นต้องระบุ Idempotency-Key)",
+      "en": "Create order + reserve stock in one request (requires Idempotency-Key)"
+    },
+    "Report simulated payment result (paid/failed)": {
+      "th": "รายงานผลการทดลองชำระเงินจำลอง (paid/failed)",
+      "en": "Report simulated payment result (paid/failed)"
+    },
+    "Order details + fulfillment status": {
+      "th": "รายละเอียดคำสั่งซื้อและสถานะการจัดส่ง",
+      "en": "Order details + fulfillment status"
+    },
+    "Order history for customer (requires customerId)": {
+      "th": "ประวัติคำสั่งซื้อของลูกค้า (จำเป็นต้องระบุ customerId)",
+      "en": "Order history for customer (requires customerId)"
+    },
+    "API Documentation": {
+      "th": "เอกสาร API (API Documentation)",
+      "en": "API Documentation"
+    },
+    "Storefront endpoints for building against the Commerce Platform.": {
+      "th": "Storefront endpoints สำหรับเชื่อมต่อและพัฒนาระบบร่วมกับ Commerce Platform",
+      "en": "Storefront endpoints for building against the Commerce Platform."
+    },
+    "Interactive API Explorer": {
+      "th": "Interactive API Explorer",
+      "en": "Interactive API Explorer"
+    },
+    "Open Swagger": {
+      "th": "เปิด Swagger",
+      "en": "Open Swagger"
+    },
+    "Try live requests at": {
+      "th": "ทดสอบส่งคำขอจริงได้ที่",
+      "en": "Try live requests at"
+    },
+    "Before sending requests, add your API key from the": {
+      "th": "ก่อนส่งคำขอ กรุณาระบุ API key จากหน้า",
+      "en": "Before sending requests, add your API key from the"
+    },
+    "page to the": {
+      "th": "ลงในส่วนหัว",
+      "en": "page to the"
+    },
+    "X-Api-Key": {
+      "th": "X-Api-Key",
+      "en": "X-Api-Key"
+    },
+    "header.": {
+      "th": "header",
+      "en": "header."
+    },
+    "Storefront Endpoints": {
+      "th": "Storefront Endpoints",
+      "en": "Storefront Endpoints"
+    },
+    "Path": {
+      "th": "พาธ (Path)",
+      "en": "Path"
+    },
+    "Authentication": {
+      "th": "การยืนยันตัวตน (Authentication)",
+      "en": "Authentication"
+    },
+    "X-Api-Key Header": {
+      "th": "X-Api-Key Header",
+      "en": "X-Api-Key Header"
+    },
+    "Include your API key in the X-Api-Key header of every request:": {
+      "th": "โปรดระบุ API key ของคุณในส่วนหัว X-Api-Key ของทุกคำขอ:",
+      "en": "Include your API key in the X-Api-Key header of every request:"
+    },
+    "cURL example": {
+      "th": "ตัวอย่าง cURL",
+      "en": "cURL example"
+    },
+    "เข้ากับอาหาร": {
+      "th": "เข้ากับอาหาร",
+      "en": "Food pairing compatible"
+    },
+    "เงื่อนไขอื่น เช่น role, ยอดสั่งซื้อ, วันที่สมัคร": {
+      "th": "เงื่อนไขอื่น เช่น role, ยอดสั่งซื้อ, วันที่สมัคร",
+      "en": "Other criteria e.g. role, order total, registration date"
+    },
+    "เช็กว่า device มีลิงก์ user หรือยัง, offer ถูก dismiss ไปหรือยัง, และ shop จะเห็นอะไรจาก": {
+      "th": "เช็กว่า device มีลิงก์ user หรือยัง, offer ถูก dismiss ไปหรือยัง, และ shop จะเห็นอะไรจาก",
+      "en": "Verify if device is linked to user, if offer was dismissed, and what merchant sees"
+    },
+    "ตั้งค่า": {
+      "th": "ตั้งค่า",
+      "en": "Settings"
+    },
+    "บันทึกราคา": {
+      "th": "บันทึกราคา",
+      "en": "Save pricing"
+    },
+    "ผู้สมัคร": {
+      "th": "ผู้สมัคร",
+      "en": "Applicant"
+    },
+    "ไม่พบประเภทร้าน": {
+      "th": "ไม่พบประเภทร้าน",
+      "en": "Store type not found"
+    },
+    "ยังไม่มีรายชื่อ": {
+      "th": "ยังไม่มีรายชื่อ",
+      "en": "No entries yet"
+    },
+    "ราคาสมาชิก": {
+      "th": "ราคาสมาชิก",
+      "en": "Member pricing"
+    },
+    "ลำดับบนหน้าแรก": {
+      "th": "ลำดับบนหน้าแรก",
+      "en": "Homepage ordering"
+    },
+    "ส่งทดสอบไม่สำเร็จ": {
+      "th": "ส่งทดสอบไม่สำเร็จ",
+      "en": "Test delivery failed"
+    },
+    "แสดง Popup (โฆษณา)": {
+      "th": "แสดง Popup (โฆษณา)",
+      "en": "Display popup ad"
+    },
+    "ออร์แกนิก": {
+      "th": "ออร์แกนิก",
+      "en": "Organic"
+    }
+  }
+  </script>
+<!-- Bilingual Dynamic Switcher & Copy Interactions Script -->
+<script>
+    (function () {
+      const rawCatalog = document.getElementById('commerce-ui-translations').textContent;
+      const translations = JSON.parse(rawCatalog);
+      let currentLang = 'th';
+
+      const toggleBtn = document.getElementById('lang-toggle-btn');
+      const langLabel = document.getElementById('current-lang-label');
+
+      function applyTranslations(lang) {
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const key = el.getAttribute('data-i18n');
+          if (translations[key] && translations[key][lang]) {
+            el.textContent = translations[key][lang];
+          }
+        });
+        langLabel.textContent = lang === 'th' ? 'ไทย / EN' : 'EN / ไทย';
+      }
+
+      toggleBtn.addEventListener('click', function () {
+        currentLang = currentLang === 'th' ? 'en' : 'th';
+        applyTranslations(currentLang);
+      });
+
+      // Quick Copy handler for curl sample
+      const copyCurlBtn = document.getElementById('copy-curl-btn');
+      const copyCurlText = document.getElementById('copy-curl-text');
+      if (copyCurlBtn) {
+        copyCurlBtn.addEventListener('click', function () {
+          const curlCode = `curl -X GET "https://api.commerceplatform.co.th/v2.4/products?page=1&pageSize=20" \\\n  -H "X-Api-Key: pk_test_7f849b2c01994ad6" \\\n  -H "Content-Type: application/json" \\\n  -H "Accept-Language: th"`;
+          navigator.clipboard.writeText(curlCode).then(() => {
+            copyCurlText.textContent = 'Copied!';
+            setTimeout(() => {
+              copyCurlText.textContent = 'Copy';
+            }, 2000);
+          });
+        });
+      }
+    })();
+  </script>
+</body></html>

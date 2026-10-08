@@ -14,6 +14,8 @@ import type { BannerOption, ChannelDesign, CouponOption, EmailChrome } from './c
  * concept; subject/title stays on the notify's own title field). Edits a
  * `ChannelDesign` whose `meta` is `EmailChrome` (content width + backgrounds).
  */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function EmailCreativeEditor({
   design,
   onChange,
@@ -27,6 +29,7 @@ export function EmailCreativeEditor({
   banners: BannerOption[];
   variables: Array<{ key: string; label: string }>;
 }) {
+  __useUiLocale();
   const [editorLocale, setEditorLocale] = useState<'th' | 'en'>('th');
 
   const {
@@ -64,7 +67,7 @@ export function EmailCreativeEditor({
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-1.5">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] font-semibold tracking-wide text-gray-400">เพิ่มองค์ประกอบ</span>
+            <span className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("เพิ่มองค์ประกอบ")}</span>
             {ELEMENT_TYPES.map((item) => (
               <button
                 key={item.type}
@@ -76,8 +79,7 @@ export function EmailCreativeEditor({
               </button>
             ))}
             <span className="text-[10px] text-gray-400">
-              · Layout 1/2/3 · แถวย่อยในคอลัมน์ · ลาก ⋮⋮ ข้ามช่องได้
-            </span>
+              {__uiText("· Layout 1/2/3 · แถวย่อยในคอลัมน์ · ลาก ⋮⋮ ข้ามช่องได้")}</span>
           </div>
           <div className="flex shrink-0 overflow-hidden rounded-md border border-gray-200">
             {(['th', 'en'] as const).map((code) => (
@@ -89,7 +91,7 @@ export function EmailCreativeEditor({
                   editorLocale === code ? 'bg-primary text-white' : 'bg-white text-gray-500 hover:text-gray-700'
                 }`}
               >
-                {code === 'th' ? 'ไทย' : 'EN'}
+                {code === 'th' ? __uiText("ไทย") : __uiText("EN")}
               </button>
             ))}
           </div>

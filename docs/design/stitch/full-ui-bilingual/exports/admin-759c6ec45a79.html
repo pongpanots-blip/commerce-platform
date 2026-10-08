@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>จัดการสินค้า | Commerce Operations Hub</title>
+  <!-- Google Fonts: Noto Sans Thai & Noto Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#365cf5',
+              hover: '#294acb',
+              light: '#eff3ff',
+              ink: '#17243b',
+              secondary: '#52627a',
+              canvas: '#f6f8fc',
+              border: '#e1e7f0',
+              success: '#157347',
+              warning: '#b08900',
+              error: '#c2333f',
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', '"Noto Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#f6f8fc] text-[#17243b]">
+
+  <!-- TOP CONTEXTUAL NAV HEADER -->
+  <header class="h-14 bg-white border-b border-[#e1e7f0] sticky top-0 z-40 px-6 flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-base shadow-sm">
+          C
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-sm leading-tight text-[#17243b]">Commerce</span>
+          <span class="text-[11px] text-[#52627a] leading-tight">Operations Hub</span>
+        </div>
+        <span class="bg-slate-100 text-[#52627a] text-[11px] px-2 py-0.5 rounded font-mono font-medium border border-slate-200 ml-1">admin</span>
+      </div>
+
+      <div class="h-4 w-px bg-slate-200"></div>
+
+      <!-- Breadcrumbs -->
+      <nav class="flex items-center space-x-2 text-xs text-[#52627a]" aria-label="Breadcrumb">
+        <span data-i18n="nav_cat">สินค้าและสต็อก</span>
+        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <span class="text-[#17243b] font-medium" data-i18n="breadcrumb_current">จัดการสินค้า</span>
+        <span class="text-[11px] font-mono text-slate-400 ml-1.5 px-1.5 py-0.5 bg-slate-100 rounded border border-slate-200">admin-759c6ec45a79</span>
+      </nav>
+    </div>
+
+    <!-- Header Right Tools -->
+    <div class="flex items-center space-x-3">
+      <!-- Badge sample data -->
+      <div class="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-200/80 rounded-full text-amber-800 text-xs font-medium">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+        <span data-i18n="sample_badge">ข้อมูลตัวอย่าง</span>
+      </div>
+
+      <!-- Language Toggle -->
+      <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-[#e1e7f0] text-xs">
+        <button id="lang-btn-th" onclick="setLang('th')" class="px-2.5 py-1 rounded font-medium bg-white text-[#365cf5] shadow-xs transition-all">ไทย</button>
+        <button id="lang-btn-en" onclick="setLang('en')" class="px-2.5 py-1 rounded font-medium text-[#52627a] hover:text-[#17243b] transition-all">English</button>
+      </div>
+
+      <div class="h-4 w-px bg-slate-200"></div>
+
+      <!-- User Profile -->
+      <div class="flex items-center space-x-2">
+        <div class="w-7 h-7 rounded-full bg-blue-100 text-[#365cf5] font-semibold text-xs flex items-center justify-center border border-blue-200">
+          OP
+        </div>
+        <div class="text-xs">
+          <p class="font-medium text-[#17243b] leading-tight" data-i18n="user_role">ทีมปฏิบัติการ</p>
+          <p class="text-[10px] text-[#52627a] leading-tight">Commerce Ops</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN BODY LAYOUT -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- LEFT SIDEBAR (256px) -->
+    <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col shrink-0 justify-between">
+      <div class="py-4 overflow-y-auto">
+        <div class="px-4 mb-2">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-[#52627a]" data-i18n="sidebar_group_title">พื้นที่ปฏิบัติการ (7 กลุ่ม)</p>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="space-y-1 px-2.5 text-[13px]">
+          <!-- Active Area: สินค้าและสต็อก -->
+          <div>
+            <div class="flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg bg-blue-50/70 text-[#365cf5]">
+              <span class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <span data-i18n="nav_cat">สินค้าและสต็อก</span>
+              </span>
+              <svg class="w-4 h-4 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7 7"/></svg>
+            </div>
+
+            <!-- Sub-items in สินค้าและสต็อก -->
+            <div class="mt-1 pl-4 pr-1 space-y-0.5 border-l-2 border-blue-100 ml-4 py-1">
+              <a href="/j/allproducts" class="flex items-center justify-between px-3 py-1.5 rounded-md font-medium text-[#365cf5] bg-blue-50/90 text-xs">
+                <span data-i18n="title_page">จัดการสินค้า</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+              </a>
+              <a href="/products" class="flex items-center px-3 py-1.5 rounded-md text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] text-xs">
+                <span data-i18n="sub_products">แคตตาล็อกแพลตฟอร์ม</span>
+              </a>
+              <a href="/product-master-queue" class="flex items-center justify-between px-3 py-1.5 rounded-md text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] text-xs">
+                <span data-i18n="sub_erp_queue">คิวข้อมูลสินค้าจาก ERP</span>
+                <span class="px-1.5 py-0.2 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full">3</span>
+              </a>
+              <a href="/product-prices" class="flex items-center px-3 py-1.5 rounded-md text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] text-xs">
+                <span data-i18n="sub_prices">ราคาสินค้า (ProductPrices)</span>
+              </a>
+              <a href="/stock-moves" class="flex items-center px-3 py-1.5 rounded-md text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] text-xs">
+                <span data-i18n="sub_stockmoves">ความเคลื่อนไหวสต็อก</span>
+              </a>
+              <a href="/erp/inventory-warehouse" class="flex items-center px-3 py-1.5 rounded-md text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] text-xs">
+                <span data-i18n="sub_wh_stock">สต็อกแยกตามคลัง</span>
+              </a>
+              <a href="/prices/staff" class="flex items-center px-3 py-1.5 rounded-md text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] text-xs">
+                <span data-i18n="sub_contracts">ราคาลูกค้า / ราคาสัญญา</span>
+              </a>
+              <a href="/erp-stock" class="flex items-center px-3 py-1.5 rounded-md text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] text-xs">
+                <span>ERP stub stock</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Other 6 work areas -->
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b]">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span data-i18n="area_orders">ออเดอร์และการเงิน</span>
+          </a>
+
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b]">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <span data-i18n="area_customers">ลูกค้าและบริการ</span>
+          </a>
+
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b]">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+            <span data-i18n="area_marketing">การตลาด</span>
+          </a>
+
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b]">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <span data-i18n="area_reports">รายงานและข้อมูล</span>
+          </a>
+
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b]">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span data-i18n="area_connections">ระบบเชื่อมต่อ</span>
+          </a>
+
+          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b]">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span data-i18n="area_settings">ตั้งค่าและทีมงาน</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Sidebar Footer Links -->
+      <div class="p-3 border-t border-[#e1e7f0] bg-slate-50/50">
+        <a href="/portal" class="flex items-center justify-between text-xs text-[#52627a] hover:text-[#365cf5] px-2 py-1.5 rounded transition">
+          <span class="flex items-center gap-1.5 font-medium">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            <span>Developer Portal</span>
+          </span>
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+        <div class="mt-1 px-2 flex items-center justify-between text-[11px] text-slate-400">
+          <span>Route: /j/allproducts</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA (~1240px container) -->
+    <main class="flex-1 overflow-y-auto custom-scrollbar p-6">
+      <div class="max-w-[1240px] mx-auto space-y-6">
+
+        <!-- PAGE HEADER & PRIMARY ACTION -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
+          <div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-tight" data-i18n="title_page">
+                จัดการสินค้า
+              </h1>
+              <span class="px-2 py-0.5 text-xs font-mono bg-blue-100/70 text-[#365cf5] rounded border border-blue-200/60 font-medium">/j/allproducts</span>
+              <span class="text-xs text-[#52627a] font-normal" data-i18n="product_list_en">(Product List)</span>
+            </div>
+            <p class="text-sm text-[#52627a] mt-1" data-i18n="header_desc">
+              รายการสินค้าทั้งหมดในระบบ Commerce บริหารจัดการแคตตาล็อก ตรวจสอบราคา สต็อก และอนุมัติการอัปเดตจากระบบ ERP
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2.5 shrink-0">
+            <button onclick="refreshData()" class="h-10 px-4 rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] text-sm font-medium hover:bg-slate-50 flex items-center gap-2 shadow-xs transition">
+              <svg id="refresh-icon" class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span data-i18n="btn_refresh">รีเฟรช</span>
+            </button>
+            <button onclick="openCreateModal()" class="h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-[#294acb] text-white text-sm font-medium flex items-center gap-2 shadow-xs transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span data-i18n="btn_add_product">เพิ่มสินค้า</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- NOTIFICATION / NOTICE BANNER -->
+        <div id="erp-sync-notice" class="bg-blue-50/80 border border-blue-200 rounded-xl p-3.5 flex items-start justify-between text-xs text-[#17243b]">
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[#365cf5] shrink-0 mt-0.5">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+            </div>
+            <div>
+              <p class="font-medium">
+                <span data-i18n="notice_title">สถานะคิวเชื่อมต่อ ERP:</span>
+                <span class="text-[#365cf5] font-semibold" data-i18n="notice_erp_count">มี 2 สินค้ารอตรวจสอบการเปลี่ยนแปลงข้อมูลและราคา</span>
+              </p>
+              <p class="text-[#52627a] mt-0.5" data-i18n="notice_erp_sub">
+                ท่านสามารถกดอนุมัติการอัปเดตจาก ERP ได้ทันทีในตารางด้านล่าง หรือเข้าไปที่หน้า <a href="/product-master-queue" class="underline text-[#365cf5] hover:text-[#294acb]">คิวข้อมูลสินค้าจาก ERP</a> เพื่อดูรายละเอียดความต่าง
+              </p>
+            </div>
+          </div>
+          <button onclick="document.getElementById('erp-sync-notice').remove()" class="text-slate-400 hover:text-slate-600 p-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- FILTER & SEARCH PANEL (Task-oriented) -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-xs space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+
+            <!-- Search field with explicit boundary statement -->
+            <div class="md:col-span-5 space-y-1">
+              <label for="search-input" class="block text-xs font-medium text-[#17243b]">
+                <span data-i18n="label_search_name">ค้นหาด้วยชื่อสินค้า</span> / SKU
+              </label>
+              <div class="relative">
+                <input id="search-input" type="text" oninput="handleSearch(this.value)" placeholder="ค้นหาสินค้า (ค้นเฉพาะในหน้านี้)..."
+                  class="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] transition">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+            </div>
+
+            <!-- Category filter -->
+            <div class="md:col-span-3 space-y-1">
+              <label for="category-select" class="block text-xs font-medium text-[#17243b]" data-i18n="label_category">
+                หมวดหมู่
+              </label>
+              <select id="category-select" onchange="handleCategoryFilter(this.value)" class="w-full h-10 px-3 text-sm rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] transition">
+                <option value="ALL" data-i18n="opt_all_categories">ทุกหมวดหมู่ (All)</option>
+                <option value="อาหารและเครื่องดื่ม" data-i18n="cat_food">อาหารและเครื่องดื่ม</option>
+                <option value="วัตถุดิบและน้ำมันประกอบอาหาร" data-i18n="cat_ingredients">วัตถุดิบและน้ำมันประกอบอาหาร</option>
+                <option value="ผลิตภัณฑ์แช่เย็นและชีส" data-i18n="cat_chilled">ผลิตภัณฑ์แช่เย็นและชีส</option>
+                <option value="ไม่มีหมวดหมู่" data-i18n="cat_none">ไม่มีหมวดหมู่</option>
+              </select>
+            </div>
+
+            <!-- Status filter -->
+            <div class="md:col-span-2 space-y-1">
+              <label for="status-select" class="block text-xs font-medium text-[#17243b]" data-i18n="label_status">
+                สถานะสินค้า
+              </label>
+              <select id="status-select" onchange="handleStatusFilter(this.value)" class="w-full h-10 px-3 text-sm rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] transition">
+                <option value="ALL" data-i18n="opt_all_statuses">ทั้งหมด</option>
+                <option value="ACTIVE" data-i18n="status_active">ใช้งานอยู่</option>
+                <option value="ERP_PENDING" data-i18n="status_erp_pending">รออนุมัติ ERP</option>
+                <option value="INACTIVE" data-i18n="status_inactive">ปิดการใช้งาน</option>
+              </select>
+            </div>
+
+            <!-- Clear / Filter buttons -->
+            <div class="md:col-span-2 flex items-center gap-2">
+              <button onclick="resetFilters()" class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] bg-white text-xs font-medium text-[#52627a] hover:bg-slate-50 transition" data-i18n="btn_clear_filters">
+                ล้างเงื่อนไข
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Honest Search scope note -->
+          <div class="flex items-center justify-between text-[11px] text-[#52627a] pt-1 border-t border-slate-100">
+            <span class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+              <span data-i18n="search_page_note">การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API</span>
+            </span>
+            <span id="record-count-text">แสดง <span class="font-bold text-[#17243b]" id="shown-count">5</span> จาก 5 <span data-i18n="unit_items">รายการ</span> (ข้อมูลตัวอย่าง)</span>
+          </div>
+        </div>
+
+        <!-- BULK BATCH ACTIONS BAR (Appears when items selected) -->
+        <div id="bulk-toolbar" class="hidden bg-slate-900 text-white rounded-xl px-4 py-2.5 flex items-center justify-between shadow-md transition-all">
+          <div class="flex items-center gap-3 text-xs">
+            <span class="flex items-center gap-1.5 font-medium">
+              <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              <span><span data-i18n="bulk_selected">เลือกแล้ว</span> <span id="selected-count-badge" class="font-bold text-blue-300">0</span> <span data-i18n="unit_items">รายการ</span></span>
+            </span>
+            <span class="text-slate-400">|</span>
+            <span class="text-slate-300" data-i18n="bulk_erp_controls">การจัดการเฉพาะรายการที่รออนุมัติ ERP:</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="bulkApprovePending()" class="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium flex items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span id="bulk-approve-label">อนุมัติทั้งหมด (2)</span>
+            </button>
+            <button onclick="bulkRejectPending()" class="px-3 py-1.5 rounded bg-rose-600 hover:bg-rose-500 text-white text-xs font-medium flex items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span data-i18n="btn_reject_pending_selected">ปฏิเสธ pending ที่เลือก</span>
+            </button>
+            <button onclick="clearSelection()" class="px-2 py-1.5 rounded text-slate-300 hover:text-white text-xs transition">
+              ยกเลิก
+            </button>
+          </div>
+        </div>
+
+        <!-- MAIN PRODUCT TABLE CARD -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs overflow-hidden">
+
+          <!-- Table Header strip -->
+          <div class="px-4 py-3 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/50">
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-[#17243b]" data-i18n="all_product_records">รายการสินค้าทั้งหมด</h2>
+              <span class="text-xs text-[#52627a] font-normal" data-i18n="table_subtext">— แคตตาล็อกกลาง (Central Master Catalog)</span>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs text-[#52627a]">
+              <span class="inline-flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span data-i18n="status_online">ซิงค์แบบเรียลไทม์</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Responsive Table Container -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-[#e1e7f0] text-[#52627a] font-semibold">
+                  <th class="py-3 px-4 w-10 text-center">
+                    <input type="checkbox" id="check-all" onchange="toggleSelectAll(this.checked)" class="rounded border-slate-300 text-[#365cf5] focus:ring-[#365cf5]">
+                  </th>
+                  <th class="py-3 px-3 w-14 text-center" data-i18n="th_image">รูป</th>
+                  <th class="py-3 px-3 w-32">SKU</th>
+                  <th class="py-3 px-4 min-w-[220px]" data-i18n="th_product_name">ชื่อสินค้า</th>
+                  <th class="py-3 px-4 w-44" data-i18n="th_category">หมวดหมู่</th>
+                  <th class="py-3 px-3 w-28 text-right" data-i18n="th_stock">จำนวนสต็อก</th>
+                  <th class="py-3 px-3 w-32 text-right" data-i18n="th_price">ราคาขายเริ่มต้น</th>
+                  <th class="py-3 px-4 w-32 text-center" data-i18n="th_status">สถานะ</th>
+                  <th class="py-3 px-4 w-48 text-right" data-i18n="th_actions">เครื่องมือ</th>
+                </tr>
+              </thead>
+              <tbody id="product-table-body" class="divide-y divide-[#e1e7f0] text-[#17243b]">
+
+                <!-- Item 1: SKU-TH-8890 (Active with ERP Pending change) -->
+                <tr id="row-prod-1" class="hover:bg-blue-50/30 transition group">
+                  <td class="py-3.5 px-4 text-center">
+                    <input type="checkbox" class="product-row-check rounded border-slate-300 text-[#365cf5] focus:ring-[#365cf5]" value="prod_01h89x" onchange="updateRowSelection()">
+                  </td>
+                  <td class="py-3.5 px-3 text-center">
+                    <div class="w-10 h-10 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 font-bold text-xs mx-auto shadow-xs">
+                      🌾
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-3 font-mono font-medium text-xs">
+                    <a href="/products/prod_01h89x" class="text-[#365cf5] hover:underline font-semibold block">SKU-TH-8890</a>
+                    <span class="text-[10px] text-[#52627a]">prod_01h89x</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-sm text-[#17243b] group-hover:text-[#365cf5] transition">ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง</div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5 line-clamp-1">ข้าวหอมมะลิแท้ 100% บรรจุสุญญากาศ เกรดส่งออก</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-xs text-[#52627a]">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-medium">
+                      อาหารและเครื่องดื่ม
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <span class="font-bold text-sm text-[#17243b]">420</span>
+                    <span class="text-[11px] text-[#52627a] ml-0.5" data-i18n="unit_pcs">ชิ้น</span>
+                    <span class="block text-[10px] text-emerald-700 font-medium">คลัง WH-BKK01</span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <div class="font-semibold text-sm text-[#17243b]">฿195.00</div>
+                    <div class="text-[10px] text-amber-700 font-medium flex items-center justify-end gap-1">
+                      <span>ERP → ฿210.00</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+                      <span data-i18n="badge_erp_pending">รออนุมัติ ERP</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <!-- Direct Quick ERP Approval Actions -->
+                      <button onclick="approveSingleERP('SKU-TH-8890', 'ข้าวหอมมะลิตัดพิเศษ 5กก.')" title="อนุมัติการอัปเดตจาก ERP" class="px-2 py-1 rounded bg-blue-50 text-[#365cf5] hover:bg-[#365cf5] hover:text-white border border-blue-200 text-xs font-medium transition" data-i18n="btn_approve_erp">
+                        อนุมัติสินค้า
+                      </button>
+                      <button onclick="rejectSingleERP('SKU-TH-8890')" title="ปฏิเสธการอัปเดตจาก ERP" class="p-1 rounded text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                      <button onclick="openEditModal('SKU-TH-8890', 'ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง', 'อาหารและเครื่องดื่ม', 'ข้าวหอมมะลิแท้ 100% บรรจุสุญญากาศ', '420', '195.00')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[#17243b] text-xs font-medium transition" data-i18n="btn_edit">
+                        แก้ไข
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Item 2: SKU-CH-4412 (Active with ERP Pending change) -->
+                <tr id="row-prod-2" class="hover:bg-blue-50/30 transition group">
+                  <td class="py-3.5 px-4 text-center">
+                    <input type="checkbox" class="product-row-check rounded border-slate-300 text-[#365cf5] focus:ring-[#365cf5]" value="prod_02m44a" onchange="updateRowSelection()">
+                  </td>
+                  <td class="py-3.5 px-3 text-center">
+                    <div class="w-10 h-10 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-700 font-bold text-xs mx-auto shadow-xs">
+                      🌻
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-3 font-mono font-medium text-xs">
+                    <a href="/products/prod_02m44a" class="text-[#365cf5] hover:underline font-semibold block">SKU-CH-4412</a>
+                    <span class="text-[10px] text-[#52627a]">prod_02m44a</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-sm text-[#17243b] group-hover:text-[#365cf5] transition">น้ำมันพืชบรรจุลัง (12 ขวด) ตรา Golden Harvest</div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5 line-clamp-1">น้ำมันปาล์มผ่านกรรมวิธี สำหรับทอดและประกอบอาหารความร้อนสูง</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-xs text-[#52627a]">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-medium">
+                      วัตถุดิบและน้ำมันประกอบอาหาร
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <span class="font-bold text-sm text-[#17243b]">1,050</span>
+                    <span class="text-[11px] text-[#52627a] ml-0.5" data-i18n="unit_pcs">ชิ้น</span>
+                    <span class="block text-[10px] text-slate-500 font-medium">ERP-CENTRAL</span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <div class="font-semibold text-sm text-[#17243b]">฿520.00</div>
+                    <div class="text-[10px] text-emerald-700 font-medium flex items-center justify-end gap-1">
+                      <span>ERP → ฿490.00</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+                      <span data-i18n="badge_erp_pending">รออนุมัติ ERP</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button onclick="approveSingleERP('SKU-CH-4412', 'น้ำมันพืชบรรจุลัง (12 ขวด)')" title="อนุมัติการอัปเดตจาก ERP" class="px-2 py-1 rounded bg-blue-50 text-[#365cf5] hover:bg-[#365cf5] hover:text-white border border-blue-200 text-xs font-medium transition" data-i18n="btn_approve_erp">
+                        อนุมัติสินค้า
+                      </button>
+                      <button onclick="rejectSingleERP('SKU-CH-4412')" title="ปฏิเสธการอัปเดตจาก ERP" class="p-1 rounded text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                      <button onclick="openEditModal('SKU-CH-4412', 'น้ำมันพืชบรรจุลัง (12 ขวด) ตรา Golden Harvest', 'วัตถุดิบและน้ำมันประกอบอาหาร', 'น้ำมันปาล์มผ่านกรรมวิธี', '1050', '520.00')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[#17243b] text-xs font-medium transition" data-i18n="btn_edit">
+                        แก้ไข
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Item 3: SKU-MK-1102 (Active, Normal) -->
+                <tr id="row-prod-3" class="hover:bg-blue-50/30 transition group">
+                  <td class="py-3.5 px-4 text-center">
+                    <input type="checkbox" class="product-row-check rounded border-slate-300 text-[#365cf5] focus:ring-[#365cf5]" value="prod_03mk77" onchange="updateRowSelection()">
+                  </td>
+                  <td class="py-3.5 px-3 text-center">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-bold text-xs mx-auto shadow-xs">
+                      🥛
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-3 font-mono font-medium text-xs">
+                    <a href="/products/prod_03mk77" class="text-[#365cf5] hover:underline font-semibold block">SKU-MK-1102</a>
+                    <span class="text-[10px] text-[#52627a]">prod_03mk77</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-sm text-[#17243b] group-hover:text-[#365cf5] transition">นมยูเอชที รสจืด 250มล. (ลัง 36 กล่อง)</div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5 line-clamp-1">นมโคสดแท้ ยูเอชที รสจืด ขนาดกล่อง 250 มล. แพ็คใหญ่</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-xs text-[#52627a]">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-medium">
+                      อาหารและเครื่องดื่ม
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <span class="font-bold text-sm text-amber-700">5</span>
+                    <span class="text-[11px] text-[#52627a] ml-0.5" data-i18n="unit_pcs">ชิ้น</span>
+                    <span class="block text-[10px] text-amber-800 font-medium">ใกล้หมด (Low)</span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <div class="font-semibold text-sm text-[#17243b]">฿365.00</div>
+                    <div class="text-[10px] text-[#52627a]">MOQ: 2 ลัง</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      <span data-i18n="status_active">ใช้งานอยู่</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <a href="/products/prod_03mk77" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[#17243b] text-xs font-medium transition" data-i18n="btn_view_detail">
+                        ดูรายละเอียด
+                      </a>
+                      <button onclick="openEditModal('SKU-MK-1102', 'นมยูเอชที รสจืด 250มล. (ลัง 36)', 'อาหารและเครื่องดื่ม', 'นมโคสดแท้ ยูเอชที รสจืด', '5', '365.00')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[#17243b] text-xs font-medium transition" data-i18n="btn_edit">
+                        แก้ไข
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Item 4: SKU-FD-7741 (Inactive / Out of stock) -->
+                <tr id="row-prod-4" class="hover:bg-blue-50/30 transition group">
+                  <td class="py-3.5 px-4 text-center">
+                    <input type="checkbox" class="product-row-check rounded border-slate-300 text-[#365cf5] focus:ring-[#365cf5]" value="prod_04fd88" onchange="updateRowSelection()">
+                  </td>
+                  <td class="py-3.5 px-3 text-center">
+                    <div class="w-10 h-10 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-700 font-bold text-xs mx-auto shadow-xs">
+                      🧀
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-3 font-mono font-medium text-xs">
+                    <a href="/products/prod_04fd88" class="text-[#365cf5] hover:underline font-semibold block">SKU-FD-7741</a>
+                    <span class="text-[10px] text-[#52627a]">prod_04fd88</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-sm text-[#17243b] group-hover:text-[#365cf5] transition">เนยชีสนำเข้าเกรดพรีเมียม 1กก.</div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5 line-clamp-1">กูด้าชีสหมักบ่มธรรมชาติ สำหรับอาหารและเบเกอรี่</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-xs text-[#52627a]">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-medium">
+                      ผลิตภัณฑ์แช่เย็นและชีส
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <span class="font-bold text-sm text-rose-700">0</span>
+                    <span class="text-[11px] text-[#52627a] ml-0.5" data-i18n="unit_pcs">ชิ้น</span>
+                    <span class="block text-[10px] text-rose-800 font-medium">สินค้าหมด</span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <div class="font-semibold text-sm text-[#17243b]">฿280.00</div>
+                    <div class="text-[10px] text-[#52627a]">MOQ: 1 กก.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-rose-50 text-rose-800 border border-rose-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                      <span data-i18n="status_inactive">ปิดการใช้งาน</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <a href="/products/prod_04fd88" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[#17243b] text-xs font-medium transition" data-i18n="btn_view_detail">
+                        ดูรายละเอียด
+                      </a>
+                      <button onclick="openEditModal('SKU-FD-7741', 'เนยชีสนำเข้าเกรดพรีเมียม 1กก.', 'ผลิตภัณฑ์แช่เย็นและชีส', 'กูด้าชีสหมักบ่มธรรมชาติ', '0', '280.00')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[#17243b] text-xs font-medium transition" data-i18n="btn_edit">
+                        แก้ไข
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Item 5: SKU-1 (Pending Price setup / ⏳ รอระบุราคา) -->
+                <tr id="row-prod-5" class="hover:bg-blue-50/30 transition group">
+                  <td class="py-3.5 px-4 text-center">
+                    <input type="checkbox" class="product-row-check rounded border-slate-300 text-[#365cf5] focus:ring-[#365cf5]" value="prod_05jg01" onchange="updateRowSelection()">
+                  </td>
+                  <td class="py-3.5 px-3 text-center">
+                    <div class="w-10 h-10 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-900 font-bold text-xs mx-auto shadow-xs">
+                      ☕
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-3 font-mono font-medium text-xs">
+                    <a href="/products/prod_05jg01" class="text-[#365cf5] hover:underline font-semibold block">SKU-1</a>
+                    <span class="text-[10px] text-[#52627a]">prod_05jg01</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-sm text-[#17243b] group-hover:text-[#365cf5] transition">ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)</div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5 line-clamp-1">อาราบิก้าแท้ 100% ปลูกบนพื้นที่สูง คั่วสดใหม่ กลิ่นหอมละมุน</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-xs text-[#52627a]">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-medium">
+                      อาหารและเครื่องดื่ม
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <span class="font-bold text-sm text-[#17243b]">72</span>
+                    <span class="text-[11px] text-[#52627a] ml-0.5" data-i18n="unit_pcs">ชิ้น</span>
+                    <span class="block text-[10px] text-slate-500 font-medium">WH-BKK01</span>
+                  </td>
+                  <td class="py-3.5 px-3 text-right">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200" data-i18n="badge_wait_price">
+                      ⏳ รอระบุราคา
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                      <span data-i18n="status_draft">รอเปิดขาย</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <a href="/products/prod_05jg01" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[#17243b] text-xs font-medium transition" data-i18n="btn_view_detail">
+                        ดูรายละเอียด
+                      </a>
+                      <button onclick="openEditModal('SKU-1', 'ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)', 'อาหารและเครื่องดื่ม', 'อาราบิก้าแท้ 100%', '72', '')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[#17243b] text-xs font-medium transition" data-i18n="btn_edit">
+                        แก้ไข
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty search filter state (Hidden by default) -->
+          <div id="filter-empty-state" class="hidden p-12 text-center">
+            <div class="w-12 h-12 rounded-full bg-slate-100 text-[#52627a] flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-[#17243b]" data-i18n="empty_filter_title">ไม่พบรายการสินค้าที่ตรงกับเงื่อนไข</h3>
+            <p class="text-xs text-[#52627a] mt-1" data-i18n="empty_filter_desc">ลองค้นหาด้วยคำอื่น หรือกดล้างตัวกรองเพื่อแสดงข้อมูลทั้งหมด</p>
+            <button onclick="resetFilters()" class="mt-4 px-3.5 py-1.5 bg-[#365cf5] text-white text-xs font-medium rounded-lg hover:bg-[#294acb] transition" data-i18n="btn_clear_filters">
+              ล้างเงื่อนไข
+            </button>
+          </div>
+
+          <!-- Table Pagination Footer -->
+          <div class="px-4 py-3 border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a] bg-white">
+            <div>
+              <span data-i18n="pagination_info">หน้า 1 จาก 1 (แสดง 5 รายการ, จำนวนหน้าสูงสุด: 1)</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <button disabled class="px-3 py-1.5 rounded border border-[#e1e7f0] bg-slate-50 text-slate-400 font-medium cursor-not-allowed text-xs" data-i18n="btn_prev">
+                ก่อนหน้า
+              </button>
+              <button class="px-3 py-1.5 rounded bg-[#365cf5] text-white font-medium text-xs">
+                1
+              </button>
+              <button disabled class="px-3 py-1.5 rounded border border-[#e1e7f0] bg-slate-50 text-slate-400 font-medium cursor-not-allowed text-xs" data-i18n="btn_next">
+                ถัดไป
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPERATIONAL GUIDELINES & PROTOCOL CARD -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-xs">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-5 h-5 rounded-full bg-blue-100 text-[#365cf5] flex items-center justify-center font-bold text-xs">
+              i
+            </div>
+            <h3 class="text-sm font-bold text-[#17243b]" data-i18n="guide_title">
+              ข้อกำหนดการจัดการสินค้าและกฎการเชื่อมต่อระบบ (Product Management Protocol)
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-[#52627a]">
+            <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-100 space-y-1.5">
+              <p class="font-semibold text-[#17243b]" data-i18n="guide_1_head">1. กฎการอนุมัติการอัปเดตจาก ERP</p>
+              <p data-i18n="guide_1_body">เมื่อ ERP มีการส่งการเปลี่ยนแปลงข้อมูลมา เช่น ปรับราคา หรือเปลี่ยนชื่อสินค้า ระบบจะกักไว้ในสถานะ "รออนุมัติ ERP" เพื่อให้ทีมงานตรวจสอบก่อนส่งไปยัง Storefront</p>
+            </div>
+            <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-100 space-y-1.5">
+              <p class="font-semibold text-[#17243b]" data-i18n="guide_2_head">2. การสร้างและแก้ไขสินค้า</p>
+              <p data-i18n="guide_2_body">รหัส SKU จะต้องไม่ซ้ำกันในระบบ การสร้างสินค้าใหม่สามารถระบุชื่อ หมวดหมู่ และรายละเอียดเริ่มต้นได้ โดยราคาขายและสต็อกสามารถเชื่อมโยงตามลำดับ</p>
+            </div>
+            <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-100 space-y-1.5">
+              <p class="font-semibold text-[#17243b]" data-i18n="guide_3_head">3. ขอบเขต API และการค้นหา</p>
+              <p data-i18n="guide_3_body">การค้นหาในตารางเป็นการกรองข้อมูลเฉพาะหน้านี้ตามข้อกำหนด Pagination API เพื่อประสิทธิภาพสูงสุดของระบบหลังบ้าน</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL 1: ADD / CREATE PRODUCT -->
+  <div id="create-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl border border-[#e1e7f0] max-w-lg w-full shadow-xl overflow-hidden animate-in fade-in zoom-in duration-150">
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/70">
+        <h3 class="text-base font-bold text-[#17243b]" data-i18n="btn_add_product">เพิ่มสินค้า</h3>
+        <button onclick="closeCreateModal()" class="text-slate-400 hover:text-[#17243b] transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form onsubmit="handleCreateProduct(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            SKU <span class="text-rose-500">*</span>
+          </label>
+          <input type="text" required placeholder="เช่น SKU-TH-9901" id="create-sku"
+            class="w-full h-10 px-3 text-sm rounded-lg border border-[#e1e7f0] focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] outline-none font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            <span data-i18n="th_product_name">ชื่อสินค้า</span> <span class="text-rose-500">*</span>
+          </label>
+          <input type="text" required placeholder="ระบุชื่อสินค้าเต็ม" id="create-name"
+            class="w-full h-10 px-3 text-sm rounded-lg border border-[#e1e7f0] focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1" data-i18n="th_category">
+            หมวดหมู่
+          </label>
+          <select id="create-cat" class="w-full h-10 px-3 text-sm rounded-lg border border-[#e1e7f0] focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] outline-none">
+            <option value="อาหารและเครื่องดื่ม" data-i18n="cat_food">อาหารและเครื่องดื่ม</option>
+            <option value="วัตถุดิบและน้ำมันประกอบอาหาร" data-i18n="cat_ingredients">วัตถุดิบและน้ำมันประกอบอาหาร</option>
+            <option value="ผลิตภัณฑ์แช่เย็นและชีส" data-i18n="cat_chilled">ผลิตภัณฑ์แช่เย็นและชีส</option>
+            <option value="ไม่มีหมวดหมู่" data-i18n="cat_none">ไม่มีหมวดหมู่</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            รายละเอียดสินค้า (Description)
+          </label>
+          <textarea rows="3" id="create-desc" placeholder="คำอธิบายสินค้าเบื้องต้น"
+            class="w-full p-3 text-sm rounded-lg border border-[#e1e7f0] focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] outline-none"></textarea>
+        </div>
+        <div class="pt-3 border-t border-[#e1e7f0] flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeCreateModal()" class="h-10 px-4 rounded-lg border border-[#e1e7f0] text-xs font-medium text-[#52627a] hover:bg-slate-50 transition">
+            ยกเลิก
+          </button>
+          <button type="submit" class="h-10 px-5 rounded-lg bg-[#365cf5] hover:bg-[#294acb] text-white text-xs font-medium shadow-xs transition">
+            บันทึกสินค้า
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: EDIT PRODUCT -->
+  <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl border border-[#e1e7f0] max-w-lg w-full shadow-xl overflow-hidden animate-in fade-in zoom-in duration-150">
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-slate-50/70">
+        <div class="flex items-center gap-2">
+          <h3 class="text-base font-bold text-[#17243b]" data-i18n="modal_edit_title">แก้ไขรายละเอียด</h3>
+          <span id="edit-sku-badge" class="font-mono text-xs text-[#365cf5] bg-blue-50 px-2 py-0.5 rounded border border-blue-200"></span>
+        </div>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-[#17243b] transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form onsubmit="handleSaveEdit(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1" data-i18n="th_product_name">
+            ชื่อสินค้า
+          </label>
+          <input type="text" id="edit-name-input" required class="w-full h-10 px-3 text-sm rounded-lg border border-[#e1e7f0] focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1" data-i18n="th_category">
+            หมวดหมู่
+          </label>
+          <select id="edit-cat-select" class="w-full h-10 px-3 text-sm rounded-lg border border-[#e1e7f0] focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] outline-none">
+            <option value="อาหารและเครื่องดื่ม" data-i18n="cat_food">อาหารและเครื่องดื่ม</option>
+            <option value="วัตถุดิบและน้ำมันประกอบอาหาร" data-i18n="cat_ingredients">วัตถุดิบและน้ำมันประกอบอาหาร</option>
+            <option value="ผลิตภัณฑ์แช่เย็นและชีส" data-i18n="cat_chilled">ผลิตภัณฑ์แช่เย็นและชีส</option>
+            <option value="ไม่มีหมวดหมู่" data-i18n="cat_none">ไม่มีหมวดหมู่</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            รายละเอียดคำอธิบาย
+          </label>
+          <textarea rows="3" id="edit-desc-input" class="w-full p-3 text-sm rounded-lg border border-[#e1e7f0] focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] outline-none"></textarea>
+        </div>
+        <div class="pt-3 border-t border-[#e1e7f0] flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeEditModal()" class="h-10 px-4 rounded-lg border border-[#e1e7f0] text-xs font-medium text-[#52627a] hover:bg-slate-50 transition">
+            ยกเลิก
+          </button>
+          <button type="submit" class="h-10 px-5 rounded-lg bg-[#365cf5] hover:bg-[#294acb] text-white text-xs font-medium shadow-xs transition">
+            บันทึกการแก้ไข
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+  <!-- EXACT MANDATORY TRANSLATION DICTIONARY (JSON Script Tag) -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "เพิ่มสินค้า": {
+      "th": "เพิ่มสินค้า",
+      "en": "Add product"
+    },
+    "สถานะ": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "ค้นหาสินค้า": {
+      "th": "ค้นหาสินค้า",
+      "en": "Search products"
+    },
+    "รายการ": {
+      "th": "รายการ",
+      "en": "items"
+    },
+    "ชื่อสินค้า": {
+      "th": "ชื่อสินค้า",
+      "en": "Product name"
+    },
+    "ลองใหม่": {
+      "th": "ลองใหม่",
+      "en": "Retry"
+    },
+    "หมวดหมู่": {
+      "th": "หมวดหมู่",
+      "en": "Category"
+    },
+    "เลือกทั้งหมด": {
+      "th": "เลือกทั้งหมด",
+      "en": "Select all"
+    },
+    "เลือกแล้ว": {
+      "th": "เลือกแล้ว",
+      "en": "Selected"
+    },
+    "เครื่องมือ": {
+      "th": "เครื่องมือ",
+      "en": "Actions"
+    },
+    "ดูรายละเอียด": {
+      "th": "ดูรายละเอียด",
+      "en": "View details"
+    },
+    "ชิ้น": {
+      "th": "ชิ้น",
+      "en": "units"
+    },
+    "กำลังโหลด…": {
+      "th": "กำลังโหลด…",
+      "en": "Loading…"
+    },
+    "รูป": {
+      "th": "รูป",
+      "en": "Image"
+    },
+    "โหลดข้อมูลไม่สำเร็จ": {
+      "th": "โหลดข้อมูลไม่สำเร็จ",
+      "en": "Failed to load data"
+    },
+    "ไม่มีชื่อสินค้า": {
+      "th": "ไม่มีชื่อสินค้า",
+      "en": "No product name"
+    },
+    "ไม่มีหมวดหมู่": {
+      "th": "ไม่มีหมวดหมู่",
+      "en": "No category"
+    },
+    "จำนวนสต็อก": {
+      "th": "จำนวนสต็อก",
+      "en": "Stock quantity"
+    },
+    "ราคาขายเริ่มต้น": {
+      "th": "ราคาขายเริ่มต้น",
+      "en": "Base selling price"
+    },
+    "⏳ รอระบุราคา": {
+      "th": "⏳ รอระบุราคา",
+      "en": "⏳ Price pending"
+    },
+    "ERP →": {
+      "th": "ERP →",
+      "en": "ERP →"
+    },
+    "รออนุมัติ ERP": {
+      "th": "รออนุมัติ ERP",
+      "en": "Pending ERP approval"
+    },
+    "แก้ไขรายละเอียด": {
+      "th": "แก้ไขรายละเอียด",
+      "en": "Edit details"
+    },
+    "อนุมัติการอัปเดตจาก ERP": {
+      "th": "อนุมัติการอัปเดตจาก ERP",
+      "en": "Approve ERP update"
+    },
+    "อนุมัติสินค้า": {
+      "th": "อนุมัติสินค้า",
+      "en": "Approve product"
+    },
+    "ปฏิเสธการอัปเดตจาก ERP สำหรับสินค้านี้?": {
+      "th": "ปฏิเสธการอัปเดตจาก ERP สำหรับสินค้านี้?",
+      "en": "Reject ERP update for this product?"
+    },
+    "ปฏิเสธการอัปเดตจาก ERP": {
+      "th": "ปฏิเสธการอัปเดตจาก ERP",
+      "en": "Reject ERP update"
+    },
+    "Product List": {
+      "th": "Product List",
+      "en": "Product List"
+    },
+    "รายการสินค้าทั้งหมด": {
+      "th": "รายการสินค้าทั้งหมด",
+      "en": "All products"
+    },
+    "ค้นหาด้วยชื่อสินค้า": {
+      "th": "ค้นหาด้วยชื่อสินค้า",
+      "en": "Search by product name"
+    },
+    "สถานะสินค้า": {
+      "th": "สถานะสินค้า",
+      "en": "Product status"
+    },
+    "ปฏิเสธ pending ทั้งหมด": {
+      "th": "ปฏิเสธ pending ทั้งหมด",
+      "en": "Reject all pending"
+    },
+    "ปฏิเสธการอัปเดตจาก ERP ที่ค้างทั้งหมด (สถานะสินค้าไม่เปลี่ยน)?": {
+      "th": "ปฏิเสธการอัปเดตจาก ERP ที่ค้างทั้งหมด (สถานะสินค้าไม่เปลี่ยน)?",
+      "en": "Reject all pending ERP updates (product status remains unchanged)?"
+    },
+    "ปฏิเสธ pending ที่เลือก": {
+      "th": "ปฏิเสธ pending ที่เลือก",
+      "en": "Reject selected pending"
+    },
+    "รายการในหน้านี้ —": {
+      "th": "รายการในหน้านี้ —",
+      "en": "Items on this page —"
+    },
+    "ข้อความอีเมล": {
+      "th": "ข้อความอีเมล",
+      "en": "Email message"
+    },
+    "คาดว่าของเข้า (YYYY-MM-DD)": {
+      "th": "คาดว่าของเข้า (YYYY-MM-DD)",
+      "en": "Expected arrival (YYYY-MM-DD)"
+    },
+    "เจ้าของงาน {0}": {
+      "th": "เจ้าของงาน {0}",
+      "en": "Assignee {0}"
+    },
+    "เช่น ลูกค้า VIP": {
+      "th": "เช่น ลูกค้า VIP",
+      "en": "e.g. VIP customer"
+    },
+    "ตัวแปร (คลิกเพื่อแทรก)": {
+      "th": "ตัวแปร (คลิกเพื่อแทรก)",
+      "en": "Variables (click to insert)"
+    },
+    "บันทึกราคาพิเศษไม่สำเร็จ": {
+      "th": "บันทึกราคาพิเศษไม่สำเร็จ",
+      "en": "Failed to save special price"
+    },
+    "ผลที่อ่านเจอ": {
+      "th": "ผลที่อ่านเจอ",
+      "en": "Discovered results"
+    },
+    "เมื่อไม่มีค่าจริง (เช่น guest checkout หรือไม่มีข้อมูลบริษัท)": {
+      "th": "เมื่อไม่มีค่าจริง (เช่น guest checkout หรือไม่มีข้อมูลบริษัท)",
+      "en": "When no actual value (e.g. guest checkout or no company info)"
+    },
+    "ย้อนเวลารายการ {0} (นาที)": {
+      "th": "ย้อนเวลารายการ {0} (นาที)",
+      "en": "Rewind item {0} (minutes)"
+    },
+    "รหัสผู้ใช้ที่ซ้ำ (Duplicate User ID) *": {
+      "th": "รหัสผู้ใช้ที่ซ้ำ (Duplicate User ID) *",
+      "en": "Duplicate User ID *"
+    },
+    "รูปต้นฉบับ (ไทย) — ยังไม่ได้แปล": {
+      "th": "รูปต้นฉบับ (ไทย) — ยังไม่ได้แปล",
+      "en": "Original image (Thai) — untranslated"
+    },
+    "เล่นสไลด์อัตโนมัติ (วินาที, 0 = ปิด)": {
+      "th": "เล่นสไลด์อัตโนมัติ (วินาที, 0 = ปิด)",
+      "en": "Auto slide (seconds, 0 = off)"
+    },
+    "ส่งสำเร็จ (7 วัน)": {
+      "th": "ส่งสำเร็จ (7 วัน)",
+      "en": "Delivered successfully (7 days)"
+    },
+    "สีตัวอักษร": {
+      "th": "สีตัวอักษร",
+      "en": "Text color"
+    },
+    "โหลดรายการสินค้าไม่สำเร็จ": {
+      "th": "โหลดรายการสินค้าไม่สำเร็จ",
+      "en": "Failed to load product list"
+    },
+    "ซ้ำกับใบที่ส่งไปแล้ว": {
+      "th": "ซ้ำกับใบที่ส่งไปแล้ว",
+      "en": "Duplicates already sent invoice"
+    },
+    "ปฏิเสธการอัปเดตจาก ERP สำหรับ {0} รายการ?": {
+      "th": "ปฏิเสธการอัปเดตจาก ERP สำหรับ {0} รายการ?",
+      "en": "Reject ERP updates for {0} items?"
+    },
+    "ยืนยันอนุมัติสินค้าทั้งหมด {0} รายการ?": {
+      "th": "ยืนยันอนุมัติสินค้าทั้งหมด {0} รายการ?",
+      "en": "Confirm approving all {0} items?"
+    },
+    "อนุมัติทั้งหมด ({0})": {
+      "th": "อนุมัติทั้งหมด ({0})",
+      "en": "Approve all ({0})"
+    }
+  }
+  </script>
+
+  <!-- INTERACTIVE CLIENT LOGIC & BILINGUAL ENGINE -->
+  <script>
+    // State
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    const uiDictionary = {
+      th: {
+        nav_cat: "สินค้าและสต็อก",
+        breadcrumb_current: "จัดการสินค้า",
+        sample_badge: "ข้อมูลตัวอย่าง",
+        user_role: "ทีมปฏิบัติการ",
+        sidebar_group_title: "พื้นที่ปฏิบัติการ (7 กลุ่ม)",
+        title_page: "จัดการสินค้า",
+        product_list_en: "(Product List)",
+        sub_products: "แคตตาล็อกแพลตฟอร์ม",
+        sub_erp_queue: "คิวข้อมูลสินค้าจาก ERP",
+        sub_prices: "ราคาสินค้า (ProductPrices)",
+        sub_stockmoves: "ความเคลื่อนไหวสต็อก",
+        sub_wh_stock: "สต็อกแยกตามคลัง",
+        sub_contracts: "ราคาลูกค้า / ราคาสัญญา",
+        area_orders: "ออเดอร์และการเงิน",
+        area_customers: "ลูกค้าและบริการ",
+        area_marketing: "การตลาด",
+        area_reports: "รายงานและข้อมูล",
+        area_connections: "ระบบเชื่อมต่อ",
+        area_settings: "ตั้งค่าและทีมงาน",
+        header_desc: "รายการสินค้าทั้งหมดในระบบ Commerce บริหารจัดการแคตตาล็อก ตรวจสอบราคา สต็อก และอนุมัติการอัปเดตจากระบบ ERP",
+        btn_refresh: "รีเฟรช",
+        btn_add_product: "เพิ่มสินค้า",
+        notice_title: "สถานะคิวเชื่อมต่อ ERP:",
+        notice_erp_count: "มี 2 สินค้ารอตรวจสอบการเปลี่ยนแปลงข้อมูลและราคา",
+        notice_erp_sub: "ท่านสามารถกดอนุมัติการอัปเดตจาก ERP ได้ทันทีในตารางด้านล่าง หรือเข้าไปที่หน้า คิวข้อมูลสินค้าจาก ERP เพื่อดูรายละเอียดความต่าง",
+        label_search_name: "ค้นหาด้วยชื่อสินค้า",
+        label_category: "หมวดหมู่",
+        label_status: "สถานะสินค้า",
+        opt_all_categories: "ทุกหมวดหมู่ (All)",
+        cat_food: "อาหารและเครื่องดื่ม",
+        cat_ingredients: "วัตถุดิบและน้ำมันประกอบอาหาร",
+        cat_chilled: "ผลิตภัณฑ์แช่เย็นและชีส",
+        cat_none: "ไม่มีหมวดหมู่",
+        opt_all_statuses: "ทั้งหมด",
+        status_active: "ใช้งานอยู่",
+        status_erp_pending: "รออนุมัติ ERP",
+        status_inactive: "ปิดการใช้งาน",
+        status_draft: "รอเปิดขาย",
+        btn_clear_filters: "ล้างเงื่อนไข",
+        search_page_note: "การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API",
+        unit_items: "รายการ",
+        unit_pcs: "ชิ้น",
+        bulk_selected: "เลือกแล้ว",
+        bulk_erp_controls: "การจัดการเฉพาะรายการที่รออนุมัติ ERP:",
+        btn_reject_pending_selected: "ปฏิเสธ pending ที่เลือก",
+        all_product_records: "รายการสินค้าทั้งหมด",
+        table_subtext: "— แคตตาล็อกกลาง (Central Master Catalog)",
+        status_online: "ซิงค์แบบเรียลไทม์",
+        th_image: "รูป",
+        th_product_name: "ชื่อสินค้า",
+        th_category: "หมวดหมู่",
+        th_stock: "จำนวนสต็อก",
+        th_price: "ราคาขายเริ่มต้น",
+        th_status: "สถานะ",
+        th_actions: "เครื่องมือ",
+        badge_erp_pending: "รออนุมัติ ERP",
+        badge_wait_price: "⏳ รอระบุราคา",
+        btn_approve_erp: "อนุมัติสินค้า",
+        btn_edit: "แก้ไข",
+        btn_view_detail: "ดูรายละเอียด",
+        empty_filter_title: "ไม่พบรายการสินค้าที่ตรงกับเงื่อนไข",
+        empty_filter_desc: "ลองค้นหาด้วยคำอื่น หรือกดล้างตัวกรองเพื่อแสดงข้อมูลทั้งหมด",
+        pagination_info: "หน้า 1 จาก 1 (แสดง 5 รายการ, จำนวนหน้าสูงสุด: 1)",
+        btn_prev: "ก่อนหน้า",
+        btn_next: "ถัดไป",
+        guide_title: "ข้อกำหนดการจัดการสินค้าและกฎการเชื่อมต่อระบบ (Product Management Protocol)",
+        guide_1_head: "1. กฎการอนุมัติการอัปเดตจาก ERP",
+        guide_1_body: "เมื่อ ERP มีการส่งการเปลี่ยนแปลงข้อมูลมา เช่น ปรับราคา หรือเปลี่ยนชื่อสินค้า ระบบจะกักไว้ในสถานะ 'รออนุมัติ ERP' เพื่อให้ทีมงานตรวจสอบก่อนส่งไปยัง Storefront",
+        guide_2_head: "2. การสร้างและแก้ไขสินค้า",
+        guide_2_body: "รหัส SKU จะต้องไม่ซ้ำกันในระบบ การสร้างสินค้าใหม่สามารถระบุชื่อ หมวดหมู่ และรายละเอียดเริ่มต้นได้ โดยราคาขายและสต็อกสามารถเชื่อมโยงตามลำดับ",
+        guide_3_head: "3. ขอบเขต API และการค้นหา",
+        guide_3_body: "การค้นหาในตารางเป็นการกรองข้อมูลเฉพาะหน้านี้ตามข้อกำหนด Pagination API เพื่อประสิทธิภาพสูงสุดของระบบหลังบ้าน",
+        modal_edit_title: "แก้ไขรายละเอียด"
+      },
+      en: {
+        nav_cat: "Products & Stock",
+        breadcrumb_current: "Product Management",
+        sample_badge: "Sample data",
+        user_role: "Operations Team",
+        sidebar_group_title: "Work Areas (7 Groups)",
+        title_page: "All Products",
+        product_list_en: "(Product List)",
+        sub_products: "Platform Catalog",
+        sub_erp_queue: "ERP Product Queue",
+        sub_prices: "Product Prices",
+        sub_stockmoves: "Stock Moves",
+        sub_wh_stock: "Inventory per Warehouse",
+        sub_contracts: "Customer / Contract Prices",
+        area_orders: "Orders & Finance",
+        area_customers: "Customers & Service",
+        area_marketing: "Marketing",
+        area_reports: "Reports & Data",
+        area_connections: "Integrations",
+        area_settings: "Team & Settings",
+        header_desc: "Central product master catalog across Commerce. Manage products, verify pricing, stock levels, and review ERP updates.",
+        btn_refresh: "Refresh",
+        btn_add_product: "Add product",
+        notice_title: "ERP Sync Queue Status:",
+        notice_erp_count: "2 items pending review for updates & pricing changes",
+        notice_erp_sub: "You can approve ERP updates directly in the table below or visit the ERP Master Queue page for detailed diffs.",
+        label_search_name: "Search by product name",
+        label_category: "Category",
+        label_status: "Product status",
+        opt_all_categories: "All categories",
+        cat_food: "Food & Beverage",
+        cat_ingredients: "Raw Ingredients & Oils",
+        cat_chilled: "Chilled & Dairy",
+        cat_none: "No category",
+        opt_all_statuses: "All statuses",
+        status_active: "Active",
+        status_erp_pending: "Pending ERP approval",
+        status_inactive: "Disabled",
+        status_draft: "Draft",
+        btn_clear_filters: "Clear filters",
+        search_page_note: "Search operates strictly within the current page per pagination API specs",
+        unit_items: "items",
+        unit_pcs: "units",
+        bulk_selected: "Selected",
+        bulk_erp_controls: "Pending ERP approval actions:",
+        btn_reject_pending_selected: "Reject selected pending",
+        all_product_records: "All Product Records",
+        table_subtext: "— Central Master Catalog",
+        status_online: "Real-time sync active",
+        th_image: "Image",
+        th_product_name: "Product name",
+        th_category: "Category",
+        th_stock: "Stock quantity",
+        th_price: "Base selling price",
+        th_status: "Status",
+        th_actions: "Actions",
+        badge_erp_pending: "Pending ERP approval",
+        badge_wait_price: "⏳ Price pending",
+        btn_approve_erp: "Approve product",
+        btn_edit: "Edit",
+        btn_view_detail: "View details",
+        empty_filter_title: "No products matched your search filters",
+        empty_filter_desc: "Try searching with a different term or clear filters to view all records.",
+        pagination_info: "Page 1 of 1 (Showing 5 items, max page: 1)",
+        btn_prev: "Previous",
+        btn_next: "Next",
+        guide_title: "Product Management Protocol & Integration Boundaries",
+        guide_1_head: "1. ERP Inbound Update Protocol",
+        guide_1_body: "When ERP syncs revised attributes or base prices, records stay in 'Pending ERP approval' until ops approves them before storefront publish.",
+        guide_2_head: "2. Creation and Master Records",
+        guide_2_body: "SKU must remain unique across systems. Basic attributes can be staged here while stock and contract tiers link subsequently.",
+        guide_3_head: "3. API & Search Boundary",
+        guide_3_body: "Table filters operate locally on this page per pagination specs to ensure rapid high-volume operations.",
+        modal_edit_title: "Edit details"
+      }
+    };
+
+    function setLang(lang) {
+      currentLang = lang;
+
+      // Update Toggle UI
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded font-medium bg-white text-[#365cf5] shadow-xs transition-all";
+        btnEn.className = "px-2.5 py-1 rounded font-medium text-[#52627a] hover:text-[#17243b] transition-all";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded font-medium bg-white text-[#365cf5] shadow-xs transition-all";
+        btnTh.className = "px-2.5 py-1 rounded font-medium text-[#52627a] hover:text-[#17243b] transition-all";
+      }
+
+      // Update All marked i18n nodes
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (uiDictionary[lang] && uiDictionary[lang][key]) {
+          el.textContent = uiDictionary[lang][key];
+        }
+      });
+
+      // Update placeholders
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) {
+        searchInput.placeholder = lang === 'th' ? "ค้นหาสินค้า (ค้นเฉพาะในหน้านี้)..." : "Search products (current page only)...";
+      }
+
+      showToast(lang === 'th' ? 'เปลี่ยนภาษาเป็น: ภาษาไทย' : 'Switched language to: English', 'info');
+    }
+
+    // Filter Logic
+    function handleSearch(val) {
+      applyFilters();
+    }
+
+    function handleCategoryFilter(val) {
+      applyFilters();
+    }
+
+    function handleStatusFilter(val) {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+      const cat = document.getElementById('category-select').value;
+      const status = document.getElementById('status-select').value;
+
+      const rows = document.querySelectorAll('#product-table-body tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const matchesQuery = !q || text.includes(q);
+
+        let matchesCat = true;
+        if (cat !== 'ALL') {
+          matchesCat = text.includes(cat.toLowerCase());
+        }
+
+        let matchesStatus = true;
+        if (status === 'ACTIVE') {
+          matchesStatus = text.includes('ใช้งานอยู่') || text.includes('active');
+        } else if (status === 'ERP_PENDING') {
+          matchesStatus = text.includes('รออนุมัติ erp') || text.includes('pending erp');
+        } else if (status === 'INACTIVE') {
+          matchesStatus = text.includes('ปิดการใช้งาน') || text.includes('disabled');
+        }
+
+        if (matchesQuery && matchesCat && matchesStatus) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('shown-count').textContent = visibleCount;
+      const emptyState = document.getElementById('filter-empty-state');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('category-select').value = 'ALL';
+      document.getElementById('status-select').value = 'ALL';
+      applyFilters();
+      showToast(currentLang === 'th' ? 'ล้างตัวกรองทั้งหมดแล้ว' : 'Filters cleared', 'info');
+    }
+
+    // Refresh simulation
+    function refreshData() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast(currentLang === 'th' ? 'รีเฟรชข้อมูลล่าสุดสำเร็จ' : 'Data refreshed successfully', 'success');
+      }, 500);
+    }
+
+    // Selection & Bulk Toolbar
+    function toggleSelectAll(checked) {
+      document.querySelectorAll('.product-row-check').forEach(cb => {
+        cb.checked = checked;
+      });
+      updateRowSelection();
+    }
+
+    function updateRowSelection() {
+      const selected = Array.from(document.querySelectorAll('.product-row-check:checked'));
+      const count = selected.length;
+      const toolbar = document.getElementById('bulk-toolbar');
+      const badge = document.getElementById('selected-count-badge');
+      const checkAll = document.getElementById('check-all');
+
+      if (count > 0) {
+        toolbar.classList.remove('hidden');
+        badge.textContent = count;
+        document.getElementById('bulk-approve-label').textContent = currentLang === 'th' ? `อนุมัติทั้งหมด (${count})` : `Approve all (${count})`;
+      } else {
+        toolbar.classList.add('hidden');
+      }
+
+      const allChecks = document.querySelectorAll('.product-row-check');
+      if (count === allChecks.length && count > 0) {
+        checkAll.checked = true;
+      } else {
+        checkAll.checked = false;
+      }
+    }
+
+    function clearSelection() {
+      toggleSelectAll(false);
+    }
+
+    // Actions
+    function approveSingleERP(sku, name) {
+      const confirmed = confirm(currentLang === 'th' ? `อนุมัติการอัปเดตจาก ERP สำหรับ ${sku} (${name})?` : `Approve ERP update for ${sku}?`);
+      if (confirmed) {
+        showToast(currentLang === 'th' ? `อนุมัติสินค้า ${sku} เรียบร้อยแล้ว` : `Approved product ${sku}`, 'success');
+        // Visually update the status badge on row
+        if (sku === 'SKU-TH-8890') {
+          const row = document.getElementById('row-prod-1');
+          row.querySelector('td:nth-child(8)').innerHTML = `
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              <span>${currentLang === 'th' ? 'ใช้งานอยู่' : 'Active'}</span>
+            </span>
+          `;
+          row.querySelector('td:nth-child(7) .text-amber-700').remove();
+        }
+      }
+    }
+
+    function rejectSingleERP(sku) {
+      const confirmed = confirm(currentLang === 'th' ? `ปฏิเสธการอัปเดตจาก ERP สำหรับสินค้านี้?` : `Reject ERP update for this product?`);
+      if (confirmed) {
+        showToast(currentLang === 'th' ? `ปฏิเสธการอัปเดตจาก ERP ของ ${sku} แล้ว` : `Rejected ERP update for ${sku}`, 'warning');
+      }
+    }
+
+    function bulkApprovePending() {
+      const count = document.querySelectorAll('.product-row-check:checked').length || 2;
+      const question = currentLang === 'th' ? `ยืนยันอนุมัติสินค้าทั้งหมด ${count} รายการ?` : `Confirm approving all ${count} items?`;
+      if (confirm(question)) {
+        showToast(currentLang === 'th' ? `อนุมัติข้อมูลจาก ERP สำเร็จ ${count} รายการ` : `Approved ${count} items from ERP`, 'success');
+        clearSelection();
+      }
+    }
+
+    function bulkRejectPending() {
+      const count = document.querySelectorAll('.product-row-check:checked').length || 2;
+      const question = currentLang === 'th' ? `ปฏิเสธการอัปเดตจาก ERP สำหรับ ${count} รายการ?` : `Reject ERP updates for ${count} items?`;
+      if (confirm(question)) {
+        showToast(currentLang === 'th' ? `ปฏิเสธ pending ที่เลือก สำเร็จ` : `Rejected selected pending`, 'warning');
+        clearSelection();
+      }
+    }
+
+    // Modals
+    function openCreateModal() {
+      document.getElementById('create-modal').classList.remove('hidden');
+      document.getElementById('create-sku').focus();
+    }
+    function closeCreateModal() {
+      document.getElementById('create-modal').classList.add('hidden');
+    }
+    function handleCreateProduct(e) {
+      e.preventDefault();
+      const sku = document.getElementById('create-sku').value;
+      closeCreateModal();
+      showToast(currentLang === 'th' ? `สร้างสินค้า ${sku} เรียบร้อยแล้ว` : `Product ${sku} created`, 'success');
+    }
+
+    let activeEditSku = '';
+    function openEditModal(sku, name, cat, desc, stock, price) {
+      activeEditSku = sku;
+      document.getElementById('edit-sku-badge').textContent = sku;
+      document.getElementById('edit-name-input').value = name;
+      document.getElementById('edit-desc-input').value = desc || '';
+      document.getElementById('edit-cat-select').value = cat || 'อาหารและเครื่องดื่ม';
+      document.getElementById('edit-modal').classList.remove('hidden');
+      document.getElementById('edit-name-input').focus();
+    }
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+    }
+    function handleSaveEdit(e) {
+      e.preventDefault();
+      closeEditModal();
+      showToast(currentLang === 'th' ? `บันทึกการแก้ไข ${activeEditSku} เรียบร้อยแล้ว` : `Updated ${activeEditSku}`, 'success');
+    }
+
+    // Keyboard support: Escape closes modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCreateModal();
+        closeEditModal();
+      }
+    });
+
+    // Toast helper
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bg = type === 'success' ? 'bg-emerald-800' : type === 'warning' ? 'bg-amber-800' : 'bg-slate-900';
+      toast.className = `${bg} text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 transform transition-all duration-200 translate-y-2 opacity-0`;
+      toast.innerHTML = `<span>${msg}</span>`;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 200);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2066",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2JjZTk0Yzk5MDQ2NDQ4OTZiNWVmNjYxODg2ZTEzNzZmEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/08f96bd326a64115be4024f03f25abd2"
+            },
+            "id": "5b431ba6b272483e8b6c26c4cdeb2bc6",
+            "name": "projects/18348214526789030153/screens/5b431ba6b272483e8b6c26c4cdeb2bc6",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1VT76IiQ6X3ZWKO86mY9h2Fl_RKjcpZoR_zA3KNICigdaHFQwRUioidEbv-l55vw5og1siTXgreS1K2NGjra-W2Xr9j9L4K7iRVigyw1Z_V1Z8aBKxw08dB3z9E4ryfmlPSCuxlWL5Ym8tviF1xID2XrqK9Qal2zYAzeiNkXXMcWET1TMh9c2rrC3xF8IquoNqUzhbLRTH80_VpGIkrRgkZx65Rn1Q8bZFaJYgulOIp0np3OqjUgj5HGSE",
+              "name": "projects/18348214526789030153/files/17037df903364a1a893d491385751f13"
+            },
+            "theme": {},
+            "title": "รายละเอียดลูกค้า (CustomerDetail)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **รายละเอียดลูกค้า (CustomerDetail: `/customers/:id`)** สำหรับ Commerce Platform เรียบร้อยแล้ว\n\n### สรุปการออกแบบและคุณสมบัติหลัก:\n1. **โครงสร้างและ Design System:**\n   - ใช้แถบ Sidebar มาตรฐาน 256px พร้อม 7 พื้นที่ทำงานหลัก (สายงาน **ลูกค้าและบริการ** เป็น Active section พร้อม Submenu สำหรับลูกค้าแพลตฟอร์ม)\n   - แคนวาสสี `#f6f8fc`, การ์ดสีขาวตัดขอบ `#e1e7f0` พร้อมรัศมีมน 12px, ฟอนต์ Noto Sans Thai และ JetBrains Mono สำหรับตัวเลข/รหัส\n   - พาเล็ตต์สีหลัก `#365cf5` (Primary blue), ตัวหนังสือหมึกเข้ม `#17243b` และข้อความรอง `#52627a`\n\n2. **ฟังก์ชันการทำงานของหน้ารายละเอียดและแก้ไข (CustomerDetail):**\n   - **ส่วนหัวเรื่อง & การดำเนินการ:** แสดงรหัสลูกค้า `CUST-88491` พร้อมสถานะ `รอกำหนดสาขา`, ปุ่ม **รีเฟรช** (พร้อมแอนิเมชัน) และปุ่มหลัก **แก้ไขลูกค้า**\n   - **การ์ดสรุปตัวชี้วัด (3 คอลัมน์):** Customer ID, จำนวนออเดอร์ (3 รายการ), และมูลค่าออเดอร์ที่แสดง (`฿142,500.00`)\n   - **ข้อมูลลูกค้า (Fact Sheet):** รหัสลูกค้า, ชื่อลูกค้า, อีเมล, เบอร์โทร, สถานะ, ชื่อสาขา, ประเภทบัญชี/เครดิต และที่อยู่จัดส่ง\n   - **ตารางออเดอร์ของลูกค้า:** แสดงรายการคำสั่งซื้อจริงพร้อมรหัสออเดอร์, สถานะ, ยอดรวม และวันที่สร้างที่สามารถเลื่อนดูได้ภายในคอนเทนเนอร์\n   - **ฟอร์มไดอะล็อกแก้ไขลูกค้า (Modal Dialog):** รองรับการเปิด-ปิดด้วยปุ่ม Escape, การควบคุมโฟกัสของคีย์บอร์ด, ข้อความแจ้งเตือน Inline error เมื่อกรอกข้อมูลไม่ถูกต้อง และปุ่ม ปิดรายละเอียด / บันทึกการแก้ไข\n\n3. **Bilingual & Exact Copy Export Requirement:**\n   - มีตัวสลับภาษา **ไทย / English** ที่ใช้งานได้จริงบนส่วนหัวหน้าจอ\n   - บรรจุ Invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่ระบุคู่คำแปลภาษาไทยและภาษาอังกฤษครบทุกคำตามแค็ตตาล็อกที่ระบุไว้อย่างเคร่งครัด"
+    },
+    {
+      "suggestion": "ลองเปิดไดอะล็อก 'แก้ไขลูกค้า' เพื่อทดสอบการบันทึกข้อมูลและ Inline Errors"
+    },
+    {
+      "suggestion": "สลับภาษาเป็น English เพื่อดูการแสดงผลแบบสองภาษา"
+    },
+    {
+      "suggestion": "เพิ่มส่วนประวัติการติดต่อ (Contact Log / CS Notes) ในหน้ารายละเอียดนี้"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "9191622679437397374"
+}

@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commerce Platform - UI Copy Review (batch copy-1791435141520-1)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#365cf5',
+              dark: '#2445cc',
+              light: '#edf1fe',
+              surface: '#f6f8fc'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Noto Sans Thai', sans-serif; background-color: #f6f8fc; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-slate-800 antialiased min-h-screen">
+  <!-- Top Navigation Bar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white shadow-sm shadow-blue-500/20">
+          <span class="material-symbols-outlined text-xl">translate</span>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-base font-bold text-slate-900 tracking-tight leading-none">Commerce Platform</h1>
+            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono border border-slate-200">copy-1791435141520-1</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Thai / English UI Copy Review & Production Dictionary</p>
+        </div>
+      </div>
+
+      <!-- Native Language Selector & Metrics -->
+      <div class="flex items-center space-x-4">
+        <div class="hidden md:flex items-center space-x-2 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Dictionary keys: <strong class="text-slate-700 font-mono">240/240</strong> verified</span>
+        </div>
+
+        <!-- Toggle button -->
+        <div class="inline-flex p-1 bg-slate-100 rounded-lg border border-slate-200" role="group" aria-label="Language selector">
+          <button id="lang-btn-th" type="button" onclick="setLanguage('th')" class="px-3 py-1 text-xs font-semibold rounded-md transition-all duration-150 bg-white text-[#365cf5] shadow-sm">
+            ไทย (TH)
+          </button>
+          <button id="lang-btn-en" type="button" onclick="setLanguage('en')" class="px-3 py-1 text-xs font-semibold rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900">
+            English (EN)
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <!-- Header Banner -->
+    <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs font-semibold bg-blue-50 text-[#365cf5] rounded border border-blue-100">Review Batch Active</span>
+            <span class="text-xs text-slate-400 font-mono">ID: copy-1791435141520-1</span>
+          </div>
+          <h2 class="text-lg font-bold text-slate-900 mt-1" id="banner-title" data-i18n="Homepage Overview">ภาพรวมหน้าหลัก</h2>
+          <p class="text-xs text-slate-600 mt-0.5" id="banner-desc">ตรวจสอบการแปลข้อความภาษาไทยและอังกฤษสำหรับส่วนเชื่อมต่อ ERP, ระบบคำสั่งซื้อ, ใบแจ้งหนี้ และ Webhook</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition" onclick="copyDictionarySummary()">
+            <span class="material-symbols-outlined text-sm">content_copy</span>
+            <span data-i18n="export CSV">ส่งออกเป็น CSV</span>
+          </button>
+          <button type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-[#365cf5] hover:bg-[#2445cc] rounded-lg shadow-sm transition">
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            <span data-i18n="Done">เสร็จสิ้น</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Five Example Interactive Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <!-- Card 1: Order & Invoice Actions -->
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <span class="material-symbols-outlined text-[#365cf5] text-lg">receipt_long</span>
+              <h3 class="text-sm font-bold text-slate-900" data-i18n="Invoice">ใบแจ้งหนี้</h3>
+            </div>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200" data-i18n="Invoice Overdue">ใบแจ้งหนี้เกินกำหนดชำระ</span>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-500" data-i18n="Customer ID">รหัสลูกค้า</span>
+              <span class="font-mono font-medium text-slate-800">CUST-0892</span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-500" data-i18n="Invoice status">สถานะใบแจ้งหนี้</span>
+              <span class="font-medium text-slate-700" data-i18n="Declined">ปฏิเสธแล้ว</span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-500" data-i18n="Free delivery threshold (ex VAT): ฿">ยอดสั่งซื้อส่งฟรี (ไม่รวม VAT): ฿</span>
+              <span class="font-mono font-medium text-slate-800">1,500.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-3 border-t border-slate-100">
+          <p class="text-[11px] text-slate-500 mb-2 flex items-center gap-1">
+            <span class="material-symbols-outlined text-xs text-slate-400">info</span>
+            <span data-i18n="e.g. 10% off orders over 3,000">เช่น ลด 10% เมื่อสั่งซื้อครบ 3,000 บาท</span>
+          </p>
+          <div class="grid grid-cols-2 gap-2">
+            <!-- Button 1 & 2 -->
+            <button type="button" class="w-full py-1.5 px-3 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition" data-i18n="Details">
+              รายละเอียด
+            </button>
+            <button type="button" class="w-full py-1.5 px-3 text-xs font-semibold text-white bg-[#365cf5] hover:bg-[#2445cc] rounded-lg transition" data-i18n="Duplicate">
+              คัดลอกรายการ
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: ERP Integration & Webhook Sync -->
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <span class="material-symbols-outlined text-[#365cf5] text-lg">sync_alt</span>
+              <h3 class="text-sm font-bold text-slate-900" data-i18n="ERP Inbound Log">บันทึกข้อมูลขาเข้าจาก ERP</h3>
+            </div>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200" data-i18n="ERP ยืนยันแล้ว กำลังเตรียม">ERP ยืนยันแล้ว กำลังเตรียม</span>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-xs">
+              <div class="text-[11px] text-slate-500 font-mono" data-i18n="Idempotency key">Idempotency Key</div>
+              <div class="font-mono text-slate-700 truncate mt-0.5">idem_ord_9f82a17cb402</div>
+            </div>
+            <div class="text-xs text-slate-600 bg-blue-50/60 p-2.5 rounded-lg border border-blue-100">
+              <span class="font-semibold text-[#365cf5]" data-i18n="ERP → commerce → josh">ERP → commerce → josh</span>
+              <p class="text-[11px] text-slate-500 mt-1" data-i18n="ERP ส่งสต็อก ราคา สินค้า ลูกค้า สถานะ order/invoice เข้ามา · commerce ส่งต่อให้ josh">
+                ERP ส่งสต็อก ราคา สินค้า ลูกค้า สถานะ order/invoice เข้ามา · commerce ส่งต่อให้ josh
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-3 border-t border-slate-100">
+          <p class="text-[11px] text-amber-600 mb-2 flex items-center gap-1 font-medium">
+            <span class="material-symbols-outlined text-xs">warning</span>
+            <span data-i18n="ERP PRICE — ราคาที่ลูกค้าจ่ายจริง แก้ที่ ERP เท่านั้น">ราคาใน ERP — ราคาที่ลูกค้าจ่ายจริง ปรับแก้ที่ระบบ ERP เท่านั้น</span>
+          </p>
+          <div class="grid grid-cols-2 gap-2">
+            <!-- Button 3 & 4 -->
+            <button type="button" class="w-full py-1.5 px-3 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition" data-i18n="Dry run">
+              ทดสอบเสมือนจริง
+            </button>
+            <button type="button" class="w-full py-1.5 px-3 text-xs font-semibold text-white bg-[#365cf5] hover:bg-[#2445cc] rounded-lg transition" data-i18n="Force processing">
+              บังคับประมวลผลทันที
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Asset & File Ingestion Helper -->
+      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <span class="material-symbols-outlined text-[#365cf5] text-lg">cloud_upload</span>
+              <h3 class="text-sm font-bold text-slate-900" data-i18n="Images">รูปภาพสินค้า</h3>
+            </div>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200" data-i18n="Format: WebP">รูปแบบ: WebP</span>
+          </div>
+
+          <div class="mt-4 border-2 border-dashed border-slate-200 hover:border-[#365cf5] rounded-lg p-4 text-center cursor-pointer transition bg-slate-50/50">
+            <span class="material-symbols-outlined text-slate-400 text-2xl">drive_folder_upload</span>
+            <p class="text-xs font-medium text-slate-700 mt-1" data-i18n="Drop your image lot here">วางชุดไฟล์รูปภาพที่นี่</p>
+            <p class="text-[11px] text-slate-500 mt-1" data-i18n="Drop an image lot, or select images/folder above.">วางชุดรูปภาพ หรือเลือกไฟล์/โฟลเดอร์จากด้านบน</p>
+          </div>
+
+          <div class="mt-3 text-[11px] text-slate-500 space-y-1">
+            <p data-i18n="JPG / PNG / WebP">JPG / PNG / WebP</p>
+            <p class="text-slate-400" data-i18n="Images are processed locally in your browser. Your files are not uploaded.">รูปภาพได้รับการประมวลผลบนเบราว์เซอร์ของคุณโดยตรง ไฟล์จะไม่ถูกอัปโหลดขึ้นเซิร์ฟเวอร์</p>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-3 border-t border-slate-100">
+          <p class="text-[11px] text-slate-500 mb-2 flex items-center gap-1 font-mono">
+            <span class="material-symbols-outlined text-xs text-slate-400">rule</span>
+            <span data-i18n="e.g. SKU-A">ตัวอย่าง SKU-A</span>
+          </p>
+          <!-- Button 5 -->
+          <button type="button" class="w-full py-1.5 px-3 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition flex items-center justify-center gap-1.5" data-i18n="Dismiss">
+            <span class="material-symbols-outlined text-xs">close</span>
+            <span>ยกเลิกข้อความ</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Dictionary Inspection Table -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900">ตัวอย่างคลังคำแปลความสมบูรณ์สูง (Production Translation Dictionary)</h3>
+          <p class="text-xs text-slate-500">แสดงผลคู่คำแปลที่เชื่อมโยงกับสคริปต์ความถูกต้อง 240 รายการแบบเรียลไทม์</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <input id="key-search" type="text" placeholder="ค้นหาคีย์หรือคำแปล..." oninput="filterSampleKeys(this.value)" class="text-xs pl-8 pr-3 py-1.5 rounded-lg border border-slate-300 focus:outline-none focus:border-[#365cf5] w-64">
+            <span class="material-symbols-outlined text-slate-400 absolute left-2 top-1.5 text-sm">search</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto max-h-96">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="bg-slate-50 text-slate-600 sticky top-0 border-b border-slate-200 z-10">
+            <tr>
+              <th class="py-2.5 px-4 font-semibold w-12">#</th>
+              <th class="py-2.5 px-4 font-semibold w-2/5">Source Key (Exact Match)</th>
+              <th class="py-2.5 px-4 font-semibold w-1/3">Thai (TH)</th>
+              <th class="py-2.5 px-4 font-semibold">English (EN)</th>
+            </tr>
+          </thead>
+          <tbody id="dict-sample-tbody" class="divide-y divide-slate-100 font-sans">
+            <!-- Populated dynamically via JS from #commerce-ui-translations -->
+          </tbody>
+        </table>
+      </div>
+      <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+        <span>คีย์คำศัพท์ทั้งหมด: <strong class="text-slate-800">240 รายการ</strong> (แสดงตัวอย่างสดและค้นหาได้ทันที)</span>
+        <span class="font-mono text-slate-400">ID: commerce-ui-translations</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Complete Production UI Translations Dictionary (Invisible, Type application/json) -->
+  <script id="commerce-ui-translations" type="application/json">
+{
+  "Customer ID": {
+    "th": "รหัสลูกค้า",
+    "en": "Customer ID"
+  },
+  "Customer upsert": {
+    "th": "สร้างหรืออัปเดตข้อมูลลูกค้า (Customer Upsert)",
+    "en": "Customer upsert"
+  },
+  "customer, admin, staff": {
+    "th": "ลูกค้า, แอดมิน, พนักงาน",
+    "en": "customer, admin, staff"
+  },
+  "date": {
+    "th": "วันที่",
+    "en": "date"
+  },
+  "Deactivate": {
+    "th": "ปิดใช้งาน",
+    "en": "Deactivate"
+  },
+  "Dead letter": {
+    "th": "ข้อความที่ไม่สามารถส่งได้ (Dead Letter)",
+    "en": "Dead letter"
+  },
+  "Declined": {
+    "th": "ปฏิเสธแล้ว",
+    "en": "Declined"
+  },
+  "default": {
+    "th": "ค่าเริ่มต้น",
+    "en": "default"
+  },
+  "Delete": {
+    "th": "ลบ",
+    "en": "Delete"
+  },
+  "Delete preset": {
+    "th": "ลบค่าที่ตั้งไว้ล่วงหน้า",
+    "en": "Delete preset"
+  },
+  "Delete this subscription?": {
+    "th": "ต้องการลบการติดตาม (Subscription) นี้หรือไม่?",
+    "en": "Delete this subscription?"
+  },
+  "Delivery": {
+    "th": "การจัดส่ง",
+    "en": "Delivery"
+  },
+  "Delivery log": {
+    "th": "บันทึกประวัติการจัดส่ง",
+    "en": "Delivery log"
+  },
+  "Delivery Schedule": {
+    "th": "กำหนดการจัดส่ง",
+    "en": "Delivery Schedule"
+  },
+  "Delivery Stats": {
+    "th": "สถิติการจัดส่ง",
+    "en": "Delivery Stats"
+  },
+  "Delivery status": {
+    "th": "สถานะการจัดส่ง",
+    "en": "Delivery status"
+  },
+  "Description": {
+    "th": "รายละเอียด",
+    "en": "Description"
+  },
+  "Desktop": {
+    "th": "เดสก์ท็อป",
+    "en": "Desktop"
+  },
+  "Details": {
+    "th": "รายละเอียด",
+    "en": "Details"
+  },
+  "Developer": {
+    "th": "นักพัฒนา",
+    "en": "Developer"
+  },
+  "Different URL for web": {
+    "th": "URL แยกสำหรับหน้าเว็บ",
+    "en": "Different URL for web"
+  },
+  "Disable": {
+    "th": "ปิดการใช้งาน",
+    "en": "Disable"
+  },
+  "Dismiss": {
+    "th": "ยกเลิก / ปิดข้อความ",
+    "en": "Dismiss"
+  },
+  "DOC_BOOK": {
+    "th": "เล่มที่เอกสาร (DOC_BOOK)",
+    "en": "DOC_BOOK"
+  },
+  "DOC_NO": {
+    "th": "เลขที่เอกสาร (DOC_NO)",
+    "en": "DOC_NO"
+  },
+  "Docs": {
+    "th": "เอกสารคู่มือ",
+    "en": "Docs"
+  },
+  "Docs & Reference": {
+    "th": "เอกสารคู่มือและการอ้างอิง",
+    "en": "Docs & Reference"
+  },
+  "Done": {
+    "th": "เสร็จสิ้น",
+    "en": "Done"
+  },
+  "Download QR (PNG)": {
+    "th": "ดาวน์โหลด QR (PNG)",
+    "en": "Download QR (PNG)"
+  },
+  "Download QR (SVG)": {
+    "th": "ดาวน์โหลด QR (SVG)",
+    "en": "Download QR (SVG)"
+  },
+  "Download ZIP": {
+    "th": "ดาวน์โหลดไฟล์ ZIP",
+    "en": "Download ZIP"
+  },
+  "Drop an image lot, or select images/folder above.": {
+    "th": "ลากวางชุดรูปภาพ หรือเลือกไฟล์ภาพ/โฟลเดอร์จากด้านบน",
+    "en": "Drop an image lot, or select images/folder above."
+  },
+  "Drop your image lot here": {
+    "th": "วางชุดไฟล์รูปภาพที่นี่",
+    "en": "Drop your image lot here"
+  },
+  "Dry run": {
+    "th": "ทดสอบเสมือนจริง (Dry Run)",
+    "en": "Dry run"
+  },
+  "Dry run (ไม่ยิงจริง)": {
+    "th": "ทดสอบเสมือนจริง (ไม่ส่งข้อมูลจริง)",
+    "en": "Dry run (no live dispatch)"
+  },
+  "Duplicate": {
+    "th": "ทำสำเนา",
+    "en": "Duplicate"
+  },
+  "e.g. 10% off orders over 3,000": {
+    "th": "เช่น ส่วนลด 10% เมื่อสั่งซื้อครบ 3,000 บาท",
+    "en": "e.g. 10% off orders over 3,000"
+  },
+  "e.g. 20% off": {
+    "th": "เช่น ลด 20%",
+    "en": "e.g. 20% off"
+  },
+  "e.g. Our e-commerce store": {
+    "th": "เช่น ร้านค้าออนไลน์ของเรา",
+    "en": "e.g. Our e-commerce store"
+  },
+  "e.g. SKU-A": {
+    "th": "เช่น SKU-A",
+    "en": "e.g. SKU-A"
+  },
+  "e.g., Order sync worker": {
+    "th": "เช่น ระบบซิงก์ออเดอร์ (Order Sync Worker)",
+    "en": "e.g., Order sync worker"
+  },
+  "e.g., Production Backend": {
+    "th": "เช่น ระบบเบื้องหลังสำหรับ Production",
+    "en": "e.g., Production Backend"
+  },
+  "e.g., Production Webhook": {
+    "th": "เช่น Production Webhook",
+    "en": "e.g., Production Webhook"
+  },
+  "Edit": {
+    "th": "แก้ไข",
+    "en": "Edit"
+  },
+  "Edit Workflow:": {
+    "th": "แก้ไขเวิร์กโฟลว์:",
+    "en": "Edit Workflow:"
+  },
+  "Element actions": {
+    "th": "การดำเนินการขององค์ประกอบ",
+    "en": "Element actions"
+  },
+  "Elements": {
+    "th": "องค์ประกอบ",
+    "en": "Elements"
+  },
+  "email": {
+    "th": "อีเมล",
+    "en": "email"
+  },
+  "EMAIL CHROME": {
+    "th": "EMAIL CHROME",
+    "en": "EMAIL CHROME"
+  },
+  "EN": {
+    "th": "อังกฤษ (EN)",
+    "en": "EN"
+  },
+  "Enable": {
+    "th": "เปิดใช้งาน",
+    "en": "Enable"
+  },
+  "English": {
+    "th": "ภาษาอังกฤษ",
+    "en": "English"
+  },
+  "Enjosh signature": {
+    "th": "ลายเซ็น Enjosh",
+    "en": "Enjosh signature"
+  },
+  "Enroll": {
+    "th": "ลงทะเบียน / เข้าร่วม",
+    "en": "Enroll"
+  },
+  "Enroll → Notify:": {
+    "th": "ลงทะเบียน → แจ้งเตือน:",
+    "en": "Enroll → Notify:"
+  },
+  "Enroll → Offer:": {
+    "th": "ลงทะเบียน → ข้อเสนอ:",
+    "en": "Enroll → Offer:"
+  },
+  "Enroll → Order:": {
+    "th": "ลงทะเบียน → คำสั่งซื้อ:",
+    "en": "Enroll → Order:"
+  },
+  "Enrolled": {
+    "th": "ลงทะเบียนแล้ว",
+    "en": "Enrolled"
+  },
+  "enrolled ·": {
+    "th": "ลงทะเบียนแล้ว ·",
+    "en": "enrolled ·"
+  },
+  "enrolled จาก": {
+    "th": "ลงทะเบียนจาก",
+    "en": "enrolled from"
+  },
+  "Enrolled ตามเวลา (": {
+    "th": "ลงทะเบียนตามเวลา (",
+    "en": "Enrolled by time ("
+  },
+  "Enrolled รวม": {
+    "th": "ยอดลงทะเบียนรวม",
+    "en": "Total enrolled"
+  },
+  "Enrollment": {
+    "th": "การลงทะเบียน",
+    "en": "Enrollment"
+  },
+  "Entity type": {
+    "th": "ประเภทเอนทิตี",
+    "en": "Entity type"
+  },
+  "ERP →": {
+    "th": "ERP →",
+    "en": "ERP →"
+  },
+  "ERP → commerce → josh": {
+    "th": "ERP → commerce → josh",
+    "en": "ERP → commerce → josh"
+  },
+  "ERP Inbound Log": {
+    "th": "บันทึกข้อมูลขาเข้าจาก ERP",
+    "en": "ERP Inbound Log"
+  },
+  "ERP Inbound Logs": {
+    "th": "ประวัติข้อมูลขาเข้าจาก ERP ทั้งหมด",
+    "en": "ERP Inbound Logs"
+  },
+  "ERP ingest": {
+    "th": "การรับข้อมูลเข้าสู่ ERP",
+    "en": "ERP ingest"
+  },
+  "ERP PRICE — ราคาที่ลูกค้าจ่ายจริง แก้ที่ ERP เท่านั้น": {
+    "th": "ราคาใน ERP — ราคาที่ลูกค้าจ่ายจริง ปรับแก้ที่ระบบ ERP เท่านั้น",
+    "en": "ERP PRICE — Actual price paid by customer, editable in ERP only"
+  },
+  "ERP simulator": {
+    "th": "โปรแกรมจำลอง ERP",
+    "en": "ERP simulator"
+  },
+  "ERP stub stock": {
+    "th": "สต็อกจำลองใน ERP (Stub Stock)",
+    "en": "ERP stub stock"
+  },
+  "ERP Webhook Simulator": {
+    "th": "โปรแกรมจำลอง ERP Webhook",
+    "en": "ERP Webhook Simulator"
+  },
+  "ERP webhook simulator (josh)": {
+    "th": "โปรแกรมจำลอง ERP webhook (josh)",
+    "en": "ERP webhook simulator (josh)"
+  },
+  "ERP ได้คำตอบ {0} ใน {1} ms": {
+    "th": "ERP ได้รับคำตอบ {0} ภายใน {1} มิลลิวินาที",
+    "en": "ERP received response {0} in {1} ms"
+  },
+  "ERP เปลี่ยน (ตอนนี้ → ใหม่)": {
+    "th": "ERP เปลี่ยนแปลงข้อมูล (ปัจจุบัน → ค่าใหม่)",
+    "en": "ERP changed (current → new)"
+  },
+  "ERP เปลี่ยนเมื่อ": {
+    "th": "ERP ปรับปรุงเมื่อ",
+    "en": "ERP changed at"
+  },
+  "ERP ยกเลิก": {
+    "th": "ERP ยกเลิกรายการแล้ว",
+    "en": "ERP cancelled"
+  },
+  "ERP ยืนยันแล้ว กำลังเตรียม": {
+    "th": "ERP ยืนยันแล้ว กำลังเตรียมสินค้า",
+    "en": "ERP confirmed, preparing"
+  },
+  "ERP รออนุมัติ (": {
+    "th": "ERP รอการอนุมัติ (",
+    "en": "ERP awaiting approval ("
+  },
+  "ERP ส่งมา": {
+    "th": "ERP ส่งข้อมูลมา",
+    "en": "ERP received"
+  },
+  "ERP ส่งมาเมื่อ": {
+    "th": "ERP ส่งข้อมูลมาเมื่อ",
+    "en": "ERP received at"
+  },
+  "ERP ส่งเมื่อ": {
+    "th": "ERP ส่งข้อมูลออกเมื่อ",
+    "en": "ERP sent at"
+  },
+  "ERP ส่งล่าสุด": {
+    "th": "ERP ส่งข้อมูลล่าสุด",
+    "en": "ERP last sent"
+  },
+  "ERP ส่งสต็อก ราคา สินค้า ลูกค้า สถานะ order/invoice เข้ามา · commerce ส่งต่อให้ josh": {
+    "th": "ERP ส่งสต็อก ราคา สินค้า ลูกค้า สถานะคำสั่งซื้อ/ใบแจ้งหนี้เข้ามา · ระบบคอมเมิร์ซส่งต่อให้ josh",
+    "en": "ERP sends stock, price, products, customers, order/invoice status · commerce forwards to josh"
+  },
+  "erp_sync_status": {
+    "th": "สถานะการซิงก์ข้อมูล ERP (erp_sync_status)",
+    "en": "erp_sync_status"
+  },
+  "Error": {
+    "th": "ข้อผิดพลาด",
+    "en": "Error"
+  },
+  "Error / สุขภาพระบบ": {
+    "th": "ข้อผิดพลาด / สถานะความสมบูรณ์ของระบบ",
+    "en": "Error / System Health"
+  },
+  "Error saving workflow: {0}": {
+    "th": "เกิดข้อผิดพลาดในการบันทึกเวิร์กโฟลว์: {0}",
+    "en": "Error saving workflow: {0}"
+  },
+  "Error testing flow: {0}": {
+    "th": "เกิดข้อผิดพลาดในการทดสอบโฟลว์: {0}",
+    "en": "Error testing flow: {0}"
+  },
+  "Error และสุขภาพระบบ": {
+    "th": "ข้อผิดพลาดและสถานะความสมบูรณ์ของระบบ",
+    "en": "Errors and system health"
+  },
+  "Error:": {
+    "th": "ข้อผิดพลาด:",
+    "en": "Error:"
+  },
+  "escalate": {
+    "th": "ส่งต่อเคส / ยกระดับปัญหา",
+    "en": "escalate"
+  },
+  "Escalate": {
+    "th": "ยกระดับปัญหา",
+    "en": "Escalate"
+  },
+  "Estimated output": {
+    "th": "ผลลัพธ์โดยประมาณ",
+    "en": "Estimated output"
+  },
+  "event": {
+    "th": "เหตุการณ์",
+    "en": "event"
+  },
+  "Event": {
+    "th": "เหตุการณ์",
+    "en": "Event"
+  },
+  "Event Type": {
+    "th": "ประเภทเหตุการณ์",
+    "en": "Event Type"
+  },
+  "Event Types": {
+    "th": "ประเภทเหตุการณ์ทั้งหมด",
+    "en": "Event Types"
+  },
+  "event ของ order นี้": {
+    "th": "เหตุการณ์ของคำสั่งซื้อนี้",
+    "en": "Events for this order"
+  },
+  "events": {
+    "th": "เหตุการณ์ทั้งหมด",
+    "en": "events"
+  },
+  "Events": {
+    "th": "เหตุการณ์",
+    "en": "Events"
+  },
+  "Events to send": {
+    "th": "เหตุการณ์ที่จะส่ง",
+    "en": "Events to send"
+  },
+  "Evidence IDs ของ {0}": {
+    "th": "รหัสหลักฐาน (Evidence IDs) ของ {0}",
+    "en": "Evidence IDs for {0}"
+  },
+  "example": {
+    "th": "ตัวอย่าง",
+    "en": "example"
+  },
+  "Exclude segment IDs": {
+    "th": "รหัสเซกเมนต์ที่ต้องการคัดออก",
+    "en": "Exclude segment IDs"
+  },
+  "Exclude segments (optional)": {
+    "th": "คัดออกบางเซกเมนต์ (ไม่บังคับ)",
+    "en": "Exclude segments (optional)"
+  },
+  "exhausted": {
+    "th": "หมดจำนวนครั้งที่อนุญาตแล้ว",
+    "en": "exhausted"
+  },
+  "Expand": {
+    "th": "ขยาย",
+    "en": "Expand"
+  },
+  "Expires": {
+    "th": "หมดอายุ",
+    "en": "Expires"
+  },
+  "export CSV": {
+    "th": "ส่งออกเป็น CSV",
+    "en": "export CSV"
+  },
+  "Export Excel": {
+    "th": "ส่งออกเป็น Excel",
+    "en": "Export Excel"
+  },
+  "External ID": {
+    "th": "รหัสภายนอก",
+    "en": "External ID"
+  },
+  "External ref": {
+    "th": "เลขอ้างอิงภายนอก",
+    "en": "External ref"
+  },
+  "facebook": {
+    "th": "facebook",
+    "en": "facebook"
+  },
+  "Facebook URL": {
+    "th": "Facebook URL",
+    "en": "Facebook URL"
+  },
+  "Fade": {
+    "th": "จางลง",
+    "en": "Fade"
+  },
+  "fail": {
+    "th": "ล้มเหลว",
+    "en": "fail"
+  },
+  "Fail reason": {
+    "th": "สาเหตุความล้มเหลว",
+    "en": "Fail reason"
+  },
+  "failed": {
+    "th": "ไม่สำเร็จ",
+    "en": "failed"
+  },
+  "Failed": {
+    "th": "ล้มเหลว",
+    "en": "Failed"
+  },
+  "Failed Deliveries": {
+    "th": "รายการส่งมอบที่ไม่สำเร็จ",
+    "en": "Failed Deliveries"
+  },
+  "Failed files": {
+    "th": "ไฟล์ที่ไม่สามารถประมวลผลได้",
+    "en": "Failed files"
+  },
+  "Failed to decode {0}.": {
+    "th": "ไม่สามารถถอดรหัส {0} ได้",
+    "en": "Failed to decode {0}."
+  },
+  "FAILED_DELIVERY": {
+    "th": "FAILED_DELIVERY",
+    "en": "FAILED_DELIVERY"
+  },
+  "faq": {
+    "th": "คำถามที่พบบ่อย (FAQ)",
+    "en": "faq"
+  },
+  "faq_general": {
+    "th": "คำถามทั่วไป (faq_general)",
+    "en": "faq_general"
+  },
+  "Field": {
+    "th": "ฟิลด์",
+    "en": "Field"
+  },
+  "Fields": {
+    "th": "ฟิลด์ข้อมูล",
+    "en": "Fields"
+  },
+  "Finance": {
+    "th": "การเงิน",
+    "en": "Finance"
+  },
+  "Fire log": {
+    "th": "บันทึกการส่งเหตุการณ์ (Fire Log)",
+    "en": "Fire log"
+  },
+  "fires": {
+    "th": "จำนวนการทำงาน (Fires)",
+    "en": "fires"
+  },
+  "Fires ล่าสุด": {
+    "th": "การทำงานล่าสุด",
+    "en": "Recent fires"
+  },
+  "Flash Sale — Thailand": {
+    "th": "แฟลชเซล — ประเทศไทย",
+    "en": "Flash Sale — Thailand"
+  },
+  "Flow Design": {
+    "th": "การออกแบบโฟลว์",
+    "en": "Flow Design"
+  },
+  "Footer (footerSize)": {
+    "th": "ส่วนท้าย (footerSize)",
+    "en": "Footer (footerSize)"
+  },
+  "for HMAC signature": {
+    "th": "สำหรับลายเซ็น HMAC",
+    "en": "for HMAC signature"
+  },
+  "For HMAC signature verification": {
+    "th": "สำหรับการตรวจสอบลายเซ็น HMAC",
+    "en": "For HMAC signature verification"
+  },
+  "Force processing": {
+    "th": "บังคับประมวลผลทันที",
+    "en": "Force processing"
+  },
+  "Format: WebP": {
+    "th": "รูปแบบ: WebP",
+    "en": "Format: WebP"
+  },
+  "Free delivery threshold (ex VAT): ฿": {
+    "th": "ยอดสั่งซื้อส่งฟรี (ไม่รวม VAT): ฿",
+    "en": "Free delivery threshold (ex VAT): ฿"
+  },
+  "Fulfillments ({0})": {
+    "th": "การจัดส่งสินค้า ({0})",
+    "en": "Fulfillments ({0})"
+  },
+  "Funnel (sessions)": {
+    "th": "กระบวนการแปลง (เซสชัน)",
+    "en": "Funnel (sessions)"
+  },
+  "Funnel ของ workflow": {
+    "th": "กระบวนการแปลง (Funnel) ของเวิร์กโฟลว์",
+    "en": "Workflow funnel"
+  },
+  "Gate มีแล้ว (สูงสุด 1)": {
+    "th": "มี Gate อยู่แล้ว (กำหนดได้สูงสุด 1 จุด)",
+    "en": "Gate already exists (maximum 1)"
+  },
+  "General": {
+    "th": "ทั่วไป",
+    "en": "General"
+  },
+  "Generate an API key to authenticate your requests": {
+    "th": "สร้างคีย์ API เพื่อยืนยันตัวตนสำหรับคำขอของคุณ",
+    "en": "Generate an API key to authenticate your requests"
+  },
+  "GET /drivers/tracking": {
+    "th": "GET /drivers/tracking",
+    "en": "GET /drivers/tracking"
+  },
+  "GET /marketing-offers/active": {
+    "th": "GET /marketing-offers/active",
+    "en": "GET /marketing-offers/active"
+  },
+  "Getting started checklist": {
+    "th": "รายการตรวจสอบสำหรับการเริ่มต้นใช้งาน",
+    "en": "Getting started checklist"
+  },
+  "Global Frequency Cap": {
+    "th": "ขีดจำกัดความถี่รวม (Global Frequency Cap)",
+    "en": "Global Frequency Cap"
+  },
+  "Grant → Redeem:": {
+    "th": "มอบสิทธิ์ → ใช้สิทธิ์:",
+    "en": "Grant → Redeem:"
+  },
+  "Growth": {
+    "th": "การเติบโตทางธุรกิจ",
+    "en": "Growth"
+  },
+  "Growth Workspace": {
+    "th": "พื้นที่ทำงานเพื่อการเติบโต",
+    "en": "Growth Workspace"
+  },
+  "GTM / ค้นหาไม่เจอ": {
+    "th": "GTM / ค้นหาไม่พบข้อมูล",
+    "en": "GTM / Not found"
+  },
+  "header.": {
+    "th": "header.",
+    "en": "header."
+  },
+  "Height": {
+    "th": "ความสูง",
+    "en": "Height"
+  },
+  "Hero image": {
+    "th": "ภาพแบนเนอร์หลัก (Hero Image)",
+    "en": "Hero image"
+  },
+  "Holdout ({0}% ควบคุม)": {
+    "th": "กลุ่มควบคุม ({0}% Holdout)",
+    "en": "Holdout ({0}% control)"
+  },
+  "Homepage Overview": {
+    "th": "ภาพรวมหน้าหลัก",
+    "en": "Homepage Overview"
+  },
+  "href / src / content": {
+    "th": "href / src / content",
+    "en": "href / src / content"
+  },
+  "HTML": {
+    "th": "HTML",
+    "en": "HTML"
+  },
+  "HTML — เร็วและใช้ทรัพยากรน้อย": {
+    "th": "HTML — รวดเร็วและใช้ทรัพยากรน้อย",
+    "en": "HTML — fast and lightweight"
+  },
+  "HTTP": {
+    "th": "HTTP",
+    "en": "HTTP"
+  },
+  "HTTP {0}": {
+    "th": "HTTP {0}",
+    "en": "HTTP {0}"
+  },
+  "HTTPS endpoint to receive webhooks": {
+    "th": "HTTPS Endpoint สำหรับรับข้อมูล Webhook",
+    "en": "HTTPS endpoint to receive webhooks"
+  },
+  "httpStatus:": {
+    "th": "สถานะ HTTP:",
+    "en": "httpStatus:"
+  },
+  "I": {
+    "th": "I",
+    "en": "I"
+  },
+  "ID": {
+    "th": "รหัสประจำตัว",
+    "en": "ID"
+  },
+  "Idempotency key": {
+    "th": "Idempotency Key",
+    "en": "Idempotency key"
+  },
+  "If / Else": {
+    "th": "เงื่อนไข If / Else",
+    "en": "If / Else"
+  },
+  "If/Else": {
+    "th": "If/Else",
+    "en": "If/Else"
+  },
+  "Images": {
+    "th": "รูปภาพ",
+    "en": "Images"
+  },
+  "Images are processed locally in your browser. Your files are not uploaded.": {
+    "th": "รูปภาพได้รับการประมวลผลบนเบราว์เซอร์ของคุณโดยตรง ไฟล์จะไม่ถูกอัปโหลดขึ้นเซิร์ฟเวอร์",
+    "en": "Images are processed locally in your browser. Your files are not uploaded."
+  },
+  "images loaded": {
+    "th": "โหลดรูปภาพแล้ว",
+    "en": "images loaded"
+  },
+  "Import ไม่สำเร็จ": {
+    "th": "นำเข้าข้อมูลไม่สำเร็จ",
+    "en": "Import failed"
+  },
+  "Inbound log": {
+    "th": "บันทึกข้อมูลขาเข้า",
+    "en": "Inbound log"
+  },
+  "Inbound webhooks — stored raw, processed asynchronously, replayable.": {
+    "th": "Webhooks ขาเข้า — บันทึกข้อมูลดิบ, ประมวลผลแบบอะซิงโครนัส, สามารถเล่นซ้ำได้",
+    "en": "Inbound webhooks — stored raw, processed asynchronously, replayable."
+  },
+  "Include = users ∪ ร้าน(company) ∪ segments · Exclude ตัดออกก่อนส่ง": {
+    "th": "กลุ่มเป้าหมาย (Include) = ผู้ใช้ ∪ ร้านค้า ∪ เซกเมนต์ · กลุ่มยกเว้น (Exclude) จะถูกตัดออกก่อนส่ง",
+    "en": "Include = users ∪ store(company) ∪ segments · Exclude is filtered out before delivery"
+  },
+  "Include your API key in the X-Api-Key header of every request:": {
+    "th": "โปรดระบุคีย์ API ในส่วนหัว X-Api-Key ของทุกคำขอ:",
+    "en": "Include your API key in the X-Api-Key header of every request:"
+  },
+  "Instagram URL": {
+    "th": "Instagram URL",
+    "en": "Instagram URL"
+  },
+  "Integration": {
+    "th": "การเชื่อมต่อระบบ",
+    "en": "Integration"
+  },
+  "Intent": {
+    "th": "เจตนา / วัตถุประสงค์ (Intent)",
+    "en": "Intent"
+  },
+  "Intent Rules": {
+    "th": "กฎของ Intent",
+    "en": "Intent Rules"
+  },
+  "Interactive API Explorer": {
+    "th": "เครื่องมือทดสอบ API แบบโต้ตอบ",
+    "en": "Interactive API Explorer"
+  },
+  "INV_BOOK": {
+    "th": "เล่มที่ใบแจ้งหนี้ (INV_BOOK)",
+    "en": "INV_BOOK"
+  },
+  "INV_NO": {
+    "th": "เลขที่ใบแจ้งหนี้ (INV_NO)",
+    "en": "INV_NO"
+  },
+  "Invoice": {
+    "th": "ใบแจ้งหนี้",
+    "en": "Invoice"
+  },
+  "Invoice #": {
+    "th": "เลขที่ใบแจ้งหนี้ #",
+    "en": "Invoice #"
+  },
+  "Invoice Overdue": {
+    "th": "ใบแจ้งหนี้เกินกำหนดชำระ",
+    "en": "Invoice Overdue"
+  },
+  "Invoice qty": {
+    "th": "จำนวนในใบแจ้งหนี้",
+    "en": "Invoice qty"
+  },
+  "Invoice qty {0}": {
+    "th": "จำนวนในใบแจ้งหนี้ {0}",
+    "en": "Invoice qty {0}"
+  },
+  "Invoice status": {
+    "th": "สถานะใบแจ้งหนี้",
+    "en": "Invoice status"
+  },
+  "Invoice:": {
+    "th": "ใบแจ้งหนี้:",
+    "en": "Invoice:"
+  },
+  "invoice.status.changed": {
+    "th": "invoice.status.changed",
+    "en": "invoice.status.changed"
+  },
+  "iOS": {
+    "th": "iOS",
+    "en": "iOS"
+  },
+  "J": {
+    "th": "J",
+    "en": "J"
+  },
+  "Jagota payment testing": {
+    "th": "การทดสอบการชำระเงิน Jagota",
+    "en": "Jagota payment testing"
+  },
+  "Jagota Payment Testing": {
+    "th": "การทดสอบระบบชำระเงิน Jagota",
+    "en": "Jagota Payment Testing"
+  },
+  "Jagota sync": {
+    "th": "การซิงก์ข้อมูล Jagota",
+    "en": "Jagota sync"
+  },
+  "Jagota sync error": {
+    "th": "ข้อผิดพลาดในการซิงก์ข้อมูล Jagota",
+    "en": "Jagota sync error"
+  },
+  "Jagota ตอบ": {
+    "th": "การตอบกลับจาก Jagota",
+    "en": "Jagota response"
+  },
+  "jagota_order_sync": {
+    "th": "jagota_order_sync",
+    "en": "jagota_order_sync"
+  },
+  "JD": {
+    "th": "JD",
+    "en": "JD"
+  },
+  "JG-001": {
+    "th": "JG-001",
+    "en": "JG-001"
+  },
+  "JG-001_2.png": {
+    "th": "JG-001_2.png",
+    "en": "JG-001_2.png"
+  },
+  "JG001_1.jpg": {
+    "th": "JG001_1.jpg",
+    "en": "JG001_1.jpg"
+  },
+  "JG001_2.jpg": {
+    "th": "JG001_2.jpg",
+    "en": "JG001_2.jpg"
+  },
+  "JG001_2.jpg จะทับรูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องมีลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน": {
+    "th": "JG001_2.jpg จะทับรูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องระบุลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน",
+    "en": "JG001_2.jpg will overwrite image 2 of JG001 — filenames must be sequenced without duplicate sequence numbers in the same batch"
+  },
+  "JG002": {
+    "th": "JG002",
+    "en": "JG002"
+  },
+  "JG002.webp": {
+    "th": "JG002.webp",
+    "en": "JG002.webp"
+  },
+  "Job history": {
+    "th": "ประวัติการทำงาน (Job History)",
+    "en": "Job history"
+  },
+  "John Doe": {
+    "th": "John Doe",
+    "en": "John Doe"
+  },
+  "josh": {
+    "th": "josh",
+    "en": "josh"
+  },
+  "Josh": {
+    "th": "Josh",
+    "en": "Josh"
+  },
+  "JOSH · ตอนนี้": {
+    "th": "JOSH · ตอนนี้",
+    "en": "JOSH · current"
+  },
+  "josh → commerce → ERP": {
+    "th": "josh → commerce → ERP",
+    "en": "josh → commerce → ERP"
+  },
+  "JOSH ADMIN": {
+    "th": "JOSH ADMIN",
+    "en": "JOSH ADMIN"
+  },
+  "josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · ไม่ส่งอะไรไป ERP": {
+    "th": "josh ยังส่งคำสั่งซื้อไป Jagota ตามปกติ · ระบบคอมเมิร์ซจะสร้างคำขอของคำสั่งซื้อเดียวกันเพื่อเปรียบเทียบกับที่ josh ส่งจริงแบบช่องต่อช่อง · ไม่ส่งข้อมูลไปยัง ERP",
+    "en": "josh continues sending orders to Jagota as normal · commerce generates matching requests to shadow-compare field by field against actual josh dispatches · nothing is sent to ERP"
+  },
+  "josh เรียก commerce": {
+    "th": "josh เรียกใช้งานระบบ commerce",
+    "en": "josh calls commerce"
+  },
+  "josh ส่ง": {
+    "th": "josh ส่งข้อมูล",
+    "en": "josh sent"
+  },
+  "josh ส่งไป Jagota": {
+    "th": "josh ส่งข้อมูลไปยัง Jagota",
+    "en": "josh sent to Jagota"
+  },
+  "josh ส่งเมื่อ": {
+    "th": "josh ส่งเมื่อ",
+    "en": "josh sent at"
+  },
+  "josh สั่งซื้อผ่าน commerce · จ่ายเงินแล้ว commerce ส่ง order ไป ERP": {
+    "th": "josh สั่งซื้อผ่าน commerce · เมื่อชำระเงินเรียบร้อย commerce จะส่งคำสั่งซื้อไปยัง ERP",
+    "en": "josh places orders through commerce · once payment is completed, commerce transmits the order to ERP"
+  },
+  "josh.admin@saas.com": {
+    "th": "josh.admin@saas.com",
+    "en": "josh.admin@saas.com"
+  },
+  "Journey": {
+    "th": "เส้นทางผู้ใช้ (Journey)",
+    "en": "Journey"
+  },
+  "Journey funnel": {
+    "th": "กรวยสถิติเส้นทางผู้ใช้",
+    "en": "Journey funnel"
+  },
+  "Journey Funnel": {
+    "th": "กรวยสถิติการเดินทางของลูกค้า",
+    "en": "Journey Funnel"
+  },
+  "Journey Timeline": {
+    "th": "ไทม์ไลน์เส้นทางผู้ใช้",
+    "en": "Journey Timeline"
+  },
+  "JPG / PNG / WebP": {
+    "th": "JPG / PNG / WebP",
+    "en": "JPG / PNG / WebP"
+  },
+  "jpg / png / webp / gif — รวมแล้วไม่เกิน 3 รูป": {
+    "th": "jpg / png / webp / gif — รวมทั้งหมดไม่เกิน 3 ภาพ",
+    "en": "jpg / png / webp / gif — maximum 3 images in total"
+  },
+  "KBank testing console": {
+    "th": "คอนโซลทดสอบ KBank",
+    "en": "KBank testing console"
+  },
+  "KBank Testing Console": {
+    "th": "คอนโซลทดสอบระบบธนาคารกสิกรไทย (KBank)",
+    "en": "KBank Testing Console"
+  },
+  "KBANK_TESTING_CONSOLE=true": {
+    "th": "KBANK_TESTING_CONSOLE=true",
+    "en": "KBANK_TESTING_CONSOLE=true"
+  },
+  "Kcal": {
+    "th": "กิโลแคลอรี (Kcal)",
+    "en": "Kcal"
+  },
+  "kebab-case เช่น vip-customers": {
+    "th": "รูปแบบ kebab-case เช่น vip-customers",
+    "en": "kebab-case format e.g. vip-customers"
+  },
+  "Keep keys server-side": {
+    "th": "จัดเก็บคีย์ไว้ที่ฝั่งเซิร์ฟเวอร์เสมอ",
+    "en": "Keep keys server-side"
+  },
+  "Key Name": {
+    "th": "ชื่อคีย์",
+    "en": "Key Name"
+  },
+  "Key prefix": {
+    "th": "คำนำหน้าคีย์ (Key Prefix)",
+    "en": "Key prefix"
+  },
+  "Keys authenticate your server with the X-Api-Key header. Keep them secret.": {
+    "th": "คีย์ใช้สำหรับการยืนยันตัวตนเซิร์ฟเวอร์ของคุณผ่านส่วนหัว X-Api-Key โปรดเก็บรักษาไว้เป็นความลับ",
+    "en": "Keys authenticate your server with the X-Api-Key header. Keep them secret."
+  }
+}
+  </script>
+
+  <script>
+    let currentLang = 'th';
+    let translations = {};
+
+    try {
+      const scriptElem = document.getElementById('commerce-ui-translations');
+      if (scriptElem) {
+        translations = JSON.parse(scriptElem.textContent);
+      }
+    } catch (e) {
+      console.error('Failed to parse translation dictionary:', e);
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Update toggle buttons styling
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+      if (lang === 'th') {
+        btnTh.className = "px-3 py-1 text-xs font-semibold rounded-md transition-all duration-150 bg-white text-[#365cf5] shadow-sm";
+        btnEn.className = "px-3 py-1 text-xs font-semibold rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
+        document.documentElement.lang = 'th';
+      } else {
+        btnEn.className = "px-3 py-1 text-xs font-semibold rounded-md transition-all duration-150 bg-white text-[#365cf5] shadow-sm";
+        btnTh.className = "px-3 py-1 text-xs font-semibold rounded-md transition-all duration-150 text-slate-600 hover:text-slate-900";
+        document.documentElement.lang = 'en';
+      }
+
+      // Update text nodes with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+
+      renderSampleKeysTable();
+    }
+
+    function renderSampleKeysTable(filterText = '') {
+      const tbody = document.getElementById('dict-sample-tbody');
+      if (!tbody) return;
+
+      const keys = Object.keys(translations);
+      const filtered = keys.filter(k => {
+        if (!filterText) return true;
+        const lower = filterText.toLowerCase();
+        return k.toLowerCase().includes(lower) ||
+               translations[k].th.toLowerCase().includes(lower) ||
+               translations[k].en.toLowerCase().includes(lower);
+      });
+
+      tbody.innerHTML = '';
+      filtered.forEach((key, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = idx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="py-2.5 px-4 text-slate-400 font-mono text-[11px]">${idx + 1}</td>
+          <td class="py-2.5 px-4 font-mono text-[11px] font-medium text-slate-800 break-words">${escapeHtml(key)}</td>
+          <td class="py-2.5 px-4 text-slate-700 ${currentLang === 'th' ? 'font-semibold text-[#365cf5]' : ''}">${escapeHtml(translations[key].th)}</td>
+          <td class="py-2.5 px-4 text-slate-600 ${currentLang === 'en' ? 'font-semibold text-[#365cf5]' : ''}">${escapeHtml(translations[key].en)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterSampleKeys(val) {
+      renderSampleKeysTable(val);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function copyDictionarySummary() {
+      const keyCount = Object.keys(translations).length;
+      alert(`Exporting copy batch copy-1791435141520-1 with ${keyCount} complete keys.`);
+    }
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', () => {
+      setLanguage('th');
+    });
+  </script>
+</body>
+</html>

@@ -1,3 +1,6 @@
+import { uiText as __uiText } from '@cp/ui';
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 import { formatBangkokDateTime, type PromotionValue } from '@josh/shared-api';
 import { summarizeMechanicValue } from '../campain/promotion-mechanic-form.helpers';
 
@@ -15,10 +18,10 @@ export const ACTION_LABELS: Record<string, string> = {
 /** Thai names for the fields worth naming; anything else is shown by its raw field name. */
 const FIELD_LABELS: Record<string, string> = {
   name: 'ชื่อ',
-  title: 'ชื่อ',
+  get title(){return uiText("ชื่อ");},
   title_th: 'ชื่อ (ไทย)',
   title_en: 'ชื่อ (EN)',
-  description: 'คำอธิบาย',
+  get description(){return uiText("คำอธิบาย");},
   description_th: 'คำอธิบาย (ไทย)',
   description_en: 'คำอธิบาย (EN)',
   is_active: 'เปิดใช้งาน',
@@ -112,11 +115,11 @@ const AUDIENCE_LABELS: Record<string, string> = { all: 'ทุกคน', compan
 function formatKnownField(field: string, value: unknown): string | null {
   switch (field) {
     case 'max_units':
-      return value == null ? 'ไม่จำกัด' : null;
+      return value == null ? __uiText("ไม่จำกัด") : null;
     case 'audience':
       return typeof value === 'string' ? (AUDIENCE_LABELS[value] ?? null) : null;
     case 'audience_company_ids':
-      return Array.isArray(value) ? `${value.length} บริษัท` : null;
+      return Array.isArray(value) ? __uiText("{0} บริษัท",{"0":value.length}) : null;
     case 'value': {
       // a mechanic's PromotionValue → "ลด 15%"; anything unrecognised falls through to JSON
       const text = isRecord(value) ? summarizeMechanicValue(value as PromotionValue) : '-';
@@ -146,7 +149,7 @@ export function formatChangeValue(
   const known = field ? formatKnownField(field, value) : null;
   if (known !== null) return clip(nameIds(known, names));
   if (value === null || value === undefined || value === '') return '—';
-  if (typeof value === 'boolean') return value ? 'ใช่' : 'ไม่ใช่';
+  if (typeof value === 'boolean') return value ? __uiText("ใช่") : __uiText("ไม่ใช่");
   if (typeof value === 'string') {
     return ISO_DATE.test(value) ? formatBangkokDateTime(value, 'th') : clip(nameIds(value, names));
   }
@@ -185,3 +188,5 @@ export function formatChange(
     after: diff && (diff.added || diff.removed) ? `${after} (+${diff.added} / −${diff.removed})` : after,
   };
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

@@ -1,20 +1,27 @@
+// ui-caption-migration: literal captions only
 import { useState } from 'react';
 import {
-  ArrowLink, Chip, CodeBlock, ErrorText, Icon, Loading, Page, PageHeader, Panel, PanelHead,
+  ArrowLink, Button, ButtonLink, Chip, CodeBlock, Empty, ErrorText, Icon, Loading, Page, PageHeader, Panel, PanelHead, Select,
   StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { keys, webhooks, deliveries, ApiKeyRow, WebhookRow, WebhookDelivery } from '../../lib/api';
+import { api, keys, webhooks, deliveries } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function Dashboard() {
+  __useUiLocale();
   const keysState = useAsync(() => keys.list());
   const webhooksState = useAsync(() => webhooks.list());
   const deliveriesState = useAsync(() => deliveries.recent(6));
   const [checklist, setChecklist] = useState(true);
+  const [deliveryStatus, setDeliveryStatus] = useState('');
 
   const keysList = keysState.data ?? [];
   const webhooksList = webhooksState.data ?? [];
   const deliveriesList = deliveriesState.data ?? [];
+  const visibleDeliveries = deliveriesList.filter(item => !deliveryStatus || item.status === deliveryStatus);
+  const catalogUrl = new URL(`${api.base}/v1/storefront/catalog/products`, window.location.origin).href;
 
   const activeKeys = keysList.filter((k) => k.active);
   const activeWebhooks = webhooksList.filter((w) => w.active);
@@ -23,38 +30,38 @@ export function Dashboard() {
   const lastDelivery = deliveriesList[0];
 
   // Checklist items
-  const hasKey = keysList.length > 0;
-  const hasWebhook = webhooksList.length > 0;
+  const hasKey = activeKeys.length > 0;
+  const hasWebhook = activeWebhooks.length > 0;
   const hasSuccessfulDelivery = successfulDeliveries.length > 0;
   const completedItems = [hasKey, hasWebhook, hasSuccessfulDelivery].filter(Boolean).length;
 
   return (
     <Page>
       <PageHeader
-        title="Dashboard"
-        subtitle="Your API keys and webhook subscriptions at a glance."
+        title={__uiText("Dashboard")}
+        subtitle={__uiText("Connect your application in three steps, then monitor your API keys and event deliveries.")}
+        actions={<ButtonLink to={!hasKey ? '/keys?create=1' : !hasWebhook ? '/webhooks?create=1' : '/webhooks'} variant="primary" icon="arrow_forward">{!hasKey ? __uiText("Create your first key") : !hasWebhook ? __uiText("Connect a webhook") : __uiText("Test your connection")}</ButtonLink>}
       />
 
       {/* Getting started checklist */}
       {checklist && (
         <Panel className="mb-6 p-5">
-          <div className="flex items-center justify-between pb-3 mb-4 border-b border-outline-variant/20">
-            <div className="flex items-center gap-2.5">
+          <div className="flex items-start justify-between gap-3 pb-3 mb-4 border-b border-outline-variant/20">
+            <div className="flex min-w-0 flex-wrap items-center gap-2.5">
               <Icon name="task_alt" className="text-primary" />
-              <h2 className="font-headline font-semibold text-sm text-on-surface">Getting started checklist</h2>
+              <h2 className="font-headline font-semibold text-sm text-on-surface">{__uiText("Getting started checklist")}</h2>
               <span className="text-xs px-2 py-0.5 rounded-full bg-surface-container-low text-primary font-medium num-tabular">
-                {completedItems} of 3 completed
-              </span>
+                {completedItems} {__uiText(" of 3 completed")}</span>
             </div>
             <button
               className="text-on-surface-variant hover:text-on-surface p-1 rounded transition-colors"
               onClick={() => setChecklist(false)}
-              title="Dismiss checklist"
+              title={__uiText("Dismiss checklist")}
             >
               <Icon name="close" size={18} />
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
             {/* Item 1: Create API key */}
             <div className={`flex items-start gap-3 p-3 rounded-lg border ${hasKey ? 'bg-surface-container-low/50 border-outline-variant/20' : 'bg-surface-container-lowest border-primary/40'}`}>
               <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${hasKey ? 'bg-primary text-on-primary' : 'border-2 border-primary text-primary text-[11px] font-semibold'}`}>
@@ -62,13 +69,13 @@ export function Dashboard() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className={`text-xs font-medium ${hasKey ? 'text-on-surface line-through opacity-85' : 'text-on-surface font-semibold'}`}>
-                  Create an API key
-                </div>
+                  {__uiText("Create an API key")}</div>
                 <p className="text-[11px] text-on-surface-variant mt-0.5">
-                  {hasKey ? 'Active production key initialized' : 'Start by creating your first API key'}
+                  {hasKey ? __uiText("An active API key is ready") : __uiText("Start by creating your first API key")}
                 </p>
+                {!hasKey && <ArrowLink to="/keys?create=1">{__uiText("Create key")}</ArrowLink>}
               </div>
-              {hasKey && <span className="text-[10px] font-medium text-primary px-1.5 py-0.5 rounded bg-surface-container-lowest">Done</span>}
+              {hasKey && <span className="text-[10px] font-medium text-primary px-1.5 py-0.5 rounded bg-surface-container-lowest">{__uiText("Done")}</span>}
             </div>
 
             {/* Item 2: Subscribe to webhook */}
@@ -78,13 +85,13 @@ export function Dashboard() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className={`text-xs font-medium ${hasWebhook ? 'text-on-surface line-through opacity-85' : 'text-on-surface font-semibold'}`}>
-                  Subscribe a webhook
-                </div>
+                  {__uiText("Subscribe a webhook")}</div>
                 <p className="text-[11px] text-on-surface-variant mt-0.5">
-                  {hasWebhook ? 'Listening to order.* events' : 'Set up a webhook endpoint'}
+                  {hasWebhook ? __uiText("An active webhook is configured") : __uiText("Set up a webhook endpoint")}
                 </p>
+                {!hasWebhook && <ArrowLink to="/webhooks?create=1">{__uiText("Set up webhook")}</ArrowLink>}
               </div>
-              {hasWebhook && <span className="text-[10px] font-medium text-primary px-1.5 py-0.5 rounded bg-surface-container-lowest">Done</span>}
+              {hasWebhook && <span className="text-[10px] font-medium text-primary px-1.5 py-0.5 rounded bg-surface-container-lowest">{__uiText("Done")}</span>}
             </div>
 
             {/* Item 3: Send test event */}
@@ -94,18 +101,14 @@ export function Dashboard() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className={`text-xs font-medium ${hasSuccessfulDelivery ? 'text-on-surface line-through opacity-85' : 'text-on-surface font-semibold'}`}>
-                  Send a test event
-                </div>
+                  {__uiText("Send a test event")}</div>
                 <p className="text-[11px] text-on-surface-variant mt-0.5">
-                  {hasSuccessfulDelivery ? 'Verify signature & receiver handler' : 'Test your webhook setup'}
+                  {hasSuccessfulDelivery ? __uiText("Verify signature & receiver handler") : __uiText("Test your webhook setup")}
                 </p>
               </div>
-              {hasSuccessfulDelivery && <span className="text-[10px] font-medium text-primary px-1.5 py-0.5 rounded bg-surface-container-lowest">Done</span>}
-              {!hasSuccessfulDelivery && webhooksList.length > 0 && (
-                <button className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary text-on-primary hover:bg-primary-dim rounded text-xs font-medium transition-colors flex-shrink-0">
-                  Send test
-                  <Icon name="bolt" size={14} />
-                </button>
+              {hasSuccessfulDelivery && <span className="text-[10px] font-medium text-primary px-1.5 py-0.5 rounded bg-surface-container-lowest">{__uiText("Done")}</span>}
+              {!hasSuccessfulDelivery && hasWebhook && (
+                <ButtonLink to="/webhooks" variant="primary" icon="bolt">{__uiText("Test webhook")}</ButtonLink>
               )}
             </div>
           </div>
@@ -113,7 +116,8 @@ export function Dashboard() {
       )}
 
       {/* Summary cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <ErrorText error={keysState.error ?? webhooksState.error} />
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
         {/* API Keys card */}
         <Panel className="p-5">
           <div className="flex items-center justify-between mb-4">
@@ -121,32 +125,28 @@ export function Dashboard() {
               <div className="w-7 h-7 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
                 <Icon name="key" size={18} />
               </div>
-              <span className="font-headline font-semibold text-sm text-on-surface">API keys</span>
+              <span className="font-headline font-semibold text-sm text-on-surface">{__uiText("API keys")}</span>
             </div>
-            <ArrowLink to="/keys">Manage</ArrowLink>
+            <ArrowLink to="/keys">{__uiText("Manage")}</ArrowLink>
           </div>
-          <div className="flex items-baseline gap-3 mb-4">
+          <div className="flex flex-wrap items-baseline gap-3 mb-4">
             <span className="font-headline text-3xl font-semibold text-on-surface num-tabular">{keysList.length}</span>
-            <span className="text-xs text-on-surface-variant">total keys</span>
+            <span className="text-xs text-on-surface-variant">{__uiText("total keys")}</span>
             {activeKeys.length > 0 && (
               <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-surface-container-low text-primary border border-outline-variant/30">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                {activeKeys.length} active
-              </span>
+                {activeKeys.length} {__uiText(" active")}</span>
             )}
           </div>
           {latestKey && (
-            <div className="pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs">
+            <div className="pt-3 border-t border-outline-variant/20 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2 overflow-hidden">
                 <code className="font-mono bg-surface-container-low text-on-surface px-2 py-0.5 rounded text-[11px] border border-outline-variant/30 truncate">
                   {latestKey.keyPrefix}…
                 </code>
-                <button className="text-on-surface-variant hover:text-on-surface" title="Copy key token">
-                  <Icon name="content_copy" size={14} />
-                </button>
               </div>
               <span className="text-on-surface-variant text-[11px] whitespace-nowrap">
-                {latestKey.createdAt ? `Created ${fmt.ago(latestKey.createdAt)}` : '—'}
+                {latestKey.createdAt ? __uiText("Created {0}", {"0": fmt.ago(latestKey.createdAt)}) : '—'}
               </span>
             </div>
           )}
@@ -159,18 +159,17 @@ export function Dashboard() {
               <div className="w-7 h-7 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
                 <Icon name="webhook" size={18} />
               </div>
-              <span className="font-headline font-semibold text-sm text-on-surface">Webhooks</span>
+              <span className="font-headline font-semibold text-sm text-on-surface">{__uiText("Webhooks")}</span>
             </div>
-            <ArrowLink to="/webhooks">Manage</ArrowLink>
+            <ArrowLink to="/webhooks">{__uiText("Manage")}</ArrowLink>
           </div>
-          <div className="flex items-baseline gap-3 mb-4">
+          <div className="flex flex-wrap items-baseline gap-3 mb-4">
             <span className="font-headline text-3xl font-semibold text-on-surface num-tabular">{webhooksList.length}</span>
-            <span className="text-xs text-on-surface-variant">subscriptions</span>
+            <span className="text-xs text-on-surface-variant">{__uiText("subscriptions")}</span>
             {activeWebhooks.length > 0 && (
               <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-surface-container-low text-primary border border-outline-variant/30">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                {activeWebhooks.length} active
-              </span>
+                {activeWebhooks.length} {__uiText(" active")}</span>
             )}
           </div>
           {lastDelivery && (
@@ -180,7 +179,7 @@ export function Dashboard() {
                   <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${lastDelivery.status === 'success' ? 'bg-primary' : lastDelivery.status === 'pending' ? 'bg-amber-500' : 'bg-error'}`} />
                   <span className={`relative inline-flex rounded-full h-2 w-2 ${lastDelivery.status === 'success' ? 'bg-primary' : lastDelivery.status === 'pending' ? 'bg-amber-500' : 'bg-error'}`} />
                 </span>
-                <span className="text-on-surface font-medium text-[11px]">{lastDelivery.status}{lastDelivery.statusCode ? ` · HTTP ${lastDelivery.statusCode}` : ''}</span>
+                <span className="text-on-surface font-medium text-[11px]">{lastDelivery.status}{lastDelivery.statusCode ? __uiText(" · HTTP {0}", {"0": lastDelivery.statusCode}) : ''}</span>
                 <span className="text-on-surface-variant text-[11px]">· {fmt.ago(lastDelivery.createdAt)}</span>
               </div>
             </div>
@@ -191,19 +190,17 @@ export function Dashboard() {
       {/* Main content grid: recent deliveries + docs */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Recent deliveries table */}
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <Panel className="overflow-hidden">
             <PanelHead
-              title="Recent webhook deliveries"
-              sub={`(Last ${deliveriesList.length} events)`}
+              title={__uiText("Recent webhook deliveries")}
+              sub={__uiText("{0} of {1} recent events",{'0':visibleDeliveries.length,'1':deliveriesList.length})}
               actions={
                 <>
-                  <button className="p-1 text-on-surface-variant hover:text-on-surface rounded hover:bg-surface-container-low transition-colors" title="Filter logs">
-                    <Icon name="filter_list" size={18} />
-                  </button>
-                  <button className="p-1 text-on-surface-variant hover:text-on-surface rounded hover:bg-surface-container-low transition-colors" title="Refresh logs">
-                    <Icon name="autorenew" size={18} />
-                  </button>
+                  <Select aria-label={__uiText("Delivery status")} value={deliveryStatus} onChange={event => setDeliveryStatus(event.target.value)} className="w-36">
+                    <option value="">{__uiText("All statuses")}</option><option value="pending">{__uiText("Pending")}</option><option value="success">{__uiText("Success")}</option><option value="failed">{__uiText("Failed")}</option><option value="superseded">{__uiText("Superseded")}</option>
+                  </Select>
+                  <Button icon="refresh" onClick={deliveriesState.reload} disabled={deliveriesState.loading}>{__uiText("Refresh logs")}</Button>
                 </>
               }
             />
@@ -211,32 +208,27 @@ export function Dashboard() {
               <ErrorText error={deliveriesState.error} />
             ) : deliveriesState.loading ? (
               <Loading />
-            ) : deliveriesList.length === 0 ? (
-              <div className="p-6"><p className="text-xs text-on-surface-variant">No webhook deliveries yet.</p></div>
+            ) : visibleDeliveries.length === 0 ? (
+              <Empty>{deliveryStatus ? __uiText("No recent deliveries match this status.") : __uiText("No webhook deliveries yet.")}</Empty>
             ) : (
               <Table>
                 <THead>
-                    <TH>Event</TH>
-                    <TH>Status</TH>
-                    <TH className="text-right">Attempts</TH>
-                    <TH className="text-right">Time</TH>
-                    <TH className="text-right">Actions</TH>
+                    <TH>{__uiText("Event")}</TH>
+                    <TH>{__uiText("Status")}</TH>
+                    <TH className="text-right">{__uiText("Attempts")}</TH>
+                    <TH className="text-right">{__uiText("Time")}</TH>
                   </THead>
                 <TBody>
-                  {deliveriesList.map((d) => (
+                  {visibleDeliveries.map((d) => (
                     <TR key={d.id}>
                       <TD><code className="font-mono text-primary text-[12px]">{d.eventType}</code></TD>
                       <TD>
                         <StatusChip status={d.status} />
-                        {d.statusCode && <span className="ml-1.5 font-mono text-[10px] text-on-surface-variant">HTTP {d.statusCode}</span>}
+                        {d.statusCode && <span className="ml-1.5 font-mono text-[10px] text-on-surface-variant">{__uiText("HTTP ")}{d.statusCode}</span>}
+                        {d.error && <p className="mt-1 max-w-60 break-words text-xs text-error">{d.error}</p>}
                       </TD>
                       <TD kind="text" className="text-right num-tabular text-on-surface">{d.attempts}</TD>
                       <TD className="text-right text-on-surface-variant text-[12px] whitespace-nowrap">{fmt.ago(d.createdAt)}</TD>
-                      <TD className="text-right">
-                        <button className="text-on-surface-variant hover:text-on-surface" title="Inspect payload">
-                          <Icon name="open_in_new" size={16} />
-                        </button>
-                      </TD>
                     </TR>
                   ))}
                 </TBody>
@@ -252,24 +244,22 @@ export function Dashboard() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Icon name="menu_book" className="text-primary" />
-                <span className="font-headline font-semibold text-xs text-on-surface">Docs & Reference</span>
+                <span className="font-headline font-semibold text-xs text-on-surface">{__uiText("Docs & Reference")}</span>
               </div>
-              <Chip tone="primary">Quickstart</Chip>
+              <Chip tone="primary">{__uiText("Quickstart")}</Chip>
             </div>
             <h4 className="font-headline font-semibold text-sm text-on-surface mb-2">
-              Authenticate with X-Api-Key
-            </h4>
+              {__uiText("Authenticate with X-Api-Key")}</h4>
             <p className="text-xs text-on-surface-variant mb-3 leading-relaxed">
-              Include your live or sandbox partner key inside the HTTP header of every request.
-            </p>
+              {__uiText("Include your live or sandbox partner key inside the HTTP header of every request.")}</p>
             <CodeBlock
-              title="cURL request"
-              value='curl -H "X-Api-Key: cp_live_..." \\\n  https://api.commerceplatform.io/v1/orders'
+              title={__uiText("cURL request")}
+              value={`curl -H "X-Api-Key: YOUR_API_KEY" "${catalogUrl}"`}
               maxHeight={200}
             />
             <div className="pt-3 border-t border-outline-variant/20 space-y-2 mt-4">
-              <ArrowLink to="/docs" tone="primary">View API Reference</ArrowLink>
-              <ArrowLink to="/docs" tone="primary">Webhook signatures guide</ArrowLink>
+              <ArrowLink to="/docs" tone="primary">{__uiText("View API Reference")}</ArrowLink>
+              <ArrowLink to="/docs" tone="primary">{__uiText("Webhook signatures guide")}</ArrowLink>
             </div>
           </Panel>
 
@@ -278,10 +268,9 @@ export function Dashboard() {
             <div className="flex items-start gap-2.5">
               <Icon name="info" className="text-primary mt-0.5" size={18} />
               <div>
-                <span className="font-medium text-on-surface">Keep keys server-side</span>
+                <span className="font-medium text-on-surface">{__uiText("Keep keys server-side")}</span>
                 <p className="text-on-surface-variant text-[11px] mt-0.5 leading-normal">
-                  Send the key in the X-Api-Key header from your server only. A revoked key stops working immediately.
-                </p>
+                  {__uiText("Send the key in the X-Api-Key header from your server only. Revocation can take up to 30 seconds while validation caches expire.")}</p>
               </div>
             </div>
           </div>

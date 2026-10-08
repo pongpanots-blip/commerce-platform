@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commerce Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              DEFAULT: '#365cf5',
+              hover: '#284cd6',
+              light: '#f1f4ff',
+            },
+            canvas: '#f6f8fc',
+            ink: {
+              DEFAULT: '#17243b',
+              secondary: '#52627a',
+              muted: '#8595ad',
+            },
+            border: '#e1e7f0',
+            success: '#157347',
+            warning: '#b08900',
+            danger: '#c2333f',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: "Noto Sans Thai", system-ui, -apple-system, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased bg-[#f6f8fc]">
+
+  <!-- Header Section -->
+  <header class="w-full bg-white border-b border-[#e1e7f0] sticky top-0 z-20">
+    <div class="max-w-[1240px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Brand & Context -->
+      <div class="flex items-center gap-3">
+        <a href="/login" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <div>
+            <span class="font-bold text-[17px] tracking-tight text-[#17243b] leading-tight block">Commerce Platform</span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-[#52627a] font-normal" data-i18n="portal_subtitle">พอร์ทัลนักพัฒนา</span>
+              <span class="inline-flex items-center px-1.5 py-0.2 text-[10px] font-mono font-medium rounded bg-blue-50 text-[#365cf5] border border-blue-200">v2.4 API</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Operational Health Badge -->
+        <div class="hidden md:flex items-center gap-1.5 ml-4 pl-4 border-l border-[#e1e7f0]">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-[#157347] border border-emerald-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#157347] animate-pulse"></span>
+            <span data-i18n="status_operational">ระบบพร้อมใช้งานปกติ (All Systems Operational)</span>
+          </span>
+          <span class="text-xs text-[#52627a] font-mono bg-slate-100 px-2 py-0.5 rounded border border-[#e1e7f0]">portal-7e93fba0bc7a</span>
+        </div>
+      </div>
+
+      <!-- Header Trailing Actions -->
+      <div class="flex items-center gap-3">
+        <!-- Documentation Link -->
+        <a href="/docs" class="hidden sm:inline-flex items-center gap-1.5 text-xs text-[#52627a] hover:text-[#17243b] font-medium px-2.5 py-1.5 rounded hover:bg-slate-100 transition-colors">
+          <svg class="w-4 h-4 text-[#52627a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span data-i18n="docs_link">เอกสาร API (Docs)</span>
+        </a>
+
+        <!-- Language Switcher -->
+        <div class="inline-flex items-center rounded-lg border border-[#e1e7f0] bg-white p-0.5 text-xs font-medium shadow-2xs">
+          <button id="lang-btn-th" type="button" class="px-2.5 py-1 rounded text-[#17243b] bg-slate-100 font-semibold transition-all">
+            ไทย
+          </button>
+          <button id="lang-btn-en" type="button" class="px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all">
+            English
+          </button>
+        </div>
+
+        <!-- Register Link Button -->
+        <a href="/register" class="inline-flex items-center justify-center px-3.5 py-1.5 text-xs font-medium rounded-lg bg-blue-50 text-[#365cf5] hover:bg-blue-100 border border-blue-200 transition-colors">
+          <span data-i18n="btn_create_account">สร้างบัญชีผู้ใช้</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content: Centered Auth Form (Login) -->
+  <main class="flex-1 flex flex-col justify-center items-center px-4 py-10 sm:py-16">
+    <div class="w-full max-w-[480px]">
+
+      <!-- Meta Badge -->
+      <div class="flex items-center justify-center gap-2 mb-4">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white text-[#52627a] border border-[#e1e7f0] shadow-xs">
+          <svg class="w-3.5 h-3.5 text-[#365cf5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 2l-2 2m-1-1l-3 3m5 8h-3m2-4h-2m-8 6h8a2 2 0 002-2v-4a2 2 0 00-2-2h-8a2 2 0 00-2 2v4a2 2 0 002 2z"></path>
+            <circle cx="7.5" cy="7.5" r="4.5"></circle>
+          </svg>
+          <span data-i18n="pill_dev_portal">Developer portal</span>
+          <span class="text-slate-300">•</span>
+          <span class="font-mono text-[11px] text-[#365cf5]">API v2.4</span>
+        </span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-slate-100 text-[#52627a] border border-[#e1e7f0]">/login</span>
+      </div>
+
+      <!-- Main Login Card with 12px corners -->
+      <div class="bg-white rounded-[12px] border border-[#e1e7f0] shadow-sm p-6 sm:p-8">
+
+        <!-- Card Header -->
+        <div class="text-center mb-6">
+          <h1 class="text-[26px] font-bold text-[#17243b] tracking-tight leading-snug mb-1.5" data-i18n="card_title">
+            Commerce Platform
+          </h1>
+          <p class="text-sm text-[#52627a]" data-i18n="card_subtitle">
+            Access your API keys and webhooks
+          </p>
+        </div>
+
+        <!-- Prototype Mode Indicator Banner -->
+        <div class="mb-5 px-3 py-2 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0] flex items-center justify-between text-xs text-[#52627a]">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+            <span>สถานะเซิร์ฟเวอร์: <span class="font-medium text-[#17243b]" data-i18n="sample_gateway">ข้อมูลตัวอย่าง (Sandbox Mode)</span></span>
+          </div>
+          <span class="font-mono text-[11px] bg-white px-1.5 py-0.5 rounded border border-[#e1e7f0] text-[#365cf5]">v2.4 Ready</span>
+        </div>
+
+        <!-- Inline Error Banner (Hidden by default, toggled on submit error) -->
+        <div id="auth-alert" class="hidden mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-[#c2333f] flex items-start gap-2">
+          <svg class="w-4 h-4 text-[#c2333f] mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <div class="flex-1">
+            <span class="font-medium" data-i18n="err_invalid">อีเมลหรือรหัสผ่านไม่ถูกต้อง</span>
+            <p class="text-[11px] text-red-600/80 mt-0.5">กรุณาตรวจสอบข้อมูลหรือใช้ข้อมูลบัญชีทดสอบที่กำหนดไว้</p>
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-4" onsubmit="event.preventDefault(); handleLogin();">
+
+          <!-- Email Field -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="email" class="block text-[13px] font-medium text-[#17243b]">
+                <span data-i18n="label_email">Email</span> <span class="text-[#c2333f]">*</span>
+              </label>
+              <span class="text-xs text-[#52627a] font-normal" data-i18n="hint_email">Your account email</span>
+            </div>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#52627a]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                value="merchant_lead@payment.co.th"
+                placeholder="dev@example.com"
+                class="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] placeholder-[#8595ad] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] transition-all"
+              />
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="password" class="block text-[13px] font-medium text-[#17243b]">
+                <span data-i18n="label_password">Password</span> <span class="text-[#c2333f]">*</span>
+              </label>
+              <a href="#forgot" class="text-xs text-[#365cf5] hover:text-[#284cd6] hover:underline" data-i18n="link_forgot">
+                ลืมรหัสผ่าน? (Forgot password?)
+              </a>
+            </div>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#52627a]">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                value="••••••••••••"
+                placeholder="Your password"
+                class="w-full h-10 pl-9 pr-10 text-sm rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] placeholder-[#8595ad] focus:outline-none focus:ring-2 focus:ring-[#365cf5]/20 focus:border-[#365cf5] transition-all"
+              />
+              <button
+                type="button"
+                onclick="togglePasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#52627a] hover:text-[#17243b]"
+                aria-label="Toggle password visibility"
+              >
+                <svg id="eye-icon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+            <p class="text-[12px] text-[#52627a] mt-1" data-i18n="hint_password">Your password</p>
+          </div>
+
+          <!-- Remember Me Checkbox -->
+          <div class="flex items-center justify-between pt-1">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                id="remember"
+                checked
+                class="w-4 h-4 rounded text-[#365cf5] border-[#e1e7f0] focus:ring-[#365cf5]/30 focus:ring-offset-0"
+              />
+              <span class="text-xs text-[#17243b]" data-i18n="remember_me">จดจำอุปกรณ์นี้อย่างปลอดภัย (Remember device)</span>
+            </label>
+          </div>
+
+          <!-- Primary Submit Action Button (40px high) -->
+          <div class="pt-2">
+            <button
+              id="submit-btn"
+              type="submit"
+              class="w-full h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-[#284cd6] active:bg-[#1e3ec7] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-xs transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#365cf5]"
+            >
+              <span id="btn-text" data-i18n="btn_signin">Sign in</span>
+              <svg id="btn-arrow" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+              <!-- Loading spinner -->
+              <svg id="btn-spinner" class="hidden w-4 h-4 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <!-- No Account Yet? Create one -->
+        <div class="mt-6 pt-5 border-t border-[#e1e7f0] text-center text-xs text-[#52627a]">
+          <span data-i18n="no_account">No account yet?</span>
+          <a href="/register" class="ml-1 text-[#365cf5] hover:text-[#284cd6] font-semibold hover:underline" data-i18n="create_one">
+            Create one
+          </a>
+        </div>
+
+        <!-- Security & Compliance Callout inside card -->
+        <div class="mt-5 p-3 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0] flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 text-[#52627a]">
+            <svg class="w-4 h-4 text-[#157347]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+            <span class="text-[11px] font-medium" data-i18n="security_badge">PCI-DSS Level 1 &amp; PDPA Compliant</span>
+          </div>
+          <span class="inline-flex items-center gap-1 text-[11px] text-[#157347] font-medium">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+            <span>PRODUCTION</span>
+          </span>
+        </div>
+
+      </div>
+
+      <!-- Quick Switcher to Merchant Console / Docs -->
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-[#52627a]">
+        <a href="/docs" class="inline-flex items-center gap-1 hover:text-[#17243b] transition-colors">
+          <svg class="w-3.5 h-3.5 text-[#52627a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span data-i18n="quick_api_ref">API Reference (v2.4)</span>
+        </a>
+        <span class="text-slate-300">•</span>
+        <a href="/merchant" class="inline-flex items-center gap-1 hover:text-[#17243b] transition-colors">
+          <svg class="w-3.5 h-3.5 text-[#52627a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span data-i18n="quick_merchant">เปิดแผงควบคุมร้านค้า (Merchant Console)</span>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer Section (max-w-[1240px]) -->
+  <footer class="w-full bg-white border-t border-[#e1e7f0] py-4">
+    <div class="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+      <div class="flex items-center gap-2">
+        <span class="font-semibold text-[#17243b]">Commerce Platform</span>
+        <span>•</span>
+        <span>© 2025 Commerce Platform Southeast Asia Pte. Ltd. All rights reserved. PCI-DSS Level 1 Certified.</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <a href="#security" class="hover:text-[#17243b] transition-colors" data-i18n="footer_sec">Security Architecture</a>
+        <a href="#compliance" class="hover:text-[#17243b] transition-colors" data-i18n="footer_compliance">Compliance &amp; PDPA</a>
+        <a href="#terms" class="hover:text-[#17243b] transition-colors" data-i18n="footer_terms">Developer Terms</a>
+        <a href="#privacy" class="hover:text-[#17243b] transition-colors" data-i18n="footer_privacy">Privacy Policy</a>
+        <span class="inline-flex items-center gap-1.5 text-[#157347] font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+          <span>API Status: Healthy</span>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Invisible translation script with EVERY exact catalogue key required by prompt -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "Commerce Platform": {
+      "th": "Commerce Platform",
+      "en": "Commerce Platform"
+    },
+    "Sign in": {
+      "th": "เข้าสู่ระบบ",
+      "en": "Sign in"
+    },
+    "Email": {
+      "th": "อีเมล",
+      "en": "Email"
+    },
+    "Password": {
+      "th": "รหัสผ่าน",
+      "en": "Password"
+    },
+    "Developer portal": {
+      "th": "พอร์ทัลนักพัฒนา",
+      "en": "Developer portal"
+    },
+    "Access your API keys and webhooks": {
+      "th": "เข้าถึงคีย์ API และเว็บฮุกของคุณ",
+      "en": "Access your API keys and webhooks"
+    },
+    "Your account email": {
+      "th": "อีเมลสำหรับบัญชีของคุณ",
+      "en": "Your account email"
+    },
+    "dev@example.com": {
+      "th": "dev@example.com",
+      "en": "dev@example.com"
+    },
+    "Your password": {
+      "th": "รหัสผ่านของคุณ",
+      "en": "Your password"
+    },
+    "Signing in…": {
+      "th": "กำลังเข้าสู่ระบบ…",
+      "en": "Signing in…"
+    },
+    "No account yet?": {
+      "th": "ยังไม่มีบัญชีผู้ใช้?",
+      "en": "No account yet?"
+    },
+    "Create one": {
+      "th": "สร้างบัญชีใหม่",
+      "en": "Create one"
+    },
+    "ข้อมูลยังไม่พร้อม": {
+      "th": "ข้อมูลยังไม่พร้อม",
+      "en": "Data not ready yet"
+    },
+    "คืนเงินแล้ว": {
+      "th": "คืนเงินแล้ว",
+      "en": "Refunded"
+    },
+    "ช่องที่ต่าง": {
+      "th": "ช่องที่ต่าง",
+      "en": "Differing fields"
+    },
+    "ซื้อขั้นต่ำ": {
+      "th": "ซื้อขั้นต่ำ",
+      "en": "Minimum purchase"
+    },
+    "ถึงวันที่": {
+      "th": "ถึงวันที่",
+      "en": "Until date"
+    },
+    "ใบลดหนี้จากเคลม — view=admin": {
+      "th": "ใบลดหนี้จากเคลม — view=admin",
+      "en": "Credit note from claim — view=admin"
+    },
+    "แผนนี้อ่านได้ การแก้เนื้อหาและอนุมัติเป็นหน้าที่เจ้าของแผนหรือผู้ดูแล": {
+      "th": "แผนนี้อ่านได้ การแก้เนื้อหาและอนุมัติเป็นหน้าที่เจ้าของแผนหรือผู้ดูแล",
+      "en": "This plan is read-only. Editing and approval are reserved for plan owners or administrators."
+    },
+    "ไม่พบ shipment": {
+      "th": "ไม่พบ shipment",
+      "en": "Shipment not found"
+    },
+    "ยังไม่มี SKU ที่ตรวจแล้ว": {
+      "th": "ยังไม่มี SKU ที่ตรวจแล้ว",
+      "en": "No verified SKUs yet"
+    },
+    "ระบบเก็บต่อเองทีละหน้าเบื้องหลัง ปิดหน้านี้ได้ ดูความคืบหน้าได้ที่การ์ดด้านล่าง": {
+      "th": "ระบบเก็บต่อเองทีละหน้าเบื้องหลัง ปิดหน้านี้ได้ ดูความคืบหน้าได้ที่การ์ดด้านล่าง",
+      "en": "The system continues gathering in the background page-by-page. You may close this page and monitor progress on the card below."
+    },
+    "เริ่ม:": {
+      "th": "เริ่ม:",
+      "en": "Start:"
+    },
+    "เลือกแบรนด์ → สินค้าทั้งหมดของแบรนด์ถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกเลือกเพื่อเอาออก": {
+      "th": "เลือกแบรนด์ → สินค้าทั้งหมดของแบรนด์ถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกเลือกเพื่อเอาออก",
+      "en": "Select brand → all products of the brand are added to the list automatically; deselect to remove."
+    },
+    "สร้าง popup ใหม่ →": {
+      "th": "สร้าง popup ใหม่ →",
+      "en": "Create new popup →"
+    },
+    "ใส่ลิงก์หน้าค้นหาหรือหมวดสินค้า ระบบจะลองอ่านให้ดูก่อนเริ่มเก็บ": {
+      "th": "ใส่ลิงก์หน้าค้นหาหรือหมวดสินค้า ระบบจะลองอ่านให้ดูก่อนเริ่มเก็บ",
+      "en": "Enter search or product category URL; the system will preview before harvesting."
+    },
+    "ออกของ (shipped)": {
+      "th": "ออกของ (shipped)",
+      "en": "Shipped (ออกของ)"
+    }
+  }
+  </script>
+
+  <!-- Interactive Client-side Script for Language Switching, Form Submission & State -->
+  <script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    const uiTextMap = {
+      th: {
+        portal_subtitle: "พอร์ทัลนักพัฒนา",
+        status_operational: "ระบบพร้อมใช้งานปกติ (All Systems Operational)",
+        docs_link: "เอกสาร API (Docs)",
+        btn_create_account: "สร้างบัญชีผู้ใช้",
+        pill_dev_portal: "Developer portal",
+        card_title: "Commerce Platform",
+        card_subtitle: "เข้าถึงคีย์ API และเว็บฮุกของคุณ (Access your API keys and webhooks)",
+        sample_gateway: "ข้อมูลตัวอย่าง (Sandbox Mode)",
+        err_invalid: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+        label_email: "อีเมล (Email)",
+        hint_email: "อีเมลสำหรับบัญชีของคุณ",
+        label_password: "รหัสผ่าน (Password)",
+        link_forgot: "ลืมรหัสผ่าน?",
+        hint_password: "รหัสผ่านของคุณ",
+        remember_me: "จดจำอุปกรณ์นี้อย่างปลอดภัย (Remember device)",
+        btn_signin: "เข้าสู่ระบบ (Sign in)",
+        btn_signing_in: "กำลังเข้าสู่ระบบ…",
+        no_account: "ยังไม่มีบัญชีผู้ใช้?",
+        create_one: "สร้างบัญชีใหม่ (Create one)",
+        security_badge: "PCI-DSS Level 1 & PDPA Compliant",
+        quick_api_ref: "เอกสารอ้างอิง API (v2.4)",
+        quick_merchant: "เปิดแผงควบคุมร้านค้า (Merchant Console)",
+        footer_sec: "สถาปัตยกรรมความปลอดภัย",
+        footer_compliance: "การปฏิบัติตามกฎระเบียบ & PDPA",
+        footer_terms: "ข้อกำหนดสำหรับนักพัฒนา",
+        footer_privacy: "นโยบายความเป็นส่วนตัว"
+      },
+      en: {
+        portal_subtitle: "Developer Portal",
+        status_operational: "All Systems Operational",
+        docs_link: "API Docs",
+        btn_create_account: "Create Account",
+        pill_dev_portal: "Developer portal",
+        card_title: "Commerce Platform",
+        card_subtitle: "Access your API keys and webhooks",
+        sample_gateway: "Sample Data (Sandbox Mode)",
+        err_invalid: "Invalid email or password",
+        label_email: "Email",
+        hint_email: "Your account email",
+        label_password: "Password",
+        link_forgot: "Forgot password?",
+        hint_password: "Your password",
+        remember_me: "Remember this device securely",
+        btn_signin: "Sign in",
+        btn_signing_in: "Signing in…",
+        no_account: "No account yet?",
+        create_one: "Create one",
+        security_badge: "PCI-DSS Level 1 & PDPA Compliant",
+        quick_api_ref: "API Reference (v2.4)",
+        quick_merchant: "Open Merchant Console",
+        footer_sec: "Security Architecture",
+        footer_compliance: "Compliance & PDPA",
+        footer_terms: "Developer Terms",
+        footer_privacy: "Privacy Policy"
+      }
+    };
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      const dict = uiTextMap[lang];
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.textContent = dict[key];
+        }
+      });
+
+      // Update button toggle styling
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded text-[#17243b] bg-slate-100 font-semibold transition-all";
+        btnEn.className = "px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded text-[#17243b] bg-slate-100 font-semibold transition-all";
+        btnTh.className = "px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all";
+      }
+
+      document.documentElement.lang = lang;
+    }
+
+    document.getElementById('lang-btn-th').addEventListener('click', () => applyLanguage('th'));
+    document.getElementById('lang-btn-en').addEventListener('click', () => applyLanguage('en'));
+
+    // Toggle Password Visibility
+    function togglePasswordVisibility() {
+      const pwdInput = document.getElementById('password');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+      } else {
+        pwdInput.type = 'password';
+      }
+    }
+
+    // Submit Simulation
+    function handleLogin() {
+      const btn = document.getElementById('submit-btn');
+      const btnText = document.getElementById('btn-text');
+      const btnArrow = document.getElementById('btn-arrow');
+      const btnSpinner = document.getElementById('btn-spinner');
+      const alertBox = document.getElementById('auth-alert');
+
+      // State: Loading
+      btn.disabled = true;
+      btn.classList.add('opacity-80', 'cursor-wait');
+      btnText.textContent = uiTextMap[currentLang].btn_signing_in;
+      btnArrow.classList.add('hidden');
+      btnSpinner.classList.remove('hidden');
+      alertBox.classList.add('hidden');
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.classList.remove('opacity-80', 'cursor-wait');
+        btnText.textContent = uiTextMap[currentLang].btn_signin;
+        btnArrow.classList.remove('hidden');
+        btnSpinner.classList.add('hidden');
+
+        // Redirect simulation to Developer Portal Dashboard
+        window.location.href = '#dashboard-redirect';
+      }, 900);
+    }
+
+    // Initial run
+    applyLanguage('th');
+  </script>
+</body>
+</html>

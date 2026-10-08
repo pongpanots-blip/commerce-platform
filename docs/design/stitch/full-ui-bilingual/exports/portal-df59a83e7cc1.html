@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>API Keys - Commerce Platform DevPortal</title>
+<!-- Google Fonts: Inter & Noto Sans Thai -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed-variant": "#0034c0",
+            "on-secondary": "#ffffff",
+            "on-surface-variant": "#444655",
+            "surface-tint": "#214ce7",
+            "surface-bright": "#f9f9ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "inverse-surface": "#243048",
+            "on-tertiary-fixed": "#360f00",
+            "primary-fixed": "#dde1ff",
+            "secondary": "#4f5f77",
+            "surface-container": "#e8eeff",
+            "tertiary": "#943500",
+            "on-secondary-fixed": "#0b1c31",
+            "on-primary-container": "#ededff",
+            "on-error-container": "#93000a",
+            "surface-variant": "#d7e2ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-primary": "#ffffff",
+            "tertiary-container": "#bc4600",
+            "surface-container-low": "#f1f3ff",
+            "surface": "#f9f9ff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-background": "#0e1b32",
+            "surface-dim": "#cddaf9",
+            "secondary-fixed": "#d3e3ff",
+            "tertiary-fixed": "#ffdbcd",
+            "secondary-container": "#d0e1fd",
+            "outline": "#747687",
+            "outline-variant": "#c4c5d8",
+            "inverse-primary": "#b9c3ff",
+            "on-primary-fixed": "#001257",
+            "background": "#f9f9ff",
+            "primary-container": "#365cf5",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-high": "#e0e8ff",
+            "primary": "#0a3fdc",
+            "on-error": "#ffffff",
+            "on-tertiary-container": "#ffebe4",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary": "#ffffff",
+            "error": "#ba1a1a",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-secondary-container": "#54647c",
+            "surface-container-highest": "#d7e2ff",
+            "on-surface": "#0e1b32",
+            "error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "margin-mobile": "1rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "gutter": "1.5rem",
+            "margin": "2rem",
+            "gutter-sm": "1rem"
+          },
+          "fontFamily": {
+            "body-md": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "body-sm": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "headline-md": ["\"Inter\", \"Noto Sans Thai\", sans-serif"],
+            "headline-lg-mobile": ["\"Inter\", \"Noto Sans Thai\", sans-serif"],
+            "headline-lg": ["\"Inter\", \"Noto Sans Thai\", sans-serif"],
+            "label-md": ["\"Inter\", \"Noto Sans Thai\", sans-serif"],
+            "headline-sm": ["\"Inter\", \"Noto Sans Thai\", sans-serif"],
+            "label-sm": ["\"Inter\", \"Noto Sans Thai\", sans-serif"],
+            "body-lg": ["\"Noto Sans Thai\", \"Inter\", sans-serif"],
+            "code-sm": ["\"JetBrains Mono\", monospace"],
+            "title-md": ["\"Inter\", \"Noto Sans Thai\", sans-serif"]
+          },
+          "fontSize": {
+            "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "600" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+            "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+            "code-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      display: inline-block;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-body-md text-on-surface bg-[#f6f8fc] antialiased selection:bg-primary-container selection:text-white">
+<!-- TOP APP BAR -->
+<header class="bg-surface-container-lowest border-b border-outline-variant shadow-sm sticky top-0 z-30">
+<div class="w-full px-6 lg:px-12 flex justify-between items-center h-16 max-w-7xl mx-auto">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-white shadow-sm font-semibold tracking-wider text-xs">
+            SDC
+          </div>
+<span class="text-title-md font-title-md font-semibold text-on-surface tracking-tight">Commerce Platform DevPortal</span>
+</div>
+<div class="hidden md:flex items-center gap-2 pl-4 border-l border-outline-variant/60">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-surface-container text-secondary border border-outline-variant/50">
+            portal-df59a83e7cc1
+          </span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347] animate-pulse"></span>
+<span data-i18n="status_operational">ระบบพร้อมใช้งานปกติ (All Systems Operational)</span>
+</span>
+</div>
+</div>
+<nav class="hidden lg:flex items-center space-x-6">
+<a class="text-secondary hover:text-on-surface transition-colors text-label-md font-label-md" data-i18n="nav_docs" href="#docs">Documentation</a>
+<a class="text-secondary hover:text-on-surface transition-colors text-label-md font-label-md" data-i18n="nav_api" href="#api">API Reference</a>
+<a class="text-primary font-semibold border-b-2 border-primary pb-1 text-label-md font-label-md" data-i18n="nav_status" href="#status">System Status</a>
+</nav>
+<div class="flex items-center gap-3">
+<!-- Thai / English toggle -->
+<button class="px-2.5 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-secondary hover:text-primary transition-colors text-label-sm font-label-sm flex items-center gap-1.5" id="langToggleBtn" onclick="toggleLanguage()">
+<span class="material-symbols-outlined text-[16px]">translate</span>
+<span class="font-medium" id="currentLangLabel">ไทย / EN</span>
+</button>
+<!-- Sandbox toggle indicator -->
+<div class="hidden sm:inline-flex items-center p-0.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-label-sm">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#edf1fe] text-[#365cf5]">LIVE</span>
+<span class="px-2 py-0.5 rounded text-[11px] text-secondary hover:text-on-surface cursor-pointer">TEST</span>
+</div>
+<button class="h-10 px-4 bg-primary-container text-white rounded-lg text-label-md font-label-md hover:bg-primary transition-colors active:opacity-80 shadow-sm flex items-center gap-1.5" data-i18n="btn_create_account">
+          Create Account
+        </button>
+</div>
+</div>
+</header>
+<!-- MAIN WRAPPER WITH SIDEBAR -->
+<div class="flex-1 flex max-w-7xl w-full mx-auto">
+<!-- LEFT 256px SIDEBAR -->
+<aside class="w-64 shrink-0 bg-surface-container-lowest border-r border-outline-variant hidden md:flex flex-col justify-between py-6 px-4">
+<div class="space-y-6">
+<!-- Portal Section Title -->
+<div>
+<p class="px-3 text-[11px] font-semibold tracking-wider text-secondary uppercase mb-2">Developer Console</p>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f6f8fc] transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span data-i18n="menu_dashboard">ภาพรวมและสถานะ</span>
+</a>
+<!-- Active item: API Keys -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#edf1fe] text-primary-container font-semibold text-label-md font-label-md" href="/keys">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">key</span>
+<span data-i18n="menu_api_keys">API Keys (คีย์ใช้งาน)</span>
+</div>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-primary-container text-white font-mono">3</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f6f8fc] transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">webhook</span>
+<span data-i18n="menu_webhooks">Webhooks (เว็บฮุก)</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f6f8fc] transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+<span data-i18n="menu_docs">เอกสาร &amp; อ้างอิง API</span>
+</a>
+</div>
+</div>
+<div>
+<p class="px-3 text-[11px] font-semibold tracking-wider text-secondary uppercase mb-2">Merchant Tools</p>
+<div class="space-y-1">
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f6f8fc] transition-colors text-label-md font-label-md group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+<span data-i18n="menu_open_console">Open Merchant Console</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:translate-x-0.5 transition-transform">open_in_new</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f6f8fc] transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">security</span>
+<span data-i18n="menu_audit_logs">Audit &amp; Compliance</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Environment / Help card -->
+<div class="p-3.5 rounded-xl border border-outline-variant bg-[#f6f8fc] space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm font-semibold text-on-surface">API Environment</span>
+<span class="text-[11px] font-mono px-1.5 py-0.5 rounded bg-surface-container text-primary font-medium">v2.1</span>
+</div>
+<p class="text-[12px] text-secondary leading-snug">PCI-DSS Level 1 tokenized endpoints active.</p>
+<div class="pt-1 flex items-center gap-1.5 text-[11px] text-primary hover:underline cursor-pointer">
+<span class="material-symbols-outlined text-[14px]">terminal</span>
+<span>curl --header "X-Api-Key"</span>
+</div>
+</div>
+</aside>
+<!-- CONTENT CANVAS (1240px container) -->
+<main class="flex-1 py-8 px-6 lg:px-10 overflow-y-auto max-w-[1240px]">
+<!-- BREADCRUMB & METRICS ROW -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-secondary">
+<span>Developer Portal</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-medium" data-i18n="breadcrumb_keys">API Keys</span>
+<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-secondary-container text-on-secondary-container">
+<span data-i18n="sample_data_tag">ข้อมูลตัวอย่าง (Sample Data)</span>
+</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="badge_active_status">Active</span>
+</span>
+</div>
+</div>
+<!-- PAGE TITLE & PRIMARY ACTION -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-outline-variant mb-6">
+<div>
+<h1 class="text-headline-md font-headline-md text-on-surface tracking-tight" data-i18n="page_title">
+            API Keys (คีย์ใช้งาน)
+          </h1>
+<p class="text-body-md font-body-md text-secondary mt-1 max-w-2xl" data-i18n="page_subtitle">
+            Keys authenticate your server with the X-Api-Key header. Keep them secret. (คีย์ใช้ระบุตัวตนเซิร์ฟเวอร์ของคุณผ่าน X-Api-Key header โปรดเก็บเป็นความลับ)
+          </p>
+</div>
+<div>
+<button class="h-10 px-5 bg-primary-container text-white rounded-lg text-label-md font-label-md hover:bg-primary transition-all active:opacity-80 shadow-sm inline-flex items-center gap-2 whitespace-nowrap" onclick="openCreateModal()">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span data-i18n="btn_create_key">+ สร้างคีย์ใหม่ (Create API key)</span>
+</button>
+</div>
+</div>
+<!-- NEWLY GENERATED KEY BANNER (Interactive Alert) -->
+<div class="mb-6 rounded-xl border border-blue-200 bg-[#edf1fe] p-5 shadow-sm transition-all duration-300" id="newKeyAlert">
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-start gap-3.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-white flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-title-md font-title-md text-on-surface" data-i18n="alert_title">
+                  New API Key Created
+                </h3>
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#e8f5ed] text-[#157347]" data-i18n="alert_status_badge">
+                  Active
+                </span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5" data-i18n="alert_subtitle">
+                Copy this key now — you won't see it again. (คัดลอกคีย์นี้ทันที — คุณจะไม่สามารถดูคีย์เต็มได้อีก)
+              </p>
+<!-- Key display & copy tool -->
+<div class="mt-3 flex flex-wrap items-center gap-2.5">
+<div class="flex items-center rounded-lg border border-outline-variant bg-white px-3.5 py-1.5 shadow-sm">
+<span class="material-symbols-outlined text-outline text-[16px] mr-2">lock</span>
+<code class="font-code-sm text-code-sm text-on-surface font-mono select-all" id="newKeySecret">pk_live_8f49b2c01994ad6e87b28a49c2d109f5</code>
+</div>
+<button class="h-9 px-3.5 bg-white border border-outline-variant hover:border-outline text-on-surface rounded-lg text-label-sm font-label-sm flex items-center gap-1.5 transition-colors" id="copyBtn" onclick="copyNewKey()">
+<span class="material-symbols-outlined text-[16px] text-secondary" id="copyIcon">content_copy</span>
+<span data-i18n="btn_copy" id="copyBtnText">Copy</span>
+</button>
+</div>
+</div>
+</div>
+<button class="text-secondary hover:text-on-surface p-1 rounded-lg hover:bg-surface-variant transition-colors" onclick="dismissNewKeyAlert()" title="Dismiss">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+<!-- KEY LIST SECTION (Your API Keys) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden mb-8">
+<!-- Card Header with Filter & Count -->
+<div class="px-6 py-4 border-b border-outline-variant flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<h2 class="text-title-md font-title-md text-on-surface" data-i18n="table_heading">
+              Your API Keys
+            </h2>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container text-secondary" id="keysCountBadge">
+              3 keys
+            </span>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-[18px] text-outline">search</span>
+<input class="h-9 pl-9 pr-3 rounded-lg border border-outline-variant text-body-sm font-body-sm focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 w-44 sm:w-56" placeholder="Search keys..." type="text"/>
+</div>
+<select class="h-9 px-3 rounded-lg border border-outline-variant text-body-sm font-body-sm text-secondary bg-surface-container-lowest focus:border-primary-container">
+<option>All Scopes</option>
+<option>Production</option>
+<option>Sandbox</option>
+</select>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f8fafc] border-b border-outline-variant text-label-sm font-label-sm text-secondary">
+<th class="py-3 px-6" data-i18n="col_name">Name</th>
+<th class="py-3 px-6" data-i18n="col_prefix">Key prefix</th>
+<th class="py-3 px-6" data-i18n="col_scopes">Scopes</th>
+<th class="py-3 px-6" data-i18n="col_status">Status</th>
+<th class="py-3 px-6" data-i18n="col_created">Created</th>
+<th class="py-3 px-6" data-i18n="col_last_used">Last used</th>
+<th class="py-3 px-6 text-right" data-i18n="col_actions">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-sm font-body-sm" id="keysTableBody">
+<!-- Row 1: Active Production -->
+<tr class="hover:bg-surface-bright transition-colors" id="row-key-1">
+<td class="py-4 px-6">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-primary-container">key</span>
+<div>
+<div class="font-medium text-on-surface">Production Backend - ERP</div>
+<div class="text-[11px] text-secondary">Bangkok Cluster · Node 04</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="font-code-sm text-code-sm bg-surface-container px-2 py-0.5 rounded text-on-surface font-mono">pk_live_8f49...</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-[11px] bg-[#edf1fe] text-[#365cf5]">read:orders</span>
+<span class="px-2 py-0.5 rounded text-[11px] bg-[#edf1fe] text-[#365cf5]">write:payments</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="status_active">Active</span>
+</span>
+</td>
+<td class="py-4 px-6 text-secondary">15 ม.ค. 2025</td>
+<td class="py-4 px-6 text-on-surface font-medium">5 นาทีที่แล้ว</td>
+<td class="py-4 px-6 text-right">
+<button class="px-3 py-1 text-label-sm font-label-sm text-[#c2333f] hover:bg-[#fbebee] rounded-lg border border-transparent hover:border-red-200 transition-colors" data-i18n="btn_revoke" onclick="confirmRevoke('Production Backend - ERP', 'row-key-1')">
+                    Revoke
+                  </button>
+</td>
+</tr>
+<!-- Row 2: Mobile App Checkout Gateway -->
+<tr class="hover:bg-surface-bright transition-colors" id="row-key-2">
+<td class="py-4 px-6">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">phone_iphone</span>
+<div>
+<div class="font-medium text-on-surface">Mobile App Checkout Gateway</div>
+<div class="text-[11px] text-secondary">iOS / Android Flutter Core</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="font-code-sm text-code-sm bg-surface-container px-2 py-0.5 rounded text-on-surface font-mono">pk_live_3c17...</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-[11px] bg-[#edf1fe] text-[#365cf5]">read:inventory</span>
+<span class="px-2 py-0.5 rounded text-[11px] bg-[#edf1fe] text-[#365cf5]">write:orders</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="status_active">Active</span>
+</span>
+</td>
+<td class="py-4 px-6 text-secondary">02 ก.พ. 2025</td>
+<td class="py-4 px-6 text-secondary">2 วันที่แล้ว</td>
+<td class="py-4 px-6 text-right">
+<button class="px-3 py-1 text-label-sm font-label-sm text-[#c2333f] hover:bg-[#fbebee] rounded-lg border border-transparent hover:border-red-200 transition-colors" data-i18n="btn_revoke" onclick="confirmRevoke('Mobile App Checkout Gateway', 'row-key-2')">
+                    Revoke
+                  </button>
+</td>
+</tr>
+<!-- Row 3: Revoked key -->
+<tr class="bg-gray-50/60 hover:bg-gray-100/60 transition-colors opacity-75" id="row-key-3">
+<td class="py-4 px-6">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-outline">key_off</span>
+<div>
+<div class="font-medium text-secondary line-through">Webhook Test Runner - Revoked</div>
+<div class="text-[11px] text-outline">Automated CI/CD Sandbox</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="font-code-sm text-code-sm bg-gray-200 px-2 py-0.5 rounded text-outline font-mono">pk_test_99a1...</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-[11px] bg-gray-200 text-outline">read:orders</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fbebee] text-[#c2333f]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+<span data-i18n="status_revoked">Revoked</span>
+</span>
+</td>
+<td class="py-4 px-6 text-outline">28 ธ.ค. 2024</td>
+<td class="py-4 px-6 text-outline font-normal" data-i18n="last_used_never">Never</td>
+<td class="py-4 px-6 text-right">
+<span class="text-label-sm font-label-sm text-outline cursor-not-allowed">Archived</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty state placeholder (hidden by default) -->
+<div class="hidden p-12 text-center" id="emptyStateBox">
+<span class="material-symbols-outlined text-outline text-4xl mb-2">vpn_key_alert</span>
+<p class="text-body-md font-body-md text-secondary" data-i18n="empty_state">No API keys yet. Create one to get started.</p>
+</div>
+<!-- Revocation Safety Notice inside card footer -->
+<div class="p-4 bg-[#f8fafc] border-t border-outline-variant flex items-start sm:items-center gap-2.5 text-label-sm font-label-sm text-secondary">
+<span class="material-symbols-outlined text-outline text-[18px] shrink-0">info</span>
+<span data-i18n="revocation_notice">
+            Revocation can take up to 30 seconds while validation caches expire. (การเพิกถอนอาจใช้เวลาสูงสุด 30 วินาทีขณะที่แคชการตรวจสอบหมดอายุ)
+          </span>
+</div>
+</div>
+<!-- BENTO / CARD GRID: SECURITY & ROTATION BEST PRACTICES -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<!-- Box 1: Storage Best Practice -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#fdf8e6] text-[#b08900] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">dns</span>
+</div>
+<h4 class="text-title-md font-title-md text-on-surface" data-i18n="sec_storage_title">เก็บ API Key บนฝั่ง Server เท่านั้น</h4>
+</div>
+<p class="text-body-sm font-body-sm text-secondary">
+            ห้าม commit คีย์ลง Git repo สาธารณะ หรือนำไปใช้ใน client-side code (เช่น React, Vue หรือ Browser JS) ให้ใช้ Reverse Proxy หรือ Edge Worker เสมอ
+          </p>
+</div>
+<!-- Box 2: Rotation Policy -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#edf1fe] text-[#365cf5] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">autorenew</span>
+</div>
+<h4 class="text-title-md font-title-md text-on-surface" data-i18n="sec_rotation_title">Key Rotation Policy (90 Days)</h4>
+</div>
+<p class="text-body-sm font-body-sm text-secondary">
+            ระบบแนะนำให้หมุนเวียนคีย์ทุก 90 วันเพื่อมาตรฐาน PCI-DSS เมื่อสร้างคีย์ใหม่ สามารถใช้งานคู่ขนานได้ก่อนเพิกถอนคีย์เดิมเพื่อ Zero-Downtime
+          </p>
+</div>
+<!-- Box 3: Scopes & Least Privilege -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#e8f5ed] text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<h4 class="text-title-md font-title-md text-on-surface" data-i18n="sec_least_privilege_title">Least Privilege Access</h4>
+</div>
+<p class="text-body-sm font-body-sm text-secondary">
+            กำหนดเฉพาะ Scopes ที่จำเป็นต่อ Service นั้นๆ หลีกเลี่ยงการให้สิทธิ์แบบครอบคลุม สามารถตรวจสอบประวัติการเรียกผ่าน Audit Log เสมอ
+          </p>
+</div>
+</div>
+</main>
+</div>
+<!-- CREATE NEW KEY MODAL DIALOG -->
+<div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4" id="createKeyModal">
+<div class="bg-surface-container-lowest w-full max-w-[480px] rounded-xl border border-outline-variant shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="px-6 py-5 border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">add_moderator</span>
+</div>
+<div>
+<h3 class="text-title-md font-title-md text-on-surface" data-i18n="modal_title">Create a new key</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="modal_subtitle">Generate an API key to authenticate your requests</p>
+</div>
+</div>
+<button class="text-secondary hover:text-on-surface p-1 rounded-lg" onclick="closeCreateModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<form class="p-6 space-y-5" id="createKeyForm" onsubmit="handleCreateKeySubmit(event)">
+<!-- Key Name Field -->
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1.5" data-i18n="label_key_name" for="keyNameInput">
+            Key Name
+          </label>
+<input class="h-10 w-full rounded-lg border border-outline-variant px-3 text-body-md font-body-md text-on-surface placeholder:text-outline focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all" id="keyNameInput" placeholder="e.g., Production Backend" required="" type="text"/>
+</div>
+<!-- Environment Selector -->
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1.5" data-i18n="label_env">
+            Environment
+          </label>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex items-center gap-2 p-2.5 rounded-lg border border-primary-container bg-[#edf1fe] cursor-pointer">
+<input checked="" class="text-primary-container focus:ring-primary-container" name="envRadio" type="radio" value="live"/>
+<div class="text-label-sm">
+<span class="font-semibold text-on-surface">Production</span>
+<span class="block text-[11px] text-secondary">pk_live_*</span>
+</div>
+</label>
+<label class="flex items-center gap-2 p-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-outline cursor-pointer">
+<input class="text-primary-container focus:ring-primary-container" name="envRadio" type="radio" value="test"/>
+<div class="text-label-sm">
+<span class="font-semibold text-on-surface">Sandbox</span>
+<span class="block text-[11px] text-secondary">pk_test_*</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Scopes Checkboxes -->
+<div>
+<label class="block text-label-sm font-label-sm text-secondary mb-1.5" data-i18n="label_scopes">
+            Scopes &amp; Permissions
+          </label>
+<div class="space-y-2 border border-outline-variant rounded-lg p-3 bg-[#f8fafc]">
+<label class="flex items-center gap-2.5 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="text-body-sm font-body-sm text-on-surface">read:orders <span class="text-secondary text-[11px]">(Retrieve order metadata)</span></span>
+</label>
+<label class="flex items-center gap-2.5 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="text-body-sm font-body-sm text-on-surface">write:payments <span class="text-secondary text-[11px]">(Process checkout token charge)</span></span>
+</label>
+<label class="flex items-center gap-2.5 cursor-pointer">
+<input class="rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="text-body-sm font-body-sm text-on-surface">read:inventory <span class="text-secondary text-[11px]">(Query warehouse availability)</span></span>
+</label>
+<label class="flex items-center gap-2.5 cursor-pointer">
+<input class="rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="text-body-sm font-body-sm text-on-surface">write:orders <span class="text-secondary text-[11px]">(Create &amp; cancel customer carts)</span></span>
+</label>
+</div>
+</div>
+<!-- Modal Actions -->
+<div class="pt-3 border-t border-outline-variant flex items-center justify-end gap-3">
+<button class="h-10 px-4 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container transition-colors text-label-md font-label-md" data-i18n="btn_cancel" onclick="closeCreateModal()" type="button">
+            Cancel
+          </button>
+<button class="h-10 px-5 rounded-lg bg-primary-container hover:bg-primary text-white font-medium text-label-md font-label-md transition-all flex items-center gap-2 shadow-sm" id="submitCreateKeyBtn" type="submit">
+<span data-i18n="btn_create_key_confirm" id="submitCreateKeyText">Create key</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<!-- REVOKE CONFIRMATION MODAL -->
+<div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4" id="revokeModal">
+<div class="bg-surface-container-lowest w-full max-w-[440px] rounded-xl border border-outline-variant shadow-xl p-6 space-y-4">
+<div class="w-10 h-10 rounded-full bg-[#fbebee] text-[#c2333f] flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">warning</span>
+</div>
+<div>
+<h3 class="text-title-md font-title-md text-on-surface" data-i18n="revoke_modal_title">Revoke API Key?</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+          Are you sure you want to revoke <span class="font-semibold text-on-surface" id="revokeKeyTargetName"></span>? Any server requests using this key will immediately fail with HTTP 401 Unauthorized.
+        </p>
+</div>
+<div class="p-3 bg-[#fdf8e6] rounded-lg text-label-sm font-label-sm text-[#b08900] flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] shrink-0 mt-0.5">cached</span>
+<span data-i18n="revocation_notice">Revocation can take up to 30 seconds while validation caches expire.</span>
+</div>
+<div class="flex items-center justify-end gap-3 pt-2">
+<button class="h-10 px-4 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container transition-colors text-label-md font-label-md" data-i18n="btn_cancel" onclick="closeRevokeModal()">
+          Cancel
+        </button>
+<button class="h-10 px-4 rounded-lg bg-[#c2333f] hover:bg-red-700 text-white font-medium text-label-md font-label-md transition-colors shadow-sm" data-i18n="btn_revoke_confirm" onclick="executeRevoke()">
+          Revoke Key
+        </button>
+</div>
+</div>
+</div>
+<!-- FOOTER COMPONENT -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant mt-auto">
+<div class="w-full py-6 px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-4 max-w-7xl mx-auto">
+<div class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#157347]">verified</span>
+<span>© 2025 Commerce Platform Southeast Asia Pte. Ltd. All rights reserved. PCI-DSS Level 1 Certified.</span>
+</div>
+<div class="flex flex-wrap items-center gap-6 text-label-sm font-label-sm">
+<a class="text-secondary hover:text-on-surface transition-colors" data-i18n="footer_link_1" href="#security">Security Architecture</a>
+<a class="text-secondary hover:text-on-surface transition-colors" data-i18n="footer_link_2" href="#compliance">Compliance &amp; PDPA</a>
+<a class="text-secondary hover:text-on-surface transition-colors" data-i18n="footer_link_3" href="#terms">Developer Terms</a>
+<a class="text-secondary hover:text-on-surface transition-colors" data-i18n="footer_link_4" href="#privacy">Privacy Policy</a>
+<a class="text-on-surface font-medium hover:text-primary transition-colors" data-i18n="footer_link_5" href="#api-status">API Status</a>
+</div>
+</div>
+</footer>
+<!-- MANDATORY TRANSLATION CATALOGUE JSON SCRIPT TAG -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "Created": {
+      "th": "วันที่สร้าง",
+      "en": "Created"
+    },
+    "Actions": {
+      "th": "การจัดการ",
+      "en": "Actions"
+    },
+    "Name": {
+      "th": "ชื่อคีย์",
+      "en": "Name"
+    },
+    "Active": {
+      "th": "เปิดใช้งาน",
+      "en": "Active"
+    },
+    "API Keys": {
+      "th": "คีย์ใช้งาน",
+      "en": "API Keys"
+    },
+    "Keys authenticate your server with the X-Api-Key header. Keep them secret.": {
+      "th": "คีย์ใช้ระบุตัวตนเซิร์ฟเวอร์ของคุณผ่าน X-Api-Key header โปรดเก็บเป็นความลับ",
+      "en": "Keys authenticate your server with the X-Api-Key header. Keep them secret."
+    },
+    "Create API key": {
+      "th": "สร้างคีย์ใหม่",
+      "en": "Create API key"
+    },
+    "New API Key Created": {
+      "th": "สร้าง API Key สำเร็จแล้ว",
+      "en": "New API Key Created"
+    },
+    "Dismiss": {
+      "th": "ปิด",
+      "en": "Dismiss"
+    },
+    "Copy this key now — you won't see it again.": {
+      "th": "คัดลอกคีย์นี้ทันที — คุณจะไม่สามารถดูคีย์เต็มได้อีก",
+      "en": "Copy this key now — you won't see it again."
+    },
+    "New API key": {
+      "th": "API key ใหม่",
+      "en": "New API key"
+    },
+    "Copied": {
+      "th": "คัดลอกแล้ว",
+      "en": "Copied"
+    },
+    "Copy": {
+      "th": "คัดลอก",
+      "en": "Copy"
+    },
+    "Create a new key": {
+      "th": "สร้างคีย์ใหม่",
+      "en": "Create a new key"
+    },
+    "Generate an API key to authenticate your requests": {
+      "th": "สร้าง API key เพื่อยืนยันตัวตนสำหรับคำขอของคุณ",
+      "en": "Generate an API key to authenticate your requests"
+    },
+    "Creating…": {
+      "th": "กำลังสร้าง…",
+      "en": "Creating…"
+    },
+    "Create key": {
+      "th": "สร้างคีย์",
+      "en": "Create key"
+    },
+    "Key Name": {
+      "th": "ชื่อคีย์",
+      "en": "Key Name"
+    },
+    "e.g., Production Backend": {
+      "th": "เช่น Production Backend",
+      "en": "e.g., Production Backend"
+    },
+    "Your API Keys": {
+      "th": "คีย์ API ของคุณ",
+      "en": "Your API Keys"
+    },
+    "No API keys yet. Create one to get started.": {
+      "th": "ยังไม่มีคีย์ API กดสร้างคีย์เพื่อเริ่มต้นใช้งาน",
+      "en": "No API keys yet. Create one to get started."
+    },
+    "Key prefix": {
+      "th": "คำนำหน้าคีย์",
+      "en": "Key prefix"
+    },
+    "Scopes": {
+      "th": "สิทธิ์การเข้าถึง",
+      "en": "Scopes"
+    },
+    "Last used": {
+      "th": "ใช้งานล่าสุด",
+      "en": "Last used"
+    },
+    "Never": {
+      "th": "ไม่เคยใช้งาน",
+      "en": "Never"
+    },
+    "Revoked": {
+      "th": "เพิกถอนสิทธิ์แล้ว",
+      "en": "Revoked"
+    },
+    "Revoke": {
+      "th": "เพิกถอนสิทธิ์",
+      "en": "Revoke"
+    },
+    "Revocation can take up to 30 seconds while validation caches expire.": {
+      "th": "การเพิกถอนอาจใช้เวลาสูงสุด 30 วินาทีขณะที่แคชการตรวจสอบหมดอายุ",
+      "en": "Revocation can take up to 30 seconds while validation caches expire."
+    },
+    "ข้อมูลร้าน ·": {
+      "th": "ข้อมูลร้าน ·",
+      "en": "Store Info ·"
+    },
+    "คุณได้รับคูปอง": {
+      "th": "คุณได้รับคูปอง",
+      "en": "You received a coupon"
+    },
+    "ช่องที่ต่างบ่อย:": {
+      "th": "ช่องที่ต่างบ่อย:",
+      "en": "Frequently varying fields:"
+    },
+    "ซื้อขั้นต่ำ แถวที่ {0}": {
+      "th": "ซื้อขั้นต่ำ แถวที่ {0}",
+      "en": "Minimum purchase row {0}"
+    },
+    "ถูกข้าม": {
+      "th": "ถูกข้าม",
+      "en": "Skipped"
+    },
+    "ปกติ": {
+      "th": "ปกติ",
+      "en": "Normal"
+    },
+    "แผนและข้อความ": {
+      "th": "แผนและข้อความ",
+      "en": "Plans and messages"
+    },
+    "ไม่พบ SKU ที่ชื่อใกล้เคียง": {
+      "th": "ไม่พบ SKU ที่ชื่อใกล้เคียง",
+      "en": "No close matching SKU found"
+    },
+    "ยังไม่มี smart link — กด \"สร้างลิงก์\"": {
+      "th": "ยังไม่มี smart link — กด \"สร้างลิงก์\"",
+      "en": "No smart link yet — click \"Create link\""
+    },
+    "ระบบคัดลอกรายการ SKU ของแต่ละชุดไว้ตอนกดบันทึก — แก้ชุดทีหลังไม่กระทบโปร จนกว่าจะเลือก “ใช้รายการล่าสุด”": {
+      "th": "ระบบคัดลอกรายการ SKU ของแต่ละชุดไว้ตอนกดบันทึก — แก้ชุดทีหลังไม่กระทบโปร จนกว่าจะเลือก “ใช้รายการล่าสุด”",
+      "en": "The system copies SKU lists when saving — editing later will not affect promotions until you select 'Use latest list'."
+    },
+    "เริ่มเก็บ": {
+      "th": "เริ่มเก็บ",
+      "en": "Start collection"
+    },
+    "เลือกประเภทด้านล่าง แล้วปรับค่าให้ตรงแคมเปญ — เปลี่ยนประเภทได้ตลอดก่อน Activate": {
+      "th": "เลือกประเภทด้านล่าง แล้วปรับค่าให้ตรงแคมเปญ — เปลี่ยนประเภทได้ตลอดก่อน Activate",
+      "en": "Choose category below and adjust to campaign — editable anytime before activation."
+    },
+    "สร้าง Product Set": {
+      "th": "สร้าง Product Set",
+      "en": "Create Product Set"
+    },
+    "หน่วงใช้ได้ (วัน)": {
+      "th": "หน่วงใช้ได้ (วัน)",
+      "en": "Usage delay (days)"
+    },
+    "ออกจัดส่งแล้ว": {
+      "th": "ออกจัดส่งแล้ว",
+      "en": "Dispatched"
+    }
+  }
+  </script>
+<!-- INTERACTIVE LOGIC -->
+<script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'th' ? 'en' : 'th';
+      document.getElementById('currentLangLabel').textContent = currentLang === 'th' ? 'ไทย / EN' : 'EN / ไทย';
+
+      // Update specific DOM elements using translation catalogue
+      const mapping = [
+        { selector: '[data-i18n="page_title"]', key: "API Keys", extraTh: " (คีย์ใช้งาน)", extraEn: "" },
+        { selector: '[data-i18n="breadcrumb_keys"]', key: "API Keys" },
+        { selector: '[data-i18n="page_subtitle"]', key: "Keys authenticate your server with the X-Api-Key header. Keep them secret." },
+        { selector: '[data-i18n="btn_create_key"]', key: "Create API key", prefixTh: "+ ", prefixEn: "+ " },
+        { selector: '[data-i18n="alert_title"]', key: "New API Key Created" },
+        { selector: '[data-i18n="alert_subtitle"]', key: "Copy this key now — you won't see it again." },
+        { selector: '[data-i18n="btn_copy"]', key: "Copy" },
+        { selector: '[data-i18n="table_heading"]', key: "Your API Keys" },
+        { selector: '[data-i18n="col_name"]', key: "Name" },
+        { selector: '[data-i18n="col_prefix"]', key: "Key prefix" },
+        { selector: '[data-i18n="col_scopes"]', key: "Scopes" },
+        { selector: '[data-i18n="col_status"]', key: "Status" },
+        { selector: '[data-i18n="col_created"]', key: "Created" },
+        { selector: '[data-i18n="col_last_used"]', key: "Last used" },
+        { selector: '[data-i18n="col_actions"]', key: "Actions" },
+        { selector: '[data-i18n="modal_title"]', key: "Create a new key" },
+        { selector: '[data-i18n="modal_subtitle"]', key: "Generate an API key to authenticate your requests" },
+        { selector: '[data-i18n="label_key_name"]', key: "Key Name" },
+        { selector: '[data-i18n="btn_create_key_confirm"]', key: "Create key" },
+        { selector: '[data-i18n="empty_state"]', key: "No API keys yet. Create one to get started." },
+        { selector: '[data-i18n="last_used_never"]', key: "Never" },
+        { selector: '[data-i18n="revocation_notice"]', key: "Revocation can take up to 30 seconds while validation caches expire." }
+      ];
+
+      mapping.forEach(item => {
+        const els = document.querySelectorAll(item.selector);
+        els.forEach(el => {
+          if (translationsData[item.key]) {
+            let val = translationsData[item.key][currentLang];
+            if (currentLang === 'th' && item.extraTh) val += item.extraTh;
+            if (currentLang === 'en' && item.extraEn) val += item.extraEn;
+            if (item.prefixTh && currentLang === 'th') val = item.prefixTh + val;
+            if (item.prefixEn && currentLang === 'en') val = item.prefixEn + val;
+            el.textContent = val;
+          }
+        });
+      });
+
+      // Update placeholders
+      const nameInput = document.getElementById('keyNameInput');
+      if (nameInput && translationsData["e.g., Production Backend"]) {
+        nameInput.placeholder = translationsData["e.g., Production Backend"][currentLang];
+      }
+    }
+
+    // Copy Key Handler
+    function copyNewKey() {
+      const secret = document.getElementById('newKeySecret').innerText;
+      navigator.clipboard.writeText(secret).then(() => {
+        const copyBtnText = document.getElementById('copyBtnText');
+        const copyIcon = document.getElementById('copyIcon');
+
+        copyBtnText.innerText = currentLang === 'th' ? "คัดลอกแล้ว" : "Copied";
+        copyIcon.innerText = "check";
+        copyIcon.classList.add("text-[#157347]");
+
+        setTimeout(() => {
+          copyBtnText.innerText = currentLang === 'th' ? "คัดลอก" : "Copy";
+          copyIcon.innerText = "content_copy";
+          copyIcon.classList.remove("text-[#157347]");
+        }, 2200);
+      });
+    }
+
+    function dismissNewKeyAlert() {
+      const el = document.getElementById('newKeyAlert');
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(-10px)';
+      setTimeout(() => el.remove(), 250);
+    }
+
+    // Modal Control
+    function openCreateModal() {
+      document.getElementById('createKeyModal').classList.remove('hidden');
+      document.getElementById('keyNameInput').focus();
+    }
+
+    function closeCreateModal() {
+      document.getElementById('createKeyModal').classList.add('hidden');
+    }
+
+    function handleCreateKeySubmit(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitCreateKeyBtn');
+      const submitText = document.getElementById('submitCreateKeyText');
+
+      submitText.textContent = translationsData["Creating…"][currentLang];
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        const inputName = document.getElementById('keyNameInput').value;
+        const newKeyPrefix = "pk_live_" + Math.random().toString(36).substring(2, 6) + "...";
+        const tableBody = document.getElementById('keysTableBody');
+
+        const newRow = document.createElement('tr');
+        newRow.className = "hover:bg-surface-bright transition-colors animate-in fade-in";
+        newRow.innerHTML = `
+          <td class="py-4 px-6">
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined text-[18px] text-primary-container">key</span>
+              <div>
+                <div class="font-medium text-on-surface">${escapeHtml(inputName)}</div>
+                <div class="text-[11px] text-secondary">Manual Portal Generated · Web Client</div>
+              </div>
+            </div>
+          </td>
+          <td class="py-4 px-6">
+            <span class="font-code-sm text-code-sm bg-surface-container px-2 py-0.5 rounded text-on-surface font-mono">${newKeyPrefix}</span>
+          </td>
+          <td class="py-4 px-6">
+            <div class="flex flex-wrap gap-1">
+              <span class="px-2 py-0.5 rounded text-[11px] bg-[#edf1fe] text-[#365cf5]">read:orders</span>
+              <span class="px-2 py-0.5 rounded text-[11px] bg-[#edf1fe] text-[#365cf5]">write:payments</span>
+            </div>
+          </td>
+          <td class="py-4 px-6">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+              <span>Active</span>
+            </span>
+          </td>
+          <td class="py-4 px-6 text-secondary">วันนี้</td>
+          <td class="py-4 px-6 text-secondary">Never</td>
+          <td class="py-4 px-6 text-right">
+            <button onclick="confirmRevoke('${escapeHtml(inputName)}', this.closest('tr'))" class="px-3 py-1 text-label-sm font-label-sm text-[#c2333f] hover:bg-[#fbebee] rounded-lg border border-transparent hover:border-red-200 transition-colors">
+              Revoke
+            </button>
+          </td>
+        `;
+
+        tableBody.insertBefore(newRow, tableBody.firstChild);
+        document.getElementById('keysCountBadge').textContent = (tableBody.querySelectorAll('tr').length) + " keys";
+
+        submitText.textContent = translationsData["Create key"][currentLang];
+        submitBtn.disabled = false;
+        document.getElementById('keyNameInput').value = '';
+        closeCreateModal();
+
+        // Update alert banner with newly generated secret
+        const generatedSecret = "pk_live_" + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('');
+        document.getElementById('newKeySecret').textContent = generatedSecret;
+        document.getElementById('newKeyAlert').classList.remove('hidden');
+      }, 700);
+    }
+
+    // Revocation Modal Control
+    let pendingRevokeTarget = null;
+    let pendingRevokeRow = null;
+
+    function confirmRevoke(name, rowRef) {
+      pendingRevokeTarget = name;
+      pendingRevokeRow = typeof rowRef === 'string' ? document.getElementById(rowRef) : rowRef;
+      document.getElementById('revokeKeyTargetName').textContent = name;
+      document.getElementById('revokeModal').classList.remove('hidden');
+    }
+
+    function closeRevokeModal() {
+      document.getElementById('revokeModal').classList.add('hidden');
+      pendingRevokeTarget = null;
+      pendingRevokeRow = null;
+    }
+
+    function executeRevoke() {
+      if (pendingRevokeRow) {
+        pendingRevokeRow.classList.add('opacity-50', 'bg-red-50/30');
+        const statusCell = pendingRevokeRow.querySelector('td:nth-child(4)');
+        if (statusCell) {
+          statusCell.innerHTML = `
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fbebee] text-[#c2333f]">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+              <span>Revoked</span>
+            </span>
+          `;
+        }
+        const actionCell = pendingRevokeRow.querySelector('td:nth-child(7)');
+        if (actionCell) {
+          actionCell.innerHTML = `<span class="text-label-sm font-label-sm text-outline">Revoked</span>`;
+        }
+      }
+      closeRevokeModal();
+    }
+
+    function escapeHtml(string) {
+      return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+          '/': '&#x2F;',
+          '=': '&#x3D;',
+          '`': '&#x60;'
+        }[s];
+      });
+    }
+  </script>
+</body></html>

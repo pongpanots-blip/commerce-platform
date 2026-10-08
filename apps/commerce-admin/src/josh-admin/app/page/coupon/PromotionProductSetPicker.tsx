@@ -1,3 +1,5 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
 import {
   getPromotionProductSet,
   getPromotionProductSets,
@@ -15,6 +17,8 @@ import { appendReturnTo } from '../../utils/return-to';
 import { useStashCouponDraftOnClick } from './coupon-form-draft.helpers';
 import { diffProductSetItems, hasProductSetChanged } from './coupon-redemption.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const API_BASE_URL =
   import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? 'https://joshapp.io/api';
 
@@ -67,7 +71,7 @@ async function fetchAllProductSets(): Promise<PromotionProductSetSummary[]> {
 function formatDateTime(value: string | null | undefined): string {
   if (!value) return '-';
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? '-' : date.toLocaleString('th-TH');
+  return Number.isNaN(date.getTime()) ? '-' : date.toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'));
 }
 
 /** ป้ายกำกับ SKU สำหรับแสดงผล — SKU อาจว่างได้ (snapshot เก่าที่ไม่มี sku ติดมา) ใช้ id ย่อแทน */
@@ -83,6 +87,7 @@ function SnapshotItemsView({
 }: {
   items: Array<{ product_inventory_id: string; sku: string }>;
 }) {
+  __useUiLocale();
   const skus = useMemo(() => items.map((item) => item.sku).filter(Boolean), [items]);
   // ไม่มี sku ให้ resolve เลย (ทุกแถวว่าง) — ไม่ต้อง fetch, เริ่มต้นเป็น "โหลดจบแล้ว" ไปเลย
   const [loading, setLoading] = useState(skus.length > 0);
@@ -112,7 +117,7 @@ function SnapshotItemsView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skuKey]);
 
-  if (loading) return <p className="text-xs text-gray-400">กำลังโหลดรายการ...</p>;
+  if (loading) return <p className="text-xs text-gray-400">{__uiText("กำลังโหลดรายการ...")}</p>;
 
   const bySku = new Map(resolved.items.map((item) => [item.sku, item]));
 
@@ -169,6 +174,7 @@ function ProductSetChangedNotice({
   onRefreshChange: (next: string[]) => void;
   disabled?: boolean;
 }) {
+  __useUiLocale();
   const diff = diffProductSetItems(
     snapshot.items,
     latestDetail.items.map((item) => ({
@@ -188,14 +194,14 @@ function ProductSetChangedNotice({
 
   return (
     <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
-      <p className="font-medium">ชุดนี้ถูกแก้ไขหลังบันทึกคูปอง</p>
+      <p className="font-medium">{__uiText("ชุดนี้ถูกแก้ไขหลังบันทึกคูปอง")}</p>
       {diff.added.length > 0 && (
         <p>
-          + เพิ่ม: {diff.added.map((item) => `${item.sku || item.productInventoryId.slice(0, 8)} (${item.name})`).join(', ')}
+          {__uiText("+ เพิ่ม: ")}{diff.added.map((item) => `${item.sku || item.productInventoryId.slice(0, 8)} (${item.name})`).join(', ')}
         </p>
       )}
       {diff.removed.length > 0 && (
-        <p>− ลบ: {diff.removed.map(displaySku).join(', ')}</p>
+        <p>{__uiText("− ลบ: ")}{diff.removed.map(displaySku).join(', ')}</p>
       )}
       <div className="mt-1.5 flex flex-col gap-1">
         <label className="flex items-center gap-1.5">
@@ -206,7 +212,7 @@ function ProductSetChangedNotice({
             disabled={disabled}
             onChange={() => setUseLatest(false)}
           />
-          <span>ใช้รายการเดิม (บันทึกเมื่อ {formatDateTime(snapshot.snapshotted_at)})</span>
+          <span>{__uiText("ใช้รายการเดิม (บันทึกเมื่อ ")}{formatDateTime(snapshot.snapshotted_at)})</span>
         </label>
         <label className="flex items-center gap-1.5">
           <input
@@ -216,7 +222,7 @@ function ProductSetChangedNotice({
             disabled={disabled}
             onChange={() => setUseLatest(true)}
           />
-          <span>ใช้รายการล่าสุด</span>
+          <span>{__uiText("ใช้รายการล่าสุด")}</span>
         </label>
       </div>
     </div>
@@ -248,12 +254,13 @@ function SelectedSetCard({
   onRefreshChange: (next: string[]) => void;
   onRemove: () => void;
 }) {
+  __useUiLocale();
   const [viewOpen, setViewOpen] = useState(false);
 
   if (entry.kind === 'unresolved') {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-500">
-        <span>{loading ? 'กำลังโหลด…' : `ชุดสินค้า ${entry.id.slice(0, 8)}…`}</span>
+        <span>{loading ? __uiText("กำลังโหลด…") : __uiText("ชุดสินค้า {0}…", {"0": entry.id.slice(0, 8)})}</span>
         {!disabled && (
           <button type="button" onClick={onRemove} className="ml-1 text-gray-400 hover:text-red-500">
             ×
@@ -266,7 +273,7 @@ function SelectedSetCard({
   if (entry.kind === 'missing') {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs text-red-600">
-        <span>ไม่พบชุดสินค้า (ถูกลบ?)</span>
+        <span>{__uiText("ไม่พบชุดสินค้า (ถูกลบ?)")}</span>
         {!disabled && (
           <button type="button" onClick={onRemove} className="ml-1 text-red-400 hover:text-red-600">
             ×
@@ -286,7 +293,7 @@ function SelectedSetCard({
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
             <span className="font-medium text-gray-800">{snapshot.name || entry.id.slice(0, 8)}</span>
-            <span className="ml-1.5 text-gray-400">({snapshot.items.length} รายการ)</span>
+            <span className="ml-1.5 text-gray-400">({snapshot.items.length} {__uiText(" รายการ)")}</span>
           </div>
           {!disabled && (
             <button type="button" onClick={onRemove} className="shrink-0 text-gray-400 hover:text-red-500">
@@ -294,16 +301,16 @@ function SelectedSetCard({
             </button>
           )}
         </div>
-        <p className="mt-1 text-gray-500">บันทึกรายการเมื่อ {formatDateTime(snapshot.snapshotted_at)}</p>
+        <p className="mt-1 text-gray-500">{__uiText("บันทึกรายการเมื่อ ")}{formatDateTime(snapshot.snapshotted_at)}</p>
         {confirmedDeleted && (
-          <p className="mt-1 text-rose-600">ชุดต้นทางถูกลบแล้ว — ใช้รายการที่บันทึกไว้</p>
+          <p className="mt-1 text-rose-600">{__uiText("ชุดต้นทางถูกลบแล้ว — ใช้รายการที่บันทึกไว้")}</p>
         )}
         <button
           type="button"
           onClick={() => setViewOpen((prev) => !prev)}
           className="mt-1 text-blue-600 underline hover:text-blue-700"
         >
-          {viewOpen ? 'ซ่อนรายการ' : 'ดูรายการ'}
+          {viewOpen ? __uiText("ซ่อนรายการ") : __uiText("ดูรายการ")}
         </button>
         {viewOpen && <SnapshotItemsView items={snapshot.items} />}
       </div>
@@ -324,8 +331,7 @@ function SelectedSetCard({
         <div className="min-w-0">
           <span className="font-medium text-gray-800">{liveSet.name}</span>
           <span className="ml-1.5 text-gray-400">
-            ({snapshot ? snapshot.items.length : liveSet.itemCount} รายการ)
-          </span>
+            ({snapshot ? snapshot.items.length : liveSet.itemCount} {__uiText(" รายการ)")}</span>
         </div>
         {!disabled && (
           <button type="button" onClick={onRemove} className="shrink-0 text-gray-400 hover:text-red-500">
@@ -337,20 +343,20 @@ function SelectedSetCard({
       {/* ข้อความ "คูปองยังใช้รายการที่บันทึกไว้" มีความหมายเฉพาะตอนมี snapshot จริง — ชุดที่ปิดใช้งานแต่ยังไม่เคย
           บันทึกเลย (เพิ่งเลือกใหม่) ให้ปล่อยให้ข้อความ "จะบันทึกรายการเมื่อกดบันทึก" ด้านล่างสื่อความหมายพอ */}
       {!liveSet.isActive && snapshot && (
-        <p className="mt-1 text-amber-700">ชุดต้นทางปิดใช้งาน — คูปองยังใช้รายการที่บันทึกไว้</p>
+        <p className="mt-1 text-amber-700">{__uiText("ชุดต้นทางปิดใช้งาน — คูปองยังใช้รายการที่บันทึกไว้")}</p>
       )}
 
       {snapshot ? (
         <>
           <p className="mt-1 text-gray-500">
-            บันทึกรายการเมื่อ {formatDateTime(snapshot.snapshotted_at)}
+            {__uiText("บันทึกรายการเมื่อ ")}{formatDateTime(snapshot.snapshotted_at)}
           </p>
           <button
             type="button"
             onClick={() => setViewOpen((prev) => !prev)}
             className="mt-1 text-blue-600 underline hover:text-blue-700"
           >
-            {viewOpen ? 'ซ่อนรายการ' : 'ดูรายการ'}
+            {viewOpen ? __uiText("ซ่อนรายการ") : __uiText("ดูรายการ")}
           </button>
           {viewOpen && <SnapshotItemsView items={snapshot.items} />}
           {changed &&
@@ -366,21 +372,20 @@ function SelectedSetCard({
               />
             ) : changedError ? (
               <p className="mt-1 text-red-600">
-                ตรวจสอบการเปลี่ยนแปลงไม่สำเร็จ{' '}
+                {__uiText("ตรวจสอบการเปลี่ยนแปลงไม่สำเร็จ")}{' '}
                 <button
                   type="button"
                   onClick={onRetryChanged}
                   className="underline hover:text-red-700"
                 >
-                  ลองใหม่
-                </button>
+                  {__uiText("ลองใหม่")}</button>
               </p>
             ) : (
-              <p className="mt-1 text-gray-400">กำลังตรวจสอบการเปลี่ยนแปลง...</p>
+              <p className="mt-1 text-gray-400">{__uiText("กำลังตรวจสอบการเปลี่ยนแปลง...")}</p>
             ))}
         </>
       ) : (
-        <p className="mt-1 text-gray-500">จะบันทึกรายการเมื่อกดบันทึก</p>
+        <p className="mt-1 text-gray-500">{__uiText("จะบันทึกรายการเมื่อกดบันทึก")}</p>
       )}
     </div>
   );
@@ -408,6 +413,7 @@ export function PromotionProductSetPicker({
   lockedIds = NO_LOCKED_IDS,
   manageLinkTarget,
 }: Props) {
+  __useUiLocale();
   // radio "name" ต้องไม่ซ้ำข้าม picker สองตัว (include/exclude) — ชุดเดียวกันอาจถูกเลือกทั้งคู่พร้อมกัน
   const pickerId = React.useId();
   const location = useLocation();
@@ -540,8 +546,7 @@ export function PromotionProductSetPicker({
           rel={manageLinkTarget ? 'noopener noreferrer' : undefined}
           className="text-xs text-blue-600 hover:underline"
         >
-          จัดการ Promotion Product Set
-        </Link>
+          {__uiText("จัดการ Promotion Product Set")}</Link>
       </div>
       {hint && <p className="text-xs text-gray-500">{hint}</p>}
 
@@ -568,8 +573,7 @@ export function PromotionProductSetPicker({
 
       {loadError && (
         <p className="text-xs text-red-600">
-          โหลดรายการ Promotion Product Set ไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง
-        </p>
+          {__uiText("โหลดรายการ Promotion Product Set ไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง")}</p>
       )}
 
       <div className="relative">
@@ -579,24 +583,24 @@ export function PromotionProductSetPicker({
           onClick={() => setOpen((prev) => !prev)}
           className="w-full rounded-lg border border-gray-200 px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
         >
-          {open ? 'ซ่อนรายการ' : '+ เลือก Promotion Product Set'}
+          {open ? __uiText("ซ่อนรายการ") : __uiText("+ เลือก Promotion Product Set")}
         </button>
 
         {open && (
           <div className="mt-2 space-y-2 rounded-lg border border-gray-100 p-2">
             <Input
-              label="ค้นหา Promotion Product Set"
-              aria-label={`ค้นหา${title}`}
+              label={__uiText("ค้นหา Promotion Product Set")}
+              aria-label={__uiText("ค้นหา{0}", {"0": title})}
               value={search}
               disabled={disabled}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="ค้นหาชื่อชุดสินค้า..."
+              placeholder={__uiText("ค้นหาชื่อชุดสินค้า...")}
             />
             <div className="max-h-44 space-y-1 overflow-y-auto">
               {loading ? (
-                <p className="text-xs text-gray-400">กำลังโหลด...</p>
+                <p className="text-xs text-gray-400">{__uiText("กำลังโหลด...")}</p>
               ) : filtered.length === 0 ? (
-                <p className="text-xs text-gray-400">ไม่พบ Promotion Product Set</p>
+                <p className="text-xs text-gray-400">{__uiText("ไม่พบ Promotion Product Set")}</p>
               ) : (
                 filtered.map((set) => {
                   const isSelected = selectedIds.includes(set.id);
@@ -613,12 +617,11 @@ export function PromotionProductSetPicker({
                         onChange={() => toggle(set.id)}
                       />
                       <span>{set.name}</span>
-                      <span className="text-xs text-gray-400">{set.itemCount} รายการ</span>
-                      {isLocked && <span className="text-[10px] text-gray-400">เลือกไว้แล้ว</span>}
+                      <span className="text-xs text-gray-400">{set.itemCount} {__uiText(" รายการ")}</span>
+                      {isLocked && <span className="text-[10px] text-gray-400">{__uiText("เลือกไว้แล้ว")}</span>}
                       {!set.isActive && (
                         <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-700">
-                          ปิดใช้งาน
-                        </span>
+                          {__uiText("ปิดใช้งาน")}</span>
                       )}
                     </label>
                   );

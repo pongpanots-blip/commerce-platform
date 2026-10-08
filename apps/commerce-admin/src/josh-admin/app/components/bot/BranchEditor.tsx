@@ -3,6 +3,8 @@ import { FlowBranch } from '@josh/shared-api'
 import { Select } from '@josh/shared-ui-web'
 import styles from './BranchEditor.module.css'
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface BranchEditorProps {
   branches?: FlowBranch[]
   stepIds: string[]
@@ -14,6 +16,7 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
   stepIds,
   onChange,
 }) => {
+  __useUiLocale();
   const addBranch = () => {
     const newBranch: FlowBranch = {
       match: { type: 'keyword', value: '' },
@@ -40,13 +43,13 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
 
   return (
     <div className={styles.container}>
-      <h4>Branches</h4>
+      <h4>{__uiText("Branches")}</h4>
       <table className={styles.table}>
         <thead>
           <tr>
-            <th>ประเภทการจับคู่</th>
-            <th>ค่า</th>
-            <th>ขั้นตอนถัดไป</th>
+            <th>{__uiText("ประเภทการจับคู่")}</th>
+            <th>{__uiText("ค่า")}</th>
+            <th>{__uiText("ขั้นตอนถัดไป")}</th>
             <th></th>
           </tr>
         </thead>
@@ -55,29 +58,29 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
             <tr key={idx}>
               <td>
                 <Select
-                  aria-label={`ประเภทเงื่อนไข (Match Type) แถวที่ ${idx + 1}`}
+                  aria-label={__uiText("ประเภทเงื่อนไข (Match Type) แถวที่ {0}", {"0": idx + 1})}
                   value={branch.match.type}
                   onChange={(e) => updateBranch(idx, 'matchType', e.target.value)}
                 >
-                  <option value="option">option</option>
-                  <option value="keyword">keyword</option>
-                  <option value="regex">regex</option>
-                  <option value="default">default</option>
+                  <option value="option">{__uiText("option")}</option>
+                  <option value="keyword">{__uiText("keyword")}</option>
+                  <option value="regex">{__uiText("regex")}</option>
+                  <option value="default">{__uiText("default")}</option>
                 </Select>
               </td>
               <td>
                 <input
-                  aria-label={`ค่าที่จับคู่ (Value) แถวที่ ${idx + 1}`}
+                  aria-label={__uiText("ค่าที่จับคู่ (Value) แถวที่ {0}", {"0": idx + 1})}
                   type="text"
                   value={branch.match.value || ''}
                   onChange={(e) => updateBranch(idx, 'matchValue', e.target.value)}
                   disabled={branch.match.type === 'default'}
-                  placeholder={branch.match.type === 'default' ? 'N/A' : '...'}
+                  placeholder={branch.match.type === 'default' ? __uiText("N/A") : '...'}
                 />
               </td>
               <td>
                 <Select
-                  aria-label={`ขั้นตอนถัดไป (Next Step) แถวที่ ${idx + 1}`}
+                  aria-label={__uiText("ขั้นตอนถัดไป (Next Step) แถวที่ {0}", {"0": idx + 1})}
                   value={branch.nextStepId}
                   onChange={(e) => updateBranch(idx, 'nextStepId', e.target.value)}
                 >
@@ -93,16 +96,14 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
                   className={styles.deleteBtn}
                   onClick={() => deleteBranch(idx)}
                 >
-                  Delete
-                </button>
+                  {__uiText("Delete")}</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       <button className={styles.addBtn} onClick={addBranch}>
-        + Add Branch
-      </button>
+        {__uiText("+ Add Branch")}</button>
     </div>
   )
 }

@@ -1,0 +1,66 @@
+Design EXACTLY ONE polished, easy-to-use Commerce Platform screen. Route identifier admin-f72339d86a2f; URL /j/marketing/scraping-sources; app admin; category การตลาด; component ScrapingSourcesPage; view type screen; title ตั้งค่าเก็บข้อมูลเว็บ.
+
+# Commerce Platform — task-based UI
+
+Design for Thai commerce operations teams. The product has seven work areas:
+สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล,
+ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน. A separate developer portal manages API keys and webhooks.
+
+## Visual language
+
+- Light canvas `#f6f8fc`, white cards, restrained borders `#e1e7f0`.
+- Primary blue `#365cf5`; ink `#17243b`; secondary text `#52627a`.
+- Success `#157347`, warning `#b08900`, error `#c2333f`; always pair color with text.
+- Noto Sans Thai for Thai and Latin; body 14px, labels 13px, page titles 28px.
+- Cards have 12px corners; controls 8px. Use 16/24/32px spacing.
+- A 256px sidebar, compact contextual header, and a readable content width near 1240px.
+- SVG icons and local fonts in the application. No decorative stock photos or gradients.
+- Phone layouts stack cards and collapse navigation. Scroll wide tables inside their panel.
+
+## Usability
+
+- Lead with the task and one primary action. Show records before creation forms.
+- Organize each work area's links into short task sections, with useful descriptions.
+- Creation and editing use named dialogs, clear labels, inline errors, and Cancel/Save actions.
+- Keep keyboard focus inside dialogs, support Escape, and return focus to the trigger.
+- Record links open their own detail URLs; preserve existing routes and role restrictions.
+- Show loading, empty, filtered-empty and failed states separately.
+- Counts and operational status in the application must come from its API. Prototype samples
+  must be labeled `ข้อมูลตัวอย่าง`; never copy sample figures into application code.
+- List APIs for platform products/customers support pagination only. A frontend search must
+  explicitly say it searches the current page. Do not imply a complete catalog search.
+- Every action in the application must work. Do not add export/import, bulk changes, charts,
+  advanced filters or copy-secret actions without an existing supported API.
+
+## Business fields and workflows
+
+- Product list: SKU, name, status. Create/edit: SKU, name, description. Product detail also
+  shows fulfillment mode, lead time, update date and inventory by warehouse when available.
+- Customer list: name/code, email, phone, status. Detail shows contact data and actual orders.
+- Orders: code, status, total, creation date. Create with customer/product selectors,
+  editable quantity/unit price, add/remove lines and a calculated subtotal.
+- Stock movements: receive, count, damage/return/correction, transfer. Choose an owned
+  warehouse, enter SKU/quantity/note, show a clear explanation of the selected movement.
+- Marketing: planning, campaigns/promotions, content/communication, tracking results.
+- Reports: select a business/system report and its existing filters; show unavailable data
+  honestly, with a retry action where supported.
+- Connections: connections, inbound data, sync jobs, outgoing deliveries and failed records.
+- Team settings: staff list, create account, role management and existing password/status actions.
+- Portal: active key/webhook onboarding, key creation with the existing one-time secret,
+  subscriptions, webhook test results, and recent delivery status filters.
+
+## Implementation boundary
+
+Stitch screens are visual references. React implements the supported interactions using
+`@cp/ui`; preserve API payloads, confirmation behavior and server permissions. Complex
+migrated management pages retain their domain-specific workflows while adopting the common
+visual system. Never replace a working business screen with static generated HTML.
+
+
+Design this specific existing page, including its details or create/edit form when that is its route. Use its UI copy to infer supported fields, actions, tables and statuses. Keep domain controls and avoid inventing business operations. Lists lead with records and real filters. Forms group required fields before optional/advanced settings with clear section headings and sticky Cancel/Save. Details lead with facts, then related records and existing actions. Admin uses the seven-area sidebar; Portal uses its own navigation; login/register are centered forms. Use 256px sidebar, 1240px main width, Noto Sans Thai, #365cf5 primary, #f6f8fc canvas, white cards with 12px corners, 40px inputs and buttons, 14px body. Avoid decorative charts and stock photography.
+
+BILINGUAL: Thai default, visible ไทย / English selector with working UI translations. Mark example records as ข้อมูลตัวอย่าง / Sample data. Preserve record names, identifiers, URLs, API enums and code. Translate labels, help, actions and errors naturally.
+
+Exact UI copy catalogue (include all in export): ["เทียบราคาคู่แข่ง","ยกเลิก","ราคา","ลบ","หน้า","สำเร็จ","พบ","รายการ","อ่านแล้ว","จาก","เปิดอยู่","นาที","ตัวอย่าง","ข้อมูลจากเว็บ","ปิดอยู่","ดูรายการ","หน้าล็อกอิน","ชื่อผู้ใช้ / อีเมล","รหัสผ่าน","กำลังเริ่ม…","ตรวจแล้ว","เก็บต่อเลยตอนนี้","ตั้งค่า","ข้อมูลคู่แข่ง","ตั้งค่าเว็บ","เว็บนี้ยังเก็บแบบเก่า: อ่านเฉพาะลิงก์ที่เห็น ไม่ได้กดไปหน้าถัดไป จึงได้สินค้าไม่ครบ · กดแล้วเริ่มเก็บเบื้องหลังทันที (20 หน้าแรกตอนนี้ ที่เหลือคืนนี้)","เก็บทุกหน้า","ตั้งค่าเก็บข้อมูลจากเว็บ","กำหนดหน้าที่เก็บและฟิลด์เองได้ ทั้งสินค้า ราคา รายละเอียด และข้อมูลอื่น","+ ตั้งค่าเองแบบละเอียด","สวิตช์เก็บข้อมูลเบื้องหลัง","การเก็บข้อมูลเบื้องหลัง (ช่วงทดลอง):","เว็บที่ตั้งเก็บอัตโนมัติจะทำงานตามรอบ · ปิดแล้วทุกเว็บหยุดหลังหน้าที่กำลังอ่าน ความคืบหน้ายังอยู่","ไม่มีการเก็บเบื้องหลังเลย · “ลองดึงข้อมูล” ยังใช้ได้ · เปิดแล้วเก็บต่อจากที่ค้างไว้","ปิดการเก็บข้อมูลเบื้องหลังทุกเว็บ?","ปิดการเก็บเบื้องหลัง","เปิดการเก็บเบื้องหลัง","สำรวจเว็บอัตโนมัติ","1. ใส่ลิงก์เว็บ แล้วลองดึงข้อมูล 1 รอบ","ระบบเปิดดูไม่เกิน 6 หน้า แล้วบอกว่าเว็บนี้มีข้อมูลอะไร เช่น ชื่อสินค้า ราคา — ยังไม่เริ่มเก็บจริงจนกว่าจะกดยืนยัน","ลิงก์เว็บ (หรือชื่อ Makro PRO, Big C, Freshket)","เช่น https://example.com/products","เป็นข้อมูลสาธารณะ และเรามีสิทธิ์อ่าน/เก็บข้อมูลจากเว็บนี้","เว็บนี้ต้องล็อกอิน? ใช้บัญชีสมาชิกของบริษัท (ไม่บังคับ)","ใช้เฉพาะบัญชีของบริษัทเราเอง · รหัสผ่านเก็บแบบเข้ารหัสและจะไม่แสดงอีก · ราคาที่เห็นหลังล็อกอินนับเป็น “ราคาสมาชิก” แยกจากราคาปกติ · เว็บที่มี CAPTCHA/OTP ล็อกอินอัตโนมัติไม่ได้","กำลังดึงข้อมูล… (อาจใช้ถึง 2 นาที)","ลองดึงข้อมูล","ติ๊กยืนยันสิทธิ์ก่อน","หน้า · ดูแหล่งที่มา","เลือกข้อมูลที่ต้องการเก็บ","2. ตรวจผลดึง ถ้าถูกต้องกดเริ่มเก็บ","เลือกข้อมูลที่จะเก็บ","✗ ไม่พบราคา","รายการในหน้าแรก","จำนวนหน้า","✓ เลื่อนหน้าเองได้ —","เก็บได้เฉพาะหน้านี้และลิงก์ที่พบ — ไม่พบปุ่มหรือลิงก์ไปหน้าถัดไป","เก็บสูงสุด","จำนวนหน้าสูงสุด","รายการ · ใช้เวลาประมาณ","ราคาที่เห็นบนเว็บนี้ (ต้องเลือก)","ราคาที่ลูกค้าจ่ายจริง รวม VAT แล้ว หรือสินค้ายกเว้น VAT — ใช้เทียบราคาได้","ไม่รวม VAT หรือไม่แน่ใจ — เก็บไว้ดูอย่างเดียว ยังไม่เอาไปเทียบ","รอบเก็บ","เก็บซ้ำอัตโนมัติทุกวัน","เก็บเฉพาะกลางคืน 00:00–06:00 (แนะนำสำหรับเว็บใหญ่ · เก็บไม่จบจะพักและเก็บต่อคืนถัดไป)","ข้อมูลถูกต้อง เริ่มเก็บเบื้องหลัง","ระบบเก็บต่อเองทีละหน้าเบื้องหลัง ปิดหน้านี้ได้ ดูความคืบหน้าได้ที่การ์ดด้านล่าง","ตั้งค่าเพิ่มเติม / แก้ฟิลด์ที่ระบบตรวจพบ","แก้ไขเว็บ","เพิ่มเว็บใหม่","ชื่อเว็บ","ที่อยู่เว็บหลัก","หน้าเริ่มต้น / Sitemap (หนึ่งลิงก์ต่อบรรทัด)","ขอบเขต path ที่ตามลิงก์ (หนึ่ง path ต่อบรรทัด)","/products/","ใช้ / เพื่อรวมทุกหน้าในโดเมน · ลิงก์ภายนอกจะไม่ถูกเก็บ","วิธีเปิดหน้าเว็บ","HTML — เร็วและใช้ทรัพยากรน้อย","เบราว์เซอร์ — เว็บที่โหลดด้วย JavaScript","ตัวเลือกแต่ละรายการ (CSS selector)","เช่น .product-card · เว้นว่างเมื่อหนึ่งรายการต่อหน้า","ฟิลด์ที่ต้องการเก็บ","+ เพิ่มฟิลด์","เว้นว่างเพื่ออ่าน Product JSON-LD อัตโนมัติ · เมื่อตั้งเองต้องมี name หรือ title · หน้าหลายรายการต้องมี url","ชื่อฟิลด์","price หรือชื่อใหม่","ป้ายกำกับ","CSS selector",".price หรือ :scope","Attribute (ถ้ามี)","href / src / content","สกุลเงิน","เก็บซ้ำทุก (ชั่วโมง)","เพดานหน้าต่อรอบ","พักระหว่างหน้า (วินาที)","เงื่อนไขข้อมูล / สาขา / ฐานราคา","ราคาสาธารณะที่เลือกเก็บรวม VAT หรือยกเว้น VAT","มีสิทธิ์หรือได้รับอนุญาตให้เก็บข้อมูลจากเว็บนี้","เปิดเก็บอัตโนมัติตามเวลาที่ตั้ง","ลองดึงก่อนบันทึก","ลิงก์ทดลอง","หน้าสินค้าหรือหน้ารายการ","ทดลองดึง","ผลทดลองดึง","รายการ ·","ลิงก์","· Sitemap","ราคาไม่ชัดเจน","บันทึกการตั้งค่า","กำลังโหลดเว็บที่ตั้งค่า…","เริ่มจากใส่เว็บด้านบน แล้วกดสำรวจ","เลือกฟิลด์ที่อ่านเจอและเริ่มเก็บได้เลย","รอเก็บคืนนี้ 00:00–06:00","หลุด — กำลังลองใหม่เอง","หลุดกลางคัน","รออ่าน","หน้า · ไม่สำเร็จ","หน้า · เพดาน","หน้า ·","เริ่มเก็บด้วยตนเอง","· เก็บเฉพาะ 00:00–06:00","ไม่ได้ล็อกอิน · ราคาสาธารณะ","🔒 ล็อกอินเป็น","· ราคาที่เก็บนับเป็นราคาสมาชิก","แก้ล็อกอิน","ตั้งค่าล็อกอิน","เว้นว่าง = ใช้รหัสเดิม","บันทึกแล้วต้องกด “เริ่มรอบใหม่” เพื่อเก็บด้วยบัญชีนี้","บันทึกล็อกอิน","ลบล็อกอิน","หยุดเก็บ","เก็บต่อ","เริ่มเก็บ","เริ่มรอบใหม่","กึ่งกลาง","ข้อมูลปัจจุบัน (ปิดบางส่วนเพื่อความเป็นส่วนตัว)","ค่าเป้าหมาย (","จำนวนวันหลัง enroll ที่ยังนับว่าออเดอร์นั้นมาจาก workflow นี้","ชุดนี้ถูกแก้ไขหลังบันทึกคูปอง","ดึงค่าไม่สำเร็จ:","ตัวอย่างรูปคูปอง","น้ำหนักยังไม่ชัดเจน","ประเภทภาษีมูลค่าเพิ่ม (VAT Type)","ผู้ให้บริการชำระเงิน (Gateway)","มูลค่าออเดอร์รวมขั้นต่ำ","ไม่สามารถโหลด log การส่งได้","ยังไม่ระบุ — ใส่ก่อนติ๊ก","ระบบสร้าง/อัปเดต/ลบแบนเนอร์ HERO ของหน้านี้ให้เอง — ใช้ภาพและวันที่ของหน้า","รูปภาพ (URL)","ลูกค้าเปิดที่","วิธีใช้: กด","สรุปด้วย AI ·","หน้าค้นหาหรือหน้าหมวดสินค้า เช่น makro.pro/c/search?q=* หรือหน้าหมวดเนื้อหมูของ Lotus's","โหลดใหม่","ถูกปฏิเสธ","ข้าม (ยังไม่ถึงเวลา)","ไม่สามารถคำนวณราคาได้","ส่วนลดแบบเปอร์เซ็นต์ต้องระบุส่วนลดสูงสุด (บาท)","จาก ~{0} หน้า","พบ {0} รายการ","ไม่ได้ค้าง — เก็บแล้ว {0} หน้า ที่เหลือเก็บต่อเองคืนนี้ 00:00–06:00 · สินค้าที่ได้แล้วใช้จับคู่ได้เลย"]
+
+Exported HTML MUST include an invisible <script id="commerce-ui-translations" type="application/json"> object keyed by EVERY exact source string above. Values must be {"th":"Thai UI translation","en":"English UI translation"}. Preserve placeholders such as {0}, {1}, {name} exactly. Do not display the dictionary. Render only this route's UI; extra messages belong in translation data, not as extra unrelated controls. This export requirement has already worked in the existing project screens. Generate one complete screen.

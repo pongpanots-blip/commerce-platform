@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { StickerPreset } from '../../types/batch-sticker';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function PresetManager({
   presets,
   onSave,
@@ -14,18 +16,19 @@ export function PresetManager({
   onRename: (id: string, name: string) => void;
   onDelete: (id: string) => void;
 }) {
+  __useUiLocale();
   const [newName, setNewName] = useState('');
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
 
   return (
     <div className="space-y-2 rounded-md border border-gray-200 bg-white p-3">
-      <div className="text-sm font-medium text-gray-700">Position Presets</div>
+      <div className="text-sm font-medium text-gray-700">{__uiText("Position Presets")}</div>
 
       <div className="flex gap-2">
         <input
           className="flex-1 rounded-md border border-gray-200 px-2 py-1 text-sm"
-          placeholder="Preset name"
+          placeholder={__uiText("Preset name")}
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
         />
@@ -38,11 +41,10 @@ export function PresetManager({
             setNewName('');
           }}
         >
-          Save
-        </button>
+          {__uiText("Save")}</button>
       </div>
 
-      {presets.length === 0 && <p className="text-sm text-gray-400">No saved presets yet.</p>}
+      {presets.length === 0 && <p className="text-sm text-gray-400">{__uiText("No saved presets yet.")}</p>}
 
       <ul className="space-y-1">
         {presets.map((preset) => (
@@ -69,7 +71,7 @@ export function PresetManager({
             <div className="flex shrink-0 gap-1 text-gray-400">
               <button
                 type="button"
-                aria-label="Rename preset"
+                aria-label={__uiText("Rename preset")}
                 className="hover:text-gray-700"
                 onClick={() => {
                   setRenamingId(preset.id);
@@ -78,7 +80,7 @@ export function PresetManager({
               >
                 ✎
               </button>
-              <button type="button" aria-label="Delete preset" className="hover:text-red-600" onClick={() => onDelete(preset.id)}>
+              <button type="button" aria-label={__uiText("Delete preset")} className="hover:text-red-600" onClick={() => onDelete(preset.id)}>
                 ✕
               </button>
             </div>

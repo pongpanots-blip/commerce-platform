@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Admin - ใบสมัครเครดิต (Credit Term Applications)</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-container": "#ffebe4",
+            "surface-variant": "#d7e2ff",
+            "surface-container": "#e8eeff",
+            "on-surface-variant": "#444655",
+            "background": "#f9f9ff",
+            "outline": "#747687",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-secondary": "#ffffff",
+            "on-secondary-fixed": "#0b1c31",
+            "on-tertiary-fixed": "#360f00",
+            "on-primary-fixed": "#001257",
+            "error-container": "#ffdad6",
+            "secondary-fixed": "#d3e3ff",
+            "error": "#ba1a1a",
+            "on-primary-fixed-variant": "#0034c0",
+            "surface-tint": "#214ce7",
+            "primary": "#0a3fdc",
+            "on-primary-container": "#ededff",
+            "secondary": "#4f5f77",
+            "tertiary": "#943500",
+            "surface": "#f9f9ff",
+            "secondary-container": "#d0e1fd",
+            "inverse-surface": "#243048",
+            "surface-bright": "#f9f9ff",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-error": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "outline-variant": "#c4c5d8",
+            "surface-container-highest": "#d7e2ff",
+            "on-secondary-container": "#54647c",
+            "surface-container-high": "#e0e8ff",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed-variant": "#38485e",
+            "tertiary-fixed": "#ffdbcd",
+            "primary-fixed": "#dde1ff",
+            "surface-dim": "#cddaf9",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "inverse-on-surface": "#ecf0ff",
+            "on-background": "#0e1b32",
+            "surface-container-low": "#f1f3ff",
+            "on-surface": "#0e1b32",
+            "primary-container": "#365cf5",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-primary": "#ffffff",
+            "on-error-container": "#93000a",
+            "tertiary-container": "#bc4600"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "1.5rem",
+            "gutter-compact": "0.75rem",
+            "margin": "1.5rem",
+            "gutter": "1rem",
+            "space-md": "0.75rem",
+            "space-lg": "1rem",
+            "space-2xl": "2rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Noto Sans", "sans-serif"],
+            "label-lg": ["Noto Sans", "sans-serif"],
+            "numeric-data": ["Noto Sans", "sans-serif"],
+            "headline-xl": ["Noto Sans", "sans-serif"],
+            "body-md": ["Noto Sans", "sans-serif"],
+            "label-sm": ["Noto Sans", "sans-serif"],
+            "label-md": ["Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans", "sans-serif"],
+            "headline-sm": ["Noto Sans", "sans-serif"],
+            "body-lg": ["Noto Sans", "sans-serif"],
+            "table-cell": ["Noto Sans", "sans-serif"],
+            "body-sm": ["Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "numeric-data": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "headline-xl": ["28px", { "lineHeight": "38px", "fontWeight": "700" }],
+            "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-lg": ["22px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "table-cell": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<!-- Prompt UI Translations JSON Dictionary -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ทุกสถานะ": { "th": "ทุกสถานะ", "en": "All Statuses" },
+    "บริษัท": { "th": "บริษัท", "en": "Company" },
+    "สถานะ": { "th": "สถานะ", "en": "Status" },
+    "อนุมัติ": { "th": "อนุมัติ", "en": "Approve" },
+    "จัดการ": { "th": "จัดการ", "en": "Actions" },
+    "ปฏิเสธ": { "th": "ปฏิเสธ", "en": "Reject" },
+    "Pending": { "th": "Pending", "en": "Pending" },
+    "Review": { "th": "Review", "en": "Review" },
+    "Request Doc": { "th": "Request Doc", "en": "Request Doc" },
+    "Approved": { "th": "Approved", "en": "Approved" },
+    "Rejected": { "th": "Rejected", "en": "Rejected" },
+    "ID": { "th": "ID", "en": "ID" },
+    "ผู้สมัคร": { "th": "ผู้สมัคร", "en": "Applicant" },
+    "วงเงินขอ": { "th": "วงเงินขอ", "en": "Requested Limit" },
+    "เทอม (วัน)": { "th": "เทอม (วัน)", "en": "Terms (Days)" },
+    "ขอเอกสารใหม่": { "th": "ขอเอกสารใหม่", "en": "Request New Docs" },
+    "Credit Term แอป": { "th": "Credit Term แอป", "en": "Credit Term App" },
+    "อนุมัติ / ขอเอกสาร / ปฏิเสธคำขอเครดิต": { "th": "อนุมัติ / ขอเอกสาร / ปฏิเสธคำขอเครดิต", "en": "Approve / Request Docs / Reject credit requests" },
+    "กรองตามสถานะ": { "th": "กรองตามสถานะ", "en": "Filter by status" },
+    "แก้ไขแล้ว": { "th": "แก้ไขแล้ว", "en": "Resolved" },
+    "ค่าที่ต้องการ": { "th": "ค่าที่ต้องการ", "en": "Required Value" },
+    "ช่องทางชำระเงินที่ใช้ได้": { "th": "ช่องทางชำระเงินที่ใช้ได้", "en": "Eligible Payment Methods" },
+    "ดู log ของ request นี้เพิ่มได้ที่หน้า ERP Inbound Logs (ผ่าน service ตัวจริง แต่ไม่ผ่าน HTTP interceptor ของ /api/erp/* — row จะไม่ขึ้นใน log viewer)": {
+      "th": "ดู log ของ request นี้เพิ่มได้ที่หน้า ERP Inbound Logs (ผ่าน service ตัวจริง แต่ไม่ผ่าน HTTP interceptor ของ /api/erp/* — row จะไม่ขึ้นใน log viewer)",
+      "en": "View request log on ERP Inbound Logs (dispatched via direct core service, bypassing /api/erp/* HTTP interceptor — record won't display in standard log viewer)"
+    },
+    "เปิดคูปอง": { "th": "เปิดคูปอง", "en": "Enable Coupon" },
+    "มูลค่า": { "th": "มูลค่า", "en": "Value" },
+    "ยังไม่ได้แปล": { "th": "ยังไม่ได้แปล", "en": "Untranslated" },
+    "รับเฉพาะ user UUID เท่านั้น (ไม่ใช่อีเมลหรือรหัสลูกค้า) — บันทึกไม่ได้ถ้ามีค่าอื่นปน": {
+      "th": "รับเฉพาะ user UUID เท่านั้น (ไม่ใช่อีเมลหรือรหัสลูกค้า) — บันทึกไม่ได้ถ้ามีค่าอื่นปน",
+      "en": "Accepts user UUID format only (not email or customer code) — validation fails with other inputs"
+    },
+    "ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่": { "th": "ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่", "en": "Drag files or folder here" },
+    "ส่งถึงแล้ว": { "th": "ส่งถึงแล้ว", "en": "Delivered" },
+    "หน้า ·": { "th": "หน้า ·", "en": "Page ·" },
+    "โอกาสขาย": { "th": "โอกาสขาย", "en": "Sales Opportunity" },
+    "ใช้อัตโนมัติ": { "th": "ใช้อัตโนมัติ", "en": "Auto Apply" },
+    "ราคาต้อง ≥ 0": { "th": "ราคาต้อง ≥ 0", "en": "Price must be ≥ 0" },
+    "บันทึกสถานะเครดิตไม่สำเร็จ": { "th": "บันทึกสถานะเครดิตไม่สำเร็จ", "en": "Failed to update credit status" },
+    "โหลดคำขอเครดิตไม่สำเร็จ": { "th": "โหลดคำขอเครดิตไม่สำเร็จ", "en": "Failed to load credit applications" }
+  }
+  </script>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface font-body-md antialiased overflow-x-hidden min-h-screen">
+<!-- ================= SIDEBAR (Shared Component: SideNavBar) ================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between py-4 px-3 shadow-none">
+<!-- Header Brand Section -->
+<div>
+<div class="flex items-center gap-3 px-2 mb-6">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[24px]">account_balance</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm text-primary tracking-tight">Commerce Admin</span>
+<span class="text-label-sm font-label-sm text-secondary">ศูนย์จัดการระบบพาณิชย์</span>
+</div>
+</div>
+<!-- Navigation Workspaces (7 Tabs) -->
+<nav class="space-y-1">
+<!-- 1: สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2: ออเดอร์และการเงิน (ACTIVE CATEGORY) -->
+<div class="pt-1">
+<a class="flex items-center justify-between px-3 py-2 text-label-md font-label-md bg-surface-container-high text-primary font-semibold rounded-lg transition-colors duration-150" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span>ออเดอร์และการเงิน</span>
+</div>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</a>
+<!-- Submenu -->
+<div class="ml-4 pl-3 my-1 border-l-2 border-primary-container/40 space-y-0.5">
+<a class="block px-2 py-1.5 text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container/60 rounded" href="#">ออเดอร์ทั้งหมด</a>
+<a class="block px-2 py-1.5 text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container/60 rounded" href="#">จัดการออเดอร์</a>
+<a class="block px-2 py-1.5 text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container/60 rounded" href="#">จัดการการจัดส่ง</a>
+<a class="block px-2 py-1.5 text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container/60 rounded" href="#">Payment Transactions</a>
+<a class="block px-2 py-1.5 text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container/60 rounded" href="#">ใบแจ้งหนี้ค้างชำระ</a>
+<!-- Active Sub-item -->
+<a class="flex items-center justify-between px-2 py-1.5 text-body-sm font-body-sm font-semibold bg-surface-container-highest text-primary rounded" href="/j/credit-terms">
+<span>ใบสมัครเครดิต</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+</a>
+<a class="block px-2 py-1.5 text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container/60 rounded" href="#">เครดิตคืน (Credit Backs)</a>
+<a class="block px-2 py-1.5 text-body-sm font-body-sm text-secondary hover:text-on-surface hover:bg-surface-container/60 rounded" href="#">การจองสต็อก (Reservations)</a>
+</div>
+</div>
+<!-- 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5: รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">monitoring</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer CTA & Actions -->
+<div class="border-t border-outline-variant pt-3 space-y-1">
+<a class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-semibold text-label-sm transition-colors" href="#">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Developer Portal</span>
+</span>
+<span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span>ศูนย์ช่วยเหลือ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-label-md font-label-md text-error hover:bg-error-container/40 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ================= TOP HEADER (Shared Component: TopNavBar) ================= -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-6 shadow-none">
+<!-- Breadcrumbs & Omnisearch -->
+<div class="flex items-center gap-6 flex-1 max-w-2xl">
+<nav class="flex items-center gap-1.5 text-label-sm font-label-sm text-secondary truncate">
+<span>ออเดอร์และการเงิน</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">ใบสมัครเครดิต (/j/credit-terms)</span>
+<span class="text-outline-variant">/</span>
+<span class="font-mono text-label-sm text-secondary">admin-3405ab848a95</span>
+</nav>
+<!-- Search input on left -->
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full h-8 pl-8 pr-3 text-body-sm font-body-sm bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface" id="search-input" placeholder="ค้นหาชื่อบริษัท, เลขประจำตัวผู้เสียภาษี, หรือ ID..." type="text"/>
+</div>
+</div>
+<!-- Header Trailing Action Cluster -->
+<div class="flex items-center gap-4">
+<!-- Top banner sample data chip -->
+<div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/80 text-secondary text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+<span>ข้อมูลตัวอย่าง / Sample data</span>
+</div>
+<!-- Bilingual Toggle [TH | EN] -->
+<div class="flex items-center bg-[#edf2f9] p-0.5 rounded-full border border-outline-variant" id="lang-switch-container">
+<button class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-white text-on-surface shadow-sm border border-outline-variant/60 transition-all" id="lang-th-btn" onclick="switchLanguage('th')">
+          ไทย
+        </button>
+<button class="px-2.5 py-1 text-[11px] font-medium rounded-full text-secondary hover:text-on-surface transition-all" id="lang-en-btn" onclick="switchLanguage('en')">
+          English
+        </button>
+</div>
+<!-- Icons: notifications & help -->
+<div class="flex items-center gap-1 text-secondary">
+<button class="relative p-1.5 rounded-lg hover:bg-surface-container transition-colors" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container transition-colors" title="Help">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+</div>
+<!-- User Profile Badge -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-label-sm border border-primary/20">
+          OP
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-label-sm font-label-sm font-semibold text-on-surface leading-tight">OP สมชาย บริการค้า</span>
+<span class="text-[10px] text-secondary leading-tight">Finance &amp; Operations</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ================= MAIN CONTENT CANVAS ================= -->
+<main class="ml-64 pt-14 p-6 min-h-screen">
+<div class="max-w-[1240px] mx-auto space-y-6">
+<!-- Breadcrumbs and Title Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight" data-i18n="ใบสมัครเครดิต">ใบสมัครเครดิต</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/30 text-label-sm font-label-sm font-semibold" data-i18n="Credit Term แอป">
+              Credit Term แอป
+            </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-secondary text-label-sm font-mono">
+              admin-3405ab848a95
+            </span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1" data-i18n="อนุมัติ / ขอเอกสาร / ปฏิเสธคำขอเครดิต">
+            อนุมัติ / ขอเอกสาร / ปฏิเสธคำขอเครดิต
+          </p>
+</div>
+<!-- Top Right Actions -->
+<div class="flex items-center gap-2.5">
+<button class="h-10 px-3.5 bg-white border border-outline-variant rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container flex items-center gap-2 text-label-lg font-label-lg transition-colors shadow-sm" onclick="refreshData()">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>รีเฟรชข้อมูล</span>
+</button>
+<button class="h-10 px-4 bg-primary text-white rounded-lg hover:bg-primary-container flex items-center gap-2 text-label-lg font-label-lg transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>ส่งออกรายงาน (.CSV)</span>
+</button>
+</div>
+</div>
+<!-- Quick Metrics Summary Cards (Bento Style with clear status colors) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: Pending Review -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant shadow-sm flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2 text-secondary mb-1">
+<span class="material-symbols-outlined text-[18px] text-[#b08900]">schedule</span>
+<span class="text-label-md font-label-md">Pending Review</span>
+</div>
+<div class="text-[26px] font-bold text-on-surface tracking-tight">8 <span class="text-body-sm font-normal text-secondary">คำขอ</span></div>
+<div class="text-label-sm text-[#b08900] font-semibold mt-1">฿3,850,000 วงเงินรอตรวจ</div>
+</div>
+<span class="px-2 py-1 bg-[#fdf8e6] text-[#b08900] border border-[#fae392] rounded-md text-label-sm font-semibold">
+            รอบันทึก
+          </span>
+</div>
+<!-- Card 2: Request Doc -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant shadow-sm flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2 text-secondary mb-1">
+<span class="material-symbols-outlined text-[18px] text-[#365cf5]">attach_file</span>
+<span class="text-label-md font-label-md">Request Doc</span>
+</div>
+<div class="text-[26px] font-bold text-on-surface tracking-tight">3 <span class="text-body-sm font-normal text-secondary">บริษัท</span></div>
+<div class="text-label-sm text-[#365cf5] font-semibold mt-1">รอเอกสาร ภ.พ.20 / งบฯ</div>
+</div>
+<span class="px-2 py-1 bg-[#ebf0ff] text-[#365cf5] border border-[#b9c3ff] rounded-md text-label-sm font-semibold">
+            ขอเพิ่ม
+          </span>
+</div>
+<!-- Card 3: Approved -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant shadow-sm flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2 text-secondary mb-1">
+<span class="material-symbols-outlined text-[18px] text-[#157347]">check_circle</span>
+<span class="text-label-md font-label-md">Approved (เดือนนี้)</span>
+</div>
+<div class="text-[26px] font-bold text-on-surface tracking-tight">24 <span class="text-body-sm font-normal text-secondary">ราย</span></div>
+<div class="text-label-sm text-[#157347] font-semibold mt-1">฿14,200,000 อนุมัติแล้ว</div>
+</div>
+<span class="px-2 py-1 bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8] rounded-md text-label-sm font-semibold">
+            ผ่านเกณฑ์
+          </span>
+</div>
+<!-- Card 4: Rejected -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant shadow-sm flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2 text-secondary mb-1">
+<span class="material-symbols-outlined text-[18px] text-[#c2333f]">cancel</span>
+<span class="text-label-md font-label-md">Rejected</span>
+</div>
+<div class="text-[26px] font-bold text-on-surface tracking-tight">5 <span class="text-body-sm font-normal text-secondary">ราย</span></div>
+<div class="text-label-sm text-[#c2333f] font-semibold mt-1">เครดิตบูโร / งบขาดทุน</div>
+</div>
+<span class="px-2 py-1 bg-[#faecee] text-[#c2333f] border border-[#f1b3b8] rounded-md text-label-sm font-semibold">
+            ปฏิเสธ
+          </span>
+</div>
+</div>
+<!-- Information Callout Bar for ERP Inbound Logs Requirement -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-3.5 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">info</span>
+<div class="flex-1 text-body-sm font-body-sm text-secondary">
+<span class="font-semibold text-on-surface" data-i18n="ดู log ของ request นี้เพิ่มได้ที่หน้า ERP Inbound Logs (ผ่าน service ตัวจริง แต่ไม่ผ่าน HTTP interceptor ของ /api/erp/* — row จะไม่ขึ้นใน log viewer)">
+            ดู log ของ request นี้เพิ่มได้ที่หน้า ERP Inbound Logs (ผ่าน service ตัวจริง แต่ไม่ผ่าน HTTP interceptor ของ /api/erp/* — row จะไม่ขึ้นใน log viewer)
+          </span>
+</div>
+<a class="text-primary hover:underline text-label-sm font-label-sm font-semibold whitespace-nowrap flex items-center gap-1" href="#">
+<span>ERP Inbound</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</div>
+<!-- Filter & Search Control Bar -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-3">
+<!-- Status Dropdown Filter -->
+<div class="flex items-center gap-2">
+<label class="text-label-md font-label-md text-secondary" data-i18n="กรองตามสถานะ" for="status-filter">กรองตามสถานะ:</label>
+<div class="relative">
+<select class="h-9 pl-3 pr-8 text-body-sm font-body-sm bg-surface-container-low border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:border-primary cursor-pointer" id="status-filter" onchange="filterStatus(this.value)">
+<option data-i18n="ทุกสถานะ" value="ALL">ทุกสถานะ</option>
+<option data-i18n="Pending" value="Pending">Pending</option>
+<option data-i18n="Review" value="Review">Review</option>
+<option data-i18n="Request Doc" value="Request Doc">Request Doc</option>
+<option data-i18n="Approved" value="Approved">Approved</option>
+<option data-i18n="Rejected" value="Rejected">Rejected</option>
+</select>
+</div>
+</div>
+<!-- Quick Term Duration Pills -->
+<div class="hidden lg:flex items-center gap-1.5 pl-3 border-l border-outline-variant text-label-sm">
+<span class="text-secondary mr-1">ระยะเวลาเทอม:</span>
+<button class="px-2.5 py-1 rounded-full bg-surface-container text-primary font-semibold hover:bg-surface-container-high">30 วัน</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-low text-secondary hover:bg-surface-container">60 วัน</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-low text-secondary hover:bg-surface-container">90 วัน</button>
+</div>
+</div>
+<!-- In-page Table Filter Search -->
+<div class="relative w-full md:w-80">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-[18px]">filter_list</span>
+<input class="w-full h-9 pl-8 pr-3 text-body-sm font-body-sm bg-white border border-outline-variant rounded-lg focus:outline-none focus:border-primary text-on-surface" id="table-filter-input" onkeyup="searchTable()" placeholder="กรองรายการในหน้านี้ (ID, บริษัท, ผู้ติดต่อ)..." type="text"/>
+</div>
+</div>
+<!-- Main Data Table Container -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="applications-table">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-outline-variant text-secondary text-label-md font-label-md uppercase tracking-wider">
+<th class="py-3 px-4" data-i18n="ID">ID</th>
+<th class="py-3 px-4" data-i18n="บริษัท">บริษัท / ผู้สมัคร</th>
+<th class="py-3 px-4 text-right" data-i18n="วงเงินขอ">วงเงินขอ</th>
+<th class="py-3 px-4 text-center" data-i18n="เทอม (วัน)">เทอม (วัน)</th>
+<th class="py-3 px-4" data-i18n="ช่องทางชำระเงินที่ใช้ได้">ช่องทางชำระเงินที่ใช้ได้</th>
+<th class="py-3 px-4 text-center" data-i18n="สถานะ">สถานะ</th>
+<th class="py-3 px-4 text-center" data-i18n="จัดการ">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant font-table-cell text-table-cell">
+<!-- Row 1: CR-20250328-001 (Review) -->
+<tr class="hover:bg-slate-50 transition-colors app-row" data-status="Review">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+                  CR-20250328-001
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">บริษัท สยาม โลจิสติกส์ อินโนเวชั่น จำกัด</div>
+<div class="text-body-sm text-secondary flex items-center gap-2">
+<span>Tax ID: 0105558091234</span>
+<span>•</span>
+<span>ผู้ติดต่อ: คุณอนุชา พงษ์ศิริ</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿500,000.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded bg-surface-container text-on-surface font-numeric-data">30 วัน</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">โอนเงิน / QR</span>
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">เช็ค</span>
+<span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-medium border border-blue-200">B2B Credit</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#ebf0ff] text-[#365cf5] border border-[#b9c3ff]" data-i18n="Review">
+                    Review
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-semibold bg-white border border-outline-variant hover:bg-surface-container rounded-lg text-secondary hover:text-on-surface transition-colors shadow-xs" onclick="openModal('CR-20250328-001', 'บริษัท สยาม โลจิสติกส์ อินโนเวชั่น จำกัด', '฿500,000.00', '30 วัน', 'Review')">
+                      ตรวจเอกสาร
+                    </button>
+<button class="px-2.5 py-1 text-label-sm font-semibold bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8] hover:bg-emerald-100 rounded-lg transition-colors" data-i18n="อนุมัติ" onclick="approveDirect(this)">
+                      อนุมัติ
+                    </button>
+</div>
+</td>
+</tr>
+<!-- Row 2: CR-20250328-002 (Pending) -->
+<tr class="hover:bg-slate-50 transition-colors app-row" data-status="Pending">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+                  CR-20250328-002
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">บจก. ธนาภัณฑ์ ค้าส่งอาหารแห้ง กรุงเทพฯ</div>
+<div class="text-body-sm text-secondary flex items-center gap-2">
+<span>Tax ID: 0105562019941</span>
+<span>•</span>
+<span>ผู้ติดต่อ: น.ส. วรรณา ทรัพย์ดี</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿1,200,000.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded bg-surface-container text-on-surface font-numeric-data">60 วัน</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">โอนเงิน / QR</span>
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">เช็ค</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#fdf8e6] text-[#b08900] border border-[#fae392]" data-i18n="Pending">
+                    Pending
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-semibold bg-white border border-outline-variant hover:bg-surface-container rounded-lg text-secondary hover:text-on-surface transition-colors" onclick="openModal('CR-20250328-002', 'บจก. ธนาภัณฑ์ ค้าส่งอาหารแห้ง กรุงเทพฯ', '฿1,200,000.00', '60 วัน', 'Pending')">
+                      ตรวจเอกสาร
+                    </button>
+<button class="px-2.5 py-1 text-label-sm font-semibold bg-[#ebf0ff] text-[#365cf5] border border-[#b9c3ff] hover:bg-blue-100 rounded-lg transition-colors" data-i18n="ขอเอกสารใหม่" onclick="openModal('CR-20250328-002', 'บจก. ธนาภัณฑ์ ค้าส่งอาหารแห้ง กรุงเทพฯ', '฿1,200,000.00', '60 วัน', 'Pending', true)">
+                      ขอเอกสารใหม่
+                    </button>
+</div>
+</td>
+</tr>
+<!-- Row 3: CR-20250327-014 (Request Doc) -->
+<tr class="hover:bg-slate-50 transition-colors app-row" data-status="Request Doc">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+                  CR-20250327-014
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">ห้างหุ้นส่วนจำกัด กิจรุ่งเรือง พาณิชย์อีคอมเมิร์ซ</div>
+<div class="text-body-sm text-secondary flex items-center gap-2">
+<span>Tax ID: 0123549001228</span>
+<span>•</span>
+<span>ผู้ติดต่อ: นายนพดล กิจรุ่ง</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-numeric-data font-semibold text-on-surface">
+                  ฿150,000.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded bg-surface-container text-on-surface font-numeric-data">30 วัน</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">โอนเงิน / QR</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#ebf0ff] text-[#365cf5] border border-[#b9c3ff]" data-i18n="Request Doc">
+                    Request Doc
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-semibold bg-white border border-outline-variant hover:bg-surface-container rounded-lg text-secondary hover:text-on-surface transition-colors" onclick="openModal('CR-20250327-014', 'ห้างหุ้นส่วนจำกัด กิจรุ่งเรือง พาณิชย์อีคอมเมิร์ซ', '฿150,000.00', '30 วัน', 'Request Doc')">
+                      ดูสถานะส่งเอกสาร
+                    </button>
+<button class="px-2.5 py-1 text-label-sm font-semibold bg-[#faecee] text-[#c2333f] border border-[#f1b3b8] hover:bg-rose-100 rounded-lg transition-colors" data-i18n="ปฏิเสธ" onclick="rejectDirect(this)">
+                      ปฏิเสธ
+                    </button>
+</div>
+</td>
+</tr>
+<!-- Row 4: CR-20250326-009 (Approved) -->
+<tr class="hover:bg-slate-50 transition-colors app-row" data-status="Approved">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+                  CR-20250326-009
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">บริษัท โมเดิร์น รีเทล กรุ๊ป (มหาชน)</div>
+<div class="text-body-sm text-secondary flex items-center gap-2">
+<span>Tax ID: 0107560000889</span>
+<span>•</span>
+<span>ผู้ติดต่อ: ฝ่ายบัญชีและการเงิน</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right font-numeric-data font-semibold text-[#157347]">
+                  ฿2,000,000.00
+                </td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded bg-surface-container text-on-surface font-numeric-data">90 วัน</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">โอนเงิน / QR</span>
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200">เช็ค</span>
+<span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-medium border border-blue-200">B2B Credit</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#e8f5ee] text-[#157347] border border-[#b7dfc8]" data-i18n="Approved">
+                    Approved
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-semibold bg-white border border-outline-variant hover:bg-surface-container rounded-lg text-secondary hover:text-on-surface transition-colors" onclick="openModal('CR-20250326-009', 'บริษัท โมเดิร์น รีเทล กรุ๊ป (มหาชน)', '฿2,000,000.00', '90 วัน', 'Approved')">
+                      ดูสัญญาเครดิต
+                    </button>
+<span class="text-xs text-[#157347] flex items-center gap-0.5 font-medium">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>แก้ไขแล้ว</span>
+</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="p-4 bg-[#f6f8fc] border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm">
+<div class="flex items-center gap-2 text-secondary">
+<span data-i18n="หน้า ·">หน้า ·</span>
+<span class="font-semibold text-on-surface">1 จาก 4 รายการ</span>
+<span class="text-outline-variant">|</span>
+<span class="text-label-sm text-secondary">API Rate Limit: 1,840/2,000 req/hr</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded border border-outline-variant bg-white text-secondary hover:text-on-surface disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[16px] align-middle">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded bg-primary text-white font-semibold text-label-sm">1</button>
+<button class="px-2.5 py-1 rounded border border-outline-variant bg-white text-secondary hover:text-on-surface disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[16px] align-middle">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- User UUID Requirement Notice Card -->
+<div class="bg-amber-50/70 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-amber-600 text-[22px] mt-0.5">warning</span>
+<div class="space-y-1">
+<div class="text-label-md font-label-md text-amber-900 font-semibold" data-i18n="ค่าที่ต้องการ">
+            ข้อกำหนดระบบการระบุตัวตนผู้ขอเครดิต (ค่าที่ต้องการ):
+          </div>
+<div class="text-body-sm font-body-sm text-amber-800" data-i18n="รับเฉพาะ user UUID เท่านั้น (ไม่ใช่อีเมลหรือรหัสลูกค้า) — บันทึกไม่ได้ถ้ามีค่าอื่นปน">
+            รับเฉพาะ user UUID เท่านั้น (ไม่ใช่อีเมลหรือรหัสลูกค้า) — บันทึกไม่ได้ถ้ามีค่าอื่นปน
+          </div>
+</div>
+</div>
+</div>
+</main>
+<!-- ================= SLIDE-OVER DETAIL REVIEW MODAL ================= -->
+<div class="fixed inset-0 z-50 bg-[#17243b]/45 backdrop-blur-[2px] hidden transition-opacity flex justify-end" id="review-modal">
+<div class="w-full max-w-2xl bg-white h-full shadow-2xl flex flex-col justify-between overflow-hidden animate-slide-left">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">พิจารณาใบสมัครเครดิต</h3>
+<span class="font-mono text-label-sm text-secondary font-semibold" id="modal-app-id">CR-20250328-001</span>
+</div>
+</div>
+<button class="p-1 rounded-lg hover:bg-surface-container text-secondary hover:text-on-surface" onclick="closeModal()">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+<!-- Modal Body (Scrollable) -->
+<div class="p-6 overflow-y-auto space-y-6 flex-1 bg-[#f9fafc]">
+<!-- Applicant Corporate Details Box -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<h4 class="text-label-lg font-label-lg font-semibold text-on-surface" data-i18n="บริษัท">ข้อมูลนิติบุคคล / บริษัท</h4>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#ebf0ff] text-[#365cf5] border border-[#b9c3ff]" id="modal-status-badge">
+              Review
+            </span>
+</div>
+<div class="text-body-lg font-semibold text-primary" id="modal-company-name">บริษัท สยาม โลจิสติกส์ อินโนเวชั่น จำกัด</div>
+<div class="grid grid-cols-2 gap-3 text-body-sm pt-2 border-t border-outline-variant/60">
+<div>
+<span class="text-secondary block">ทุนจดทะเบียน:</span>
+<span class="font-semibold text-on-surface">฿10,000,000.00 (ชำระเต็ม)</span>
+</div>
+<div>
+<span class="text-secondary block">ประวัติการสั่งซื้อ (3 เดือน):</span>
+<span class="font-semibold text-[#157347]">฿1,840,200 (ตรงกำหนด 100%)</span>
+</div>
+<div>
+<span class="text-secondary block">วงเงินเครดิตที่ขอ:</span>
+<span class="font-bold text-on-surface text-[15px]" id="modal-limit">฿500,000.00</span>
+</div>
+<div>
+<span class="text-secondary block">เทอมการชำระเงินที่ขอ:</span>
+<span class="font-bold text-on-surface text-[15px]" id="modal-term">30 วัน</span>
+</div>
+</div>
+<!-- Strict User UUID Display with validation check -->
+<div class="mt-3 p-3 bg-surface-container-low rounded-lg border border-outline-variant text-body-sm">
+<span class="text-label-sm font-semibold text-secondary block mb-1">User UUID (ตามข้อกำหนดระบบ):</span>
+<div class="font-mono text-xs bg-white p-2 rounded border border-outline-variant/80 text-on-surface flex items-center justify-between">
+<span id="modal-user-uuid">8e1d7a42-9f33-4f10-b992-0b2a95c0147e</span>
+<span class="text-[#157347] flex items-center gap-1 text-[11px] font-sans font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> ถูกต้อง
+              </span>
+</div>
+</div>
+</div>
+<!-- Submitted Documents Review Area -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm space-y-4">
+<h4 class="text-label-lg font-label-lg font-semibold text-on-surface flex items-center justify-between">
+<span>เอกสารประกอบการพิจารณา (3 รายการ)</span>
+<span class="text-label-sm text-[#157347] font-semibold">แนบครบถ้วน</span>
+</h4>
+<div class="space-y-2.5">
+<!-- Doc 1: งบการเงินย้อนหลัง -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:bg-slate-50 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-rose-600 text-[28px]">picture_as_pdf</span>
+<div>
+<div class="font-semibold text-body-sm text-on-surface">งบการเงินปีล่าสุด_ audited_2024.pdf</div>
+<div class="text-[11px] text-secondary">2.8 MB • อัปโหลดเมื่อ 28 มี.ค. 2025 09:14</div>
+</div>
+</div>
+<button class="px-2.5 py-1 text-label-sm text-primary hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span> เปิดตรวจ
+              </button>
+</div>
+<!-- Doc 2: ภ.พ.20 -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:bg-slate-50 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-rose-600 text-[28px]">picture_as_pdf</span>
+<div>
+<div class="font-semibold text-body-sm text-on-surface">ภพ20_ใบทะเบียนภาษีมูลค่าเพิ่ม.pdf</div>
+<div class="text-[11px] text-secondary">850 KB • อัปโหลดเมื่อ 28 มี.ค. 2025 09:15</div>
+</div>
+</div>
+<button class="px-2.5 py-1 text-label-sm text-primary hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span> เปิดตรวจ
+              </button>
+</div>
+<!-- Doc 3: หนังสือรับรองบริษัท -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:bg-slate-50 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-rose-600 text-[28px]">picture_as_pdf</span>
+<div>
+<div class="font-semibold text-body-sm text-on-surface">หนังสือรับรองนิติบุคคล_DBD_ไม่เกิน3เดือน.pdf</div>
+<div class="text-[11px] text-secondary">1.4 MB • อัปโหลดเมื่อ 28 มี.ค. 2025 09:16</div>
+</div>
+</div>
+<button class="px-2.5 py-1 text-label-sm text-primary hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span> เปิดตรวจ
+              </button>
+</div>
+</div>
+<!-- Document Upload Drop Area Notice -->
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-4 text-center bg-[#f6f8fc]">
+<span class="material-symbols-outlined text-secondary text-[26px]">upload_file</span>
+<p class="text-body-sm text-secondary mt-1" data-i18n="ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่">ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่</p>
+<span class="text-[11px] text-outline">รองรับ PDF, JPG, PNG สูงสุด 25MB</span>
+</div>
+</div>
+<!-- Note & Reviewer Decision Input -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant shadow-sm space-y-2">
+<label class="text-label-md font-label-md font-semibold text-on-surface block">
+            หมายเหตุผลการพิจารณา (Finance Internal Note):
+          </label>
+<textarea class="w-full text-body-sm p-3 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-primary text-on-surface" id="modal-reviewer-note" placeholder="ระบุเหตุผลการอนุมัติ หรือเอกสารที่ต้องการให้ผู้สมัครอัปโหลดเพิ่มเติม..." rows="2"></textarea>
+</div>
+</div>
+<!-- Modal Action Footer Buttons -->
+<div class="px-6 py-4 bg-white border-t border-outline-variant flex items-center justify-between">
+<button class="h-10 px-4 bg-white border border-outline-variant rounded-lg text-secondary hover:text-on-surface text-label-lg font-label-lg transition-colors" onclick="closeModal()">
+          ปิด
+        </button>
+<div class="flex items-center gap-2">
+<button class="h-10 px-4 bg-[#faecee] text-[#c2333f] border border-[#f1b3b8] hover:bg-rose-100 rounded-lg text-label-lg font-label-lg transition-colors" data-i18n="ปฏิเสธ" onclick="rejectFromModal()">
+            ปฏิเสธ
+          </button>
+<button class="h-10 px-4 bg-[#ebf0ff] text-[#365cf5] border border-[#b9c3ff] hover:bg-blue-100 rounded-lg text-label-lg font-label-lg transition-colors" data-i18n="ขอเอกสารใหม่" onclick="requestDocFromModal()">
+            ขอเอกสารใหม่
+          </button>
+<button class="h-10 px-5 bg-primary text-white hover:bg-primary-container rounded-lg text-label-lg font-label-lg transition-colors shadow-sm" data-i18n="อนุมัติ" onclick="approveFromModal()">
+            อนุมัติ
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Toast Notification Container -->
+<div class="fixed bottom-6 right-6 z-50 bg-[#17243b] text-white px-4 py-3 rounded-xl shadow-lg border border-slate-700 hidden items-center gap-3" id="toast">
+<span class="material-symbols-outlined text-[20px] text-emerald-400" id="toast-icon">check_circle</span>
+<span class="text-body-sm font-medium" id="toast-message">การดำเนินการสำเร็จ</span>
+</div>
+<!-- ================= INLINE LOGIC & LANGUAGE TRANSLATION SCRIPT ================= -->
+<script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function switchLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-th-btn');
+      const enBtn = document.getElementById('lang-en-btn');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 text-[11px] font-semibold rounded-full bg-white text-on-surface shadow-sm border border-outline-variant/60 transition-all";
+        enBtn.className = "px-2.5 py-1 text-[11px] font-medium rounded-full text-secondary hover:text-on-surface transition-all";
+      } else {
+        enBtn.className = "px-2.5 py-1 text-[11px] font-semibold rounded-full bg-white text-on-surface shadow-sm border border-outline-variant/60 transition-all";
+        thBtn.className = "px-2.5 py-1 text-[11px] font-medium rounded-full text-secondary hover:text-on-surface transition-all";
+      }
+
+      // Update all data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[key] && translationsData[key][lang]) {
+          el.textContent = translationsData[key][lang];
+        }
+      });
+
+      // Update select option texts
+      const select = document.getElementById('status-filter');
+      Array.from(select.options).forEach(opt => {
+        const key = opt.getAttribute('data-i18n');
+        if (key && translationsData[key] && translationsData[key][lang]) {
+          opt.textContent = translationsData[key][lang];
+        }
+      });
+    }
+
+    function searchTable() {
+      const query = document.getElementById('table-filter-input').value.toLowerCase();
+      const rows = document.querySelectorAll('.app-row');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
+
+    function filterStatus(status) {
+      const rows = document.querySelectorAll('.app-row');
+      rows.forEach(row => {
+        if (status === 'ALL' || row.getAttribute('data-status') === status) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.textContent = message;
+      if (isError) {
+        toastIcon.textContent = 'error';
+        toastIcon.className = 'material-symbols-outlined text-[20px] text-rose-400';
+      } else {
+        toastIcon.textContent = 'check_circle';
+        toastIcon.className = 'material-symbols-outlined text-[20px] text-emerald-400';
+      }
+
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 3500);
+    }
+
+    function openModal(id, company, limit, term, status, isRequestDoc = false) {
+      document.getElementById('modal-app-id').textContent = id;
+      document.getElementById('modal-company-name').textContent = company;
+      document.getElementById('modal-limit').textContent = limit;
+      document.getElementById('modal-term').textContent = term;
+      document.getElementById('modal-status-badge').textContent = status;
+      if (isRequestDoc) {
+        document.getElementById('modal-reviewer-note').value = 'ขอเอกสาร ภ.พ.20 และงบการเงินฉบับมีผู้สอบบัญชีรับรองเพิ่มเติม';
+      } else {
+        document.getElementById('modal-reviewer-note').value = '';
+      }
+      document.getElementById('review-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('review-modal').classList.add('hidden');
+    }
+
+    function approveFromModal() {
+      const id = document.getElementById('modal-app-id').textContent;
+      closeModal();
+      showToast(`อนุมัติวงเงินสำหรับคำขอ ${id} เรียบร้อยแล้ว`);
+    }
+
+    function requestDocFromModal() {
+      const id = document.getElementById('modal-app-id').textContent;
+      closeModal();
+      showToast(`ส่งคำขอเอกสารใหม่ไปยังผู้สมัคร ${id} แล้ว`);
+    }
+
+    function rejectFromModal() {
+      const id = document.getElementById('modal-app-id').textContent;
+      closeModal();
+      showToast(`ปฏิเสธคำขอเครดิต ${id} แล้ว`, true);
+    }
+
+    function approveDirect(btn) {
+      const row = btn.closest('tr');
+      const id = row.querySelector('td').textContent.trim();
+      showToast(`อนุมัติวงเงิน ${id} สำเร็จ`);
+    }
+
+    function rejectDirect(btn) {
+      const row = btn.closest('tr');
+      const id = row.querySelector('td').textContent.trim();
+      showToast(`ปฏิเสธคำขอ ${id} แล้ว`, true);
+    }
+
+    function refreshData() {
+      showToast('อัปเดตข้อมูลคำขอเครดิตล่าสุดแล้ว');
+    }
+  </script>
+<style>
+    @keyframes slideLeft {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    .animate-slide-left {
+      animation: slideLeft 0.22s ease-out forwards;
+    }
+  </style>
+</body></html>

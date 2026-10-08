@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>คิวงานการตลาด (Marketing Queue) - สยาม คอมเมิร์ซ</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#e8eeff",
+            "primary-fixed-dim": "#b9c3ff",
+            "secondary-container": "#d0e1fd",
+            "on-secondary": "#ffffff",
+            "surface-container-low": "#f1f3ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "inverse-on-surface": "#ecf0ff",
+            "primary-fixed": "#dde1ff",
+            "outline-variant": "#c4c5d8",
+            "on-tertiary-container": "#b7ffcf",
+            "on-surface": "#0e1b32",
+            "on-secondary-container": "#54647c",
+            "secondary": "#4f5f77",
+            "tertiary-fixed": "#9ef5be",
+            "on-primary-fixed": "#001257",
+            "on-primary-container": "#ededff",
+            "error-container": "#ffdad6",
+            "tertiary-fixed-dim": "#82d8a3",
+            "primary": "#0a3fdc",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-variant": "#d7e2ff",
+            "on-tertiary-fixed-variant": "#00522f",
+            "surface-dim": "#cddaf9",
+            "on-tertiary-fixed": "#002110",
+            "on-error-container": "#93000a",
+            "outline": "#747687",
+            "error": "#ba1a1a",
+            "surface": "#f9f9ff",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-background": "#0e1b32",
+            "tertiary-container": "#217b4e",
+            "tertiary": "#006139",
+            "surface-container-high": "#e0e8ff",
+            "on-surface-variant": "#444655",
+            "on-secondary-fixed": "#0b1c31",
+            "background": "#f9f9ff",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#d3e3ff",
+            "primary-container": "#365cf5",
+            "inverse-surface": "#243048",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface-tint": "#214ce7",
+            "surface-bright": "#f9f9ff",
+            "on-primary": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "surface-container-highest": "#d7e2ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "margin": "1rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "gutter-desktop": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "display-lg": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "body-md": ["Noto Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex">
+<!-- Left Sidebar (SideNavBar - 256px fixed) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md select-none">
+<div class="flex flex-col gap-space-md">
+<!-- App Header Brand -->
+<div class="flex items-center gap-space-sm px-space-xs py-space-xs">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-md font-bold shadow-sm">
+          S
+        </div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight">สยาม คอมเมิร์ซ</span>
+<span class="text-label-md font-label-md text-secondary" data-i18n="brand_sub">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full flex items-center justify-center gap-space-xs py-space-sm px-space-md bg-primary-container text-on-primary rounded-lg font-label-lg font-semibold hover:bg-primary transition-all duration-150 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span data-i18n="cta_new">+ สร้างรายการใหม่</span>
+</button>
+<!-- Nav Links Cluster (7 Tabs) -->
+<nav class="flex flex-col gap-1 mt-space-xs">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="text-label-lg font-label-lg" data-i18n="nav_inventory">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="text-label-lg font-label-lg" data-i18n="nav_orders">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-label-lg font-label-lg" data-i18n="nav_customers">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด [ACTIVE] -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="text-label-lg font-label-lg font-semibold" data-i18n="nav_marketing">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-label-lg font-label-lg" data-i18n="nav_analytics">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="text-label-lg font-label-lg" data-i18n="nav_integrations">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-label-lg font-label-lg" data-i18n="nav_settings">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Links -->
+<div class="flex flex-col gap-1 pt-space-md border-t border-outline-variant">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="text-label-lg font-label-lg" data-i18n="nav_help">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-label-lg font-label-lg" data-i18n="nav_logout">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- Main Viewport Canvas (Fluid grid, desktop margin left 256px) -->
+<div class="flex-1 ml-64 flex flex-col min-w-0">
+<!-- TopNavBar (Fixed at top) -->
+<header class="h-16 fixed top-0 right-0 left-64 bg-surface-container-lowest border-b border-outline-variant z-30 flex items-center justify-between px-gutter-desktop">
+<div class="flex items-center gap-space-md">
+<!-- Breadcrumb / Route Context -->
+<div class="flex items-center gap-2">
+<span class="text-label-lg font-label-lg text-secondary" data-i18n="bc_marketing">การตลาด</span>
+<span class="text-secondary text-label-md">/</span>
+<h1 class="text-headline-sm font-headline-sm font-semibold text-on-surface" data-i18n="bc_sub">Marketing Queue</h1>
+<span class="ml-2 font-mono text-[11px] px-2 py-0.5 rounded bg-surface-container text-secondary font-medium border border-outline-variant">admin-5daec79741ef</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<!-- Sample data badge -->
+<div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-secondary border border-outline-variant text-label-md font-label-md">
+<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+<span data-i18n="badge_sample">ข้อมูลตัวอย่าง / Sample data</span>
+</div>
+<!-- Language toggle button -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container transition-all text-label-md font-label-md text-on-surface" id="langToggleBtn">
+<span class="material-symbols-outlined text-[16px]">translate</span>
+<span id="currentLangLabel">ไทย / English</span>
+</button>
+<!-- Notification and Help Icons -->
+<div class="flex items-center gap-1">
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" title="Help">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+</div>
+<!-- User Profile Avatar -->
+<div class="flex items-center gap-2 pl-space-sm border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-label-md">
+            OL
+          </div>
+<div class="hidden md:flex flex-col">
+<span class="text-label-md font-label-md text-on-surface leading-tight">Ops Lead Admin</span>
+<span class="text-[11px] text-secondary leading-tight">Bangkok HQ</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas (Scrollable area) -->
+<main class="mt-16 p-space-lg flex flex-col gap-space-lg max-w-[1600px] w-full mx-auto">
+<!-- Page Header & Action Controls Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md pb-space-xs">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface flex items-center gap-2">
+<span data-i18n="page_title">คิวงานการตลาด (Marketing Queue)</span>
+<span class="text-label-sm font-label-sm font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-tertiary">Active Service</span>
+</h1>
+<p class="text-body-md font-body-md text-secondary mt-1" data-i18n="page_subtitle">
+            ภาพรวม BullMQ scheduled fires ข้ามทุก workflow — ดูว่าช่วงไหน / workflow ไหน enroll เยอะสุด
+          </p>
+</div>
+<!-- Action Controls -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<!-- Time range selector -->
+<div class="flex items-center bg-surface-container-lowest border border-outline-variant rounded-lg p-0.5">
+<button class="px-3 py-1.5 rounded text-label-md font-label-md bg-primary-container text-on-primary font-semibold" data-i18n="filter_24h">24 ชม.</button>
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-secondary hover:text-on-surface" data-i18n="filter_7d">7 วัน</button>
+<button class="px-3 py-1.5 rounded text-label-md font-label-md text-secondary hover:text-on-surface" data-i18n="filter_30d">30 วัน</button>
+</div>
+<!-- Refresh Button -->
+<button class="flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface rounded-lg text-label-md font-label-md font-medium transition-all shadow-sm" id="refreshBtn">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span data-i18n="btn_refresh">รีเฟรช</span>
+</button>
+<!-- External Bull Board Link -->
+<a class="flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-lowest border border-outline-variant hover:border-primary text-primary rounded-lg text-label-md font-label-md font-semibold transition-all shadow-sm group" href="#">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+<span data-i18n="btn_bull_board">Bull Board ↗</span>
+</a>
+</div>
+</div>
+<!-- Top Metric Cards Grid (Utilitarian Bento Matrix) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- 1. Enrolled รวม -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-md font-label-md" data-i18n="metric_enrolled_title">Enrolled รวม</span>
+<span class="material-symbols-outlined text-[20px] text-primary">person_add</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-on-surface font-bold tracking-tight">14,289</span>
+<span class="text-label-sm font-label-sm text-tertiary flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +12.4%
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1" data-i18n="metric_enrolled_sub">
+            max ต่อวัน แล้วรวม — ไม่บวก cron ซ้ำ
+          </p>
+</div>
+<!-- 2. สำเร็จ (attempts) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-md font-label-md" data-i18n="metric_success_title">สำเร็จ (attempts)</span>
+<span class="material-symbols-outlined text-[20px] text-tertiary">check_circle</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-on-surface font-bold tracking-tight">13,942</span>
+<span class="text-label-sm font-label-sm font-medium text-secondary">97.57%</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1" data-i18n="metric_success_sub">
+            รวม safety-net retries
+          </p>
+</div>
+<!-- 3. Failed -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-md font-label-md" data-i18n="metric_failed_title">Failed</span>
+<span class="material-symbols-outlined text-[20px] text-error">cancel</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-error font-bold tracking-tight">42</span>
+<span class="text-label-sm font-label-sm text-error flex items-center">
+              0.29%
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1" data-i18n="metric_failed_sub">
+            งานล้มเหลว รอ automatic backoff
+          </p>
+</div>
+<!-- 4. Skipped / ข้าม -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-md font-label-md" data-i18n="metric_skipped_title">Skipped / ข้าม</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">skip_next</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-on-surface font-bold tracking-tight">305</span>
+<span class="text-label-sm font-label-sm text-secondary font-medium">2.14%</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1" data-i18n="metric_skipped_sub">
+            audience ไม่ตรงเงื่อนไข trigger
+          </p>
+</div>
+</div>
+<!-- Highlight Insight Banners -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Banner 1: Peak hour bucket -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-md flex items-start gap-3 shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[22px]">schedule</span>
+</div>
+<div class="flex-1">
+<div class="text-label-sm font-label-sm text-secondary" data-i18n="insight_peak_label">ช่วงนี้ enroll เยอะสุด:</div>
+<div class="text-headline-sm font-headline-sm text-on-surface font-bold mt-0.5">
+              11:00 - 12:00 น. <span class="text-label-lg font-label-lg font-medium text-secondary">(เที่ยงวัน Flash Sale)</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+<span class="font-semibold text-primary">3,842</span> <span data-i18n="insight_peak_enrolled">enrolled จาก</span> <span class="font-semibold text-on-surface">18</span> <span data-i18n="insight_peak_fires">fires</span> (44.8% ของปริมาณงานรอบเช้า)
+            </p>
+</div>
+</div>
+<!-- Banner 2: Top workflow -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-md flex items-start gap-3 shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[22px]">auto_mode</span>
+</div>
+<div class="flex-1">
+<div class="text-label-sm font-label-sm text-secondary" data-i18n="insight_wf_label">Workflow ที่ enroll เยอะสุด:</div>
+<div class="text-headline-sm font-headline-sm text-on-surface font-bold mt-0.5">
+              Abandoned Cart Recovery 1hr <span class="text-label-sm font-mono text-secondary px-1.5 py-0.5 bg-surface-container rounded ml-1">WF-CRT-01</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+<span class="font-semibold text-primary">5,410</span> <span data-i18n="insight_wf_enrolled">enrolled</span> (37.8% ของ total pipeline) • 99.2% success
+            </p>
+</div>
+</div>
+</div>
+<!-- Section 1: Enrolled ตามเวลา (24 ชม.) Table breakdown -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-md shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-space-sm mb-space-sm border-b border-outline-variant gap-2">
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface font-bold flex items-center gap-2">
+<span data-i18n="sec1_title">Enrolled ตามเวลา (24 ชม.)</span>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-secondary">Hourly Buckets</span>
+</h2>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="sec1_sub">ตารางวิเคราะห์การแจกแจงงานคิว BullMQ ต่อช่วงเวลา 60 นาที</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-secondary text-[16px]">search</span>
+<input class="pl-8 pr-3 py-1.5 text-body-sm font-body-sm bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:border-primary" id="bucketSearch" placeholder="ค้นหา Bucket / เวลา..." type="text"/>
+</div>
+<button class="p-1.5 rounded-lg border border-outline-variant hover:bg-surface-container text-secondary" title="Export CSV">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="bucketTable">
+<thead>
+<tr class="bg-surface-container-low text-secondary text-label-md font-label-md border-b border-outline-variant">
+<th class="py-2.5 px-4 font-semibold" data-i18n="th_time">เวลา</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="th_range">ช่วง</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="th_hour">ชั่วโมง</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="th_day">วัน</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="th_bucket">Bucket</th>
+<th class="py-2.5 px-4 font-semibold text-right" data-i18n="th_occurrence">occurrence ต่อวัน</th>
+<th class="py-2.5 px-4 font-semibold text-right" data-i18n="th_enrolled">Enrolled</th>
+<th class="py-2.5 px-4 font-semibold text-center" data-i18n="th_status">สถานะ</th>
+</tr>
+</thead>
+<tbody class="text-data-tabular font-data-tabular divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">11:00</td>
+<td class="py-3 px-4 text-secondary" data-i18n="row_morning">ช่วงกลางวัน</td>
+<td class="py-3 px-4 text-on-surface">11</td>
+<td class="py-3 px-4 text-secondary">วันนี้</td>
+<td class="py-3 px-4"><span class="font-mono text-xs px-2 py-0.5 rounded bg-surface-container text-primary font-medium">BKT-1100-PEAK</span></td>
+<td class="py-3 px-4 text-right font-medium">18 fires</td>
+<td class="py-3 px-4 text-right font-semibold text-primary">3,842</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สมบูรณ์</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">12:00</td>
+<td class="py-3 px-4 text-secondary" data-i18n="row_afternoon">ช่วงบ่าย</td>
+<td class="py-3 px-4 text-on-surface">12</td>
+<td class="py-3 px-4 text-secondary">วันนี้</td>
+<td class="py-3 px-4"><span class="font-mono text-xs px-2 py-0.5 rounded bg-surface-container text-primary font-medium">BKT-1200-LUNCH</span></td>
+<td class="py-3 px-4 text-right font-medium">14 fires</td>
+<td class="py-3 px-4 text-right font-semibold text-primary">2,610</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สมบูรณ์</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">10:00</td>
+<td class="py-3 px-4 text-secondary" data-i18n="row_morning">ช่วงเช้า</td>
+<td class="py-3 px-4 text-on-surface">10</td>
+<td class="py-3 px-4 text-secondary">วันนี้</td>
+<td class="py-3 px-4"><span class="font-mono text-xs px-2 py-0.5 rounded bg-surface-container text-primary font-medium">BKT-1000-NORM</span></td>
+<td class="py-3 px-4 text-right font-medium">12 fires</td>
+<td class="py-3 px-4 text-right font-semibold text-on-surface">1,940</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สมบูรณ์</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">09:00</td>
+<td class="py-3 px-4 text-secondary" data-i18n="row_morning">ช่วงเช้า</td>
+<td class="py-3 px-4 text-on-surface">09</td>
+<td class="py-3 px-4 text-secondary">วันนี้</td>
+<td class="py-3 px-4"><span class="font-mono text-xs px-2 py-0.5 rounded bg-surface-container text-primary font-medium">BKT-0900-OPEN</span></td>
+<td class="py-3 px-4 text-right font-medium">10 fires</td>
+<td class="py-3 px-4 text-right font-semibold text-on-surface">1,520</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สมบูรณ์</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">08:00</td>
+<td class="py-3 px-4 text-secondary" data-i18n="row_morning">ช่วงเช้า</td>
+<td class="py-3 px-4 text-on-surface">08</td>
+<td class="py-3 px-4 text-secondary">วันนี้</td>
+<td class="py-3 px-4"><span class="font-mono text-xs px-2 py-0.5 rounded bg-surface-container text-primary font-medium">BKT-0800-EARLY</span></td>
+<td class="py-3 px-4 text-right font-medium">8 fires</td>
+<td class="py-3 px-4 text-right font-semibold text-on-surface">980</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-amber-100 text-amber-800">มี Retry</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">00:00 - 07:00</td>
+<td class="py-3 px-4 text-secondary" data-i18n="row_night">รอบดึก</td>
+<td class="py-3 px-4 text-on-surface">00-07</td>
+<td class="py-3 px-4 text-secondary">เมื่อคืน</td>
+<td class="py-3 px-4"><span class="font-mono text-xs px-2 py-0.5 rounded bg-surface-container text-primary font-medium">BKT-OVERNIGHT</span></td>
+<td class="py-3 px-4 text-right font-medium">22 fires</td>
+<td class="py-3 px-4 text-right font-semibold text-on-surface">3,397</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สมบูรณ์</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Section 2: Fires ล่าสุด (Recent workflow fires) -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-space-md shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-space-sm mb-space-sm border-b border-outline-variant gap-2">
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface font-bold flex items-center gap-2">
+<span data-i18n="sec2_title">Fires ล่าสุด</span>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-secondary">Realtime Stream</span>
+</h2>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="sec2_sub">บันทึกการประมวลผลงาน trigger BullMQ ข้ามทุกเวิร์กโฟลว์อัตโนมัติ</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md font-label-md text-secondary" data-i18n="filter_status_label">ตัวกรอง:</span>
+<select class="text-label-md font-label-md bg-surface-container-lowest border border-outline-variant rounded-lg px-2.5 py-1 text-on-surface focus:outline-none focus:border-primary">
+<option value="all">ทั้งหมด (All)</option>
+<option value="completed">สำเร็จ (Completed)</option>
+<option value="failed">Failed</option>
+<option value="retrying">Retrying</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary text-label-md font-label-md border-b border-outline-variant">
+<th class="py-2.5 px-4 font-semibold" data-i18n="th2_time">เวลา</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="th2_workflow">Workflow</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="th2_audience">Audience</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="th2_round">รอบ</th>
+<th class="py-2.5 px-4 font-semibold text-right" data-i18n="th2_enrolled">Enrolled</th>
+<th class="py-2.5 px-4 font-semibold text-center" data-i18n="th2_status">สถานะ</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="th2_source">แหล่ง</th>
+</tr>
+</thead>
+<tbody class="text-data-tabular font-data-tabular divide-y divide-outline-variant">
+<!-- Item 1 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">11:45:12</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">Flash Sale 12.12 Teaser (SMS)</div>
+<div class="text-[11px] text-secondary font-mono">wf-promo-sms-1212</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[14px]">group</span> VIP Tier 1
+                  </span>
+</td>
+<td class="py-3 px-4 text-secondary">#08 / วันนี้</td>
+<td class="py-3 px-4 text-right font-semibold text-primary">1,450</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สำเร็จ</span>
+</td>
+<td class="py-3 px-4">
+<span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-mono">cron-scheduled</span>
+</td>
+</tr>
+<!-- Item 2 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">11:30:00</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">Abandoned Cart Recovery 1hr</div>
+<div class="text-[11px] text-secondary font-mono">wf-cart-dropoff-01</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[14px]">shopping_cart</span> Cart &gt; ฿1,000
+                  </span>
+</td>
+<td class="py-3 px-4 text-secondary">#23 / วันนี้</td>
+<td class="py-3 px-4 text-right font-semibold text-on-surface">892</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สำเร็จ</span>
+</td>
+<td class="py-3 px-4">
+<span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-mono">event-hook</span>
+</td>
+</tr>
+<!-- Item 3 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">11:15:04</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">LINE OA Broadcast: Coupon Drop</div>
+<div class="text-[11px] text-secondary font-mono">wf-line-broadcast-cp</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[14px]">bolt</span> Active Last 30d
+                  </span>
+</td>
+<td class="py-3 px-4 text-secondary">#03 / วันนี้</td>
+<td class="py-3 px-4 text-right font-semibold text-primary">1,500</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สำเร็จ</span>
+</td>
+<td class="py-3 px-4">
+<span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-mono">bull-recurring</span>
+</td>
+</tr>
+<!-- Item 4 (Failed case) -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">10:55:00</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">Re-engagement: Inactive 90 Days</div>
+<div class="text-[11px] text-secondary font-mono">wf-reengage-email-90d</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[14px]">mail</span> Inactive Buyers
+                  </span>
+</td>
+<td class="py-3 px-4 text-secondary">#01 / วันนี้</td>
+<td class="py-3 px-4 text-right font-semibold text-error">42</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-red-100 text-error">Failed</span>
+</td>
+<td class="py-3 px-4">
+<span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-mono">cron-scheduled</span>
+</td>
+</tr>
+<!-- Item 5 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">10:40:22</td>
+<td class="py-3 px-4">
+<div class="font-medium text-on-surface">Welcome Series: Step 2 (Voucher)</div>
+<div class="text-[11px] text-secondary font-mono">wf-onboarding-s2</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[14px]">person</span> New Registrations
+                  </span>
+</td>
+<td class="py-3 px-4 text-secondary">#19 / วันนี้</td>
+<td class="py-3 px-4 text-right font-semibold text-on-surface">318</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-tertiary">สำเร็จ</span>
+</td>
+<td class="py-3 px-4">
+<span class="text-xs px-2 py-0.5 rounded bg-surface-container text-secondary font-mono">bull-delayed</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="flex items-center justify-between pt-space-sm mt-space-sm border-t border-outline-variant text-label-md font-label-md text-secondary">
+<div>
+<span data-i18n="showing_rows">แสดง 1 ถึง 5 จากทั้งหมด 48 fires ใน 24 ชม.</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded border border-outline-variant hover:bg-surface-container disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded bg-primary text-on-primary font-semibold">1</button>
+<button class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container">2</button>
+<button class="px-3 py-1 rounded border border-outline-variant hover:bg-surface-container">3</button>
+<button class="px-2.5 py-1 rounded border border-outline-variant hover:bg-surface-container">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Empty / Filter State Demonstration (Hidden by default, used when filter yields zero) -->
+<div class="hidden bg-surface-container-lowest border border-dashed border-outline-variant rounded-xl p-space-xl flex-col items-center justify-center text-center" id="emptyFilterState">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-secondary mb-2">
+<span class="material-symbols-outlined text-[28px]">inbox</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm font-semibold text-on-surface" data-i18n="empty_title">ไม่พบรายการคิวในเงื่อนไขนี้</h3>
+<p class="text-body-sm font-body-sm text-secondary max-w-sm mt-1" data-i18n="empty_desc">ลองเปลี่ยนคำค้นหา หรือรีเซ็ตช่วงเวลาเพื่อดูคิวงาน BullMQ ที่บันทึกไว้</p>
+</div>
+</main>
+</div>
+<!-- Mandatory invisible translation catalogue script -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "brand_title": {
+      "th": "สยาม คอมเมิร์ซ",
+      "en": "Siam Commerce"
+    },
+    "brand_sub": {
+      "th": "ศูนย์จัดการระบบร้านค้า",
+      "en": "Commerce Operations Hub"
+    },
+    "cta_new": {
+      "th": "+ สร้างรายการใหม่",
+      "en": "+ Create New Entry"
+    },
+    "nav_inventory": {
+      "th": "สินค้าและสต็อก",
+      "en": "Products & Stock"
+    },
+    "nav_orders": {
+      "th": "ออเดอร์และการเงิน",
+      "en": "Orders & Finance"
+    },
+    "nav_customers": {
+      "th": "ลูกค้าและบริการ",
+      "en": "Customers & Service"
+    },
+    "nav_marketing": {
+      "th": "การตลาด",
+      "en": "Marketing"
+    },
+    "nav_analytics": {
+      "th": "รายงานและข้อมูล",
+      "en": "Reports & Analytics"
+    },
+    "nav_integrations": {
+      "th": "ระบบเชื่อมต่อ",
+      "en": "Integrations & Hub"
+    },
+    "nav_settings": {
+      "th": "ตั้งค่าและทีมงาน",
+      "en": "Settings & Team"
+    },
+    "nav_help": {
+      "th": "คู่มือใช้งาน",
+      "en": "User Manual"
+    },
+    "nav_logout": {
+      "th": "ออกจากระบบ",
+      "en": "Log Out"
+    },
+    "bc_marketing": {
+      "th": "การตลาด",
+      "en": "Marketing"
+    },
+    "bc_sub": {
+      "th": "Marketing Queue",
+      "en": "Marketing Queue"
+    },
+    "badge_sample": {
+      "th": "ข้อมูลตัวอย่าง / Sample data",
+      "en": "Sample Data Active"
+    },
+    "page_title": {
+      "th": "คิวงานการตลาด (Marketing Queue)",
+      "en": "Marketing Queue Dashboard"
+    },
+    "page_subtitle": {
+      "th": "ภาพรวม BullMQ scheduled fires ข้ามทุก workflow — ดูว่าช่วงไหน / workflow ไหน enroll เยอะสุด",
+      "en": "Overview of BullMQ scheduled fires across all workflows — identify peak time windows and highest enrollment workflows"
+    },
+    "filter_24h": {
+      "th": "24 ชม.",
+      "en": "24 Hours"
+    },
+    "filter_7d": {
+      "th": "7 วัน",
+      "en": "7 Days"
+    },
+    "filter_30d": {
+      "th": "30 วัน",
+      "en": "30 Days"
+    },
+    "btn_refresh": {
+      "th": "รีเฟรช",
+      "en": "Refresh"
+    },
+    "btn_bull_board": {
+      "th": "Bull Board ↗",
+      "en": "Bull Board ↗"
+    },
+    "metric_enrolled_title": {
+      "th": "Enrolled รวม",
+      "en": "Total Enrolled"
+    },
+    "metric_enrolled_sub": {
+      "th": "max ต่อวัน แล้วรวม — ไม่บวก cron ซ้ำ",
+      "en": "daily max aggregated — excludes duplicate crons"
+    },
+    "metric_success_title": {
+      "th": "สำเร็จ (attempts)",
+      "en": "Successful (Attempts)"
+    },
+    "metric_success_sub": {
+      "th": "รวม safety-net retries",
+      "en": "includes safety-net retries"
+    },
+    "metric_failed_title": {
+      "th": "Failed",
+      "en": "Failed"
+    },
+    "metric_failed_sub": {
+      "th": "งานล้มเหลว รอ automatic backoff",
+      "en": "failed jobs awaiting automatic backoff"
+    },
+    "metric_skipped_title": {
+      "th": "Skipped / ข้าม",
+      "en": "Skipped / Bypassed"
+    },
+    "metric_skipped_sub": {
+      "th": "audience ไม่ตรงเงื่อนไข trigger",
+      "en": "audience did not match trigger criteria"
+    },
+    "insight_peak_label": {
+      "th": "ช่วงนี้ enroll เยอะสุด:",
+      "en": "Peak Enrollment Window:"
+    },
+    "insight_peak_enrolled": {
+      "th": "enrolled จาก",
+      "en": "enrolled from"
+    },
+    "insight_peak_fires": {
+      "th": "fires",
+      "en": "fires"
+    },
+    "insight_wf_label": {
+      "th": "Workflow ที่ enroll เยอะสุด:",
+      "en": "Highest Enrolling Workflow:"
+    },
+    "insight_wf_enrolled": {
+      "th": "enrolled",
+      "en": "enrolled"
+    },
+    "sec1_title": {
+      "th": "Enrolled ตามเวลา (24 ชม.)",
+      "en": "Enrolled Breakdown by Time (24h)"
+    },
+    "sec1_sub": {
+      "th": "ตารางวิเคราะห์การแจกแจงงานคิว BullMQ ต่อช่วงเวลา 60 นาที",
+      "en": "Analytical distribution of BullMQ queue tasks across 60-minute time buckets"
+    },
+    "th_time": {
+      "th": "เวลา",
+      "en": "Time"
+    },
+    "th_range": {
+      "th": "ช่วง",
+      "en": "Period"
+    },
+    "th_hour": {
+      "th": "ชั่วโมง",
+      "en": "Hour"
+    },
+    "th_day": {
+      "th": "วัน",
+      "en": "Day"
+    },
+    "th_bucket": {
+      "th": "Bucket",
+      "en": "Bucket"
+    },
+    "th_occurrence": {
+      "th": "occurrence ต่อวัน",
+      "en": "Daily Occurrences"
+    },
+    "th_enrolled": {
+      "th": "Enrolled",
+      "en": "Enrolled"
+    },
+    "th_status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "sec2_title": {
+      "th": "Fires ล่าสุด",
+      "en": "Recent Workflow Fires"
+    },
+    "sec2_sub": {
+      "th": "บันทึกการประมวลผลงาน trigger BullMQ ข้ามทุกเวิร์กโฟลว์อัตโนมัติ",
+      "en": "Execution audit log of BullMQ automated triggers across all workflows"
+    },
+    "filter_status_label": {
+      "th": "ตัวกรอง:",
+      "en": "Filter:"
+    },
+    "th2_time": {
+      "th": "เวลา",
+      "en": "Timestamp"
+    },
+    "th2_workflow": {
+      "th": "Workflow",
+      "en": "Workflow"
+    },
+    "th2_audience": {
+      "th": "Audience",
+      "en": "Audience"
+    },
+    "th2_round": {
+      "th": "รอบ",
+      "en": "Round"
+    },
+    "th2_enrolled": {
+      "th": "Enrolled",
+      "en": "Enrolled"
+    },
+    "th2_status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "th2_source": {
+      "th": "แหล่ง",
+      "en": "Source"
+    },
+    "showing_rows": {
+      "th": "แสดง 1 ถึง 5 จากทั้งหมด 48 fires ใน 24 ชม.",
+      "en": "Showing 1 to 5 of 48 fires in 24 hours"
+    },
+    "row_morning": {
+      "th": "ช่วงเช้า",
+      "en": "Morning"
+    },
+    "row_afternoon": {
+      "th": "ช่วงบ่าย",
+      "en": "Afternoon"
+    },
+    "row_night": {
+      "th": "รอบดึก",
+      "en": "Overnight"
+    },
+    "empty_title": {
+      "th": "ไม่พบรายการคิวในเงื่อนไขนี้",
+      "en": "No queue records found"
+    },
+    "empty_desc": {
+      "th": "ลองเปลี่ยนคำค้นหา หรือรีเซ็ตช่วงเวลาเพื่อดูคิวงาน BullMQ ที่บันทึกไว้",
+      "en": "Try adjusting your search criteria or resetting the time filter"
+    }
+  }
+  </script>
+<!-- Bilingual Toggle Script & Micro-interactions -->
+<script>
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function updateLanguage(lang) {
+      currentLang = lang;
+      const elements = document.querySelectorAll('[data-i18n]');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+      document.getElementById('currentLangLabel').textContent = lang === 'th' ? 'ไทย / English' : 'English / ภาษาไทย';
+      document.documentElement.lang = lang;
+    }
+
+    document.getElementById('langToggleBtn').addEventListener('click', () => {
+      const nextLang = currentLang === 'th' ? 'en' : 'th';
+      updateLanguage(nextLang);
+    });
+
+    // Refresh simulation
+    document.getElementById('refreshBtn').addEventListener('click', function() {
+      const icon = this.querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 700);
+    });
+
+    // Search filter micro-interaction for Bucket table
+    document.getElementById('bucketSearch').addEventListener('input', function(e) {
+      const term = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#bucketTable tbody tr');
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(term)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      const emptyState = document.getElementById('emptyFilterState');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+    });
+  </script>
+</body></html>

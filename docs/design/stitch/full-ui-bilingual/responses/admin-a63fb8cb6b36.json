@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2456",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzExNjFkN2MxZDYyMDQ1OWU4MzEwMDJkZTQxYjkzYzkxEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/461a021043634913881ccb79a28c41ea"
+            },
+            "id": "3ffe118ac597429493333ff9c799ba69",
+            "name": "projects/18348214526789030153/screens/3ffe118ac597429493333ff9c799ba69",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XW0XRudHCQn0F-C9V7qKvy2YDY0vUPXDSrXhoL-RZR82oyJs0oLs57C0OXlRl9VJbA_oIrZHQryWKHAhy3lFM4dg7ZuEJouc5y_mEiKuG74g20lg9h8Alv4tipC9O-UmL-3NxXt06W4vbrKcyyQixZluHTPitMbMOmifjvQWVg4Vdp7zOvhKV4LgPTCNArGO2R62KyIs_gP-MRj47PaArWPJ6jyaev7je4ypD3aXtlMASTBGDvttpypSvU",
+              "name": "projects/18348214526789030153/files/12bdeb8058ac477eac76852b78f01c87"
+            },
+            "theme": {},
+            "title": "ติดตามลูกค้าเก่า (Winback)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "สร้างหน้าจอ **ติดตามลูกค้าเก่า (Winback)** สำหรับเส้นทาง `admin-a63fb8cb6b36` (`/reports/winback`) เสร็จสมบูรณ์แล้วตามข้อกำหนดของ Commerce Platform:\n\n### รายละเอียดการออกแบบและการทำงาน:\n1. **ดีไซน์ซิสเต็มและโครงสร้างหลัก:**\n   - **พาเลทสีและกรอบงาน:** Canvas สี `#f6f8fc`, การ์ดสีขาวขอบมน 12px พร้อมขอบสี `#e1e7f0`, ปุ่มควบคุมขนาด 40px/8px corners, โทนสีหลัก Primary Blue `#365cf5`, ข้อความหลัก Ink `#17243b`, ข้อความรอง Secondary `#52627a`\n   - **Sidebar (256px):** ครบทั้ง 7 สายงานหลักภาษาไทย (สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ [Active], การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน) พร้อมลิงก์ Developer Portal\n   - **พื้นที่เนื้อหาหลัก (~1240px):** รองรับมุมมองหัวหน้าทีมขาย B2B ที่เชื่อมข้อมูลชุดเดียวกับแอปเซลล์ พร้อมป้ายระบุ `ข้อมูลตัวอย่าง`\n\n2. **การนำเสนอข้อมูล Win-back:**\n   - **5 การ์ดสรุปตัวเลขหลัก:** ลูกค้าใน pool (142 ร้าน / ยังไม่มีคนดูแล 18 ร้าน), รายได้/เดือนที่เสี่ยงหาย (฿1.84M), กู้คืนได้ประมาณการ (฿645K ดึงกลับสำเร็จ 24 ร้าน), GMV เดือนนี้ / เป้าหมาย (68.5% ขาด ฿295K), และกิจกรรมรวม (โทร 86, เข้าพบ 32)\n   - **ตารางลีดที่ต้องตาม (เงียบนานสุดก่อน):** จัดลำดับความเร่งด่วนตามระยะเวลาที่ไม่มีการติดต่อ มีแท็กระดับ Tier, สถานะ Stage, การนัดที่ไม่ได้บันทึก, พร้อมตัวกรอง Stage และรายชื่อเซลล์\n   - **สรุปผลงานทีมขายรายบุคคล:** แสดงสถิติการเปิดลีด, ปิดได้, ปฏิเสธ, เข้าพบ, โทร, GMV และแถบ Progress Bar เทียบเป้าหมาย\n   - **Dialogs & Interactive Actions:** โมดอลมอบหมายงาน/จ่ายลีด (Assign lead) รองรับ Escape key และมีแถบแจ้งเตือนพร้อมปุ่ม `↶ Undo` รวมถึงโมดอลบันทึกผลกิจกรรม\n\n3. **ระบบ 2 ภาษา (Bilingual Support) & Export Catalogue:**\n   - มีปุ่มสลับภาษา **ไทย / English** ทำงานได้จริงในคลิกเดียว\n   - ฝังแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` ครบทุกคีย์ตามข้อกำหนดของ Copy Catalogue อย่างเคร่งครัด พร้อมการแปลไทย-อังกฤษที่สอดคล้องกับระบบ"
+    },
+    {
+      "suggestion": "เพิ่มฟังก์ชันจำแนกลีดตามช่วงเวลาหยุดสั่งซื้อ (30 วัน, 60 วัน, 90 วัน)"
+    },
+    {
+      "suggestion": "ดูรายละเอียดประวัติการติดต่อและการสั่งซื้อเดิมของร้านค้าที่เลือก"
+    },
+    {
+      "suggestion": "ปรับแต่งหน้าจอโมดอลสำหรับการบันทึกการเข้าพบและยื่นส่วนลดพิเศษ"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "9115496197723591134"
+}

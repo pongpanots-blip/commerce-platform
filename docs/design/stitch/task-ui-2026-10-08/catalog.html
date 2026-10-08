@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>สินค้าและสต็อก — แคตตาล็อกแพลตฟอร์ม</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {},
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            display: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            body: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            label: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Public Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      font-size: 20px;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-[#f6f8fc]">
+<!-- 1. SIDEBAR (256px / w-64) -->
+<aside class="fixed top-0 left-0 h-screen w-64 bg-white dark:bg-slate-900 border-r border-[#e1e7f0] dark:border-slate-800 flex flex-col justify-between p-4 z-30 select-none">
+<div class="flex flex-col gap-6">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-2 py-1.5">
+<div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-base shadow-sm">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-base font-bold text-[#17243b] dark:text-white font-headline leading-tight truncate">Commerce Platform</span>
+<span class="text-xs text-[#52627a] dark:text-slate-400 font-normal leading-normal truncate">ระบบปฏิบัติการการค้า</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav aria-label="แถบเมนูหลัก" class="flex flex-col space-y-1">
+<!-- Tab 1: สินค้าและสต็อก (ACTIVE) -->
+<a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#365cf5]/10 text-[#365cf5] font-semibold dark:bg-[#365cf5]/20" href="#">
+<span class="material-symbols-outlined text-[#365cf5]">inventory_2</span>
+<span class="text-sm font-label truncate">สินค้าและสต็อก</span>
+</a>
+<!-- Tab 2: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-sm font-label truncate">ออเดอร์และการเงิน</span>
+</a>
+<!-- Tab 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-label truncate">ลูกค้าและบริการ</span>
+</a>
+<!-- Tab 4: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-sm font-label truncate">การตลาด</span>
+</a>
+<!-- Tab 5: รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-label truncate">รายงานและข้อมูล</span>
+</a>
+<!-- Tab 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="text-sm font-label truncate">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Tab 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-label truncate">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Area (Portal) -->
+<div class="pt-4 border-t border-[#e1e7f0] dark:border-slate-800 flex flex-col gap-1">
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150 text-sm" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">code</span>
+<span class="font-medium text-xs font-label">นักพัฒนา &amp; API</span>
+</div>
+<span class="material-symbols-outlined text-xs text-[#52627a]/70">open_in_new</span>
+</a>
+<div class="px-3 pt-2 text-[11px] text-[#52627a]/60">
+        Commerce Platform v2.4
+      </div>
+</div>
+</aside>
+<!-- 2. MAIN CONTENT WRAPPER -->
+<div class="ml-64 flex-1 flex flex-col min-h-screen bg-[#f6f8fc]">
+<!-- Top Navigation Header (Sticky, Flat, Restrained border) -->
+<header class="sticky top-0 z-20 w-full bg-white dark:bg-slate-900 border-b border-[#e1e7f0] dark:border-slate-800">
+<div class="flex justify-between items-center h-16 px-8 max-w-[1240px] mx-auto w-full">
+<!-- Search bar on left -->
+<div class="w-80 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#52627a] text-[18px] pointer-events-none">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 hover:bg-slate-100/80 focus:bg-white text-[#17243b] placeholder-[#52627a]/60 border border-[#e1e7f0] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5] transition-colors" placeholder="ค้นหาข้อมูลระบบหรือเอกสาร..." type="search"/>
+</div>
+<!-- Trailing actions and Profile -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 border-r border-[#e1e7f0] pr-3">
+<button class="w-8 h-8 rounded-lg text-[#52627a] hover:bg-slate-100 flex items-center justify-center transition-colors" title="รีเฟรช" type="button">
+<span class="material-symbols-outlined text-[19px]">refresh</span>
+</button>
+<button class="w-8 h-8 rounded-lg text-[#52627a] hover:bg-slate-100 flex items-center justify-center transition-colors relative" title="การแจ้งเตือน" type="button">
+<span class="material-symbols-outlined text-[19px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#c2333f] rounded-full ring-2 ring-white"></span>
+</button>
+<button class="w-8 h-8 rounded-lg text-[#52627a] hover:bg-slate-100 flex items-center justify-center transition-colors" title="ช่วยเหลือ" type="button">
+<span class="material-symbols-outlined text-[19px]">help_outline</span>
+</button>
+</div>
+<!-- User Identity (Operational Team) -->
+<div class="flex items-center gap-3 pl-1">
+<div class="w-8 h-8 rounded-full bg-[#17243b] text-white flex items-center justify-center text-xs font-semibold">
+              สม
+            </div>
+<div class="flex flex-col text-left leading-tight">
+<span class="text-xs font-bold text-[#17243b] font-headline">ทีมปฏิบัติการคลังสินค้า</span>
+<span class="text-[11px] text-[#52627a]">somchai.p@commerce.internal</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Canvas Inner Container -->
+<main class="flex-1 w-full max-w-[1240px] mx-auto px-8 py-8 flex flex-col gap-6">
+<!-- 3. PAGE HEADER & ACTIONS -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="space-y-1.5">
+<!-- Breadcrumb indicator -->
+<div class="flex items-center gap-2 text-xs font-medium text-[#52627a]">
+<span>สินค้าและสต็อก</span>
+<span class="text-[14px] leading-none">/</span>
+<span class="text-[#17243b] font-semibold">แคตตาล็อกสินค้า</span>
+</div>
+<!-- Page Title + Prototype Badge -->
+<div class="flex items-center gap-3">
+<h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-snug font-headline">แคตตาล็อกสินค้า</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-[#52627a] border border-[#e1e7f0]">
+              ข้อมูลตัวอย่าง
+            </span>
+</div>
+<p class="text-sm text-[#52627a] leading-relaxed">
+            รายการและสถานะสินค้าในระบบแพลตฟอร์มสำหรับการจัดการคลังและช่องทางจำหน่าย
+          </p>
+</div>
+<!-- Header Actions: Single Primary CTA + Quiet Secondary -->
+<div class="flex items-center gap-2.5 self-start md:self-auto">
+<button class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#17243b] bg-white border border-[#e1e7f0] rounded-lg hover:bg-slate-50 transition-colors shadow-sm active:bg-slate-100" type="button">
+<span class="material-symbols-outlined text-[18px] text-[#52627a]">refresh</span>
+<span>รีเฟรช</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#365cf5] rounded-lg hover:bg-[#365cf5]/90 transition-colors shadow-sm active:scale-[0.99]" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>เพิ่มสินค้า</span>
+</button>
+</div>
+</section>
+<!-- 4. TASK SECTIONS LINKS BAR (Horizontal sub-navigation) -->
+<nav aria-label="หมวดหมู่งานย่อย" class="border-b border-[#e1e7f0] flex items-center gap-8 -mb-2">
+<button class="pb-3 text-sm font-semibold text-[#365cf5] border-b-2 border-[#365cf5] inline-flex items-center gap-1.5 focus:outline-none" type="button">
+<span>ข้อมูลสินค้า</span>
+<span class="ml-1 text-[11px] py-0.5 px-1.5 bg-[#365cf5]/10 text-[#365cf5] rounded-full font-medium">48</span>
+</button>
+<button class="pb-3 text-sm font-medium text-[#52627a] hover:text-[#17243b] border-b-2 border-transparent transition-colors focus:outline-none" type="button">
+          ราคาและสต็อก
+        </button>
+<button class="pb-3 text-sm font-medium text-[#52627a] hover:text-[#17243b] border-b-2 border-transparent transition-colors focus:outline-none" type="button">
+          ซัพพลายเออร์และสื่อ
+        </button>
+</nav>
+<!-- 5. MAIN PRODUCT PANEL (White card, restrained border #e1e7f0, rounded-xl) -->
+<section class="bg-white border border-[#e1e7f0] rounded-xl shadow-none overflow-hidden flex flex-col">
+<!-- Table Toolbar Controls -->
+<div class="p-4 border-b border-[#e1e7f0] bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-3 flex-1">
+<!-- Search current page input -->
+<div class="relative w-full sm:w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#52627a] text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 text-xs text-[#17243b] placeholder-[#52627a]/70 border border-[#e1e7f0] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5]" id="searchCurrentPage" placeholder="ค้นหาในหน้านี้..." type="text"/>
+</div>
+<!-- Filter Status Dropdown -->
+<div class="relative">
+<select class="text-xs text-[#17243b] font-medium bg-white border border-[#e1e7f0] rounded-lg py-1.5 pl-3 pr-8 focus:outline-none focus:ring-1 focus:ring-[#365cf5] focus:border-[#365cf5]">
+<option value="all">สถานะทั้งหมด</option>
+<option value="active">เปิดขายปกติ</option>
+<option value="low_stock">สต็อกใกล้หมด</option>
+<option value="inactive">ระงับการขาย</option>
+</select>
+</div>
+<!-- Page Size Selector -->
+<div class="hidden md:block">
+<select class="text-xs text-[#52627a] bg-white border border-[#e1e7f0] rounded-lg py-1.5 pl-2.5 pr-7 focus:outline-none">
+<option>แสดง 10 รายการ / หน้า</option>
+<option>แสดง 25 รายการ / หน้า</option>
+</select>
+</div>
+</div>
+<!-- Operational hint -->
+<div class="text-[12px] text-[#52627a] font-normal self-end sm:self-center">
+<span class="inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-[#52627a]">info</span>
+              ค้นหาเฉพาะข้อมูล 10 รายการในหน้านี้เท่านั้น
+            </span>
+</div>
+</div>
+<!-- 3-Column Strict Table (SKU / ชื่อสินค้า / สถานะ) -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-[#e1e7f0] bg-slate-50/60 text-xs text-[#52627a] font-semibold tracking-wide">
+<th class="py-3 px-6 w-56" scope="col">รหัสสินค้า (SKU)</th>
+<th class="py-3 px-6" scope="col">ชื่อสินค้า</th>
+<th class="py-3 px-6 w-44 text-right" scope="col">สถานะ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-sm text-[#17243b]">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50/60 transition-colors duration-150 h-12">
+<td class="py-3 px-6 font-mono text-xs text-[#17243b] font-medium tracking-tight">
+                  TH-SKU-00102
+                </td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-slate-100 border border-[#e1e7f0] flex items-center justify-center text-[11px] font-semibold text-[#52627a] flex-shrink-0">
+                      กข
+                    </span>
+<a class="font-medium text-[#17243b] hover:text-[#365cf5] hover:underline focus:outline-none transition-colors truncate" href="#">
+                      ชุดกล่องพัสดุรีไซเคิล ขนาด B (แพ็ก 20 ใบ)
+                    </a>
+</div>
+</td>
+<td class="py-3 px-6 text-right">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347] border border-[#157347]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    เปิดขายปกติ
+                  </span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50/60 transition-colors duration-150 h-12">
+<td class="py-3 px-6 font-mono text-xs text-[#17243b] font-medium tracking-tight">
+                  TH-SKU-00105
+                </td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-slate-100 border border-[#e1e7f0] flex items-center justify-center text-[11px] font-semibold text-[#52627a] flex-shrink-0">
+                      กบ
+                    </span>
+<a class="font-medium text-[#17243b] hover:text-[#365cf5] hover:underline focus:outline-none transition-colors truncate" href="#">
+                      กระดาษความร้อนใบเสร็จ 80x80mm (ลัง 50 ม้วน)
+                    </a>
+</div>
+</td>
+<td class="py-3 px-6 text-right">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347] border border-[#157347]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    เปิดขายปกติ
+                  </span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50/60 transition-colors duration-150 h-12">
+<td class="py-3 px-6 font-mono text-xs text-[#17243b] font-medium tracking-tight">
+                  TH-SKU-00140
+                </td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-slate-100 border border-[#e1e7f0] flex items-center justify-center text-[11px] font-semibold text-[#52627a] flex-shrink-0">
+                      ทก
+                    </span>
+<a class="font-medium text-[#17243b] hover:text-[#365cf5] hover:underline focus:outline-none transition-colors truncate" href="#">
+                      เทปกาวปิดกล่องกันน้ำ 2 นิ้ว x 100 หลา
+                    </a>
+</div>
+</td>
+<td class="py-3 px-6 text-right">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#b08900]/10 text-[#b08900] border border-[#b08900]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+                    สต็อกใกล้หมด
+                  </span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50/60 transition-colors duration-150 h-12">
+<td class="py-3 px-6 font-mono text-xs text-[#17243b] font-medium tracking-tight">
+                  TH-SKU-00218
+                </td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-slate-100 border border-[#e1e7f0] flex items-center justify-center text-[11px] font-semibold text-[#52627a] flex-shrink-0">
+                      2D
+                    </span>
+<a class="font-medium text-[#17243b] hover:text-[#365cf5] hover:underline focus:outline-none transition-colors truncate" href="#">
+                      เครื่องอ่านบาร์โค้ดไร้สาย 2D Handheld
+                    </a>
+</div>
+</td>
+<td class="py-3 px-6 text-right">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347] border border-[#157347]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    เปิดขายปกติ
+                  </span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-slate-50/60 transition-colors duration-150 h-12">
+<td class="py-3 px-6 font-mono text-xs text-[#17243b] font-medium tracking-tight">
+                  TH-SKU-00301
+                </td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-slate-100 border border-[#e1e7f0] flex items-center justify-center text-[11px] font-semibold text-[#52627a] flex-shrink-0">
+                      AB
+                    </span>
+<a class="font-medium text-[#17243b] hover:text-[#365cf5] hover:underline focus:outline-none transition-colors truncate" href="#">
+                      ถุงพลาสติกกันกระแทก Air Bubble 25x35 ซม.
+                    </a>
+</div>
+</td>
+<td class="py-3 px-6 text-right">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#c2333f]/10 text-[#c2333f] border border-[#c2333f]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+                    ระงับการขาย
+                  </span>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-slate-50/60 transition-colors duration-150 h-12">
+<td class="py-3 px-6 font-mono text-xs text-[#17243b] font-medium tracking-tight">
+                  TH-SKU-00412
+                </td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-full bg-slate-100 border border-[#e1e7f0] flex items-center justify-center text-[11px] font-semibold text-[#52627a] flex-shrink-0">
+                      PP
+                    </span>
+<a class="font-medium text-[#17243b] hover:text-[#365cf5] hover:underline focus:outline-none transition-colors truncate" href="#">
+                      สายรัดพลาสติก PP 12 มม. สีน้ำเงิน
+                    </a>
+</div>
+</td>
+<td class="py-3 px-6 text-right">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347] border border-[#157347]/20">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    เปิดขายปกติ
+                  </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer (API Pagination Only) -->
+<div class="p-4 border-t border-[#e1e7f0] bg-white flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+<div>
+<span>แสดงรายการที่ <strong class="font-semibold text-[#17243b]">1 - 6</strong> จากทั้งหมด <strong class="font-semibold text-[#17243b]">48</strong> รายการ</span>
+<span class="text-[11px] text-[#52627a]/70 ml-1">(ข้อมูลตัวอย่าง)</span>
+</div>
+<nav aria-label="การแบ่งหน้า" class="inline-flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg border border-[#e1e7f0] bg-slate-50 text-[#52627a]/40 cursor-not-allowed flex items-center justify-center" disabled="" title="ก่อนหน้า" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button aria-current="page" class="w-8 h-8 rounded-lg bg-[#365cf5] text-white font-semibold flex items-center justify-center shadow-sm" type="button">
+              1
+            </button>
+<button class="w-8 h-8 rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] hover:bg-slate-50 font-medium flex items-center justify-center transition-colors" type="button">
+              2
+            </button>
+<button class="w-8 h-8 rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] hover:bg-slate-50 font-medium flex items-center justify-center transition-colors" type="button">
+              3
+            </button>
+<button class="w-8 h-8 rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] hover:bg-slate-50 flex items-center justify-center transition-colors" title="ถัดไป" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</nav>
+</div>
+</section>
+<!-- 6. CONTEXTUAL GUIDANCE STRIP (Near bottom) -->
+<section class="bg-white border border-[#e1e7f0] rounded-xl p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-[#365cf5] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">quick_reference</span>
+</div>
+<div>
+<h3 class="text-xs font-bold text-[#17243b] font-headline">คำสั่งงานที่เกี่ยวข้องกับสต็อกและสินค้า</h3>
+<p class="text-[12px] text-[#52627a]">เลือกงานปฏิบัติการเพื่อเข้าสู่แบบฟอร์มบันทึกการเคลื่อนไหวหรือกำหนดราคา</p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<a class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[#17243b] bg-slate-50 hover:bg-slate-100 rounded-lg border border-[#e1e7f0] transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px] text-[#365cf5]">sync_alt</span>
+<span>บันทึกการเคลื่อนไหวสต็อก (Stock Movement)</span>
+<span class="material-symbols-outlined text-[14px] text-[#52627a]">arrow_forward</span>
+</a>
+<a class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[#17243b] bg-slate-50 hover:bg-slate-100 rounded-lg border border-[#e1e7f0] transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px] text-[#52627a]">sell</span>
+<span>ตรวจสอบราคาและโปรโมชั่นสินค้า</span>
+<span class="material-symbols-outlined text-[14px] text-[#52627a]">arrow_forward</span>
+</a>
+</div>
+</section>
+</main>
+</div>
+<script>
+    // Lightweight micro-interaction for in-page search hint
+    const searchInput = document.getElementById('searchCurrentPage');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(query)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+  </script>
+</body></html>

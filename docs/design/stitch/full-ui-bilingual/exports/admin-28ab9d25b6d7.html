@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ทดสอบเหตุการณ์ ERP ของร้านค้า | Thai Ops Cockpit</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary": "#0a3fdc",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-primary": "#ffffff",
+            "primary-fixed-dim": "#b9c3ff",
+            "outline-variant": "#c4c5d8",
+            "surface-dim": "#cddaf9",
+            "surface-bright": "#f9f9ff",
+            "secondary-fixed": "#d3e3ff",
+            "primary-container": "#365cf5",
+            "on-tertiary-fixed": "#360f00",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-variant": "#d7e2ff",
+            "surface-container-high": "#e0e8ff",
+            "on-background": "#0e1b32",
+            "surface-container-low": "#f1f3ff",
+            "secondary": "#4f5f77",
+            "on-tertiary-container": "#ffebe4",
+            "on-secondary-container": "#54647c",
+            "inverse-primary": "#b9c3ff",
+            "on-error-container": "#93000a",
+            "background": "#f9f9ff",
+            "on-surface-variant": "#444655",
+            "secondary-container": "#d0e1fd",
+            "on-surface": "#0e1b32",
+            "on-secondary-fixed": "#0b1c31",
+            "on-primary-fixed": "#001257",
+            "tertiary-container": "#bc4600",
+            "tertiary-fixed-dim": "#ffb597",
+            "tertiary": "#943500",
+            "surface-container-highest": "#d7e2ff",
+            "on-secondary": "#ffffff",
+            "primary-fixed": "#dde1ff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#243048",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-primary-container": "#ededff",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#ffdbcd",
+            "surface": "#f9f9ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-tint": "#214ce7",
+            "outline": "#747687",
+            "surface-container": "#e8eeff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "space-2xl": "2.5rem",
+            "space-md": "1rem",
+            "margin": "2rem",
+            "space-lg": "1.5rem",
+            "gutter": "1.5rem",
+            "gutter-mobile": "1rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "1rem"
+          },
+          "fontFamily": {
+            "code-sm": ["\"JetBrains Mono, monospace\""],
+            "body-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "label-sm": ["\"Inter, Noto Sans, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans, sans-serif\""],
+            "headline-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-lg-mobile": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-sm": ["\"Noto Sans, Inter, sans-serif\""]
+          },
+          "fontSize": {
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface font-body-md antialiased selection:bg-surface-variant selection:text-primary min-h-screen flex">
+<!-- Invisible Strict Exact Copy Translation Catalog -->
+<script id="commerce-ui-translations" type="application/json">
+    {
+      "app_name": { "th": "Thai Ops Cockpit", "en": "Thai Ops Cockpit" },
+      "app_subtext": { "th": "ศูนย์บริหารจัดการร้านค้า", "en": "Store Operations Center" },
+      "page_title": { "th": "ทดสอบเหตุการณ์ ERP ของร้านค้า", "en": "Merchant ERP Event Simulator" },
+      "page_badge": { "th": "ERP Webhook Simulator", "en": "ERP Webhook Simulator" },
+      "page_subtitle": { "th": "ยิง webhook ERP → Josh จำลอง เข้า service handler ตัวจริง (validation + logic เดียวกับ /api/erp/*) — ไม่ต้องรอ ERP sandbox", "en": "Simulate mock ERP → Josh webhooks directly into production service handlers (identical validation & logic to /api/erp/*) — no need to wait for ERP sandbox" },
+      "sandbox_ready": { "th": "Simulation Sandbox Ready", "en": "Simulation Sandbox Ready" },
+      "route_identifier": { "th": "admin-28ab9d25b6d7", "en": "admin-28ab9d25b6d7" },
+      "nav_stock": { "th": "สินค้าและสต็อก", "en": "Products & Stock" },
+      "nav_orders": { "th": "ออเดอร์และการเงิน", "en": "Orders & Finance" },
+      "nav_customers": { "th": "ลูกค้าและบริการ", "en": "Customers & Support" },
+      "nav_marketing": { "th": "การตลาด", "en": "Marketing" },
+      "nav_reports": { "th": "รายงานและข้อมูล", "en": "Reports & Analytics" },
+      "nav_integrations": { "th": "ระบบเชื่อมต่อ", "en": "Integrations & Webhooks" },
+      "nav_settings": { "th": "ตั้งค่าและทีมงาน", "en": "Settings & Team" },
+      "find_order_heading": { "th": "หา order", "en": "Find Order" },
+      "search_order_placeholder": { "th": "เลขที่ order เช่น JOSH-2026-04417", "en": "Order no. e.g. JOSH-2026-04417" },
+      "btn_search": { "th": "ค้นหา", "en": "Search" },
+      "order_status_current": { "th": "สถานะปัจจุบัน", "en": "Current status" },
+      "order_status_val": { "th": "ชำระแล้ว รอ ERP ยืนยัน", "en": "Paid, Waiting ERP Confirmation" },
+      "shipment_in": { "th": "Shipment ใน", "en": "Shipment in" },
+      "from_real_shipment": { "th": "จาก shipment จริง", "en": "from real shipment" },
+      "shipment_status": { "th": "Shipment status", "en": "Shipment status" },
+      "erp_sync_status": { "th": "erp_sync_status", "en": "erp_sync_status" },
+      "status_have": { "th": "มี", "en": "Yes" },
+      "jagota_order_sync": { "th": "jagota_order_sync", "en": "jagota_order_sync" },
+      "courier_driver": { "th": "คนขับ (courier)", "en": "Courier Driver" },
+      "status_none": { "th": "ยังไม่มี", "en": "None assigned" },
+      "sample_data_badge": { "th": "ข้อมูลตัวอย่าง", "en": "Mock Sample Data" },
+      "tab_order_invoice": { "th": "Order / Invoice status", "en": "Order / Invoice status" },
+      "tab_3pl": { "th": "3PL delivery", "en": "3PL delivery" },
+      "tab_courier": { "th": "Courier", "en": "Courier" },
+      "tab_other_webhooks": { "th": "Webhook อื่น ๆ", "en": "Other Webhooks" },
+      "order_status_flags": { "th": "orderStatus flags", "en": "orderStatus flags" },
+      "order_confirmed_flag": { "th": "\"Order Confirmed\": \"Y\"", "en": "\"Order Confirmed\": \"Y\"" },
+      "order_confirmed_help": { "th": "shipment ไป preparing (จาก paid/payment_pending), จอง stock", "en": "Shipment shifts to preparing (from paid/payment_pending), reserves inventory" },
+      "order_cancelled_flag": { "th": "\"Order Cancelled\": \"Y\"", "en": "\"Order Cancelled\": \"Y\"" },
+      "order_cancelled_help": { "th": "shipment ไป cancelled, คืน stock", "en": "Shipment shifts to cancelled, refunds inventory" },
+      "doc_book_label": { "th": "DOC_BOOK", "en": "DOC_BOOK" },
+      "doc_book_help": { "th": "ว่างได้ — backend ใช้ค่าจาก jagota_order_sync", "en": "Can be blank — backend uses jagota_order_sync default" },
+      "doc_no_label": { "th": "DOC_NO", "en": "DOC_NO" },
+      "btn_send_mock": { "th": "Send mock webhook →", "en": "Send mock webhook →" },
+      "btn_simulate": { "th": "จำลอง", "en": "Simulate" },
+      "btn_simulate_result": { "th": "จำลองผล", "en": "Simulate Output" },
+      "inv_book_label": { "th": "INV_BOOK", "en": "INV_BOOK" },
+      "inv_no_label": { "th": "INV_NO", "en": "INV_NO" },
+      "sku_table_title": { "th": "SKU บน shipment นี้ — ตั้งจำนวนที่ ERP invoice จริง", "en": "SKUs on this shipment — specify real ERP invoice quantity" },
+      "th_product_sku": { "th": "Product / SKU", "en": "Product / SKU" },
+      "th_ordered_qty": { "th": "สั่ง", "en": "Ordered" },
+      "th_price_ex_vat": { "th": "ราคา (ex VAT)", "en": "Price (ex VAT)" },
+      "th_invoice_qty": { "th": "Invoice qty", "en": "Invoice qty" },
+      "input_qty_hint": { "th": "กรอกจำนวน ≥ 0", "en": "Enter qty ≥ 0" },
+      "credit_back_notice_part1": { "th": "คาดว่าจะเกิด Credit Back ≈ ฿", "en": "Estimated Credit Back ≈ ฿" },
+      "credit_back_notice_part2": { "th": "(ex VAT) — คำนวณจริงฝั่ง backend", "en": "(ex VAT) — computed precisely on backend" },
+      "invoice_delivery_heading": { "th": "สถานะจัดส่ง (invoice.delivery)", "en": "Delivery status (invoice.delivery)" },
+      "invoice_delivery_notice": { "th": "Packed / Closed for VAT ไม่มีในตัวเลือก — handleInvoiceStatus ไม่อ่าน flag พวกนี้", "en": "Packed / Closed for VAT not selectable — handleInvoiceStatus ignores these flags" },
+      "select_one_delivery": { "th": "เลือกสถานะจัดส่ง 1 อัน", "en": "Select 1 delivery state" },
+      "opt_inv_only": { "th": "ออก invoice อย่างเดียว (ไม่มี flag)", "en": "Invoice only (no flags)" },
+      "opt_out_for_delivery": { "th": "\"Out for Delivery\": \"Y\"", "en": "\"Out for Delivery\": \"Y\"" },
+      "opt_delivered": { "th": "\"Delivered\": \"Y\"", "en": "\"Delivered\": \"Y\"" },
+      "opt_delivery_failed": { "th": "\"Delivery Failed\": \"Y\"", "en": "\"Delivery Failed\": \"Y\"" },
+      "opt_invoice_cancelled": { "th": "\"Invoice Cancelled\": \"Y\"", "en": "\"Invoice Cancelled\": \"Y\"" },
+      "status_3pl_label": { "th": "3PL status", "en": "3PL status" },
+      "three_pl_explanation": { "th": "— คนละเส้นกับ invoice. กด 'จำลอง' โดยไม่กรอกคนขับ จะได้สถานะปัจจุบันแบบ shipment shipped · order preparing · คนขับยังไม่มี (ถ้ายังไม่มี 3PL status จะยิง PREPARING ให้ก่อน). order เป็น delivered เมื่อทุก shipment ส่งถึง; Credit Back ออกจาก tab invoice (ไม่ต้องรอส่งถึง)", "en": "— Separate endpoint from invoice. Pressing simulate without driver results in shipment shipped · order preparing · no driver yet (if no 3PL status exists, PREPARING is emitted first). Order marks delivered only when all shipments arrive; Credit Back is emitted from invoice tab (no need to wait for delivery)." },
+      "courier_input_driver": { "th": "คนขับ", "en": "Driver name" },
+      "driver_optional_hint": { "th": "ว่างได้ — SHIPPING โดยไม่มีคนขับจะโชว์ ยังไม่มี", "en": "Can be blank — SHIPPING without driver will display 'None assigned'" },
+      "driver_phone": { "th": "เบอร์คนขับ", "en": "Driver phone" },
+      "driver_plate": { "th": "ทะเบียนรถ", "en": "Vehicle plate" },
+      "courier_note": { "th": "ตัวจริง — คนขับ/route ไม่ได้มาจาก invoice.status.changed แยก mock ไว้เพราะเป็นคนละ endpoint กัน ยิงแล้วจะ persist ลง shipment.courier_* เหมือน flow จริง", "en": "Real flow — driver/route does not come from invoice.status.changed. Mocked separately as a distinct endpoint; once invoked it persists into shipment.courier_* matching production flow." },
+      "console_heading": { "th": "ผลล่าสุด —", "en": "Latest Output —" },
+      "before_dispatch": { "th": "ก่อนยิง", "en": "Before Webhook" },
+      "after_dispatch": { "th": "หลังยิง", "en": "After Webhook" },
+      "top_nav_breadcrumb": { "th": "ระบบเชื่อมต่อ / ทดสอบเหตุการณ์ ERP ของร้านค้า", "en": "Integrations / Merchant ERP Event Simulator" },
+      "lang_switch": { "th": "ไทย / EN", "en": "ไทย / EN" },
+      "sample_data_button": { "th": "ข้อมูลตัวอย่าง", "en": "Sample Data" },
+      "user_profile_alt": { "th": "รูปโปรไฟล์ผู้ดูแลระบบ", "en": "Admin profile image" },
+      "brand_logo_alt": { "th": "Thai Commerce Operations Logo", "en": "Thai Commerce Operations Logo" }
+    }
+  </script>
+<!-- Side Navigation Bar (Persisted 256px) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-[#e1e7f0] shadow-none flex flex-col justify-between p-3 select-none">
+<div class="flex flex-col gap-4">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-3 py-3 rounded-lg border-b border-[#f1f5f9]">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="terminal">terminal</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight">Thai Ops Cockpit</span>
+<span class="text-[11px] font-body-sm text-secondary font-normal">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Navigation Menu Items -->
+<nav class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] text-label-md font-normal" href="#inventory">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-icon="inventory_2">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] text-label-md font-normal" href="#orders">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-icon="receipt_long">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] text-label-md font-normal" href="#customers">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-icon="support_agent">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] text-label-md font-normal" href="#marketing">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-icon="campaign">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] text-label-md font-normal" href="#reports">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-icon="analytics">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE ITEM) -->
+<div class="flex flex-col gap-0.5">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#eef2ff] text-primary font-medium border-l-[3px] border-primary cursor-pointer active:scale-[0.99] text-label-md" href="#integrations">
+<span class="material-symbols-outlined text-[20px] text-primary" data-icon="sync_alt">sync_alt</span>
+<span class="font-medium text-primary">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Nested sub-links under active tab -->
+<div class="ml-9 flex flex-col gap-1 mt-1 pl-2 border-l border-[#d0e1fd]">
+<a class="px-2 py-1.5 rounded text-[12px] font-medium text-primary bg-[#e0e8ff]/60 flex items-center justify-between" href="#erp-webhook">
+<span>ERP Simulator</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="px-2 py-1.5 rounded text-[12px] text-secondary hover:text-on-surface hover:bg-surface-container-low" href="#api-logs">API Webhooks Log</a>
+<a class="px-2 py-1.5 rounded text-[12px] text-secondary hover:text-on-surface hover:bg-surface-container-low" href="#jagota-sync">Jagota Sync Status</a>
+</div>
+</div>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] text-label-md font-normal" href="#settings">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-icon="settings">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer Context -->
+<div class="p-3 bg-surface-container-low rounded-xl border border-[#e1e7f0] flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-label-sm font-semibold uppercase tracking-wider text-secondary">Service Node</span>
+<span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#157347]">
+<span class="w-2 h-2 rounded-full bg-[#157347] animate-pulse"></span> TH-BKK-01
+        </span>
+</div>
+<div class="text-[11px] text-secondary font-mono bg-white px-2 py-1 rounded border border-[#e1e7f0] truncate">
+        v2.4.12-prod-patch
+      </div>
+</div>
+</aside>
+<!-- Main Content Wrap -->
+<div class="pl-64 flex-1 flex flex-col min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest border-b border-[#e1e7f0] shadow-sm flex items-center justify-between px-8">
+<!-- Breadcrumbs & Route Badge -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-body-md text-secondary">
+<span class="font-medium text-secondary">ระบบเชื่อมต่อ</span>
+<span class="text-[#c4c5d8]">/</span>
+<span class="text-on-surface font-semibold">ทดสอบเหตุการณ์ ERP ของร้านค้า</span>
+</div>
+<span class="bg-[#eef2ff] text-primary border border-[#cddaf9] font-code-sm text-code-sm px-2 py-0.5 rounded-md font-mono">
+          admin-28ab9d25b6d7
+        </span>
+</div>
+<!-- Trailing Action Controls -->
+<div class="flex items-center gap-4">
+<!-- Sample Data Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f1f5f9] hover:text-on-surface text-label-md transition-colors cursor-pointer active:scale-95 shadow-none" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="dataset">dataset</span>
+<span>ข้อมูลตัวอย่าง</span>
+</button>
+<!-- Bilingual Selector -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f1f5f9] text-label-md font-medium transition-colors cursor-pointer active:scale-95" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="translate">translate</span>
+<span>ไทย / EN</span>
+</button>
+<div class="h-5 w-[1px] bg-[#e1e7f0]"></div>
+<!-- Notification & Help Icon Buttons -->
+<div class="flex items-center gap-1 text-secondary">
+<button aria-label="Notifications" class="p-2 rounded-lg hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors cursor-pointer relative" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary ring-2 ring-white"></span>
+</button>
+<button aria-label="Help" class="p-2 rounded-lg hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-5 w-[1px] bg-[#e1e7f0]"></div>
+<!-- User Profile Avatar Pill -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white font-semibold flex items-center justify-center text-label-sm ring-2 ring-[#e0e8ff]">
+            OP
+          </div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-[13px] font-semibold text-on-surface leading-tight">Admin Josh S.</span>
+<span class="text-[11px] text-secondary">Super Administrator</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Operational Stage Canvas -->
+<main class="flex-1 p-8 max-w-[1600px] w-full mx-auto space-y-6">
+<!-- Stage Page Header Block -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-6 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1.5">
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg font-bold text-on-surface tracking-tight">ทดสอบเหตุการณ์ ERP ของร้านค้า</h1>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eef2ff] text-primary border border-[#cddaf9]">
+              ERP Webhook Simulator
+            </span>
+</div>
+<p class="text-body-md font-body-md text-secondary leading-relaxed max-w-4xl">
+            ยิง webhook ERP → Josh จำลอง เข้า service handler ตัวจริง (validation + logic เดียวกับ /api/erp/*) — ไม่ต้องรอ ERP sandbox
+          </p>
+</div>
+<div class="flex items-center gap-3 self-start md:self-auto shrink-0">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e8f5ed] border border-[#a3e6be] text-[#157347] text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-[#157347] animate-ping"></span>
+<span>Simulation Sandbox Ready</span>
+</div>
+<button class="h-10 px-3.5 rounded-lg border border-[#e1e7f0] bg-white text-on-surface hover:bg-[#f1f5f9] flex items-center gap-1.5 text-label-md transition-colors cursor-pointer shadow-none" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="refresh">refresh</span>
+<span>รีเฟรชสถานะ</span>
+</button>
+<button class="h-10 px-3.5 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:text-on-surface hover:bg-[#f1f5f9] flex items-center gap-1.5 text-label-md transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="menu_book">menu_book</span>
+<span>คู่มือการจำลอง</span>
+</button>
+</div>
+</div>
+<!-- Section 1: Order & Shipment Lookup Panel ("หา order") -->
+<section class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-6 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)]">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="manage_search">manage_search</span>
+<h2 class="text-headline-sm font-headline-sm font-semibold text-on-surface">หา order</h2>
+</div>
+<span class="text-label-sm text-secondary bg-[#f1f5f9] px-2.5 py-1 rounded-md font-mono">
+              GET /api/erp/orders/lookup
+            </span>
+</div>
+<!-- Search Bar Row -->
+<div class="flex flex-col sm:flex-row items-center gap-3">
+<div class="relative flex-1 w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary text-[20px]" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-16 bg-white border border-[#e1e7f0] rounded-lg text-body-md text-on-surface font-body-md focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors" placeholder="เลขที่ order เช่น JOSH-2026-04417" type="text" value="JOSH-2026-04417"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-mono text-secondary bg-[#f1f5f9] px-1.5 py-0.5 rounded border border-[#e1e7f0]">
+                ⌘K
+              </span>
+</div>
+<button class="w-full sm:w-auto h-10 px-6 rounded-lg bg-primary-container hover:bg-[#2947d1] text-white font-medium text-label-md flex items-center justify-center gap-2 transition-all cursor-pointer shadow-none" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="search">search</span>
+<span>ค้นหา</span>
+</button>
+</div>
+<!-- Matched Order & Shipment Context Panel (Bento Grid Style) -->
+<div class="mt-2 p-5 rounded-xl bg-[#f8fafc] border border-[#e1e7f0] flex flex-col gap-4">
+<div class="flex items-center justify-between flex-wrap gap-2 border-b border-[#e1e7f0] pb-3">
+<div class="flex items-center gap-3">
+<span class="font-mono font-bold text-[16px] text-on-surface tracking-wide">JOSH-2026-04417</span>
+<span class="text-xs px-2.5 py-0.5 rounded-full bg-[#fef9e7] text-[#b08900] font-semibold border border-[#fed7aa]">
+                  ชำระแล้ว รอ ERP ยืนยัน
+                </span>
+<span class="text-xs px-2 py-0.5 rounded bg-[#f1f5f9] text-secondary font-mono">
+                  Order status: PREPARING
+                </span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eef2ff] text-primary border border-[#cddaf9]">
+<span class="material-symbols-outlined text-[14px]" data-icon="inventory">inventory</span>
+                ข้อมูลตัวอย่าง
+              </span>
+</div>
+<!-- Metadata Metrics Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<div class="bg-white p-3 rounded-lg border border-[#e1e7f0] flex flex-col gap-1">
+<div class="text-[12px] text-secondary flex items-center gap-1">
+<span>Shipment ใน order</span>
+<span class="text-[10px] text-[#157347] bg-[#e8f5ed] px-1.5 py-0.2 rounded font-medium">จาก shipment จริง</span>
+</div>
+<div class="font-mono text-body-md font-semibold text-on-surface">SHP-2026-09142</div>
+</div>
+<div class="bg-white p-3 rounded-lg border border-[#e1e7f0] flex flex-col gap-1">
+<div class="text-[12px] text-secondary">Shipment status</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#b08900]"></span>
+<span class="font-mono text-body-md font-semibold text-on-surface">PREPARING</span>
+</div>
+</div>
+<div class="bg-white p-3 rounded-lg border border-[#e1e7f0] flex flex-col gap-1">
+<div class="text-[12px] text-secondary">erp_sync_status</div>
+<div class="flex items-center gap-1.5 text-body-md font-semibold text-[#157347]">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+<span>มี (sync เรียบร้อย)</span>
+</div>
+</div>
+<div class="bg-white p-3 rounded-lg border border-[#e1e7f0] flex flex-col gap-1">
+<div class="text-[12px] text-secondary">jagota_order_sync</div>
+<div class="flex items-center gap-1.5 text-body-md font-semibold text-[#157347]">
+<span class="material-symbols-outlined text-[18px]" data-icon="verified">verified</span>
+<span>มี</span>
+</div>
+</div>
+<div class="bg-white p-3 rounded-lg border border-[#e1e7f0] flex flex-col gap-1">
+<div class="text-[12px] text-secondary">คนขับ (courier)</div>
+<div class="flex items-center gap-1.5 text-body-md font-medium text-secondary">
+<span class="material-symbols-outlined text-[18px] text-[#c4c5d8]" data-icon="person_off">person_off</span>
+<span>ยังไม่มี</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Simulator Action Workspace with Tabs -->
+<section class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] overflow-hidden shadow-[0_1px_3px_0_rgba(23,36,59,0.04)]">
+<!-- Main Simulator Mode Tabs -->
+<div class="bg-[#f8fafc] border-b border-[#e1e7f0] px-6 pt-3 flex items-center justify-between overflow-x-auto gap-4 custom-scrollbar">
+<div class="flex items-center gap-2">
+<!-- Tab 1: Active -->
+<button class="h-11 px-4 border-b-2 border-primary text-primary font-semibold text-label-md flex items-center gap-2 bg-white rounded-t-lg border-t border-l border-r border-[#e1e7f0]" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="swap_horiz">swap_horiz</span>
+<span>Order / Invoice status</span>
+<span class="text-[11px] font-mono text-secondary bg-[#eef2ff] px-2 py-0.5 rounded text-primary">2 handlers</span>
+</button>
+<!-- Tab 2 -->
+<button class="h-11 px-4 border-b-2 border-transparent text-secondary hover:text-on-surface font-medium text-label-md flex items-center gap-2 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="local_shipping">local_shipping</span>
+<span>3PL delivery</span>
+<span class="text-[11px] font-mono text-secondary bg-[#f1f5f9] px-1.5 py-0.5 rounded">POST /3pl/*</span>
+</button>
+<!-- Tab 3 -->
+<button class="h-11 px-4 border-b-2 border-transparent text-secondary hover:text-on-surface font-medium text-label-md flex items-center gap-2 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="badge">badge</span>
+<span>Courier</span>
+<span class="text-[11px] font-mono text-secondary bg-[#f1f5f9] px-1.5 py-0.5 rounded">/drivers/*</span>
+</button>
+<!-- Tab 4 -->
+<button class="h-11 px-4 border-b-2 border-transparent text-secondary hover:text-on-surface font-medium text-label-md flex items-center gap-2 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="hub">hub</span>
+<span>Webhook อื่น ๆ</span>
+<span class="text-[11px] text-secondary">quotation · catalog · stock</span>
+</button>
+</div>
+<div class="hidden lg:flex items-center gap-2 text-label-sm text-secondary pb-2">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+<span>Target: internal staging worker</span>
+</div>
+</div>
+<div class="p-6 space-y-8">
+<!-- SUB-PANEL A: order.status.changed -->
+<div class="border border-[#e1e7f0] rounded-xl p-5 bg-[#fafbfe]">
+<div class="flex items-center justify-between pb-4 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-3">
+<span class="h-6 px-2 rounded font-mono font-bold text-[11px] flex items-center bg-[#e8f5ed] text-[#157347] border border-[#c3e6cb]">
+                  POST
+                </span>
+<div>
+<h3 class="text-headline-sm font-headline-sm font-semibold text-on-surface">order.status.changed</h3>
+<div class="font-mono text-[12px] text-secondary">/api/erp/orders/status</div>
+</div>
+</div>
+<span class="text-label-sm text-secondary">Step 1: ERP Validation &amp; Acknowledgement</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-4">
+<!-- Radio Flags Selection -->
+<div class="lg:col-span-7 space-y-3">
+<label class="block text-label-sm font-semibold text-on-surface">
+                  orderStatus flags <span class="text-error">*</span>
+</label>
+<div class="space-y-2.5">
+<label class="flex items-start gap-3 p-3.5 rounded-lg border border-primary bg-[#f0f4ff] cursor-pointer transition-all">
+<input checked="" class="mt-1 text-primary focus:ring-primary border-[#cbd5e1]" name="order_flag" type="radio"/>
+<div class="flex-1">
+<div class="flex items-center gap-2">
+<span class="font-mono font-semibold text-body-md text-primary">"Order Confirmed": "Y"</span>
+<span class="text-[11px] bg-[#d3e3ff] text-primary px-2 py-0.2 rounded font-medium">Recommended</span>
+</div>
+<p class="text-body-sm text-secondary mt-0.5">
+                        shipment ไป preparing (จาก paid/payment_pending), จอง stock
+                      </p>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f8fafc] cursor-pointer transition-all">
+<input class="mt-1 text-primary focus:ring-primary border-[#cbd5e1]" name="order_flag" type="radio"/>
+<div class="flex-1">
+<div class="flex items-center gap-2">
+<span class="font-mono font-semibold text-body-md text-error">"Order Cancelled": "Y"</span>
+<span class="text-[11px] bg-[#fdf2f2] text-error px-2 py-0.2 rounded font-medium">Rollback</span>
+</div>
+<p class="text-body-sm text-secondary mt-0.5">
+                        shipment ไป cancelled, คืน stock
+                      </p>
+</div>
+</label>
+</div>
+</div>
+<!-- Doc Book & Doc No Parameters -->
+<div class="lg:col-span-5 flex flex-col justify-between gap-4">
+<div class="space-y-3">
+<div>
+<label class="block text-label-sm font-medium text-on-surface mb-1">
+                      DOC_BOOK
+                      <span class="text-secondary text-[11px] font-normal ml-1">(ว่างได้ — backend ใช้ค่าจาก jagota_order_sync)</span>
+</label>
+<input class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-body-md font-mono focus:border-primary focus:outline-none" placeholder="BK-HQ-01" type="text" value="BK-HQ-01"/>
+</div>
+<div>
+<label class="block text-label-sm font-medium text-on-surface mb-1">
+                      DOC_NO
+                    </label>
+<input class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-body-md font-mono focus:border-primary focus:outline-none" placeholder="ERP-2026-99014" type="text" value="ERP-2026-99014"/>
+</div>
+</div>
+<div class="pt-2 flex justify-end">
+<button class="w-full sm:w-auto h-10 px-5 rounded-lg bg-primary hover:bg-[#0832b0] text-white font-medium text-label-md flex items-center justify-center gap-2 cursor-pointer shadow-none" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="send">send</span>
+<span>Send mock webhook →</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- SUB-PANEL B: invoice.status.changed -->
+<div class="border border-[#e1e7f0] rounded-xl p-5 bg-[#ffffff] space-y-6">
+<div class="flex items-center justify-between pb-4 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-3">
+<span class="h-6 px-2 rounded font-mono font-bold text-[11px] flex items-center bg-[#e8f5ed] text-[#157347] border border-[#c3e6cb]">
+                  POST
+                </span>
+<div>
+<h3 class="text-headline-sm font-headline-sm font-semibold text-on-surface">invoice.status.changed</h3>
+<div class="font-mono text-[12px] text-secondary">/api/erp/invoices/status</div>
+</div>
+</div>
+<span class="text-label-sm text-secondary">Step 2: SKU Fulfillment &amp; Credit Back Calculation</span>
+</div>
+<!-- Invoice Headers Parameters -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-sm font-medium text-on-surface mb-1">INV_BOOK</label>
+<input class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-body-md font-mono focus:border-primary focus:outline-none" type="text" value="INV-BKK-01"/>
+</div>
+<div>
+<label class="block text-label-sm font-medium text-on-surface mb-1">INV_NO</label>
+<input class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-body-md font-mono focus:border-primary focus:outline-none" type="text" value="INV-2026-004419"/>
+</div>
+</div>
+<!-- SKU Table Configuration -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-semibold text-on-surface">
+                  SKU บน shipment นี้ — ตั้งจำนวนที่ ERP invoice จริง
+                </span>
+<span class="text-[12px] text-secondary">2 รายการบนคำสั่งซื้อ</span>
+</div>
+<div class="border border-[#e1e7f0] rounded-lg overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-11 bg-[#f8fafc] text-secondary text-[12px] font-semibold border-b border-[#e1e7f0]">
+<th class="px-4 py-2">Product / SKU</th>
+<th class="px-4 py-2 text-right">สั่ง (Ordered qty)</th>
+<th class="px-4 py-2 text-right">ราคา (ex VAT)</th>
+<th class="px-4 py-2 w-48 text-right">Invoice qty</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-md">
+<!-- Row 1 -->
+<tr class="hover:bg-[#f8fafc] transition-colors">
+<td class="px-4 py-3">
+<div class="font-medium text-on-surface">ผ้าไหมยกดอกลายราชสำนักไทย (Thai Silk Gold Motif)</div>
+<div class="font-mono text-[12px] text-secondary">SKU-TH-SILK-01</div>
+</td>
+<td class="px-4 py-3 text-right font-mono font-medium text-on-surface">10</td>
+<td class="px-4 py-3 text-right font-mono text-on-surface">฿450.00</td>
+<td class="px-4 py-3 text-right">
+<div class="flex items-center justify-end gap-2">
+<input class="w-24 h-9 px-2.5 text-right bg-white border border-[#e1e7f0] rounded-lg font-mono text-body-md focus:border-primary focus:outline-none" max="10" min="0" placeholder="กรอกจำนวน ≥ 0" type="number" value="10"/>
+<span class="text-xs text-secondary">ชิ้น</span>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#f8fafc] transition-colors">
+<td class="px-4 py-3">
+<div class="font-medium text-on-surface">ชาอู่หลงยอดดอยแม่สลองคัดพิเศษ (Doi Mae Salong Tea)</div>
+<div class="font-mono text-[12px] text-secondary">SKU-TH-TEA-002</div>
+</td>
+<td class="px-4 py-3 text-right font-mono font-medium text-on-surface">5</td>
+<td class="px-4 py-3 text-right font-mono text-on-surface">฿280.00</td>
+<td class="px-4 py-3 text-right">
+<div class="flex items-center justify-end gap-2">
+<input class="w-24 h-9 px-2.5 text-right bg-white border border-[#e1e7f0] rounded-lg font-mono text-body-md focus:border-primary focus:outline-none" max="5" min="0" placeholder="กรอกจำนวน ≥ 0" type="number" value="5"/>
+<span class="text-xs text-secondary">กล่อง</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Credit Back Warning Banner -->
+<div class="p-3.5 rounded-lg bg-[#eef2ff] border border-[#cddaf9] flex items-center justify-between text-body-sm text-on-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span>คาดว่าจะเกิด Credit Back ≈ <strong class="font-mono text-primary font-bold">฿ 0.00</strong> (ex VAT) — คำนวณจริงฝั่ง backend</span>
+</div>
+<span class="text-xs text-secondary bg-white px-2 py-0.5 rounded border border-[#e1e7f0]">
+                  Full Delivery Matched
+                </span>
+</div>
+</div>
+<!-- Delivery State Selector (invoice.delivery) -->
+<div class="space-y-3 pt-2">
+<div class="flex items-center justify-between">
+<label class="text-label-md font-semibold text-on-surface">สถานะจัดส่ง (invoice.delivery)</label>
+<span class="text-[12px] text-secondary">เลือกสถานะจัดส่ง 1 อัน</span>
+</div>
+<!-- Notice Badge -->
+<div class="p-3 rounded-lg bg-[#fef9e7] border border-[#fed7aa] text-[12px] text-[#b08900] flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="info">info</span>
+<span>Packed / Closed for VAT ไม่มีในตัวเลือก — handleInvoiceStatus ไม่อ่าน flag พวกนี้</span>
+</div>
+<!-- Options Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+<label class="flex items-center gap-2.5 p-3 rounded-lg border border-[#e1e7f0] bg-[#fafbfe] hover:bg-white cursor-pointer transition-all">
+<input class="text-primary focus:ring-primary" name="inv_delivery" type="radio"/>
+<span class="text-body-sm text-on-surface">ออก invoice อย่างเดียว (ไม่มี flag)</span>
+</label>
+<label class="flex items-center gap-2.5 p-3 rounded-lg border border-primary bg-[#f0f4ff] cursor-pointer transition-all">
+<input checked="" class="text-primary focus:ring-primary" name="inv_delivery" type="radio"/>
+<span class="text-body-sm font-medium text-primary">"Out for Delivery": "Y"</span>
+</label>
+<label class="flex items-center gap-2.5 p-3 rounded-lg border border-[#e1e7f0] bg-[#fafbfe] hover:bg-white cursor-pointer transition-all">
+<input class="text-primary focus:ring-primary" name="inv_delivery" type="radio"/>
+<span class="text-body-sm text-[#157347] font-medium">"Delivered": "Y"</span>
+</label>
+<label class="flex items-center gap-2.5 p-3 rounded-lg border border-[#e1e7f0] bg-[#fafbfe] hover:bg-white cursor-pointer transition-all">
+<input class="text-primary focus:ring-primary" name="inv_delivery" type="radio"/>
+<span class="text-body-sm text-[#b08900] font-medium">"Delivery Failed": "Y"</span>
+</label>
+<label class="flex items-center gap-2.5 p-3 rounded-lg border border-[#e1e7f0] bg-[#fafbfe] hover:bg-white cursor-pointer transition-all">
+<input class="text-primary focus:ring-primary" name="inv_delivery" type="radio"/>
+<span class="text-body-sm text-error font-medium">"Invoice Cancelled": "Y"</span>
+</label>
+</div>
+<div class="pt-3 flex justify-end">
+<button class="h-10 px-6 rounded-lg bg-primary-container hover:bg-[#2947d1] text-white font-medium text-label-md flex items-center gap-2 cursor-pointer transition-colors shadow-none" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="rocket_launch">rocket_launch</span>
+<span>Send mock webhook → (POST /api/erp/invoices/status)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- SUB-PANEL C: 3PL Delivery & Courier Testing -->
+<div class="border border-[#e1e7f0] rounded-xl p-5 bg-[#ffffff] space-y-5">
+<div class="flex items-center justify-between pb-3 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-3">
+<span class="h-6 px-2 rounded font-mono font-bold text-[11px] flex items-center bg-[#eef2ff] text-primary border border-[#cddaf9]">
+                  3PL DISPATCH
+                </span>
+<h3 class="text-headline-sm font-headline-sm font-semibold text-on-surface">3PL Delivery &amp; Courier Simulation</h3>
+</div>
+<span class="font-mono text-xs text-secondary">POST /api/erp/testing/shipments/:id/delivery-status</span>
+</div>
+<!-- Explanatory text block -->
+<div class="p-3.5 rounded-lg bg-[#f8fafc] border border-[#e1e7f0] text-body-sm text-secondary leading-relaxed">
+<p>
+<strong>3PL status</strong> — คนละเส้นกับ invoice. กด 'จำลอง' โดยไม่กรอกคนขับ จะได้สถานะปัจจุบันแบบ shipment shipped · order preparing · คนขับยังไม่มี (ถ้ายังไม่มี 3PL status จะยิง PREPARING ให้ก่อน). order เป็น delivered เมื่อทุก shipment ส่งถึง; Credit Back ออกจาก tab invoice (ไม่ต้องรอส่งถึง)
+              </p>
+</div>
+<!-- 3PL Status Selectors -->
+<div class="space-y-2">
+<label class="text-label-sm font-semibold text-on-surface">3PL status</label>
+<div class="flex flex-wrap items-center gap-2">
+<button class="h-9 px-3.5 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f1f5f9] text-label-md font-mono" type="button">PREPARING</button>
+<button class="h-9 px-3.5 rounded-lg border border-primary bg-[#eef2ff] text-primary text-label-md font-mono font-semibold" type="button">SHIPPING</button>
+<button class="h-9 px-3.5 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f1f5f9] text-label-md font-mono" type="button">DELIVERED</button>
+<button class="h-9 px-3.5 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f1f5f9] text-label-md font-mono" type="button">FAILED_DELIVERY</button>
+<button class="h-9 px-3.5 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f1f5f9] text-label-md font-mono" type="button">RETURNED</button>
+</div>
+</div>
+<!-- Courier Details Inputs -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+<div>
+<label class="block text-label-sm font-medium text-on-surface mb-1">
+                  คนขับ <span class="text-secondary text-xs font-normal">(ว่างได้ — SHIPPING โดยไม่มีคนขับจะโชว์ ยังไม่มี)</span>
+</label>
+<input class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-body-md focus:border-primary focus:outline-none" placeholder="เช่น สมศักดิ์ มั่นคง" type="text" value="สมศักดิ์ มั่นคง (Courier Josh Express)"/>
+</div>
+<div>
+<label class="block text-label-sm font-medium text-on-surface mb-1">เบอร์คนขับ</label>
+<input class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-body-md font-mono focus:border-primary focus:outline-none" placeholder="081-234-5678" type="text" value="089-948-2211"/>
+</div>
+<div>
+<label class="block text-label-sm font-medium text-on-surface mb-1">ทะเบียนรถ</label>
+<input class="w-full h-10 px-3 bg-white border border-[#e1e7f0] rounded-lg text-body-md font-mono focus:border-primary focus:outline-none" placeholder="1กข-9921 กทม." type="text" value="2ฒณ-8812 กทม."/>
+</div>
+</div>
+<!-- Explanatory note -->
+<div class="text-[12px] text-secondary flex items-start gap-1.5 pt-1">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5" data-icon="help">help</span>
+<span>ตัวจริง — คนขับ/route ไม่ได้มาจาก invoice.status.changed แยก mock ไว้เพราะเป็นคนละ endpoint กัน ยิงแล้วจะ persist ลง shipment.courier_* เหมือน flow จริง</span>
+</div>
+<div class="pt-2 flex justify-end">
+<button class="h-10 px-6 rounded-lg bg-primary-container hover:bg-[#2947d1] text-white font-medium text-label-md flex items-center gap-2 cursor-pointer transition-colors shadow-none" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="play_circle">play_circle</span>
+<span>จำลองผล (POST /api/erp/testing/shipments/:id/delivery-status)</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Live Simulation Output & Audit Console ("ผลล่าสุด —") -->
+<section class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-6 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] space-y-5">
+<div class="flex items-center justify-between border-b border-[#e1e7f0] pb-4 flex-wrap gap-2">
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-[#157347]"></span>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight">ผลล่าสุด — Simulation Execution Summary</h2>
+<span class="px-2 py-0.5 rounded text-xs font-mono font-medium bg-[#e8f5ed] text-[#157347] border border-[#a3e6be]">
+              HTTP 200 OK
+            </span>
+<span class="font-mono text-xs text-secondary bg-[#f1f5f9] px-2 py-0.5 rounded border border-[#e1e7f0]">
+              Latency: 48ms
+            </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-secondary font-mono">Timestamp: 2026-03-30T10:42:15.201Z</span>
+</div>
+</div>
+<!-- Split View: ก่อนยิง vs หลังยิง -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Column 1: ก่อนยิง (Before) -->
+<div class="border border-[#e1e7f0] rounded-xl p-4 bg-[#f8fafc] space-y-3">
+<div class="flex items-center justify-between pb-2 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="history">history</span>
+<span class="text-label-md font-semibold text-secondary uppercase tracking-wider">ก่อนยิง (Current State)</span>
+</div>
+<span class="text-xs font-mono text-secondary">Snapshot #01</span>
+</div>
+<div class="space-y-2.5 text-body-sm">
+<div class="flex items-center justify-between py-1 border-b border-[#e1e7f0]/60">
+<span class="text-secondary">Order Status:</span>
+<span class="font-medium text-on-surface">ชำระแล้ว รอ ERP ยืนยัน (PREPARING)</span>
+</div>
+<div class="flex items-center justify-between py-1 border-b border-[#e1e7f0]/60">
+<span class="text-secondary">Shipment Status:</span>
+<span class="font-mono font-medium text-[#b08900]">PREPARING</span>
+</div>
+<div class="flex items-center justify-between py-1 border-b border-[#e1e7f0]/60">
+<span class="text-secondary">Credit Back Emitted:</span>
+<span class="font-mono text-on-surface">฿0.00</span>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-secondary">Courier Assigned:</span>
+<span class="text-secondary">ยังไม่มี</span>
+</div>
+</div>
+</div>
+<!-- Column 2: หลังยิง (After) -->
+<div class="border border-[#cddaf9] rounded-xl p-4 bg-[#f0f4ff]/50 space-y-3">
+<div class="flex items-center justify-between pb-2 border-b border-[#cddaf9]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="check_circle">check_circle</span>
+<span class="text-label-md font-semibold text-primary uppercase tracking-wider">หลังยิง (Projected Next State)</span>
+</div>
+<span class="text-xs font-mono text-primary font-bold">Updated Live</span>
+</div>
+<div class="space-y-2.5 text-body-sm">
+<div class="flex items-center justify-between py-1 border-b border-[#cddaf9]/60">
+<span class="text-secondary">Order Status:</span>
+<span class="font-medium text-primary flex items-center gap-1">
+<span>ERP ยืนยันแล้ว กำลังเตรียม</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_flat">trending_flat</span>
+</span>
+</div>
+<div class="flex items-center justify-between py-1 border-b border-[#cddaf9]/60">
+<span class="text-secondary">Shipment Status:</span>
+<span class="font-mono font-bold text-primary">SHIPPING</span>
+</div>
+<div class="flex items-center justify-between py-1 border-b border-[#cddaf9]/60">
+<span class="text-secondary">Credit Back Emitted:</span>
+<span class="font-mono font-medium text-on-surface">฿0.00 (No short ship)</span>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-secondary">Courier Assigned:</span>
+<span class="font-medium text-on-surface">สมศักดิ์ มั่นคง (2ฒณ-8812)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Raw JSON Payload Response Inspector -->
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-semibold text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]" data-icon="code">code</span>
+              Raw Webhook Response (Payload &amp; Handlers Log)
+            </span>
+<button class="text-xs text-primary hover:underline font-mono cursor-pointer" type="button">Copy JSON</button>
+</div>
+<pre class="bg-[#0f172a] text-[#e2e8f0] p-4 rounded-xl text-code-sm font-code-sm overflow-x-auto custom-scrollbar leading-relaxed"><code>{
+  "event_id": "evt_sim_8928374112",
+  "status": "success",
+  "http_code": 200,
+  "execution_time_ms": 48,
+  "target_order_id": "JOSH-2026-04417",
+  "target_shipment_id": "SHP-2026-09142",
+  "applied_transitions": [
+    {
+      "step": "order.status.changed",
+      "flags_applied": { "Order Confirmed": "Y" },
+      "inventory_reservation": "CONFIRMED"
+    },
+    {
+      "step": "invoice.status.changed",
+      "doc_book": "BK-HQ-01",
+      "doc_no": "ERP-2026-99014",
+      "invoice_no": "INV-2026-004419",
+      "delivery_status": "Out for Delivery",
+      "calculated_credit_back_thb": 0.00
+    },
+    {
+      "step": "3pl.delivery-status",
+      "status": "SHIPPING",
+      "courier": {
+        "name": "สมศักดิ์ มั่นคง (Courier Josh Express)",
+        "phone": "089-948-2211",
+        "plate": "2ฒณ-8812 กทม."
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</section>
+</main>
+</div>
+</body></html>

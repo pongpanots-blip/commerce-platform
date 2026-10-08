@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { Button, Checkbox, ErrorText, Field, FormPanel, Icon, Input, Loading, Page, PageHeader, Panel, PanelHead, Span, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
+import { useSearchParams } from 'react-router-dom';
+import { Button, Checkbox, ErrorText, Field, FormPanel, Icon, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Span, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
 import { webhooks, events, TestWebhookResult } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function Webhooks() {
+  __useUiLocale();
   const { data, loading, error, reload } = useAsync(() => webhooks.list());
   const eventsState = useAsync(() => events.list());
   const catalog = eventsState.data?.items ?? [];
@@ -13,7 +17,11 @@ export function Webhooks() {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<Record<string, TestWebhookResult>>({});
+  const [search, setSearch] = useSearchParams();
+  const creating = search.get('create') === '1';
+  function closeCreate() { const next = new URLSearchParams(search); next.delete('create'); setSearch(next, { replace: true }); }
 
   function toggleEvent(type: string) {
     setSelectedEvents((prev) =>
@@ -22,7 +30,7 @@ export function Webhooks() {
 
   async function submit() {
     if (!selectedEvents.length) {
-      setFormError('Select at least 1 event');
+      setFormError(__uiMessage("Select at least 1 event"));
       return;
     }
     setSubmitting(true);
@@ -37,6 +45,7 @@ export function Webhooks() {
       setForm({ name: '', targetUrl: '', secret: '' });
       setSelectedEvents([]);
       reload();
+      closeCreate();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -46,9 +55,12 @@ export function Webhooks() {
 
   async function toggleActive(id: string, active: boolean) {
     setBusyId(id);
+    setActionError(null);
     try {
       await webhooks.update(id, { active: !active });
       reload();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusyId(null);
     }
@@ -56,9 +68,12 @@ export function Webhooks() {
 
   async function test(id: string) {
     setBusyId(id);
+    setActionError(null);
     try {
       const result = await webhooks.test(id);
       setTestResults((prev) => ({ ...prev, [id]: result }));
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusyId(null);
     }
@@ -67,31 +82,33 @@ export function Webhooks() {
   return (
     <Page>
       <PageHeader
-        title="Webhooks"
-        subtitle="Subscribe an endpoint to receive platform events as they happen."
+        title={__uiText("Webhooks")}
+        subtitle={__uiText("Subscribe an endpoint to receive platform events as they happen.")}
+        actions={<Button variant="primary" icon="add" onClick={() => setSearch({ create: '1' })}>{__uiText("Create webhook")}</Button>}
       />
 
       {/* Create webhook form */}
-      <div className="mb-6">
+      {creating && <Modal title={__uiText("Create webhook")} onClose={() => { if (!submitting) closeCreate(); }} width={640}>
         <FormPanel
-          title="Create a new webhook"
+          title={__uiText("Create a new webhook")}
           icon="add_circle"
-          description="Subscribe to events and receive HTTP notifications"
+          description={__uiText("Subscribe to events and receive HTTP notifications")}
           cols={1}
           error={formError}
-          submitLabel={submitting ? 'Creating…' : '+ Create webhook'}
+          submitLabel={submitting ? __uiText("Creating…") : __uiText("+ Create webhook")}
           busy={submitting}
           onSubmit={submit}
+          onCancel={closeCreate}
         >
-        <Field label="Name" hint="e.g., Order sync worker">
+        <Field label={__uiText("Name")} hint={__uiText("e.g., Order sync worker")}>
           <Input
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            placeholder="e.g., Order sync worker"
+            placeholder={__uiText("e.g., Order sync worker")}
           />
         </Field>
-        <Field label="Target URL" hint="Your webhook receiver endpoint">
+        <Field label={__uiText("Target URL")} hint={__uiText("Your webhook receiver endpoint")}>
           <Input
             required
             type="url"
@@ -100,18 +117,19 @@ export function Webhooks() {
             placeholder="https://example.com/webhooks/josh"
           />
         </Field>
-        <Field label="Secret (optional)" hint="For HMAC signature verification">
+        <Field label={__uiText("Secret (optional)")} hint={__uiText("For HMAC signature verification")}>
           <Input
             value={form.secret}
             onChange={(e) => setForm({ ...form, secret: e.target.value })}
-            placeholder="for HMAC signature"
+            placeholder={__uiText("for HMAC signature")}
           />
         </Field>
 
         {/* Event selection */}
+        <ErrorText error={eventsState.error} />
         <Span>
           <div>
-            <label className="block text-xs font-medium text-on-surface mb-2">Events</label>
+            <label className="block text-xs font-medium text-on-surface mb-2">{__uiText("Events")}</label>
             <div className="space-y-2">
               {catalog.map((ev) => (
                 <label key={ev.type} className="flex items-center gap-2 cursor-pointer">
@@ -129,25 +147,26 @@ export function Webhooks() {
           </div>
         </Span>
         </FormPanel>
-      </div>
+      </Modal>}
 
       {/* Webhooks table */}
+      <ErrorText error={actionError} />
       <Panel>
-        <PanelHead title="Your Webhooks" />
+        <PanelHead title={__uiText("Your Webhooks")} />
         {error ? (
           <ErrorText error={error} />
         ) : loading ? (
           <Loading />
         ) : !data?.length ? (
-          <div className="p-6"><p className="text-xs text-on-surface-variant">No webhooks yet. Create one to get started.</p></div>
+          <div className="p-6"><p className="text-xs text-on-surface-variant">{__uiText("No webhooks yet. Create one to get started.")}</p></div>
         ) : (
           <Table>
             <THead>
-                <TH>Name</TH>
-                <TH>Target URL</TH>
-                <TH>Events</TH>
-                <TH>Status</TH>
-                <TH className="text-right">Actions</TH>
+                <TH>{__uiText("Name")}</TH>
+                <TH>{__uiText("Target URL")}</TH>
+                <TH>{__uiText("Events")}</TH>
+                <TH>{__uiText("Status")}</TH>
+                <TH className="text-right">{__uiText("Actions")}</TH>
               </THead>
             <TBody>
               {data.map((w) => (
@@ -160,7 +179,7 @@ export function Webhooks() {
                   </TD>
                   <TD>
                     <div className="text-xs text-on-surface-variant">
-                      {w.eventTypes.length} event{w.eventTypes.length !== 1 ? 's' : ''}
+                      {__uiText(w.eventTypes.length === 1 ? '{0} event' : '{0} events', { '0': w.eventTypes.length })}
                     </div>
                   </TD>
                   <TD>
@@ -173,7 +192,7 @@ export function Webhooks() {
                         className="w-4 h-4"
                       />
                       <span className="text-on-surface-variant">
-                        {w.active ? 'Active' : 'Inactive'}
+                        {w.active ? __uiText("Active") : __uiText("Inactive")}
                       </span>
                     </label>
                   </TD>
@@ -183,15 +202,15 @@ export function Webhooks() {
                       disabled={busyId === w.id}
                       onClick={() => test(w.id)}
                     >
-                      {busyId === w.id ? '…' : 'Test'}
+                      {busyId === w.id ? '…' : __uiText("Test")}
                     </button>
                     {testResults[w.id] && (
                       <div className="text-[11px] mt-1">
                         {testResults[w.id].ok ? (
-                          <span className="text-primary font-medium">✓ OK · {testResults[w.id].status}</span>
+                          <span className="text-primary font-medium">{__uiText("✓ OK · ")}{testResults[w.id].status}</span>
                         ) : (
                           <span className="text-error font-medium">
-                            ✗ Failed {testResults[w.id].status ? `· ${testResults[w.id].status}` : ''}
+                            {__uiText("✗ Failed ")}{testResults[w.id].status ? `· ${testResults[w.id].status}` : ''}
                             {testResults[w.id].error ? ` · ${testResults[w.id].error}` : ''}
                           </span>
                         )}

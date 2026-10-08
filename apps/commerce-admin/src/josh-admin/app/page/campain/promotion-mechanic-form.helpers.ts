@@ -1,3 +1,6 @@
+import { uiText as __uiText } from '@cp/ui';
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 import {
   fromBangkokInputValue,
   toBangkokInputValue,
@@ -75,10 +78,10 @@ export type MechanicOriginal = {
 };
 
 export const VALUE_TYPE_OPTIONS: Array<{ value: MechanicValueType; label: string }> = [
-  { value: 'percentage', label: 'ลด % (Percentage)' },
-  { value: 'special_price', label: 'ราคาโปร (Special price)' },
-  { value: 'tiered', label: 'ยิ่งซื้อยิ่งถูก (Tiered)' },
-  { value: 'bogo', label: 'ซื้อ X แถม Y (BOGO)' },
+  { value: 'percentage', get label(){return uiText("ลด % (Percentage)");} },
+  { value: 'special_price', get label(){return uiText("ราคาโปร (Special price)");} },
+  { value: 'tiered', get label(){return uiText("ยิ่งซื้อยิ่งถูก (Tiered)");} },
+  { value: 'bogo', get label(){return uiText("ซื้อ X แถม Y (BOGO)");} },
 ];
 
 let tierSeq = 0;
@@ -450,18 +453,16 @@ export function validateMechanicForm(
 export function summarizeMechanicValue(value: PromotionValue | null | undefined): string {
   switch (value?.type) {
     case 'percentage':
-      return `ลด ${value.percent}%`;
+      return __uiText("ลด {0}%",{"0":value.percent});
     case 'tiered': {
       const [only] = value.tiers;
       // same test as valueToFormFields: a single open-ended tier at 1 is "ราคาโปร"
       return value.tiers.length === 1 && only.min_qty === 1 && only.max_qty == null
-        ? `ราคาโปร ฿${Number(only.promotion_price).toLocaleString('th-TH')}`
-        : `ยิ่งซื้อยิ่งถูก ${value.tiers.length} ขั้น`;
+        ? __uiText("ราคาโปร ฿{0}",{"0":Number(only.promotion_price).toLocaleString('th-TH')})
+        : __uiText("ยิ่งซื้อยิ่งถูก {0} ขั้น",{"0":value.tiers.length});
     }
     case 'bogo':
-      return `ซื้อ ${value.buy_qty} แถม ${value.get_qty}${
-        value.get_discount_percent === 100 ? '' : ` (ลด ${value.get_discount_percent}%)`
-      }`;
+      return __uiText("ซื้อ {0} แถม {1}{2}",{"0":value.buy_qty,"1":value.get_qty,"2":value.get_discount_percent === 100 ? '' : __uiText(" (ลด {0}%)",{"0":value.get_discount_percent})});
     default:
       return '-';
   }
@@ -493,10 +494,12 @@ export function summarizeLegacyItems(items: LegacyItem[] | undefined): string {
   );
   kinds.delete('-');
   if (kinds.size === 0) return '-';
-  return kinds.size === 1 ? [...kinds][0] : `หลายแบบ (${kinds.size} แบบ ตามแต่ละ SKU)`;
+  return kinds.size === 1 ? [...kinds][0] : __uiText("หลายแบบ ({0} แบบ ตามแต่ละ SKU)",{"0":kinds.size});
 }
 
 /** List cell: new mechanics carry one `value`; a legacy one has none (its discount is per SKU). */
 export function summarizeMechanicRow(value: PromotionValue | null | undefined): string {
-  return value ? summarizeMechanicValue(value) : 'ต่อ SKU (แบบเดิม)';
+  return value ? summarizeMechanicValue(value) : __uiText("ต่อ SKU (แบบเดิม)");
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

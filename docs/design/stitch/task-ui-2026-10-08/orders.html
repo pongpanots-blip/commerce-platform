@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ออเดอร์และการเงิน — Commerce Platform</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: "#365cf5",
+              ink: "#17243b",
+              secondary: "#52627a",
+              border: "#e1e7f0",
+              canvas: "#f6f8fc",
+              success: "#157347",
+              warning: "#b08900",
+              danger: "#c2333f",
+            }
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+            lg: "1rem",
+            xl: "1.5rem",
+            full: "9999px"
+          },
+          fontFamily: {
+            headline: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            display: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            body: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            label: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Public Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-[#17243b] min-h-screen flex">
+<!-- ========================================== -->
+<!-- SIDEBAR (Fixed 256px / w-64)               -->
+<!-- ========================================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 bg-white dark:bg-slate-900 border-r border-[#e1e7f0] dark:border-slate-800 flex flex-col justify-between z-30 select-none">
+<!-- Top Area: Brand & Navigation Items -->
+<div class="flex flex-col flex-1 overflow-y-auto">
+<!-- App Header / Logo -->
+<div class="h-16 flex items-center px-5 border-b border-[#e1e7f0] dark:border-slate-800 gap-3">
+<div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+<span class="material-symbols-outlined" style="font-size: 22px;">dataset</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-[#17243b] dark:text-white leading-tight font-headline">Commerce Platform</span>
+<span class="text-xs text-[#52627a] dark:text-slate-400">ระบบปฏิบัติการการค้า</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="p-3 space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl">inventory_2</span>
+<span class="text-sm font-medium">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน (ACTIVE) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#365cf5]/10 text-[#365cf5] font-semibold dark:bg-[#365cf5]/20 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl fill-icon">shopping_cart</span>
+<span class="text-sm">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+<span class="text-sm font-medium">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl">campaign</span>
+<span class="text-sm font-medium">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl">bar_chart</span>
+<span class="text-sm font-medium">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl">hub</span>
+<span class="text-sm font-medium">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="text-sm font-medium">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Area: Developer portal & build version -->
+<div class="p-3 border-t border-[#e1e7f0] dark:border-slate-800">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] dark:text-slate-400 dark:hover:bg-slate-800 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl">code</span>
+<span class="text-sm font-medium">นักพัฒนา &amp; API</span>
+</a>
+<div class="px-3 pt-2 pb-1 flex items-center justify-between text-xs text-[#52627a] dark:text-slate-400">
+<span>Commerce Platform</span>
+<span class="font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">v2.4</span>
+</div>
+</div>
+</aside>
+<!-- ========================================== -->
+<!-- MAIN LAYOUT WRAPPER (Offset by w-64)       -->
+<!-- ========================================== -->
+<div class="flex-1 ml-64 flex flex-col min-w-0">
+<!-- Top Contextual App Bar -->
+<header class="sticky top-0 z-20 h-16 bg-white dark:bg-slate-900 border-b border-[#e1e7f0] dark:border-slate-800 flex items-center px-8 justify-between">
+<!-- Search Input in TopNav -->
+<div class="flex items-center w-full max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#52627a] text-lg pointer-events-none">search</span>
+<input class="w-full bg-[#f6f8fc] dark:bg-slate-800 text-[#17243b] dark:text-white pl-9 pr-4 py-1.5 text-xs rounded-lg border border-[#e1e7f0] dark:border-slate-700 focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] transition-all" placeholder="ค้นหาข้อมูลระบบหรือเอกสาร..." type="text"/>
+</div>
+</div>
+<!-- Actions & User Profile Cluster -->
+<div class="flex items-center gap-3">
+<!-- Refresh Action -->
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors" title="รีเฟรชข้อมูล">
+<span class="material-symbols-outlined text-lg">refresh</span>
+</button>
+<!-- Notifications Action with dot indicator -->
+<button class="relative w-9 h-9 flex items-center justify-center rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-lg">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#c2333f]"></span>
+</button>
+<!-- Help Action -->
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors" title="ความช่วยเหลือ">
+<span class="material-symbols-outlined text-lg">help_outline</span>
+</button>
+<div class="h-5 w-px bg-[#e1e7f0] dark:bg-slate-800 mx-1"></div>
+<!-- User Profile Badge -->
+<div class="flex items-center gap-3 pl-1 cursor-pointer select-none">
+<div class="w-8 h-8 rounded-full bg-[#365cf5]/15 text-[#365cf5] font-bold text-xs flex items-center justify-center border border-[#365cf5]/30">
+            สม
+          </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-[#17243b] leading-tight">ทีมปฏิบัติการคลังสินค้า</span>
+<span class="text-[11px] text-[#52627a] leading-tight">somchai.p@commerce.internal</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================== -->
+<!-- CONTENT CANVAS (Max ~1240px)               -->
+<!-- ========================================== -->
+<main class="flex-1 p-8 max-w-[1240px] w-full mx-auto space-y-6">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-xs text-[#52627a]">
+<a class="hover:text-[#365cf5] transition-colors" href="#">หน้าหลัก</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-[#17243b] font-medium">ออเดอร์และการเงิน</span>
+</nav>
+<!-- Category Header Area -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-6 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1.5">
+<div class="flex items-center gap-3">
+<h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-none">ออเดอร์และการเงิน</h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#365cf5]/10 text-[#365cf5] border border-[#365cf5]/20">
+                ศูนย์รวมงานปฏิบัติการ
+              </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-[#52627a] border border-[#e1e7f0]">
+                ข้อมูลตัวอย่าง
+              </span>
+</div>
+<p class="text-sm text-[#52627a]">
+              เลือกงานปฏิบัติการคำสั่งซื้อ การจัดส่ง การชำระเงิน และเอกสารทางการเงินเพื่อดำเนินการต่อ
+            </p>
+</div>
+<!-- Actions: Primary & Secondary -->
+<div class="flex items-center gap-2.5 shrink-0">
+<button class="h-9 px-3.5 bg-white border border-[#e1e7f0] text-sm font-medium text-[#17243b] rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-base text-[#52627a]">refresh</span>
+<span>รีเฟรช</span>
+</button>
+<button class="h-9 px-4 bg-[#365cf5] text-white text-sm font-semibold rounded-lg hover:bg-[#365cf5]/90 transition-colors flex items-center gap-1.5 shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-base">add</span>
+<span>สร้างคำสั่งซื้อใหม่</span>
+</button>
+</div>
+</div>
+<!-- In-page Task Filter Bar -->
+<div class="mt-6 pt-5 border-t border-[#e1e7f0]">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="relative flex-1 max-w-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#52627a] text-lg">filter_list</span>
+<input class="w-full pl-9 pr-4 py-2 text-xs bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-[#365cf5] focus:bg-white text-[#17243b] transition-all" id="taskSearchInput" placeholder="ค้นหางานหรือเมนูในหน้านี้..." type="text"/>
+</div>
+<p class="text-xs text-[#52627a] flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-[#52627a]">info</span>
+<span>ค้นหาเฉพาะงานในหมวดหมู่ออเดอร์และการเงิน</span>
+</p>
+</div>
+</div>
+</div>
+<!-- Frequent High-Priority Task Cards (4 Grid) -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-xs font-semibold text-[#52627a] uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-[#365cf5]">bolt</span>
+            งานที่ดำเนินการบ่อยประจำวัน
+          </h2>
+<span class="text-xs text-[#52627a]">4 งานหลักที่ใช้งานต่อเนื่อง</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1 -->
+<a class="group bg-white p-4 rounded-xl border border-[#e1e7f0] hover:border-[#365cf5] hover:shadow-sm transition-all duration-150 flex flex-col justify-between" href="#">
+<div>
+<div class="flex items-center justify-between mb-2.5">
+<div class="w-9 h-9 rounded-lg bg-[#365cf5]/10 text-[#365cf5] flex items-center justify-center group-hover:bg-[#365cf5] group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">shopping_bag</span>
+</div>
+<span class="px-2 py-0.5 text-[11px] font-semibold bg-[#c2333f]/10 text-[#c2333f] border border-[#c2333f]/20 rounded-md">
+                  งานด่วน
+                </span>
+</div>
+<h3 class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors leading-snug">
+                จัดการออเดอร์รอจัดส่ง
+              </h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2 leading-relaxed">
+                ตรวจสอบคำสั่งซื้อที่ชำระเงินเรียบร้อยและพร้อมจัดสรรสต็อก
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-[#365cf5] font-medium">
+<span>เปิดรายการออเดอร์</span>
+<span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</div>
+</a>
+<!-- Card 2 -->
+<a class="group bg-white p-4 rounded-xl border border-[#e1e7f0] hover:border-[#365cf5] hover:shadow-sm transition-all duration-150 flex flex-col justify-between" href="#">
+<div>
+<div class="flex items-center justify-between mb-2.5">
+<div class="w-9 h-9 rounded-lg bg-emerald-50 text-[#157347] flex items-center justify-center group-hover:bg-[#157347] group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">payments</span>
+</div>
+<span class="text-[11px] font-medium text-[#52627a] bg-slate-100 px-2 py-0.5 rounded">
+                  การเงิน
+                </span>
+</div>
+<h3 class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors leading-snug">
+                รายการชำระเงินรอตรวจสอบ
+              </h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2 leading-relaxed">
+                เทียบสลิปโอนเงิน ตรวจการชำระผ่านเกตเวย์ และตัดยอดรับเงิน
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-[#365cf5] font-medium">
+<span>ตรวจสอบสลิป</span>
+<span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</div>
+</a>
+<!-- Card 3 -->
+<a class="group bg-white p-4 rounded-xl border border-[#e1e7f0] hover:border-[#365cf5] hover:shadow-sm transition-all duration-150 flex flex-col justify-between" href="#">
+<div>
+<div class="flex items-center justify-between mb-2.5">
+<div class="w-9 h-9 rounded-lg bg-amber-50 text-[#b08900] flex items-center justify-center group-hover:bg-[#b08900] group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">print</span>
+</div>
+<span class="text-[11px] font-medium text-[#52627a] bg-slate-100 px-2 py-0.5 rounded">
+                  คลังสินค้า
+                </span>
+</div>
+<h3 class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors leading-snug">
+                พิมพ์สติกเกอร์และใบปะหน้า
+              </h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2 leading-relaxed">
+                พิมพ์ Waybill บาร์โค้ด และใบหยิบสินค้าตามรอบขนส่งปัจจุบัน
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-[#365cf5] font-medium">
+<span>พิมพ์ใบจัดส่ง</span>
+<span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</div>
+</a>
+<!-- Card 4 -->
+<a class="group bg-white p-4 rounded-xl border border-[#e1e7f0] hover:border-[#365cf5] hover:shadow-sm transition-all duration-150 flex flex-col justify-between" href="#">
+<div>
+<div class="flex items-center justify-between mb-2.5">
+<div class="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">assignment_return</span>
+</div>
+<span class="text-[11px] font-medium text-[#52627a] bg-slate-100 px-2 py-0.5 rounded">
+                  พัสดุตีกลับ
+                </span>
+</div>
+<h3 class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors leading-snug">
+                คืนสินค้าและคำขอคืนเงิน
+              </h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2 leading-relaxed">
+                บันทึกพัสดุตีกลับ ตรวจสอบเหตุผลเคลม และออกเครดิตเงินคืน
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-[#365cf5] font-medium">
+<span>จัดการคำขอเคลม</span>
+<span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</div>
+</a>
+</div>
+</div>
+<!-- Structured Task Sections (Enterprise 2x2 Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+<!-- SECTION 1: คำสั่งซื้อและการจอง -->
+<section class="task-panel bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-sm flex flex-col">
+<div class="flex items-center gap-3 pb-4 border-b border-[#e1e7f0]">
+<div class="w-9 h-9 rounded-lg bg-[#365cf5]/10 text-[#365cf5] flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">receipt_long</span>
+</div>
+<div>
+<h2 class="text-base font-bold text-[#17243b] leading-tight">คำสั่งซื้อและการจอง</h2>
+<p class="text-xs text-[#52627a]">จัดการรอบคำสั่งซื้อ บันทึกการจอง และนำเข้าข้อมูลช่องทาง</p>
+</div>
+</div>
+<div class="divide-y divide-slate-100 flex-1">
+<!-- Item 1 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">ออเดอร์แพลตฟอร์ม</div>
+<div class="text-xs text-[#52627a] leading-relaxed">ดูและจัดการคำสั่งซื้อที่เชื่อมต่อจากช่องทางมาร์เก็ตเพลสและร้านค้า</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 2 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">จัดการออเดอร์</div>
+<div class="text-xs text-[#52627a] leading-relaxed">ตรวจสอบสถานะ แก้ไขข้อมูล และยืนยันรายการคำสั่งซื้อของระบบ</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 3 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">นำเข้าออเดอร์</div>
+<div class="text-xs text-[#52627a] leading-relaxed">นำเข้าไฟล์รายการคำสั่งซื้อตามรอบการขายแบบแบทช์ (CSV / Excel)</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 4 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">การจองสินค้า</div>
+<div class="text-xs text-[#52627a] leading-relaxed">ตรวจสอบและจัดการการล็อกสต็อกสินค้าตามคำสั่งซื้อที่รอชำระเงิน</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- SECTION 2: จัดส่งสินค้า -->
+<section class="task-panel bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-sm flex flex-col">
+<div class="flex items-center gap-3 pb-4 border-b border-[#e1e7f0]">
+<div class="w-9 h-9 rounded-lg bg-emerald-50 text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">local_shipping</span>
+</div>
+<div>
+<h2 class="text-base font-bold text-[#17243b] leading-tight">จัดส่งสินค้า</h2>
+<p class="text-xs text-[#52627a]">กระบวนการตัดรอบขนส่ง เอกสารการแพ็ก และส่งมอบพัสดุ</p>
+</div>
+</div>
+<div class="divide-y divide-slate-100 flex-1">
+<!-- Item 1 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">จัดการการจัดส่ง</div>
+<div class="text-xs text-[#52627a] leading-relaxed">มอบหมายรอบรถและตัวแทนขนส่งสำหรับพัสดุที่พร้อมส่ง</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 2 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">พิมพ์สติกเกอร์</div>
+<div class="text-xs text-[#52627a] leading-relaxed">พิมพ์ใบปะหน้ากล่อง บาร์โค้ด และใบจัดเตรียมสินค้า (Pick list)</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 3 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">ตารางรอบส่ง</div>
+<div class="text-xs text-[#52627a] leading-relaxed">กำหนดการตัดรอบขนส่งและตรวจสอบสถานะการเข้ารับพัสดุ</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- SECTION 3: ชำระเงินและเครดิต -->
+<section class="task-panel bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-sm flex flex-col">
+<div class="flex items-center gap-3 pb-4 border-b border-[#e1e7f0]">
+<div class="w-9 h-9 rounded-lg bg-amber-50 text-[#b08900] flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+</div>
+<div>
+<h2 class="text-base font-bold text-[#17243b] leading-tight">ชำระเงินและเครดิต</h2>
+<p class="text-xs text-[#52627a]">ตรวจสอบหลักฐานการเงิน เอกสารเรียกเก็บ และเครดิตเทอมลูกค้า</p>
+</div>
+</div>
+<div class="divide-y divide-slate-100 flex-1">
+<!-- Item 1 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">รายการชำระเงิน</div>
+<div class="text-xs text-[#52627a] leading-relaxed">ตรวจสอบหลักฐานการโอนและสถานะการตัดยอดชำระเงิน</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 2 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">ใบแจ้งหนี้ค้างชำระ</div>
+<div class="text-xs text-[#52627a] leading-relaxed">ตรวจสอบรายการบิลที่เกินกำหนดและแจ้งเตือนยอดค้าง</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 3 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">วางบิล</div>
+<div class="text-xs text-[#52627a] leading-relaxed">ออกเอกสารใบวางบิลและสรุปยอดสำหรับลูกค้าองค์กร/เครดิต</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 4 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">ใบสมัครเครดิต</div>
+<div class="text-xs text-[#52627a] leading-relaxed">พิจารณาและอนุมัติวงเงินเครดิตเทอมสำหรับลูกค้าธุรกิจ</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- SECTION 4: คืนสินค้าและคืนเงิน -->
+<section class="task-panel bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-sm flex flex-col">
+<div class="flex items-center gap-3 pb-4 border-b border-[#e1e7f0]">
+<div class="w-9 h-9 rounded-lg bg-red-50 text-[#c2333f] flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">replay</span>
+</div>
+<div>
+<h2 class="text-base font-bold text-[#17243b] leading-tight">คืนสินค้าและคืนเงิน</h2>
+<p class="text-xs text-[#52627a]">บันทึกรับคืนพัสดุ สภาพสินค้า ใบลดหนี้ และการคืนวงเงิน</p>
+</div>
+</div>
+<div class="divide-y divide-slate-100 flex-1">
+<!-- Item 1 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">คืนสินค้าและคืนเงิน</div>
+<div class="text-xs text-[#52627a] leading-relaxed">บันทึกรับคืนพัสดุ ตรวจสอบสภาพสินค้า และเริ่มกระบวนการคืนเงิน</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 2 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">Credit notes</div>
+<div class="text-xs text-[#52627a] leading-relaxed">ออกใบลดหนี้สำหรับยอดคืนสินค้าหรือส่วนลดพิเศษ</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+<!-- Item 3 -->
+<a class="task-item py-3 px-2 flex items-start justify-between gap-3 hover:bg-[#f6f8fc] rounded-lg transition-colors group" href="#">
+<div class="space-y-0.5">
+<div class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">Credit backs</div>
+<div class="text-xs text-[#52627a] leading-relaxed">ตรวจสอบและยืนยันการคืนวงเงินเข้ากระเป๋าเครดิตลูกค้า</div>
+</div>
+<span class="material-symbols-outlined text-sm text-[#52627a] group-hover:text-[#365cf5] group-hover:translate-x-0.5 transition-all mt-1">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+<!-- Operational Policy & Audit Trail Note Footer -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-4 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-[#52627a] gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-[#157347]">verified_user</span>
+<span>ระบบบันทึก Log การดำเนินการทุกรายการตามสิทธิ์ของบัญชีเจ้าหน้าที่</span>
+</div>
+<div class="flex items-center gap-4">
+<span>เขตเวลา: <strong>Asia/Bangkok (GMT+7)</strong></span>
+<span>สถานะ API: <strong class="text-[#157347]">พร้อมใช้งานปกติ</strong></span>
+</div>
+</div>
+</main>
+</div>
+<!-- Inline Script for In-Page Instant Task Filter -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('taskSearchInput');
+      const taskItems = document.querySelectorAll('.task-item');
+      const panels = document.querySelectorAll('.task-panel');
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim().toLowerCase();
+
+        taskItems.forEach(item => {
+          const text = item.textContent.toLowerCase();
+          if (text.includes(query)) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        // Hide section panel if no children visible
+        panels.forEach(panel => {
+          const visibleItems = panel.querySelectorAll('.task-item[style*="display: flex"], .task-item:not([style*="display"])');
+          let hasVisible = false;
+          visibleItems.forEach(it => {
+            if (it.style.display !== 'none') hasVisible = true;
+          });
+          panel.style.display = hasVisible ? 'flex' : (query ? 'none' : 'flex');
+        });
+      });
+    });
+  </script>
+</body></html>

@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ERP Inbound Log - บันทึกข้อมูลขาเข้า | Thai Ops Cockpit</title>
+<!-- Material Symbols & Typography -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS Engine -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Injected Tailwind Configuration Verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed": "#dde1ff",
+            "primary-container": "#365cf5",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface-container-highest": "#d7e2ff",
+            "on-secondary-container": "#54647c",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "background": "#f9f9ff",
+            "inverse-surface": "#243048",
+            "on-primary": "#ffffff",
+            "on-background": "#0e1b32",
+            "surface-container": "#e8eeff",
+            "secondary-container": "#d0e1fd",
+            "on-primary-fixed": "#001257",
+            "tertiary-container": "#bc4600",
+            "tertiary-fixed": "#ffdbcd",
+            "on-surface-variant": "#444655",
+            "outline": "#747687",
+            "surface-container-lowest": "#ffffff",
+            "primary": "#0a3fdc",
+            "inverse-primary": "#b9c3ff",
+            "on-primary-container": "#ededff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary-container": "#ffebe4",
+            "secondary": "#4f5f77",
+            "surface-container-high": "#e0e8ff",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#ffb597",
+            "tertiary": "#943500",
+            "surface-container-low": "#f1f3ff",
+            "surface-tint": "#214ce7",
+            "on-error-container": "#93000a",
+            "outline-variant": "#c4c5d8",
+            "on-secondary-fixed": "#0b1c31",
+            "error": "#ba1a1a",
+            "secondary-fixed": "#d3e3ff",
+            "on-tertiary-fixed": "#360f00",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-bright": "#f9f9ff",
+            "surface": "#f9f9ff",
+            "on-secondary": "#ffffff",
+            "on-error": "#ffffff",
+            "on-primary-fixed-variant": "#0034c0",
+            "surface-variant": "#d7e2ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-dim": "#cddaf9",
+            "on-surface": "#0e1b32"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "gutter-mobile": "1rem",
+            "space-xs": "0.25rem",
+            "margin-mobile": "1rem",
+            "gutter": "1.5rem",
+            "space-2xl": "2.5rem",
+            "margin": "2rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "body-lg": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "headline-sm": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "headline-lg-mobile": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "body-md": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "label-sm": ["\"Inter, Noto Sans Thai, Noto Sans, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans Thai, Noto Sans, sans-serif\""],
+            "code-sm": ["\"JetBrains Mono, monospace\""],
+            "headline-md": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "body-sm": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "headline-lg": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""]
+          },
+          "fontSize": {
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased font-body-md min-h-screen flex selection:bg-surface-container selection:text-primary">
+<!-- ========================================================================= -->
+<!-- 1. PERSISTENT SIDE NAVIGATION BAR (256px)                                  -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant shadow-none flex flex-col justify-between p-3 select-none">
+<div>
+<!-- Brand & Header -->
+<div class="flex items-center gap-3 px-3 py-3.5 mb-2 border-b border-outline-variant/60">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold font-headline-sm text-headline-sm shadow-sm">
+          TP
+        </div>
+<div class="flex flex-col overflow-hidden">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Thai Ops Cockpit</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Navigation Tabs (7 Work Areas) -->
+<nav class="space-y-1 mt-3">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal" href="#inventory">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="font-label-md text-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal" href="#orders">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="font-label-md text-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal" href="#customers">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span class="font-label-md text-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal" href="#marketing">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+<span class="font-label-md text-label-md">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal" href="#analytics">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="font-label-md text-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE TAB - EXACT MATCH) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-medium border-l-[3px] border-primary transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#integrations">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">sync_alt</span>
+<span class="font-label-md text-label-md font-semibold text-primary">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99] font-normal" href="#settings">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-md text-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom Status & Instance Meta -->
+<div class="pt-4 border-t border-outline-variant/60 px-2 space-y-3">
+<div class="bg-surface-container-low rounded-lg p-3 border border-outline-variant/40">
+<div class="flex items-center justify-between text-secondary font-label-sm text-label-sm mb-1.5">
+<span>Worker Node</span>
+<span class="inline-flex items-center gap-1 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347] animate-pulse"></span>
+            Online
+          </span>
+</div>
+<div class="text-[11px] font-code-sm text-secondary truncate">node-th-central-bkk-04</div>
+<div class="mt-2 text-[11px] text-secondary/80 flex items-center justify-between">
+<span>Ingest Latency</span>
+<span class="font-code-sm font-semibold text-on-surface">34ms</span>
+</div>
+</div>
+<div class="text-[11px] text-secondary/70 text-center font-label-sm">
+        Thai Ops Engine v4.12.8-prod
+      </div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- 2. MAIN VIEWPORT & STAGE CANVAS                                            -->
+<!-- ========================================================================= -->
+<div class="pl-64 flex-1 flex flex-col min-w-0 bg-background">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex justify-between items-center px-6">
+<!-- Breadcrumb Cluster -->
+<div class="flex items-center gap-3">
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 font-label-md text-label-md">
+<span class="text-secondary hover:text-on-surface cursor-pointer">ระบบเชื่อมต่อ</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-medium">บันทึกข้อมูลขาเข้า</span>
+</nav>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-primary border border-surface-container-highest">
+          ข้อมูลตัวอย่าง
+        </span>
+</div>
+<!-- Trailing Action Cluster -->
+<div class="flex items-center gap-4">
+<!-- Language Switcher Pill -->
+<button class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-label-sm text-label-sm cursor-pointer active:scale-95" title="Switch Language">
+<span class="material-symbols-outlined text-[16px] text-secondary">language</span>
+<span class="font-medium">ไทย</span>
+<span class="text-outline-variant">/</span>
+<span class="text-secondary hover:text-on-surface">EN</span>
+</button>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<!-- Utility Icons -->
+<div class="flex items-center gap-1">
+<button class="relative p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer active:scale-95" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer active:scale-95" title="Help Documentation">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<!-- Super Admin Profile Badge -->
+<div class="flex items-center gap-3 cursor-pointer pl-1 group">
+<div class="w-8 h-8 rounded-full bg-surface-container text-primary flex items-center justify-center font-bold text-[12px] ring-1 ring-primary/20">
+            SA
+          </div>
+<div class="hidden lg:flex flex-col text-left">
+<span class="font-label-md text-label-md font-semibold text-on-surface group-hover:text-primary transition-colors">Admin Supaporn</span>
+<span class="text-[11px] text-secondary leading-tight">Super Admin (Operations)</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Operational Main Content -->
+<main class="p-8 max-w-[1600px] w-full mx-auto space-y-6">
+<!-- ========================================================================= -->
+<!-- 2.1 PAGE TITLE & REAL-TIME CONTROLS                                       -->
+<!-- ========================================================================= -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-outline-variant/40">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">ERP Inbound Log</h1>
+<span class="inline-flex items-center font-code-sm text-[11px] px-2 py-0.5 rounded bg-surface-container-low text-secondary border border-outline-variant/60 font-semibold">
+              ROUTE: admin-be5c404c30b1
+            </span>
+</div>
+<p class="font-body-md text-body-md text-secondary mt-1">
+            Staged ERP payloads — review parse/apply outcomes and retry failures.
+          </p>
+</div>
+<!-- Live Controls & Polling Cluster -->
+<div class="flex items-center gap-3">
+<!-- Auto-poll status pill -->
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant shadow-sm text-secondary font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-[#157347] animate-pulse"></span>
+<span>Auto-poll:</span>
+<span class="font-code-sm text-on-surface font-semibold">5s (Active)</span>
+</div>
+<!-- Refresh Button -->
+<button class="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant text-on-surface font-label-md text-label-md font-medium transition-colors cursor-pointer active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary">refresh</span>
+<span>Refresh</span>
+</button>
+<!-- Export / Secondary Trigger -->
+<button class="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-medium transition-colors cursor-pointer active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">publish</span>
+<span>Reprocess All Failed</span>
+</button>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 2.2 TOP KPI / METRIC STAT CARDS                                           -->
+<!-- ========================================================================= -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+<!-- Metric 1: Staged Records -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Staged Records</span>
+<span class="p-2 rounded-lg bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[20px]">database</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface">1,482</div>
+<div class="flex items-center gap-1.5 mt-1 text-[12px] text-[#157347] font-medium">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+128 วันนี้ (Today)</span>
+</div>
+</div>
+</div>
+<!-- Metric 2: Parse Success Rate -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Parse Success Rate</span>
+<span class="p-2 rounded-lg bg-[#e8f5ed] text-[#157347]">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface">98.2%</div>
+<div class="flex items-center gap-1 mt-1 text-[12px] text-secondary font-label-sm">
+<span>เป้าหมาย SLA:</span>
+<span class="font-semibold text-on-surface">&gt; 97.5%</span>
+</div>
+</div>
+</div>
+<!-- Metric 3: Failed / Pending Apply -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-error-container/80 shadow-sm relative overflow-hidden flex flex-col justify-between bg-gradient-to-br from-surface-container-lowest to-[#fff5f5]">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-error font-semibold">Failed / Pending Apply</span>
+<span class="p-2 rounded-lg bg-[#fdf2f2] text-error">
+<span class="material-symbols-outlined text-[20px]">error</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="font-headline-lg text-headline-lg font-bold text-error">7 รายการ</div>
+<div class="flex items-center gap-1.5 mt-1 text-[12px] text-error font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span>ต้องการการตรวจสอบและแก้ไขทันที</span>
+</div>
+</div>
+</div>
+<!-- Metric 4: Last Synced timestamp -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Last Synced Timestamp</span>
+<span class="p-2 rounded-lg bg-surface-container-low text-secondary">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="font-headline-md text-headline-md font-bold font-code-sm text-on-surface">14:32:05</div>
+<div class="flex items-center gap-1.5 mt-1 text-[12px] text-secondary truncate">
+<span class="font-medium text-on-surface">SAP Outbound Channel</span>
+<span>(Delta-Sync)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 2.3 FILTERS COMPONENT CARD                                                -->
+<!-- ========================================================================= -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-secondary">filter_alt</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Filters</h2>
+</div>
+<button class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-1 cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+            ล้างตัวกรอง
+          </button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Entity Type Select -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-secondary">Entity type</label>
+<select class="h-10 px-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface text-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+<option value="">All entity types</option>
+<option value="order">Order (คำสั่งซื้อ)</option>
+<option value="product">Product (ข้อมูลสินค้า)</option>
+<option value="inventory">Inventory (ยอดสต็อก)</option>
+<option value="customer">Customer (ลูกค้า)</option>
+<option value="pricing">Pricing (โครงสร้างราคา)</option>
+</select>
+</div>
+<!-- Status Select -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-secondary">Status</label>
+<select class="h-10 px-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface text-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors">
+<option value="">All statuses</option>
+<option value="applied">Applied (สำเร็จแล้ว)</option>
+<option value="failed">Failed (ผิดพลาด)</option>
+<option value="parsed">Parsed (แปลงค่าแล้ว)</option>
+<option value="pending">Pending (รอดำเนินการ)</option>
+</select>
+</div>
+<!-- Free-text Search -->
+<div class="flex flex-col gap-1.5 lg:col-span-1">
+<div class="flex items-center justify-between">
+<label class="font-label-sm text-label-sm text-secondary">Search</label>
+<span class="text-[11px] text-secondary/70">ค้นหาในหน้านี้เท่านั้น</span>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined text-[18px] text-secondary absolute left-3 top-2.5">search</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface text-body-md placeholder:text-secondary/60 focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" placeholder="ค้นหา External ID, รหัสอ้างอิง ERP..." type="text"/>
+</div>
+</div>
+<!-- Action Button -->
+<div class="flex items-end gap-2">
+<button class="w-full h-10 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-medium transition-colors flex items-center justify-center gap-1.5 shadow-sm active:scale-98 cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">search</span>
+<span>ค้นหา</span>
+</button>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 2.4 DATA TABLE & PAYLOAD SPLIT INSPECTOR VIEW                             -->
+<!-- ========================================================================= -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- Table Section (Takes 7 or 8 cols on XL screens) -->
+<div class="xl:col-span-7 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+<!-- Card Header -->
+<div class="p-4 border-b border-outline-variant flex flex-wrap items-center justify-between gap-3 bg-surface-container-low/30">
+<div class="flex items-center gap-2.5">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Staged Payloads (ERP Stream)</h3>
+<span class="px-2 py-0.5 rounded-full text-[12px] font-code-sm bg-surface-container text-secondary">
+                6 of 1,482 records
+              </span>
+</div>
+<div class="flex items-center gap-2 text-[12px] font-code-sm text-secondary bg-surface-container-lowest px-2.5 py-1 rounded-md border border-outline-variant/60">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+<span>Webhook Worker: Active | FIFO Queue #04</span>
+</div>
+</div>
+<!-- Responsive Table Container -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse min-w-[760px]">
+<thead>
+<tr class="h-11 bg-[#f8fafc] text-secondary text-[12px] font-semibold uppercase tracking-wider border-b border-outline-variant">
+<th class="px-4 py-2 font-label-sm">Created</th>
+<th class="px-4 py-2 font-label-sm">Entity type</th>
+<th class="px-4 py-2 font-label-sm">External ID</th>
+<th class="px-4 py-2 font-label-sm">Status</th>
+<th class="px-4 py-2 font-label-sm">Error</th>
+<th class="px-3 py-2 font-label-sm text-center">Payloads</th>
+<th class="px-4 py-2 font-label-sm text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-sm">
+<!-- Row 1 (Selected Row - ERP-ORD-991823) -->
+<tr class="h-[52px] bg-surface-container/40 hover:bg-surface-container/60 transition-colors border-l-4 border-l-primary cursor-pointer">
+<td class="px-4 py-2 whitespace-nowrap font-code-sm text-[12px] text-secondary">
+                    14:32:05 <span class="text-secondary/60">15 พ.ค. 2024</span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#eef2ff] text-[#314bb5] border border-[#d0e1fd]">
+                      Order
+                    </span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<div class="font-code-sm font-semibold text-on-surface">ERP-ORD-991823</div>
+<div class="text-[11px] text-secondary">Branch: BKK-HQ</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      Applied
+                    </span>
+</td>
+<td class="px-4 py-2 text-secondary font-code-sm text-[12px]">
+                    -
+                  </td>
+<td class="px-3 py-2 whitespace-nowrap text-center">
+<div class="inline-flex rounded-md shadow-sm border border-outline-variant overflow-hidden">
+<button class="px-2 py-1 text-[11px] font-medium bg-primary-container text-on-primary">Raw</button>
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low">Parsed</button>
+</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap text-right">
+<span class="inline-flex items-center gap-1 text-[12px] text-[#157347] font-medium">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                      Synced to DB
+                    </span>
+</td>
+</tr>
+<!-- Row 2 (Failed - Schema mismatch) -->
+<tr class="h-[52px] hover:bg-[#f8fafc] transition-colors cursor-pointer">
+<td class="px-4 py-2 whitespace-nowrap font-code-sm text-[12px] text-secondary">
+                    14:31:12 <span class="text-secondary/60">15 พ.ค. 2024</span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#fef3c7] text-[#92400e] border border-[#fde68a]">
+                      Customer
+                    </span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<div class="font-code-sm font-semibold text-on-surface">ERP-CUST-44019</div>
+<div class="text-[11px] text-secondary">Branch: CNX-NORTH</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#fdf2f2] text-error">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                      Failed
+                    </span>
+</td>
+<td class="px-4 py-2 text-error font-code-sm text-[12px] max-w-[200px] truncate" title="Schema mismatch: missing tax_id">
+                    Schema mismatch: missing tax_id
+                  </td>
+<td class="px-3 py-2 whitespace-nowrap text-center">
+<div class="inline-flex rounded-md shadow-sm border border-outline-variant overflow-hidden">
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low">Raw</button>
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low border-l border-outline-variant">Parsed</button>
+</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap text-right">
+<button class="px-3 py-1 text-[12px] rounded font-medium bg-error/10 hover:bg-error/20 text-error border border-error/20 transition-colors">
+                      Retry
+                    </button>
+</td>
+</tr>
+<!-- Row 3 (Failed - Invalid currency) -->
+<tr class="h-[52px] hover:bg-[#f8fafc] transition-colors cursor-pointer">
+<td class="px-4 py-2 whitespace-nowrap font-code-sm text-[12px] text-secondary">
+                    14:28:40 <span class="text-secondary/60">15 พ.ค. 2024</span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#eef2ff] text-[#314bb5] border border-[#d0e1fd]">
+                      Order
+                    </span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<div class="font-code-sm font-semibold text-on-surface">ERP-ORD-991822</div>
+<div class="text-[11px] text-secondary">Branch: BKK-HQ</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#fdf2f2] text-error">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                      Failed
+                    </span>
+</td>
+<td class="px-4 py-2 text-error font-code-sm text-[12px] max-w-[200px] truncate" title="Invalid currency code [USD] expected THB">
+                    Invalid currency code [USD] expected THB
+                  </td>
+<td class="px-3 py-2 whitespace-nowrap text-center">
+<div class="inline-flex rounded-md shadow-sm border border-outline-variant overflow-hidden">
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low">Raw</button>
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low border-l border-outline-variant">Parsed</button>
+</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap text-right">
+<button class="px-3 py-1 text-[12px] rounded font-medium bg-error/10 hover:bg-error/20 text-error border border-error/20 transition-colors">
+                      Retry
+                    </button>
+</td>
+</tr>
+<!-- Row 4 (Parsed - Ready to apply) -->
+<tr class="h-[52px] hover:bg-[#f8fafc] transition-colors cursor-pointer">
+<td class="px-4 py-2 whitespace-nowrap font-code-sm text-[12px] text-secondary">
+                    14:26:01 <span class="text-secondary/60">15 พ.ค. 2024</span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0]">
+                      Inventory
+                    </span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<div class="font-code-sm font-semibold text-on-surface">ERP-INV-10294</div>
+<div class="text-[11px] text-secondary">Warehouse: WH-02-RAYONG</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#fef9e7] text-[#b08900]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+                      Parsed
+                    </span>
+</td>
+<td class="px-4 py-2 text-secondary font-code-sm text-[12px]">
+                    -
+                  </td>
+<td class="px-3 py-2 whitespace-nowrap text-center">
+<div class="inline-flex rounded-md shadow-sm border border-outline-variant overflow-hidden">
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low">Raw</button>
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low border-l border-outline-variant">Parsed</button>
+</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap text-right">
+<button class="px-3 py-1 text-[12px] rounded font-medium bg-primary-container text-on-primary hover:bg-primary transition-colors shadow-sm">
+                      Apply
+                    </button>
+</td>
+</tr>
+<!-- Row 5 (Product - Applied) -->
+<tr class="h-[52px] hover:bg-[#f8fafc] transition-colors cursor-pointer">
+<td class="px-4 py-2 whitespace-nowrap font-code-sm text-[12px] text-secondary">
+                    14:24:55 <span class="text-secondary/60">15 พ.ค. 2024</span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#f5f3ff] text-[#5b21b6] border border-[#ddd6fe]">
+                      Product
+                    </span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<div class="font-code-sm font-semibold text-on-surface">SKU-TH-88204</div>
+<div class="text-[11px] text-secondary">Catalog: Retail-TH</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      Applied
+                    </span>
+</td>
+<td class="px-4 py-2 text-secondary font-code-sm text-[12px]">
+                    -
+                  </td>
+<td class="px-3 py-2 whitespace-nowrap text-center">
+<div class="inline-flex rounded-md shadow-sm border border-outline-variant overflow-hidden">
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low">Raw</button>
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low border-l border-outline-variant">Parsed</button>
+</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap text-right">
+<span class="inline-flex items-center gap-1 text-[12px] text-[#157347] font-medium">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                      Synced to DB
+                    </span>
+</td>
+</tr>
+<!-- Row 6 (Pricing - Applied) -->
+<tr class="h-[52px] hover:bg-[#f8fafc] transition-colors cursor-pointer">
+<td class="px-4 py-2 whitespace-nowrap font-code-sm text-[12px] text-secondary">
+                    14:20:19 <span class="text-secondary/60">15 พ.ค. 2024</span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#f0fdf4] text-[#166534] border border-[#bbf7d0]">
+                      Pricing
+                    </span>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<div class="font-code-sm font-semibold text-on-surface">PRC-LIST-2024Q2</div>
+<div class="text-[11px] text-secondary">Tier: Wholesale-TH</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      Applied
+                    </span>
+</td>
+<td class="px-4 py-2 text-secondary font-code-sm text-[12px]">
+                    -
+                  </td>
+<td class="px-3 py-2 whitespace-nowrap text-center">
+<div class="inline-flex rounded-md shadow-sm border border-outline-variant overflow-hidden">
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low">Raw</button>
+<button class="px-2 py-1 text-[11px] font-medium bg-surface-container-lowest text-secondary hover:bg-surface-container-low border-l border-outline-variant">Parsed</button>
+</div>
+</td>
+<td class="px-4 py-2 whitespace-nowrap text-right">
+<span class="inline-flex items-center gap-1 text-[12px] text-[#157347] font-medium">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                      Synced to DB
+                    </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Bar -->
+<div class="p-3.5 border-t border-outline-variant bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm">
+<div class="flex items-center gap-2 text-secondary">
+<span class="font-label-sm">แสดง 1 - 6 จาก 1,482 รายการ</span>
+<span class="text-outline-variant">|</span>
+<span class="text-[11px] text-secondary/80">ค้นหาในหน้านี้เท่านั้น</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1.5 rounded border border-outline-variant text-secondary hover:bg-surface-container-low disabled:opacity-40 disabled:cursor-not-allowed text-label-sm">
+                Prev
+              </button>
+<button class="w-8 h-8 rounded bg-primary-container text-on-primary font-medium text-label-sm">1</button>
+<button class="w-8 h-8 rounded border border-outline-variant hover:bg-surface-container-low text-on-surface font-medium text-label-sm">2</button>
+<button class="w-8 h-8 rounded border border-outline-variant hover:bg-surface-container-low text-on-surface font-medium text-label-sm">3</button>
+<span class="px-1 text-secondary">...</span>
+<button class="w-8 h-8 rounded border border-outline-variant hover:bg-surface-container-low text-on-surface font-medium text-label-sm">149</button>
+<button class="px-2.5 py-1.5 rounded border border-outline-variant text-on-surface hover:bg-surface-container-low text-label-sm">
+                Next
+              </button>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 2.5 RIGHT DETAIL INSPECTOR DRAWER / SPLIT VIEW                           -->
+<!-- ========================================================================= -->
+<div class="xl:col-span-5 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm flex flex-col overflow-hidden">
+<!-- Inspector Header -->
+<div class="p-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low/40">
+<div class="flex items-center gap-3">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface font-code-sm">ERP-ORD-991823</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                Applied
+              </span>
+</div>
+<button class="p-1 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" title="Close Panel">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Metadata Ribbon -->
+<div class="grid grid-cols-3 gap-2 px-4 py-2.5 bg-surface-container-low/20 border-b border-outline-variant/60 text-[11px] font-label-sm text-secondary">
+<div>
+<span class="block text-secondary/70">Source Channel</span>
+<span class="font-medium text-on-surface truncate block" title="SAP S/4HANA Outbound Webhook">SAP S/4HANA Outbound</span>
+</div>
+<div>
+<span class="block text-secondary/70">Payload Size</span>
+<span class="font-code-sm font-semibold text-on-surface">3.42 KB</span>
+</div>
+<div>
+<span class="block text-secondary/70">Processing Time</span>
+<span class="font-code-sm font-semibold text-[#157347]">84ms</span>
+</div>
+</div>
+<!-- Tab Selector Bar -->
+<div class="flex items-center border-b border-outline-variant bg-surface-container-lowest px-4">
+<button class="px-4 py-2.5 text-label-md font-medium text-primary border-b-2 border-primary cursor-pointer">
+              Raw Payload
+            </button>
+<button class="px-4 py-2.5 text-label-md font-medium text-secondary hover:text-on-surface cursor-pointer">
+              Parsed Structure
+            </button>
+<button class="px-4 py-2.5 text-label-md font-medium text-secondary hover:text-on-surface cursor-pointer">
+              Audit History
+            </button>
+</div>
+<!-- Syntax-highlighted JSON Code Block -->
+<div class="p-4 bg-[#0f172a] text-[#e2e8f0] font-code-sm text-[12px] leading-relaxed overflow-x-auto max-h-[380px] custom-scrollbar select-text">
+<pre class="m-0"><code>{
+  <span class="text-[#38bdf8]">"header"</span>: {
+    <span class="text-[#38bdf8]">"source_system"</span>: <span class="text-[#fde047]">"SAP_S4_PROD_BKK"</span>,
+    <span class="text-[#38bdf8]">"transmission_id"</span>: <span class="text-[#fde047]">"TX-88319-TH"</span>,
+    <span class="text-[#38bdf8]">"timestamp"</span>: <span class="text-[#fde047]">"2024-05-15T14:32:05.120+07:00"</span>,
+    <span class="text-[#38bdf8]">"sync_type"</span>: <span class="text-[#fde047]">"OUTBOUND_ORDERS_EVENT"</span>
+  },
+  <span class="text-[#38bdf8]">"order_document"</span>: {
+    <span class="text-[#38bdf8]">"external_id"</span>: <span class="text-[#fde047]">"ERP-ORD-991823"</span>,
+    <span class="text-[#38bdf8]">"channel"</span>: <span class="text-[#fde047]">"DIRECT_ECOMMERCE_TH"</span>,
+    <span class="text-[#38bdf8]">"customer_ref"</span>: <span class="text-[#fde047]">"CUST-BKK-0921"</span>,
+    <span class="text-[#38bdf8]">"tax_invoice_required"</span>: <span class="text-[#a7f3d0]">true</span>,
+    <span class="text-[#38bdf8]">"currency"</span>: <span class="text-[#fde047]">"THB"</span>,
+    <span class="text-[#38bdf8]">"total_amount"</span>: <span class="text-[#fb923c]">4590.00</span>,
+    <span class="text-[#38bdf8]">"line_items"</span>: [
+      {
+        <span class="text-[#38bdf8]">"sku"</span>: <span class="text-[#fde047]">"SKU-TH-88204"</span>,
+        <span class="text-[#38bdf8]">"qty"</span>: <span class="text-[#fb923c]">2</span>,
+        <span class="text-[#38bdf8]">"unit_price"</span>: <span class="text-[#fb923c]">1890.00</span>,
+        <span class="text-[#38bdf8]">"discount_thb"</span>: <span class="text-[#fb923c]">0.00</span>
+      },
+      {
+        <span class="text-[#38bdf8]">"sku"</span>: <span class="text-[#fde047]">"SKU-ACC-0012"</span>,
+        <span class="text-[#38bdf8]">"qty"</span>: <span class="text-[#fb923c]">1</span>,
+        <span class="text-[#38bdf8]">"unit_price"</span>: <span class="text-[#fb923c]">810.00</span>,
+        <span class="text-[#38bdf8]">"discount_thb"</span>: <span class="text-[#fb923c]">0.00</span>
+      }
+    ],
+    <span class="text-[#38bdf8]">"shipping_address"</span>: {
+      <span class="text-[#38bdf8]">"recipient"</span>: <span class="text-[#fde047]">"คุณสุรชัย วงศ์สวัสดิ์"</span>,
+      <span class="text-[#38bdf8]">"province"</span>: <span class="text-[#fde047]">"กรุงเทพมหานคร"</span>,
+      <span class="text-[#38bdf8]">"postal_code"</span>: <span class="text-[#fde047]">"10110"</span>,
+      <span class="text-[#38bdf8]">"phone"</span>: <span class="text-[#fde047]">"081-992-XXXX"</span>
+    }
+  }
+}</code></pre>
+</div>
+<!-- Bottom Action Ribbon -->
+<div class="p-3.5 bg-surface-container-low/40 border-t border-outline-variant flex items-center justify-between gap-2">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-sm text-label-sm font-medium transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[16px] text-secondary">download</span>
+<span>Download JSON</span>
+</button>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-sm text-label-sm font-medium transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[16px] text-secondary">sync</span>
+<span>Retry Parsing</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-sm text-label-sm font-medium transition-colors cursor-pointer shadow-sm">
+<span class="material-symbols-outlined text-[16px]">done_all</span>
+<span>Apply to Database</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 2.6 BOTTOM POLICY & SLA DISCLOSURE CARD                                   -->
+<!-- ========================================================================= -->
+<footer class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-start gap-3.5">
+<div class="p-2 rounded-lg bg-surface-container text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">policy</span>
+</div>
+<div class="space-y-1">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              ข้อกำหนดการจัดเก็บและการใช้งาน Log ขาเข้า (Staging Policy &amp; SLA)
+            </h4>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+              ข้อมูล Payload ขาเข้าจากระบบ ERP หรือระบบภายนอกจะถูกจัดเก็บใน Staging Pipeline ชั่วคราวเป็นระยะเวลา 30 วันก่อนจะทำการย้ายเข้าสู่ Cold Storage โดยอัตโนมัติ ในกรณีที่พบข้อผิดพลาดด้าน Schema หรือ Data Mapping ผู้ดูแลระบบสามารถใช้ฟังก์ชัน Retry เพื่อนำส่งข้อมูลกลับเข้าสู่ Ingestion Queue โดยไม่กระทบกับข้อมูลคำสั่งซื้อหลักของระบบ
+            </p>
+<div class="flex flex-wrap items-center gap-6 pt-2 font-label-sm text-label-sm text-secondary">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-[#157347]">verified</span>
+                Audit Retention: 30 วันบริบูรณ์
+              </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-[#314bb5]">lock</span>
+                TLS 1.3 Payload Encryption
+              </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-[#943500]">data_object</span>
+                Schema Spec: ERP-OpenProtocol-v2.1
+              </span>
+</div>
+</div>
+</div>
+</footer>
+</main>
+</div>
+<!-- ========================================================================= -->
+<!-- 3. MANDATORY INVISIBLE CATALOGUE DICTIONARY INJECTION SCRIPT              -->
+<!-- ========================================================================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Refresh": {
+      "th": "รีเฟรช",
+      "en": "Refresh"
+    },
+    "Status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "Staged ERP payloads — review parse/apply outcomes and retry failures.": {
+      "th": "Staged ERP payloads — ตรวจสอบผลการ parse/apply และส่งซ้ำรายการที่ล้มเหลว",
+      "en": "Staged ERP payloads — review parse/apply outcomes and retry failures."
+    },
+    "Filters": {
+      "th": "ตัวกรอง",
+      "en": "Filters"
+    },
+    "All entity types": {
+      "th": "ทุกประเภทเอนทิตี",
+      "en": "All entity types"
+    },
+    "All statuses": {
+      "th": "ทุกสถานะ",
+      "en": "All statuses"
+    },
+    "No staged ERP rows yet.": {
+      "th": "ยังไม่มีรายการ ERP ใน Staging",
+      "en": "No staged ERP rows yet."
+    },
+    "Created": {
+      "th": "เวลาที่สร้าง",
+      "en": "Created"
+    },
+    "Entity type": {
+      "th": "ประเภทเอนทิตี",
+      "en": "Entity type"
+    },
+    "External ID": {
+      "th": "รหัสภายนอก (External ID)",
+      "en": "External ID"
+    },
+    "Error": {
+      "th": "ข้อผิดพลาด",
+      "en": "Error"
+    },
+    "Retry": {
+      "th": "ลองใหม่",
+      "en": "Retry"
+    },
+    "Apply": {
+      "th": "ปรับใช้",
+      "en": "Apply"
+    },
+    "Payloads": {
+      "th": "เพย์โหลด",
+      "en": "Payloads"
+    },
+    "Raw": {
+      "th": "ข้อมูลดิบ",
+      "en": "Raw"
+    },
+    "Parsed": {
+      "th": "แปลงข้อมูลแล้ว",
+      "en": "Parsed"
+    },
+    "ERP Inbound Log": {
+      "th": "บันทึกข้อมูลขาเข้า ERP",
+      "en": "ERP Inbound Log"
+    },
+    "เก็บทุกหน้า": {
+      "th": "เก็บทุกหน้า",
+      "en": "Retain all pages"
+    },
+    "ค้นหา SKU ไม่สำเร็จ": {
+      "th": "ค้นหา SKU ไม่สำเร็จ",
+      "en": "Failed to find SKU"
+    },
+    "เงื่อนไขอื่น เช่น role, ยอดสั่งซื้อ, วันที่สมัคร": {
+      "th": "เงื่อนไขอื่น เช่น role, ยอดสั่งซื้อ, วันที่สมัคร",
+      "en": "Other conditions such as role, order amount, registration date"
+    },
+    "ชื่อฟิลด์ {0}": {
+      "th": "ชื่อฟิลด์ {0}",
+      "en": "Field name {0}"
+    },
+    "ได้แล้ว": {
+      "th": "ได้แล้ว",
+      "en": "Completed"
+    },
+    "แทนที่": {
+      "th": "แทนที่",
+      "en": "Replace"
+    },
+    "ปิด = ลูกค้าเปิดหน้านี้ไม่ได้ (404) และแบนเนอร์หน้าแรกถูกปิดด้วย": {
+      "th": "ปิด = ลูกค้าเปิดหน้านี้ไม่ได้ (404) และแบนเนอร์หน้าแรกถูกปิดด้วย",
+      "en": "Disabled = Customers cannot access this page (404) and homepage banner is also deactivated"
+    },
+    "เพิ่มแล้ว": {
+      "th": "เพิ่มแล้ว",
+      "en": "Added"
+    },
+    "ไม่มีราคา": {
+      "th": "ไม่มีราคา",
+      "en": "No price specified"
+    },
+    "ยังไม่มีเว็บคู่แข่ง — เพิ่มเว็บในขั้นที่ 1 ก่อน": {
+      "th": "ยังไม่มีเว็บคู่แข่ง — เพิ่มเว็บในขั้นที่ 1 ก่อน",
+      "en": "No competitor websites yet — add website in step 1 first"
+    },
+    "ราคาตามจำนวนของสินค้านี้มาจากโปรโมชัน": {
+      "th": "ราคาตามจำนวนของสินค้านี้มาจากโปรโมชัน",
+      "en": "Volume pricing for this item originates from promotions"
+    },
+    "ลบรูปที่เลือก": {
+      "th": "ลบรูปที่เลือก",
+      "en": "Delete selected images"
+    },
+    "วันที่วันนี้": {
+      "th": "วันที่วันนี้",
+      "en": "Today's date"
+    },
+    "สไลด์รูป": {
+      "th": "สไลด์รูป",
+      "en": "Image slider"
+    },
+    "หลักฐานที่ใช้:": {
+      "th": "หลักฐานที่ใช้:",
+      "en": "Supporting evidence:"
+    },
+    "ค้นคลังเว็บคู่แข่ง": {
+      "th": "ค้นคลังเว็บคู่แข่ง",
+      "en": "Search competitor repository"
+    }
+  }
+  </script>
+</body></html>

@@ -1,15 +1,18 @@
+// ui-metadata-migration: static labels and UI notices only
 import { Input, Select } from '@josh/shared-ui-web';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const ACTION_TYPE_OPTIONS = [
-  { value: 'tool', label: 'tool' },
-  { value: 'escalate', label: 'escalate' },
-  { value: 'llm', label: 'llm (ยังไม่รองรับ)' },
+  { value: 'tool', get label(){return __uiText("tool");} },
+  { value: 'escalate', get label(){return __uiText("escalate");} },
+  { value: 'llm', get label(){return __uiText("llm (ยังไม่รองรับ)");} },
 ];
 
 const TOOL_NAME_OPTIONS = [
-  { value: 'order_lookup', label: 'order_lookup' },
-  { value: 'product_search', label: 'product_search' },
-  { value: 'faq', label: 'faq' },
+  { value: 'order_lookup', get label(){return __uiText("order_lookup");} },
+  { value: 'product_search', get label(){return __uiText("product_search");} },
+  { value: 'faq', get label(){return __uiText("faq");} },
 ];
 
 export interface BotWorkflowFormValue {
@@ -28,27 +31,28 @@ type Props = {
 };
 
 const BotWorkflowForm = ({ value, onChange, templateOptions }: Props) => {
+  __useUiLocale();
   return (
     <>
       <div>
         <Input
-          label="ชื่อ Workflow"
+          label={__uiText("ชื่อ Workflow")}
           value={value.name}
           onChange={(e) => onChange({ ...value, name: e.target.value })}
-          placeholder="เช่น order_status_lookup"
+          placeholder={__uiText("เช่น order_status_lookup")}
         />
       </div>
       <div>
         <Input
-          label="รูปแบบข้อความที่กระตุ้น Workflow (Trigger Pattern regex)"
+          label={__uiText("รูปแบบข้อความที่กระตุ้น Workflow (Trigger Pattern regex)")}
           value={value.triggerPattern}
           onChange={(e) => onChange({ ...value, triggerPattern: e.target.value })}
-          placeholder="เช่น (order|สั่งซื้อ).*(status|สถานะ)"
+          placeholder={__uiText("เช่น (order|สั่งซื้อ).*(status|สถานะ)")}
         />
       </div>
       <div>
         <Select
-          label="ประเภทการทำงาน (Action Type)"
+          label={__uiText("ประเภทการทำงาน (Action Type)")}
           data={ACTION_TYPE_OPTIONS}
           value={value.actionType}
           onChange={(e) =>
@@ -59,7 +63,7 @@ const BotWorkflowForm = ({ value, onChange, templateOptions }: Props) => {
       {value.actionType === 'tool' && (
         <div>
           <Select
-            label="เครื่องมือที่ใช้ (Tool)"
+            label={__uiText("เครื่องมือที่ใช้ (Tool)")}
             data={TOOL_NAME_OPTIONS}
             value={value.toolName}
             onChange={(e) => onChange({ ...value, toolName: e.target.value })}
@@ -69,17 +73,17 @@ const BotWorkflowForm = ({ value, onChange, templateOptions }: Props) => {
       <div>
         {templateOptions && templateOptions.length > 0 ? (
           <Select
-            label="Template คำตอบ (Response Template)"
+            label={__uiText("Template คำตอบ (Response Template)")}
             data={templateOptions}
             value={value.templateId}
             onChange={(e) => onChange({ ...value, templateId: e.target.value })}
           />
         ) : (
           <Input
-            label="Template คำตอบ (Response Template)"
+            label={__uiText("Template คำตอบ (Response Template)")}
             value={value.templateId}
             onChange={(e) => onChange({ ...value, templateId: e.target.value })}
-            placeholder="Template ID"
+            placeholder={__uiText("Template ID")}
           />
         )}
       </div>
@@ -89,8 +93,7 @@ const BotWorkflowForm = ({ value, onChange, templateOptions }: Props) => {
           checked={value.active}
           onChange={(e) => onChange({ ...value, active: e.target.checked })}
         />
-        เปิดใช้งาน (Active)
-      </label>
+        {__uiText("เปิดใช้งาน (Active)")}</label>
     </>
   );
 };

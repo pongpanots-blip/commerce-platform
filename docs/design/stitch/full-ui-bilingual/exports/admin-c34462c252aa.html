@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Links - Siam Commerce Hub</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#0e1b32",
+            "surface-container": "#e8eeff",
+            "primary": "#0a3fdc",
+            "surface-tint": "#214ce7",
+            "outline-variant": "#c4c5d8",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#0e1b32",
+            "surface-container-highest": "#d7e2ff",
+            "surface-dim": "#cddaf9",
+            "on-primary": "#ffffff",
+            "tertiary-fixed": "#9ef5be",
+            "primary-fixed-dim": "#b9c3ff",
+            "tertiary": "#006139",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-primary-container": "#ededff",
+            "on-error": "#ffffff",
+            "on-tertiary-container": "#b7ffcf",
+            "on-error-container": "#93000a",
+            "surface-container-high": "#e0e8ff",
+            "secondary-container": "#d0e1fd",
+            "on-secondary-fixed": "#0b1c31",
+            "error-container": "#ffdad6",
+            "tertiary-fixed-dim": "#82d8a3",
+            "background": "#f9f9ff",
+            "surface-container-low": "#f1f3ff",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#365cf5",
+            "inverse-on-surface": "#ecf0ff",
+            "error": "#ba1a1a",
+            "surface-variant": "#d7e2ff",
+            "on-tertiary-fixed": "#002110",
+            "on-surface-variant": "#444655",
+            "surface-bright": "#f9f9ff",
+            "primary-fixed": "#dde1ff",
+            "outline": "#747687",
+            "on-secondary": "#ffffff",
+            "tertiary-container": "#217b4e",
+            "secondary-fixed-dim": "#b7c7e3",
+            "inverse-surface": "#243048",
+            "surface": "#f9f9ff",
+            "on-tertiary-fixed-variant": "#00522f",
+            "secondary": "#4f5f77",
+            "inverse-primary": "#b9c3ff",
+            "on-secondary-container": "#54647c",
+            "secondary-fixed": "#d3e3ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-primary-fixed": "#001257"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem",
+            "gutter-desktop": "1.5rem",
+            "margin": "1rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "label-lg": ["Noto Sans", "sans-serif"],
+            "headline-sm": ["Noto Sans", "sans-serif"],
+            "data-tabular": ["Noto Sans", "sans-serif"],
+            "body-lg": ["Noto Sans", "sans-serif"],
+            "label-sm": ["Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans", "sans-serif"],
+            "body-md": ["Noto Sans", "sans-serif"],
+            "body-sm": ["Noto Sans", "sans-serif"],
+            "label-md": ["Noto Sans", "sans-serif"],
+            "display-lg": ["Noto Sans", "sans-serif"],
+            "headline-md": ["Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    /* Custom Scrollbar for subtle enterprise view */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased overflow-x-hidden">
+<!-- ================= SIDEBAR (SideNavBar Shared Component) ================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md shadow-none select-none">
+<div class="flex flex-col gap-space-md">
+<!-- Header / Logo -->
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white font-bold text-lg shadow-sm">
+<span class="material-symbols-outlined text-white text-[24px]">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight">สยาม คอมเมิร์ซ</span>
+<span class="text-body-sm font-body-sm text-secondary">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action / CTA button from JSON -->
+<div class="px-1">
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-3 bg-surface-container-low hover:bg-surface-container text-primary font-label-lg text-label-lg rounded-lg border border-primary/20 transition-colors duration-150" onclick="toggleModal(true)">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>สร้างรายการใหม่</span>
+</button>
+</div>
+<!-- Navigation Tabs (7 tabs, การตลาด ACTIVE) -->
+<nav class="flex flex-col gap-1 mt-2">
+<!-- 0: สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 text-body-md font-body-md" href="#inventory">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 1: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 text-body-md font-body-md" href="#orders">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 2: ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 text-body-md font-body-md" href="#customers">
+<span class="material-symbols-outlined">group</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 3: การตลาด [ACTIVE TAB as per route / context] -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary transition-colors duration-150" href="#marketing">
+<span class="material-symbols-outlined fill text-primary" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 4: รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 text-body-md font-body-md" href="#analytics">
+<span class="material-symbols-outlined">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 5: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 text-body-md font-body-md" href="#integrations">
+<span class="material-symbols-outlined">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 6: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 text-body-md font-body-md" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Tabs (คู่มือใช้งาน, ออกจากระบบ) -->
+<div class="border-t border-outline-variant pt-3 flex flex-col gap-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150 text-body-sm font-body-sm" href="#help">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span>คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-error hover:bg-error-container/40 transition-colors duration-150 text-body-sm font-body-sm" href="#logout">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ================= TOP BAR (TopNavBar Shared Component) ================= -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter-desktop">
+<!-- Left: Breadcrumb Context -->
+<div class="flex items-center gap-3">
+<nav class="flex items-center text-body-md font-body-md text-secondary">
+<span>การตลาด</span>
+<span class="mx-2 text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">Smart Links</span>
+</nav>
+<!-- Sample Data Notice Badge -->
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container/50 text-on-secondary-container border border-outline-variant/60">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        ข้อมูลตัวอย่าง / Sample data
+      </span>
+</div>
+<!-- Right: Actions & User Profile -->
+<div class="flex items-center gap-3">
+<!-- Language Toggle -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant text-label-md font-label-md text-secondary hover:bg-surface-container-low transition-all duration-150">
+<span class="material-symbols-outlined text-[18px]">language</span>
+<span>ไทย / English</span>
+</button>
+<!-- Icon Actions -->
+<button class="relative p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150" title="การแจ้งเตือน">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-white"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150" title="ช่วยเหลือ">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-1"></div>
+<!-- Admin Profile Avatar -->
+<div class="flex items-center gap-2.5 pl-1">
+<div class="relative w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of an Asian professional operations manager in business casual attire smiling calmly with soft studio rim lighting and blurred corporate office background, neutral color palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7c44cq-U1kUVBs8ZBXq2twun-ZbZTiLIkE5ILJX7EAQchDcOVxPPu5mI1vicG0OOgbTrnAE2OzORHmBvHMb7_H8h_lDZvvFIJfzPv6O1djAMSNtThphaTBeVWj9wIDHCRdNdWUICP0Y0GUXRpj4zE3qPe5F3xBxOb7UbYI41310nwCJ8qbtXOXkFgGvL-sV3vbACDhacBg3qE0YvsfEw6UKE_nMgNGyn1mf0urQVT6uii1x6-T1xv00DZ8mxElwQOy_y2vKpa5_U"/>
+</div>
+<div class="flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold text-on-surface leading-tight">แอดมินผู้ดูแลระบบ Siam Commerce</span>
+<span class="text-[11px] text-secondary">admin-c34462c252aa</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ================= MAIN CONTENT WORKSPACE ================= -->
+<main class="ml-64 pt-20 pb-16 px-gutter-desktop min-h-screen">
+<div class="max-w-[1240px] mx-auto space-y-6">
+<!-- Page Title & Primary Actions Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-headline-lg font-headline-lg text-on-surface font-bold tracking-tight">Smart Links</h1>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-semibold">Beta v2.4</span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-0.5">ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking</p>
+</div>
+<div class="flex items-center gap-2.5">
+<!-- Refresh Button -->
+<button class="flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-lg font-label-lg text-on-surface hover:bg-surface-container-low transition-colors" id="refreshBtn" onclick="handleRefresh()">
+<span class="material-symbols-outlined text-[18px]" id="refreshIcon">refresh</span>
+<span>รีเฟรช</span>
+</button>
+<!-- Secondary Analytics action -->
+<button class="flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-lg font-label-lg text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">insights</span>
+<span>Analytics</span>
+</button>
+<!-- Primary Action Button: + สร้างลิงก์ -->
+<button class="flex items-center gap-1.5 px-4 py-2 bg-primary-container hover:bg-[#2848D6] text-white rounded-lg text-label-lg font-label-lg font-semibold shadow-sm transition-colors" onclick="toggleModal(true)">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>+ สร้างลิงก์</span>
+</button>
+</div>
+</div>
+<!-- Quick Operational Metrics (4 Bento KPI Cards) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Metric 1: Total Smart Links -->
+<div class="bg-surface-container-lowest border border-outline-variant/80 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary">Total Smart Links</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">link</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="text-display-lg font-display-lg font-bold text-on-surface">18 <span class="text-headline-sm font-headline-sm text-secondary font-normal">ลิงก์</span></div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-tertiary mt-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+3 ลิงก์สร้างใหม่สัปดาห์นี้</span>
+</div>
+</div>
+</div>
+<!-- Metric 2: Active links -->
+<div class="bg-surface-container-lowest border border-outline-variant/80 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary">Active links</span>
+<span class="w-8 h-8 rounded-lg bg-tertiary-fixed/40 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="text-display-lg font-display-lg font-bold text-tertiary">15 <span class="text-headline-sm font-headline-sm text-secondary font-normal">Active</span></div>
+<div class="text-label-sm font-label-sm text-secondary mt-1">พร้อมดีเลย์ fallback 99.98%</div>
+</div>
+</div>
+<!-- Metric 3: Clicks & Conversions (30d) -->
+<div class="bg-surface-container-lowest border border-outline-variant/80 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary">Clicks &amp; Conversions (30d)</span>
+<span class="w-8 h-8 rounded-lg bg-primary-fixed/40 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">touch_app</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="text-display-lg font-display-lg font-bold text-on-surface">99,680 <span class="text-body-sm font-body-sm text-secondary font-normal">คลิก</span></div>
+<div class="flex items-center gap-1.5 text-label-sm font-label-sm text-tertiary mt-1">
+<span class="font-semibold">CVR 4.2%</span>
+<span class="text-outline-variant">•</span>
+<span class="text-secondary">4,186 ยอดสั่งซื้อ</span>
+</div>
+</div>
+</div>
+<!-- Metric 4: Top Channel / Campaign -->
+<div class="bg-surface-container-lowest border border-outline-variant/80 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary">Top Campaign Channel</span>
+<span class="w-8 h-8 rounded-lg bg-secondary-container/50 flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="text-headline-lg font-headline-lg font-bold text-on-surface">TikTok &amp; Meta Ads</div>
+<div class="text-label-sm font-label-sm text-secondary mt-1">แคมเปญ 11.11 ซื้อ 1 แถม 1</div>
+</div>
+</div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+<!-- Search Box -->
+<div class="flex-1 max-w-md relative">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-secondary text-[20px]">search</span>
+<input class="w-full pl-10 pr-24 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface placeholder:text-secondary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" id="tableSearchInput" onkeyup="filterLinks()" placeholder="ค้นหา slug / title" type="text"/>
+<button class="absolute right-1.5 px-2.5 py-1 bg-surface-container-low hover:bg-surface-container text-secondary text-label-sm font-label-sm rounded border border-outline-variant transition-colors">
+                ค้นหา
+              </button>
+</div>
+</div>
+<!-- Filter Controls -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- Status Dropdown -->
+<div class="flex items-center gap-1.5">
+<label class="text-label-sm font-label-sm text-secondary font-medium" for="statusFilter">Status:</label>
+<select class="bg-surface-container-lowest border border-outline-variant text-on-surface text-label-md font-label-md rounded-lg py-1.5 pl-2.5 pr-8 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="statusFilter" onchange="filterLinks()">
+<option value="All">ทั้งหมด</option>
+<option value="Active">Active</option>
+<option value="Inactive">Inactive</option>
+</select>
+</div>
+<!-- Destination Type -->
+<div class="flex items-center gap-1.5">
+<label class="text-label-sm font-label-sm text-secondary font-medium" for="typeFilter">Destination:</label>
+<select class="bg-surface-container-lowest border border-outline-variant text-on-surface text-label-md font-label-md rounded-lg py-1.5 pl-2.5 pr-8 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="typeFilter" onchange="filterLinks()">
+<option value="All">ทุกประเภท</option>
+<option value="Product">สินค้า (Product)</option>
+<option value="Promotion">โปรโมชัน (Promotion)</option>
+<option value="Custom">คูปอง / อื่นๆ</option>
+</select>
+</div>
+<!-- Quick Export / Filter Reset -->
+<button class="p-2 border border-outline-variant hover:bg-surface-container-low text-secondary rounded-lg transition-colors" onclick="resetFilters()" title="รีเซ็ตตัวกรอง">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+</button>
+</div>
+</div>
+<!-- Note caption as instructed in specs -->
+<div class="flex items-center gap-1.5 mt-3 pt-2.5 border-t border-outline-variant/50 text-[12px] text-secondary">
+<span class="material-symbols-outlined text-[15px] text-outline">info</span>
+<span>เก็บได้เฉพาะหน้านี้และลิงก์ที่พบ — ไม่พบปุ่มหรือลิงก์ไปหน้าถัดไป</span>
+</div>
+</div>
+<!-- Core Records Data Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="smartLinksTable">
+<thead>
+<tr class="bg-[#F6F8FC] border-b border-outline-variant text-secondary text-label-sm font-label-sm uppercase tracking-wider">
+<th class="py-3.5 px-4 font-semibold">Link</th>
+<th class="py-3.5 px-4 font-semibold">Web destination</th>
+<th class="py-3.5 px-3 font-semibold">Status</th>
+<th class="py-3.5 px-4 font-semibold">Expires</th>
+<th class="py-3.5 px-4 font-semibold">Analytics</th>
+<th class="py-3.5 px-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-md font-body-md">
+<!-- Record 1 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors data-row" data-status="Active" data-type="Product">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">โปรเปิดตัวเนื้อสันคอวากิว A5</span>
+<div class="flex items-center gap-1.5 mt-0.5">
+<code class="text-data-tabular font-data-tabular text-primary font-medium bg-surface-container-low px-1.5 py-0.5 rounded">siam.link/wagyu-a5</code>
+<button class="text-secondary hover:text-primary p-0.5 transition-colors" onclick="copyLink('https://siam.link/wagyu-a5', this)" title="คัดลอกลิงก์">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col max-w-xs">
+<span class="text-body-sm font-body-sm text-on-surface truncate">/products/SKU-BF-001</span>
+<div class="flex items-center gap-1 mt-0.5 text-[11px] text-secondary">
+<span class="inline-flex items-center text-primary font-medium">iOS &amp; Android App Link</span>
+<span>• fallback /web</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-data-tabular font-data-tabular text-secondary">30 พ.ย. 2025</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-data-tabular font-data-tabular font-semibold text-on-surface">24,890 <span class="text-secondary font-normal text-[11px]">คลิก</span></span>
+<span class="text-[11px] text-secondary">CTR 8.4% • CVR 5.1%</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-secondary hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors" onclick="openEditModal('โปรเปิดตัวเนื้อสันคอวากิว A5', 'wagyu-a5', '/products/SKU-BF-001')" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-surface-container-low rounded-lg transition-colors" onclick="toggleRowStatus(this)" title="Deactivate">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error-container/40 rounded-lg transition-colors" onclick="deleteRow(this)" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Record 2 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors data-row" data-status="Active" data-type="Promotion">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">แคมเปญ 11.11 ซื้อ 1 แถม 1 วัตถุดิบเบเกอรี่</span>
+<div class="flex items-center gap-1.5 mt-0.5">
+<code class="text-data-tabular font-data-tabular text-primary font-medium bg-surface-container-low px-1.5 py-0.5 rounded">siam.link/baking-1111</code>
+<button class="text-secondary hover:text-primary p-0.5 transition-colors" onclick="copyLink('https://siam.link/baking-1111', this)" title="คัดลอกลิงก์">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col max-w-xs">
+<span class="text-body-sm font-body-sm text-on-surface truncate">/campaign/baking-mega</span>
+<div class="flex items-center gap-1 mt-0.5 text-[11px] text-secondary">
+<span class="inline-flex items-center text-primary font-medium">Universal Links enabled</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-data-tabular font-data-tabular text-secondary">12 พ.ย. 2025</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-data-tabular font-data-tabular font-semibold text-on-surface">52,140 <span class="text-secondary font-normal text-[11px]">คลิก</span></span>
+<span class="text-[11px] text-secondary">CTR 12.2% • CVR 6.8%</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-secondary hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors" onclick="openEditModal('แคมเปญ 11.11 ซื้อ 1 แถม 1 วัตถุดิบเบเกอรี่', 'baking-1111', '/campaign/baking-mega')" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-surface-container-low rounded-lg transition-colors" onclick="toggleRowStatus(this)" title="Deactivate">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error-container/40 rounded-lg transition-colors" onclick="deleteRow(this)" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Record 3 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors data-row" data-status="Active" data-type="Custom">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">คูปองส่งฟรี ยอดสั่ง 1,500 บาทขึ้นไป</span>
+<div class="flex items-center gap-1.5 mt-0.5">
+<code class="text-data-tabular font-data-tabular text-primary font-medium bg-surface-container-low px-1.5 py-0.5 rounded">siam.link/freeship-1500</code>
+<button class="text-secondary hover:text-primary p-0.5 transition-colors" onclick="copyLink('https://siam.link/freeship-1500', this)" title="คัดลอกลิงก์">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col max-w-xs">
+<span class="text-body-sm font-body-sm text-on-surface truncate">/vouchers/freeship</span>
+<div class="flex items-center gap-1 mt-0.5 text-[11px] text-secondary">
+<span class="inline-flex items-center text-primary font-medium">Web / In-App Browser</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-data-tabular font-data-tabular text-secondary">31 ธ.ค. 2025</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-data-tabular font-data-tabular font-semibold text-on-surface">14,200 <span class="text-secondary font-normal text-[11px]">คลิก</span></span>
+<span class="text-[11px] text-secondary">CTR 6.1% • CVR 3.9%</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-secondary hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors" onclick="openEditModal('คูปองส่งฟรี ยอดสั่ง 1,500 บาทขึ้นไป', 'freeship-1500', '/vouchers/freeship')" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-surface-container-low rounded-lg transition-colors" onclick="toggleRowStatus(this)" title="Deactivate">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error-container/40 rounded-lg transition-colors" onclick="deleteRow(this)" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Record 4 -->
+<tr class="hover:bg-[#F8FAFD] transition-colors data-row" data-status="Inactive" data-type="Product">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-secondary">Flash Sale เนยสดพรีเมียม Pure Butter</span>
+<div class="flex items-center gap-1.5 mt-0.5">
+<code class="text-data-tabular font-data-tabular text-secondary font-medium bg-surface-container-low px-1.5 py-0.5 rounded">siam.link/flash-butter</code>
+<button class="text-secondary hover:text-primary p-0.5 transition-colors" onclick="copyLink('https://siam.link/flash-butter', this)" title="คัดลอกลิงก์">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col max-w-xs">
+<span class="text-body-sm font-body-sm text-secondary truncate">/products/SKU-PB-404</span>
+<div class="flex items-center gap-1 mt-0.5 text-[11px] text-secondary">
+<span>หมดช่วงโปรโมชัน</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-secondary/15 text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Inactive
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-data-tabular font-data-tabular text-secondary">15 ต.ค. 2025</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-data-tabular font-data-tabular font-semibold text-secondary">8,450 <span class="text-secondary font-normal text-[11px]">คลิก</span></span>
+<span class="text-[11px] text-secondary">CTR 4.9% • CVR 2.8%</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-secondary hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors" onclick="openEditModal('Flash Sale เนยสดพรีเมียม Pure Butter', 'flash-butter', '/products/SKU-PB-404')" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-primary hover:bg-surface-container-low rounded-lg transition-colors" onclick="toggleRowStatus(this)" title="Activate">
+<span class="material-symbols-outlined text-[18px]">play_circle</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error-container/40 rounded-lg transition-colors" onclick="deleteRow(this)" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination and Summary -->
+<div class="flex flex-col sm:flex-row items-center justify-between px-4 py-3 bg-[#F6F8FC] border-t border-outline-variant text-label-md font-label-md text-secondary gap-3">
+<div class="flex items-center gap-2">
+<span>แสดง 4 จาก 18 ลิงก์</span>
+<span class="text-outline-variant">•</span>
+<span class="text-[12px] bg-surface-container-lowest px-2 py-0.5 rounded border border-outline-variant text-secondary">ตารางสินค้า · Smart Links Engine</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded border border-outline-variant bg-surface-container-lowest text-secondary opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded bg-primary text-white font-medium text-[13px]">1</button>
+<button class="px-3 py-1 rounded bg-surface-container-lowest border border-outline-variant hover:bg-surface-container text-on-surface text-[13px]">2</button>
+<button class="p-1 rounded border border-outline-variant bg-surface-container-lowest text-secondary hover:bg-surface-container">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ================= CREATE / EDIT MODAL OVERLAY ================= -->
+<div class="fixed inset-0 z-50 bg-[#17243B]/50 backdrop-blur-sm hidden flex items-center justify-center p-4" id="smartLinkModal">
+<div class="bg-surface-container-lowest rounded-xl max-w-lg w-full border border-outline-variant shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+<!-- Modal Header -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant bg-[#F6F8FC]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">add_link</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface font-semibold" id="modalTitle">+ สร้างลิงก์</h2>
+</div>
+<button class="text-secondary hover:text-on-surface p-1 rounded-lg hover:bg-surface-container-low transition-colors" onclick="toggleModal(false)">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Form Body -->
+<form class="p-6 space-y-4" id="smartLinkForm" onsubmit="handleFormSubmit(event)">
+<!-- Title Input -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-medium mb-1">ชื่อลิงก์ (Title) <span class="text-error">*</span></label>
+<input class="w-full h-[38px] px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" id="modalLinkTitle" placeholder="เช่น โปรเปิดตัวเซตพิเศษ 11.11" required="" type="text"/>
+</div>
+<!-- Custom Slug -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-medium mb-1">Custom Slug <span class="text-error">*</span></label>
+<div class="flex items-center">
+<span class="h-[38px] px-3 bg-surface-container-low border border-r-0 border-outline-variant rounded-l-lg text-label-md font-label-md text-secondary flex items-center select-none">
+              siam.link/
+            </span>
+<input class="w-full h-[38px] px-3 bg-surface-container-lowest border border-outline-variant rounded-r-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" id="modalLinkSlug" placeholder="super-sale-11" required="" type="text"/>
+</div>
+<p class="text-[11px] text-secondary mt-1">ปล่อยว่างไว้เพื่อไม่แก้ไข — ระบบจะไม่บันทึกทับด้วยค่าว่าง</p>
+</div>
+<!-- Web Destination -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-medium mb-1">Web destination <span class="text-error">*</span></label>
+<input class="w-full h-[38px] px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" id="modalLinkDest" placeholder="https://shop.siamcommerce.co.th/p/sku-123" required="" type="text"/>
+</div>
+<!-- Deep Link Routing (iOS / Android) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+<div>
+<label class="block text-label-sm font-label-sm text-secondary font-medium mb-1">iOS Universal Link (Optional)</label>
+<input class="w-full h-[36px] px-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="siamcommerce://product/..." type="text"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-secondary font-medium mb-1">Android App Link (Optional)</label>
+<input class="w-full h-[36px] px-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm text-on-surface focus:outline-none focus:border-primary" placeholder="siamcommerce://product/..." type="text"/>
+</div>
+</div>
+<!-- UTM Tracking Parameters -->
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/60 space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm font-semibold text-on-surface">UTM Tracking Parameters</span>
+<span class="text-[10px] text-primary bg-primary-fixed px-1.5 py-0.5 rounded">Auto Tag</span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<input class="h-[32px] px-2 text-[12px] bg-white border border-outline-variant rounded" placeholder="utm_source" type="text" value="tiktok"/>
+<input class="h-[32px] px-2 text-[12px] bg-white border border-outline-variant rounded" placeholder="utm_medium" type="text" value="cpc"/>
+<input class="h-[32px] px-2 text-[12px] bg-white border border-outline-variant rounded" placeholder="utm_campaign" type="text" value="1111_launch"/>
+</div>
+</div>
+<!-- Expiration Date -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-medium mb-1">Expires (วันหมดอายุ)</label>
+<input class="w-full h-[38px] px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary" type="date" value="2025-12-31"/>
+</div>
+<!-- Actions -->
+<div class="flex items-center justify-end gap-2.5 pt-4 border-t border-outline-variant">
+<button class="px-4 py-2 bg-white border border-outline-variant hover:bg-surface-container-low rounded-lg text-label-md font-label-md text-on-surface transition-colors" onclick="toggleModal(false)" type="button">
+            ยกเลิก
+          </button>
+<button class="px-5 py-2 bg-primary-container hover:bg-[#2848D6] text-white rounded-lg text-label-md font-label-md font-semibold transition-colors" type="submit">
+            บันทึก
+          </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Toast Feedback Notification -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2 px-4 py-3 bg-[#17243B] text-white rounded-lg shadow-xl text-body-sm font-body-sm" id="toastNotification">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]" id="toastIcon">check_circle</span>
+<span id="toastMsg">ดำเนินการสำเร็จ</span>
+</div>
+<!-- ================= CRITICAL TRANSLATION SCRIPT (Per Strict Requirements) ================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ค้นหา": { "th": "ค้นหา", "en": "Search" },
+    "Status": { "th": "Status", "en": "Status" },
+    "Expires": { "th": "Expires", "en": "Expires" },
+    "Actions": { "th": "Actions", "en": "Actions" },
+    "Delete": { "th": "Delete", "en": "Delete" },
+    "Analytics": { "th": "Analytics", "en": "Analytics" },
+    "Smart Links": { "th": "Smart Links", "en": "Smart Links" },
+    "Active": { "th": "Active", "en": "Active" },
+    "Inactive": { "th": "Inactive", "en": "Inactive" },
+    "กำลังโหลด…": { "th": "กำลังโหลด…", "en": "Loading…" },
+    "Link": { "th": "Link", "en": "Link" },
+    "Web destination": { "th": "Web destination", "en": "Web destination" },
+    "Edit": { "th": "Edit", "en": "Edit" },
+    "Deactivate": { "th": "Deactivate", "en": "Deactivate" },
+    "ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking": { "th": "ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking", "en": "Single link for ads — device redirection with tracking" },
+    "ค้นหาลิงก์": { "th": "ค้นหาลิงก์", "en": "Search links" },
+    "ค้นหา slug / title": { "th": "ค้นหา slug / title", "en": "Search slug / title" },
+    "+ สร้างลิงก์": { "th": "+ สร้างลิงก์", "en": "+ Create link" },
+    "ยังไม่มี smart link — กด \"สร้างลิงก์\"": { "th": "ยังไม่มี smart link — กด \"สร้างลิงก์\"", "en": "No smart links yet — click \"Create link\"" },
+    "เก็บได้เฉพาะหน้านี้และลิงก์ที่พบ — ไม่พบปุ่มหรือลิงก์ไปหน้าถัดไป": { "th": "เก็บได้เฉพาะหน้านี้และลิงก์ที่พบ — ไม่พบปุ่มหรือลิงก์ไปหน้าถัดไป", "en": "Captured only this page and discovered links — no next page button found" },
+    "ข้อมูลโภชนาการ": { "th": "ข้อมูลโภชนาการ", "en": "Nutrition facts" },
+    "คำขอคืนเงิน / คืนสินค้า": { "th": "คำขอคืนเงิน / คืนสินค้า", "en": "Refund / Return requests" },
+    "จำนวนหมวดหมู่": { "th": "จำนวนหมวดหมู่", "en": "Number of categories" },
+    "เช็คทุก": { "th": "เช็คทุก", "en": "Check every" },
+    "ดึงราคาอัตโนมัติรายชั่วโมง หลังยืนยันคู่สินค้าและตั้งค่าระบบดึงราคา": { "th": "ดึงราคาอัตโนมัติรายชั่วโมง หลังยืนยันคู่สินค้าและตั้งค่าระบบดึงราคา", "en": "Automatic hourly price sync after matching products and pricing setup" },
+    "ตารางสินค้า ·": { "th": "ตารางสินค้า ·", "en": "Product table ·" },
+    "เนื้อหา (bodySize)": { "th": "เนื้อหา (bodySize)", "en": "Content (bodySize)" },
+    "ปล่อยว่างไว้เพื่อไม่แก้ไข — ระบบจะไม่บันทึกทับด้วยค่าว่าง": { "th": "ปล่อยว่างไว้เพื่อไม่แก้ไข — ระบบจะไม่บันทึกทับด้วยค่าว่าง", "en": "Leave blank to keep unchanged — system will not overwrite with empty value" },
+    "แผนนี้ยังไม่พร้อมเปิดส่งอัตโนมัติ": { "th": "แผนนี้ยังไม่พร้อมเปิดส่งอัตโนมัติ", "en": "This plan is not ready for automated dispatch" },
+    "เมื่อเงื่อนไขเริ่ม (เช่น ฝนเริ่มตก) — ทุกคนที่เข้าเว็บช่วงนั้น จะเข้า workflow (สูงสุดวันละ 1 ครั้ง/เครื่อง) แล้วกด": { "th": "เมื่อเงื่อนไขเริ่ม (เช่น ฝนเริ่มตก) — ทุกคนที่เข้าเว็บช่วงนั้น จะเข้า workflow (สูงสุดวันละ 1 ครั้ง/เครื่อง) แล้วกด", "en": "When trigger starts (e.g. rain begins) — all visitors will enter the workflow (max 1 time/day/device)" },
+    "ไม่สำเร็จ — ตรวจว่า REF_TOKEN ถูกต้อง และ backend ชี้ไป staging": { "th": "ไม่สำเร็จ — ตรวจว่า REF_TOKEN ถูกต้อง และ backend ชี้ไป staging", "en": "Failed — verify REF_TOKEN is valid and backend points to staging" },
+    "ยังอ่านสินค้าจากลิงก์นี้ไม่ได้": { "th": "ยังอ่านสินค้าจากลิงก์นี้ไม่ได้", "en": "Unable to read products from this link" },
+    "ระบบอ่านชื่อไฟล์ได้ แต่ไม่พบรหัสสินค้าที่ตรงกันในระบบ ตัวอย่างจากชุดนี้:": { "th": "ระบบอ่านชื่อไฟล์ได้ แต่ไม่พบรหัสสินค้าที่ตรงกันในระบบ ตัวอย่างจากชุดนี้:", "en": "Filename read successfully, but no matching product SKU found in system. Sample:" },
+    "รูปภาพสไลด์ที่ {0} (URL)": { "th": "รูปภาพสไลด์ที่ {0} (URL)", "en": "Slide image at {0} (URL)" },
+    "เลขทะเบียน": { "th": "เลขทะเบียน", "en": "Registration number" },
+    "เว้นว่าง = ใช้รหัสเดิม": { "th": "เว้นว่าง = ใช้รหัสเดิม", "en": "Leave blank = use original code" },
+    "สัดส่วนภาพ (Aspect Ratio)": { "th": "สัดส่วนภาพ (Aspect Ratio)", "en": "Image aspect ratio" },
+    "หน้าโปร": { "th": "หน้าโปร", "en": "Promotion page" },
+    "อนุมัติ / ขอเอกสาร / ปฏิเสธคำขอเครดิต": { "th": "อนุมัติ / ขอเอกสาร / ปฏิเสธคำขอเครดิต", "en": "Approve / Request documents / Reject credit application" },
+    "รหัสเมนู (Cuisine ID)": { "th": "รหัสเมนู (Cuisine ID)", "en": "Cuisine ID" },
+    "ข้าม": { "th": "ข้าม", "en": "Skip" },
+    "Schema ไม่ใช่ JSON ที่ถูกต้อง": { "th": "Schema ไม่ใช่ JSON ที่ถูกต้อง", "en": "Schema is not a valid JSON" },
+    "กรุณาเลือกช่องทางชำระเงินอย่างน้อย 1 รายการ": { "th": "กรุณาเลือกช่องทางชำระเงินอย่างน้อย 1 รายการ", "en": "Please select at least 1 payment method" },
+    "โหลดลิงก์ไม่สำเร็จ": { "th": "โหลดลิงก์ไม่สำเร็จ", "en": "Failed to load link" }
+  }
+  </script>
+<!-- ================= CLIENT JAVASCRIPT ================= -->
+<script>
+    // Copy Link Helper
+    function copyLink(text, buttonElement) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("คัดลอกลิงก์เรียบร้อยแล้ว: " + text);
+        const icon = buttonElement.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.textContent = 'done';
+          setTimeout(() => { icon.textContent = 'content_copy'; }, 1500);
+        }
+      }).catch(() => {
+        showToast("คัดลอกลิงก์: " + text);
+      });
+    }
+
+    // Modal Control
+    function toggleModal(show) {
+      const modal = document.getElementById('smartLinkModal');
+      if (show) {
+        modal.classList.remove('hidden');
+        document.getElementById('modalTitle').textContent = "+ สร้างลิงก์";
+        document.getElementById('modalLinkTitle').value = "";
+        document.getElementById('modalLinkSlug').value = "";
+        document.getElementById('modalLinkDest').value = "";
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function openEditModal(title, slug, dest) {
+      const modal = document.getElementById('smartLinkModal');
+      document.getElementById('modalTitle').textContent = "แก้ไขลิงก์: " + slug;
+      document.getElementById('modalLinkTitle').value = title;
+      document.getElementById('modalLinkSlug').value = slug;
+      document.getElementById('modalLinkDest').value = dest;
+      modal.classList.remove('hidden');
+    }
+
+    // Form submission
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      toggleModal(false);
+      showToast("บันทึกข้อมูล Smart Link สำเร็จ");
+    }
+
+    // Toggle Link Status (Active / Inactive)
+    function toggleRowStatus(btn) {
+      const row = btn.closest('tr');
+      const badge = row.querySelector('td:nth-child(3) span');
+      const currentStatus = row.getAttribute('data-status');
+
+      if (currentStatus === 'Active') {
+        row.setAttribute('data-status', 'Inactive');
+        badge.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-secondary/15 text-secondary";
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Inactive';
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">play_circle</span>';
+        btn.setAttribute('title', 'Activate');
+        showToast("ปิดการใช้งานลิงก์ชั่วคราว");
+      } else {
+        row.setAttribute('data-status', 'Active');
+        badge.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-[#157347]/10 text-[#157347]";
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>Active';
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">pause_circle</span>';
+        btn.setAttribute('title', 'Deactivate');
+        showToast("เปิดใช้งานลิงก์เรียบร้อยแล้ว");
+      }
+    }
+
+    // Delete row
+    function deleteRow(btn) {
+      if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบ Smart Link นี้?")) {
+        const row = btn.closest('tr');
+        row.remove();
+        showToast("ลบรายการสำเร็จ");
+      }
+    }
+
+    // Refresh simulation
+    function handleRefresh() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      showToast("กำลังรีเฟรชข้อมูลล่าสุด...");
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast("ข้อมูลเป็นปัจจุบันแล้ว");
+      }, 700);
+    }
+
+    // Filter Logic
+    function filterLinks() {
+      const searchVal = document.getElementById('tableSearchInput').value.toLowerCase();
+      const statusVal = document.getElementById('statusFilter').value;
+      const typeVal = document.getElementById('typeFilter').value;
+      const rows = document.querySelectorAll('#smartLinksTable tbody tr.data-row');
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const rowStatus = row.getAttribute('data-status');
+        const rowType = row.getAttribute('data-type');
+
+        const matchesSearch = text.includes(searchVal);
+        const matchesStatus = (statusVal === 'All' || rowStatus === statusVal);
+        const matchesType = (typeVal === 'All' || rowType === typeVal);
+
+        if (matchesSearch && matchesStatus && matchesType) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function resetFilters() {
+      document.getElementById('tableSearchInput').value = '';
+      document.getElementById('statusFilter').value = 'All';
+      document.getElementById('typeFilter').value = 'All';
+      filterLinks();
+      showToast("รีเซ็ตตัวกรองแล้ว");
+    }
+
+    // Toast Alert
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+  </script>
+</body></html>

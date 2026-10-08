@@ -1,0 +1,66 @@
+Design EXACTLY ONE polished, easy-to-use Commerce Platform screen. Route identifier admin-2dc0e7bb0927; URL /j/product/bulk-image-upload; app admin; category สินค้าและสต็อก; component BulkImageUploadPage; view type screen; title อัปโหลดรูปสินค้าหลายรายการ.
+
+# Commerce Platform — task-based UI
+
+Design for Thai commerce operations teams. The product has seven work areas:
+สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล,
+ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน. A separate developer portal manages API keys and webhooks.
+
+## Visual language
+
+- Light canvas `#f6f8fc`, white cards, restrained borders `#e1e7f0`.
+- Primary blue `#365cf5`; ink `#17243b`; secondary text `#52627a`.
+- Success `#157347`, warning `#b08900`, error `#c2333f`; always pair color with text.
+- Noto Sans Thai for Thai and Latin; body 14px, labels 13px, page titles 28px.
+- Cards have 12px corners; controls 8px. Use 16/24/32px spacing.
+- A 256px sidebar, compact contextual header, and a readable content width near 1240px.
+- SVG icons and local fonts in the application. No decorative stock photos or gradients.
+- Phone layouts stack cards and collapse navigation. Scroll wide tables inside their panel.
+
+## Usability
+
+- Lead with the task and one primary action. Show records before creation forms.
+- Organize each work area's links into short task sections, with useful descriptions.
+- Creation and editing use named dialogs, clear labels, inline errors, and Cancel/Save actions.
+- Keep keyboard focus inside dialogs, support Escape, and return focus to the trigger.
+- Record links open their own detail URLs; preserve existing routes and role restrictions.
+- Show loading, empty, filtered-empty and failed states separately.
+- Counts and operational status in the application must come from its API. Prototype samples
+  must be labeled `ข้อมูลตัวอย่าง`; never copy sample figures into application code.
+- List APIs for platform products/customers support pagination only. A frontend search must
+  explicitly say it searches the current page. Do not imply a complete catalog search.
+- Every action in the application must work. Do not add export/import, bulk changes, charts,
+  advanced filters or copy-secret actions without an existing supported API.
+
+## Business fields and workflows
+
+- Product list: SKU, name, status. Create/edit: SKU, name, description. Product detail also
+  shows fulfillment mode, lead time, update date and inventory by warehouse when available.
+- Customer list: name/code, email, phone, status. Detail shows contact data and actual orders.
+- Orders: code, status, total, creation date. Create with customer/product selectors,
+  editable quantity/unit price, add/remove lines and a calculated subtotal.
+- Stock movements: receive, count, damage/return/correction, transfer. Choose an owned
+  warehouse, enter SKU/quantity/note, show a clear explanation of the selected movement.
+- Marketing: planning, campaigns/promotions, content/communication, tracking results.
+- Reports: select a business/system report and its existing filters; show unavailable data
+  honestly, with a retry action where supported.
+- Connections: connections, inbound data, sync jobs, outgoing deliveries and failed records.
+- Team settings: staff list, create account, role management and existing password/status actions.
+- Portal: active key/webhook onboarding, key creation with the existing one-time secret,
+  subscriptions, webhook test results, and recent delivery status filters.
+
+## Implementation boundary
+
+Stitch screens are visual references. React implements the supported interactions using
+`@cp/ui`; preserve API payloads, confirmation behavior and server permissions. Complex
+migrated management pages retain their domain-specific workflows while adopting the common
+visual system. Never replace a working business screen with static generated HTML.
+
+
+Design this specific existing page, including its details or create/edit form when that is its route. Use its UI copy to infer supported fields, actions, tables and statuses. Keep domain controls and avoid inventing business operations. Lists lead with records and real filters. Forms group required fields before optional/advanced settings with clear section headings and sticky Cancel/Save. Details lead with facts, then related records and existing actions. Admin uses the seven-area sidebar; Portal uses its own navigation; login/register are centered forms. Use 256px sidebar, 1240px main width, Noto Sans Thai, #365cf5 primary, #f6f8fc canvas, white cards with 12px corners, 40px inputs and buttons, 14px body. Avoid decorative charts and stock photography.
+
+BILINGUAL: Thai default, visible ไทย / English selector with working UI translations. Mark example records as ข้อมูลตัวอย่าง / Sample data. Preserve record names, identifiers, URLs, API enums and code. Translate labels, help, actions and errors naturally.
+
+Exact UI copy catalogue (include all in export): ["สถานะ","เวลา","เพิ่ม","SKU","สำเร็จ","รายการ","ไม่สำเร็จ","กำลังอัปโหลด…","ลองใหม่","← กลับ","กำลังโหลด…","ไฟล์","รูป","สูงสุด","อัปโหลด","โหมด","ไม่มีรูปเก่าที่ต้องลบ","ล้างรูปเก่าไม่สำเร็จ","อัปโหลดรูปสินค้าแบบชุด","ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วแทนที่รูปตามลำดับที่ระบุในชื่อไฟล์ (รูปเดิมที่ลำดับนั้นถูกทับ)","ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วเพิ่มต่อท้ายแกลเลอรีเดิม (ไม่ลบ/ไม่แทนที่รูปเดิม)","เพิ่มต่อท้าย","แทนที่ตามลำดับ","JG001_2.jpg จะทับรูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องมีลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน","รูปทุกไฟล์ถูกเพิ่มต่อท้ายแกลเลอรีเดิม","ลากไฟล์หรือโฟลเดอร์มาวาง หรือเลือกด้วยปุ่มด้านล่าง","ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่","หรือ","เลือกโฟลเดอร์","เลือกไฟล์","ไฟล์ต่อครั้ง · ไฟล์ละไม่เกิน","MB · jpg, jpeg, png, gif, webp","วางไฟล์เพิ่มได้ (เหลืออีก","ไฟล์)","เลือกโฟลเดอร์รูปภาพเพื่ออัปโหลด","เลือกไฟล์รูปภาพเพื่ออัปโหลด","ตั้งชื่อไฟล์ตามรูปแบบ","sku_ลำดับ.นามสกุล","— ระบบใช้ชื่อไฟล์จับคู่สินค้า","JG001_1.jpg","→ SKU","JG001","รูปที่ 1","JG001_2.jpg","รูปที่ 2","JG-001_2.png","JG-001","(ขีดในรหัสได้ ระบบตัดเฉพาะ _ตัวเลขท้ายสุด)","JG002.webp","ถูกข้าม","— โหมดแทนที่ต้องมีลำดับเสมอ","JG002","(ไม่ใส่ลำดับก็ได้)","ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งให้ทราบ","· โหมดแทนที่: ลำดับในชื่อไฟล์คือรูปที่จะถูกทับ ถ้าลำดับนั้นยังว่างจะเพิ่มให้แทน","— ไม่พบ SKU","พร้อมอัปโหลด","แสดงเพิ่ม (","รายการที่เหลือ)","แทนที่","ล้างรายการ","· ถูกข้าม","(ไฟล์ที่ถูกข้ามจะไม่ถูกส่ง)","กำลังอัปโหลดชุดที่","อย่าปิดหน้านี้จนกว่าจะเสร็จ","รอคิว","ไม่สำเร็จทั้งหมด — 0 จาก","ไฟล์ถูก","แทนที่รูปสำเร็จ","เพิ่มรูปสำเร็จ","ทุกไฟล์อ่าน SKU ไม่ได้ — ปัญหาน่าจะอยู่ที่ชื่อไฟล์","ระบบจับคู่รูปกับสินค้าจาก","ชื่อไฟล์เท่านั้น","ตัวอย่างจากชุดนี้:","→ อ่านไม่ได้ · ควรเป็น","เปลี่ยนชื่อไฟล์เป็น","(เช่น",") แล้วลากมาวางใหม่","ทุกไฟล์ไม่พบ SKU ในระบบ","ระบบอ่านชื่อไฟล์ได้ แต่ไม่พบรหัสสินค้าที่ตรงกันในระบบ ตัวอย่างจากชุดนี้:","ไม่พบในระบบ","ตรวจสอบว่ารหัสสินค้าตรงกับ SKU ในระบบ แล้วลองใหม่อีกครั้ง","อัปโหลดขัดข้องทั้งหมด","ไฟล์อ่าน SKU ได้ปกติ แต่การอัปโหลดล้มเหลว อาจเกิดจากปัญหาเครือข่ายหรือเซิร์ฟเวอร์ชั่วคราว ลองกด “ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ” ด้านล่าง","ไฟล์ใหญ่เกินกำหนดทั้งหมด","ชนิดไฟล์ไม่รองรับทั้งหมด","ไฟล์ในชุดนี้ใหญ่เกิน 5 MB — ย่อขนาดไฟล์แล้วลองใหม่","ระบบรองรับเฉพาะไฟล์ jpg, jpeg, png, gif, webp — ตรวจสอบชนิดไฟล์แล้วลองใหม่","ไม่สำเร็จ (","…อีก","ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ","ลบไฟล์ที่ไม่สำเร็จออก","สำเร็จ (","แทนที่แล้ว","เพิ่มแล้ว","เลือกไฟล์ใหม่","อัปโหลดชุดใหม่","ประวัติการอัปโหลด","ลบรูปเก่าที่ถูกแทนที่ซ้ำจนกู้คืนไม่ได้แล้วออกจาก S3 — แต่ละช่องรูปเก็บรูปก่อนหน้าไว้ 1 ภาพเสมอ","กำลังล้าง…","ล้างรูปเก่าที่กู้คืนไม่ได้แล้ว","โหลดประวัติไม่สำเร็จ","ข้อจำกัดของข้อมูล","ค่าตัวอย่าง ({0})","แจ้ง","เช่น หมวดเนื้อสัตว์โปรโมชั่น","ตัวหนา","บันทึกร่าง","ผลลัพธ์ของ workflow","ไม่ active","ยังไม่เคยส่ง","รหัสสินค้า (SKU)","รูปที่ {0}","เลือก {0}","สต็อก","สีพื้นหลังอีเมล","โหลดล่าสุด","แพ็คแล้ว","แทนที่รูปที่ {0}","พบรูปเก่าที่กู้คืนไม่ได้แล้ว {0} ไฟล์ ลบออกจาก S3 ถาวร? ย้อนกลับไม่ได้","ล้างรูปเก่าเรียบร้อย"]
+
+Exported HTML MUST include an invisible <script id="commerce-ui-translations" type="application/json"> object keyed by EVERY exact source string above. Values must be {"th":"Thai UI translation","en":"English UI translation"}. Preserve placeholders such as {0}, {1}, {name} exactly. Do not display the dictionary. Render only this route's UI; extra messages belong in translation data, not as extra unrelated controls. This export requirement has already worked in the existing project screens. Generate one complete screen.

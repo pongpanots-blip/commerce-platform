@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useCloseOnOutsideClick } from './useCloseOnOutsideClick';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type BrandRow = {
   id: string;
   brand_code: string;
@@ -24,6 +26,7 @@ type Props = {
 
 /** เลือกแบรนด์แบบหลายรายการ (dropdown + ค้นหา + checkbox), ทรงเดียวกับ PromotionCategoryMultiSelect */
 export function PromotionBrandMultiSelect({ selectedIds, onChange }: Props) {
+  __useUiLocale();
   const [brands, setBrands] = useState<BrandRow[]>([]);
   const [open, setOpen] = useState(false);
   const rootRef = useCloseOnOutsideClick<HTMLDivElement>(open, setOpen);
@@ -74,14 +77,13 @@ export function PromotionBrandMultiSelect({ selectedIds, onChange }: Props) {
         onClick={() => setOpen((prev) => !prev)}
         className="flex w-full items-center justify-between rounded-lg border-2 border-primary-border bg-white px-3 py-2 text-sm text-ink hover:border-primary"
       >
-        <span>เลือกแบรนด์ ({selectedIds.length})</span>
+        <span>{__uiText("เลือกแบรนด์ (")}{selectedIds.length})</span>
         <span className="text-xs text-gray-400">{open ? '▲' : '▼'}</span>
       </button>
 
       {loadError && (
         <p className="mt-1 text-xs text-red-600">
-          โหลดรายการแบรนด์ไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง
-        </p>
+          {__uiText("โหลดรายการแบรนด์ไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง")}</p>
       )}
 
       {open && (
@@ -89,16 +91,16 @@ export function PromotionBrandMultiSelect({ selectedIds, onChange }: Props) {
           <div className="border-b border-gray-100 p-2">
             <Input
               icon={<AiOutlineSearch size={18} />}
-              placeholder="ค้นหาแบรนด์..."
+              placeholder={__uiText("ค้นหาแบรนด์...")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <div className="max-h-64 overflow-y-auto p-2">
             {loading ? (
-              <p className="py-4 text-center text-xs text-gray-400">กำลังโหลด...</p>
+              <p className="py-4 text-center text-xs text-gray-400">{__uiText("กำลังโหลด...")}</p>
             ) : filtered.length === 0 ? (
-              <p className="py-4 text-center text-xs text-gray-400">ไม่พบแบรนด์</p>
+              <p className="py-4 text-center text-xs text-gray-400">{__uiText("ไม่พบแบรนด์")}</p>
             ) : (
               <ul>
                 {filtered.map((brand) => (
@@ -122,8 +124,7 @@ export function PromotionBrandMultiSelect({ selectedIds, onChange }: Props) {
               onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/10"
             >
-              เสร็จสิ้น
-            </button>
+              {__uiText("เสร็จสิ้น")}</button>
           </div>
         </div>
       )}

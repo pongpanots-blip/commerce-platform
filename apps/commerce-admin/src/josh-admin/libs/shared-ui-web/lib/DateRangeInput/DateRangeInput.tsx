@@ -1,5 +1,7 @@
 import React from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface DateRangeProps {
   startDate: string;
   endDate: string;
@@ -17,6 +19,7 @@ export function DateRangeInput({
   className = '',
   label
 }: DateRangeProps) {
+  __useUiLocale();
   const startId = React.useId();
   const endId = React.useId();
 
@@ -25,7 +28,7 @@ export function DateRangeInput({
 
       {/* วันที่เริ่มต้น */}
       <div className="flex items-center gap-1.5">
-        <label htmlFor={startId} className="text-xs text-gray-400 font-medium pl-1">เริ่ม:</label>
+        <label htmlFor={startId} className="text-xs text-gray-400 font-medium pl-1">{__uiText("เริ่ม:")}</label>
         <input
           id={startId}
           type="date"
@@ -40,7 +43,7 @@ export function DateRangeInput({
 
       {/* วันที่สิ้นสุด */}
       <div className="flex items-center gap-1.5">
-        <label htmlFor={endId} className="text-xs text-gray-400 font-medium">ถึง:</label>
+        <label htmlFor={endId} className="text-xs text-gray-400 font-medium">{__uiText("ถึง:")}</label>
         <input
           id={endId}
           type="date"

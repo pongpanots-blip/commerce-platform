@@ -6,6 +6,8 @@ import { AiOutlineCheck, AiOutlineCopy } from 'react-icons/ai';
  * ใช้ในแถวลิสต์ (CategoryList / CuisineCardsPage) และกล่องข้อมูล id ของหน้าแก้ไข
  * (EditCategory / CuisineCardEdit)
  */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function CopyIdButton({
   id,
   className = '',
@@ -17,14 +19,15 @@ export function CopyIdButton({
   /** Accessible name / tooltip; default `คัดลอก id <id>`. Set it when what is copied is not an id. */
   label?: string;
 }) {
+  __useUiLocale();
   const [copied, setCopied] = useState(false);
   const name = label ?? `คัดลอก id ${id}`;
 
   return (
     <button
       type="button"
-      title={copied ? 'คัดลอกแล้ว' : name}
-      aria-label={copied ? 'คัดลอกแล้ว' : name}
+      title={copied ? __uiText("คัดลอกแล้ว") : name}
+      aria-label={copied ? __uiText("คัดลอกแล้ว") : name}
       onClick={async () => {
         await navigator.clipboard.writeText(id);
         setCopied(true);

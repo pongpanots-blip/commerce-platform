@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>อีเมลต้อนรับลีด (Welcome Lead Email) — Siam Commerce Hub</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Noto Sans Font for Thai & Latin Harmony -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Forms and Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration verbatim from Design System -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-low": "#f1f3ff",
+            "on-background": "#0e1b32",
+            "inverse-primary": "#b9c3ff",
+            "surface-container-high": "#e0e8ff",
+            "on-tertiary": "#ffffff",
+            "surface-dim": "#cddaf9",
+            "primary-fixed": "#dde1ff",
+            "on-tertiary-fixed-variant": "#00522f",
+            "tertiary-fixed-dim": "#82d8a3",
+            "on-primary-fixed": "#001257",
+            "on-surface": "#0e1b32",
+            "on-primary-container": "#ededff",
+            "outline": "#747687",
+            "on-secondary-fixed": "#0b1c31",
+            "on-secondary-container": "#54647c",
+            "tertiary": "#006139",
+            "secondary-fixed": "#d3e3ff",
+            "on-tertiary-fixed": "#002110",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-tint": "#214ce7",
+            "on-tertiary-container": "#b7ffcf",
+            "secondary-container": "#d0e1fd",
+            "error-container": "#ffdad6",
+            "background": "#f9f9ff",
+            "primary": "#0a3fdc",
+            "surface-bright": "#f9f9ff",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#d7e2ff",
+            "surface-container-highest": "#d7e2ff",
+            "error": "#ba1a1a",
+            "surface": "#f9f9ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-error-container": "#93000a",
+            "secondary-fixed-dim": "#b7c7e3",
+            "outline-variant": "#c4c5d8",
+            "tertiary-container": "#217b4e",
+            "surface-container-lowest": "#ffffff",
+            "primary-container": "#365cf5",
+            "inverse-on-surface": "#ecf0ff",
+            "secondary": "#4f5f77",
+            "on-primary": "#ffffff",
+            "on-surface-variant": "#444655",
+            "inverse-surface": "#243048",
+            "surface-container": "#e8eeff",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#9ef5be"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "gutter-desktop": "1.5rem",
+            "margin-desktop": "1.5rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["Noto Sans", "sans-serif"],
+            "body-md": ["Noto Sans", "sans-serif"],
+            "body-lg": ["Noto Sans", "sans-serif"],
+            "data-tabular": ["Noto Sans", "sans-serif"],
+            "label-sm": ["Noto Sans", "sans-serif"],
+            "display-lg": ["Noto Sans", "sans-serif"],
+            "body-sm": ["Noto Sans", "sans-serif"],
+            "label-lg": ["Noto Sans", "sans-serif"],
+            "headline-md": ["Noto Sans", "sans-serif"],
+            "label-md": ["Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Tabular figures for operational reliability */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Subtle custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #747687;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- ========================================================
+       SHARED COMPONENT: SideNavBar (256px Fixed)
+       Active: การตลาด (Tab index 3)
+       ======================================================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md select-none">
+<div class="flex flex-col gap-space-md">
+<!-- App Header Brand Identity -->
+<div class="flex items-center gap-space-sm px-space-xs py-space-xs">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-md shadow-sm">
+          S
+        </div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md font-bold text-on-surface leading-tight">สยาม คอมเมิร์ซ</span>
+<span class="text-label-sm font-label-sm text-secondary">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full flex items-center justify-center gap-space-xs py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-headline-sm text-label-lg transition-colors duration-150 ease-in-out border border-outline-variant" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Main Navigation Menu -->
+<nav class="flex flex-col gap-1 mt-1">
+<!-- Tab 0: สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- Tab 1: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- Tab 2: ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- Tab 3: การตลาด (ACTIVE MATCH) -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- Tab 4: รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- Tab 5: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Tab 6: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- SideNavBar Footer -->
+<div class="flex flex-col gap-1 border-t border-outline-variant pt-space-sm">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="text-label-md font-label-md">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:text-error hover:bg-error-container/20 transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-label-md font-label-md">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================
+       SHARED COMPONENT: TopNavBar (Fixed right: 64 to screen end)
+       ======================================================== -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter-desktop transition-all duration-150 ease-in-out">
+<!-- Breadcrumbs & Product Navigation -->
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-2 text-label-md font-label-md">
+<span class="text-secondary font-medium">การตลาด</span>
+<span class="text-outline">/</span>
+<span class="text-secondary font-medium">Marketing Settings</span>
+<span class="text-outline">/</span>
+<span class="text-primary font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">mark_email_unread</span>
+          อีเมลต้อนรับลีด
+        </span>
+</div>
+<!-- Route identifier chip -->
+<span class="ml-2 font-mono text-[11px] px-2 py-0.5 rounded bg-surface-container text-secondary border border-outline-variant select-all">
+        admin-f3adeff2ac3f
+      </span>
+<!-- Sample data pill -->
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+        ข้อมูลตัวอย่าง / Sample data
+      </span>
+</div>
+<!-- Right utility controls -->
+<div class="flex items-center gap-3">
+<!-- Language Selector -->
+<div class="inline-flex items-center rounded-lg border border-outline-variant p-0.5 bg-surface-container-low text-label-sm font-label-sm">
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest text-primary font-semibold shadow-xs" type="button">ไทย</button>
+<button class="px-2.5 py-1 rounded text-secondary hover:text-on-surface" type="button">English</button>
+</div>
+<div class="h-4 w-px bg-outline-variant"></div>
+<!-- Action icon notifications -->
+<button class="relative p-2 rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" title="การแจ้งเตือน" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" title="ช่วยเหลือ" type="button">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<div class="h-4 w-px bg-outline-variant"></div>
+<!-- User Profile Cluster -->
+<div class="flex items-center gap-2 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-label-md border border-primary/20">
+          AO
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold text-on-surface leading-tight">Admin Siam Ops</span>
+<span class="text-[11px] text-secondary leading-tight">Head Merchandiser</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================
+       MAIN APPLICATION VIEWPORT CANVAS (Offset 256px + 64px)
+       ======================================================== -->
+<main class="ml-64 mt-16 w-[calc(100%-16rem)] min-h-[calc(100vh-4rem)] p-space-lg flex flex-col gap-6">
+<!-- PAGE HEADER & ACTION CONTROLS BAR -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg border border-outline-variant shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center gap-1 text-label-md font-label-md text-primary hover:underline" href="#">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            ← Marketing Settings
+          </a>
+<span class="text-outline">•</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-tertiary/10 text-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+            ใช้งานอยู่ (Active in Prod)
+          </span>
+</div>
+<div class="flex items-baseline gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">อีเมลต้อนรับลีด (Welcome Lead Email)</h1>
+<span class="text-body-sm font-body-sm text-secondary tabular-nums">อัปเดตล่าสุด: วันนี้ 14:20 น. (v2.4)</span>
+</div>
+<p class="text-body-md font-body-md text-secondary max-w-4xl">
+          แก้ไขข้อความ ขนาดตัวอักษร และรูป/URL ของอีเมลต้อนรับหลัง lead intake — มีผลทันทีใน prod ไม่ต้อง redeploy
+        </p>
+</div>
+<!-- Action Buttons Cluster -->
+<div class="flex items-center gap-2 self-start md:self-auto shrink-0">
+<button class="h-9 px-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-low text-label-md font-label-md inline-flex items-center gap-1.5 transition-colors" id="btn-refresh-preview" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>รีเฟรช preview</span>
+</button>
+<button class="h-9 px-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-secondary hover:text-error hover:border-error/30 text-label-md font-label-md inline-flex items-center gap-1.5 transition-colors" id="btn-reset-defaults" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+<span>รีเซ็ตเป็นค่าเริ่มต้น</span>
+</button>
+<button class="h-9 px-5 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-headline-sm text-label-lg inline-flex items-center gap-2 shadow-sm transition-colors active:scale-95" id="btn-save" type="button">
+<span class="material-symbols-outlined text-[18px]" id="save-icon">save</span>
+<span id="save-text">บันทึก</span>
+</button>
+</div>
+</section>
+<!-- TWO-COLUMN EDIT & LIVE PREVIEW WORKSPACE -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- ========================================================
+           LEFT COLUMN: EDITOR CONTROLS (approx. 58% -> col-span-7)
+           ======================================================== -->
+<div class="col-span-12 lg:col-span-7 flex flex-col gap-6">
+<!-- 1. SECTION: ข้อความอีเมล (Email Copy & Translations) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-outline-variant shadow-xs flex flex-col gap-5">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">edit_note</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">ข้อความอีเมล</h2>
+</div>
+<!-- Language Switcher Pill -->
+<div class="inline-flex items-center rounded-lg border border-outline-variant p-0.5 bg-surface-container-low text-label-sm font-label-sm">
+<button class="px-3 py-1 rounded bg-primary text-on-primary font-semibold shadow-xs" id="lang-pill-th" type="button">ไทย</button>
+<button class="px-3 py-1 rounded text-secondary hover:text-on-surface font-semibold" id="lang-pill-en" type="button">English</button>
+</div>
+</div>
+<!-- Translation Action Helpers -->
+<div class="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-surface-container-low border border-outline-variant text-label-sm font-label-sm">
+<span class="text-secondary font-medium mr-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">translate</span>
+              เครื่องมือแปล:
+            </span>
+<button class="translate-trigger px-2.5 py-1 rounded bg-surface-container-lowest hover:bg-white text-on-surface border border-outline-variant hover:border-primary transition-colors" type="button">
+              แปลทั้งหมด TH → EN
+            </button>
+<button class="translate-trigger px-2.5 py-1 rounded bg-surface-container-lowest hover:bg-white text-on-surface border border-outline-variant hover:border-primary transition-colors" type="button">
+              แปลทั้งหมด EN → TH
+            </button>
+<button class="translate-trigger px-2 py-1 rounded bg-surface-container-lowest hover:bg-white text-secondary border border-outline-variant hover:border-primary transition-colors" type="button">
+              ← แปลจาก EN
+            </button>
+<button class="translate-trigger px-2 py-1 rounded bg-surface-container-lowest hover:bg-white text-secondary border border-outline-variant hover:border-primary transition-colors" type="button">
+              แปลจาก ไทย →
+            </button>
+</div>
+<!-- Form Fields -->
+<div class="space-y-4">
+<!-- Subject -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">
+                หัวเรื่องอีเมล (subject)
+                <span class="text-error">*</span>
+</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-on-surface" id="input-subject" type="text" value="ยินดีต้อนรับสู่ Siam Commerce Hub — เริ่มต้นขยายธุรกิจของคุณ"/>
+</div>
+<!-- Logo Tagline Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">ข้อความข้างโลโก้ บรรทัด 1 (taglineTop)</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-on-surface" id="input-tagline-top" type="text" value="Siam Commerce Direct"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">ข้อความข้างโลโก้ บรรทัด 2 – ตัวหนา (taglineBottom)</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md font-semibold focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-on-surface" id="input-tagline-bottom" type="text" value="แพลตฟอร์มบริหารคลังและกระจายสินค้า B2B"/>
+</div>
+</div>
+<!-- Headline Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">หัวข้อ บรรทัด 1 (headlineTop)</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-on-surface" id="input-headline-top" type="text" value="ยินดีต้อนรับคุณเข้าร่วมเครือข่าย"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">หัวข้อ บรรทัด 2 – ตัวหนา (headlineBottom)</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md font-semibold focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-on-surface" id="input-headline-bottom" type="text" value="เริ่มต้นจัดการซัพพลายเชนได้ทันที"/>
+</div>
+</div>
+<!-- Body Area -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">เนื้อหา (body)</label>
+<textarea class="w-full p-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-on-surface leading-relaxed" id="input-body" rows="4">ขอขอบคุณที่ร่วมเป็นพันธมิตรกับเรา บัญชีองค์กรของท่านได้รับการยืนยันความพร้อมเรียบร้อยแล้ว ท่านสามารถเข้าสู่ระบบเพื่อสำรวจคลังกระจายสินค้า 4 ภูมิภาคหลัก จัดการคำสั่งซื้อแบบรวมศูนย์ และเชื่อมต่อ API การจัดส่งได้โดยอัตโนมัติตลอด 24 ชม.</textarea>
+</div>
+<!-- CTA & CTA URL Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">ปุ่ม (cta)</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md font-medium focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-on-surface" id="input-cta" type="text" value="เข้าสู่ระบบและตั้งค่าร้านค้า"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">CTA URL</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md text-primary focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all" id="input-cta-url" type="url" value="https://hub.siamcommerce.co.th/onboarding?ref=lead_email"/>
+</div>
+</div>
+<!-- Footer Legal -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">ข้อความลิขสิทธิ์ (footerLegal)</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-on-surface" id="input-footer-legal" type="text" value="© 2025 Siam Commerce Hub Co., Ltd. All rights reserved."/>
+</div>
+<!-- Links Row: Terms & Privacy -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant space-y-3">
+<span class="text-label-sm font-label-sm text-secondary font-semibold uppercase tracking-wider block">ข้อกำหนดและนโยบายความเป็นส่วนตัว (Compliance Links)</span>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div>
+<label class="block text-[11px] text-secondary mb-1">ข้อความ — Terms (terms)</label>
+<input class="w-full h-9 px-2.5 rounded bg-surface-container-lowest border border-outline-variant text-body-sm font-body-sm text-on-surface" id="input-terms-text" type="text" value="ข้อกำหนดการใช้บริการ"/>
+</div>
+<div>
+<label class="block text-[11px] text-secondary mb-1">URL — Terms (termsUrl)</label>
+<input class="w-full h-9 px-2.5 rounded bg-surface-container-lowest border border-outline-variant text-body-sm font-body-sm text-primary" id="input-terms-url" type="text" value="https://hub.siamcommerce.co.th/legal/terms"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div>
+<label class="block text-[11px] text-secondary mb-1">ข้อความ — Privacy (privacy)</label>
+<input class="w-full h-9 px-2.5 rounded bg-surface-container-lowest border border-outline-variant text-body-sm font-body-sm text-on-surface" id="input-privacy-text" type="text" value="นโยบายความเป็นส่วนตัว"/>
+</div>
+<div>
+<label class="block text-[11px] text-secondary mb-1">URL — Privacy (privacyUrl)</label>
+<input class="w-full h-9 px-2.5 rounded bg-surface-container-lowest border border-outline-variant text-body-sm font-body-sm text-primary" id="input-privacy-url" type="text" value="https://hub.siamcommerce.co.th/legal/privacy"/>
+</div>
+</div>
+</div>
+<!-- Link helper to reset text -->
+<div class="pt-1">
+<button class="confirm-reset-trigger text-label-md font-label-md text-error hover:underline inline-flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                รีเซ็ตข้อความอีเมลทั้งสองภาษาเป็นค่าเริ่มต้น?
+              </button>
+</div>
+</div>
+</div>
+<!-- 2. SECTION: ขนาดตัวอักษร (px) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-outline-variant shadow-xs flex flex-col gap-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">format_size</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">ขนาดตัวอักษร (px)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">Dynamic Scaling</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Tagline Size -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<label class="text-label-sm font-label-sm text-on-surface">ข้อความข้างโลโก้ (taglineSize)</label>
+<span class="text-body-sm font-semibold tabular-nums text-primary" id="val-tagline-size">13 px</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-outline-variant rounded-lg cursor-pointer" id="slider-tagline-size" max="18" min="11" type="range" value="13"/>
+</div>
+<!-- Headline Size -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<label class="text-label-sm font-label-sm text-on-surface">หัวข้อ (headlineSize)</label>
+<span class="text-body-sm font-semibold tabular-nums text-primary" id="val-headline-size">26 px</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-outline-variant rounded-lg cursor-pointer" id="slider-headline-size" max="36" min="20" type="range" value="26"/>
+</div>
+<!-- Body Size -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<label class="text-label-sm font-label-sm text-on-surface">เนื้อหา (bodySize)</label>
+<span class="text-body-sm font-semibold tabular-nums text-primary" id="val-body-size">15 px</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-outline-variant rounded-lg cursor-pointer" id="slider-body-size" max="20" min="12" type="range" value="15"/>
+</div>
+<!-- CTA Size -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<label class="text-label-sm font-label-sm text-on-surface">ปุ่ม (ctaSize)</label>
+<span class="text-body-sm font-semibold tabular-nums text-primary" id="val-cta-size">16 px</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-outline-variant rounded-lg cursor-pointer" id="slider-cta-size" max="22" min="13" type="range" value="16"/>
+</div>
+<!-- Footer Size -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex justify-between items-center mb-2">
+<label class="text-label-sm font-label-sm text-on-surface">Footer (footerSize)</label>
+<span class="text-body-sm font-semibold tabular-nums text-primary" id="val-footer-size">12 px</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-outline-variant rounded-lg cursor-pointer" id="slider-footer-size" max="16" min="10" type="range" value="12"/>
+</div>
+</div>
+<div>
+<button class="confirm-reset-trigger text-label-md font-label-md text-error hover:underline inline-flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+              รีเซ็ตขนาดตัวอักษรทั้งสองภาษาเป็นค่าเริ่มต้น?
+            </button>
+</div>
+</div>
+<!-- 3. SECTION: รูปภาพ (Images & Assets) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-outline-variant shadow-xs flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">image</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">รูปภาพ</h2>
+</div>
+<span class="text-body-sm font-body-sm text-secondary">Asset Manager</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Card 1: Hero Image -->
+<div class="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest flex flex-col justify-between gap-3 hover:border-primary/40 transition-colors">
+<div>
+<div class="flex items-center justify-between mb-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Hero image</h3>
+<span class="text-[11px] font-mono text-secondary bg-surface-container px-1.5 py-0.5 rounded">1200×643</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary">PNG พื้นใส แนะนำ 1200×643px</p>
+<div class="mt-3 aspect-video rounded-lg border border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center p-2 text-center overflow-hidden">
+<img class="w-full h-full object-cover rounded" data-alt="A clean, minimalist high-tech B2B supply chain visualization with subtle isometric logistics hubs, global shipping routes, and modern fleet icons illuminated with soft blue corporate tones on a clean transparent background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAr9cNn_aS5nGeO0Kg8wMUH4LrrbU02N9SESFhjD1voKJn7IPVwpLoj7nQeRHVrbRqVngY7ic_BRwofTAHwFS4xS0ijH-UVsZ90Dj4QGZY-WL55kKpGme8YS16PpZO2UVLWCdXpzVT0Kb4xKFhEuwQNPVu7mQf5ymRjaU_Zrj1uAqkjijCCtMDqOJqso0f8hvrsbU06eUJ1H_8n9CjiyCwYxK2cX_QIbX0St2VEdusUDeo7UKpYOWiydH1_nWAFQqye0_voiJR4_w"/>
+</div>
+</div>
+<div class="space-y-2 pt-2 border-t border-outline-variant">
+<div class="flex gap-2">
+<button class="flex-1 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant text-label-sm font-label-sm text-on-surface inline-flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">upload</span>
+                    อัปโหลด
+                  </button>
+<button class="flex-1 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant text-label-sm font-label-sm text-secondary inline-flex items-center justify-center gap-1" type="button">
+                    ใช้ค่าเริ่มต้น
+                  </button>
+</div>
+<p class="text-[11px] text-secondary leading-tight">ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ</p>
+</div>
+</div>
+<!-- Card 2: Logo -->
+<div class="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest flex flex-col justify-between gap-3 hover:border-primary/40 transition-colors">
+<div>
+<div class="flex items-center justify-between mb-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Logo</h3>
+<span class="text-[11px] font-mono text-secondary bg-surface-container px-1.5 py-0.5 rounded">500×163</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary">PNG พื้นใส แนะนำ 500×163px</p>
+<div class="mt-3 aspect-video rounded-lg border border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center p-2 text-center overflow-hidden">
+<img class="w-full h-full object-contain p-2 rounded" data-alt="A pristine high-resolution corporate vector logo design for Siam Commerce Hub with clean geometric sans-serif Thai and Latin logotype in deep royal blue with an elegant modern maritime freight motif on a crisp light surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVaCsfNOHrIyX216bwhkjQ-dFnq3mEfU5kVDqr53OI25qNkI34aqick3MajGlG2qaMyji1U53_uKkugB-7M5lXaMikS10ZkLm0yCeVeetUaEquIndoQGzvh96Eeexl_31vH9LHs_dSjJ9JCuFFemzwkr4oOgyFXJzq2V-vMsJvacndRF48IIQdxpx6HjVgSp29Xf3nsy1I9lNfZPWWz_57CJYfooAMVf31bLxj-zJx_I2Lo8MMSlcEnGoggwTlBcITNqHIV2XdmIw"/>
+</div>
+</div>
+<div class="space-y-2 pt-2 border-t border-outline-variant">
+<div class="flex gap-2">
+<button class="flex-1 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant text-label-sm font-label-sm text-on-surface inline-flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">upload</span>
+                    อัปโหลด
+                  </button>
+<button class="flex-1 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant text-label-sm font-label-sm text-secondary inline-flex items-center justify-center gap-1" type="button">
+                    ใช้ค่าเริ่มต้น
+                  </button>
+</div>
+<p class="text-[11px] text-secondary leading-tight">ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ</p>
+</div>
+</div>
+<!-- Card 3: Enjosh Signature -->
+<div class="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest flex flex-col justify-between gap-3 hover:border-primary/40 transition-colors">
+<div>
+<div class="flex items-center justify-between mb-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Enjosh signature</h3>
+<span class="text-[11px] font-mono text-secondary bg-surface-container px-1.5 py-0.5 rounded">480×277</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary">PNG พื้นใส แนะนำ 480×277px</p>
+<div class="mt-3 aspect-video rounded-lg border border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center p-2 text-center overflow-hidden">
+<img class="w-full h-full object-contain p-1 rounded" data-alt="A sharp authentic executive fountain pen signature with fluent artistic strokes in deep slate ink representing executive founder approval on a pristine transparent digital canvas." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDhtTLdMPN4TTowLMkKP2vMRsX0hHmgZ2JzbtfSsY4IORd85jreE80vLSwfFiB3oK9-vhWu9icPMAcMV8c7b_7lrk5Mrz7ENrI99J3gdwTnRUIAuT1W0Y6uceg48uspD5N9gwTsekwI2TOBZCG2BVHmPDhBGKFHgQgolyiEH9MOtaIwq5BrsCpmUg_fRjJ7P8lHPj7AGcs4VOX-OOkniR-tCVhtXkJcXp8Lc07B3HdryhAtVCcnbZQup9LLmOQkT7KH79bExMoGoI"/>
+</div>
+</div>
+<div class="space-y-2 pt-2 border-t border-outline-variant">
+<div class="flex gap-2">
+<button class="flex-1 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant text-label-sm font-label-sm text-on-surface inline-flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">upload</span>
+                    อัปโหลด
+                  </button>
+<button class="flex-1 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant text-label-sm font-label-sm text-secondary inline-flex items-center justify-center gap-1" type="button">
+                    ใช้ค่าเริ่มต้น
+                  </button>
+</div>
+<p class="text-[11px] text-secondary leading-tight">ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. SECTION: Assets อื่นๆ & การตกแต่ง -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-outline-variant shadow-xs flex flex-col gap-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">palette</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">Assets อื่นๆ</h2>
+</div>
+<span class="text-body-sm font-body-sm text-secondary">Canvas Styling</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Background color picker -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant">
+<label class="block text-label-md font-label-md text-on-surface mb-2">สีพื้นหลังอีเมล</label>
+<div class="flex items-center gap-3">
+<input class="w-10 h-10 rounded border border-outline-variant cursor-pointer p-0 bg-transparent" id="input-bg-color" type="color" value="#f6f8fc"/>
+<div class="flex-1">
+<input class="w-full h-9 px-3 rounded border border-outline-variant bg-surface-container-lowest text-label-md font-mono uppercase text-on-surface" id="input-bg-color-hex" type="text" value="#F6F8FC"/>
+</div>
+</div>
+</div>
+<!-- Gradient Height Slider -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="text-label-md font-label-md text-on-surface">ไล่สีจากขาวถึง (% ของความสูง)</label>
+<span class="text-body-sm font-semibold tabular-nums text-primary" id="val-gradient-height">50%</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-outline-variant rounded-lg cursor-pointer" id="slider-gradient" max="100" min="0" type="range" value="50"/>
+</div>
+<p class="text-[11px] text-secondary mt-2">0 = สีพื้นล้วน, 50 ≈ ใต้ลายเซ็น Enjosh (ตาม mock)</p>
+</div>
+</div>
+</div>
+<!-- 5. SECTION: โซเชียล (Social Media Links) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-outline-variant shadow-xs flex flex-col gap-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">share</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">โซเชียล</h2>
+</div>
+<span class="text-body-sm font-body-sm text-secondary">ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Facebook -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">public</span>
+                Facebook URL
+              </label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm font-body-sm text-on-surface" id="social-fb" type="text" value="https://facebook.com/siamcommercehub"/>
+</div>
+<!-- Instagram -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">photo_camera</span>
+                Instagram URL
+              </label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm font-body-sm text-on-surface" id="social-ig" type="text" value="https://instagram.com/siamcommercehub"/>
+</div>
+<!-- TikTok -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">smart_display</span>
+                TikTok URL
+              </label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm font-body-sm text-on-surface" id="social-tiktok" type="text" value="https://tiktok.com/@siamcommercehub"/>
+</div>
+<!-- LinkedIn -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">work</span>
+                LinkedIn URL
+              </label>
+<input class="w-full h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm font-body-sm text-on-surface" id="social-linkedin" type="text" value="https://linkedin.com/company/siamcommercehub"/>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================
+           RIGHT COLUMN: LIVE INTERACTIVE PREVIEW (approx. 42% -> col-span-5)
+           Sticky Container
+           ======================================================== -->
+<div class="col-span-12 lg:col-span-5 sticky top-24 flex flex-col gap-3">
+<!-- Live Preview Chrome Bar -->
+<div class="bg-surface-container-lowest rounded-xl p-3 border border-outline-variant shadow-xs flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary animate-pulse"></span>
+<span class="text-headline-sm font-headline-sm text-on-surface">Preview</span>
+</div>
+<!-- Viewport Mode Toggle -->
+<div class="flex items-center gap-2">
+<div class="inline-flex items-center rounded-lg border border-outline-variant p-0.5 bg-surface-container-low text-label-sm font-label-sm">
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest text-primary font-semibold shadow-xs flex items-center gap-1" id="btn-view-desktop" type="button">
+<span class="material-symbols-outlined text-[16px]">desktop_windows</span>
+                Desktop
+              </button>
+<button class="px-2.5 py-1 rounded text-secondary hover:text-on-surface flex items-center gap-1" id="btn-view-mobile" type="button">
+<span class="material-symbols-outlined text-[16px]">smartphone</span>
+                Mobile
+              </button>
+</div>
+<button class="p-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-secondary hover:text-primary transition-colors" id="btn-preview-refresh-icon" title="รีเฟรช preview" type="button">
+<span class="material-symbols-outlined text-[18px]">cached</span>
+</button>
+</div>
+</div>
+<!-- Subject Header Simulation -->
+<div class="px-3.5 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant flex items-center gap-2 text-body-sm">
+<span class="font-semibold text-secondary whitespace-nowrap">หัวเรื่อง:</span>
+<span class="text-on-surface font-medium truncate" id="preview-subject-text">
+            ยินดีต้อนรับสู่ Siam Commerce Hub — เริ่มต้นขยายธุรกิจของคุณ
+          </span>
+</div>
+<!-- Email Mock Render Frame Container -->
+<div class="w-full flex justify-center transition-all duration-300" id="preview-viewport-shell">
+<div class="w-full max-w-[580px] rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col transition-all duration-300" data-preview="welcome-lead-email-preview" id="email-frame" style="background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 50%, #F6F8FC 50%, #F6F8FC 100%);">
+<!-- Email Header with Brand & Tagline -->
+<div class="p-6 border-b border-outline-variant/60 flex items-center justify-between bg-white/80 backdrop-blur-xs">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-white flex items-center justify-center font-bold text-headline-md shadow-xs">
+                  S
+                </div>
+<div class="flex flex-col">
+<span class="text-[13px] leading-tight text-secondary" id="preview-tagline-top">Siam Commerce Direct</span>
+<span class="text-[13px] leading-tight font-bold text-on-surface" id="preview-tagline-bottom">แพลตฟอร์มบริหารคลังและกระจายสินค้า B2B</span>
+</div>
+</div>
+<div class="text-[11px] text-secondary font-mono tracking-wider">
+                CONFIDENTIAL
+              </div>
+</div>
+<!-- Email Hero Image Banner -->
+<div class="p-6 pb-2">
+<div class="rounded-lg overflow-hidden border border-outline-variant/80 bg-surface-container-low shadow-xs aspect-[1200/643]">
+<img class="w-full h-full object-cover" data-alt="A clean modern digital illustration representing enterprise B2B fulfillment logistics with cargo ships, freight trains, and high-tech warehouses under a clear bright sky styled with Siam commerce corporate blue tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEQhDCypduwJRYJ4FUtaVL33hTvpnOLwYdckXO9NPAl6_1E6Hy2Gn4ZyFG_hROcCUqR02EBBulTJstpHQ8_jQmQlhxrZ1KNhVMQ4u5zsqnAb59DvFjWGVH1TCvf2Ad5xvTnMsaqlgeCyL00GkiGp4BAesOkzQ6eAhmqxhtXK_pvsZwXZZuwIRES0jvgSCWg9Ab4KchYpjUdSXvEIbMiPOCeuju_q6K1z60H8xQlcug7O2KfBJsrNMdifr7xzyMxbsMTGNrSIlFbcI"/>
+</div>
+</div>
+<!-- Email Main Content Area -->
+<div class="px-6 py-4 flex flex-col gap-4 text-center items-center">
+<!-- Headlines -->
+<div class="space-y-1">
+<div class="text-[26px] leading-snug font-normal text-on-surface" id="preview-headline-top">
+                  ยินดีต้อนรับคุณเข้าร่วมเครือข่าย
+                </div>
+<div class="text-[26px] leading-snug font-bold text-primary" id="preview-headline-bottom">
+                  เริ่มต้นจัดการซัพพลายเชนได้ทันที
+                </div>
+</div>
+<!-- Body Copy -->
+<p class="text-[15px] leading-relaxed text-secondary text-left max-w-md" id="preview-body-copy">
+                ขอขอบคุณที่ร่วมเป็นพันธมิตรกับเรา บัญชีองค์กรของท่านได้รับการยืนยันความพร้อมเรียบร้อยแล้ว ท่านสามารถเข้าสู่ระบบเพื่อสำรวจคลังกระจายสินค้า 4 ภูมิภาคหลัก จัดการคำสั่งซื้อแบบรวมศูนย์ และเชื่อมต่อ API การจัดส่งได้โดยอัตโนมัติตลอด 24 ชม.
+              </p>
+<!-- Main Primary CTA Button -->
+<div class="py-2">
+<a class="inline-block px-7 py-3 rounded-lg bg-primary-container text-white font-semibold text-[16px] shadow-md hover:bg-primary transition-all duration-150" href="https://hub.siamcommerce.co.th/onboarding?ref=lead_email" id="preview-cta-button" target="_blank">
+                  เข้าสู่ระบบและตั้งค่าร้านค้า
+                </a>
+</div>
+<!-- Founder Signature Block -->
+<div class="pt-4 pb-2 flex flex-col items-center">
+<div class="w-36 h-14 flex items-center justify-center">
+<img class="max-h-full object-contain" data-alt="Handwritten executive signature of Enjosh founder in crisp navy fountain ink, clean corporate typography underneath indicating Managing Director Siam Commerce." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlQSoUVXjZHHv130zHLzX6akwjsPkeZxYf3HNkCoaBHJlMjyWZQKRSGHgrkP9YQzJeLuvNXHyp8sIX15wTbSbS_dXkWLMg9aXTUVZ6kiKL-InI5Tb3UIB2UuzkD866_ozsarxIp-C68ETF-c26NY9di0LK5DIHq3zNx9G8mCq_DvNha1sXchasOS245HFiZJQzvWn0DUPbXlZUpLU53GG8JslU4lIeQYDQgHxYDbhgG2_ZCkkV4PzRtIWkO4QEiWlw0UGF-ejY0R0"/>
+</div>
+<span class="text-[12px] font-semibold text-on-surface">Enjosh &amp; ทีมงาน Siam Commerce</span>
+<span class="text-[11px] text-secondary">Customer Success &amp; Operations</span>
+</div>
+</div>
+<!-- Email Footer & Social Links -->
+<div class="p-6 border-t border-outline-variant/80 bg-surface-container-low/50 flex flex-col items-center gap-4 text-center">
+<!-- Social Icons -->
+<div class="flex items-center gap-3">
+<a class="w-8 h-8 rounded-full bg-white border border-outline-variant flex items-center justify-center text-secondary hover:text-primary transition-colors shadow-2xs" href="#">
+<span class="material-symbols-outlined text-[18px]">public</span>
+</a>
+<a class="w-8 h-8 rounded-full bg-white border border-outline-variant flex items-center justify-center text-secondary hover:text-primary transition-colors shadow-2xs" href="#">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span>
+</a>
+<a class="w-8 h-8 rounded-full bg-white border border-outline-variant flex items-center justify-center text-secondary hover:text-primary transition-colors shadow-2xs" href="#">
+<span class="material-symbols-outlined text-[18px]">smart_display</span>
+</a>
+<a class="w-8 h-8 rounded-full bg-white border border-outline-variant flex items-center justify-center text-secondary hover:text-primary transition-colors shadow-2xs" href="#">
+<span class="material-symbols-outlined text-[18px]">work</span>
+</a>
+</div>
+<!-- Legal & Terms links -->
+<div class="flex items-center gap-3 text-[12px] text-secondary">
+<a class="underline hover:text-primary" href="#" id="preview-terms-link">ข้อกำหนดการใช้บริการ</a>
+<span>•</span>
+<a class="underline hover:text-primary" href="#" id="preview-privacy-link">นโยบายความเป็นส่วนตัว</a>
+</div>
+<!-- Legal Copyright -->
+<p class="text-[12px] text-secondary/80 leading-normal max-w-sm" id="preview-footer-legal">
+                © 2025 Siam Commerce Hub Co., Ltd. All rights reserved.
+              </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================
+       MODAL: Confirmation / Reset Dialog
+       ======================================================== -->
+<div class="fixed inset-0 z-50 hidden flex items-center justify-center bg-inverse-surface/40 backdrop-blur-xs p-4" id="confirm-modal">
+<div class="bg-surface-container-lowest rounded-xl max-w-md w-full border border-outline-variant shadow-xl p-space-lg flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-full bg-error-container/40 text-error flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">warning</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">ยืนยันการดำเนินการ</h3>
+<p class="text-body-md font-body-md text-secondary mt-1" id="modal-desc">
+            คุณแน่ใจหรือไม่ว่าต้องการรีเซ็ตการตั้งค่าเป็นค่าเริ่มต้น? การเปลี่ยนแปลงที่ยังไม่ได้บันทึกจะสูญหาย
+          </p>
+</div>
+</div>
+<div class="flex justify-end gap-2 pt-2 border-t border-outline-variant">
+<button class="h-9 px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface text-label-md font-label-md transition-colors" id="modal-btn-cancel" type="button">
+          ยกเลิก
+        </button>
+<button class="h-9 px-4 rounded-lg bg-error text-on-error hover:bg-error/90 text-label-md font-label-md transition-colors" id="modal-btn-confirm" type="button">
+          ยืนยันการรีเซ็ต
+        </button>
+</div>
+</div>
+</div>
+<!-- ========================================================
+       TOAST NOTIFICATION BANNER
+       ======================================================== -->
+<div class="fixed bottom-6 right-6 z-50 hidden items-center gap-2 px-4 py-3 rounded-lg bg-inverse-surface text-inverse-on-surface shadow-lg text-body-md transition-all duration-200" id="toast">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]">check_circle</span>
+<span id="toast-text">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+</div>
+<!-- ========================================================
+       CRITICAL EXPORT REQUIREMENT:
+       Pre-populated Commerce UI Translation Dictionary Object
+       ======================================================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "กำลังอัปโหลด…": { "th": "กำลังอัปโหลด…", "en": "Uploading…" },
+    "กำลังบันทึก…": { "th": "กำลังบันทึก…", "en": "Saving…" },
+    "บันทึก": { "th": "บันทึก", "en": "Save" },
+    "Preview": { "th": "Preview", "en": "Preview" },
+    "ขนาดตัวอักษร (px)": { "th": "ขนาดตัวอักษร (px)", "en": "Font size (px)" },
+    "Welcome Lead Email": { "th": "Welcome Lead Email", "en": "Welcome Lead Email" },
+    "กำลังโหลด…": { "th": "กำลังโหลด…", "en": "Loading…" },
+    "รูปภาพ": { "th": "รูปภาพ", "en": "Images" },
+    "ไทย": { "th": "ไทย", "en": "Thai" },
+    "หัวเรื่องอีเมล (subject)": { "th": "หัวเรื่องอีเมล (subject)", "en": "Email subject" },
+    "ข้อความข้างโลโก้ บรรทัด 1 (taglineTop)": { "th": "ข้อความข้างโลโก้ บรรทัด 1 (taglineTop)", "en": "Logo tagline line 1 (taglineTop)" },
+    "ข้อความข้างโลโก้ บรรทัด 2 – ตัวหนา (taglineBottom)": { "th": "ข้อความข้างโลโก้ บรรทัด 2 – ตัวหนา (taglineBottom)", "en": "Logo tagline line 2 – bold (taglineBottom)" },
+    "หัวข้อ บรรทัด 1 (headlineTop)": { "th": "หัวข้อ บรรทัด 1 (headlineTop)", "en": "Headline line 1 (headlineTop)" },
+    "หัวข้อ บรรทัด 2 – ตัวหนา (headlineBottom)": { "th": "หัวข้อ บรรทัด 2 – ตัวหนา (headlineBottom)", "en": "Headline line 2 – bold (headlineBottom)" },
+    "เนื้อหา (body)": { "th": "เนื้อหา (body)", "en": "Content (body)" },
+    "ปุ่ม (cta)": { "th": "ปุ่ม (cta)", "en": "Button (cta)" },
+    "ข้อความลิขสิทธิ์ (footerLegal)": { "th": "ข้อความลิขสิทธิ์ (footerLegal)", "en": "Copyright notice (footerLegal)" },
+    "ข้อความ — Terms (terms)": { "th": "ข้อความ — Terms (terms)", "en": "Text — Terms (terms)" },
+    "URL — Terms (termsUrl)": { "th": "URL — Terms (termsUrl)", "en": "URL — Terms (termsUrl)" },
+    "ข้อความ — Privacy (privacy)": { "th": "ข้อความ — Privacy (privacy)", "en": "Text — Privacy (privacy)" },
+    "URL — Privacy (privacyUrl)": { "th": "URL — Privacy (privacyUrl)", "en": "URL — Privacy (privacyUrl)" },
+    "ข้อความข้างโลโก้ (taglineSize)": { "th": "ข้อความข้างโลโก้ (taglineSize)", "en": "Logo tagline size (taglineSize)" },
+    "หัวข้อ (headlineSize)": { "th": "หัวข้อ (headlineSize)", "en": "Headline size (headlineSize)" },
+    "เนื้อหา (bodySize)": { "th": "เนื้อหา (bodySize)", "en": "Content size (bodySize)" },
+    "ปุ่ม (ctaSize)": { "th": "ปุ่ม (ctaSize)", "en": "Button size (ctaSize)" },
+    "Footer (footerSize)": { "th": "Footer (footerSize)", "en": "Footer size (footerSize)" },
+    "กำลังแปล...": { "th": "กำลังแปล...", "en": "Translating..." },
+    "← แปลจาก EN": { "th": "← แปลจาก EN", "en": "← Translate from EN" },
+    "English": { "th": "English", "en": "English" },
+    "แปลจาก ไทย →": { "th": "แปลจาก ไทย →", "en": "Translate from Thai →" },
+    "Hero image": { "th": "Hero image", "en": "Hero image" },
+    "PNG พื้นใส แนะนำ 1200×643px": { "th": "PNG พื้นใส แนะนำ 1200×643px", "en": "Transparent PNG recommended 1200×643px" },
+    "Logo": { "th": "Logo", "en": "Logo" },
+    "PNG พื้นใส แนะนำ 500×163px": { "th": "PNG พื้นใส แนะนำ 500×163px", "en": "Transparent PNG recommended 500×163px" },
+    "Enjosh signature": { "th": "Enjosh signature", "en": "Enjosh signature" },
+    "PNG พื้นใส แนะนำ 480×277px": { "th": "PNG พื้นใส แนะนำ 480×277px", "en": "Transparent PNG recommended 480×277px" },
+    "Instagram URL": { "th": "Instagram URL", "en": "Instagram URL" },
+    "TikTok URL": { "th": "TikTok URL", "en": "TikTok URL" },
+    "Facebook URL": { "th": "Facebook URL", "en": "Facebook URL" },
+    "LinkedIn URL": { "th": "LinkedIn URL", "en": "LinkedIn URL" },
+    "ไม่มีรูปพรีวิว": { "th": "ไม่มีรูปพรีวิว", "en": "No image preview" },
+    "อัปโหลด": { "th": "อัปโหลด", "en": "Upload" },
+    "กำลังรีเซ็ต…": { "th": "กำลังรีเซ็ต…", "en": "Resetting…" },
+    "ใช้ค่าเริ่มต้น": { "th": "ใช้ค่าเริ่มต้น", "en": "Use default" },
+    "ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ": { "th": "ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ", "en": "Use default for this image? Uploaded image will be removed" },
+    "รีเซ็ตข้อความอีเมลทั้งสองภาษาเป็นค่าเริ่มต้น?": { "th": "รีเซ็ตข้อความอีเมลทั้งสองภาษาเป็นค่าเริ่มต้น?", "en": "Reset email copy in both languages to defaults?" },
+    "รีเซ็ตขนาดตัวอักษรทั้งสองภาษาเป็นค่าเริ่มต้น?": { "th": "รีเซ็ตขนาดตัวอักษรทั้งสองภาษาเป็นค่าเริ่มต้น?", "en": "Reset font sizes in both languages to defaults?" },
+    "← Marketing Settings": { "th": "← Marketing Settings", "en": "← Marketing Settings" },
+    "แก้ไขข้อความ ขนาดตัวอักษร และรูป/URL ของอีเมลต้อนรับหลัง lead intake — มีผลทันทีใน prod ไม่ต้อง redeploy": { "th": "แก้ไขข้อความ ขนาดตัวอักษร และรูป/URL ของอีเมลต้อนรับหลัง lead intake — มีผลทันทีใน prod ไม่ต้อง redeploy", "en": "Edit copy, font sizes, and image/URLs for the welcome email after lead intake — immediate effect in prod without redeploy" },
+    "อัปเดตล่าสุด:": { "th": "อัปเดตล่าสุด:", "en": "Last updated:" },
+    "Assets อื่นๆ": { "th": "Assets อื่นๆ", "en": "Other Assets" },
+    "CTA URL": { "th": "CTA URL", "en": "CTA URL" },
+    "สีพื้นหลังอีเมล": { "th": "สีพื้นหลังอีเมล", "en": "Email background color" },
+    "ไล่สีจากขาวถึง (% ของความสูง)": { "th": "ไล่สีจากขาวถึง (% ของความสูง)", "en": "Gradient fade from white to (% of height)" },
+    "0 = สีพื้นล้วน, 50 ≈ ใต้ลายเซ็น Enjosh (ตาม mock)": { "th": "0 = สีพื้นล้วน, 50 ≈ ใต้ลายเซ็น Enjosh (ตาม mock)", "en": "0 = solid background, 50 ≈ under Enjosh signature (per mock)" },
+    "โซเชียล": { "th": "โซเชียล", "en": "Social Media" },
+    "ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน": { "th": "ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน", "en": "Clear and save = hide icon" },
+    "ข้อความอีเมล": { "th": "ข้อความอีเมล", "en": "Email Copy" },
+    "แปลทั้งหมด TH → EN": { "th": "แปลทั้งหมด TH → EN", "en": "Translate all TH → EN" },
+    "แปลทั้งหมด EN → TH": { "th": "แปลทั้งหมด EN → TH", "en": "Translate all EN → TH" },
+    "รีเซ็ตเป็นค่าเริ่มต้น": { "th": "รีเซ็ตเป็นค่าเริ่มต้น", "en": "Reset to default" },
+    "Desktop": { "th": "Desktop", "en": "Desktop" },
+    "Mobile": { "th": "Mobile", "en": "Mobile" },
+    "กำลังโหลด preview…": { "th": "กำลังโหลด preview…", "en": "Loading preview…" },
+    "รีเฟรช preview": { "th": "รีเฟรช preview", "en": "Refresh preview" },
+    "หัวเรื่อง:": { "th": "หัวเรื่อง:", "en": "Subject:" },
+    "welcome-lead-email-preview": { "th": "welcome-lead-email-preview", "en": "welcome-lead-email-preview" },
+    "เก็บซ้ำทุก (ชั่วโมง)": { "th": "เก็บซ้ำทุก (ชั่วโมง)", "en": "Repeat collection every (hours)" },
+    "ข้อมูลผู้จัดจำหน่าย / ซัพพลายเออร์": { "th": "ข้อมูลผู้จัดจำหน่าย / ซัพพลายเออร์", "en": "Distributor / Supplier Information" },
+    "ค่าหนึ่งบรรทัดต่อหนึ่งค่า": { "th": "ค่าหนึ่งบรรทัดต่อหนึ่งค่า", "en": "One value per line" },
+    "จำนวนหน้า": { "th": "จำนวนหน้า", "en": "Page count" },
+    "ชุดสินค้า {0}…": { "th": "ชุดสินค้า {0}…", "en": "Product bundle {0}…" },
+    "ดึงผู้ใช้ออกจาก workflow ทันทีที่ทำเป้าหมายสำเร็จ — ตรวจทุกครั้งที่ resume และก่อนส่งทุกข้อความ (ไม่ใช่เช็คจุดเดียวแบบ gate)": { "th": "ดึงผู้ใช้ออกจาก workflow ทันทีที่ทำเป้าหมายสำเร็จ — ตรวจทุกครั้งที่ resume และก่อนส่งทุกข้อความ (ไม่ใช่เช็คจุดเดียวแบบ gate)", "en": "Remove users from workflow as soon as target goal is met — evaluated on every resume and prior to every outbound message (not a single gate check)" },
+    "ตามเวลา (Scheduled)": { "th": "ตามเวลา (Scheduled)", "en": "Scheduled" },
+    "เนื้อหา": { "th": "เนื้อหา", "en": "Content" },
+    "ประเภทลูกค้า (custype)": { "th": "ประเภทลูกค้า (custype)", "en": "Customer Type (custype)" },
+    "แผนที่ร้านในหน้านี้": { "th": "แผนที่ร้านในหน้านี้", "en": "Store map on this page" },
+    "มูลค่าออเดอร์รวมไม่เกิน": { "th": "มูลค่าออเดอร์รวมไม่เกิน", "en": "Total order value not exceeding" },
+    "ไม่สามารถโหลดรายการแจ้งเตือนได้": { "th": "ไม่สามารถโหลดรายการแจ้งเตือนได้", "en": "Unable to load notifications" },
+    "ยังไม่อ่าน": { "th": "ยังไม่อ่าน", "en": "Unread" },
+    "ระบบใส่ให้ตอน checkout เมื่อลูกค้าไม่ได้กรอกโค้ดอื่น (ถ้ามีหลายใบ เลือกใบที่ลดมากสุด) — ตั้งจำนวนครั้งที่ใช้ให้เหมาะสม เพราะค่าเริ่มต้นจำกัดต่อผู้ใช้/สาขาแค่ 1 ครั้ง": { "th": "ระบบใส่ให้ตอน checkout เมื่อลูกค้าไม่ได้กรอกโค้ดอื่น (ถ้ามีหลายใบ เลือกใบที่ลดมากสุด) — ตั้งจำนวนครั้งที่ใช้ให้เหมาะสม เพราะค่าเริ่มต้นจำกัดต่อผู้ใช้/สาขาแค่ 1 ครั้ง", "en": "System auto-applies during checkout if user entered no coupon (selects deepest discount if multiple) — configure usage quota prudently since default restricts to 1 use per branch/account" },
+    "รูปภาพ (ลากเรียงลำดับได้)": { "th": "รูปภาพ (ลากเรียงลำดับได้)", "en": "Images (Drag to reorder)" },
+    "ลูกเล่นตอนแสดง (Animation)": { "th": "ลูกเล่นตอนแสดง (Animation)", "en": "Display Animation" },
+    "วิธีเปิดหน้าเว็บ": { "th": "วิธีเปิดหน้าเว็บ", "en": "Web Page Open Mode" },
+    "สั่ง {0} รายการให้ {1} ({2})? josh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ": { "th": "สั่ง {0} รายการให้ {1} ({2})? josh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ", "en": "Place {0} items for {1} ({2})? Josh will create genuine production orders and route them into ERP normally" },
+    "หน้าต่างวัดผล": { "th": "หน้าต่างวัดผล", "en": "Evaluation Window" },
+    "องค์ประกอบนี้ไม่มีข้อความให้แปล — ตั้งค่าได้ในโหมดภาษาไทยเท่านั้น": { "th": "องค์ประกอบนี้ไม่มีข้อความให้แปล — ตั้งค่าได้ในโหมดภาษาไทยเท่านั้น", "en": "This element contains no translatable text — configuration permitted only in Thai mode" },
+    "รหัสสินค้า (Product ID)": { "th": "รหัสสินค้า (Product ID)", "en": "Product ID" },
+    "ข้าม (ไม่ active)": { "th": "ข้าม (ไม่ active)", "en": "Skip (Inactive)" },
+    "Applied \"{0}\" — skipped layer(s) not currently loaded: {1}": { "th": "Applied \"{0}\" — skipped layer(s) not currently loaded: {1}", "en": "Applied \"{0}\" — skipped layer(s) not currently loaded: {1}" },
+    "กรุณากรอกรายละเอียด (ไทยและอังกฤษ)": { "th": "กรุณากรอกรายละเอียด (ไทยและอังกฤษ)", "en": "Please provide details in both Thai and English" },
+    "พรีวิวไม่สำเร็จ": { "th": "พรีวิวไม่สำเร็จ", "en": "Preview failed" }
+  }
+  </script>
+<!-- ========================================================
+       LIVE REACTIVE CONTROLLER
+       Synchronizes inputs, typography sliders, & styling to live preview
+       ======================================================== -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Element bindings
+      const inputSubject = document.getElementById('input-subject');
+      const inputTaglineTop = document.getElementById('input-tagline-top');
+      const inputTaglineBottom = document.getElementById('input-tagline-bottom');
+      const inputHeadlineTop = document.getElementById('input-headline-top');
+      const inputHeadlineBottom = document.getElementById('input-headline-bottom');
+      const inputBody = document.getElementById('input-body');
+      const inputCta = document.getElementById('input-cta');
+      const inputCtaUrl = document.getElementById('input-cta-url');
+      const inputFooterLegal = document.getElementById('input-footer-legal');
+      const inputTerms = document.getElementById('input-terms-text');
+      const inputPrivacy = document.getElementById('input-privacy-text');
+
+      // Preview Bindings
+      const previewSubject = document.getElementById('preview-subject-text');
+      const previewTaglineTop = document.getElementById('preview-tagline-top');
+      const previewTaglineBottom = document.getElementById('preview-tagline-bottom');
+      const previewHeadlineTop = document.getElementById('preview-headline-top');
+      const previewHeadlineBottom = document.getElementById('preview-headline-bottom');
+      const previewBody = document.getElementById('preview-body-copy');
+      const previewCta = document.getElementById('preview-cta-button');
+      const previewFooterLegal = document.getElementById('preview-footer-legal');
+      const previewTerms = document.getElementById('preview-terms-link');
+      const previewPrivacy = document.getElementById('preview-privacy-link');
+      const emailFrame = document.getElementById('email-frame');
+      const previewViewportShell = document.getElementById('preview-viewport-shell');
+
+      // Sliders & Values
+      const sliderTagline = document.getElementById('slider-tagline-size');
+      const sliderHeadline = document.getElementById('slider-headline-size');
+      const sliderBody = document.getElementById('slider-body-size');
+      const sliderCta = document.getElementById('slider-cta-size');
+      const sliderFooter = document.getElementById('slider-footer-size');
+      const sliderGradient = document.getElementById('slider-gradient');
+
+      const valTagline = document.getElementById('val-tagline-size');
+      const valHeadline = document.getElementById('val-headline-size');
+      const valBody = document.getElementById('val-body-size');
+      const valCta = document.getElementById('val-cta-size');
+      const valFooter = document.getElementById('val-footer-size');
+      const valGradient = document.getElementById('val-gradient-height');
+
+      const inputBgColor = document.getElementById('input-bg-color');
+      const inputBgHex = document.getElementById('input-bg-color-hex');
+
+      // Sync Text Inputs to Live Preview
+      inputSubject.addEventListener('input', (e) => { previewSubject.textContent = e.target.value; });
+      inputTaglineTop.addEventListener('input', (e) => { previewTaglineTop.textContent = e.target.value; });
+      inputTaglineBottom.addEventListener('input', (e) => { previewTaglineBottom.textContent = e.target.value; });
+      inputHeadlineTop.addEventListener('input', (e) => { previewHeadlineTop.textContent = e.target.value; });
+      inputHeadlineBottom.addEventListener('input', (e) => { previewHeadlineBottom.textContent = e.target.value; });
+      inputBody.addEventListener('input', (e) => { previewBody.textContent = e.target.value; });
+      inputCta.addEventListener('input', (e) => { previewCta.textContent = e.target.value; });
+      inputCtaUrl.addEventListener('input', (e) => { previewCta.href = e.target.value; });
+      inputFooterLegal.addEventListener('input', (e) => { previewFooterLegal.textContent = e.target.value; });
+      inputTerms.addEventListener('input', (e) => { previewTerms.textContent = e.target.value; });
+      inputPrivacy.addEventListener('input', (e) => { previewPrivacy.textContent = e.target.value; });
+
+      // Typography scaling live preview
+      sliderTagline.addEventListener('input', (e) => {
+        valTagline.textContent = `${e.target.value} px`;
+        previewTaglineTop.style.fontSize = `${e.target.value}px`;
+        previewTaglineBottom.style.fontSize = `${e.target.value}px`;
+      });
+      sliderHeadline.addEventListener('input', (e) => {
+        valHeadline.textContent = `${e.target.value} px`;
+        previewHeadlineTop.style.fontSize = `${e.target.value}px`;
+        previewHeadlineBottom.style.fontSize = `${e.target.value}px`;
+      });
+      sliderBody.addEventListener('input', (e) => {
+        valBody.textContent = `${e.target.value} px`;
+        previewBody.style.fontSize = `${e.target.value}px`;
+      });
+      sliderCta.addEventListener('input', (e) => {
+        valCta.textContent = `${e.target.value} px`;
+        previewCta.style.fontSize = `${e.target.value}px`;
+      });
+      sliderFooter.addEventListener('input', (e) => {
+        valFooter.textContent = `${e.target.value} px`;
+        previewFooterLegal.style.fontSize = `${e.target.value}px`;
+        previewTerms.style.fontSize = `${e.target.value}px`;
+        previewPrivacy.style.fontSize = `${e.target.value}px`;
+      });
+
+      // Background Gradient updates
+      function updateGradient() {
+        const hex = inputBgColor.value;
+        const stop = sliderGradient.value;
+        valGradient.textContent = `${stop}%`;
+        emailFrame.style.background = `linear-gradient(180deg, #FFFFFF 0%, #FFFFFF ${stop}%, ${hex} ${stop}%, ${hex} 100%)`;
+      }
+      sliderGradient.addEventListener('input', updateGradient);
+      inputBgColor.addEventListener('input', (e) => {
+        inputBgHex.value = e.target.value.toUpperCase();
+        updateGradient();
+      });
+      inputBgHex.addEventListener('input', (e) => {
+        if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+          inputBgColor.value = e.target.value;
+          updateGradient();
+        }
+      });
+
+      // Viewport Switcher (Desktop vs Mobile)
+      const btnViewDesktop = document.getElementById('btn-view-desktop');
+      const btnViewMobile = document.getElementById('btn-view-mobile');
+
+      btnViewDesktop.addEventListener('click', () => {
+        btnViewDesktop.className = "px-2.5 py-1 rounded bg-surface-container-lowest text-primary font-semibold shadow-xs flex items-center gap-1";
+        btnViewMobile.className = "px-2.5 py-1 rounded text-secondary hover:text-on-surface flex items-center gap-1";
+        emailFrame.classList.remove('max-w-[360px]');
+        emailFrame.classList.add('max-w-[580px]');
+      });
+
+      btnViewMobile.addEventListener('click', () => {
+        btnViewMobile.className = "px-2.5 py-1 rounded bg-surface-container-lowest text-primary font-semibold shadow-xs flex items-center gap-1";
+        btnViewDesktop.className = "px-2.5 py-1 rounded text-secondary hover:text-on-surface flex items-center gap-1";
+        emailFrame.classList.remove('max-w-[580px]');
+        emailFrame.classList.add('max-w-[360px]');
+      });
+
+      // Toast Controller
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      function showToast(msg) {
+        toastText.textContent = msg;
+        toast.classList.remove('hidden');
+        toast.classList.add('flex');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+          toast.classList.remove('flex');
+        }, 3200);
+      }
+
+      // Save Button Mock Interaction with Loading State
+      const btnSave = document.getElementById('btn-save');
+      const saveIcon = document.getElementById('save-icon');
+      const saveText = document.getElementById('save-text');
+
+      btnSave.addEventListener('click', () => {
+        saveIcon.textContent = 'hourglass_empty';
+        saveText.textContent = 'กำลังบันทึก…';
+        btnSave.disabled = true;
+        btnSave.classList.add('opacity-80', 'cursor-wait');
+
+        setTimeout(() => {
+          saveIcon.textContent = 'save';
+          saveText.textContent = 'บันทึก';
+          btnSave.disabled = false;
+          btnSave.classList.remove('opacity-80', 'cursor-wait');
+          showToast('บันทึกข้อมูลและส่งผลเข้า Production เรียบร้อยแล้ว');
+        }, 800);
+      });
+
+      // Refresh Preview Simulation
+      const btnRefresh = document.getElementById('btn-refresh-preview');
+      const btnRefreshIcon = document.getElementById('btn-preview-refresh-icon');
+      function handleRefresh() {
+        emailFrame.style.opacity = '0.4';
+        showToast('กำลังโหลด preview…');
+        setTimeout(() => {
+          emailFrame.style.opacity = '1';
+        }, 350);
+      }
+      btnRefresh.addEventListener('click', handleRefresh);
+      btnRefreshIcon.addEventListener('click', handleRefresh);
+
+      // Translation helpers mock
+      document.querySelectorAll('.translate-trigger').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const original = btn.textContent;
+          btn.textContent = 'กำลังแปล...';
+          setTimeout(() => {
+            btn.textContent = original;
+            showToast('แปลเนื้อหาและอัปเดตช่องข้อความสำเร็จ');
+          }, 700);
+        });
+      });
+
+      // Confirmation Modal Logic
+      const modal = document.getElementById('confirm-modal');
+      const modalCancel = document.getElementById('modal-btn-cancel');
+      const modalConfirm = document.getElementById('modal-btn-confirm');
+      const resetButtons = document.querySelectorAll('.confirm-reset-trigger, #btn-reset-defaults');
+
+      resetButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          modal.classList.remove('hidden');
+        });
+      });
+
+      modalCancel.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+
+      modalConfirm.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        showToast('กำลังรีเซ็ต… รีเซ็ตเป็นค่าเริ่มต้นเรียบร้อยแล้ว');
+      });
+    });
+  </script>
+</body></html>

@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useId, useState, type ReactNode } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { POPUP_GRID_COLS } from '@josh/shared-api';
@@ -15,6 +16,8 @@ import type {
   GridItem,
 } from './creative-editor.types';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type OverlaySlide = { src?: string; alt?: string; linkUrl?: string };
 
 /** Build a dense array (no holes) so a sparse edit (e.g. slide 2 before slide 0) never
@@ -32,19 +35,19 @@ const INPUT_CLASS =
 const LABEL_CLASS = 'mb-1 block text-[10px] font-medium text-gray-500';
 
 const ELEMENT_LABELS: Record<CreativeElement['type'], string> = {
-  text: 'ข้อความ',
-  image: 'รูปภาพ',
-  button: 'ปุ่ม (Action)',
-  coupon: 'โค้ดคูปอง',
-  spacer: 'ระยะห่าง',
-  divider: 'เส้นคั่น',
-  video: 'วิดีโอ',
-  html: 'HTML',
-  countdown: 'นับถอยหลัง',
-  carousel: 'สไลด์รูป',
-  product_grid: 'กริดสินค้า',
-  rich_text: 'ข้อความ (Rich Text)',
-  accordion: 'แอคคอร์เดียน',
+  get text(){return __uiText("ข้อความ");},
+  get image(){return __uiText("รูปภาพ");},
+  get button(){return __uiText("ปุ่ม (Action)");},
+  get coupon(){return __uiText("โค้ดคูปอง");},
+  get spacer(){return __uiText("ระยะห่าง");},
+  get divider(){return __uiText("เส้นคั่น");},
+  get video(){return __uiText("วิดีโอ");},
+  get html(){return __uiText("HTML");},
+  get countdown(){return __uiText("นับถอยหลัง");},
+  get carousel(){return __uiText("สไลด์รูป");},
+  get product_grid(){return __uiText("กริดสินค้า");},
+  get rich_text(){return __uiText("ข้อความ (Rich Text)");},
+  get accordion(){return __uiText("แอคคอร์เดียน");},
 };
 
 /**
@@ -91,10 +94,10 @@ export function InspectorSection({
 }
 
 const SECTION_LABELS = {
-  content: 'เนื้อหา',
-  style: 'รูปแบบ',
-  spacing: 'ระยะห่าง',
-  display: 'การแสดงผลต่อจอ',
+  get content(){return __uiText("เนื้อหา");},
+  get style(){return __uiText("รูปแบบ");},
+  get spacing(){return __uiText("ระยะห่าง");},
+  get display(){return __uiText("การแสดงผลต่อจอ");},
 } as const;
 
 /**
@@ -116,9 +119,9 @@ const TYPES_WITH_CONTENT = new Set<CreativeElement['type']>([
 const TYPES_WITH_STYLE = new Set<CreativeElement['type']>(['text', 'button', 'divider', 'video']);
 
 const BUTTON_ACTION_OPTIONS: Array<{ value: 'go_url' | 'copy_code' | 'close'; label: string }> = [
-  { value: 'go_url', label: 'ไปลิงก์ (เช่น หน้าตะกร้า/สินค้า)' },
-  { value: 'copy_code', label: 'คัดลอกโค้ดคูปอง' },
-  { value: 'close', label: 'ปิด popup' },
+  { value: 'go_url', get label(){return __uiText("ไปลิงก์ (เช่น หน้าตะกร้า/สินค้า)");} },
+  { value: 'copy_code', get label(){return __uiText("คัดลอกโค้ดคูปอง");} },
+  { value: 'close', get label(){return __uiText("ปิด popup");} },
 ];
 
 /**
@@ -172,6 +175,7 @@ export function ElementInspector({
    */
   rawElement?: CreativeElement | null;
 }) {
+  __useUiLocale();
   const uid = useId();
   const translating = Boolean(editorLocale && editorLocale !== 'th' && onPatchOverlay);
 
@@ -192,11 +196,9 @@ export function ElementInspector({
   if (!element) {
     return (
       <div className="space-y-2 rounded-lg border border-gray-200 bg-white p-2.5">
-        <p className="text-[10px] font-semibold tracking-wide text-gray-400">องค์ประกอบที่เลือก</p>
+        <p className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("องค์ประกอบที่เลือก")}</p>
         <p className="text-[11px] text-gray-400">
-          คลิกองค์ประกอบบน canvas เพื่อแก้ไข · ลาก ⋮⋮ เพื่อย้ายข้ามคอลัมน์ · เลือก Layout แถว
-          (1/2/3 คอลัมน์)
-        </p>
+          {__uiText("คลิกองค์ประกอบบน canvas เพื่อแก้ไข · ลาก ⋮⋮ เพื่อย้ายข้ามคอลัมน์ · เลือก Layout แถว (1/2/3 คอลัมน์)")}</p>
       </div>
     );
   }
@@ -215,8 +217,7 @@ export function ElementInspector({
           onClick={onRemove}
           className="text-[11px] text-red-500 hover:underline"
         >
-          ลบ
-        </button>
+          {__uiText("ลบ")}</button>
       </div>
 
       {showContent && (
@@ -235,8 +236,7 @@ export function ElementInspector({
           {element.type === 'text' && (
             <div className="space-y-1.5">
               <label className={LABEL_CLASS} htmlFor={`${uid}-text`}>
-                ข้อความ
-              </label>
+                {__uiText("ข้อความ")}</label>
               <textarea
                 id={`${uid}-text`}
                 rows={3}
@@ -274,7 +274,7 @@ export function ElementInspector({
           {element.type === 'image' && (
             <div className="space-y-1.5">
               <ImageSourceField
-                label="รูปภาพ (URL)"
+                label={__uiText("รูปภาพ (URL)")}
                 value={tvalue('src', element.src)}
                 basePreviewValue={translating ? element.src : undefined}
                 onChange={(url) =>
@@ -284,8 +284,7 @@ export function ElementInspector({
               />
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-alt`}>
-                  คำอธิบายรูปภาพ (Alt text)
-                </label>
+                  {__uiText("คำอธิบายรูปภาพ (Alt text)")}</label>
                 <input
                   id={`${uid}-alt`}
                   type="text"
@@ -306,8 +305,7 @@ export function ElementInspector({
             <div className="space-y-1.5">
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-btn-label`}>
-                  ข้อความบนปุ่ม
-                </label>
+                  {__uiText("ข้อความบนปุ่ม")}</label>
                 <input
                   id={`${uid}-btn-label`}
                   type="text"
@@ -323,8 +321,7 @@ export function ElementInspector({
               </div>
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-btn-action`}>
-                  การทำงานเมื่อคลิก (Action)
-                </label>
+                  {__uiText("การทำงานเมื่อคลิก (Action)")}</label>
                 <Select
                   id={`${uid}-btn-action`}
                   className="w-full"
@@ -343,8 +340,7 @@ export function ElementInspector({
               {element.action === 'go_url' && (
                 <div>
                   <label className={LABEL_CLASS} htmlFor={`${uid}-btn-url`}>
-                    ลิงก์ (URL)
-                  </label>
+                    {__uiText("ลิงก์ (URL)")}</label>
                   <input
                     id={`${uid}-btn-url`}
                     type="text"
@@ -365,8 +361,7 @@ export function ElementInspector({
           {element.type === 'coupon' && (
             <div className="space-y-1.5">
               <label className={LABEL_CLASS} htmlFor={`${uid}-coupon`}>
-                โค้ดคูปอง
-              </label>
+                {__uiText("โค้ดคูปอง")}</label>
               <Select
                 id={`${uid}-coupon`}
                 className="w-full font-mono"
@@ -375,19 +370,18 @@ export function ElementInspector({
                   onPatch({ legacyCode: event.target.value || undefined } as Partial<CreativeElement>)
                 }
               >
-                <option value="">— เลือกคูปองจากระบบ —</option>
+                <option value="">{__uiText("— เลือกคูปองจากระบบ —")}</option>
                 {coupons.map((coupon) => (
                   <option key={coupon.id} value={coupon.coupon_code}>
                     {coupon.coupon_code} — {coupon.title}
                   </option>
                 ))}
                 {element.legacyCode && !coupons.some((c) => c.coupon_code === element.legacyCode) && (
-                  <option value={element.legacyCode}>{element.legacyCode} (ไม่พบในระบบ)</option>
+                  <option value={element.legacyCode}>{element.legacyCode} {__uiText(" (ไม่พบในระบบ)")}</option>
                 )}
               </Select>
               <p className="text-[10px] text-gray-400">
-                หน้าร้านจะแสดงโค้ดจริงของ offer ที่ enroll เสมอ — ค่านี้ใช้เป็นตัวอย่าง/สำรองเท่านั้น
-              </p>
+                {__uiText("หน้าร้านจะแสดงโค้ดจริงของ offer ที่ enroll เสมอ — ค่านี้ใช้เป็นตัวอย่าง/สำรองเท่านั้น")}</p>
             </div>
           )}
 
@@ -395,17 +389,15 @@ export function ElementInspector({
             <div className="space-y-2">
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-video-src`}>
-                  URL วิดีโอ (YouTube / Vimeo / MP4)
-                </label>
+                  {__uiText("URL วิดีโอ (YouTube / Vimeo / MP4)")}</label>
                 <input id={`${uid}-video-src`} className={INPUT_CLASS} value={element.src} onChange={(e) => onPatch({ src: e.target.value } as Partial<CreativeElement>)} placeholder="https://youtube.com/watch?v=..." />
               </div>
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-video-mode`}>
-                  โหมดเล่น
-                </label>
+                  {__uiText("โหมดเล่น")}</label>
                 <Select id={`${uid}-video-mode`} className="w-full" value={element.playMode} onChange={(e) => onPatch({ playMode: e.target.value as 'auto' | 'click' } as Partial<CreativeElement>)}>
-                  <option value="click">Click to play</option>
-                  <option value="auto">Autoplay (muted)</option>
+                  <option value="click">{__uiText("Click to play")}</option>
+                  <option value="auto">{__uiText("Autoplay (muted)")}</option>
                 </Select>
               </div>
             </div>
@@ -414,8 +406,7 @@ export function ElementInspector({
           {element.type === 'html' && (
             <div className="space-y-2">
               <label className={LABEL_CLASS} htmlFor={`${uid}-html`}>
-                โค้ด HTML (Raw HTML)
-              </label>
+                {__uiText("โค้ด HTML (Raw HTML)")}</label>
               <textarea
                 id={`${uid}-html`}
                 rows={6}
@@ -426,7 +417,7 @@ export function ElementInspector({
                   translating ? onPatchOverlay?.({ html: e.target.value }) : onPatch({ html: e.target.value } as Partial<CreativeElement>)
                 }
               />
-              <p className="text-[10px] text-amber-500">⚠ ตรวจสอบ HTML ก่อน — จะถูก sanitize ด้วย DOMPurify ก่อนแสดงในหน้าร้าน</p>
+              <p className="text-[10px] text-amber-500">{__uiText("⚠ ตรวจสอบ HTML ก่อน — จะถูก sanitize ด้วย DOMPurify ก่อนแสดงในหน้าร้าน")}</p>
             </div>
           )}
 
@@ -434,24 +425,21 @@ export function ElementInspector({
             <div className="space-y-2">
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-cd-target`}>
-                  วันเวลาเป้าหมาย
-                </label>
+                  {__uiText("วันเวลาเป้าหมาย")}</label>
                 <input id={`${uid}-cd-target`} type="datetime-local" className={INPUT_CLASS} value={element.targetDatetime.slice(0,16)} onChange={(e) => onPatch({ targetDatetime: new Date(e.target.value).toISOString() } as Partial<CreativeElement>)} />
               </div>
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-cd-format`}>
-                  รูปแบบ
-                </label>
+                  {__uiText("รูปแบบ")}</label>
                 <Select id={`${uid}-cd-format`} className="w-full" value={element.format} onChange={(e) => onPatch({ format: e.target.value as 'dhms' | 'hms' | 'ms' } as Partial<CreativeElement>)}>
-                  <option value="dhms">วัน:ชั่วโมง:นาที:วินาที</option>
-                  <option value="hms">ชั่วโมง:นาที:วินาที</option>
-                  <option value="ms">นาที:วินาที</option>
+                  <option value="dhms">{__uiText("วัน:ชั่วโมง:นาที:วินาที")}</option>
+                  <option value="hms">{__uiText("ชั่วโมง:นาที:วินาที")}</option>
+                  <option value="ms">{__uiText("นาที:วินาที")}</option>
                 </Select>
               </div>
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-cd-expired`}>
-                  ข้อความเมื่อหมดเวลา
-                </label>
+                  {__uiText("ข้อความเมื่อหมดเวลา")}</label>
                 <input
                   id={`${uid}-cd-expired`}
                   className={INPUT_CLASS}
@@ -471,11 +459,10 @@ export function ElementInspector({
             <div className="space-y-2">
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-carousel-autoplay`}>
-                  เล่นสไลด์อัตโนมัติ (วินาที, 0 = ปิด)
-                </label>
+                  {__uiText("เล่นสไลด์อัตโนมัติ (วินาที, 0 = ปิด)")}</label>
                 <input id={`${uid}-carousel-autoplay`} type="number" min={0} className={INPUT_CLASS} value={element.autoPlaySeconds ?? 3} onChange={(e) => onPatch({ autoPlaySeconds: Number(e.target.value) } as Partial<CreativeElement>)} />
               </div>
-              <label className={LABEL_CLASS}>รูปภาพ (ลากเรียงลำดับได้)</label>
+              <label className={LABEL_CLASS}>{__uiText("รูปภาพ (ลากเรียงลำดับได้)")}</label>
               <DragDropContext onDragEnd={(result) => {
                 if (!result.destination) return;
                 const from = result.source.index;
@@ -504,7 +491,7 @@ export function ElementInspector({
                               <span {...drag.dragHandleProps} className="cursor-grab text-gray-300">⋮⋮</span>
                               <div className="flex-1 space-y-1">
                                 <ImageSourceField
-                                  label={`รูปภาพสไลด์ที่ ${idx + 1} (URL)`}
+                                  label={__uiText("รูปภาพสไลด์ที่ {0} (URL)", {"0": idx + 1})}
                                   value={
                                     translating ? ((overlay?.images?.[idx]?.src as string | undefined) ?? '') : img.src
                                   }
@@ -522,7 +509,7 @@ export function ElementInspector({
                                 />
                                 <input
                                   type="text"
-                                  aria-label={`คำอธิบายรูปภาพสไลด์ที่ ${idx + 1} (Alt text)`}
+                                  aria-label={__uiText("คำอธิบายรูปภาพสไลด์ที่ {0} (Alt text)", {"0": idx + 1})}
                                   className={INPUT_CLASS}
                                   placeholder={tplaceholder(img.alt, 'Alt text')}
                                   value={translating ? ((overlay?.images?.[idx]?.alt as string | undefined) ?? '') : (img.alt ?? '')}
@@ -540,7 +527,7 @@ export function ElementInspector({
                                 />
                                 <input
                                   type="text"
-                                  aria-label={`ลิงก์เมื่อคลิกสไลด์ที่ ${idx + 1} (URL, ไม่บังคับ)`}
+                                  aria-label={__uiText("ลิงก์เมื่อคลิกสไลด์ที่ {0} (URL, ไม่บังคับ)", {"0": idx + 1})}
                                   className={`${INPUT_CLASS} font-mono`}
                                   placeholder={tplaceholder(img.linkUrl, 'ลิงก์เมื่อคลิก (ไม่บังคับ)')}
                                   value={
@@ -592,8 +579,7 @@ export function ElementInspector({
               </DragDropContext>
               {translating ? (
                 <p className="text-center text-[11px] text-gray-400">
-                  เพิ่ม/ลบรูปภาพได้เฉพาะในโหมดไทยเท่านั้น
-                </p>
+                  {__uiText("เพิ่ม/ลบรูปภาพได้เฉพาะในโหมดไทยเท่านั้น")}</p>
               ) : (
                 <button
                   type="button"
@@ -604,8 +590,7 @@ export function ElementInspector({
                   }}
                   className="w-full rounded border border-dashed border-gray-300 py-1.5 text-xs text-gray-500 hover:bg-gray-50"
                 >
-                  + เพิ่มรูปภาพ
-                </button>
+                  {__uiText("+ เพิ่มรูปภาพ")}</button>
               )}
             </div>
           )}
@@ -630,8 +615,7 @@ export function ElementInspector({
               <div className="flex items-center gap-2">
                 <div className="flex-1">
                   <label className={LABEL_CLASS} htmlFor={`${uid}-text-align`}>
-                    การจัดวางข้อความ
-                  </label>
+                    {__uiText("การจัดวางข้อความ")}</label>
                   <Select
                     id={`${uid}-text-align`}
                     className="w-full"
@@ -642,9 +626,9 @@ export function ElementInspector({
                       } as Partial<CreativeElement>)
                     }
                   >
-                    <option value="left">ชิดซ้าย</option>
-                    <option value="center">กึ่งกลาง</option>
-                    <option value="right">ชิดขวา</option>
+                    <option value="left">{__uiText("ชิดซ้าย")}</option>
+                    <option value="center">{__uiText("กึ่งกลาง")}</option>
+                    <option value="right">{__uiText("ชิดขวา")}</option>
                   </Select>
                 </div>
                 <label className="flex shrink-0 items-center gap-1 text-[11px] text-gray-500">
@@ -657,13 +641,11 @@ export function ElementInspector({
                       } as Partial<CreativeElement>)
                     }
                   />
-                  ตัวหนา
-                </label>
+                  {__uiText("ตัวหนา")}</label>
               </div>
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-text-fontsize`}>
-                  ขนาดตัวอักษร ({element.style?.fontSizePx ?? 14}px)
-                </label>
+                  {__uiText("ขนาดตัวอักษร (")}{element.style?.fontSizePx ?? 14}{__uiText("px)")}</label>
                 <input
                   id={`${uid}-text-fontsize`}
                   type="range"
@@ -689,8 +671,7 @@ export function ElementInspector({
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className={LABEL_CLASS} id={`${uid}-btn-bg-label`}>
-                  สีพื้นหลัง
-                </label>
+                  {__uiText("สีพื้นหลัง")}</label>
                 <div className="flex items-center gap-1.5">
                   <input
                     type="color"
@@ -728,8 +709,7 @@ export function ElementInspector({
               </div>
               <div>
                 <label className={LABEL_CLASS} id={`${uid}-btn-fg-label`}>
-                  สีข้อความ
-                </label>
+                  {__uiText("สีข้อความ")}</label>
                 <div className="flex items-center gap-1.5">
                   <input
                     type="color"
@@ -772,8 +752,7 @@ export function ElementInspector({
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-divider-color`}>
-                  สี
-                </label>
+                  {__uiText("สี")}</label>
                 <input
                   id={`${uid}-divider-color`}
                   type="color"
@@ -786,8 +765,7 @@ export function ElementInspector({
               </div>
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-divider-thickness`}>
-                  ความหนา (px)
-                </label>
+                  {__uiText("ความหนา (px)")}</label>
                 <input
                   id={`${uid}-divider-thickness`}
                   type="number"
@@ -807,8 +785,7 @@ export function ElementInspector({
           {element.type === 'video' && (
             <div>
               <label className={LABEL_CLASS} htmlFor={`${uid}-video-ratio`}>
-                สัดส่วนภาพ (Aspect Ratio)
-              </label>
+                {__uiText("สัดส่วนภาพ (Aspect Ratio)")}</label>
               <Select id={`${uid}-video-ratio`} className="w-full" value={element.style?.aspectRatio ?? '16/9'} onChange={(e) => onPatch({ style: { ...element.style, aspectRatio: e.target.value as '16/9' | '4/3' | '1/1' } } as Partial<CreativeElement>)}>
                 <option value="16/9">16:9</option>
                 <option value="4/3">4:3</option>
@@ -851,8 +828,7 @@ export function ElementInspector({
         {!gridItem && (
           <div>
             <label className={LABEL_CLASS} htmlFor={`${uid}-colspan`}>
-              ครอบคลุมกี่คอลัมน์ (span) — ลากไปคอลัมน์เริ่มต้นก่อน
-            </label>
+              {__uiText("ครอบคลุมกี่คอลัมน์ (span) — ลากไปคอลัมน์เริ่มต้นก่อน")}</label>
             <Select
               id={`${uid}-colspan`}
               className="w-full"
@@ -863,22 +839,19 @@ export function ElementInspector({
                 } as Partial<CreativeElement>)
               }
             >
-              <option value={1}>1 คอลัมน์ (อยู่ช่องนี้เท่านั้น)</option>
-              <option value={2}>2 คอลัมน์</option>
-              <option value={3}>3 คอลัมน์ (คลุมเกือบทั้งแถว)</option>
+              <option value={1}>{__uiText("1 คอลัมน์ (อยู่ช่องนี้เท่านั้น)")}</option>
+              <option value={2}>{__uiText("2 คอลัมน์")}</option>
+              <option value={3}>{__uiText("3 คอลัมน์ (คลุมเกือบทั้งแถว)")}</option>
             </Select>
             <p className="mt-0.5 text-[10px] text-gray-400">
-              เช่น ข้อความอยู่แค่คอลัมน์ 2 → ลากไปช่องกลาง + span 1 · ปุ่มคลุมทั้งแถว 3 ช่อง →
-              ลากไปช่องซ้าย + span 3
-            </p>
+              {__uiText("เช่น ข้อความอยู่แค่คอลัมน์ 2 → ลากไปช่องกลาง + span 1 · ปุ่มคลุมทั้งแถว 3 ช่อง → ลากไปช่องซ้าย + span 3")}</p>
           </div>
         )}
 
         {(element.type === 'image' || element.type === 'video' || element.type === 'carousel') && (
           <div>
             <label className={LABEL_CLASS} htmlFor={`${uid}-widthpercent`}>
-              ความกว้าง (%)
-            </label>
+              {__uiText("ความกว้าง (%)")}</label>
             <input
               id={`${uid}-widthpercent`}
               type="number"
@@ -898,7 +871,7 @@ export function ElementInspector({
         {element.type === 'button' && (
           <div>
             <label className={LABEL_CLASS} htmlFor={`${uid}-btn-width`}>
-              ความกว้างในช่อง ({element.style?.fullWidth !== false ? 100 : (element.style?.widthPercent ?? 100)}%)
+              {__uiText("ความกว้างในช่อง (")}{element.style?.fullWidth !== false ? 100 : (element.style?.widthPercent ?? 100)}%)
             </label>
             <input
               id={`${uid}-btn-width`}
@@ -921,16 +894,14 @@ export function ElementInspector({
               }}
             />
             <p className="mt-0.5 text-[10px] text-gray-400">
-              สองปุ่มข้างกัน = ลากขยายช่องบน grid ให้คนละครึ่ง · ความกว้างนี้คือในช่อง (ปกติ 100%)
-            </p>
+              {__uiText("สองปุ่มข้างกัน = ลากขยายช่องบน grid ให้คนละครึ่ง · ความกว้างนี้คือในช่อง (ปกติ 100%)")}</p>
           </div>
         )}
 
         {element.type === 'spacer' && (
           <div>
             <label className={LABEL_CLASS} htmlFor={`${uid}-spacer-height`}>
-              ความสูง (px)
-            </label>
+              {__uiText("ความสูง (px)")}</label>
             <input
               id={`${uid}-spacer-height`}
               type="number"
@@ -955,10 +926,9 @@ export function ElementInspector({
                 {overridden ? (
                   <>
                     <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                    กำลังแก้เฉพาะ {BREAKPOINT_LABELS[breakpoint]} — มีค่าเฉพาะจอนี้อยู่
-                  </>
+                    {__uiText("กำลังแก้เฉพาะ ")}{BREAKPOINT_LABELS[breakpoint]} {__uiText(" — มีค่าเฉพาะจอนี้อยู่")}</>
                 ) : (
-                  <>กำลังแก้เฉพาะ {BREAKPOINT_LABELS[breakpoint]} — ยังใช้ค่าจาก base</>
+                  <>{__uiText("กำลังแก้เฉพาะ ")}{BREAKPOINT_LABELS[breakpoint]} {__uiText(" — ยังใช้ค่าจาก base")}</>
                 )}
               </span>
               {overridden && onResetBreakpoint && (
@@ -967,19 +937,18 @@ export function ElementInspector({
                   onClick={onResetBreakpoint}
                   className="shrink-0 text-[10px] font-medium text-amber-700 underline hover:text-amber-900"
                 >
-                  รีเซ็ตกลับ base
-                </button>
+                  {__uiText("รีเซ็ตกลับ base")}</button>
               )}
             </div>
             {onToggleHidden && (
               <label className="flex items-center gap-1.5 text-[10px] text-amber-700">
                 <input
                   type="checkbox"
-                  aria-label={`ซ่อนองค์ประกอบนี้บน ${BREAKPOINT_LABELS[breakpoint]}`}
+                  aria-label={__uiText("ซ่อนองค์ประกอบนี้บน {0}", {"0": BREAKPOINT_LABELS[breakpoint]})}
                   checked={hidden}
                   onChange={(event) => onToggleHidden(event.target.checked)}
                 />
-                ซ่อนองค์ประกอบนี้บน{BREAKPOINT_LABELS[breakpoint]}
+                {__uiText("ซ่อนองค์ประกอบนี้บน")}{BREAKPOINT_LABELS[breakpoint]}
               </label>
             )}
           </div>
@@ -997,6 +966,7 @@ export function RowLayoutInspector({
   rows: CreativeRow[];
   onChangeColumnWidth: (rowId: string, columnId: string, widthPercent: number) => void;
 }) {
+  __useUiLocale();
   const uid = useId();
   const collect = (list: CreativeRow[], labelPrefix: string): Array<{ row: CreativeRow; label: string }> => {
     const out: Array<{ row: CreativeRow; label: string }> = [];
@@ -1017,15 +987,14 @@ export function RowLayoutInspector({
   return (
     <div className="space-y-2 rounded-lg border border-gray-200 bg-white p-2.5">
       <p className="text-[10px] font-semibold tracking-wide text-gray-400">
-        ปรับสัดส่วนคอลัมน์ละเอียด (%)
-      </p>
+        {__uiText("ปรับสัดส่วนคอลัมน์ละเอียด (%)")}</p>
       {multiColumnRows.map(({ row, label }) => (
         <div key={row.id} className="flex flex-wrap items-center gap-2">
-          <span className="w-14 shrink-0 text-[10px] text-gray-400">แถว {label}</span>
+          <span className="w-14 shrink-0 text-[10px] text-gray-400">{__uiText("แถว ")}{label}</span>
           {row.columns.map((column, colIndex) => (
             <div key={column.id} className="flex items-center gap-1">
               <label className="text-[10px] text-gray-400" htmlFor={`${uid}-${column.id}`}>
-                คอลัมน์ {colIndex + 1}
+                {__uiText("คอลัมน์ ")}{colIndex + 1}
               </label>
               <input
                 id={`${uid}-${column.id}`}

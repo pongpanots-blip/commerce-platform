@@ -1,11 +1,16 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import { Fragment, useState } from 'react';
 import { Alert, Button, Checkbox, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, TogglePill, fmt, ButtonLink } from '@cp/ui';
 import { WorkflowRow, workflowsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS: Record<WorkflowRow['status'], 'ok' | 'warn' | 'muted'> = { active: 'ok', paused: 'warn', draft: 'muted' };
-const STATUS_LABEL: Record<WorkflowRow['status'], string> = { active: 'ทำงาน', paused: 'หยุด', draft: 'ร่าง' };
-const when = (v: string | null) => (v ? new Date(v).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : '—');
+const STATUS_LABEL: Record<WorkflowRow['status'], string> = { get active(){return __uiText("ทำงาน");}, get paused(){return __uiText("หยุด");}, get draft(){return __uiText("ร่าง");} };
+const when = (v: string | null) => (v ? new Date(v).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { dateStyle: 'short', timeStyle: 'short' }) : '—');
 const EDITABLE = ['name', 'trigger_type', 'trigger_config', 'steps', 'schedule', 'cooldown_days', 'holdout_percent', 'conversion_window_days', 'exit_on_goal'];
 
 /**
@@ -14,6 +19,7 @@ const EDITABLE = ['name', 'trigger_type', 'trigger_config', 'steps', 'schedule',
  * Enrolling customers and sending stay in josh; there is no test-send here.
  */
 export function MarketingWorkflows() {
+  __useUiLocale();
   const [days, setDays] = useState(30);
   const [open, setOpen] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
@@ -30,29 +36,29 @@ export function MarketingWorkflows() {
   }
   const toggle = (w: WorkflowRow) => {
     const action = w.status === 'active' ? 'pause' : 'activate';
-    if (!window.confirm(`${action === 'pause' ? 'หยุด' : 'เปิด'} workflow "${w.name}"?\n\n${action === 'activate' ? 'josh จะเริ่มส่งข้อความให้ลูกค้าที่เข้าเงื่อนไขตามรอบของ josh' : 'ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่'}`)) return;
+    if (!window.confirm(__uiText("{0} workflow \"{1}\"?\n\n{2}", {"0": action === 'pause' ? 'หยุด' : 'เปิด', "1": w.name, "2": action === 'activate' ? 'josh จะเริ่มส่งข้อความให้ลูกค้าที่เข้าเงื่อนไขตามรอบของ josh' : 'ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่'}))) return;
     run(`${action === 'pause' ? 'หยุด' : 'เปิด'} "${w.name}" แล้ว`, () => workflowsApi.setState(w.id, action));
   };
 
   return (
     <Page>
       <PageHeader
-        title="Marketing workflows"
-        subtitle="ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh"
+        title={__uiText("Marketing workflows")}
+        subtitle={__uiText("ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh")}
         actions={
           <div className="flex items-center gap-2">
             <label className="flex items-center gap-1.5 text-xs">
-              <span className="text-on-surface-variant">ช่วง</span>
+              <span className="text-on-surface-variant">{__uiText("ช่วง")}</span>
               <Select value={days} onChange={(e) => setDays(Number(e.target.value))} className="max-w-[120px]">
-                {[7, 30, 90].map((d) => <option key={d} value={d}>{d} วัน</option>)}
+                {[7, 30, 90].map((d) => <option key={d} value={d}>{d} {__uiText(" วัน")}</option>)}
               </Select>
             </label>
-            <ButtonLink variant="primary" icon="add" to="/marketing/workflows/new">สร้าง workflow</ButtonLink>
+            <ButtonLink variant="primary" icon="add" to="/marketing/workflows/new">{__uiText("สร้าง workflow")}</ButtonLink>
           </div>
         }
       />
 
-      {msg && <Alert tone="ok">{msg}</Alert>}
+      {msg && <Alert tone="ok">{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert>}
       <ErrorText error={list.error} />
 
       {list.data && (
@@ -60,14 +66,14 @@ export function MarketingWorkflows() {
           {list.data.length ? (
             <Table>
               <THead>
-                <TH>Workflow</TH>
-                <TH>สถานะ</TH>
-                <TH>เริ่มเมื่อ</TH>
-                <TH right>เข้า</TH>
-                <TH right>กำลังไป</TH>
-                <TH right>ล้มเหลว</TH>
-                <TH right>ซื้อ (conversion)</TH>
-                <TH>รอบล่าสุด</TH>
+                <TH>{__uiText("Workflow")}</TH>
+                <TH>{__uiText("สถานะ")}</TH>
+                <TH>{__uiText("เริ่มเมื่อ")}</TH>
+                <TH right>{__uiText("เข้า")}</TH>
+                <TH right>{__uiText("กำลังไป")}</TH>
+                <TH right>{__uiText("ล้มเหลว")}</TH>
+                <TH right>{__uiText("ซื้อ (conversion)")}</TH>
+                <TH>{__uiText("รอบล่าสุด")}</TH>
                 <TH className="w-24" />
               </THead>
               <TBody>
@@ -87,14 +93,14 @@ export function MarketingWorkflows() {
                       <TD kind="num">{w.converted ?? 0}{w.enrolled ? ` (${Math.round(((w.converted ?? 0) / w.enrolled) * 100)}%)` : ''}</TD>
                       <TD kind="time">
                         {when(w.last_run_at)}
-                        {w.failed_runs ? <div className="text-[10px] text-[#c2333f]">ล้มเหลว {w.failed_runs} รอบ</div> : null}
+                        {w.failed_runs ? <div className="text-[10px] text-[#c2333f]">{__uiText("ล้มเหลว ")}{w.failed_runs} {__uiText(" รอบ")}</div> : null}
                       </TD>
                       <TD kind="actions">
                         <div className="inline-flex items-center gap-1">
-                        <ExpandToggle open={open === w.id} onClick={() => setOpen(open === w.id ? null : w.id)} label="ดู" />
-                        <ButtonLink variant="ghost" icon="account_tree" className="!px-2 !py-1 !text-[11px]" to={`/marketing/workflows/${w.id}/edit`}>กราฟ</ButtonLink>
-                        <Button variant="ghost" size="sm" disabled={busy} onClick={() => { setOpen(w.id); setEditing(w.id); }}>แก้ JSON</Button>
-                        <Button variant={w.status === 'active' ? 'ghost' : 'primary'} size="sm" disabled={busy} onClick={() => toggle(w)}>{w.status === 'active' ? 'หยุด' : 'เปิด'}</Button>
+                        <ExpandToggle open={open === w.id} onClick={() => setOpen(open === w.id ? null : w.id)} label={__uiText("ดู")} />
+                        <ButtonLink variant="ghost" icon="account_tree" className="!px-2 !py-1 !text-[11px]" to={`/marketing/workflows/${w.id}/edit`}>{__uiText("กราฟ")}</ButtonLink>
+                        <Button variant="ghost" size="sm" disabled={busy} onClick={() => { setOpen(w.id); setEditing(w.id); }}>{__uiText("แก้ JSON")}</Button>
+                        <Button variant={w.status === 'active' ? 'ghost' : 'primary'} size="sm" disabled={busy} onClick={() => toggle(w)}>{w.status === 'active' ? __uiText("หยุด") : __uiText("เปิด")}</Button>
                         </div>
                       </TD>
                     </TR>
@@ -109,7 +115,7 @@ export function MarketingWorkflows() {
                         ) : (
                           <div className="space-y-4">
                             <div>
-                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">Enrollment</div>
+                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">{__uiText("Enrollment")}</div>
                               <div className="flex flex-wrap gap-2">
                                 {detail.data.enrollmentsByStatus.map((s) => (
                                   <span key={s.status} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-on-surface">
@@ -120,12 +126,12 @@ export function MarketingWorkflows() {
                             </div>
                             {!!detail.data.recentFailures.length && (
                               <div>
-                                <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">ส่งไม่สำเร็จล่าสุด</div>
+                                <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">{__uiText("ส่งไม่สำเร็จล่าสุด")}</div>
                                 <Table>
                                   <THead>
-                                    <TH>เวลา</TH>
-                                    <TH>ประเภท</TH>
-                                    <TH>รายละเอียด</TH>
+                                    <TH>{__uiText("เวลา")}</TH>
+                                    <TH>{__uiText("ประเภท")}</TH>
+                                    <TH>{__uiText("รายละเอียด")}</TH>
                                   </THead>
                                   <TBody>
                                     {detail.data.recentFailures.map((f, i) => (
@@ -141,13 +147,13 @@ export function MarketingWorkflows() {
                             )}
                             {!!detail.data.recentRuns.length && (
                               <div>
-                                <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">รอบที่รันล่าสุด</div>
+                                <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">{__uiText("รอบที่รันล่าสุด")}</div>
                                 <Table>
                                   <THead>
-                                    <TH>เวลา</TH>
-                                    <TH>สถานะ</TH>
-                                    <TH>ผู้ใช้</TH>
-                                    <TH>ข้อความ</TH>
+                                    <TH>{__uiText("เวลา")}</TH>
+                                    <TH>{__uiText("สถานะ")}</TH>
+                                    <TH>{__uiText("ผู้ใช้")}</TH>
+                                    <TH>{__uiText("ข้อความ")}</TH>
                                   </THead>
                                   <TBody>
                                     {detail.data.recentRuns.map((r, i) => (
@@ -163,7 +169,7 @@ export function MarketingWorkflows() {
                               </div>
                             )}
                             <div>
-                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">ขั้นตอน (steps)</div>
+                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">{__uiText("ขั้นตอน (steps)")}</div>
                               <CodeBlock value={detail.data.steps} />
                             </div>
                           </div>
@@ -175,7 +181,7 @@ export function MarketingWorkflows() {
               </TBody>
             </Table>
           ) : (
-            <div className="px-4 py-8"><Empty icon="automation">ยังไม่มี workflow</Empty></div>
+            <div className="px-4 py-8"><Empty icon="automation">{__uiText("ยังไม่มี workflow")}</Empty></div>
           )}
         </Panel>
       )}
@@ -184,27 +190,28 @@ export function MarketingWorkflows() {
 }
 
 function EditJson({ initial, busy, onSave, onCancel }: { initial: string; busy: boolean; onSave: (v: Record<string, unknown>) => void; onCancel: () => void }) {
+  __useUiLocale();
   const [text, setText] = useState(initial);
   const [err, setErr] = useState('');
   function save() {
     let v: unknown;
     try { v = JSON.parse(text); } catch { return setErr('JSON ไม่ถูกต้อง'); }
     if (!v || typeof v !== 'object' || Array.isArray(v)) return setErr('ต้องเป็น object');
-    if (!window.confirm('บันทึกการแก้ workflow นี้ไปที่ josh? (josh เก็บฉบับเดิมไว้ใน revisions)')) return;
+    if (!window.confirm(__uiText("บันทึกการแก้ workflow นี้ไปที่ josh? (josh เก็บฉบับเดิมไว้ใน revisions)"))) return;
     onSave(v as Record<string, unknown>);
   }
   return (
     <FormPanel
-      title="แก้ Workflow"
+      title={__uiText("แก้ Workflow")}
       icon="edit"
       cols={1}
-      description="รูปแบบเดียวกับ josh · josh ตรวจเงื่อนไขก่อนบันทึก"
+      description={__uiText("รูปแบบเดียวกับ josh · josh ตรวจเงื่อนไขก่อนบันทึก")}
       busy={busy}
       error={err}
       onSubmit={save}
       onCancel={onCancel}
     >
-      <Field label="ข้อมูล Workflow (JSON)">
+      <Field label={__uiText("ข้อมูล Workflow (JSON)")}>
         <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={16} />
       </Field>
     </FormPanel>

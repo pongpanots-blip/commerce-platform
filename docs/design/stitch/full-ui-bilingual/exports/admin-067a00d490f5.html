@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>กลุ่มลูกค้าเป้าหมาย (Order target group) | Commerce Platform</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-bright": "#f9f9ff",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "surface": "#f9f9ff",
+            "on-surface-variant": "#444655",
+            "tertiary-container": "#bc4600",
+            "error": "#ba1a1a",
+            "on-surface": "#0e1b32",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-container-lowest": "#ffffff",
+            "secondary": "#4f5f77",
+            "primary-fixed": "#dde1ff",
+            "on-primary": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "surface-container": "#e8eeff",
+            "secondary-container": "#d0e1fd",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed-variant": "#0034c0",
+            "secondary-fixed-dim": "#b7c7e3",
+            "primary": "#0a3fdc",
+            "on-primary-fixed": "#001257",
+            "on-secondary-fixed": "#0b1c31",
+            "surface-container-low": "#f1f3ff",
+            "surface-variant": "#d7e2ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-error-container": "#93000a",
+            "surface-tint": "#214ce7",
+            "primary-container": "#365cf5",
+            "on-primary-container": "#ededff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "background": "#f9f9ff",
+            "on-tertiary-fixed": "#360f00",
+            "on-tertiary-container": "#ffebe4",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#d3e3ff",
+            "inverse-on-surface": "#ecf0ff",
+            "error-container": "#ffdad6",
+            "tertiary": "#943500",
+            "primary-fixed-dim": "#b9c3ff",
+            "outline-variant": "#c4c5d8",
+            "tertiary-fixed-dim": "#ffb597",
+            "surface-container-highest": "#d7e2ff",
+            "surface-dim": "#cddaf9",
+            "surface-container-high": "#e0e8ff",
+            "outline": "#747687",
+            "on-background": "#0e1b32",
+            "inverse-surface": "#243048"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "margin": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "card-title": ["Noto Sans"],
+            "section-title": ["Noto Sans"],
+            "page-title": ["Noto Sans"],
+            "label-default": ["Noto Sans"],
+            "body-semibold": ["Noto Sans"],
+            "label-muted": ["Noto Sans"],
+            "caption": ["Noto Sans"],
+            "table-header": ["Noto Sans"],
+            "body-medium": ["Noto Sans"],
+            "body-default": ["Noto Sans"]
+          },
+          "fontSize": {
+            "card-title": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "section-title": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "page-title": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-default": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "body-semibold": ["14px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "label-muted": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "caption": ["11px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "table-header": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "body-medium": ["14px", { "lineHeight": "22px", "fontWeight": "500" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+    .num-tabular {
+      font-feature-settings: "tnum";
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased overflow-x-hidden">
+<!-- ===============================
+       SIDEBAR NAVIGATION (Fixed 256px)
+       =============================== -->
+<aside class="fixed top-0 left-0 w-64 h-screen z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-4">
+<div class="flex flex-col gap-5">
+<!-- Store Brand / Tenant Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-card-title shadow-sm">
+<span class="material-symbols-outlined text-[24px]">storefront</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-card-title font-card-title font-bold text-on-surface tracking-tight truncate">Commerce Platform</span>
+<span class="text-caption font-caption text-secondary flex items-center gap-1.5 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Jagota ERP Connected
+          </span>
+</div>
+</div>
+<!-- Quick Tenant Selector Pill -->
+<div class="px-2 py-1.5 bg-surface-container-low rounded-lg border border-outline-variant/60 flex items-center justify-between text-label-default font-label-default">
+<div class="flex items-center gap-2 truncate">
+<span class="material-symbols-outlined text-secondary text-[18px]">hub</span>
+<span class="text-on-surface font-body-semibold truncate">BKK Hub · FoodService</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]">unfold_more</span>
+</div>
+<!-- Navigation Tabs (7 items: item 5 'รายงานและข้อมูล' is active) -->
+<nav class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 text-label-default font-label-default" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 text-label-default font-label-default" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 text-label-default font-label-default" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 text-label-default font-label-default" href="#">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล (ACTIVE) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-semibold border-l-4 border-primary transition-all duration-150 cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-body-semibold text-primary">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 text-label-default font-label-default" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 text-label-default font-label-default" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="pt-4 border-t border-outline-variant flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default" href="#">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+<span>ช่วยเหลือและคู่มือ</span>
+</a>
+<div class="px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/60 flex items-center justify-between text-caption font-caption text-secondary">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          JOSH Replica Active
+        </span>
+<span class="text-[10px] bg-surface-container px-1.5 py-0.5 rounded text-primary font-mono">v2.4-sync</span>
+</div>
+</div>
+</aside>
+<!-- ===============================
+       TOP BAR (Fixed Header)
+       =============================== -->
+<header class="fixed top-0 left-64 right-0 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-6">
+<!-- Left: Breadcrumb trail + Route Badge -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-label-default font-label-default text-secondary">
+<span class="hover:text-primary cursor-pointer transition-colors">หน้าหลัก</span>
+<span class="text-outline-variant">/</span>
+<span class="hover:text-primary cursor-pointer transition-colors">รายงานและข้อมูล</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-body-semibold" data-i18n-key="Order target group">กลุ่มลูกค้าเป้าหมาย</span>
+</div>
+<span class="px-2 py-0.5 bg-surface-container text-primary text-[11px] font-mono rounded font-medium border border-surface-variant">admin-067a00d490f5</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 text-caption font-caption rounded border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+        ข้อมูลตัวอย่าง / Sample data
+      </span>
+</div>
+<!-- Right Controls: Production badge, Language Switcher, Notifications, User -->
+<div class="flex items-center gap-4">
+<span class="text-caption font-caption text-secondary hidden lg:inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">verified</span>
+        Production v2.4
+      </span>
+<!-- Language Switcher Pill (Bilingual Equilibrium) -->
+<div class="flex items-center bg-[#f6f8fc] p-0.5 rounded-lg border border-outline-variant text-[12px] font-body-semibold" id="lang-switch-container">
+<button class="px-2.5 py-1 rounded-md bg-surface-container-lowest shadow-sm text-primary font-bold transition-all" id="lang-th" onclick="setLanguage('th')">TH</button>
+<button class="px-2.5 py-1 rounded-md text-secondary hover:text-on-surface transition-all" id="lang-en" onclick="setLanguage('en')">EN</button>
+</div>
+<!-- Live Sync Action -->
+<button class="w-9 h-9 rounded-lg border border-outline-variant hover:bg-surface-container-low flex items-center justify-center text-secondary hover:text-primary transition-all" onclick="triggerRefresh(this)" title="ซิงค์ข้อมูลกับ JOSH">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+</button>
+<!-- Notifications -->
+<button class="relative w-9 h-9 rounded-lg border border-outline-variant hover:bg-surface-container-low flex items-center justify-center text-secondary hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<!-- User Avatar / Profile -->
+<div class="flex items-center gap-3 pl-2 border-l border-outline-variant">
+<div class="w-9 h-9 rounded-full bg-surface-container text-primary font-semibold flex items-center justify-center text-label-default border border-outline-variant">
+          VS
+        </div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-label-default font-body-semibold text-on-surface leading-tight">Verapong S.</span>
+<span class="text-caption font-caption text-secondary leading-tight">Financial Reconciler</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ===============================
+       MAIN SCROLL CANVAS
+       =============================== -->
+<main class="ml-64 mt-16 p-6 min-h-[calc(100vh-64px)]">
+<div class="max-w-[1240px] mx-auto flex flex-col gap-6">
+<!-- ===============================
+           PAGE HEADER & ACTIONS
+           =============================== -->
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4 bg-surface-container-lowest p-6 rounded-xl border border-[#e1e7f0] shadow-sm">
+<div class="flex flex-col gap-1.5 max-w-3xl">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded bg-primary-container/10 text-primary-container text-caption font-caption font-bold tracking-wider">
+              MARKET EXPLORER
+            </span>
+<span class="text-caption font-caption text-secondary">· ข้อมูลจาก JOSH · อ่านอย่างเดียว</span>
+</div>
+<h1 class="text-page-title font-page-title text-on-surface tracking-tight" data-i18n-key="Order target group">
+            กลุ่มลูกค้าเป้าหมาย (Order target group)
+          </h1>
+<p class="text-body-default font-body-default text-secondary leading-relaxed">
+            สำรวจร้านอาหาร ค้นหาโอกาสให้ทีมขาย · เลือกพื้นที่และประเภทร้าน ดูข้อมูลประกอบ แล้วส่งต่อรายชื่อให้ทีม
+          </p>
+<div class="flex items-center gap-2 mt-1 text-caption font-caption text-secondary/90 bg-[#f6f8fc] px-3 py-1.5 rounded-lg border border-[#e1e7f0] w-fit">
+<span class="material-symbols-outlined text-primary text-[16px]">info</span>
+<span>ลูกค้าแต่ละรายสั่ง SKU แบบ order-taking กี่ตัว และส่งของได้กี่วันต่อสัปดาห์ · อ่านจาก replica ของ josh</span>
+</div>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-3 shrink-0 self-end lg:self-start">
+<button class="h-10 px-4 rounded-lg bg-surface-container-lowest border border-[#e1e7f0] text-on-surface hover:bg-[#f6f8fc] font-body-medium text-body-medium flex items-center gap-2 transition-all" id="refresh-btn" onclick="simulateRefresh()">
+<span class="material-symbols-outlined text-[18px]" id="refresh-icon">refresh</span>
+<span data-i18n-key="Refresh">รีเฟรช</span>
+</button>
+<button class="h-10 px-5 rounded-lg bg-primary-container text-on-primary hover:bg-[#2c4ed6] font-body-semibold text-body-semibold flex items-center gap-2 shadow-sm transition-all" id="export-btn" onclick="simulateExport()">
+<span class="material-symbols-outlined text-[18px]" id="export-icon">download</span>
+<span data-i18n-key="ส่งออกรายชื่อ CSV" id="export-text">ส่งออกรายชื่อ CSV</span>
+</button>
+</div>
+</div>
+<!-- ===============================
+           METRIC / SUMMARY CARDS (4 CARDS)
+           =============================== -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Metric 1: ร้านที่ตรงเงื่อนไข -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-[#e1e7f0] flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-secondary" data-i18n-key="ร้านที่ตรงเงื่อนไข">ร้านที่ตรงเงื่อนไข</span>
+<span class="w-8 h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">store</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-2">
+<span class="text-[32px] font-bold text-on-surface num-tabular tracking-tight" id="count-target">184</span>
+<span class="text-body-default font-body-default text-secondary">ร้าน</span>
+</div>
+<p class="text-caption font-caption text-secondary mt-1">
+              จากทั้งหมด <span class="font-semibold text-on-surface num-tabular">1,420</span> ร้านในฐานข้อมูล
+            </p>
+</div>
+<div class="mt-3 pt-3 border-t border-[#eef2f7] flex items-center justify-between text-caption font-caption">
+<span class="text-emerald-600 font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +12% สัปดาห์นี้
+            </span>
+<span class="text-secondary">ครอบคลุม 13 เขต</span>
+</div>
+</div>
+<!-- Metric 2: เริ่มจากพื้นที่ไหน -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-[#e1e7f0] flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-secondary" data-i18n-key="เริ่มจากพื้นที่ไหน">เริ่มจากพื้นที่ไหน</span>
+<span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">map</span>
+</span>
+</div>
+<div class="mt-2">
+<span class="text-caption font-caption text-secondary">เขตที่พบมากตามเงื่อนไข:</span>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<button class="px-2 py-1 rounded-md bg-[#f6f8fc] hover:bg-surface-container text-primary font-body-semibold text-[12px] border border-[#e1e7f0] transition-colors" onclick="filterByDistrict('วัฒนา')">
+                เขตวัฒนา (48)
+              </button>
+<button class="px-2 py-1 rounded-md bg-[#f6f8fc] hover:bg-surface-container text-on-surface font-body-semibold text-[12px] border border-[#e1e7f0] transition-colors" onclick="filterByDistrict('คลองเตย')">
+                คลองเตย (36)
+              </button>
+<button class="px-2 py-1 rounded-md bg-[#f6f8fc] hover:bg-surface-container text-on-surface font-body-semibold text-[12px] border border-[#e1e7f0] transition-colors" onclick="filterByDistrict('สาทร')">
+                สาทร (29)
+              </button>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-[#eef2f7] flex items-center justify-between text-caption font-caption text-secondary">
+<span>ความหนาแน่นร้านอาหารสูง</span>
+<span class="text-primary cursor-pointer hover:underline" onclick="document.getElementById('input-district').focus()">เลือกเขต</span>
+</div>
+</div>
+<!-- Metric 3: สถานะฝ่ายขาย -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-[#e1e7f0] flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-secondary" data-i18n-key="สถานะฝ่ายขาย">สถานะฝ่ายขาย</span>
+<span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">person_search</span>
+</span>
+</div>
+<div class="mt-3 flex flex-col gap-2">
+<div class="flex items-center justify-between text-caption font-caption">
+<span class="text-secondary flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span> มีในรายชื่อแล้ว
+              </span>
+<span class="font-bold text-on-surface num-tabular">42 ร้าน (23%)</span>
+</div>
+<div class="flex items-center justify-between text-caption font-caption">
+<span class="text-secondary flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span> ยังไม่มีในรายชื่อ (โอกาส)
+              </span>
+<span class="font-bold text-primary num-tabular">142 ร้าน (77%)</span>
+</div>
+<div class="w-full bg-[#f1f3ff] h-2 rounded-full overflow-hidden flex">
+<div class="bg-emerald-500 h-full" style="width: 23%"></div>
+<div class="bg-primary-container h-full" style="width: 77%"></div>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-[#eef2f7] text-caption font-caption text-secondary">
+<span>เป้าหมาย Winback &amp; ลูกค้าใหม่</span>
+</div>
+</div>
+<!-- Metric 4: การส่งสินค้า -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-[#e1e7f0] flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default text-secondary" data-i18n-key="ส่งได้อย่างน้อย (วัน/สัปดาห์)">การส่งสินค้า</span>
+<span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+</span>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-2">
+<span class="text-[32px] font-bold text-on-surface num-tabular tracking-tight">3 - 5</span>
+<span class="text-body-default font-body-default text-secondary">วัน/สัปดาห์</span>
+</div>
+<p class="text-caption font-caption text-secondary mt-1">
+              รองรับรอบจัดส่งอาหารสดรายวัน (Cold-chain)
+            </p>
+</div>
+<div class="mt-3 pt-3 border-t border-[#eef2f7] flex items-center justify-between text-caption font-caption">
+<span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-semibold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> มีรอบส่งเปิดพร้อม
+            </span>
+<span class="text-secondary">Jagota Logistics</span>
+</div>
+</div>
+</div>
+<!-- ===============================
+           SEARCH & FILTER PANEL
+           =============================== -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col gap-5">
+<div class="flex items-center justify-between pb-4 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">filter_alt</span>
+<h2 class="text-card-title font-card-title text-on-surface" data-i18n-key="ค้นหาร้านเป้าหมาย">ค้นหาร้านเป้าหมาย</h2>
+<span class="text-caption font-caption text-secondary">· กรองจากข้อมูลที่มีจริง</span>
+</div>
+<button class="text-caption font-caption text-secondary hover:text-error flex items-center gap-1 transition-colors" onclick="resetAllFilters()">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+<span>ล้างตัวกรองทั้งหมด</span>
+</button>
+</div>
+<!-- 3 Primary Search Inputs -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Input 1: ชื่อร้าน -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-default font-label-default text-on-surface flex items-center justify-between" for="input-name">
+<span data-i18n-key="ชื่อร้าน">ชื่อร้าน</span>
+<span class="text-caption font-caption text-secondary">ไทย หรือ EN</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#e1e7f0] text-body-medium bg-surface-container-lowest text-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 placeholder:text-secondary/60" id="input-name" oninput="applyFilters()" placeholder="ค้นหาชื่อไทยหรืออังกฤษ เช่น Kenshin" type="text"/>
+</div>
+</div>
+<!-- Input 2: เขต / อำเภอ -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-default font-label-default text-on-surface flex items-center justify-between" for="input-district">
+<span data-i18n-key="เขต / อำเภอ">เขต / อำเภอ</span>
+<span class="text-caption font-caption text-secondary">กรุงเทพมหานคร</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">location_on</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#e1e7f0] text-body-medium bg-surface-container-lowest text-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 placeholder:text-secondary/60" id="input-district" oninput="applyFilters()" placeholder="เช่น วัฒนา, สาทร, คลองเตย" type="text"/>
+</div>
+</div>
+<!-- Input 3: ประเภทร้าน -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-default font-label-default text-on-surface flex items-center justify-between" for="input-type">
+<span data-i18n-key="ประเภทร้าน">ประเภทร้าน</span>
+<span class="text-caption font-caption text-secondary">หมวดหมู่อาหาร</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">restaurant_menu</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#e1e7f0] text-body-medium bg-surface-container-lowest text-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 placeholder:text-secondary/60" id="input-type" oninput="applyFilters()" placeholder="เช่น japanese หรือ cafe" type="text"/>
+</div>
+</div>
+</div>
+<!-- Quick Filters Chips (เลือกเร็ว) -->
+<div class="flex flex-wrap items-center gap-2 pt-2">
+<span class="text-caption font-caption text-secondary flex items-center gap-1 mr-1" data-i18n-key="เลือกเร็ว">
+<span class="material-symbols-outlined text-[16px]">bolt</span> เลือกเร็ว:
+          </span>
+<button class="quick-chip px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-[#f6f8fc] hover:bg-surface-container text-on-surface text-label-default font-label-default transition-all flex items-center gap-1.5" onclick="toggleQuickFilter(this, 'unassigned')" type="button">
+<span>ยังไม่อยู่ในรายชื่อฝ่ายขาย</span>
+</button>
+<button class="quick-chip px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-[#f6f8fc] hover:bg-surface-container text-on-surface text-label-default font-label-default transition-all flex items-center gap-1.5" onclick="toggleQuickFilter(this, 'rating4')" type="button">
+<span class="material-symbols-outlined text-[14px] text-amber-500">star</span>
+<span>คะแนน 4+ · รีวิว 50+</span>
+</button>
+<button class="quick-chip px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-[#f6f8fc] hover:bg-surface-container text-on-surface text-label-default font-label-default transition-all" onclick="toggleQuickFilter(this, 'cafe')" type="button">
+<span>คาเฟ่</span>
+</button>
+<button class="quick-chip px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-[#f6f8fc] hover:bg-surface-container text-on-surface text-label-default font-label-default transition-all" onclick="toggleQuickFilter(this, 'japanese')" type="button">
+<span>ร้านญี่ปุ่น</span>
+</button>
+<button class="quick-chip px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-[#f6f8fc] hover:bg-surface-container text-on-surface text-label-default font-label-default transition-all" onclick="toggleQuickFilter(this, 'highorder')" type="button">
+<span>SKU สั่งซื้อ 5+ ตัว</span>
+</button>
+</div>
+<!-- Additional Advanced Filters Drawer Toggle -->
+<div class="pt-3 border-t border-[#e1e7f0]/70 flex flex-col gap-4">
+<div class="flex items-center justify-between cursor-pointer" onclick="toggleAdvancedFilters()">
+<span class="text-caption font-caption text-secondary flex items-center gap-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span data-i18n-key="ตัวกรองเพิ่มเติม">ตัวกรองเพิ่มเติม: คะแนน · รีวิว · เวลา · บริการ</span>
+</span>
+<span class="material-symbols-outlined text-secondary text-[18px] transition-transform" id="adv-arrow">expand_more</span>
+</div>
+<div class="hidden grid grid-cols-1 md:grid-cols-4 gap-4 pt-2" id="advanced-filters">
+<!-- คะแนนขั้นต่ำ -->
+<div class="flex flex-col gap-1">
+<label class="text-caption font-caption text-on-surface" data-i18n-key="คะแนนขั้นต่ำ">คะแนนขั้นต่ำ</label>
+<select class="h-10 px-3 rounded-lg border border-[#e1e7f0] text-body-medium bg-surface-container-lowest" id="adv-rating" onchange="applyFilters()">
+<option value="0">ทุกคะแนน</option>
+<option value="4.0">⭐ 4.0 ขึ้นไป</option>
+<option value="4.5">⭐ 4.5 ขึ้นไป</option>
+</select>
+</div>
+<!-- รีวิวขั้นต่ำ -->
+<div class="flex flex-col gap-1">
+<label class="text-caption font-caption text-on-surface" data-i18n-key="รีวิวขั้นต่ำ">รีวิวขั้นต่ำ (เช่น 50)</label>
+<input class="h-10 px-3 rounded-lg border border-[#e1e7f0] text-body-medium bg-surface-container-lowest" id="adv-reviews" oninput="applyFilters()" placeholder="เช่น 50" type="number"/>
+</div>
+<!-- ช่วงที่คนเยอะวันนี้ -->
+<div class="flex flex-col gap-1">
+<label class="text-caption font-caption text-on-surface" data-i18n-key="ช่วงที่คนเยอะวันนี้">ช่วงคนเยอะ (ชม. เช่น 17-21)</label>
+<input class="h-10 px-3 rounded-lg border border-[#e1e7f0] text-body-medium bg-surface-container-lowest" id="adv-peak" oninput="applyFilters()" placeholder="เช่น 17-20" type="text"/>
+</div>
+<!-- ส่งได้อย่างน้อย (วัน/สัปดาห์) -->
+<div class="flex flex-col gap-1">
+<label class="text-caption font-caption text-on-surface" data-i18n-key="ส่งได้อย่างน้อย (วัน/สัปดาห์)">ส่งได้อย่างน้อย (วัน/สัปดาห์)</label>
+<select class="h-10 px-3 rounded-lg border border-[#e1e7f0] text-body-medium bg-surface-container-lowest" id="adv-delivery" onchange="applyFilters()">
+<option value="0">ทุกเงื่อนไข</option>
+<option value="3">อย่างน้อย 3 วัน</option>
+<option value="4">อย่างน้อย 4 วัน</option>
+<option value="5">5 วันขึ้นไป</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Filter Action Bar -->
+<div class="flex items-center justify-between pt-2">
+<div class="text-caption font-caption text-secondary">
+            แสดงผลลัพธ์แบบเรียลไทม์จากตัวกรอง <span class="font-bold text-primary" id="active-filter-count">0</span> เงื่อนไข
+          </div>
+<div class="flex items-center gap-2">
+<button class="h-9 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-[#2c4ed6] text-label-default font-label-default transition-all" onclick="applyFilters()">
+              ใช้ตัวกรอง
+            </button>
+<button class="h-9 px-3 rounded-lg bg-surface-container-lowest border border-[#e1e7f0] hover:bg-[#f6f8fc] text-secondary text-label-default font-label-default transition-all" onclick="resetAllFilters()">
+              ล้างตัวกรอง
+            </button>
+</div>
+</div>
+</div>
+<!-- ===============================
+           RESULTS TABLE SECTION
+           =============================== -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden flex flex-col">
+<!-- Table Top Header -->
+<div class="px-6 py-4 border-b border-[#e1e7f0] bg-[#f9fbfd] flex items-center justify-between flex-wrap gap-3">
+<div class="flex items-center gap-3">
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n-key="ผลการค้นหาร้าน">ผลการค้นหาร้านอาหาร</h3>
+<span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-primary font-bold text-caption font-caption border border-blue-100" id="results-count-badge">
+              184 ร้าน
+            </span>
+<span class="text-caption font-caption text-secondary hidden sm:inline" data-i18n-key="เรียงตามชื่อร้าน · กดชื่อเพื่อดูรายละเอียด">
+              · เรียงตามชื่อร้าน · กดชื่อเพื่อดูรายละเอียด
+            </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-caption font-caption text-secondary">มุมมอง:</span>
+<div class="inline-flex rounded-lg border border-[#e1e7f0] p-0.5 bg-surface-container-lowest">
+<button class="px-2.5 py-1 rounded bg-[#f6f8fc] text-primary font-bold text-caption font-caption">ตาราง</button>
+<button class="px-2.5 py-1 rounded text-secondary hover:text-on-surface text-caption font-caption">หมุดแผนที่</button>
+</div>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse" id="leads-table">
+<thead>
+<tr class="h-11 bg-[#f6f8fc] border-b border-[#e1e7f0] text-secondary text-table-header font-table-header">
+<th class="py-3 px-6">ร้าน / พื้นที่</th>
+<th class="py-3 px-4">คะแนนและรีวิว</th>
+<th class="py-3 px-4">คนเยอะวันนี้</th>
+<th class="py-3 px-4">SKU order-taking</th>
+<th class="py-3 px-4">สถานะฝ่ายขาย</th>
+<th class="py-3 px-6 text-right">รายละเอียด / จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#eef2f7] text-body-medium font-body-medium" id="table-body">
+<!-- Row 1: Kenshin Izakaya -->
+<tr class="h-14 hover:bg-[#f9fafc] transition-colors cursor-pointer group" onclick="openDrawer('kenshin')">
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-[13px] border border-orange-100 shrink-0">
+                      KI
+                    </div>
+<div class="flex flex-col">
+<span class="font-body-semibold text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Kenshin Izakaya (เคนชิน อิซากายะ)
+                        <span class="material-symbols-outlined text-secondary/40 text-[16px] group-hover:text-primary">open_in_new</span>
+</span>
+<span class="text-caption font-caption text-secondary">
+                        อโศก · เขตวัฒนา · ร้านอาหารญี่ปุ่น
+                      </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center text-amber-500 font-bold text-[13px]">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.5
+                    </span>
+<span class="text-caption font-caption text-secondary num-tabular">(340 รีวิว)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="text-caption font-caption text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">schedule</span> 18:00 - 21:00
+                    </span>
+<span class="text-[11px] text-secondary">สูงสุด 19:00</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-[13px]">8 SKUs</span>
+<span class="text-[11px] text-secondary">ส่งได้ 4 วัน/สัปดาห์ (เนื้อวากิว, แซลมอน)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-body-semibold bg-amber-50 text-amber-800 border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    ยังไม่มีในรายชื่อ (โอกาสใหม่)
+                  </span>
+</td>
+<td class="py-3 px-6 text-right">
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] hover:bg-[#f6f8fc] text-primary font-body-semibold text-[13px] transition-colors" onclick="event.stopPropagation(); openDrawer('kenshin')">
+                    รายละเอียด
+                  </button>
+</td>
+</tr>
+<!-- Row 2: Roast Coffee & Eatery -->
+<tr class="h-14 hover:bg-[#f9fafc] transition-colors cursor-pointer group" onclick="openDrawer('roast')">
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-[13px] border border-amber-100 shrink-0">
+                      RC
+                    </div>
+<div class="flex flex-col">
+<span class="font-body-semibold text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Roast Coffee &amp; Eatery (ทองหล่อ)
+                        <span class="material-symbols-outlined text-secondary/40 text-[16px] group-hover:text-primary">open_in_new</span>
+</span>
+<span class="text-caption font-caption text-secondary">
+                        The Commons ทองหล่อ · เขตวัฒนา · คาเฟ่ / ร้านกาแฟ
+                      </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center text-amber-500 font-bold text-[13px]">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.6
+                    </span>
+<span class="text-caption font-caption text-secondary num-tabular">(512 รีวิว)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="text-caption font-caption text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">schedule</span> 11:00 - 15:00
+                    </span>
+<span class="text-[11px] text-secondary">สูงสุด 12:30</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-[13px]">12 SKUs</span>
+<span class="text-[11px] text-secondary">ส่งได้ 5 วัน/สัปดาห์ (เนย, ครีม, กาแฟ)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-body-semibold bg-amber-50 text-amber-800 border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    ยังไม่มีในรายชื่อ
+                  </span>
+</td>
+<td class="py-3 px-6 text-right">
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] hover:bg-[#f6f8fc] text-primary font-body-semibold text-[13px] transition-colors" onclick="event.stopPropagation(); openDrawer('roast')">
+                    รายละเอียด
+                  </button>
+</td>
+</tr>
+<!-- Row 3: Somtum Der -->
+<tr class="h-14 hover:bg-[#f9fafc] transition-colors cursor-pointer group" onclick="openDrawer('somtum')">
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-[13px] border border-emerald-100 shrink-0">
+                      SD
+                    </div>
+<div class="flex flex-col">
+<span class="font-body-semibold text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Somtum Der (ส้มตำเด้อ ศาลาแดง)
+                        <span class="material-symbols-outlined text-secondary/40 text-[16px] group-hover:text-primary">open_in_new</span>
+</span>
+<span class="text-caption font-caption text-secondary">
+                        ศาลาแดง · เขตบางรัก · อาหารไทย
+                      </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center text-amber-500 font-bold text-[13px]">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.4
+                    </span>
+<span class="text-caption font-caption text-secondary num-tabular">(210 รีวิว)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="text-caption font-caption text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">schedule</span> 12:00 - 14:00
+                    </span>
+<span class="text-[11px] text-secondary">สูงสุด 13:00</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-[13px]">5 SKUs</span>
+<span class="text-[11px] text-secondary">ส่งได้ 3 วัน/สัปดาห์ (CUST-4412)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-body-semibold bg-[#e8f5ec] text-[#157347] border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    มีในรายชื่อแล้ว
+                  </span>
+</td>
+<td class="py-3 px-6 text-right">
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] hover:bg-[#f6f8fc] text-primary font-body-semibold text-[13px] transition-colors" onclick="event.stopPropagation(); openDrawer('somtum')">
+                    รายละเอียด
+                  </button>
+</td>
+</tr>
+<!-- Row 4: Sushi Mori -->
+<tr class="h-14 hover:bg-[#f9fafc] transition-colors cursor-pointer group" onclick="openDrawer('sushi')">
+<td class="py-3 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-blue-50 text-primary flex items-center justify-center font-bold text-[13px] border border-blue-100 shrink-0">
+                      SM
+                    </div>
+<div class="flex flex-col">
+<span class="font-body-semibold text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Sushi Mori (ซูชิ โมริ สาทร)
+                        <span class="material-symbols-outlined text-secondary/40 text-[16px] group-hover:text-primary">open_in_new</span>
+</span>
+<span class="text-caption font-caption text-secondary">
+                        สาทรธานี · เขตสาทร · อาหารญี่ปุ่น
+                      </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center text-amber-500 font-bold text-[13px]">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.7
+                    </span>
+<span class="text-caption font-caption text-secondary num-tabular">(180 รีวิว)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="text-caption font-caption text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">schedule</span> 17:30 - 21:00
+                    </span>
+<span class="text-[11px] text-secondary">สูงสุด 19:30</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-[13px]">9 SKUs</span>
+<span class="text-[11px] text-secondary">ส่งได้ 4 วัน/สัปดาห์ (วัตถุดิบซูชิสด)</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-body-semibold bg-amber-50 text-amber-800 border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    ยังไม่มีในรายชื่อ
+                  </span>
+</td>
+<td class="py-3 px-6 text-right">
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] hover:bg-[#f6f8fc] text-primary font-body-semibold text-[13px] transition-colors" onclick="event.stopPropagation(); openDrawer('sushi')">
+                    รายละเอียด
+                  </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination & Footnote -->
+<div class="px-6 py-3.5 border-t border-[#e1e7f0] bg-[#f9fbfd] flex flex-col md:flex-row items-center justify-between gap-3 text-caption font-caption text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary/70">info</span>
+<span data-i18n-key="คะแนน รีวิว และช่วงคนเยอะอาจมีไม่ครบทุกแห่ง · เวลาอ้างอิงกรุงเทพฯ · ตรวจสอบข้อมูลร้านก่อนติดต่อ">
+              คะแนน รีวิว และช่วงคนเยอะอาจมีไม่ครบทุกแห่ง · เวลาอ้างอิงกรุงเทพฯ · ตรวจสอบข้อมูลร้านก่อนติดต่อ
+            </span>
+</div>
+<div class="flex items-center gap-3">
+<span>แสดง 1-4 จาก 184 ร้าน</span>
+<div class="inline-flex items-center gap-1">
+<button class="w-8 h-8 rounded border border-[#e1e7f0] bg-surface-container-lowest text-secondary/40 flex items-center justify-center cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded border border-primary-container bg-primary-container text-on-primary font-bold flex items-center justify-center text-[12px]">
+                1
+              </button>
+<button class="w-8 h-8 rounded border border-[#e1e7f0] bg-surface-container-lowest text-on-surface hover:bg-[#f6f8fc] font-bold flex items-center justify-center text-[12px]">
+                2
+              </button>
+<button class="w-8 h-8 rounded border border-[#e1e7f0] bg-surface-container-lowest text-on-surface hover:bg-[#f6f8fc] font-bold flex items-center justify-center text-[12px]">
+                3
+              </button>
+<button class="w-8 h-8 rounded border border-[#e1e7f0] bg-surface-container-lowest text-on-surface hover:bg-[#f6f8fc] flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ===============================
+       SIDE DETAIL DRAWER (SLIDE-OUT)
+       =============================== -->
+<div class="fixed inset-0 bg-[#17243b]/45 z-50 opacity-0 pointer-events-none transition-opacity duration-300" id="drawer-backdrop" onclick="closeDrawer()"></div>
+<div class="fixed top-0 right-0 w-full max-w-[460px] h-screen bg-surface-container-lowest border-l border-[#e1e7f0] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col justify-between overflow-hidden" id="restaurant-drawer">
+<!-- Drawer Header -->
+<div class="px-6 py-5 border-b border-[#e1e7f0] flex items-center justify-between bg-[#f9fbfd]">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+</span>
+<div class="flex flex-col">
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n-key="รายละเอียดร้านอาหาร">รายละเอียดร้านอาหาร</h3>
+<span class="text-caption font-caption text-secondary">JOSH Verified Replica Record</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg border border-[#e1e7f0] hover:bg-[#f6f8fc] text-secondary hover:text-on-surface flex items-center justify-center transition-colors" onclick="closeDrawer()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Drawer Content Scrollable Area -->
+<div class="p-6 flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-6">
+<!-- Restaurant Identity Banner -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-primary border border-blue-100" id="drawer-tag">
+            อาหารญี่ปุ่น
+          </span>
+<span class="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200" id="drawer-status">
+            ยังไม่มีในรายชื่อฝ่ายขาย
+          </span>
+</div>
+<h2 class="text-section-title font-section-title text-on-surface font-bold" id="drawer-title">
+          Kenshin Izakaya (เคนชิน อิซากายะ)
+        </h2>
+<p class="text-body-default font-body-default text-secondary flex items-center gap-1.5" id="drawer-address">
+<span class="material-symbols-outlined text-secondary text-[16px]">location_on</span>
+          อโศก สี่แยกอโศก-สุขุมวิท 21 · เขตวัฒนา กรุงเทพฯ
+        </p>
+</div>
+<!-- Quick Ratings & Table Count Block -->
+<div class="grid grid-cols-2 gap-3">
+<div class="p-3.5 rounded-xl bg-[#f6f8fc] border border-[#e1e7f0] flex flex-col">
+<span class="text-caption font-caption text-secondary" data-i18n-key="คะแนน / รีวิว">คะแนน / รีวิว</span>
+<div class="flex items-baseline gap-1.5 mt-1">
+<span class="text-[20px] font-bold text-on-surface flex items-center gap-1" id="drawer-rating">
+<span class="material-symbols-outlined text-amber-500 text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.5
+            </span>
+<span class="text-caption font-caption text-secondary num-tabular" id="drawer-reviews">(340 รีวิว)</span>
+</div>
+</div>
+<div class="p-3.5 rounded-xl bg-[#f6f8fc] border border-[#e1e7f0] flex flex-col">
+<span class="text-caption font-caption text-secondary" data-i18n-key="จำนวนโต๊ะโดยประมาณ">จำนวนโต๊ะโดยประมาณ</span>
+<span class="text-[20px] font-bold text-on-surface mt-1" id="drawer-tables">~18 - 24 โต๊ะ</span>
+<span class="text-[10px] text-secondary mt-0.5" data-i18n-key="คำนวณจากรีวิว ไม่ใช่จำนวนที่สำรวจ">คำนวณจากรีวิว ไม่ใช่สำรวจ</span>
+</div>
+</div>
+<!-- Peak Hours Section -->
+<div class="flex flex-col gap-2 p-4 rounded-xl border border-[#e1e7f0] bg-surface-container-lowest">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default font-bold text-on-surface flex items-center gap-1.5" data-i18n-key="ช่วงคนเยอะวันนี้">
+<span class="material-symbols-outlined text-primary text-[18px]">schedule</span>
+            ช่วงคนเยอะวันนี้
+          </span>
+<span class="text-caption font-caption text-secondary">08:00–23:00 · เวลาไทย</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-[#eef2f7]">
+<span class="text-body-semibold font-body-semibold text-primary" id="drawer-peakhours">
+            18:00 – 21:00 (สูงสุด 19:00)
+          </span>
+<span class="text-[11px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded font-medium">ลูกค้าหนาแน่น</span>
+</div>
+<p class="text-caption font-caption text-secondary">เหมาะสำหรับเสนอสต็อกส่งช่วงบ่ายก่อน 16:00</p>
+</div>
+<!-- Services Provided (บริการของร้าน) -->
+<div class="flex flex-col gap-2.5">
+<span class="text-label-default font-label-default font-bold text-on-surface" data-i18n-key="บริการของร้าน">บริการของร้าน</span>
+<div class="grid grid-cols-3 gap-2 text-caption font-caption">
+<div class="p-2.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-800 flex flex-col items-center gap-1 text-center">
+<span class="material-symbols-outlined text-[18px]">table_restaurant</span>
+<span class="font-bold" data-i18n-key="นั่งทาน">นั่งทาน</span>
+<span class="text-[10px] text-emerald-600 font-semibold" data-i18n-key="มีบริการ">มีบริการ</span>
+</div>
+<div class="p-2.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-800 flex flex-col items-center gap-1 text-center">
+<span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+<span class="font-bold" data-i18n-key="ซื้อกลับ">ซื้อกลับ</span>
+<span class="text-[10px] text-emerald-600 font-semibold" data-i18n-key="มีบริการ">มีบริการ</span>
+</div>
+<div class="p-2.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-800 flex flex-col items-center gap-1 text-center">
+<span class="material-symbols-outlined text-[18px]">moped</span>
+<span class="font-bold" data-i18n-key="เดลิเวอรี">เดลิเวอรี</span>
+<span class="text-[10px] text-emerald-600 font-semibold" data-i18n-key="มีบริการ">มีบริการ</span>
+</div>
+</div>
+</div>
+<!-- SKUs Order-Taking Capability -->
+<div class="flex flex-col gap-2 p-4 rounded-xl border border-blue-100 bg-blue-50/50">
+<span class="text-label-default font-label-default font-bold text-primary flex items-center gap-1.5" data-i18n-key="SKU order-taking">
+<span class="material-symbols-outlined text-[18px]">inventory</span>
+          SKU order-taking &amp; รอบส่งสินค้า
+        </span>
+<div class="flex flex-col gap-1.5 text-caption font-caption text-secondary mt-1">
+<div class="flex justify-between">
+<span>ศักยภาพสั่งซื้อ:</span>
+<span class="font-bold text-on-surface" id="drawer-sku-count">8 - 12 รายการ</span>
+</div>
+<div class="flex justify-between">
+<span>รอบจัดส่งที่รองรับ:</span>
+<span class="font-bold text-on-surface" id="drawer-sku-delivery">4 วัน / สัปดาห์ (จันทร์, พุธ, ศุกร์, เสาร์)</span>
+</div>
+<div class="flex justify-between">
+<span>หมวดสินค้าตรงเป้า:</span>
+<span class="font-bold text-primary" id="drawer-sku-categories">เนื้อวากิว, แซลมอนนอร์เวย์, ซอสปรุงรส</span>
+</div>
+</div>
+</div>
+<!-- Source Footnote -->
+<div class="p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0] text-caption font-caption text-secondary flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-semibold text-on-surface" data-i18n-key="แหล่งข้อมูล:">แหล่งข้อมูล: JOSH Replica</span>
+<span class="text-[10px] text-emerald-600 font-mono">Synced: Today 09:12</span>
+</div>
+<p>ตรวจสอบข้อมูลก่อนเข้าพบหรือติดต่อร้าน · นโยบายสิทธิ์การจัดส่งเป็นไปตาม BKK Hub</p>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-5 border-t border-[#e1e7f0] bg-[#f9fbfd] flex items-center justify-between gap-3">
+<button class="h-10 px-4 rounded-lg border border-[#e1e7f0] hover:bg-[#f6f8fc] text-on-surface font-body-semibold text-body-semibold flex items-center gap-1.5 transition-colors" onclick="openExternalMap()">
+<span class="material-symbols-outlined text-[18px]">map</span>
+<span data-i18n-key="เปิดแผนที่">เปิดแผนที่</span>
+</button>
+<div class="flex items-center gap-2">
+<button class="h-10 px-4 rounded-lg border border-[#e1e7f0] hover:bg-[#f6f8fc] text-secondary font-body-medium text-body-medium transition-colors" data-i18n-key="ปิดรายละเอียด" onclick="closeDrawer()">
+          ปิด
+        </button>
+<button class="h-10 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-[#2c4ed6] font-body-semibold text-body-semibold flex items-center gap-1.5 shadow-sm transition-all" data-i18n-key="สร้างรายชื่อตอนนี้" id="drawer-assign-btn" onclick="assignLeadNow()">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>สร้างรายชื่อตอนนี้</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ==========================================
+       CATALOGUE TRANSLATIONS JSON (INVISIBLE)
+       ========================================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "รายละเอียด": {"th": "รายละเอียด", "en": "Details"},
+    "รีเฟรช": {"th": "รีเฟรช", "en": "Refresh"},
+    "Order target group": {"th": "กลุ่มลูกค้าเป้าหมาย", "en": "Order target group"},
+    "Refresh": {"th": "รีเฟรช", "en": "Refresh"},
+    "ค้นหา": {"th": "ค้นหา", "en": "Search"},
+    "ทั้งหมด": {"th": "ทั้งหมด", "en": "All"},
+    "ลูกค้า": {"th": "ลูกค้า", "en": "Customer"},
+    "รหัสลูกค้า": {"th": "รหัสลูกค้า", "en": "Customer ID"},
+    "วันส่ง": {"th": "วันส่ง", "en": "Delivery days"},
+    "ใช่": {"th": "ใช่", "en": "Yes"},
+    "MARKET EXPLORER": {"th": "MARKET EXPLORER", "en": "MARKET EXPLORER"},
+    "สำรวจร้านอาหาร": {"th": "สำรวจร้านอาหาร", "en": "Explore Restaurants"},
+    "ค้นหาโอกาสให้ทีมขาย": {"th": "ค้นหาโอกาสให้ทีมขาย", "en": "Discover sales opportunities"},
+    "เลือกพื้นที่และประเภทร้าน ดูข้อมูลประกอบ แล้วส่งต่อรายชื่อให้ทีม": {"th": "เลือกพื้นที่และประเภทร้าน ดูข้อมูลประกอบ แล้วส่งต่อรายชื่อให้ทีม", "en": "Select areas and restaurant types, analyze insights, and hand over leads to sales"},
+    "กำลังส่งออก…": {"th": "กำลังส่งออก…", "en": "Exporting…"},
+    "ส่งออกรายชื่อ CSV": {"th": "ส่งออกรายชื่อ CSV", "en": "Export CSV Leads"},
+    "ภาพรวมร้านตามเงื่อนไข": {"th": "ภาพรวมร้านตามเงื่อนไข", "en": "Matched Restaurants Overview"},
+    "ร้านที่ตรงเงื่อนไข": {"th": "ร้านที่ตรงเงื่อนไข", "en": "Qualified Leads"},
+    "ร้านในฐานข้อมูล": {"th": "ร้านในฐานข้อมูล", "en": "Restaurants in Database"},
+    "ร้าน": {"th": "ร้าน", "en": "Outlets"},
+    "ข้อมูลจาก JOSH · อ่านอย่างเดียว": {"th": "ข้อมูลจาก JOSH · อ่านอย่างเดียว", "en": "Data from JOSH · Read-only"},
+    "เริ่มจากพื้นที่ไหน": {"th": "เริ่มจากพื้นที่ไหน", "en": "Top Target Districts"},
+    "เขตที่พบมากตามเงื่อนไข": {"th": "เขตที่พบมากตามเงื่อนไข", "en": "Most frequent districts"},
+    "กำลังอ่านข้อมูลพื้นที่…": {"th": "กำลังอ่านข้อมูลพื้นที่…", "en": "Reading area data…"},
+    "ยังไม่มีข้อมูลเขตตามเงื่อนไขนี้": {"th": "ยังไม่มีข้อมูลเขตตามเงื่อนไขนี้", "en": "No district data for this condition"},
+    "ค้นหาร้านเป้าหมาย": {"th": "ค้นหาร้านเป้าหมาย", "en": "Target Restaurant Search"},
+    "กรองจากข้อมูลที่มีจริง": {"th": "กรองจากข้อมูลที่มีจริง", "en": "Filter by verified data"},
+    "ชื่อร้าน": {"th": "ชื่อร้าน", "en": "Restaurant Name"},
+    "ค้นหาชื่อไทยหรืออังกฤษ": {"th": "ค้นหาชื่อไทยหรืออังกฤษ", "en": "Search Thai or English name"},
+    "เขต / อำเภอ": {"th": "เขต / อำเภอ", "en": "District / Area"},
+    "เช่น วัฒนา": {"th": "เช่น วัฒนา", "en": "e.g. Watthana"},
+    "ประเภทร้าน": {"th": "ประเภทร้าน", "en": "Restaurant Type"},
+    "เช่น japanese หรือ cafe": {"th": "เช่น japanese หรือ cafe", "en": "e.g. Japanese or Cafe"},
+    "ค้นหาร้าน": {"th": "ค้นหาร้าน", "en": "Search Outlet"},
+    "เลือกเร็ว": {"th": "เลือกเร็ว", "en": "Quick Filters"},
+    "ยังไม่อยู่ในรายชื่อฝ่ายขาย": {"th": "ยังไม่อยู่ในรายชื่อฝ่ายขาย", "en": "Not yet in sales pipeline"},
+    "คะแนน 4+ · รีวิว 50+": {"th": "คะแนน 4+ · รีวิว 50+", "en": "Rating 4+ · 50+ Reviews"},
+    "คาเฟ่": {"th": "คาเฟ่", "en": "Cafe"},
+    "ร้านญี่ปุ่น": {"th": "ร้านญี่ปุ่น", "en": "Japanese Restaurant"},
+    "ตัวกรองเพิ่มเติม": {"th": "ตัวกรองเพิ่มเติม", "en": "Additional Filters"},
+    "คะแนน · รีวิว · เวลา · บริการ": {"th": "คะแนน · รีวิว · เวลา · บริการ", "en": "Rating · Reviews · Hours · Services"},
+    "คะแนนขั้นต่ำ": {"th": "คะแนนขั้นต่ำ", "en": "Minimum Rating"},
+    "รีวิวขั้นต่ำ": {"th": "รีวิวขั้นต่ำ", "en": "Minimum Reviews"},
+    "เช่น 50": {"th": "เช่น 50", "en": "e.g. 50"},
+    "ช่วงที่คนเยอะวันนี้": {"th": "ช่วงที่คนเยอะวันนี้", "en": "Peak hours today"},
+    "เวลาไทย · ชั่วโมงเริ่มถึงก่อนชั่วโมงสิ้นสุด": {"th": "เวลาไทย · ชั่วโมงเริ่มถึงก่อนชั่วโมงสิ้นสุด", "en": "BKK Time · Start before end"},
+    "เช่น 17-20": {"th": "เช่น 17-20", "en": "e.g. 17-20"},
+    "ช่วงราคา": {"th": "ช่วงราคา", "en": "Price range"},
+    "เช่น ฿200–400": {"th": "เช่น ฿200–400", "en": "e.g. ฿200–400"},
+    "ใช้ตัวกรอง": {"th": "ใช้ตัวกรอง", "en": "Apply Filters"},
+    "ผลการค้นหาร้าน": {"th": "ผลการค้นหาร้าน", "en": "Search Results"},
+    "รายชื่อร้านอาหาร": {"th": "รายชื่อร้านอาหาร", "en": "Restaurant Directory"},
+    "เรียงตามชื่อร้าน · กดชื่อเพื่อดูรายละเอียด": {"th": "เรียงตามชื่อร้าน · กดชื่อเพื่อดูรายละเอียด", "en": "Sorted by name · Click row for details"},
+    "ล้างตัวกรอง (": {"th": "ล้างตัวกรอง (", "en": "Clear filters ("},
+    "กำลังค้นหาร้านอาหาร…": {"th": "กำลังค้นหาร้านอาหาร…", "en": "Searching restaurants…"},
+    "ยังโหลดรายชื่อไม่ได้": {"th": "ยังโหลดรายชื่อไม่ได้", "en": "Unable to load restaurant list"},
+    "ลองรีเฟรชเพื่ออ่านข้อมูลอีกครั้ง": {"th": "ลองรีเฟรชเพื่ออ่านข้อมูลอีกครั้ง", "en": "Try refreshing to fetch data again"},
+    "ลองอีกครั้ง": {"th": "ลองอีกครั้ง", "en": "Try again"},
+    "ร้าน / พื้นที่": {"th": "ร้าน / พื้นที่", "en": "Outlet / Area"},
+    "คะแนนและรีวิว": {"th": "คะแนนและรีวิว", "en": "Rating & Reviews"},
+    "คนเยอะวันนี้": {"th": "คนเยอะวันนี้", "en": "Peak Hours Today"},
+    "สถานะฝ่ายขาย": {"th": "สถานะฝ่ายขาย", "en": "Sales Pipeline Status"},
+    "ยังไม่มีชื่อร้าน": {"th": "ยังไม่มีชื่อร้าน", "en": "No outlet name"},
+    "ยังไม่ระบุเขต": {"th": "ยังไม่ระบุเขต", "en": "Unassigned district"},
+    "ยังไม่มีคะแนน": {"th": "ยังไม่มีคะแนน", "en": "No rating"},
+    "ยังไม่มีรีวิว": {"th": "ยังไม่มีรีวิว", "en": "No reviews"},
+    "ยังไม่ระบุ": {"th": "ยังไม่ระบุ", "en": "Not specified"},
+    "มีในรายชื่อแล้ว": {"th": "มีในรายชื่อแล้ว", "en": "Already in pipeline"},
+    "ยังไม่มีในรายชื่อ": {"th": "ยังไม่มีในรายชื่อ", "en": "Not in pipeline"},
+    "ไม่พบร้านตามเงื่อนไข": {"th": "ไม่พบร้านตามเงื่อนไข", "en": "No restaurants match criteria"},
+    "ลองลดคะแนนขั้นต่ำ หรือเลือกพื้นที่อื่น": {"th": "ลองลดคะแนนขั้นต่ำ หรือเลือกพื้นที่อื่น", "en": "Try lowering rating minimum or select other districts"},
+    "ดูร้านทั้งหมด": {"th": "ดูร้านทั้งหมด", "en": "View all outlets"},
+    "คะแนน รีวิว และช่วงคนเยอะอาจมีไม่ครบทุกแห่ง · เวลาอ้างอิงกรุงเทพฯ · ตรวจสอบข้อมูลร้านก่อนติดต่อ": {"th": "คะแนน รีวิว และช่วงคนเยอะอาจมีไม่ครบทุกแห่ง · เวลาอ้างอิงกรุงเทพฯ · ตรวจสอบข้อมูลร้านก่อนติดต่อ", "en": "Ratings, reviews, and peak times may vary · Bangkok time ref · Verify before outreach"},
+    "ยังไม่มีข้อมูล": {"th": "ยังไม่มีข้อมูล", "en": "No data available"},
+    "ไม่มีช่วงหนาแน่น": {"th": "ไม่มีช่วงหนาแน่น", "en": "No peak period"},
+    "รายละเอียดร้านอาหาร": {"th": "รายละเอียดร้านอาหาร", "en": "Restaurant Details"},
+    "ปิดรายละเอียด": {"th": "ปิดรายละเอียด", "en": "Close details"},
+    "คะแนน / รีวิว": {"th": "คะแนน / รีวิว", "en": "Rating / Reviews"},
+    "จำนวนโต๊ะโดยประมาณ": {"th": "จำนวนโต๊ะโดยประมาณ", "en": "Estimated Tables"},
+    "คำนวณจากรีวิว ไม่ใช่จำนวนที่สำรวจ": {"th": "คำนวณจากรีวิว ไม่ใช่จำนวนที่สำรวจ", "en": "Calculated from reviews, not direct survey"},
+    "ช่วงคนเยอะวันนี้": {"th": "ช่วงคนเยอะวันนี้", "en": "Peak hours today"},
+    "08:00–23:00 · เวลาไทย": {"th": "08:00–23:00 · เวลาไทย", "en": "08:00–23:00 · Bangkok time"},
+    "มีในรายชื่อฝ่ายขายแล้ว": {"th": "มีในรายชื่อฝ่ายขายแล้ว", "en": "Already in sales pipeline"},
+    "ยังไม่มีในรายชื่อฝ่ายขาย": {"th": "ยังไม่มีในรายชื่อฝ่ายขาย", "en": "Not in sales pipeline"},
+    "กำลังโหลดบริการและแหล่งข้อมูล…": {"th": "กำลังโหลดบริการและแหล่งข้อมูล…", "en": "Loading services and sources…"},
+    "ลองโหลดรายละเอียดอีกครั้ง": {"th": "ลองโหลดรายละเอียดอีกครั้ง", "en": "Try reloading details"},
+    "บริการของร้าน": {"th": "บริการของร้าน", "en": "Outlet Services"},
+    "มีบริการ": {"th": "มีบริการ", "en": "Available"},
+    "ไม่มีบริการ": {"th": "ไม่มีบริการ", "en": "Unavailable"},
+    "แหล่งข้อมูล:": {"th": "แหล่งข้อมูล:", "en": "Data source:"},
+    "· ข้อมูลเพิ่มเติมล่าสุด:": {"th": "· ข้อมูลเพิ่มเติมล่าสุด:", "en": "· Latest updates:"},
+    "ตรวจสอบข้อมูลก่อนเข้าพบหรือติดต่อร้าน": {"th": "ตรวจสอบข้อมูลก่อนเข้าพบหรือติดต่อร้าน", "en": "Verify details prior to store visit or contact"},
+    "เปิดแผนที่": {"th": "เปิดแผนที่", "en": "Open Map"},
+    "ลูกค้าแต่ละรายสั่ง SKU แบบ order-taking กี่ตัว และส่งของได้กี่วันต่อสัปดาห์ · อ่านจาก replica ของ josh": {"th": "ลูกค้าแต่ละรายสั่ง SKU แบบ order-taking กี่ตัว และส่งของได้กี่วันต่อสัปดาห์ · อ่านจาก replica ของ josh", "en": "How many order-taking SKUs each customer orders & weekly delivery frequency · Read from Josh replica"},
+    "ส่งได้อย่างน้อย (วัน/สัปดาห์)": {"th": "ส่งได้อย่างน้อย (วัน/สัปดาห์)", "en": "Min Delivery Days/Week"},
+    "ราย": {"th": "ราย", "en": "accounts"},
+    "SKU ที่สั่ง": {"th": "SKU ที่สั่ง", "en": "Ordered SKUs"},
+    "SKU order-taking": {"th": "SKU order-taking", "en": "Order-taking SKUs"},
+    "มีรอบส่งเปิด": {"th": "มีรอบส่งเปิด", "en": "Delivery slots open"},
+    "ส่งได้/สัปดาห์": {"th": "ส่งได้/สัปดาห์", "en": "Deliveries/week"},
+    "ไม่พบข้อมูล": {"th": "ไม่พบข้อมูล", "en": "No records found"},
+    "กำหนดสิทธิ์": {"th": "กำหนดสิทธิ์", "en": "Assign permissions"},
+    "คนขับ (courier)": {"th": "คนขับ (courier)", "en": "Courier"},
+    "งาน Winback": {"th": "งาน Winback", "en": "Winback Task"},
+    "ชื่อไทย": {"th": "ชื่อไทย", "en": "Thai Name"},
+    "ดูรายชื่อ": {"th": "ดูรายชื่อ", "en": "View list"},
+    "ทุกไฟล์ไม่พบ SKU ในระบบ": {"th": "ทุกไฟล์ไม่พบ SKU ในระบบ", "en": "No matched SKUs across files"},
+    "ประวัติการใช้": {"th": "ประวัติการใช้", "en": "Usage history"},
+    "เพิ่มขั้น": {"th": "เพิ่มขั้น", "en": "Add tier"},
+    "ไม่มีข้อมูลช่วงก่อน": {"th": "ไม่มีข้อมูลช่วงก่อน", "en": "No prior interval data"},
+    "ยังไม่มีฝ่ายขาย": {"th": "ยังไม่มีฝ่ายขาย", "en": "Unassigned sales rep"},
+    "ราคา (ex VAT)": {"th": "ราคา (ex VAT)", "en": "Price (ex VAT)"},
+    "ลบเงื่อนไข": {"th": "ลบเงื่อนไข", "en": "Remove criteria"},
+    "ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ not_tested หรือ na, ห้ามตั้ง pass/fail จนกว่าจะไล่ได้จริง": {"th": "ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ not_tested หรือ na, ห้ามตั้ง pass/fail จนกว่าจะไล่ได้จริง", "en": "Untraceable in cycle 1 — select not_tested or na only, do not set pass/fail until confirmed"},
+    "สร้างรายชื่อตอนนี้": {"th": "สร้างรายชื่อตอนนี้", "en": "Create Lead Now"},
+    "หมายเหตุบัญชี": {"th": "หมายเหตุบัญชี", "en": "Account note"},
+    "อ่านได้เฉพาะหน้านี้ (ไม่พบหน้าถัดไป)": {"th": "อ่านได้เฉพาะหน้านี้ (ไม่พบหน้าถัดไป)", "en": "Read on this page only (no next page found)"},
+    "ดูรายละเอียด {0}": {"th": "ดูรายละเอียด {0}", "en": "View details {0}"},
+    "เลือกเขต {0}": {"th": "เลือกเขต {0}", "en": "Select district {0}"},
+    "สูงสุด {0}:00": {"th": "สูงสุด {0}:00", "en": "Peak at {0}:00"},
+    "เขต": {"th": "เขต", "en": "District"},
+    "ช่วงคนเยอะ": {"th": "ช่วงคนเยอะ", "en": "Peak Hours"},
+    "นั่งทาน": {"th": "นั่งทาน", "en": "Dine-in"},
+    "ซื้อกลับ": {"th": "ซื้อกลับ", "en": "Takeaway"},
+    "เดลิเวอรี": {"th": "เดลิเวอรี", "en": "Delivery"},
+    "ร้านอาหาร": {"th": "ร้านอาหาร", "en": "Restaurant"},
+    "ร้านกาแฟ": {"th": "ร้านกาแฟ", "en": "Cafe"},
+    "อาหารไทย": {"th": "อาหารไทย", "en": "Thai Food"},
+    "อาหารญี่ปุ่น": {"th": "อาหารญี่ปุ่น", "en": "Japanese Food"},
+    "อาหารจีน": {"th": "อาหารจีน", "en": "Chinese Food"},
+    "อาหารจานด่วน": {"th": "อาหารจานด่วน", "en": "Fast Food"},
+    "ก๋วยเตี๋ยว": {"th": "ก๋วยเตี๋ยว", "en": "Noodles"}
+  }
+  </script>
+<!-- ==========================================
+       LIGHTWEIGHT VANILLA JS LOGIC
+       ========================================== -->
+<script>
+    // Detailed lead records for the slide-out drawer
+    const restaurantData = {
+      kenshin: {
+        title: "Kenshin Izakaya (เคนชิน อิซากายะ)",
+        tag: "อาหารญี่ปุ่น",
+        status: "ยังไม่มีในรายชื่อฝ่ายขาย",
+        statusType: "unassigned",
+        address: "อโศก สี่แยกอโศก-สุขุมวิท 21 · เขตวัฒนา กรุงเทพฯ",
+        rating: "4.5",
+        reviews: "(340 รีวิว)",
+        tables: "~18 - 24 โต๊ะ",
+        peakHours: "18:00 – 21:00 (สูงสุด 19:00)",
+        skuCount: "8 รายการ",
+        skuDelivery: "4 วัน / สัปดาห์",
+        skuCategories: "เนื้อวากิว, แซลมอนนอร์เวย์, ซอสปรุงรสญี่ปุ่น",
+        lat: 13.737,
+        lng: 100.560
+      },
+      roast: {
+        title: "Roast Coffee & Eatery (ทองหล่อ)",
+        tag: "ร้านกาแฟ / คาเฟ่",
+        status: "ยังไม่มีในรายชื่อฝ่ายขาย",
+        statusType: "unassigned",
+        address: "The Commons ซอยทองหล่อ 17 · เขตวัฒนา กรุงเทพฯ",
+        rating: "4.6",
+        reviews: "(512 รีวิว)",
+        tables: "~30 - 40 โต๊ะ",
+        peakHours: "11:00 – 15:00 (สูงสุด 12:30)",
+        skuCount: "12 รายการ",
+        skuDelivery: "5 วัน / สัปดาห์",
+        skuCategories: "เนยฝรั่งเศส, ครีมสด, เมล็ดกาแฟพิเศษ, ช็อกโกแลต",
+        lat: 13.734,
+        lng: 100.582
+      },
+      somtum: {
+        title: "Somtum Der (ส้มตำเด้อ ศาลาแดง)",
+        tag: "อาหารไทย",
+        status: "มีในรายชื่อฝ่ายขายแล้ว",
+        statusType: "assigned",
+        address: "5/5 ซอยศาลาแดง ถนนสีลม · เขตบางรัก กรุงเทพฯ",
+        rating: "4.4",
+        reviews: "(210 รีวิว)",
+        tables: "~15 - 20 โต๊ะ",
+        peakHours: "12:00 – 14:00 (สูงสุด 13:00)",
+        skuCount: "5 รายการ (CUST-4412)",
+        skuDelivery: "3 วัน / สัปดาห์",
+        skuCategories: "ปลาร้าต้มสุกเกรดส่งออก, ข้าวเหนียวเขี้ยวงู, มะนาวสด",
+        lat: 13.728,
+        lng: 100.536
+      },
+      sushi: {
+        title: "Sushi Mori (ซูชิ โมริ สาทร)",
+        tag: "อาหารญี่ปุ่น",
+        status: "ยังไม่มีในรายชื่อฝ่ายขาย",
+        statusType: "unassigned",
+        address: "อาคารสาทรธานี ถนนสาทรเหนือ · เขตสาทร กรุงเทพฯ",
+        rating: "4.7",
+        reviews: "(180 รีวิว)",
+        tables: "~12 - 16 โต๊ะ",
+        peakHours: "17:30 – 21:00 (สูงสุด 19:30)",
+        skuCount: "9 รายการ",
+        skuDelivery: "4 วัน / สัปดาห์",
+        skuCategories: "ฮามาจิ, โฮตาเตะฮอกไกโด, ข้าวญี่ปุ่นพรีเมียม",
+        lat: 13.721,
+        lng: 100.530
+      }
+    };
+
+    let currentLang = 'th';
+    let translationsMap = {};
+
+    try {
+      const jsonContent = document.getElementById('commerce-ui-translations').textContent;
+      translationsMap = JSON.parse(jsonContent);
+    } catch (e) {
+      console.error("Failed to parse translations JSON", e);
+    }
+
+    // Set Language (TH / EN)
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-th');
+      const enBtn = document.getElementById('lang-en');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md bg-surface-container-lowest shadow-sm text-primary font-bold transition-all";
+        enBtn.className = "px-2.5 py-1 rounded-md text-secondary hover:text-on-surface transition-all";
+        document.documentElement.lang = "th";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md bg-surface-container-lowest shadow-sm text-primary font-bold transition-all";
+        thBtn.className = "px-2.5 py-1 rounded-md text-secondary hover:text-on-surface transition-all";
+        document.documentElement.lang = "en";
+      }
+
+      // Update text with translation keys
+      document.querySelectorAll('[data-i18n-key]').forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (translationsMap[key] && translationsMap[key][lang]) {
+          el.textContent = translationsMap[key][lang];
+        }
+      });
+    }
+
+    // Drawer Open / Close
+    let currentRestaurant = null;
+    function openDrawer(id) {
+      const data = restaurantData[id];
+      if (!data) return;
+      currentRestaurant = data;
+
+      document.getElementById('drawer-title').textContent = data.title;
+      document.getElementById('drawer-tag').textContent = data.tag;
+      document.getElementById('drawer-address').innerHTML = `<span class="material-symbols-outlined text-secondary text-[16px]">location_on</span> ${data.address}`;
+      document.getElementById('drawer-rating').innerHTML = `<span class="material-symbols-outlined text-amber-500 text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span> ${data.rating}`;
+      document.getElementById('drawer-reviews').textContent = data.reviews;
+      document.getElementById('drawer-tables').textContent = data.tables;
+      document.getElementById('drawer-peakhours').textContent = data.peakHours;
+      document.getElementById('drawer-sku-count').textContent = data.skuCount;
+      document.getElementById('drawer-sku-delivery').textContent = data.skuDelivery;
+      document.getElementById('drawer-sku-categories').textContent = data.skuCategories;
+
+      const statusEl = document.getElementById('drawer-status');
+      const assignBtn = document.getElementById('drawer-assign-btn');
+      if (data.statusType === 'assigned') {
+        statusEl.textContent = 'มีในรายชื่อฝ่ายขายแล้ว';
+        statusEl.className = 'px-2.5 py-0.5 rounded text-[11px] font-semibold bg-[#e8f5ec] text-[#157347] border border-emerald-200';
+        assignBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">visibility</span> ดูรายชื่อใน CRM';
+      } else {
+        statusEl.textContent = 'ยังไม่มีในรายชื่อฝ่ายขาย';
+        statusEl.className = 'px-2.5 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200';
+        assignBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">person_add</span> สร้างรายชื่อตอนนี้';
+      }
+
+      // Animate Drawer
+      const backdrop = document.getElementById('drawer-backdrop');
+      const drawer = document.getElementById('restaurant-drawer');
+      backdrop.classList.remove('pointer-events-none', 'opacity-0');
+      backdrop.classList.add('opacity-100');
+      drawer.classList.remove('translate-x-full');
+      drawer.classList.add('translate-x-0');
+    }
+
+    function closeDrawer() {
+      const backdrop = document.getElementById('drawer-backdrop');
+      const drawer = document.getElementById('restaurant-drawer');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+      backdrop.classList.remove('opacity-100');
+      drawer.classList.add('translate-x-full');
+      drawer.classList.remove('translate-x-0');
+    }
+
+    function openExternalMap() {
+      if (currentRestaurant) {
+        window.open(`https://maps.google.com/?q=${encodeURIComponent(currentRestaurant.title + ' ' + currentRestaurant.address)}`, '_blank');
+      }
+    }
+
+    function assignLeadNow() {
+      if (!currentRestaurant) return;
+      alert(`ดำเนินการเพิ่ม "${currentRestaurant.title}" ไปยังระบบฝ่ายขาย BKK FoodService เรียบร้อยแล้ว`);
+      closeDrawer();
+    }
+
+    // Advanced Filters toggle
+    function toggleAdvancedFilters() {
+      const box = document.getElementById('advanced-filters');
+      const arrow = document.getElementById('adv-arrow');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+      } else {
+        box.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // Quick filter chips handling
+    let activeQuick = null;
+    function toggleQuickFilter(btn, type) {
+      const chips = document.querySelectorAll('.quick-chip');
+      if (activeQuick === type) {
+        activeQuick = null;
+        btn.classList.remove('bg-primary-container', 'text-on-primary', 'border-primary');
+        btn.classList.add('bg-[#f6f8fc]', 'text-on-surface', 'border-[#e1e7f0]');
+      } else {
+        chips.forEach(c => {
+          c.classList.remove('bg-primary-container', 'text-on-primary', 'border-primary');
+          c.classList.add('bg-[#f6f8fc]', 'text-on-surface', 'border-[#e1e7f0]');
+        });
+        activeQuick = type;
+        btn.classList.remove('bg-[#f6f8fc]', 'text-on-surface', 'border-[#e1e7f0]');
+        btn.classList.add('bg-primary-container', 'text-on-primary', 'border-primary');
+      }
+      applyFilters();
+    }
+
+    function filterByDistrict(district) {
+      document.getElementById('input-district').value = district;
+      applyFilters();
+    }
+
+    // Search and filter table rows
+    function applyFilters() {
+      const nameVal = document.getElementById('input-name').value.trim().toLowerCase();
+      const distVal = document.getElementById('input-district').value.trim().toLowerCase();
+      const typeVal = document.getElementById('input-type').value.trim().toLowerCase();
+      const ratingVal = parseFloat(document.getElementById('adv-rating').value) || 0;
+
+      const rows = document.querySelectorAll('#table-body tr');
+      let visibleCount = 0;
+      let activeFilterCount = 0;
+
+      if (nameVal) activeFilterCount++;
+      if (distVal) activeFilterCount++;
+      if (typeVal) activeFilterCount++;
+      if (activeQuick) activeFilterCount++;
+      if (ratingVal > 0) activeFilterCount++;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        let matches = true;
+
+        if (nameVal && !text.includes(nameVal)) matches = false;
+        if (distVal && !text.includes(distVal)) matches = false;
+        if (typeVal && !text.includes(typeVal)) matches = false;
+
+        if (activeQuick === 'unassigned' && !text.includes('ยังไม่มีในรายชื่อ')) matches = false;
+        if (activeQuick === 'cafe' && !text.includes('กาแฟ') && !text.includes('คาเฟ่')) matches = false;
+        if (activeQuick === 'japanese' && !text.includes('ญี่ปุ่น')) matches = false;
+
+        if (matches) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('active-filter-count').textContent = activeFilterCount;
+      document.getElementById('results-count-badge').textContent = `${visibleCount} ร้าน`;
+    }
+
+    function resetAllFilters() {
+      document.getElementById('input-name').value = '';
+      document.getElementById('input-district').value = '';
+      document.getElementById('input-type').value = '';
+      document.getElementById('adv-rating').value = '0';
+      document.getElementById('adv-reviews').value = '';
+      document.getElementById('adv-peak').value = '';
+      document.getElementById('adv-delivery').value = '0';
+
+      activeQuick = null;
+      document.querySelectorAll('.quick-chip').forEach(c => {
+        c.classList.remove('bg-primary-container', 'text-on-primary', 'border-primary');
+        c.classList.add('bg-[#f6f8fc]', 'text-on-surface', 'border-[#e1e7f0]');
+      });
+
+      applyFilters();
+    }
+
+    // Export CSV Simulation with loading state
+    function simulateExport() {
+      const btn = document.getElementById('export-btn');
+      const text = document.getElementById('export-text');
+      const icon = document.getElementById('export-icon');
+
+      btn.disabled = true;
+      text.textContent = currentLang === 'th' ? "กำลังส่งออก…" : "Exporting…";
+      icon.classList.add('animate-spin');
+
+      setTimeout(() => {
+        btn.disabled = false;
+        text.textContent = currentLang === 'th' ? "ส่งออกรายชื่อ CSV" : "Export CSV Leads";
+        icon.classList.remove('animate-spin');
+        alert("ส่งออกรายชื่อร้านอาหารเป้าหมาย 184 ร้านค้า เรียบร้อยแล้ว (JOSH_order_target_leads.csv)");
+      }, 1200);
+    }
+
+    // Refresh simulation
+    function simulateRefresh() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 700);
+    }
+
+    function triggerRefresh(btn) {
+      const icon = btn.querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 800);
+    }
+
+    // ESC to close drawer
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+  </script>
+</body></html>

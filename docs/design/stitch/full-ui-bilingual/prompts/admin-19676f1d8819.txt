@@ -1,0 +1,66 @@
+Create EXACTLY ONE complete polished desktop UI design for this existing Commerce Platform route. Route identifier admin-19676f1d8819; URL /product-prices; app admin; category สินค้าและสต็อก; component ProductPrices; view type screen; current title ราคาสินค้า.
+
+# Commerce Platform — task-based UI
+
+Design for Thai commerce operations teams. The product has seven work areas:
+สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล,
+ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน. A separate developer portal manages API keys and webhooks.
+
+## Visual language
+
+- Light canvas `#f6f8fc`, white cards, restrained borders `#e1e7f0`.
+- Primary blue `#365cf5`; ink `#17243b`; secondary text `#52627a`.
+- Success `#157347`, warning `#b08900`, error `#c2333f`; always pair color with text.
+- Noto Sans Thai for Thai and Latin; body 14px, labels 13px, page titles 28px.
+- Cards have 12px corners; controls 8px. Use 16/24/32px spacing.
+- A 256px sidebar, compact contextual header, and a readable content width near 1240px.
+- SVG icons and local fonts in the application. No decorative stock photos or gradients.
+- Phone layouts stack cards and collapse navigation. Scroll wide tables inside their panel.
+
+## Usability
+
+- Lead with the task and one primary action. Show records before creation forms.
+- Organize each work area's links into short task sections, with useful descriptions.
+- Creation and editing use named dialogs, clear labels, inline errors, and Cancel/Save actions.
+- Keep keyboard focus inside dialogs, support Escape, and return focus to the trigger.
+- Record links open their own detail URLs; preserve existing routes and role restrictions.
+- Show loading, empty, filtered-empty and failed states separately.
+- Counts and operational status in the application must come from its API. Prototype samples
+  must be labeled `ข้อมูลตัวอย่าง`; never copy sample figures into application code.
+- List APIs for platform products/customers support pagination only. A frontend search must
+  explicitly say it searches the current page. Do not imply a complete catalog search.
+- Every action in the application must work. Do not add export/import, bulk changes, charts,
+  advanced filters or copy-secret actions without an existing supported API.
+
+## Business fields and workflows
+
+- Product list: SKU, name, status. Create/edit: SKU, name, description. Product detail also
+  shows fulfillment mode, lead time, update date and inventory by warehouse when available.
+- Customer list: name/code, email, phone, status. Detail shows contact data and actual orders.
+- Orders: code, status, total, creation date. Create with customer/product selectors,
+  editable quantity/unit price, add/remove lines and a calculated subtotal.
+- Stock movements: receive, count, damage/return/correction, transfer. Choose an owned
+  warehouse, enter SKU/quantity/note, show a clear explanation of the selected movement.
+- Marketing: planning, campaigns/promotions, content/communication, tracking results.
+- Reports: select a business/system report and its existing filters; show unavailable data
+  honestly, with a retry action where supported.
+- Connections: connections, inbound data, sync jobs, outgoing deliveries and failed records.
+- Team settings: staff list, create account, role management and existing password/status actions.
+- Portal: active key/webhook onboarding, key creation with the existing one-time secret,
+  subscriptions, webhook test results, and recent delivery status filters.
+
+## Implementation boundary
+
+Stitch screens are visual references. React implements the supported interactions using
+`@cp/ui`; preserve API payloads, confirmation behavior and server permissions. Complex
+migrated management pages retain their domain-specific workflows while adopting the common
+visual system. Never replace a working business screen with static generated HTML.
+
+
+THIS REQUEST COVERS ONE SPECIFIC EXISTING PAGE, INCLUDING ITS OWN DETAIL OR CREATE/EDIT FORM WHEN THIS IS THAT ROUTE. Use its supported UI copy below to infer the real workflow, field groups, actions, tables, details, status and empty/error states. Retain domain-specific controls and do not invent unsupported operations. Lists lead with records and filters; complex forms group required information before optional/advanced fields, use clear section headings and sticky Cancel/Save actions; details lead with facts then related records and existing actions. Preserve business meanings. If a referenced UI message belongs to a shared component or another screen, include it in translation data but do not show it unnecessarily in this page. For authenticated admin use 256px sidebar with 7 Thai work areas; for portal use its 4-item sidebar; auth pages use a calm centered form. Main width near1240px, blue #365cf5, canvas #f6f8fc, white12px cards, 40px controls, 14px body, Noto Sans Thai. No decorative charts or stock photos.
+
+BILINGUAL REQUIREMENT: provide Thai and English with a visible ไทย / English selector; default Thai. Keep example records clearly marked ข้อมูลตัวอย่าง / Sample data. Never translate product/customer names, identifiers, URLs, payload enums or code; UI labels/help/errors/actions must have natural translations in both languages.
+
+Exact UI copy catalogue for export (all keys required): ["ราคาสินค้า","ยกเลิก","ค้นหา","SKU","อนุมัติ","ไม่อนุมัติ","ที่มา","แก้","ราคาขาย","ราคาขาย (ต่อหน่วยขาย) ราคาสั่ง (ต่อหน่วยสั่ง) และ MOQ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · ทุกการเปลี่ยนส่งให้ร้าน (josh)","ยังไม่ได้สลับ — ราคายังแก้และอนุมัติที่ josh (COMMERCE_OWNS_PRICES)","ราคาสั่ง","MOQ","ERP เปลี่ยนเมื่อ","ไม่มีราคาที่รออนุมัติ","ราคาปัจจุบัน","บันทึก","แก้ล่าสุด","ไม่พบ SKU","ยังไม่มีราคา — import จาก josh ก่อนสลับ","· workflow","+ สร้าง segment ใหม่","Brand:","Different URL for web","Images","new","Product List","Settings","User ID","การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง","แก้ไขหน้าโปรโมชัน","ค้นหาในหมวด","เงินสด / COD","ชิ้น / ตัว / ฟอง","โซเชียล","ตัวเลือกเพิ่มเติม","บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว","เปลี่ยน","เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง","ไม่มี quotation","ยังไม่มีข้อมูลเขตตามเงื่อนไขนี้","รอชำระเงิน","รายละเอียด (อังกฤษ)","ลิงก์เดียว — มือถือเด้งเข้าแอป/สโตร์ ส่วน desktop เปิดหน้าเว็บ เอาไปยิง ads ได้เลย","วางไฟล์เพิ่มได้ (เหลืออีก","ส่วนลดของคูปองนี้กำหนดในส่วน &quot;ประเภทและส่วนลด&quot; ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ","หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate","อัปเดตล่าสุด"]
+
+IMPORTANT: exported HTML MUST contain an invisible <script id="commerce-ui-translations" type="application/json"> JSON object whose keys are EVERY exact source string in the copy catalogue. Each value must be {"th":"Thai UI translation","en":"English UI translation"}. Preserve exact keys and interpolation placeholders such as {0}. Original English source strings should keep their existing English spelling. Use these translations for a working language selector. Do NOT display this dictionary in the product. This export requirement was already successfully applied to the order-import screen in this design project series. Generate only this route's screen and keep the project consistent.

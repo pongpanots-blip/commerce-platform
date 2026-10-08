@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ข้อมูลซัพพลายเออร์ - Commerce Hub</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-secondary": "#ffffff",
+            "primary-container": "#365cf5",
+            "primary": "#0a3fdc",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#243048",
+            "secondary-fixed-dim": "#b7c7e3",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-container-high": "#e0e8ff",
+            "surface-container": "#e8eeff",
+            "on-primary-fixed": "#001257",
+            "outline-variant": "#c4c5d8",
+            "outline": "#747687",
+            "on-surface-variant": "#444655",
+            "on-background": "#0e1b32",
+            "tertiary-container": "#007c50",
+            "tertiary": "#00613d",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-primary-container": "#ededff",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed": "#0b1c31",
+            "primary-fixed": "#dde1ff",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-surface": "#0e1b32",
+            "surface-dim": "#cddaf9",
+            "secondary": "#4f5f77",
+            "on-tertiary-fixed": "#002112",
+            "on-primary": "#ffffff",
+            "secondary-fixed": "#d3e3ff",
+            "surface-container-low": "#f1f3ff",
+            "surface-container-highest": "#d7e2ff",
+            "on-tertiary-container": "#b4ffd2",
+            "surface-variant": "#d7e2ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "inverse-primary": "#b9c3ff",
+            "surface-tint": "#214ce7",
+            "on-tertiary-fixed-variant": "#005233",
+            "tertiary-fixed-dim": "#59de9e",
+            "surface-bright": "#f9f9ff",
+            "background": "#f9f9ff",
+            "error": "#ba1a1a",
+            "surface": "#f9f9ff",
+            "secondary-container": "#d0e1fd",
+            "on-secondary-container": "#54647c",
+            "tertiary-fixed": "#77fbb8",
+            "primary-fixed-dim": "#b9c3ff"
+          },
+          fontFamily: {
+            "headline-lg-mobile": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-lg": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "display": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "label-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-sm": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "body-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"],
+            "headline-md": ["Noto Sans", "Noto Sans Thai", "sans-serif"]
+          },
+          fontSize: {
+            "headline-lg-mobile": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "headline-lg": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "600" }],
+            "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "600" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "label-lg": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+            "display": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }],
+            "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "body-md": ["14px", { lineHeight: "22px", fontWeight: "400" }],
+            "headline-md": ["18px", { lineHeight: "26px", letterSpacing: "-0.01em", fontWeight: "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-surface text-on-surface antialiased overflow-x-hidden">
+<!-- Desktop Fixed SideNavBar matching Shared Components JSON -->
+<aside class="w-64 h-screen fixed left-0 top-0 z-30 flex flex-col bg-surface-container-lowest border-r border-outline-variant shadow-sm">
+<div class="p-4 flex items-center justify-between border-b border-outline-variant/40">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-bold text-headline-sm">
+          CH
+        </div>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-semibold text-on-surface leading-tight">Commerce Hub</h1>
+<p class="text-label-sm font-label-sm text-secondary">Enterprise Operations</p>
+</div>
+</div>
+</div>
+<!-- Quick Action / CTA -->
+<div class="px-3 pt-3 pb-2">
+<button class="w-full flex items-center justify-center gap-2 bg-primary-container hover:bg-primary text-on-primary py-2 px-3 rounded-lg text-label-md font-label-md font-semibold transition-colors duration-150 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>เพิ่มสินค้าใหม่</span>
+</button>
+</div>
+<!-- Navigation Tab List -->
+<nav class="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+<!-- 1. สินค้าและสต็อก (Active Group) -->
+<div>
+<div class="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-container-low text-primary font-semibold cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary fill-icon">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</div>
+<span class="material-symbols-outlined text-[18px]">expand_less</span>
+</div>
+<!-- Sub-links for Josh & Supply Chain Operations -->
+<div class="mt-1 ml-4 pl-3 border-l-2 border-primary/20 space-y-1 text-label-sm font-label-sm">
+<a class="block py-1.5 px-2 rounded text-secondary hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">แคตตาล็อกแพลตฟอร์ม</a>
+<a class="block py-1.5 px-2 rounded text-secondary hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">จัดการสินค้า</a>
+<a class="block py-1.5 px-2 rounded text-secondary hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">ราคาสินค้า</a>
+<a class="block py-1.5 px-2 rounded text-secondary hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">รอบสั่งซื้อ supplier</a>
+<a class="block py-1.5 px-2 rounded text-secondary hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">จัดการซัพพลายเออร์</a>
+<a class="flex items-center justify-between py-1.5 px-2 rounded bg-primary/10 text-primary font-semibold" href="#">
+<span>ข้อมูลซัพพลายเออร์ (josh)</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="block py-1.5 px-2 rounded text-secondary hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">คิวข้อมูลสินค้าจาก ERP</a>
+<a class="block py-1.5 px-2 rounded text-secondary hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">ความเคลื่อนไหวสต็อก</a>
+<a class="block py-1.5 px-2 rounded text-secondary hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">สต็อกแยกตามคลัง</a>
+</div>
+</div>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">integration_instructions</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+<!-- Sidebar Footer -->
+<div class="p-3 border-t border-outline-variant/40 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-md font-label-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span>ช่วยเหลือและคู่มือ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-md font-label-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Developer Portal</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container/30 text-label-md font-label-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar Contextual Header -->
+<header class="h-16 fixed top-0 right-0 left-64 z-20 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-6 shadow-sm">
+<!-- Breadcrumb & Route Context -->
+<div class="flex items-center gap-3">
+<nav class="flex items-center gap-1.5 text-body-sm font-body-sm">
+<span class="text-secondary">สินค้าและสต็อก</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">ข้อมูลซัพพลายเออร์</span>
+</nav>
+<span class="text-xs bg-surface-container-low text-secondary border border-outline-variant/60 font-mono px-2 py-0.5 rounded">admin-6c2949f545e5</span>
+<span class="text-xs bg-secondary-fixed/50 text-on-secondary-fixed font-mono px-2 py-0.5 rounded">/josh/suppliers</span>
+<span class="text-label-sm font-label-sm bg-surface-container-high text-primary px-2.5 py-0.5 rounded-full font-semibold border border-primary/20" data-translate="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</div>
+<!-- Right Controls: Language Switcher, Action Icons, Profile -->
+<div class="flex items-center gap-4">
+<!-- Working Language Switcher Button -->
+<button class="flex items-center gap-1.5 px-2.5 py-1 text-label-md font-label-md rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-on-surface transition-all" id="lang-toggle-btn">
+<span class="material-symbols-outlined text-[16px]">language</span>
+<span id="current-lang-text">ไทย / English</span>
+</button>
+<button class="text-secondary hover:text-on-surface p-1.5 rounded-lg hover:bg-surface-container transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="text-secondary hover:text-on-surface p-1.5 rounded-lg hover:bg-surface-container transition-colors" title="Help">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-6 w-px bg-outline-variant/50"></div>
+<!-- User Profile Avatar and Identity -->
+<div class="flex items-center gap-2.5 pl-1">
+<div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-label-md font-semibold font-headline-sm">
+          CO
+        </div>
+<div class="text-left">
+<div class="text-label-md font-label-md font-semibold text-on-surface leading-tight">ทีมปฏิบัติการ Commerce Ops</div>
+<div class="text-label-sm font-label-sm text-secondary">Admin-01 · สิทธิ์เต็ม</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-64 mt-16 p-6 min-h-[calc(100vh-64px)] bg-[#f6f8fc]">
+<div class="max-w-[1240px] mx-auto space-y-6">
+<!-- Page Header & Global Josh Integration Badges -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2.5 flex-wrap">
+<h1 class="text-display font-display text-[26px] font-bold text-on-surface">ข้อมูลซัพพลายเออร์</h1>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary border border-primary/20 font-semibold">
+<span class="material-symbols-outlined text-[14px]">token</span>
+<span>Josh Backoffice</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#157347]/10 text-[#157347] border border-[#157347]/30 font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>Sync กับ josh สำเร็จ</span>
+</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+<span class="font-semibold text-on-surface-variant" data-translate="อ่านอย่างเดียว · ข้อมูลจาก josh">อ่านอย่างเดียว · ข้อมูลจาก josh</span> — ข้อมูลซัพพลายเออร์และผู้ผลิตที่ผูกกับระบบจัดซื้อของ josh พร้อมสถานะการอนุญาตและคู่ค้า
+          </p>
+</div>
+<!-- Global Header Actions -->
+<div class="flex items-center gap-3 shrink-0">
+<button class="inline-flex items-center gap-1.5 px-4 h-10 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container text-label-lg font-label-lg font-semibold transition-colors shadow-sm" id="btn-refresh">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span data-translate="Refresh">Refresh</span>
+</button>
+<a class="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-label-lg font-label-lg font-semibold transition-colors shadow-sm" href="https://web-admin.josh.internal" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+<span data-translate="สั่ง josh ได้ · ตามสิทธิ์ใน josh">สั่ง josh ได้ · ตามสิทธิ์ใน josh</span>
+</a>
+</div>
+</div>
+<!-- Critical Notice Banners -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Banner 1: Read-Only Info & Security Masking -->
+<div class="rounded-xl bg-surface-container-lowest border border-outline-variant p-4 flex gap-3 shadow-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">policy</span>
+</div>
+<div class="text-body-sm font-body-sm leading-relaxed">
+<div class="font-semibold text-on-surface" data-translate="อ่านอย่างเดียว · ข้อมูลจาก josh">
+              อ่านอย่างเดียว · ข้อมูลจาก josh
+            </div>
+<div class="text-secondary mt-0.5">
+<span data-translate="แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (">แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (</span>
+<a class="text-primary hover:underline font-medium" href="#">web-admin.josh.internal</a>
+<span data-translate=") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง">) · เบอร์ อีเมล ชื่อคน ถูกปิดบัง</span> ตามนโยบายความปลอดภัยและสิทธิ์การเข้าถึงข้อมูลคู่ค้า
+            </div>
+</div>
+</div>
+<!-- Banner 2: Procurement Integration Notice -->
+<div class="rounded-xl bg-primary/5 border border-primary/20 p-4 flex gap-3 shadow-sm">
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">fact_check</span>
+</div>
+<div class="text-body-sm font-body-sm leading-relaxed">
+<div class="font-semibold text-primary" data-translate="สั่ง josh ได้ · ตามสิทธิ์ใน josh">
+              สั่ง josh ได้ · ตามสิทธิ์ใน josh
+            </div>
+<div class="text-secondary mt-0.5">
+              การสั่งซื้อหรือเปิดใบสั่งซื้อ (PO) ซิงค์ตรงเข้าคิวคำสั่งซื้อกลางของ josh ผ่าน Service Gateway ได้ทันทีโดยไม่ต้องกรอกข้อมูลซ้ำซ้อน
+            </div>
+</div>
+</div>
+</div>
+<!-- Summary KPI Metric Cards (Bento-style 4 metrics) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md">ซัพพลายเออร์ในระบบ josh</span>
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+</div>
+<div class="text-[28px] font-bold text-on-surface leading-tight">14 <span class="text-body-sm font-body-sm text-secondary font-normal">ราย</span></div>
+<div class="mt-2 text-label-sm font-label-sm flex items-center gap-1.5 text-secondary">
+<span class="text-[#157347] font-semibold">เปิดใช้งาน 12</span>
+<span>·</span>
+<span class="text-secondary">ระงับ 2</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md">สินค้าที่ผูก SKU ของเรา</span>
+<span class="material-symbols-outlined text-primary">join_inner</span>
+</div>
+<div class="text-[28px] font-bold text-on-surface leading-tight">128 <span class="text-body-sm font-body-sm text-secondary font-normal">SKU</span></div>
+<div class="mt-2 text-label-sm font-label-sm flex items-center gap-1 text-[#157347] font-medium">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span><span data-translate="จับคู่ SKU ของเรา">จับคู่ SKU ของเรา</span> สมบูรณ์ 98.4%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md">สิทธิ์การสั่งซื้อ PO อัตโนมัติ</span>
+<span class="material-symbols-outlined text-primary">verified_user</span>
+</div>
+<div class="text-[24px] font-bold text-on-surface leading-tight mt-1 text-[#157347]">เปิดใช้งานแล้ว</div>
+<div class="mt-2 text-label-sm font-label-sm text-secondary">
+<span data-translate="สั่ง josh ได้ · ตามสิทธิ์ใน josh">สั่ง josh ได้ · ตามสิทธิ์ใน josh</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md">รอบการซิงค์ข้อมูลล่าสุด</span>
+<span class="material-symbols-outlined text-primary">sync</span>
+</div>
+<div class="text-[24px] font-bold text-on-surface leading-tight mt-1">เมื่อ 5 นาทีที่แล้ว</div>
+<div class="mt-2 text-label-sm font-label-sm text-secondary">
+            อัตโนมัติจาก josh API · Interval 15m
+          </div>
+</div>
+</div>
+<!-- Search, Filter & Quick Options Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 shadow-sm space-y-3">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<!-- Search Input -->
+<div class="md:col-span-5 relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface placeholder:text-outline focus:border-primary-container focus:ring-2 focus:ring-primary/20 transition-all" id="filter-keyword" placeholder="ค้นหาด้วยชื่อ, รหัสซัพพลายเออร์, หมวดหมู่..." type="text"/>
+</div>
+<!-- Status Dropdown -->
+<div class="md:col-span-3">
+<select class="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary/20" id="filter-status">
+<option value="ALL">สถานะ: ทั้งหมด</option>
+<option value="ACTIVE">เปิดใช้งาน (Active)</option>
+<option value="INACTIVE">ปิดใช้งาน (Inactive)</option>
+</select>
+</div>
+<!-- Category Dropdown -->
+<div class="md:col-span-2">
+<select class="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary/20" id="filter-category">
+<option value="ALL">หมวดหมู่: ทั้งหมด</option>
+<option value="FRESH">ของสด &amp; วัตถุดิบ</option>
+<option value="PROCESSED">อาหารแปรรูป</option>
+<option value="DAIRY">ผลิตภัณฑ์นม</option>
+<option value="PACKAGING">บรรจุภัณฑ์</option>
+</select>
+</div>
+<!-- Filter Action Buttons -->
+<div class="md:col-span-2 flex items-center gap-2">
+<button class="flex-1 h-10 bg-primary-container hover:bg-primary text-on-primary rounded-lg text-label-md font-label-md font-semibold transition-colors flex items-center justify-center gap-1" id="btn-search-apply">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+<span data-translate="ค้นหา">ค้นหา</span>
+</button>
+<button class="px-3 h-10 bg-surface-container-lowest hover:bg-surface-container border border-outline-variant text-secondary hover:text-on-surface rounded-lg text-label-md font-label-md transition-colors" data-translate="ล้างตัวกรอง" id="btn-filter-clear" title="ล้างตัวกรอง">
+              ล้างตัวกรอง
+            </button>
+</div>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm text-secondary pt-2 border-t border-outline-variant/30">
+<div>
+            * การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API · <span data-translate="พบ">พบ</span> <span class="font-semibold text-on-surface" id="record-count">5</span> <span data-translate="รายการ">รายการ</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-mono">Tenant: JOSH-PROD-TH</span>
+</div>
+</div>
+</div>
+<!-- Main Data Table Container -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<!-- Table Toolbar -->
+<div class="px-6 py-4 border-b border-outline-variant flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">database</span>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">ตารางรายชื่อซัพพลายเออร์ (josh sync)</h2>
+<span class="ml-2 text-xs bg-surface-container-low text-primary px-2.5 py-0.5 rounded-full font-semibold">
+<span data-translate="พบ">พบ</span> 5 <span data-translate="รายการ">รายการ</span>
+</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-outline-variant text-label-sm font-label-sm font-medium text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" data-translate="คอลัมน์ · ~">
+<span class="material-symbols-outlined text-[16px]">view_column</span>
+<span>คอลัมน์ · ~</span>
+</button>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-outline-variant text-label-sm font-label-sm font-medium text-secondary hover:bg-surface-container hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Export CSV</span>
+</button>
+</div>
+</div>
+<!-- Table View -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-body-md font-body-md">
+<thead>
+<tr class="bg-[#edf2f9] text-[#52627a] text-label-md font-label-md font-semibold tracking-wider border-b border-outline-variant uppercase">
+<th class="py-3 px-4 w-12 text-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</th>
+<th class="py-3 px-4">รหัส / Code</th>
+<th class="py-3 px-4">ชื่อซัพพลายเออร์</th>
+<th class="py-3 px-4">หมวดหมู่</th>
+<th class="py-3 px-4">ข้อมูลติดต่อ (ปิดบัง PDPA)</th>
+<th class="py-3 px-4" data-translate="จับคู่ SKU ของเรา">จับคู่ SKU ของเรา</th>
+<th class="py-3 px-4">สิทธิ์ในระบบ josh</th>
+<th class="py-3 px-4">สถานะ</th>
+<th class="py-3 px-4 text-right" data-translate="จัดการ">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40" id="suppliers-table-body">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 text-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-3.5 px-4 font-mono font-semibold text-primary text-body-sm font-body-sm">
+                  JOSH-SUP-001
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">บริษัท สยามอกริฟู้ดส์ จำกัด</div>
+<div class="text-label-sm font-label-sm text-secondary">Siam Agri Foods Public Co., Ltd.</div>
+</td>
+<td class="py-3.5 px-4 text-secondary">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-label-sm font-label-sm font-medium">วัตถุดิบสด</span>
+</td>
+<td class="py-3.5 px-4 text-secondary text-body-sm font-body-sm">
+<span class="font-mono text-outline">คุณสม*** (081-445-****, c***@siamagrifoods.co.th)</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-on-surface">24 SKU</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20" data-translate="จับคู่ SKU ของเรา">จับคู่ SKU ของเรา</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-primary/10 text-primary border border-primary/20" data-translate="สั่ง josh ได้ · ตามสิทธิ์ใน josh">
+                    สั่ง josh ได้ · ตามสิทธิ์ใน josh
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#157347]/10 text-[#157347] border border-[#157347]/30">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>ใช้งานอยู่</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold text-primary hover:bg-surface-container rounded transition-colors" onclick="openSupplierDetail('JOSH-SUP-001')">ดูข้อมูล</button>
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold border border-outline-variant hover:bg-surface-container rounded text-on-surface transition-colors" data-translate="จัดการ">จัดการ</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 text-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-3.5 px-4 font-mono font-semibold text-primary text-body-sm font-body-sm">
+                  JOSH-SUP-004
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">เบทาโกร ฟู้ดส์ เซ็นเตอร์</div>
+<div class="text-label-sm font-label-sm text-secondary">Betagro Food Distribution Hub</div>
+</td>
+<td class="py-3.5 px-4 text-secondary">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-label-sm font-label-sm font-medium">อาหารแปรรูป</span>
+</td>
+<td class="py-3.5 px-4 text-secondary text-body-sm font-body-sm">
+<span class="font-mono text-outline">คุณวิ*** (089-210-****, o***@betagro-supply.com)</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-on-surface">48 SKU</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20" data-translate="จับคู่ SKU ของเรา">จับคู่ SKU ของเรา</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-primary/10 text-primary border border-primary/20" data-translate="สั่ง josh ได้ · ตามสิทธิ์ใน josh">
+                    สั่ง josh ได้ · ตามสิทธิ์ใน josh
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#157347]/10 text-[#157347] border border-[#157347]/30">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>ใช้งานอยู่</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold text-primary hover:bg-surface-container rounded transition-colors" onclick="openSupplierDetail('JOSH-SUP-004')">ดูข้อมูล</button>
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold border border-outline-variant hover:bg-surface-container rounded text-on-surface transition-colors" data-translate="จัดการ">จัดการ</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 text-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-3.5 px-4 font-mono font-semibold text-primary text-body-sm font-body-sm">
+                  JOSH-SUP-012
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">ซีพี ออลล์ โลจิสติกส์ &amp; สัพพลาย</div>
+<div class="text-label-sm font-label-sm text-secondary">CP All Logistics Network</div>
+</td>
+<td class="py-3.5 px-4 text-secondary">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-label-sm font-label-sm font-medium">ของสด &amp; วัตถุดิบ</span>
+</td>
+<td class="py-3.5 px-4 text-secondary text-body-sm font-body-sm">
+<span class="font-mono text-outline">คุณพ*** (02-071-****, p***@cpall-logistics.th)</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-on-surface">36 SKU</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20" data-translate="จับคู่ SKU ของเรา">จับคู่ SKU ของเรา</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-primary/10 text-primary border border-primary/20" data-translate="สั่ง josh ได้ · ตามสิทธิ์ใน josh">
+                    สั่ง josh ได้ · ตามสิทธิ์ใน josh
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#157347]/10 text-[#157347] border border-[#157347]/30">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>ใช้งานอยู่</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold text-primary hover:bg-surface-container rounded transition-colors" onclick="openSupplierDetail('JOSH-SUP-012')">ดูข้อมูล</button>
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold border border-outline-variant hover:bg-surface-container rounded text-on-surface transition-colors" data-translate="จัดการ">จัดการ</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 text-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-3.5 px-4 font-mono font-semibold text-primary text-body-sm font-body-sm">
+                  JOSH-SUP-025
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">ไร่ไทยออร์แกนิค ฟาร์ม</div>
+<div class="text-label-sm font-label-sm text-secondary">Thai Organic Farms Cooperative</div>
+</td>
+<td class="py-3.5 px-4 text-secondary">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-label-sm font-label-sm font-medium">ของสด &amp; วัตถุดิบ</span>
+</td>
+<td class="py-3.5 px-4 text-secondary text-body-sm font-body-sm">
+<span class="font-mono text-outline">คุณธ*** (063-882-****, c***@thaiorganicfarm.co.th)</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-on-surface">8 SKU</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20" data-translate="จับคู่ SKU ของเรา">จับคู่ SKU ของเรา</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-surface-container text-secondary border border-outline-variant" data-translate="อ่านอย่างเดียว · ข้อมูลจาก josh">
+                    อ่านอย่างเดียว · ข้อมูลจาก josh
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#157347]/10 text-[#157347] border border-[#157347]/30">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span>ใช้งานอยู่</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold text-primary hover:bg-surface-container rounded transition-colors" onclick="openSupplierDetail('JOSH-SUP-025')">ดูข้อมูล</button>
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold border border-outline-variant hover:bg-surface-container rounded text-on-surface transition-colors" data-translate="จัดการ">จัดการ</button>
+</div>
+</td>
+</tr>
+<!-- Row 5 (Inactive / Suspended) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors bg-surface-container-low/30">
+<td class="py-3.5 px-4 text-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-3.5 px-4 font-mono font-semibold text-secondary text-body-sm font-body-sm">
+                  JOSH-SUP-031
+                </td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-secondary line-through">แดรี่โกลด์ ไทยแลนด์ อินเตอร์เนชั่นแนล</div>
+<div class="text-label-sm font-label-sm text-outline">Dairy Gold (TH) Co. [ระงับชั่วคราว]</div>
+</td>
+<td class="py-3.5 px-4 text-secondary">
+<span class="px-2 py-0.5 rounded bg-surface-container text-outline text-label-sm font-label-sm font-medium">ผลิตภัณฑ์นม</span>
+</td>
+<td class="py-3.5 px-4 text-secondary text-body-sm font-body-sm">
+<span class="font-mono text-outline">คุณก*** (02-555-****, s***@dairygold.th)</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-medium text-secondary">12 SKU</span>
+<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] text-outline border border-outline-variant/50">ระงับส่ง</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-surface-container text-secondary border border-outline-variant" data-translate="อ่านอย่างเดียว · ข้อมูลจาก josh">
+                    อ่านอย่างเดียว · ข้อมูลจาก josh
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#c2333f]/10 text-[#c2333f] border border-[#c2333f]/30">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+<span>ปิดใช้งาน</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold text-primary hover:bg-surface-container rounded transition-colors" onclick="openSupplierDetail('JOSH-SUP-031')">ดูข้อมูล</button>
+<button class="px-2.5 py-1 text-label-sm font-label-sm font-semibold border border-outline-variant hover:bg-surface-container rounded text-on-surface transition-colors" data-translate="จัดการ">จัดการ</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="px-6 py-3.5 border-t border-outline-variant bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm">
+<div class="text-secondary">
+            แสดง 1 ถึง 5 จาก <span class="font-semibold text-on-surface">5</span> <span data-translate="รายการ">รายการ</span> (ข้อมูลซิงค์ตรงจาก josh master database)
+          </div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant text-secondary opacity-50 cursor-not-allowed text-label-md font-label-md">ก่อนหน้า</button>
+<span class="px-3 py-1 bg-primary text-on-primary rounded-lg text-label-md font-label-md font-semibold">1</span>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant text-secondary opacity-50 cursor-not-allowed text-label-md font-label-md">ถัดไป</button>
+</div>
+</div>
+</div>
+<!-- Policy & Architectural Protocols Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-2">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[20px]">cloud_sync</span>
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface">การเชื่อมต่อข้อมูลกับ josh</h3>
+</div>
+<p class="text-body-sm font-body-sm text-secondary leading-relaxed">
+<span class="font-semibold text-on-surface-variant" data-translate="อ่านอย่างเดียว · ข้อมูลจาก josh">อ่านอย่างเดียว · ข้อมูลจาก josh</span> โดยการเปลี่ยนแปลงข้อมูลหลักจำเป็นต้องทำผ่านระบบ josh โดยตรง เพื่อป้องกันความขัดแย้งของ schema ฐานข้อมูลศูนย์กลาง
+          </p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-2">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[20px]">shield_person</span>
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface">การรักษาความปลอดภัยข้อมูลคู่ค้า</h3>
+</div>
+<p class="text-body-sm font-body-sm text-secondary leading-relaxed">
+<span class="font-semibold text-on-surface-variant" data-translate=") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง">) · เบอร์ อีเมล ชื่อคน ถูกปิดบัง</span> เพื่อปกป้องข้อมูลส่วนบุคคลตาม PDPA และสิทธิ์ของระดับพนักงานในหน้าจอทั่วไป ข้อมูลเต็มเปิดเผยเฉพาะเมื่อมี audit trace
+          </p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-2">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface">กฎการสั่งซื้อและการส่งต่อ PO</h3>
+</div>
+<p class="text-body-sm font-body-sm text-secondary leading-relaxed">
+<span class="font-semibold text-on-surface-variant" data-translate="สั่ง josh ได้ · ตามสิทธิ์ใน josh">สั่ง josh ได้ · ตามสิทธิ์ใน josh</span> ที่ได้รับมอบหมายในระบบส่วนกลาง ใบสั่งซื้อจะถูกส่งเข้าคิว API พร้อมหมายเลขธุรกรรมแบบ idempotency
+          </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Detail Modal (Interactive UI Demonstration) -->
+<div class="fixed inset-0 bg-[#17243b]/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" id="supplier-modal">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl max-w-lg w-full p-6 shadow-xl space-y-4">
+<div class="flex items-center justify-between border-b border-outline-variant/60 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">info</span>
+<h3 class="text-headline-md font-headline-md font-bold text-on-surface">รายละเอียดซัพพลายเออร์ josh</h3>
+</div>
+<button class="text-secondary hover:text-on-surface p-1 rounded-lg" onclick="closeSupplierModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="text-body-sm font-body-sm text-secondary space-y-3" id="modal-content">
+<!-- Injected via script -->
+</div>
+<div class="flex justify-end gap-2 pt-3 border-t border-outline-variant/60">
+<button class="px-4 py-2 border border-outline-variant rounded-lg text-label-md font-label-md text-secondary hover:bg-surface-container" onclick="closeSupplierModal()">ปิดหน้าต่าง</button>
+<a class="px-4 py-2 bg-primary-container text-on-primary rounded-lg text-label-md font-label-md font-semibold hover:bg-primary" href="https://web-admin.josh.internal" target="_blank">เปิดใน web-admin ของ josh</a>
+</div>
+</div>
+</div>
+<!-- Mandatory Translation Dictionary Script -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ล้างตัวกรอง": { "th": "ล้างตัวกรอง", "en": "Clear Filters" },
+    "Refresh": { "th": "Refresh", "en": "Refresh" },
+    "ค้นหา": { "th": "ค้นหา", "en": "Search" },
+    "ทั้งหมด": { "th": "ทั้งหมด", "en": "All" },
+    "สั่ง josh ได้ · ตามสิทธิ์ใน josh": { "th": "สั่ง josh ได้ · ตามสิทธิ์ใน josh", "en": "Orderable via josh · Subject to josh permissions" },
+    "อ่านอย่างเดียว · ข้อมูลจาก josh": { "th": "อ่านอย่างเดียว · ข้อมูลจาก josh", "en": "Read-only · Data from josh" },
+    "แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (": { "th": "แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (", "en": "Other edits are still managed at josh web-admin (" },
+    ") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง": { "th": ") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง", "en": ") · Phone, email, contact names are masked" },
+    "ค้นหา…": { "th": "ค้นหา…", "en": "Search…" },
+    "พบ": { "th": "พบ", "en": "Found" },
+    "รายการ": { "th": "รายการ", "en": "items" },
+    "จัดการ": { "th": "จัดการ", "en": "Manage" },
+    "ไม่มีรายการ": { "th": "ไม่มีรายการ", "en": "No items found" },
+    "ข้อความป้าย (English)": { "th": "ข้อความป้าย (English)", "en": "Badge text (English)" },
+    "คอลัมน์ · ~": { "th": "คอลัมน์ · ~", "en": "Columns · ~" },
+    "จับคู่ SKU ของเรา": { "th": "จับคู่ SKU ของเรา", "en": "Matched with our SKUs" },
+    "ชื่อ Action": { "th": "ชื่อ Action", "en": "Action Name" },
+    "ใช้เฉพาะบัญชีของบริษัทเราเอง · รหัสผ่านเก็บแบบเข้ารหัสและจะไม่แสดงอีก · ราคาที่เห็นหลังล็อกอินนับเป็น “ราคาสมาชิก” แยกจากราคาปกติ · เว็บที่มี CAPTCHA/OTP ล็อกอินอัตโนมัติไม่ได้": {
+      "th": "ใช้เฉพาะบัญชีของบริษัทเราเอง · รหัสผ่านเก็บแบบเข้ารหัสและจะไม่แสดงอีก · ราคาที่เห็นหลังล็อกอินนับเป็น “ราคาสมาชิก” แยกจากราคาปกติ · เว็บที่มี CAPTCHA/OTP ล็อกอินอัตโนมัติไม่ได้",
+      "en": "For internal company accounts only · Passwords are encrypted and never shown again · Prices seen after login are considered 'Member Prices' separate from regular list prices · Sites requiring CAPTCHA/OTP cannot be automated"
+    },
+    "ตั้งค่าเว็บ": { "th": "ตั้งค่าเว็บ", "en": "Web Settings" },
+    "ทุกสินค้า (All products)": { "th": "ทุกสินค้า (All products)", "en": "All products" },
+    "เบอร์คนขับ": { "th": "เบอร์คนขับ", "en": "Driver Contact" },
+    "ผลการค้นหาบริษัท": { "th": "ผลการค้นหาบริษัท", "en": "Company Search Results" },
+    "ไฟล์อ่าน SKU ได้ปกติ แต่การอัปโหลดล้มเหลว อาจเกิดจากปัญหาเครือข่ายหรือเซิร์ฟเวอร์ชั่วคราว ลองกด “ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ” ด้านล่าง": {
+      "th": "ไฟล์อ่าน SKU ได้ปกติ แต่การอัปโหลดล้มเหลว อาจเกิดจากปัญหาเครือข่ายหรือเซิร์ฟเวอร์ชั่วคราว ลองกด “ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ” ด้านล่าง",
+      "en": "SKUs were read properly from the file, but upload failed due to network or temporary server issue. Please click 'Retry failed files only' below"
+    },
+    "ไม่พบชุดสินค้า (ถูกลบ?)": { "th": "ไม่พบชุดสินค้า (ถูกลบ?)", "en": "Product bundle not found (Deleted?)" },
+    "ยังไม่มี show_offer ในผลรัน — เพิ่ม Action \"แสดง Offer\" เลือกคูปอง แล้วทดสอบอีกครั้ง (ปิด Dry run)": {
+      "th": "ยังไม่มี show_offer ในผลรัน — เพิ่ม Action \"แสดง Offer\" เลือกคูปอง แล้วทดสอบอีกครั้ง (ปิด Dry run)",
+      "en": "No show_offer found in execution result — Add 'Show Offer' Action, select coupons, and test again (Turn off Dry run)"
+    },
+    "รองรับ JPG, PNG, WebP สูงสุด 5MB — แสดงในกระเป๋าคูปองของลูกค้า": {
+      "th": "รองรับ JPG, PNG, WebP สูงสุด 5MB — แสดงในกระเป๋าคูปองของลูกค้า",
+      "en": "Supports JPG, PNG, WebP up to 5MB — Displayed inside customer coupon wallet"
+    },
+    "รูปก่อนหน้าที่สลับกลับได้ (": { "th": "รูปก่อนหน้าที่สลับกลับได้ (", "en": "Previous image that can be reverted (" },
+    "ลากเพื่อย้ายช่องเริ่มต้น / จัดลำดับ": { "th": "ลากเพื่อย้ายช่องเริ่มต้น / จัดลำดับ", "en": "Drag to reorder slot positions" },
+    "เลือกราคาสัญญาของ {0}": { "th": "เลือกราคาสัญญาของ {0}", "en": "Select contract pricing of {0}" },
+    "สร้าง template": { "th": "สร้าง template", "en": "Create template" },
+    "แสดงเพิ่ม (": { "th": "แสดงเพิ่ม (", "en": "Show more (" },
+    "โหลดประวัติการยิงไม่สำเร็จ": { "th": "โหลดประวัติการยิงไม่สำเร็จ", "en": "Failed to load dispatch history" },
+    "หยุดชั่วคราว (Paused)": { "th": "หยุดชั่วคราว (Paused)", "en": "Paused" },
+    "Wait ({0})": { "th": "Wait ({0})", "en": "Wait ({0})" },
+    "มี {0} รายการที่ไม่พบผู้ใช้แล้ว — จะถูกนำออกเมื่อบันทึก": {
+      "th": "มี {0} รายการที่ไม่พบผู้ใช้แล้ว — จะถูกนำออกเมื่อบันทึก",
+      "en": "There are {0} records with missing users — they will be pruned upon saving"
+    },
+    "ต้องเป็นจำนวนเต็ม และไม่น้อยกว่าขั้นต่ำ": {
+      "th": "ต้องเป็นจำนวนเต็ม และไม่น้อยกว่าขั้นต่ำ",
+      "en": "Must be an integer and not less than minimum requirement"
+    },
+    "ข้อมูลตัวอย่าง": { "th": "ข้อมูลตัวอย่าง", "en": "Sample Data" }
+  }
+  </script>
+<!-- Interactive Script for Localization & Micro-interactions -->
+<script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    const langToggleBtn = document.getElementById('lang-toggle-btn');
+    const langLabel = document.getElementById('current-lang-text');
+
+    function applyTranslation(targetLang) {
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (translationsData[key] && translationsData[key][targetLang]) {
+          el.textContent = translationsData[key][targetLang];
+        }
+      });
+      langLabel.textContent = targetLang === 'th' ? 'ไทย / English' : 'English / ไทย';
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      currentLang = currentLang === 'th' ? 'en' : 'th';
+      applyTranslation(currentLang);
+    });
+
+    // Refresh Micro-Interaction
+    const btnRefresh = document.getElementById('btn-refresh');
+    btnRefresh.addEventListener('click', () => {
+      const icon = btnRefresh.querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      btnRefresh.disabled = true;
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        btnRefresh.disabled = false;
+      }, 700);
+    });
+
+    // Search and Filter Micro-Interaction
+    const searchInput = document.getElementById('filter-keyword');
+    const statusSelect = document.getElementById('filter-status');
+    const btnClear = document.getElementById('btn-filter-clear');
+    const btnSearch = document.getElementById('btn-search-apply');
+    const tableBody = document.getElementById('suppliers-table-body');
+    const recordCounter = document.getElementById('record-count');
+
+    function filterTable() {
+      const query = searchInput.value.toLowerCase().trim();
+      const rows = tableBody.querySelectorAll('tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const matches = text.includes(query);
+        row.style.display = matches ? '' : 'none';
+        if (matches) visibleCount++;
+      });
+      recordCounter.textContent = visibleCount;
+    }
+
+    btnSearch.addEventListener('click', filterTable);
+    searchInput.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') filterTable();
+    });
+
+    btnClear.addEventListener('click', () => {
+      searchInput.value = '';
+      statusSelect.value = 'ALL';
+      document.getElementById('filter-category').value = 'ALL';
+      filterTable();
+    });
+
+    // Modal Interaction
+    function openSupplierDetail(code) {
+      const modal = document.getElementById('supplier-modal');
+      const content = document.getElementById('modal-content');
+      content.innerHTML = `
+        <div class="p-3 bg-surface-container rounded-lg">
+          <div class="text-label-md font-label-md text-secondary">รหัสอ้างอิง Josh Supplier</div>
+          <div class="text-headline-sm font-mono font-bold text-primary">${code}</div>
+        </div>
+        <div class="space-y-1">
+          <div class="font-semibold text-on-surface">สถานะการอนุญาต (Josh Permissions)</div>
+          <p class="text-secondary text-body-sm">สามารถสั่งซื้อผ่านระบบจัดซื้อส่วนกลางได้โดยตรง พร้อมระบบแมปปิ้งรหัสสินค้าอัตโนมัติ</p>
+        </div>
+        <div class="space-y-1">
+          <div class="font-semibold text-on-surface">การปกป้องข้อมูลส่วนบุคคล (PDPA Masking)</div>
+          <p class="text-secondary text-body-sm">ข้อมูลการติดต่อพนักงานขายของคู่ค้าจะแสดงแบบ Masked ในหน้านี้ตามระดับสิทธิ์ Admin-01</p>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+    }
+
+    function closeSupplierModal() {
+      document.getElementById('supplier-modal').classList.add('hidden');
+    }
+
+    window.openSupplierDetail = openSupplierDetail;
+    window.closeSupplierModal = closeSupplierModal;
+  </script>
+</body></html>

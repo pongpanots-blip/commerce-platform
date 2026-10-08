@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Product notify funnel - Siam Commerce Hub</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-container": "#d0e1fd",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-secondary-container": "#54647c",
+            "surface-container-lowest": "#ffffff",
+            "tertiary": "#006139",
+            "inverse-on-surface": "#ecf0ff",
+            "secondary-fixed": "#d3e3ff",
+            "on-tertiary-fixed": "#002110",
+            "surface-container-high": "#e0e8ff",
+            "on-surface-variant": "#444655",
+            "on-secondary-fixed": "#0b1c31",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#001257",
+            "tertiary-fixed-dim": "#82d8a3",
+            "on-tertiary-container": "#b7ffcf",
+            "inverse-surface": "#243048",
+            "on-primary-fixed-variant": "#0034c0",
+            "outline-variant": "#c4c5d8",
+            "surface-container-highest": "#d7e2ff",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#00522f",
+            "surface-tint": "#214ce7",
+            "secondary": "#4f5f77",
+            "on-tertiary": "#ffffff",
+            "on-primary": "#ffffff",
+            "on-surface": "#0e1b32",
+            "primary": "#0a3fdc",
+            "on-error-container": "#93000a",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface": "#f6f8fc",
+            "surface-variant": "#d7e2ff",
+            "surface-bright": "#f9f9ff",
+            "on-background": "#0e1b32",
+            "surface-container-low": "#f1f3ff",
+            "on-primary-container": "#ededff",
+            "inverse-primary": "#b9c3ff",
+            "surface-container": "#e8eeff",
+            "tertiary-container": "#217b4e",
+            "background": "#f6f8fc",
+            "error-container": "#ffdad6",
+            "surface-dim": "#cddaf9",
+            "on-error": "#ffffff",
+            "primary-container": "#365cf5",
+            "primary-fixed": "#dde1ff",
+            "tertiary-fixed": "#9ef5be",
+            "primary-fixed-dim": "#b9c3ff",
+            "outline": "#747687"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "space-lg": "1.5rem",
+            "margin-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem"
+          },
+          "fontFamily": {
+            "display-lg": ["Noto Sans", "sans-serif"],
+            "body-sm": ["Noto Sans", "sans-serif"],
+            "headline-sm": ["Noto Sans", "sans-serif"],
+            "body-md": ["Noto Sans", "sans-serif"],
+            "label-sm": ["Noto Sans", "sans-serif"],
+            "body-lg": ["Noto Sans", "sans-serif"],
+            "label-md": ["Noto Sans", "sans-serif"],
+            "label-lg": ["Noto Sans", "sans-serif"],
+            "headline-md": ["Noto Sans", "sans-serif"],
+            "data-tabular": ["Noto Sans", "sans-serif"],
+            "headline-lg": ["Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+            "label-lg": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "data-tabular": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="h-full bg-background antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Required Translations JSON Script Tag -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ทุกสถานะ": {"th": "ทุกสถานะ", "en": "All Statuses"},
+    "สถานะ": {"th": "สถานะ", "en": "Status"},
+    "ผู้ใช้": {"th": "ผู้ใช้", "en": "User"},
+    "ก่อนหน้า": {"th": "ก่อนหน้า", "en": "Previous"},
+    "ถัดไป": {"th": "ถัดไป", "en": "Next"},
+    "Converted": {"th": "Converted", "en": "Converted"},
+    "ช่องทาง": {"th": "ช่องทาง", "en": "Channel"},
+    "กำลังโหลด...": {"th": "กำลังโหลด...", "en": "Loading..."},
+    "Product Notify Funnel": {"th": "Product Notify Funnel", "en": "Product Notify Funnel"},
+    "ทุกช่องทาง": {"th": "ทุกช่องทาง", "en": "All Channels"},
+    "รหัสผู้ใช้ (User ID)": {"th": "รหัสผู้ใช้ (User ID)", "en": "User ID"},
+    "กรองข้อมูล": {"th": "กรองข้อมูล", "en": "Filter Data"},
+    "Back in stock": {"th": "Back in stock", "en": "Back in stock"},
+    "Marketing remind": {"th": "Marketing remind", "en": "Marketing remind"},
+    "Active": {"th": "Active", "en": "Active"},
+    "Cancelled": {"th": "Cancelled", "en": "Cancelled"},
+    "ครั้งเฉลี่ยก่อนสั่งซื้อ ·": {"th": "ครั้งเฉลี่ยก่อนสั่งซื้อ ·", "en": "avg. notifications before order ·"},
+    "conversions": {"th": "conversions", "en": "conversions"},
+    "ไม่สามารถโหลดข้อมูล Product Notify Funnel ได้": {"th": "ไม่สามารถโหลดข้อมูล Product Notify Funnel ได้", "en": "Failed to load Product Notify Funnel data"},
+    "SKU / Inventory": {"th": "SKU / Inventory", "en": "SKU / Inventory"},
+    "จำนวนแจ้ง": {"th": "จำนวนแจ้ง", "en": "Notify Count"},
+    "แจ้งล่าสุด": {"th": "แจ้งล่าสุด", "en": "Last Notified"},
+    "คำสั่งซื้อที่ convert": {"th": "คำสั่งซื้อที่ convert", "en": "Converted Order"},
+    "จำนวนครั้งที่แจ้งเตือนก่อนลูกค้าสั่งซื้อ แยกตามช่องทาง (อ่านอย่างเดียว)": {"th": "จำนวนครั้งที่แจ้งเตือนก่อนลูกค้าสั่งซื้อ แยกตามช่องทาง (อ่านอย่างเดียว)", "en": "Number of pre-purchase notifications broken down by channel (Read-only)"},
+    "ช่องทางแจ้งเตือน": {"th": "ช่องทางแจ้งเตือน", "en": "Notification Channel"},
+    "รหัสสินค้าคงคลัง (Product Inventory ID)": {"th": "รหัสสินค้าคงคลัง (Product Inventory ID)", "en": "Product Inventory ID"},
+    "ยังไม่มี conversion สำหรับตัวกรองนี้": {"th": "ยังไม่มี conversion สำหรับตัวกรองนี้", "en": "No conversions found for this filter"},
+    "ไม่พบข้อมูล funnel": {"th": "ไม่พบข้อมูล funnel", "en": "No funnel data found"}
+  }
+  </script>
+<!-- SideNavBar Component -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline flex flex-col justify-between p-space-md">
+<div>
+<!-- Header -->
+<div class="flex items-center gap-space-sm mb-space-lg px-space-xs">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-xl">hub</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface dark:text-inverse-on-surface">สยาม คอมเมิร์ซ</h1>
+<p class="text-body-sm text-secondary">ศูนย์จัดการระบบร้านค้า</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-xl">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-xl">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- Active Item: การตลาด -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low dark:bg-secondary text-primary dark:text-on-secondary font-headline-sm border-l-4 border-primary transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="text-label-md font-label-md font-semibold">การตลาด</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-xl">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-xl">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Action -->
+<div class="pt-space-md border-t border-outline-variant">
+<button class="w-full mb-2 bg-primary hover:bg-primary-container text-on-primary py-2 px-4 rounded-lg text-label-md font-label-md transition-all flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-base">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<div class="flex items-center justify-between text-secondary px-1 pt-2">
+<a class="flex items-center gap-1 text-body-sm hover:text-on-surface" href="#">
+<span class="material-symbols-outlined text-sm">help</span> คู่มือการใช้งาน
+        </a>
+<a class="flex items-center gap-1 text-body-sm hover:text-error" href="#">
+<span class="material-symbols-outlined text-sm">logout</span> ออกจากระบบ
+        </a>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter-desktop transition-all duration-150 ease-in-out">
+<div class="flex items-center gap-4">
+<span class="text-headline-sm font-headline-sm font-semibold text-on-surface">การตลาด / Marketing Workflows</span>
+<span class="bg-surface-container px-2.5 py-1 rounded-full text-label-sm font-label-sm text-secondary border border-outline-variant">ข้อมูลตัวอย่าง / Sample data</span>
+</div>
+<div class="flex items-center gap-4">
+<!-- Language Switcher -->
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant text-label-md text-secondary hover:bg-surface-container transition-colors flex items-center gap-1.5" id="lang-toggle" onclick="toggleLanguage()">
+<span class="material-symbols-outlined text-base">language</span>
+<span id="lang-label">ไทย / English</span>
+</button>
+<!-- Trailing Action -->
+<button class="bg-surface-container-low hover:bg-surface-container text-primary px-3.5 py-1.5 rounded-lg text-label-md font-label-md border border-outline-variant transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">file_upload</span>
+<span>นำเข้าข้อมูล</span>
+</button>
+<button class="bg-primary text-on-primary px-3.5 py-1.5 rounded-lg text-label-md font-label-md hover:bg-primary-container transition-colors flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-base">add</span>
+<span>สร้างเวิร์กโฟล์ว</span>
+</button>
+<!-- Icons -->
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4">
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<!-- Profile -->
+<div class="flex items-center gap-3 pl-2 border-l border-outline-variant">
+<div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center font-bold text-on-secondary-fixed-variant text-sm overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional portrait photograph of a Thai corporate administrator in a crisp white button-down shirt smiling warmly inside a modern glass office suite with soft natural daylight. The image has a clean, high-key corporate aesthetic with a blue and white color grading." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmw8etR0kO3tn5enavCFHzqmKI14stfzOUX1rSBPPDiR1oBv2Ky0hlcEs21KUJVktASHVw34ioHc6VMmbm6X0pBA9vT-77l6_rxrf7FSB0zF2usIKKCRaM2flRqnA61wtcyEKVNSDraWcxwb-JP-O2ODvgnR68vbgVsklv8yNJckFgZ53VHuDaol4cFIVp_jvfmdzbeISVPqe0WkD0UNJd1OEn1R9q3YUsU4eph9eO3a0za_H_qzNOkxH50G8teMa0EFWOw-_zvtg"/>
+</div>
+<div class="hidden xl:block text-left">
+<p class="text-label-md font-semibold text-on-surface">Admin Siam</p>
+<p class="text-body-sm text-secondary">ผู้ดูแลระบบ</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Viewport Canvas -->
+<main class="ml-64 pt-20 p-space-lg min-h-screen bg-background">
+<div class="max-w-[1240px] mx-auto space-y-space-lg">
+<!-- Page Header & Title Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-space-lg rounded-xl border border-outline-variant shadow-sm">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary-fixed text-on-primary-fixed text-label-sm font-label-sm px-2 py-0.5 rounded">Read-only view</span>
+<span class="text-secondary text-body-sm">/j/cs/product-notify-funnel</span>
+</div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface" data-i18n-key="Product Notify Funnel">Product Notify Funnel</h2>
+<p class="text-body-md text-secondary mt-1" data-i18n-key="จำนวนครั้งที่แจ้งเตือนก่อนลูกค้าสั่งซื้อ แยกตามช่องทาง (อ่านอย่างเดียว)">จำนวนครั้งที่แจ้งเตือนก่อนลูกค้าสั่งซื้อ แยกตามช่องทาง (อ่านอย่างเดียว)</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 bg-surface-container hover:bg-surface-container-high text-on-surface text-label-md font-label-md rounded-lg border border-outline-variant transition-colors flex items-center gap-2" onclick="simulateReload()">
+<span class="material-symbols-outlined text-base">refresh</span>
+<span>รีเฟรชข้อมูล</span>
+</button>
+</div>
+</div>
+<!-- Summary Metrics Bento Grid Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl border border-outline-variant flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between">
+<span class="text-secondary text-label-md font-label-md">Total notifications / ยอดแจ้งเตือนรวม</span>
+<span class="p-2 rounded-lg bg-primary-container text-on-primary-container material-symbols-outlined">notifications_active</span>
+</div>
+<div class="mt-4">
+<h3 class="text-display-lg font-display-lg text-on-surface" id="metric-total">14,285</h3>
+<p class="text-body-sm text-secondary mt-1"><span class="text-tertiary font-semibold">+12.4%</span> เทียบกับสัปดาห์ก่อน</p>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl border border-outline-variant flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between">
+<span class="text-secondary text-label-md font-label-md">Converted orders / คำสั่งซื้อสำเร็จ</span>
+<span class="p-2 rounded-lg bg-tertiary-container text-on-tertiary material-symbols-outlined">shopping_cart_checkout</span>
+</div>
+<div class="mt-4">
+<h3 class="text-display-lg font-display-lg text-on-surface" id="metric-converted">3,492</h3>
+<p class="text-body-sm text-secondary mt-1"><span class="text-tertiary font-semibold">2.4 <span data-i18n-key="ครั้งเฉลี่ยก่อนสั่งซื้อ ·">ครั้งเฉลี่ยก่อนสั่งซื้อ ·</span></span> 24.4% conversion</p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl border border-outline-variant flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between">
+<span class="text-secondary text-label-md font-label-md">Top Channel / ช่องทางสูงสุด</span>
+<span class="p-2 rounded-lg bg-secondary-container text-on-secondary-container material-symbols-outlined">hub</span>
+</div>
+<div class="mt-4">
+<h3 class="text-headline-md font-headline-md text-on-surface">LINE Messaging API</h3>
+<p class="text-body-sm text-secondary mt-1">68.2% ของการแจ้งเตือนทั้งหมด</p>
+</div>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl border border-outline-variant shadow-sm space-y-4">
+<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+<div class="w-full md:w-1/3 space-y-1">
+<label class="block text-label-md font-label-md text-on-surface" data-i18n-key="รหัสผู้ใช้ (User ID)">รหัสผู้ใช้ (User ID)</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-lg">search</span>
+</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="filter-user" placeholder="ใส่ userId เพื่อประวัติการแจ้งเตือน" type="text"/>
+</div>
+<span class="text-xs text-secondary italic">Frontend search enabled</span>
+</div>
+<div class="w-full md:w-1/4 space-y-1">
+<label class="block text-label-md font-label-md text-on-surface" data-i18n-key="ช่องทาง">ช่องทาง</label>
+<select class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md text-on-surface focus:outline-none focus:border-primary" id="filter-channel">
+<option data-i18n-key="ทุกช่องทาง" value="all">ทุกช่องทาง</option>
+<option value="LINE">LINE</option>
+<option value="SMS">SMS</option>
+<option value="Push">Push</option>
+<option value="Email">Email</option>
+</select>
+</div>
+<div class="w-full md:w-1/4 space-y-1">
+<label class="block text-label-md font-label-md text-on-surface" data-i18n-key="สถานะ">สถานะ</label>
+<select class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md text-on-surface focus:outline-none focus:border-primary" id="filter-status">
+<option data-i18n-key="ทุกสถานะ" value="all">ทุกสถานะ</option>
+<option data-i18n-key="Active" value="Active">Active</option>
+<option data-i18n-key="Cancelled" value="Cancelled">Cancelled</option>
+</select>
+</div>
+<div class="w-full md:w-auto flex items-end gap-2 pt-5">
+<button class="w-full md:w-auto px-5 py-2 bg-primary hover:bg-primary-container text-on-primary rounded-lg text-label-md font-label-md transition-colors flex items-center justify-center gap-2 shadow-sm" onclick="applyFilters()">
+<span class="material-symbols-outlined text-base">filter_alt</span>
+<span data-i18n-key="กรองข้อมูล">กรองข้อมูล</span>
+</button>
+<button class="px-4 py-2 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg text-label-md font-label-md border border-outline-variant transition-colors" onclick="resetFilters()">
+              Reset
+            </button>
+</div>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface border-b border-outline-variant text-secondary text-label-md font-label-md">
+<th class="py-3 px-4 font-semibold">เวลา / แจ้งล่าสุด</th>
+<th class="py-3 px-4 font-semibold" data-i18n-key="ผู้ใช้">ผู้ใช้</th>
+<th class="py-3 px-4 font-semibold" data-i18n-key="รหัสสินค้าคงคลัง (Product Inventory ID)">รหัสสินค้าคงคลัง (Product Inventory ID)</th>
+<th class="py-3 px-4 font-semibold" data-i18n-key="ช่องทางแจ้งเตือน">ช่องทางแจ้งเตือน</th>
+<th class="py-3 px-4 font-semibold text-right" data-i18n-key="จำนวนแจ้ง">จำนวนแจ้ง</th>
+<th class="py-3 px-4 font-semibold" data-i18n-key="คำสั่งซื้อที่ convert">คำสั่งซื้อที่ convert</th>
+<th class="py-3 px-4 font-semibold" data-i18n-key="สถานะ">สถานะ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-md text-on-surface" id="funnel-table-body">
+<!-- Dynamically populated / sample rows -->
+<tr class="hover:bg-surface transition-colors">
+<td class="py-3 px-4 data-tabular text-secondary">2023-10-24 14:32</td>
+<td class="py-3 px-4 font-medium">USR-89421</td>
+<td class="py-3 px-4 font-mono text-xs">SKU-TH-99821 (Back in stock)</td>
+<td class="py-3 px-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container">LINE</span></td>
+<td class="py-3 px-4 text-right data-tabular font-semibold">3</td>
+<td class="py-3 px-4 text-primary font-medium hover:underline cursor-pointer">ORD-2023-9912</td>
+<td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347]">Active</span></td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="py-3 px-4 data-tabular text-secondary">2023-10-24 13:15</td>
+<td class="py-3 px-4 font-medium">USR-44102</td>
+<td class="py-3 px-4 font-mono text-xs">SKU-TH-11029 (Marketing remind)</td>
+<td class="py-3 px-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-fixed text-on-primary-fixed">SMS</span></td>
+<td class="py-3 px-4 text-right data-tabular font-semibold">1</td>
+<td class="py-3 px-4 text-primary font-medium hover:underline cursor-pointer">ORD-2023-9910</td>
+<td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347]">Active</span></td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="py-3 px-4 data-tabular text-secondary">2023-10-24 11:05</td>
+<td class="py-3 px-4 font-medium">USR-10923</td>
+<td class="py-3 px-4 font-mono text-xs">SKU-TH-44810 (Back in stock)</td>
+<td class="py-3 px-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-tertiary-fixed text-on-tertiary-fixed">Push</span></td>
+<td class="py-3 px-4 text-right data-tabular font-semibold">5</td>
+<td class="py-3 px-4 text-secondary italic">Pending conversion</td>
+<td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#c2333f]/10 text-[#c2333f]">Cancelled</span></td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="py-3 px-4 data-tabular text-secondary">2023-10-24 09:40</td>
+<td class="py-3 px-4 font-medium">USR-77312</td>
+<td class="py-3 px-4 font-mono text-xs">SKU-TH-33921 (Marketing remind)</td>
+<td class="py-3 px-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-high text-on-surface">Email</span></td>
+<td class="py-3 px-4 text-right data-tabular font-semibold">2</td>
+<td class="py-3 px-4 text-primary font-medium hover:underline cursor-pointer">ORD-2023-9892</td>
+<td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347]">Active</span></td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="py-3 px-4 data-tabular text-secondary">2023-10-24 08:22</td>
+<td class="py-3 px-4 font-medium">USR-55190</td>
+<td class="py-3 px-4 font-mono text-xs">SKU-TH-88219 (Back in stock)</td>
+<td class="py-3 px-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container">LINE</span></td>
+<td class="py-3 px-4 text-right data-tabular font-semibold">1</td>
+<td class="py-3 px-4 text-primary font-medium hover:underline cursor-pointer">ORD-2023-9884</td>
+<td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#157347]/10 text-[#157347]">Active</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Controls -->
+<div class="px-space-lg py-4 bg-surface border-t border-outline-variant flex items-center justify-between">
+<div class="text-body-sm text-secondary">
+            Showing 1-5 of 1,284 entries (ข้อมูลตัวอย่าง / Sample data)
+          </div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-md text-secondary hover:bg-surface-container transition-colors disabled:opacity-50" data-i18n-key="ก่อนหน้า" disabled="">ก่อนหน้า</button>
+<button class="px-3 py-1.5 bg-primary text-on-primary rounded-lg text-label-md font-semibold">1</button>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-md text-on-surface hover:bg-surface-container transition-colors">2</button>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-md text-on-surface hover:bg-surface-container transition-colors">3</button>
+<span class="text-secondary px-1">...</span>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-md text-on-surface hover:bg-surface-container transition-colors" data-i18n-key="ถัดไป">ถัดไป</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Interactive State Management Script -->
+<script>
+    let currentLang = 'th';
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'th' ? 'en' : 'th';
+      const langLabel = document.getElementById('lang-label');
+      langLabel.textContent = currentLang === 'th' ? 'ไทย / English' : 'English / ไทย';
+
+      const translationsScript = document.getElementById('commerce-ui-translations');
+      try {
+        const translations = JSON.parse(translationsScript.textContent);
+
+        // Translate elements with data-i18n-key
+        document.querySelectorAll('[data-i18n-key]').forEach(el => {
+          const key = el.getAttribute('data-i18n-key');
+          if (translations[key] && translations[key][currentLang]) {
+            el.textContent = translations[key][currentLang];
+          }
+        });
+      } catch (e) {
+        console.error('Translation error:', e);
+      }
+    }
+
+    function applyFilters() {
+      const userId = document.getElementById('filter-user').value;
+      const channel = document.getElementById('filter-channel').value;
+      const status = document.getElementById('filter-status').value;
+
+      // Visual feedback for filter execution
+      const tbody = document.getElementById('funnel-table-body');
+      tbody.style.opacity = '0.5';
+      setTimeout(() => {
+        tbody.style.opacity = '1';
+        // Simple mock filtering action
+        console.log('Filtered by:', { userId, channel, status });
+      }, 300);
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-user').value = '';
+      document.getElementById('filter-channel').value = 'all';
+      document.getElementById('filter-status').value = 'all';
+      applyFilters();
+    }
+
+    function simulateReload() {
+      const metricsTotal = document.getElementById('metric-total');
+      metricsTotal.style.transform = 'scale(1.05)';
+      setTimeout(() => {
+        metricsTotal.style.transform = 'scale(1)';
+      }, 200);
+    }
+  </script>
+</body></html>

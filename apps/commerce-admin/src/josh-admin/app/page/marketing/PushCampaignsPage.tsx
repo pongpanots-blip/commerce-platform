@@ -1,3 +1,8 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-render-cache-locale: refresh memoized UI labels when the language changes
+import { getUiLocale as __getUiLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import {
   createPushCampaign,
   getPushCampaignDelivery,
@@ -18,6 +23,8 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react
 import AdminListHeader from '../../components/AdminListHeader';
 import { useCompanySearch } from '../../components/useCompanySearch';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Tab = 'overview' | 'create' | 'delivery';
 
 type PickedUser = { id: string; label: string };
@@ -47,27 +54,28 @@ const statusClass: Record<PushCampaign['status'], string> = {
 };
 
 function PhonePreview({ title, body }: { title: string; body: string }) {
+  __useUiLocale();
   return (
     <div className="mx-auto w-[220px] rounded-[28px] border-8 border-slate-800 bg-slate-100 p-3 shadow-lg">
       <div className="mx-auto mb-3 h-4 w-16 rounded-full bg-slate-800" />
       <div className="rounded-2xl bg-white p-3 shadow-sm">
         <div className="flex items-center gap-2 text-[10px] text-slate-500">
           <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-500 text-[10px] font-bold text-white">
-            J
-          </span>
-          <span>Josh</span>
-          <span className="ml-auto">now</span>
+            {__uiText("J")}</span>
+          <span>{__uiText("Josh")}</span>
+          <span className="ml-auto">{__uiText("now")}</span>
         </div>
         <p className="mt-2 text-xs font-semibold text-slate-900">
-          {title || 'Title'}
+          {title || __uiText("Title")}
         </p>
-        <p className="mt-1 text-[11px] text-slate-600">{body || 'Message'}</p>
+        <p className="mt-1 text-[11px] text-slate-600">{body || __uiText("Message")}</p>
       </div>
     </div>
   );
 }
 
 export default function PushCampaignsPage() {
+  __useUiLocale();
   const [tab, setTab] = useState<Tab>('overview');
   const [campaigns, setCampaigns] = useState<PushCampaign[]>([]);
   const [overview, setOverview] = useState<PushCampaignOverview | null>(null);
@@ -121,7 +129,7 @@ export default function PushCampaignsPage() {
       setCampaigns(rows);
       setOverview(kpi);
     } catch {
-      setError('โหลดรายการแคมเปญไม่สำเร็จ');
+      setError(__uiMessage("โหลดรายการแคมเปญไม่สำเร็จ"));
       setCampaigns([]);
       setOverview(null);
     } finally {
@@ -185,7 +193,7 @@ export default function PushCampaignsPage() {
       const result = await previewPushAudience(audience);
       setEstimate(result.uniqueUsers);
     } catch {
-      setError('ประมาณจำนวนผู้รับไม่สำเร็จ');
+      setError(__uiMessage("ประมาณจำนวนผู้รับไม่สำเร็จ"));
       setEstimate(null);
     } finally {
       setBusy(false);
@@ -210,7 +218,7 @@ export default function PushCampaignsPage() {
 
   const handleSaveDraft = async () => {
     if (!title.trim() || !body.trim()) {
-      setError('ต้องมี Title และ Message');
+      setError(__uiMessage("ต้องมี Title และ Message"));
       return;
     }
     setBusy(true);
@@ -221,7 +229,7 @@ export default function PushCampaignsPage() {
       await loadOverview();
       setError(null);
     } catch {
-      setError('บันทึกแคมเปญไม่สำเร็จ — ตรวจ audience และข้อความ');
+      setError(__uiMessage("บันทึกแคมเปญไม่สำเร็จ — ตรวจ audience และข้อความ"));
     } finally {
       setBusy(false);
     }
@@ -230,7 +238,7 @@ export default function PushCampaignsPage() {
   const ensureSaved = async (): Promise<string | null> => {
     if (createdId) return createdId;
     if (!title.trim() || !body.trim()) {
-      setError('ต้องมี Title และ Message ก่อนส่ง');
+      setError(__uiMessage("ต้องมี Title และ Message ก่อนส่ง"));
       return null;
     }
     const created = await createPushCampaign(buildPayload());
@@ -250,7 +258,7 @@ export default function PushCampaignsPage() {
       await openDelivery(sent.id);
       await loadOverview();
     } catch {
-      setError('ส่งไม่สำเร็จ');
+      setError(__uiMessage("ส่งไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
@@ -258,7 +266,7 @@ export default function PushCampaignsPage() {
 
   const handleSchedule = async () => {
     if (!scheduledAt) {
-      setError('เลือกเวลาก่อนตั้ง Schedule');
+      setError(__uiMessage("เลือกเวลาก่อนตั้ง Schedule"));
       return;
     }
     setBusy(true);
@@ -270,7 +278,7 @@ export default function PushCampaignsPage() {
       await loadOverview();
       setTab('overview');
     } catch {
-      setError('ตั้งเวลาส่งไม่สำเร็จ');
+      setError(__uiMessage("ตั้งเวลาส่งไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
@@ -278,7 +286,7 @@ export default function PushCampaignsPage() {
 
   const handleTest = async () => {
     if (!testUserId.trim()) {
-      setError('ใส่ userId สำหรับทดสอบ');
+      setError(__uiMessage("ใส่ userId สำหรับทดสอบ"));
       return;
     }
     setBusy(true);
@@ -288,7 +296,7 @@ export default function PushCampaignsPage() {
       if (!id) return;
       await testPushCampaign(id, testUserId.trim());
     } catch {
-      setError('ส่งทดสอบไม่สำเร็จ');
+      setError(__uiMessage("ส่งทดสอบไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
@@ -302,7 +310,7 @@ export default function PushCampaignsPage() {
       setDelivery(data);
     } catch {
       setDelivery(null);
-      setError('โหลด delivery ไม่สำเร็จ');
+      setError(__uiMessage("โหลด delivery ไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
@@ -311,18 +319,18 @@ export default function PushCampaignsPage() {
   const tabs = useMemo(
     () =>
       [
-        { key: 'overview' as const, label: 'Overview' },
-        { key: 'create' as const, label: 'Create Notification' },
-        { key: 'delivery' as const, label: 'Delivery' },
+        { key: 'overview' as const, label: __uiText("Overview") },
+        { key: 'create' as const, label: __uiText("Create Notification") },
+        { key: 'delivery' as const, label: __uiText("Delivery") },
       ] as const,
-    [],
+    [__getUiLocale()],
   );
 
   return (
     <div className="p-6">
       <AdminListHeader
-        title="Push Campaigns"
-        subtitle="Compose · Audience · Schedule/Send — ส่งผ่าน OneSignal ของ Josh"
+        title={__uiText("Push Campaigns")}
+        subtitle={__uiText("Compose · Audience · Schedule/Send — ส่งผ่าน OneSignal ของ Josh")}
       />
 
       <div className="mb-4 flex flex-wrap gap-2">
@@ -342,16 +350,16 @@ export default function PushCampaignsPage() {
         ))}
       </div>
 
-      {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
+      {error && <p className="mb-3 text-sm text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
 
       {tab === 'overview' && (
         <div className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Kpi label="Campaigns" value={overview?.campaigns ?? '—'} />
-            <Kpi label="Scheduled" value={overview?.scheduled ?? '—'} />
-            <Kpi label="Sent today" value={overview?.sentToday ?? '—'} />
+            <Kpi label={__uiText("Campaigns")} value={overview?.campaigns ?? '—'} />
+            <Kpi label={__uiText("Scheduled")} value={overview?.scheduled ?? '—'} />
+            <Kpi label={__uiText("Sent today")} value={overview?.sentToday ?? '—'} />
             <Kpi
-              label="CTR (all)"
+              label={__uiText("CTR (all)")}
               value={
                 overview
                   ? `${(overview.clickRate * 100).toFixed(1)}%`
@@ -362,7 +370,7 @@ export default function PushCampaignsPage() {
 
           <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
             <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-              <h2 className="text-sm font-semibold text-gray-800">Recent campaigns</h2>
+              <h2 className="text-sm font-semibold text-gray-800">{__uiText("Recent campaigns")}</h2>
               <button
                 type="button"
                 className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white"
@@ -371,21 +379,20 @@ export default function PushCampaignsPage() {
                   setTab('create');
                 }}
               >
-                + New Notification
-              </button>
+                {__uiText("+ New Notification")}</button>
             </div>
             {loading ? (
-              <p className="p-4 text-sm text-gray-500">กำลังโหลด...</p>
+              <p className="p-4 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
             ) : campaigns.length === 0 ? (
-              <p className="p-4 text-sm text-gray-500">ยังไม่มีแคมเปญ</p>
+              <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มีแคมเปญ")}</p>
             ) : (
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 text-xs text-gray-500">
                   <tr>
-                    <th className="px-4 py-2">Notification</th>
-                    <th className="px-4 py-2">Audience</th>
-                    <th className="px-4 py-2">Sent</th>
-                    <th className="px-4 py-2">Status</th>
+                    <th className="px-4 py-2">{__uiText("Notification")}</th>
+                    <th className="px-4 py-2">{__uiText("Audience")}</th>
+                    <th className="px-4 py-2">{__uiText("Sent")}</th>
+                    <th className="px-4 py-2">{__uiText("Status")}</th>
                     <th className="px-4 py-2" />
                   </tr>
                 </thead>
@@ -401,9 +408,9 @@ export default function PushCampaignsPage() {
                       </td>
                       <td className="px-4 py-3 text-gray-600">
                         {row.sent_at
-                          ? new Date(row.sent_at).toLocaleString('th-TH')
+                          ? new Date(row.sent_at).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))
                           : row.scheduled_at
-                            ? new Date(row.scheduled_at).toLocaleString('th-TH')
+                            ? new Date(row.scheduled_at).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))
                             : '—'}
                       </td>
                       <td className="px-4 py-3">
@@ -422,8 +429,7 @@ export default function PushCampaignsPage() {
                             void openDelivery(row.id);
                           }}
                         >
-                          Delivery
-                        </button>
+                          {__uiText("Delivery")}</button>
                       </td>
                     </tr>
                   ))}
@@ -438,17 +444,16 @@ export default function PushCampaignsPage() {
         <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="space-y-4">
             <section className="rounded-xl border border-gray-100 bg-white p-4">
-              <h2 className="mb-3 text-sm font-semibold text-gray-800">1. Audience</h2>
+              <h2 className="mb-3 text-sm font-semibold text-gray-800">{__uiText("1. Audience")}</h2>
               <p className="mb-3 text-xs text-gray-500">
-                Include = users ∪ ร้าน(company) ∪ segments · Exclude ตัดออกก่อนส่ง
-              </p>
+                {__uiText("Include = users ∪ ร้าน(company) ∪ segments · Exclude ตัดออกก่อนส่ง")}</p>
 
-              <label className="mb-1 block text-xs text-gray-500">ค้นหา Users</label>
+              <label className="mb-1 block text-xs text-gray-500">{__uiText("ค้นหา Users")}</label>
               <input
                 className="mb-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                 value={userQuery}
                 onChange={(e) => setUserQuery(e.target.value)}
-                placeholder="ชื่อ / อีเมล"
+                placeholder={__uiText("ชื่อ / อีเมล")}
               />
               {userHits.length > 0 && (
                 <div className="mb-2 space-y-1">
@@ -478,12 +483,12 @@ export default function PushCampaignsPage() {
                 }}
               />
 
-              <label className="mb-1 mt-3 block text-xs text-gray-500">ค้นหาร้าน / Company</label>
+              <label className="mb-1 mt-3 block text-xs text-gray-500">{__uiText("ค้นหาร้าน / Company")}</label>
               <input
                 className="mb-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                 value={companyQuery}
                 onChange={(e) => setCompanyQuery(e.target.value)}
-                placeholder="ชื่อร้าน / บริษัท"
+                placeholder={__uiText("ชื่อร้าน / บริษัท")}
               />
               {companyHits.length > 0 && (
                 <div className="mb-2 space-y-1">
@@ -513,10 +518,10 @@ export default function PushCampaignsPage() {
                 }}
               />
 
-              <label className="mb-1 mt-3 block text-xs text-gray-500">Segments</label>
+              <label className="mb-1 mt-3 block text-xs text-gray-500">{__uiText("Segments")}</label>
               <div className="max-h-40 space-y-1 overflow-auto rounded-lg border border-gray-100 p-2">
                 {segments.length === 0 ? (
-                  <p className="text-xs text-gray-400">ยังไม่มี segment</p>
+                  <p className="text-xs text-gray-400">{__uiText("ยังไม่มี segment")}</p>
                 ) : (
                   segments.map((seg) => {
                     const checked = selectedSegmentIds.includes(seg.id);
@@ -549,18 +554,15 @@ export default function PushCampaignsPage() {
                   disabled={busy}
                   onClick={() => void refreshEstimate()}
                 >
-                  Preview audience
-                </button>
+                  {__uiText("Preview audience")}</button>
                 {estimate != null && (
                   <span className="text-sm font-semibold text-gray-800">
-                    ≈ {estimate.toLocaleString()} users
-                  </span>
+                    ≈ {estimate.toLocaleString()} {__uiText(" users")}</span>
                 )}
               </div>
 
               <label className="mb-1 mt-4 block text-xs text-gray-500">
-                Exclude segments (optional)
-              </label>
+                {__uiText("Exclude segments (optional)")}</label>
               <div className="max-h-28 space-y-1 overflow-auto rounded-lg border border-gray-100 p-2">
                 {segments.map((seg) => {
                   const excludeIds = audience.exclude?.segmentIds ?? [];
@@ -594,40 +596,40 @@ export default function PushCampaignsPage() {
             </section>
 
             <section className="rounded-xl border border-gray-100 bg-white p-4">
-              <h2 className="mb-3 text-sm font-semibold text-gray-800">2. Message</h2>
-              <Field label="Campaign name">
+              <h2 className="mb-3 text-sm font-semibold text-gray-800">{__uiText("2. Message")}</h2>
+              <Field label={__uiText("Campaign name")}>
                 <input
                   className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Flash Sale — Thailand"
+                  placeholder={__uiText("Flash Sale — Thailand")}
                 />
               </Field>
-              <Field label="Title *">
+              <Field label={__uiText("Title *")}>
                 <input
                   className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Title (TH)"
+                  placeholder={__uiText("Title (TH)")}
                 />
               </Field>
-              <Field label="Message *">
+              <Field label={__uiText("Message *")}>
                 <textarea
                   className="min-h-[80px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  placeholder="Message (TH)"
+                  placeholder={__uiText("Message (TH)")}
                 />
               </Field>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Title EN">
+                <Field label={__uiText("Title EN")}>
                   <input
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                     value={titleEn}
                     onChange={(e) => setTitleEn(e.target.value)}
                   />
                 </Field>
-                <Field label="Message EN">
+                <Field label={__uiText("Message EN")}>
                   <textarea
                     className="min-h-[60px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                     value={bodyEn}
@@ -635,7 +637,7 @@ export default function PushCampaignsPage() {
                   />
                 </Field>
               </div>
-              <Field label="Image URL">
+              <Field label={__uiText("Image URL")}>
                 <input
                   className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   value={imageUrl}
@@ -643,7 +645,7 @@ export default function PushCampaignsPage() {
                   placeholder="https://..."
                 />
               </Field>
-              <Field label="Launch URL / deep link">
+              <Field label={__uiText("Launch URL / deep link")}>
                 <input
                   className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   value={deepLink}
@@ -657,10 +659,9 @@ export default function PushCampaignsPage() {
                   checked={differentWebUrl}
                   onChange={(e) => setDifferentWebUrl(e.target.checked)}
                 />
-                Different URL for web
-              </label>
+                {__uiText("Different URL for web")}</label>
               {differentWebUrl && (
-                <Field label="Web URL">
+                <Field label={__uiText("Web URL")}>
                   <input
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                     value={deepLinkWeb}
@@ -675,18 +676,17 @@ export default function PushCampaignsPage() {
                   checked={abEnabled}
                   onChange={(e) => setAbEnabled(e.target.checked)}
                 />
-                A/B Test (variant B 50%)
-              </label>
+                {__uiText("A/B Test (variant B 50%)")}</label>
               {abEnabled && (
                 <div className="mt-2 space-y-2 rounded-lg border border-dashed border-gray-200 p-3">
-                  <Field label="Title B">
+                  <Field label={__uiText("Title B")}>
                     <input
                       className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                       value={titleB}
                       onChange={(e) => setTitleB(e.target.value)}
                     />
                   </Field>
-                  <Field label="Message B">
+                  <Field label={__uiText("Message B")}>
                     <textarea
                       className="min-h-[60px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                       value={bodyB}
@@ -698,7 +698,7 @@ export default function PushCampaignsPage() {
             </section>
 
             <section className="rounded-xl border border-gray-100 bg-white p-4">
-              <h2 className="mb-3 text-sm font-semibold text-gray-800">3. Delivery</h2>
+              <h2 className="mb-3 text-sm font-semibold text-gray-800">{__uiText("3. Delivery")}</h2>
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -706,20 +706,18 @@ export default function PushCampaignsPage() {
                   className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   onClick={() => void handleSaveDraft()}
                 >
-                  Save draft
-                </button>
+                  {__uiText("Save draft")}</button>
                 <button
                   type="button"
                   disabled={busy}
                   className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white"
                   onClick={() => void handleSendNow()}
                 >
-                  Send now
-                </button>
+                  {__uiText("Send now")}</button>
               </div>
               <div className="mt-3 flex flex-wrap items-end gap-2">
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">Schedule</label>
+                  <label className="mb-1 block text-xs text-gray-500">{__uiText("Schedule")}</label>
                   <input
                     type="datetime-local"
                     className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
@@ -733,19 +731,17 @@ export default function PushCampaignsPage() {
                   className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   onClick={() => void handleSchedule()}
                 >
-                  Schedule
-                </button>
+                  {__uiText("Schedule")}</button>
               </div>
               <div className="mt-3 flex flex-wrap items-end gap-2">
                 <div className="min-w-[220px] flex-1">
                   <label className="mb-1 block text-xs text-gray-500">
-                    Test & preview (userId)
-                  </label>
+                    {__uiText("Test & preview (userId)")}</label>
                   <input
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                     value={testUserId}
                     onChange={(e) => setTestUserId(e.target.value)}
-                    placeholder="uuid ของ user"
+                    placeholder={__uiText("uuid ของ user")}
                   />
                 </div>
                 <button
@@ -754,21 +750,20 @@ export default function PushCampaignsPage() {
                   className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   onClick={() => void handleTest()}
                 >
-                  Test send
-                </button>
+                  {__uiText("Test send")}</button>
               </div>
               {createdId && (
-                <p className="mt-2 text-xs text-gray-500">Saved campaign: {createdId}</p>
+                <p className="mt-2 text-xs text-gray-500">{__uiText("Saved campaign: ")}{createdId}</p>
               )}
             </section>
           </div>
 
           <div className="rounded-xl border border-gray-100 bg-white p-4">
-            <p className="mb-3 text-xs text-gray-500">Live Preview</p>
+            <p className="mb-3 text-xs text-gray-500">{__uiText("Live Preview")}</p>
             <PhonePreview title={title} body={body} />
             {abEnabled && (
               <div className="mt-6">
-                <p className="mb-3 text-xs text-gray-500">Variant B</p>
+                <p className="mb-3 text-xs text-gray-500">{__uiText("Variant B")}</p>
                 <PhonePreview title={titleB} body={bodyB} />
               </div>
             )}
@@ -788,7 +783,7 @@ export default function PushCampaignsPage() {
                 void openDelivery(id);
               }}
             >
-              <option value="">เลือกแคมเปญ</option>
+              <option value="">{__uiText("เลือกแคมเปญ")}</option>
               {campaigns.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name} · {statusLabel[c.status]}
@@ -800,36 +795,35 @@ export default function PushCampaignsPage() {
               className="rounded-lg border border-gray-200 px-3 py-2 text-xs"
               onClick={() => deliveryId && void openDelivery(deliveryId)}
             >
-              Refresh
-            </button>
+              {__uiText("Refresh")}</button>
           </div>
 
           {!delivery ? (
-            <p className="text-sm text-gray-500">เลือกแคมเปญเพื่อดู pipeline</p>
+            <p className="text-sm text-gray-500">{__uiText("เลือกแคมเปญเพื่อดู pipeline")}</p>
           ) : (
             <>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                <Kpi label="Queued" value={delivery.pipeline.queued} />
-                <Kpi label="Sent" value={delivery.pipeline.sent} />
-                <Kpi label="Skipped" value={delivery.pipeline.skipped} />
-                <Kpi label="Failed" value={delivery.pipeline.failed} />
-                <Kpi label="Clicked" value={delivery.pipeline.clicked} />
+                <Kpi label={__uiText("Queued")} value={delivery.pipeline.queued} />
+                <Kpi label={__uiText("Sent")} value={delivery.pipeline.sent} />
+                <Kpi label={__uiText("Skipped")} value={delivery.pipeline.skipped} />
+                <Kpi label={__uiText("Failed")} value={delivery.pipeline.failed} />
+                <Kpi label={__uiText("Clicked")} value={delivery.pipeline.clicked} />
               </div>
               <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
                 <div className="border-b border-gray-100 px-4 py-3 text-sm font-semibold">
-                  Recent deliveries · {delivery.campaign.name}
+                  {__uiText("Recent deliveries · ")}{delivery.campaign.name}
                 </div>
                 {delivery.recentDeliveries.length === 0 ? (
-                  <p className="p-4 text-sm text-gray-500">ยังไม่มี delivery log</p>
+                  <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มี delivery log")}</p>
                 ) : (
                   <table className="w-full text-left text-sm">
                     <thead className="bg-gray-50 text-xs text-gray-500">
                       <tr>
-                        <th className="px-4 py-2">User</th>
-                        <th className="px-4 py-2">Channel</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2">Reason</th>
-                        <th className="px-4 py-2">Sent</th>
+                        <th className="px-4 py-2">{__uiText("User")}</th>
+                        <th className="px-4 py-2">{__uiText("Channel")}</th>
+                        <th className="px-4 py-2">{__uiText("Status")}</th>
+                        <th className="px-4 py-2">{__uiText("Reason")}</th>
+                        <th className="px-4 py-2">{__uiText("Sent")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -842,7 +836,7 @@ export default function PushCampaignsPage() {
                             {row.reason ?? '—'}
                           </td>
                           <td className="px-4 py-2 text-xs">
-                            {new Date(row.sentAt).toLocaleString('th-TH')}
+                            {new Date(row.sentAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}
                           </td>
                         </tr>
                       ))}
@@ -889,6 +883,7 @@ function ChipRow({
   items: Array<{ id: string; label: string }>;
   onRemove: (id: string) => void;
 }) {
+  __useUiLocale();
   if (items.length === 0) return null;
   return (
     <div className="mb-2 flex flex-wrap gap-1">
@@ -898,7 +893,7 @@ function ChipRow({
           type="button"
           className="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-700"
           onClick={() => onRemove(item.id)}
-          title="ลบ"
+          title={__uiText("ลบ")}
         >
           {item.label} ×
         </button>

@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   createPromotionProductSet,
   getPromotionBrandProducts,
@@ -22,7 +23,10 @@ import {
   splitItemsBySource,
 } from './promotion-product-set.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PromotionProductSetForm = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -118,7 +122,7 @@ const PromotionProductSetForm = () => {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert('กรุณาระบุชื่อ Product Set');
+      alert(__uiText("กรุณาระบุชื่อ Product Set"));
       return;
     }
     setSaving(true);
@@ -150,14 +154,14 @@ const PromotionProductSetForm = () => {
   };
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">กำลังโหลด...</div>;
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <div className="mx-auto space-y-6 rounded-md bg-white p-6">
       <header className="flex items-center justify-between border-b pb-4">
         <h1 className="text-2xl font-black text-gray-800">
-          {id ? 'แก้ไข Promotion Product Set' : 'สร้าง Promotion Product Set'}
+          {id ? __uiText("แก้ไข Promotion Product Set") : __uiText("สร้าง Promotion Product Set")}
         </h1>
         <div className="flex gap-2">
           <button
@@ -165,45 +169,42 @@ const PromotionProductSetForm = () => {
             onClick={() => navigate(returnDestination ?? ADMIN_ROUTES.promotionProductSets)}
             className="rounded-lg px-4 py-2 text-sm font-bold text-gray-500 hover:bg-gray-100"
           >
-            ยกเลิก
-          </button>
+            {__uiText("ยกเลิก")}</button>
           <button
             type="button"
             disabled={saving}
             onClick={() => void handleSave()}
             className="rounded-lg bg-emerald-600 px-6 py-2 text-sm font-bold text-white shadow-md hover:bg-emerald-700 disabled:opacity-60"
           >
-            {saving ? 'กำลังบันทึก…' : 'บันทึก'}
+            {saving ? __uiText("กำลังบันทึก…") : __uiText("บันทึก")}
           </button>
         </div>
       </header>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {previewError.category && <p className="text-sm text-red-600">{previewError.category}</p>}
-      {previewError.brand && <p className="text-sm text-red-600">{previewError.brand}</p>}
+      {error && <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
+      {previewError.category && <p className="text-sm text-red-600">{(typeof (previewError.category) === 'string' ? __uiText(previewError.category) : previewError.category)}</p>}
+      {previewError.brand && <p className="text-sm text-red-600">{(typeof (previewError.brand) === 'string' ? __uiText(previewError.brand) : previewError.brand)}</p>}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="h-fit min-w-0 space-y-4 rounded-2xl border border-gray-100 p-5 shadow-sm lg:col-span-1">
-          <h3 className="border-b pb-2 font-bold text-gray-700">ตั้งค่า Product Set</h3>
+          <h3 className="border-b pb-2 font-bold text-gray-700">{__uiText("ตั้งค่า Product Set")}</h3>
 
           <div>
             <label htmlFor="pps-name" className="text-xs font-bold uppercase text-gray-400">
-              ชื่อ
-            </label>
+              {__uiText("ชื่อ")}</label>
             <input
               id="pps-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="เช่น หมวดเนื้อสัตว์โปรโมชั่น"
+              placeholder={__uiText("เช่น หมวดเนื้อสัตว์โปรโมชั่น")}
               className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none ring-primary/10 focus:ring-2"
             />
           </div>
 
           <div>
             <label htmlFor="pps-description" className="text-xs font-bold uppercase text-gray-400">
-              คำอธิบาย
-            </label>
+              {__uiText("คำอธิบาย")}</label>
             <textarea
               id="pps-description"
               value={description}
@@ -219,14 +220,12 @@ const PromotionProductSetForm = () => {
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
             />
-            เปิดใช้งาน
-          </label>
+            {__uiText("เปิดใช้งาน")}</label>
 
           <div>
-            <span className="text-xs font-bold uppercase text-gray-400">หมวดหมู่ที่ผูกอัตโนมัติ</span>
+            <span className="text-xs font-bold uppercase text-gray-400">{__uiText("หมวดหมู่ที่ผูกอัตโนมัติ")}</span>
             <p className="mb-1 text-[11px] text-gray-400">
-              ติ๊กหมวดหมู่ → สินค้าทั้งหมดในหมวดถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกติ๊กเพื่อเอาออก
-            </p>
+              {__uiText("ติ๊กหมวดหมู่ → สินค้าทั้งหมดในหมวดถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกติ๊กเพื่อเอาออก")}</p>
             <PromotionCategoryMultiSelect
               rows={categoryRows}
               selectedIds={categoryIds}
@@ -235,10 +234,9 @@ const PromotionProductSetForm = () => {
           </div>
 
           <div>
-            <span className="text-xs font-bold uppercase text-gray-400">แบรนด์ที่ผูกอัตโนมัติ</span>
+            <span className="text-xs font-bold uppercase text-gray-400">{__uiText("แบรนด์ที่ผูกอัตโนมัติ")}</span>
             <p className="mb-1 text-[11px] text-gray-400">
-              เลือกแบรนด์ → สินค้าทั้งหมดของแบรนด์ถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกเลือกเพื่อเอาออก
-            </p>
+              {__uiText("เลือกแบรนด์ → สินค้าทั้งหมดของแบรนด์ถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกเลือกเพื่อเอาออก")}</p>
             <PromotionBrandMultiSelect selectedIds={brandIds} onChange={setBrandIds} />
           </div>
         </div>
@@ -270,3 +268,5 @@ const PromotionProductSetForm = () => {
 };
 
 export default PromotionProductSetForm;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

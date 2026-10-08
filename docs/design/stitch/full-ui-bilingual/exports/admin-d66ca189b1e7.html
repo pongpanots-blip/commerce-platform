@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แคตตาล็อกแพลตฟอร์ม (/products) - Commerce Platform</title>
+  <!-- Google Fonts: Noto Sans Thai and Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            primary: {
+              DEFAULT: '#365cf5',
+              hover: '#2948db',
+              light: '#eff3ff'
+            },
+            ink: {
+              DEFAULT: '#17243b',
+              secondary: '#52627a',
+              muted: '#8596ae'
+            },
+            success: {
+              DEFAULT: '#157347',
+              bg: '#e8f5ed',
+              border: '#b8e2c8'
+            },
+            warning: {
+              DEFAULT: '#b08900',
+              bg: '#fef9e7',
+              border: '#fae79d'
+            },
+            danger: {
+              DEFAULT: '#c2333f',
+              bg: '#fdf2f2',
+              border: '#f8c0c4'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f4f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-canvas text-ink min-h-screen flex flex-col antialiased">
+
+  <!-- Application Layout Shell -->
+  <div class="flex flex-1 min-h-screen">
+
+    <!-- Left Sidebar (256px) -->
+    <aside class="w-64 bg-white border-r border-border flex flex-col fixed inset-y-0 left-0 z-30 select-none">
+      <!-- App Brand & Area Selector -->
+      <div class="h-16 flex items-center justify-between px-5 border-b border-border">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm">
+            C
+          </div>
+          <div>
+            <div class="font-bold text-[15px] leading-tight text-ink flex items-center gap-1.5">
+              <span>Commerce</span>
+              <span class="text-[10px] font-semibold bg-blue-50 text-primary border border-blue-200 px-1.5 py-0.5 rounded">admin</span>
+            </div>
+            <div class="text-xs text-ink-secondary">Operations Hub</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seven Core Work Areas Navigation -->
+      <div class="flex-1 overflow-y-auto py-3 px-3 space-y-6">
+        <div>
+          <div class="px-2 pb-1.5 text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
+            พื้นที่ปฏิบัติการ (7 กลุ่ม)
+          </div>
+          <nav class="space-y-1">
+
+            <!-- 1. สินค้าและสต็อก (Active Section) -->
+            <div class="space-y-1">
+              <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-primary bg-primary-light">
+                <span class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                  <span data-i18n="nav_products_stock">สินค้าและสต็อก</span>
+                </span>
+                <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              <!-- Submenu links -->
+              <div class="pl-5 pr-1 py-1 space-y-0.5 text-[13px] border-l-2 border-primary/20 ml-4">
+                <a href="#/products" class="flex items-center justify-between px-3 py-1.5 rounded-md font-medium text-primary bg-blue-50/70 border border-blue-100">
+                  <span data-i18n="nav_catalog">แคตตาล็อกแพลตฟอร์ม</span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                </a>
+                <a href="#/product-master-queue" class="flex items-center justify-between px-3 py-1.5 rounded-md text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+                  <span data-i18n="nav_queue">คิวข้อมูลสินค้าจาก ERP</span>
+                  <span class="text-[10px] font-semibold bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full">3</span>
+                </a>
+                <a href="#/product-prices" class="flex items-center justify-between px-3 py-1.5 rounded-md text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+                  <span data-i18n="nav_prices">ราคาสินค้า (ProductPrices)</span>
+                </a>
+                <a href="#/stock-moves" class="flex items-center justify-between px-3 py-1.5 rounded-md text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+                  <span data-i18n="nav_stock_moves">ความเคลื่อนไหวสต็อก</span>
+                </a>
+                <a href="#/prices/staff" class="flex items-center justify-between px-3 py-1.5 rounded-md text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+                  <span data-i18n="nav_contracts">ราคาลูกค้า / ราคาสัญญา</span>
+                </a>
+                <a href="#/inventory-warehouse" class="flex items-center justify-between px-3 py-1.5 rounded-md text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+                  <span data-i18n="nav_warehouse_stock">สต็อกแยกตามคลัง</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- 2. ออเดอร์และการเงิน -->
+            <a href="#/orders" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span data-i18n="nav_orders">ออเดอร์และการเงิน</span>
+              </span>
+            </a>
+
+            <!-- 3. ลูกค้าและบริการ -->
+            <a href="#/customers" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span data-i18n="nav_customers">ลูกค้าและบริการ</span>
+              </span>
+            </a>
+
+            <!-- 4. การตลาด -->
+            <a href="#/marketing" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                </svg>
+                <span data-i18n="nav_marketing">การตลาด</span>
+              </span>
+            </a>
+
+            <!-- 5. รายงานและข้อมูล -->
+            <a href="#/reports" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span data-i18n="nav_reports">รายงานและข้อมูล</span>
+              </span>
+            </a>
+
+            <!-- 6. ระบบเชื่อมต่อ -->
+            <a href="#/integrations" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span data-i18n="nav_integrations">ระบบเชื่อมต่อ</span>
+              </span>
+            </a>
+
+            <!-- 7. ตั้งค่าและทีมงาน -->
+            <a href="#/settings" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span data-i18n="nav_settings">ตั้งค่าและทีมงาน</span>
+              </span>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Developer Portal Link & Route Info Footer -->
+      <div class="p-3 border-t border-border bg-slate-50/50 space-y-2">
+        <a href="#/developer-portal" class="flex items-center justify-between px-2.5 py-1.5 text-xs text-ink-secondary hover:text-primary transition-colors rounded-md hover:bg-white">
+          <span class="flex items-center gap-1.5 font-medium">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+            Developer Portal
+          </span>
+          <svg class="w-3 h-3 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+        <div class="px-2.5 py-1 flex items-center justify-between text-[11px] text-ink-muted font-mono">
+          <span>Route: /products</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-100" title="Operational"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area (offset by 256px for fixed sidebar) -->
+    <div class="flex-1 ml-64 flex flex-col min-w-0">
+
+      <!-- Top Contextual Header -->
+      <header class="h-16 bg-white border-b border-border sticky top-0 z-20 px-8 flex items-center justify-between">
+        <!-- Breadcrumb & Route identifier -->
+        <div class="flex items-center gap-3 text-sm">
+          <div class="flex items-center gap-2 text-ink-secondary">
+            <span data-i18n="nav_products_stock">สินค้าและสต็อก</span>
+            <svg class="w-3.5 h-3.5 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="text-ink font-medium" data-i18n="title_catalog">แคตตาล็อกแพลตฟอร์ม</span>
+          </div>
+          <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 text-ink-secondary rounded border border-slate-200">
+            admin-d66ca189b1e7
+          </span>
+        </div>
+
+        <!-- Right Utilities: Sample Data pill, Bilingual switcher, User badge -->
+        <div class="flex items-center gap-3">
+          <!-- Sample Data Warning Pill -->
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200 shadow-sm" title="Counts and records shown are for prototyping and simulation">
+            <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            <span data-i18n="badge_sample_data">ข้อมูลตัวอย่าง</span>
+          </div>
+
+          <!-- Bilingual Switcher: TH / EN -->
+          <div class="inline-flex rounded-lg border border-border p-0.5 bg-slate-50 text-xs font-medium">
+            <button id="lang-btn-th" type="button" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-ink shadow-xs font-semibold transition-all">
+              ไทย
+            </button>
+            <button id="lang-btn-en" type="button" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-ink-secondary hover:text-ink transition-all">
+              English
+            </button>
+          </div>
+
+          <!-- Team profile badge -->
+          <div class="flex items-center gap-2 pl-2 border-l border-border">
+            <div class="w-8 h-8 rounded-full bg-blue-100 text-primary flex items-center justify-center font-bold text-xs border border-blue-200">
+              OP
+            </div>
+            <div class="hidden lg:block text-left">
+              <div class="text-xs font-semibold text-ink leading-tight">ทีมปฏิบัติการ</div>
+              <div class="text-[10px] text-ink-secondary">Commerce Ops</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Body Content (Max width around 1240px) -->
+      <main class="flex-1 p-8 max-w-[1240px] w-full mx-auto space-y-6">
+
+        <!-- Task Header & Primary Action -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h1 class="text-[28px] font-bold text-ink tracking-tight" data-i18n="title_catalog">แคตตาล็อกแพลตฟอร์ม</h1>
+              <span class="text-xs font-mono font-medium px-2 py-0.5 rounded-md bg-blue-50 text-primary border border-blue-200">
+                /products
+              </span>
+            </div>
+            <p class="text-sm text-ink-secondary mt-1" data-i18n="subtitle_catalog">
+              ดูและจัดการสินค้าในแพลตฟอร์ม ใช้ SKU เพื่อระบุสินค้าแต่ละรายการ
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-2.5">
+            <button type="button" onclick="refreshCatalog()" class="h-10 px-3.5 inline-flex items-center gap-2 text-sm font-medium text-ink bg-white border border-border rounded-lg hover:bg-slate-50 active:bg-slate-100 transition shadow-xs">
+              <svg class="w-4 h-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span data-i18n="btn_refresh">Refresh</span>
+            </button>
+
+            <!-- Primary Action: เพิ่มสินค้า (Opens Creation Modal) -->
+            <button type="button" onclick="openCreateProductModal()" class="h-10 px-4 inline-flex items-center gap-2 text-sm font-medium text-white bg-primary hover:bg-primary-hover active:bg-blue-700 rounded-lg transition shadow-sm">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span data-i18n="btn_add_product">เพิ่มสินค้า</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Notification Banner / Operational Notice -->
+        <div class="p-3.5 bg-blue-50/60 border border-blue-200/80 rounded-xl flex items-start gap-3">
+          <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div class="text-xs text-ink-secondary leading-relaxed">
+            <span class="font-medium text-ink" data-i18n="note_source_truth">การบริหารจัดการสินค้า Master:</span>
+            <span data-i18n="note_source_truth_desc">การสร้างและแก้ไขสินค้าจะส่งผลโดยตรงต่อ Storefront และแคตตาล็อกกลาง สำหรับสินค้าที่เชื่อมโยงกับ ERP กรุณาตรวจสอบรหัส SKU และสถานะในคิว ERP เพื่อป้องกันข้อมูลทับซ้อน</span>
+          </div>
+        </div>
+
+        <!-- Filter Card (Real Search on Current Page + Status Filter) -->
+        <div class="bg-white border border-border rounded-xl p-5 shadow-xs">
+          <form id="filter-form" onsubmit="event.preventDefault(); applyFilters();" class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-end">
+
+            <!-- Search Input: SKU or Name -->
+            <div class="md:col-span-6 space-y-1.5">
+              <label for="filter-search" class="block text-[13px] font-medium text-ink" data-i18n="label_search_sku">
+                ค้นหา SKU หรือชื่อสินค้า
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-muted">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="filter-search"
+                  name="search"
+                  placeholder="พิมพ์ SKU หรือชื่อสินค้า (ค้นเฉพาะหน้านี้)..."
+                  class="w-full h-10 pl-9 pr-3.5 rounded-lg border border-border text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+                  data-i18n-ph="placeholder_search"
+                >
+              </div>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="md:col-span-3 space-y-1.5">
+              <label for="filter-status" class="block text-[13px] font-medium text-ink" data-i18n="label_status">
+                สถานะ
+              </label>
+              <select
+                id="filter-status"
+                name="status"
+                class="w-full h-10 px-3 rounded-lg border border-border text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+              >
+                <option value="all" data-i18n="opt_all_statuses">ทุกสถานะ</option>
+                <option value="ACTIVE" data-i18n="opt_active">ใช้งานอยู่ (Active)</option>
+                <option value="DISABLED" data-i18n="opt_disabled">ปิดการใช้งาน (Disabled)</option>
+                <option value="DRAFT" data-i18n="opt_draft">รอใช้งาน (Draft)</option>
+              </select>
+            </div>
+
+            <!-- Action Filter Buttons -->
+            <div class="md:col-span-3 flex items-center gap-2">
+              <button
+                type="button"
+                onclick="applyFilters()"
+                class="flex-1 h-10 px-4 inline-flex items-center justify-center gap-1.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover active:bg-blue-700 rounded-lg transition shadow-xs"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                <span data-i18n="btn_filter">กรอง</span>
+              </button>
+
+              <button
+                type="button"
+                onclick="resetFilters()"
+                class="h-10 px-3.5 inline-flex items-center justify-center text-sm font-medium text-ink-secondary bg-white border border-border hover:bg-slate-50 active:bg-slate-100 rounded-lg transition"
+              >
+                <span data-i18n="btn_clear_filter">ล้าง</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Explicit Pagination Search Constraint Notice -->
+          <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-ink-muted">
+            <div class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              <span data-i18n="notice_pagination_search">การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API</span>
+            </div>
+            <div id="filter-result-count">
+              <span data-i18n="showing_records_prefix">แสดง</span> <span id="visible-count" class="font-semibold text-ink">5</span> <span data-i18n="of_records">จาก</span> <span class="font-semibold text-ink">5</span> <span data-i18n="records_suffix">รายการ (ข้อมูลตัวอย่าง)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Table Card -->
+        <div class="bg-white border border-border rounded-xl shadow-xs overflow-hidden flex flex-col">
+
+          <!-- Table Card Header -->
+          <div class="px-5 py-3.5 border-b border-border bg-slate-50/50 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-ink" data-i18n="table_title">รายการสินค้าในแพลตฟอร์ม</h2>
+              <span class="text-[11px] font-mono text-ink-secondary bg-slate-200/60 px-1.5 py-0.5 rounded">catalog-v1</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs text-ink-secondary">
+              <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span data-i18n="label_status_now">อัปเดตสถานะล่าสุด: now</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Table Container with Horizontal Scroll Support -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm border-collapse min-w-[840px]">
+              <thead>
+                <tr class="border-b border-border bg-slate-50/70 text-xs font-semibold text-ink-secondary tracking-wide">
+                  <th scope="col" class="py-3 px-5 w-44" data-i18n="th_sku">SKU</th>
+                  <th scope="col" class="py-3 px-5" data-i18n="th_name">ชื่อสินค้า</th>
+                  <th scope="col" class="py-3 px-5 w-36" data-i18n="th_status">สถานะ</th>
+                  <th scope="col" class="py-3 px-5 w-52" data-i18n="th_logistics">การจัดส่ง & สต็อก</th>
+                  <th scope="col" class="py-3 px-5 w-48 text-right" data-i18n="th_actions">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="product-table-body" class="divide-y divide-border text-ink">
+
+                <!-- Row 1: SKU-TH-8890 -->
+                <tr class="product-row hover:bg-slate-50/60 transition group" data-sku="SKU-TH-8890" data-name="ข้าวหอมมะลิตัดพิเศษ 5กก." data-status="ACTIVE">
+                  <td class="py-3.5 px-5 align-top">
+                    <a href="#/products/prod_01h89x" onclick="viewDetail('SKU-TH-8890')" class="font-bold text-primary hover:underline font-mono text-[13px]">
+                      SKU-TH-8890
+                    </a>
+                    <div class="text-[11px] font-mono text-ink-muted mt-0.5">ID: prod_01h89x</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <div class="font-semibold text-ink text-[14px] leading-snug">ข้าวหอมมะลิตัดพิเศษ 5กก.</div>
+                    <div class="text-xs text-ink-secondary mt-1 line-clamp-1">ข้าวหอมมะลิแท้ 100% เกรดส่งออก บรรจุถุงสุญญากาศ...</div>
+                    <div class="flex items-center gap-2 mt-1.5 text-[11px] text-ink-muted">
+                      <span>อาหารและเครื่องดื่ม > ข้าวสาร</span>
+                      <span>•</span>
+                      <span>lead time: 1 วัน</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      <span data-i18n="status_active">ใช้งานอยู่</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-xs">
+                    <div class="text-ink font-medium">คลังกลาง (WH-BKK01)</div>
+                    <div class="text-emerald-700 font-semibold mt-0.5">เหลือ 420 ถุง</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-right">
+                    <div class="inline-flex items-center gap-1.5">
+                      <button type="button" onclick="viewDetail('SKU-TH-8890')" class="px-2.5 py-1.5 text-xs font-medium text-ink bg-white border border-border rounded-md hover:bg-slate-50 transition shadow-xs inline-flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span data-i18n="btn_detail">รายละเอียด</span>
+                      </button>
+                      <button type="button" onclick="editProduct('SKU-TH-8890', 'ข้าวหอมมะลิตัดพิเศษ 5กก.', 'ข้าวหอมมะลิแท้ 100% เกรดส่งออก บรรจุถุงสุญญากาศ', 'ACTIVE')" class="px-2.5 py-1.5 text-xs font-medium text-ink-secondary bg-white border border-border rounded-md hover:text-primary hover:border-blue-300 hover:bg-blue-50/30 transition shadow-xs">
+                        <span data-i18n="btn_edit">แก้ไข</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 2: SKU-CH-4412 -->
+                <tr class="product-row hover:bg-slate-50/60 transition group" data-sku="SKU-CH-4412" data-name="น้ำมันพืชบรรจุลัง (12 ขวด)" data-status="ACTIVE">
+                  <td class="py-3.5 px-5 align-top">
+                    <a href="#/products/prod_02m44a" onclick="viewDetail('SKU-CH-4412')" class="font-bold text-primary hover:underline font-mono text-[13px]">
+                      SKU-CH-4412
+                    </a>
+                    <div class="text-[11px] font-mono text-ink-muted mt-0.5">ID: prod_02m44a</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <div class="font-semibold text-ink text-[14px] leading-snug">น้ำมันพืชบรรจุลัง (12 ขวด)</div>
+                    <div class="text-xs text-ink-secondary mt-1 line-clamp-1">น้ำมันปาล์มผ่านกรรมวิธี สำหรับทอดและปรุงอาหารความ...</div>
+                    <div class="flex items-center gap-2 mt-1.5 text-[11px] text-ink-muted">
+                      <span>วัตถุดิบและน้ำมันประกอบอาหาร</span>
+                      <span>•</span>
+                      <span>lead time: 2 วัน</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      <span data-i18n="status_active">ใช้งานอยู่</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-xs">
+                    <div class="text-ink font-medium">คลังใหญ่ พระราม 3 (ERP-CENTRAL)</div>
+                    <div class="text-emerald-700 font-semibold mt-0.5">เหลือ 1,050 ลัง</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-right">
+                    <div class="inline-flex items-center gap-1.5">
+                      <button type="button" onclick="viewDetail('SKU-CH-4412')" class="px-2.5 py-1.5 text-xs font-medium text-ink bg-white border border-border rounded-md hover:bg-slate-50 transition shadow-xs inline-flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span data-i18n="btn_detail">รายละเอียด</span>
+                      </button>
+                      <button type="button" onclick="editProduct('SKU-CH-4412', 'น้ำมันพืชบรรจุลัง (12 ขวด)', 'น้ำมันปาล์มผ่านกรรมวิธี สำหรับทอดและปรุงอาหาร', 'ACTIVE')" class="px-2.5 py-1.5 text-xs font-medium text-ink-secondary bg-white border border-border rounded-md hover:text-primary hover:border-blue-300 hover:bg-blue-50/30 transition shadow-xs">
+                        <span data-i18n="btn_edit">แก้ไข</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 3: SKU-MK-1102 -->
+                <tr class="product-row hover:bg-slate-50/60 transition group" data-sku="SKU-MK-1102" data-name="นมยูเอชที รสจืด 250มล. (ลัง 36)" data-status="ACTIVE">
+                  <td class="py-3.5 px-5 align-top">
+                    <a href="#/products/prod_03mk77" onclick="viewDetail('SKU-MK-1102')" class="font-bold text-primary hover:underline font-mono text-[13px]">
+                      SKU-MK-1102
+                    </a>
+                    <div class="text-[11px] font-mono text-ink-muted mt-0.5">ID: prod_03mk77</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <div class="font-semibold text-ink text-[14px] leading-snug">นมยูเอชที รสจืด 250มล. (ลัง 36)</div>
+                    <div class="text-xs text-ink-secondary mt-1 line-clamp-1">นมโคสดแท้ ยูเอชที รสจืด ขนาดกล่อง 250 มล. แพ็ค...</div>
+                    <div class="flex items-center gap-2 mt-1.5 text-[11px] text-ink-muted">
+                      <span>เครื่องดื่มและนมพร้อมดื่ม</span>
+                      <span>•</span>
+                      <span>lead time: 1 วัน</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      <span data-i18n="status_active">ใช้งานอยู่</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-xs">
+                    <div class="text-ink font-medium">คลังเหนือ เชียงใหม่ (WH-CM02)</div>
+                    <div class="text-amber-700 font-semibold mt-0.5 flex items-center gap-1">
+                      <span>เหลือ 5 ลัง</span>
+                      <span class="text-[10px] bg-amber-100 text-amber-800 px-1 rounded font-normal" data-i18n="badge_low_stock">(ใกล้หมด)</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-right">
+                    <div class="inline-flex items-center gap-1.5">
+                      <button type="button" onclick="viewDetail('SKU-MK-1102')" class="px-2.5 py-1.5 text-xs font-medium text-ink bg-white border border-border rounded-md hover:bg-slate-50 transition shadow-xs inline-flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span data-i18n="btn_detail">รายละเอียด</span>
+                      </button>
+                      <button type="button" onclick="editProduct('SKU-MK-1102', 'นมยูเอชที รสจืด 250มล. (ลัง 36)', 'นมโคสดแท้ ยูเอชที รสจืด ขนาดกล่อง 250 มล.', 'ACTIVE')" class="px-2.5 py-1.5 text-xs font-medium text-ink-secondary bg-white border border-border rounded-md hover:text-primary hover:border-blue-300 hover:bg-blue-50/30 transition shadow-xs">
+                        <span data-i18n="btn_edit">แก้ไข</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 4: SKU-FD-7741 -->
+                <tr class="product-row hover:bg-slate-50/60 transition group" data-sku="SKU-FD-7741" data-name="เนยชีสนำเข้าเกรดพรีเมียม 1กก." data-status="DISABLED">
+                  <td class="py-3.5 px-5 align-top">
+                    <a href="#/products/prod_04fd88" onclick="viewDetail('SKU-FD-7741')" class="font-bold text-primary hover:underline font-mono text-[13px]">
+                      SKU-FD-7741
+                    </a>
+                    <div class="text-[11px] font-mono text-ink-muted mt-0.5">ID: prod_04fd88</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <div class="font-semibold text-ink text-[14px] leading-snug">เนยชีสนำเข้าเกรดพรีเมียม 1กก.</div>
+                    <div class="text-xs text-ink-secondary mt-1 line-clamp-1">กูด้าชีสหมักบ่มธรรมชาติ สำหรับร้านอาหารและเบเกอรี่...</div>
+                    <div class="flex items-center gap-2 mt-1.5 text-[11px] text-ink-muted">
+                      <span>ผลิตภัณฑ์แช่เย็นและชีส</span>
+                      <span>•</span>
+                      <span>lead time: 3 วัน</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                      <span data-i18n="status_disabled">ปิดการใช้งาน</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-xs">
+                    <div class="text-ink font-medium">คลังบูรพา ชลบุรี (ERP-EAST)</div>
+                    <div class="text-rose-700 font-semibold mt-0.5">เหลือ 0 ชิ้น (หมด)</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-right">
+                    <div class="inline-flex items-center gap-1.5">
+                      <button type="button" onclick="viewDetail('SKU-FD-7741')" class="px-2.5 py-1.5 text-xs font-medium text-ink bg-white border border-border rounded-md hover:bg-slate-50 transition shadow-xs inline-flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span data-i18n="btn_detail">รายละเอียด</span>
+                      </button>
+                      <button type="button" onclick="editProduct('SKU-FD-7741', 'เนยชีสนำเข้าเกรดพรีเมียม 1กก.', 'กูด้าชีสหมักบ่มธรรมชาติ สำหรับร้านอาหารและเบเกอรี่', 'DISABLED')" class="px-2.5 py-1.5 text-xs font-medium text-ink-secondary bg-white border border-border rounded-md hover:text-primary hover:border-blue-300 hover:bg-blue-50/30 transition shadow-xs">
+                        <span data-i18n="btn_edit">แก้ไข</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 5: SKU-1 -->
+                <tr class="product-row hover:bg-slate-50/60 transition group" data-sku="SKU-1" data-name="ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)" data-status="DRAFT">
+                  <td class="py-3.5 px-5 align-top">
+                    <a href="#/products/prod_05jg01" onclick="viewDetail('SKU-1')" class="font-bold text-primary hover:underline font-mono text-[13px]">
+                      SKU-1
+                    </a>
+                    <div class="text-[11px] font-mono text-ink-muted mt-0.5">ID: prod_05jg01</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <div class="font-semibold text-ink text-[14px] leading-snug">ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)</div>
+                    <div class="text-xs text-ink-secondary mt-1 line-clamp-1">อาราบิก้าแท้ 100% ปลูกบนพื้นที่สูง คั่วสดใหม่ กลิ่นหอม...</div>
+                    <div class="flex items-center gap-2 mt-1.5 text-[11px] text-ink-muted">
+                      <span>เครื่องดื่มและกาแฟ > กาแฟคั่วสด</span>
+                      <span>•</span>
+                      <span>lead time: 2 วัน</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                      <span data-i18n="status_draft">รอใช้งาน</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-xs">
+                    <div class="text-ink font-medium">คลังกลาง บางนา (WH-BKK01)</div>
+                    <div class="text-ink-secondary font-medium mt-0.5">เหลือ 72 ถุง</div>
+                  </td>
+                  <td class="py-3.5 px-5 align-top text-right">
+                    <div class="inline-flex items-center gap-1.5">
+                      <button type="button" onclick="viewDetail('SKU-1')" class="px-2.5 py-1.5 text-xs font-medium text-ink bg-white border border-border rounded-md hover:bg-slate-50 transition shadow-xs inline-flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span data-i18n="btn_detail">รายละเอียด</span>
+                      </button>
+                      <button type="button" onclick="editProduct('SKU-1', 'ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)', 'อาราบิก้าแท้ 100% ปลูกบนพื้นที่สูง คั่วสดใหม่', 'DRAFT')" class="px-2.5 py-1.5 text-xs font-medium text-ink-secondary bg-white border border-border rounded-md hover:text-primary hover:border-blue-300 hover:bg-blue-50/30 transition shadow-xs">
+                        <span data-i18n="btn_edit">แก้ไข</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State (Hidden by default, shown when filtered rows = 0) -->
+          <div id="table-empty-state" class="hidden py-14 px-6 text-center">
+            <div class="w-12 h-12 rounded-full bg-slate-100 text-ink-muted mx-auto flex items-center justify-center mb-3">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-ink" data-i18n="empty_search_title">ไม่พบสินค้าที่ตรงกับเงื่อนไขในหน้านี้</h3>
+            <p class="text-xs text-ink-secondary mt-1 max-w-sm mx-auto" data-i18n="empty_search_desc">
+              ลองเปลี่ยนคำค้นหา SKU หรือล้างตัวกรองสถานะเพื่อแสดงรายการสินค้าทั้งหมด
+            </p>
+            <button type="button" onclick="resetFilters()" class="mt-4 px-3.5 py-1.5 text-xs font-medium text-primary bg-primary-light hover:bg-blue-100 rounded-md transition">
+              <span data-i18n="btn_clear_filter">ล้างเงื่อนไขการค้นหา</span>
+            </button>
+          </div>
+
+          <!-- Pagination Footer Bar (Supports page and pageSize) -->
+          <div class="px-5 py-3 border-t border-border bg-slate-50/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink-secondary">
+            <div>
+              <span data-i18n="page_prefix">หน้า</span> <span class="font-semibold text-ink">1</span> <span data-i18n="of_page">จาก</span> <span class="font-semibold text-ink">1</span>
+              (<span data-i18n="showing_prefix">แสดง</span> <span id="paginated-count" class="font-semibold text-ink">5</span> <span data-i18n="items_total">รายการ, จำนวนหน้าสูงสุด: 1</span>)
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <button type="button" disabled class="px-3 py-1.5 rounded border border-slate-200 bg-white text-slate-400 cursor-not-allowed text-xs font-medium" data-i18n="btn_prev_page">
+                ก่อนหน้า
+              </button>
+              <button type="button" class="px-3 py-1.5 rounded bg-primary text-white text-xs font-semibold shadow-xs">
+                1
+              </button>
+              <button type="button" disabled class="px-3 py-1.5 rounded border border-slate-200 bg-white text-slate-400 cursor-not-allowed text-xs font-medium" data-i18n="btn_next_page">
+                ถัดไป
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Protocol & Policy Guide Section (Bottom Knowledge / Guidance Card) -->
+        <div class="bg-blue-50/40 border border-blue-200/70 rounded-xl p-5 space-y-4">
+          <div class="flex items-center gap-2 text-ink">
+            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            <h3 class="font-bold text-sm" data-i18n="guide_title">
+              ข้อกำหนดการจัดการแคตตาล็อกสินค้าและการเชื่อมโยงสต็อก
+            </h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-ink-secondary leading-relaxed">
+            <div class="bg-white p-3.5 rounded-lg border border-border">
+              <div class="font-semibold text-ink mb-1" data-i18n="guide_rule1_title">1. ความสอดคล้องของรหัส SKU (Product Key)</div>
+              <p data-i18n="guide_rule1_desc">
+                ระบบแคตตาล็อกสินค้าในหน้านี้ใช้ SKU เป็นคีย์หลักในการซิงค์ข้อมูลกับคลังสินค้า (WH-BKK01, ERP-CENTRAL) และการตั้งราคาสัญญาของลูกค้า การเพิ่มหรือแก้ไขข้อมูลจะส่งผลต่อการออกใบสั่งซื้อในโมดูลออเดอร์ทันที
+              </p>
+            </div>
+            <div class="bg-white p-3.5 rounded-lg border border-border">
+              <div class="font-semibold text-ink mb-1" data-i18n="guide_rule2_title">2. การตรวจสอบก่อนยืนยันสถานะสินค้า</div>
+              <p data-i18n="guide_rule2_desc">
+                ตรวจชนิด / ส่วนตัด เกรด แบรนด์ ประเทศ และแช่เย็นหรือแช่แข็งจากหน้าสินค้าก่อนยืนยัน โดยเฉพาะสินค้าประเภทอาหารสดและเครื่องดื่ม เพื่อให้แน่ใจว่าการตั้งค่ารูปแบบการจัดส่ง (Logistics) และ Lead time ถูกต้อง
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL DIALOG: สร้างสินค้า / แก้ไขสินค้า (Create & Edit Dialog) -->
+  <!-- Named dialog, keyboard trap / Escape support, clear labels, sticky actions -->
+  <!-- ============================================================== -->
+  <div id="product-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity" onclick="closeProductModal()"></div>
+
+    <!-- Dialog Panel Container -->
+    <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 flex items-center justify-center">
+      <div class="relative bg-white rounded-xl shadow-xl border border-border w-full max-w-lg transform transition-all flex flex-col max-h-[90vh]">
+
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-border flex items-center justify-between shrink-0">
+          <div>
+            <h2 id="modal-title" class="text-lg font-bold text-ink">
+              <span id="modal-title-text" data-i18n="modal_add_title">เพิ่มสินค้าใหม่ในแคตตาล็อก</span>
+            </h2>
+            <p class="text-xs text-ink-secondary mt-0.5" data-i18n="modal_subtitle">
+              กำหนดรหัส SKU และข้อมูลพื้นฐานสำหรับ Storefront แพลตฟอร์ม
+            </p>
+          </div>
+          <button type="button" onclick="closeProductModal()" class="w-8 h-8 rounded-lg text-ink-muted hover:text-ink hover:bg-slate-100 flex items-center justify-center transition" aria-label="Close dialog">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal Form Body (Scrollable if necessary) -->
+        <form id="product-form" onsubmit="event.preventDefault(); saveProductSubmit();" class="p-6 space-y-4 overflow-y-auto flex-1">
+
+          <input type="hidden" id="form-mode" value="create">
+
+          <!-- SKU Field (Required) -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label for="form-sku" class="text-xs font-semibold text-ink">
+                <span data-i18n="field_sku">SKU</span> <span class="text-danger">*</span>
+              </label>
+              <span class="text-[11px] text-ink-muted font-mono" data-i18n="field_sku_hint">เช่น SKU-TH-8890 หรือ SKU-1</span>
+            </div>
+            <input
+              type="text"
+              id="form-sku"
+              required
+              placeholder="รหัสสินค้า (SKU)"
+              class="w-full h-10 px-3.5 rounded-lg border border-border text-sm text-ink placeholder:text-ink-muted font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+              data-i18n-ph="placeholder_sku"
+            >
+            <div id="sku-error" class="hidden text-xs text-danger font-medium mt-1" data-i18n="error_sku_required">
+              กรุณาระบุรหัสสินค้า (SKU)
+            </div>
+          </div>
+
+          <!-- Product Name Field (Required) -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label for="form-name" class="text-xs font-semibold text-ink">
+                <span data-i18n="field_name">ชื่อสินค้า</span> <span class="text-danger">*</span>
+              </label>
+              <span class="text-[11px] text-ink-muted" data-i18n="field_name_hint">ชื่อสินค้าที่ต้องการแสดง</span>
+            </div>
+            <input
+              type="text"
+              id="form-name"
+              required
+              placeholder="ชื่อสินค้าที่ต้องการแสดงบนหน้าร้าน..."
+              class="w-full h-10 px-3.5 rounded-lg border border-border text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+              data-i18n-ph="placeholder_name"
+            >
+            <div id="name-error" class="hidden text-xs text-danger font-medium mt-1" data-i18n="error_name_required">
+              กรุณาระบุชื่อสินค้า
+            </div>
+          </div>
+
+          <!-- Status Field -->
+          <div class="space-y-1">
+            <label for="form-status" class="text-xs font-semibold text-ink" data-i18n="field_status">
+              สถานะ
+            </label>
+            <select
+              id="form-status"
+              class="w-full h-10 px-3 rounded-lg border border-border text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+            >
+              <option value="ACTIVE" data-i18n="opt_active">ใช้งานอยู่ (Active)</option>
+              <option value="DISABLED" data-i18n="opt_disabled">ปิดการใช้งาน (Disabled)</option>
+              <option value="DRAFT" data-i18n="opt_draft">รอใช้งาน (Draft)</option>
+            </select>
+          </div>
+
+          <!-- Description Field -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label for="form-desc" class="text-xs font-semibold text-ink" data-i18n="field_desc">
+                รายละเอียดสินค้า
+              </label>
+              <span class="text-[11px] text-ink-muted" data-i18n="optional_tag">(ไม่บังคับ)</span>
+            </div>
+            <textarea
+              id="form-desc"
+              rows="3"
+              placeholder="ระบุคำอธิบายสินค้า จุดเด่น หรือขนาดบรรจุภัณฑ์..."
+              class="w-full p-3 rounded-lg border border-border text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+              data-i18n-ph="placeholder_desc"
+            ></textarea>
+          </div>
+
+          <!-- Verification Checkpoint Alert inside Dialog -->
+          <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-lg flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-amber-700 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p class="text-[11px] text-amber-900 leading-normal" data-i18n="dialog_verify_note">
+              ตรวจชนิด / ส่วนตัด เกรด แบรนด์ ประเทศ และแช่เย็นหรือแช่แข็งจากหน้าสินค้าก่อนยืนยัน
+            </p>
+          </div>
+
+        </form>
+
+        <!-- Modal Footer: Sticky Cancel / Save -->
+        <div class="px-6 py-4 border-t border-border bg-slate-50/70 flex items-center justify-end gap-2.5 shrink-0 rounded-b-xl">
+          <button
+            type="button"
+            onclick="closeProductModal()"
+            class="h-10 px-4 text-sm font-medium text-ink-secondary bg-white border border-border rounded-lg hover:bg-slate-100 active:bg-slate-200 transition"
+          >
+            <span data-i18n="btn_cancel">ยกเลิก</span>
+          </button>
+          <button
+            type="button"
+            onclick="saveProductSubmit()"
+            class="h-10 px-5 text-sm font-medium text-white bg-primary hover:bg-primary-hover active:bg-blue-700 rounded-lg transition shadow-sm inline-flex items-center gap-1.5"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span id="modal-submit-text" data-i18n="btn_save">บันทึกสินค้า</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ============================================================== -->
+  <!-- EXACT UI COPY CATALOGUE TRANSLATIONS DICTIONARY SCRIPT        -->
+  <!-- Exported HTML MUST include an invisible JSON object keyed by    -->
+  <!-- EVERY exact source string from the user prompt.                -->
+  <!-- ============================================================== -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "รายละเอียด": {
+      "th": "รายละเอียด",
+      "en": "Details"
+    },
+    "เพิ่มสินค้า": {
+      "th": "เพิ่มสินค้า",
+      "en": "Add Product"
+    },
+    "สถานะ": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "SKU": {
+      "th": "SKU",
+      "en": "SKU"
+    },
+    "แคตตาล็อกแพลตฟอร์ม": {
+      "th": "แคตตาล็อกแพลตฟอร์ม",
+      "en": "Platform Catalog"
+    },
+    "ชื่อสินค้า": {
+      "th": "ชื่อสินค้า",
+      "en": "Product Name"
+    },
+    "SKU-1": {
+      "th": "SKU-1",
+      "en": "SKU-1"
+    },
+    "ชื่อสินค้าที่ต้องการแสดง": {
+      "th": "ชื่อสินค้าที่ต้องการแสดง",
+      "en": "Display Product Name"
+    },
+    "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้ SKU เพื่อระบุสินค้าแต่ละรายการ": {
+      "th": "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้ SKU เพื่อระบุสินค้าแต่ละรายการ",
+      "en": "View and manage products on the platform. Use SKU to identify each item."
+    },
+    "แก้ JSON": {
+      "th": "แก้ JSON",
+      "en": "Edit JSON"
+    },
+    "ค้นหาชื่อไทยหรืออังกฤษ": {
+      "th": "ค้นหาชื่อไทยหรืออังกฤษ",
+      "en": "Search Thai or English name"
+    },
+    "จัดชิดขวา (กดซ้ำเพื่อยกเลิก)": {
+      "th": "จัดชิดขวา (กดซ้ำเพื่อยกเลิก)",
+      "en": "Align right (click again to undo)"
+    },
+    "ชื่อสินค้า / SKU": {
+      "th": "ชื่อสินค้า / SKU",
+      "en": "Product Name / SKU"
+    },
+    "ตรวจชนิด / ส่วนตัด เกรด แบรนด์ ประเทศ และแช่เย็นหรือแช่แข็งจากหน้าสินค้าก่อนยืนยัน": {
+      "th": "ตรวจชนิด / ส่วนตัด เกรด แบรนด์ ประเทศ และแช่เย็นหรือแช่แข็งจากหน้าสินค้าก่อนยืนยัน",
+      "en": "Verify type / cut, grade, brand, origin, and chilled/frozen state on product page before confirmation"
+    },
+    "นับถอยหลัง": {
+      "th": "นับถอยหลัง",
+      "en": "Countdown"
+    },
+    "ปิดลิงก์ไม่สำเร็จ": {
+      "th": "ปิดลิงก์ไม่สำเร็จ",
+      "en": "Failed to close link"
+    },
+    "เพิ่มองค์ประกอบ": {
+      "th": "เพิ่มองค์ประกอบ",
+      "en": "Add Element"
+    },
+    "ไม่มีหมวด": {
+      "th": "ไม่มีหมวด",
+      "en": "No Category"
+    },
+    "ยังไม่มีออเดอร์": {
+      "th": "ยังไม่มีออเดอร์",
+      "en": "No orders yet"
+    },
+    "ราคาพิเศษ": {
+      "th": "ราคาพิเศษ",
+      "en": "Special Price"
+    },
+    "ลอง fetch": {
+      "th": "ลอง fetch",
+      "en": "Try fetch"
+    },
+    "วันส่ง": {
+      "th": "วันส่ง",
+      "en": "Delivery Date"
+    },
+    "ส่วนใหญ่คือผู้ใช้ปิดรับเอง": {
+      "th": "ส่วนใหญ่คือผู้ใช้ปิดรับเอง",
+      "en": "Mostly users opted out manually"
+    },
+    "หัวข้อ (ไม่แสดงบน popup · ไม่บังคับ)": {
+      "th": "หัวข้อ (ไม่แสดงบน popup · ไม่บังคับ)",
+      "en": "Heading (not displayed on popup · optional)"
+    },
+    "สั่งเริ่ม/หยุดเก็บข้อมูลเว็บ": {
+      "th": "สั่งเริ่ม/หยุดเก็บข้อมูลเว็บ",
+      "en": "Start/Stop web scrapers"
+    }
+  }
+  </script>
+
+  <!-- Client-side Interactive Logic (Language Switcher, Modal, Search on Current Page) -->
+  <script>
+    // In-memory UI dictionary for all application texts
+    const uiTexts = {
+      th: {
+        nav_products_stock: "สินค้าและสต็อก",
+        nav_catalog: "แคตตาล็อกแพลตฟอร์ม",
+        nav_queue: "คิวข้อมูลสินค้าจาก ERP",
+        nav_prices: "ราคาสินค้า (ProductPrices)",
+        nav_stock_moves: "ความเคลื่อนไหวสต็อก",
+        nav_contracts: "ราคาลูกค้า / ราคาสัญญา",
+        nav_warehouse_stock: "สต็อกแยกตามคลัง",
+        nav_orders: "ออเดอร์และการเงิน",
+        nav_customers: "ลูกค้าและบริการ",
+        nav_marketing: "การตลาด",
+        nav_reports: "รายงานและข้อมูล",
+        nav_integrations: "ระบบเชื่อมต่อ",
+        nav_settings: "ตั้งค่าและทีมงาน",
+        badge_sample_data: "ข้อมูลตัวอย่าง",
+        title_catalog: "แคตตาล็อกแพลตฟอร์ม",
+        subtitle_catalog: "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้ SKU เพื่อระบุสินค้าแต่ละรายการ",
+        btn_refresh: "Refresh",
+        btn_add_product: "เพิ่มสินค้า",
+        note_source_truth: "การบริหารจัดการสินค้า Master:",
+        note_source_truth_desc: "การสร้างและแก้ไขสินค้าจะส่งผลโดยตรงต่อ Storefront และแคตตาล็อกกลาง สำหรับสินค้าที่เชื่อมโยงกับ ERP กรุณาตรวจสอบรหัส SKU และสถานะในคิว ERP เพื่อป้องกันข้อมูลทับซ้อน",
+        label_search_sku: "ค้นหา SKU หรือชื่อสินค้า",
+        placeholder_search: "พิมพ์ SKU หรือชื่อสินค้า (ค้นเฉพาะหน้านี้)...",
+        label_status: "สถานะ",
+        opt_all_statuses: "ทุกสถานะ",
+        opt_active: "ใช้งานอยู่ (Active)",
+        opt_disabled: "ปิดการใช้งาน (Disabled)",
+        opt_draft: "รอใช้งาน (Draft)",
+        btn_filter: "กรอง",
+        btn_clear_filter: "ล้าง",
+        notice_pagination_search: "การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API",
+        showing_records_prefix: "แสดง",
+        of_records: "จาก",
+        records_suffix: "รายการ (ข้อมูลตัวอย่าง)",
+        table_title: "รายการสินค้าในแพลตฟอร์ม",
+        label_status_now: "อัปเดตสถานะล่าสุด: now",
+        th_sku: "SKU",
+        th_name: "ชื่อสินค้า",
+        th_status: "สถานะ",
+        th_logistics: "การจัดส่ง & สต็อก",
+        th_actions: "การจัดการ",
+        btn_detail: "รายละเอียด",
+        btn_edit: "แก้ไข",
+        status_active: "ใช้งานอยู่",
+        status_disabled: "ปิดการใช้งาน",
+        status_draft: "รอใช้งาน",
+        badge_low_stock: "(ใกล้หมด)",
+        empty_search_title: "ไม่พบสินค้าที่ตรงกับเงื่อนไขในหน้านี้",
+        empty_search_desc: "ลองเปลี่ยนคำค้นหา SKU หรือล้างตัวกรองสถานะเพื่อแสดงรายการสินค้าทั้งหมด",
+        page_prefix: "หน้า",
+        of_page: "จาก",
+        showing_prefix: "แสดง",
+        items_total: "รายการ, จำนวนหน้าสูงสุด: 1",
+        btn_prev_page: "ก่อนหน้า",
+        btn_next_page: "ถัดไป",
+        guide_title: "ข้อกำหนดการจัดการแคตตาล็อกสินค้าและการเชื่อมโยงสต็อก",
+        guide_rule1_title: "1. ความสอดคล้องของรหัส SKU (Product Key)",
+        guide_rule1_desc: "ระบบแคตตาล็อกสินค้าในหน้านี้ใช้ SKU เป็นคีย์หลักในการซิงค์ข้อมูลกับคลังสินค้า (WH-BKK01, ERP-CENTRAL) และการตั้งราคาสัญญาของลูกค้า การเพิ่มหรือแก้ไขข้อมูลจะส่งผลต่อการออกใบสั่งซื้อในโมดูลออเดอร์ทันที",
+        guide_rule2_title: "2. การตรวจสอบก่อนยืนยันสถานะสินค้า",
+        guide_rule2_desc: "ตรวจชนิด / ส่วนตัด เกรด แบรนด์ ประเทศ และแช่เย็นหรือแช่แข็งจากหน้าสินค้าก่อนยืนยัน โดยเฉพาะสินค้าประเภทอาหารสดและเครื่องดื่ม เพื่อให้แน่ใจว่าการตั้งค่ารูปแบบการจัดส่ง (Logistics) และ Lead time ถูกต้อง",
+        modal_add_title: "เพิ่มสินค้าใหม่ในแคตตาล็อก",
+        modal_edit_title: "แก้ไขข้อมูลสินค้า",
+        modal_subtitle: "กำหนดรหัส SKU และข้อมูลพื้นฐานสำหรับ Storefront แพลตฟอร์ม",
+        field_sku: "SKU",
+        field_sku_hint: "เช่น SKU-TH-8890 หรือ SKU-1",
+        placeholder_sku: "รหัสสินค้า (SKU)",
+        error_sku_required: "กรุณาระบุรหัสสินค้า (SKU)",
+        field_name: "ชื่อสินค้า",
+        field_name_hint: "ชื่อสินค้าที่ต้องการแสดง",
+        placeholder_name: "ชื่อสินค้าที่ต้องการแสดงบนหน้าร้าน...",
+        error_name_required: "กรุณาระบุชื่อสินค้า",
+        field_status: "สถานะ",
+        field_desc: "รายละเอียดสินค้า",
+        optional_tag: "(ไม่บังคับ)",
+        placeholder_desc: "ระบุคำอธิบายสินค้า จุดเด่น หรือขนาดบรรจุภัณฑ์...",
+        dialog_verify_note: "ตรวจชนิด / ส่วนตัด เกรด แบรนด์ ประเทศ และแช่เย็นหรือแช่แข็งจากหน้าสินค้าก่อนยืนยัน",
+        btn_cancel: "ยกเลิก",
+        btn_save: "บันทึกสินค้า"
+      },
+      en: {
+        nav_products_stock: "Products & Stock",
+        nav_catalog: "Platform Catalog",
+        nav_queue: "ERP Product Queue",
+        nav_prices: "Product Prices",
+        nav_stock_moves: "Stock Movements",
+        nav_contracts: "Customer Contracts / Prices",
+        nav_warehouse_stock: "Inventory per Warehouse",
+        nav_orders: "Orders & Finance",
+        nav_customers: "Customers & Service",
+        nav_marketing: "Marketing",
+        nav_reports: "Reports & Data",
+        nav_integrations: "Integrations",
+        nav_settings: "Settings & Staff",
+        badge_sample_data: "Sample Data",
+        title_catalog: "Platform Catalog",
+        subtitle_catalog: "View and manage products on the platform. Use SKU to identify each item.",
+        btn_refresh: "Refresh",
+        btn_add_product: "Add Product",
+        note_source_truth: "Master Product Operations:",
+        note_source_truth_desc: "Creating and editing products directly impacts Storefront and master catalog. For ERP-connected items, verify SKU and queue status to prevent data collisions.",
+        label_search_sku: "Search SKU or Product Name",
+        placeholder_search: "Enter SKU or product name (current page only)...",
+        label_status: "Status",
+        opt_all_statuses: "All Statuses",
+        opt_active: "Active",
+        opt_disabled: "Disabled",
+        opt_draft: "Draft",
+        btn_filter: "Filter",
+        btn_clear_filter: "Clear",
+        notice_pagination_search: "Search operates strictly on this page per Pagination API specifications",
+        showing_records_prefix: "Showing",
+        of_records: "of",
+        records_suffix: "records (Sample data)",
+        table_title: "Platform Catalog Items",
+        label_status_now: "Status sync: now",
+        th_sku: "SKU",
+        th_name: "Product Name",
+        th_status: "Status",
+        th_logistics: "Fulfillment & Stock",
+        th_actions: "Actions",
+        btn_detail: "Details",
+        btn_edit: "Edit",
+        status_active: "Active",
+        status_disabled: "Disabled",
+        status_draft: "Draft",
+        badge_low_stock: "(Low stock)",
+        empty_search_title: "No products matched your criteria on this page",
+        empty_search_desc: "Try modifying your SKU search or clearing the status filter to see all records.",
+        page_prefix: "Page",
+        of_page: "of",
+        showing_prefix: "Showing",
+        items_total: "items, max page: 1",
+        btn_prev_page: "Previous",
+        btn_next_page: "Next",
+        guide_title: "Product Catalog Management & Inventory Association Protocol",
+        guide_rule1_title: "1. SKU Consistency (Product Key)",
+        guide_rule1_desc: "This catalog uses SKU as the primary key for syncing with warehouses (WH-BKK01, ERP-CENTRAL) and customer contracted pricing. Adding or updating items directly affects ordering workflows.",
+        guide_rule2_title: "2. Pre-confirmation Quality Check",
+        guide_rule2_desc: "Verify type / cut, grade, brand, origin, and chilled/frozen state on product page before confirmation, especially for fresh produce and beverages, ensuring correct logistics and lead times.",
+        modal_add_title: "Add New Product to Catalog",
+        modal_edit_title: "Edit Product Details",
+        modal_subtitle: "Configure SKU and core attributes for platform storefront",
+        field_sku: "SKU",
+        field_sku_hint: "e.g. SKU-TH-8890 or SKU-1",
+        placeholder_sku: "Product Code (SKU)",
+        error_sku_required: "Please enter product SKU",
+        field_name: "Product Name",
+        field_name_hint: "Display product name",
+        placeholder_name: "Product display name for storefront...",
+        error_name_required: "Please enter product name",
+        field_status: "Status",
+        field_desc: "Description",
+        optional_tag: "(Optional)",
+        placeholder_desc: "Enter product summary, highlights, or packaging specs...",
+        dialog_verify_note: "Verify type / cut, grade, brand, origin, and chilled/frozen state on product page before confirmation",
+        btn_cancel: "Cancel",
+        btn_save: "Save Product"
+      }
+    };
+
+    let currentLang = 'th';
+    let lastActiveElement = null;
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Update UI buttons state
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded-md bg-white text-ink shadow-xs font-semibold transition-all";
+        btnEn.className = "px-2.5 py-1 rounded-md text-ink-secondary hover:text-ink transition-all";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded-md bg-white text-ink shadow-xs font-semibold transition-all";
+        btnTh.className = "px-2.5 py-1 rounded-md text-ink-secondary hover:text-ink transition-all";
+      }
+
+      // Update text nodes
+      const dict = uiTexts[lang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.textContent = dict[key];
+        }
+      });
+
+      // Update placeholders
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        if (dict[key]) {
+          el.setAttribute('placeholder', dict[key]);
+        }
+      });
+    }
+
+    // Filter handling (Current Page only)
+    function applyFilters() {
+      const searchVal = document.getElementById('filter-search').value.trim().toLowerCase();
+      const statusVal = document.getElementById('filter-status').value;
+      const rows = document.querySelectorAll('.product-row');
+      let visible = 0;
+
+      rows.forEach(row => {
+        const sku = row.getAttribute('data-sku').toLowerCase();
+        const name = row.getAttribute('data-name').toLowerCase();
+        const status = row.getAttribute('data-status');
+
+        const matchesSearch = !searchVal || sku.includes(searchVal) || name.includes(searchVal);
+        const matchesStatus = (statusVal === 'all') || (status === statusVal);
+
+        if (matchesSearch && matchesStatus) {
+          row.style.display = '';
+          visible++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update counts
+      document.getElementById('visible-count').textContent = visible;
+      document.getElementById('paginated-count').textContent = visible;
+
+      // Handle empty state
+      const emptyState = document.getElementById('table-empty-state');
+      const tableBody = document.getElementById('product-table-body');
+      if (visible === 0) {
+        emptyState.classList.remove('hidden');
+        tableBody.classList.add('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        tableBody.classList.remove('hidden');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-status').value = 'all';
+      applyFilters();
+    }
+
+    // Modal dialog control
+    function openCreateProductModal() {
+      lastActiveElement = document.activeElement;
+      document.getElementById('form-mode').value = 'create';
+      document.getElementById('modal-title-text').textContent = uiTexts[currentLang].modal_add_title;
+      document.getElementById('modal-submit-text').textContent = uiTexts[currentLang].btn_save;
+
+      // Reset form
+      document.getElementById('form-sku').value = '';
+      document.getElementById('form-sku').removeAttribute('readonly');
+      document.getElementById('form-name').value = '';
+      document.getElementById('form-desc').value = '';
+      document.getElementById('form-status').value = 'ACTIVE';
+
+      hideErrors();
+
+      const modal = document.getElementById('product-modal');
+      modal.classList.remove('hidden');
+      document.getElementById('form-sku').focus();
+    }
+
+    function editProduct(sku, name, desc, status) {
+      lastActiveElement = document.activeElement;
+      document.getElementById('form-mode').value = 'edit';
+      document.getElementById('modal-title-text').textContent = uiTexts[currentLang].modal_edit_title + ' (' + sku + ')';
+      document.getElementById('modal-submit-text').textContent = uiTexts[currentLang].btn_save;
+
+      document.getElementById('form-sku').value = sku;
+      document.getElementById('form-sku').setAttribute('readonly', 'true');
+      document.getElementById('form-name').value = name;
+      document.getElementById('form-desc').value = desc || '';
+      document.getElementById('form-status').value = status || 'ACTIVE';
+
+      hideErrors();
+
+      const modal = document.getElementById('product-modal');
+      modal.classList.remove('hidden');
+      document.getElementById('form-name').focus();
+    }
+
+    function closeProductModal() {
+      const modal = document.getElementById('product-modal');
+      modal.classList.add('hidden');
+      hideErrors();
+      if (lastActiveElement) {
+        lastActiveElement.focus();
+      }
+    }
+
+    function hideErrors() {
+      document.getElementById('sku-error').classList.add('hidden');
+      document.getElementById('name-error').classList.add('hidden');
+    }
+
+    function saveProductSubmit() {
+      const sku = document.getElementById('form-sku').value.trim();
+      const name = document.getElementById('form-name').value.trim();
+      let hasError = false;
+
+      hideErrors();
+
+      if (!sku) {
+        document.getElementById('sku-error').classList.remove('hidden');
+        hasError = true;
+      }
+      if (!name) {
+        document.getElementById('name-error').classList.remove('hidden');
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      const mode = document.getElementById('form-mode').value;
+      const status = document.getElementById('form-status').value;
+
+      closeProductModal();
+      showToast(mode === 'create' ? `เพิ่มสินค้า ${sku} สำเร็จแล้ว` : `บันทึกการแก้ไข ${sku} เรียบร้อยแล้ว`);
+    }
+
+    function viewDetail(sku) {
+      showToast(`เปิดหน้าข้อมูลรายละเอียด: ${sku} (/products/id)`);
+    }
+
+    function refreshCatalog() {
+      showToast('รีเฟรชข้อมูลแคตตาล็อกสินค้าล่าสุดเรียบร้อย');
+    }
+
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'px-4 py-2.5 rounded-lg bg-ink text-white text-xs font-medium shadow-lg flex items-center gap-2 transform transition-all translate-y-2 opacity-0 pointer-events-auto';
+      toast.innerHTML = `
+        <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Escape Key Listener to dismiss modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('product-modal');
+        if (!modal.classList.contains('hidden')) {
+          closeProductModal();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

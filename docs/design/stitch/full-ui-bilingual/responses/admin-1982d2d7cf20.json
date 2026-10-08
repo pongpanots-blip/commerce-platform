@@ -1,0 +1,486 @@
+{
+  "outputComponents": [
+    {
+      "designSystem": {
+        "designSystem": {
+          "displayName": "Siam Enterprise Operations",
+          "styleGuidelines": "## Brand & Style\n\nThis design system is engineered for high-throughput Thai commerce operations teams handling inventory, logistics, order fulfillment, and settlement. The interface reflects an understated, functional aesthetic rooted in modern corporate software: purposeful, balanced, and visually calm to minimize cognitive fatigue during multi-hour operational shifts.\n\nThe emotional baseline focuses on operational trust, speed, and precision. It avoids decorative ornament in favor of strict data legibility, structured scannability, and unambiguous state signifiers. The visual treatment balances crisp, clean white cards over a cool-tinted canvas, reinforced by precise containment borders and a functional royal blue anchor. Bilingual parity is a foundational requirement, ensuring seamless transitions between Thai and English across all density levels and layouts.\n\n## Layout & Spacing\n\nThe layout is built around a persistent desktop shell featuring a fixed 256px vertical navigation sidebar, flanked by a content stage with a centered maximum container width of 1240px.\n\n- **Desktop (1280px and wider)**: Persistent 256px sidebar on the left. The remaining viewport hosts the header and workspace canvas (`#f6f8fc`), with page content contained within a max-width of 1240px, 24px (`space-lg`) column gutters, and 32px (`space-xl`) exterior margins.\n- **Tablet (768px – 1279px)**: Sidebar collapses into a 64px compact icon rail or off-canvas drawer. The content container adopts fluid 100% width with 24px margins and 16px gutters.\n- **Mobile (Below 768px)**: Full-width single column stack. Sidebar converts to a bottom drawer or full-bleed mobile menu. Page margins step down to 16px (`space-md`), and gutters reduce to 12px.\n- **Density Rhythm**: Internal spacing aligns to an 8px grid (with a 4px sub-grid for badges, icon offsets, and tightly bound table controls).\n\n## Elevation & Depth\n\nVisual separation relies on crisp surface boundary lines and soft, neutral ambient shadows rather than dramatic blur layers. This keeps large data sets and complex grids readable.\n\n- **Flat Surface / Base**: Background canvas sits at `#f6f8fc`.\n- **Card Shells**: `#ffffff` with a continuous `1px solid #e1e7f0` border. Ambient drop shadow: `0 1px 3px rgba(23, 36, 59, 0.04)`.\n- **Interactive Hover & Dropdowns**: Cards under direct hover or floating selection panels use `0 4px 12px rgba(23, 36, 59, 0.08)` bordered by `#e1e7f0`.\n- **Modals & Drawers**: Elevation layer utilizes `0 12px 32px rgba(23, 36, 59, 0.14)` over a backdrop tint of `rgba(23, 36, 59, 0.4)`.\n\n## Components\n\n### Buttons\nAll standard desktop and tablet buttons maintain a 40px fixed height with 8px radius and 16px horizontal padding.\n- **Primary**: Background `#365cf5`, text `#ffffff`, hover `#2a4ad8`, active `#1e3ebf`.\n- **Secondary / Outline**: Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, hover background `#f6f8fc`.\n- **Destructive**: Background `#c2333f`, text `#ffffff`, hover `#ab2c36`.\n- **Tertiary / Ghost**: Transparent background, text `#52627a`, hover background `#e1e7f0` at 40% opacity.\n\n### Form Inputs & Search Fields\n- Height: 40px.\n- Corner Radius: 8px.\n- Border: `1px solid #e1e7f0`. Background: `#ffffff`.\n- Text: 14px Noto Sans (`#17243b`). Placeholder: `#94a3b8`.\n- Focus State: Border color `#365cf5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- Error State: Border color `#c2333f` with helper caption in `#c2333f`.\n\n### Cards & Data Containers\n- Container radius is 12px with a 1px solid stroke in `#e1e7f0` and `#ffffff` fill.\n- Standard card padding is 20px or 24px (`space-lg`).\n- Internal divider lines span edge-to-edge using `1px solid #e1e7f0`.\n\n### Data Tables & Operational Lists\n- Header Row: Background `#f6f8fc`, height 44px, text 13px bold `#52627a`, border bottom `1px solid #e1e7f0`.\n- Data Rows: Height 52px, text 14px `#17243b`, alternating row hover `#f8fafc`.\n- Numeric & Financial Cells: Aligned right using monospace/tabular numbers with currency badge (`THB / ฿`).\n\n### Status Badges & Chips\n- Structure: 24px height, horizontal padding 8px, border radius 9999px, font size 12px medium.\n- Variants:\n  - *Success* (e.g., จัดส่งแล้ว / Delivered): Background `#eaf5ef`, text `#157347`.\n  - *Warning* (e.g., รอการชำระ / Pending Payment): Background `#fef9e7`, text `#b08900`.\n  - *Error* (e.g., ยกเลิกแล้ว / Cancelled): Background `#faeaeb`, text `#c2333f`.\n  - *Neutral* (e.g., รอดำเนินการ / Draft): Background `#e1e7f0`, text `#52627a`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 18px × 18px box, 4px corner radius, border `1px solid #cbd5e1`. Checked: `#365cf5` fill with white check icon.\n- Radio: 18px diameter circle with 2px inner dot clearance on check.\n\n### Bilingual Switcher & Sidebar Navigation\n- Navigation Sidebar: Fixed 256px width, `#ffffff` background with `1px solid #e1e7f0` right border. Active nav item has `#f6f8fc` background and `#365cf5` text with a 3px active indicator bar on the left edge.\n- Language Switcher: Positioned in the global header utility cluster. Uses an inline segmented control (TH | EN) at 32px height, 6px radius, toggle text 13px, active segment styled with `#ffffff` fill and subtle elevation over `#e1e7f0` track.",
+          "theme": {
+            "bodyFont": "NOTO_SANS",
+            "bodyFontFamily": "Noto Sans",
+            "colorMode": "LIGHT",
+            "colorVariant": "FIDELITY",
+            "customColor": "#365cf5",
+            "designMd": "---\nname: Siam Enterprise Operations\ncolors:\n  surface: '#f9f9ff'\n  surface-dim: '#cddaf9'\n  surface-bright: '#f9f9ff'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f1f3ff'\n  surface-container: '#e8eeff'\n  surface-container-high: '#e0e8ff'\n  surface-container-highest: '#d7e2ff'\n  on-surface: '#0e1b32'\n  on-surface-variant: '#444655'\n  inverse-surface: '#243048'\n  inverse-on-surface: '#ecf0ff'\n  outline: '#747687'\n  outline-variant: '#c4c5d8'\n  surface-tint: '#214ce7'\n  primary: '#0a3fdc'\n  on-primary: '#ffffff'\n  primary-container: '#365cf5'\n  on-primary-container: '#ededff'\n  inverse-primary: '#b9c3ff'\n  secondary: '#4f5f77'\n  on-secondary: '#ffffff'\n  secondary-container: '#d0e1fd'\n  on-secondary-container: '#54647c'\n  tertiary: '#943500'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#bc4600'\n  on-tertiary-container: '#ffebe4'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dde1ff'\n  primary-fixed-dim: '#b9c3ff'\n  on-primary-fixed: '#001257'\n  on-primary-fixed-variant: '#0034c0'\n  secondary-fixed: '#d3e3ff'\n  secondary-fixed-dim: '#b7c7e3'\n  on-secondary-fixed: '#0b1c31'\n  on-secondary-fixed-variant: '#38485e'\n  tertiary-fixed: '#ffdbcd'\n  tertiary-fixed-dim: '#ffb597'\n  on-tertiary-fixed: '#360f00'\n  on-tertiary-fixed-variant: '#7e2c00'\n  background: '#f9f9ff'\n  on-background: '#0e1b32'\n  surface-variant: '#d7e2ff'\ntypography:\n  display:\n    fontFamily: Noto Sans\n    fontSize: 32px\n    fontWeight: '600'\n    lineHeight: 40px\n  headline-page:\n    fontFamily: Noto Sans\n    fontSize: 28px\n    fontWeight: '600'\n    lineHeight: 36px\n  headline-page-mobile:\n    fontFamily: Noto Sans\n    fontSize: 22px\n    fontWeight: '600'\n    lineHeight: 30px\n  headline-card:\n    fontFamily: Noto Sans\n    fontSize: 18px\n    fontWeight: '600'\n    lineHeight: 26px\n  subheading:\n    fontFamily: Noto Sans\n    fontSize: 16px\n    fontWeight: '500'\n    lineHeight: 24px\n  body-default:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-medium:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 22px\n  label-default:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '500'\n    lineHeight: 18px\n  label-caption:\n    fontFamily: Noto Sans\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 16px\n  code-table:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\nrounded:\n  sm: 0.125rem\n  DEFAULT: 0.25rem\n  md: 0.375rem\n  lg: 0.5rem\n  xl: 0.75rem\n  full: 9999px\nspacing:\n  gutter: 1rem\n  gutter-desktop: 1.5rem\n  margin: 1rem\n  margin-desktop: 2rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n---\n\n## Brand & Style\n\nThis design system is engineered for high-throughput Thai commerce operations teams handling inventory, logistics, order fulfillment, and settlement. The interface reflects an understated, functional aesthetic rooted in modern corporate software: purposeful, balanced, and visually calm to minimize cognitive fatigue during multi-hour operational shifts.\n\nThe emotional baseline focuses on operational trust, speed, and precision. It avoids decorative ornament in favor of strict data legibility, structured scannability, and unambiguous state signifiers. The visual treatment balances crisp, clean white cards over a cool-tinted canvas, reinforced by precise containment borders and a functional royal blue anchor. Bilingual parity is a foundational requirement, ensuring seamless transitions between Thai and English across all density levels and layouts.\n\n## Colors\n\nThe palette establishes high semantic contrast designed for daylight data-entry environments and detailed dashboard monitoring:\n\n- **Canvas & Surface**: Backing canvas defaults to `#f6f8fc`. Elevated containers, data tables, and card shells use pure `#ffffff`.\n- **Primary Accent**: `#365cf5` acts as the primary interactive anchor for primary actions, selected navigation items, focused state rings, and critical progress indications.\n- **Ink & Typography Hierarchy**: Primary ink sits at `#17243b`, delivering crisp optical contrast against white backdrops. Secondary labels, supporting metadata, and table column headers map to `#52627a`. Muted hints and disabled states leverage `#94a3b8`.\n- **Structural Lines**: Container division, table cell borders, and form inputs employ `#e1e7f0`. Hover strokes on inputs step to `#cbd5e1`.\n- **Semantic Feedback**:\n  - Success (Fulfilled, Paid, Connected): `#157347` (surface tint `#eaf5ef`)\n  - Warning (Pending, Low Stock, Requires Review): `#b08900` (surface tint `#fef9e7`)\n  - Error (Cancelled, Gateway Failure, Discrepancy): `#c2333f` (surface tint `#faeaeb`)\n\n## Typography\n\nTypography is standardized on `Noto Sans` (with comprehensive support for the Thai loopless and looped scripts via Noto Sans Thai). The baseline line heights are intentionally calibrated with an extra 2px to 4px clearance relative to standard Latin typesets to ensure Thai vowel markers, tone marks, and descenders do not clip or blur during dense information display.\n\nPage titles anchor screens at 28px (`headline-page`). Operational tables and forms run primarily on 14px (`body-default` and `body-medium`) with secondary metadata, form labels, and badge indicators set to 13px (`label-default`). Numeric columns, order IDs, tracking codes, and monetary currencies align using tabular numeric figures (`tnum`).\n\n## Layout & Spacing\n\nThe layout is built around a persistent desktop shell featuring a fixed 256px vertical navigation sidebar, flanked by a content stage with a centered maximum container width of 1240px.\n\n- **Desktop (1280px and wider)**: Persistent 256px sidebar on the left. The remaining viewport hosts the header and workspace canvas (`#f6f8fc`), with page content contained within a max-width of 1240px, 24px (`space-lg`) column gutters, and 32px (`space-xl`) exterior margins.\n- **Tablet (768px – 1279px)**: Sidebar collapses into a 64px compact icon rail or off-canvas drawer. The content container adopts fluid 100% width with 24px margins and 16px gutters.\n- **Mobile (Below 768px)**: Full-width single column stack. Sidebar converts to a bottom drawer or full-bleed mobile menu. Page margins step down to 16px (`space-md`), and gutters reduce to 12px.\n- **Density Rhythm**: Internal spacing aligns to an 8px grid (with a 4px sub-grid for badges, icon offsets, and tightly bound table controls).\n\n## Elevation & Depth\n\nVisual separation relies on crisp surface boundary lines and soft, neutral ambient shadows rather than dramatic blur layers. This keeps large data sets and complex grids readable.\n\n- **Flat Surface / Base**: Background canvas sits at `#f6f8fc`.\n- **Card Shells**: `#ffffff` with a continuous `1px solid #e1e7f0` border. Ambient drop shadow: `0 1px 3px rgba(23, 36, 59, 0.04)`.\n- **Interactive Hover & Dropdowns**: Cards under direct hover or floating selection panels use `0 4px 12px rgba(23, 36, 59, 0.08)` bordered by `#e1e7f0`.\n- **Modals & Drawers**: Elevation layer utilizes `0 12px 32px rgba(23, 36, 59, 0.14)` over a backdrop tint of `rgba(23, 36, 59, 0.4)`.\n\n## Shapes\n\nThe interface balances soft container geometry with sharper functional controls:\n\n- **Cards & Data Panels**: Border radius is strictly 12px (`0.75rem`), providing clear modular separation between discrete operational modules.\n- **Controls & Form Elements**: Input fields, buttons, dropdown toggles, and search filters use an 8px (`0.5rem`) radius.\n- **Status Pills & Chips**: Retain a pill radius of 9999px for rapid scannability in order statuses.\n- **Internal Table Cells & Nested Rows**: Corner radiuses are maintained at 0px inside data grids, reserving rounded corners exclusively for outer perimeter table containers.\n\n## Components\n\n### Buttons\nAll standard desktop and tablet buttons maintain a 40px fixed height with 8px radius and 16px horizontal padding.\n- **Primary**: Background `#365cf5`, text `#ffffff`, hover `#2a4ad8`, active `#1e3ebf`.\n- **Secondary / Outline**: Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, hover background `#f6f8fc`.\n- **Destructive**: Background `#c2333f`, text `#ffffff`, hover `#ab2c36`.\n- **Tertiary / Ghost**: Transparent background, text `#52627a`, hover background `#e1e7f0` at 40% opacity.\n\n### Form Inputs & Search Fields\n- Height: 40px.\n- Corner Radius: 8px.\n- Border: `1px solid #e1e7f0`. Background: `#ffffff`.\n- Text: 14px Noto Sans (`#17243b`). Placeholder: `#94a3b8`.\n- Focus State: Border color `#365cf5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- Error State: Border color `#c2333f` with helper caption in `#c2333f`.\n\n### Cards & Data Containers\n- Container radius is 12px with a 1px solid stroke in `#e1e7f0` and `#ffffff` fill.\n- Standard card padding is 20px or 24px (`space-lg`).\n- Internal divider lines span edge-to-edge using `1px solid #e1e7f0`.\n\n### Data Tables & Operational Lists\n- Header Row: Background `#f6f8fc`, height 44px, text 13px bold `#52627a`, border bottom `1px solid #e1e7f0`.\n- Data Rows: Height 52px, text 14px `#17243b`, alternating row hover `#f8fafc`.\n- Numeric & Financial Cells: Aligned right using monospace/tabular numbers with currency badge (`THB / ฿`).\n\n### Status Badges & Chips\n- Structure: 24px height, horizontal padding 8px, border radius 9999px, font size 12px medium.\n- Variants:\n  - *Success* (e.g., จัดส่งแล้ว / Delivered): Background `#eaf5ef`, text `#157347`.\n  - *Warning* (e.g., รอการชำระ / Pending Payment): Background `#fef9e7`, text `#b08900`.\n  - *Error* (e.g., ยกเลิกแล้ว / Cancelled): Background `#faeaeb`, text `#c2333f`.\n  - *Neutral* (e.g., รอดำเนินการ / Draft): Background `#e1e7f0`, text `#52627a`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 18px × 18px box, 4px corner radius, border `1px solid #cbd5e1`. Checked: `#365cf5` fill with white check icon.\n- Radio: 18px diameter circle with 2px inner dot clearance on check.\n\n### Bilingual Switcher & Sidebar Navigation\n- Navigation Sidebar: Fixed 256px width, `#ffffff` background with `1px solid #e1e7f0` right border. Active nav item has `#f6f8fc` background and `#365cf5` text with a 3px active indicator bar on the left edge.\n- Language Switcher: Positioned in the global header utility cluster. Uses an inline segmented control (TH | EN) at 32px height, 6px radius, toggle text 13px, active segment styled with `#ffffff` fill and subtle elevation over `#e1e7f0` track.",
+            "font": "NOTO_SANS",
+            "headlineFont": "NOTO_SANS",
+            "headlineFontFamily": "Noto Sans",
+            "labelFont": "NOTO_SANS",
+            "labelFontFamily": "Noto Sans",
+            "namedColors": {
+              "background": "#f9f9ff",
+              "error": "#ba1a1a",
+              "error_container": "#ffdad6",
+              "inverse_on_surface": "#ecf0ff",
+              "inverse_primary": "#b9c3ff",
+              "inverse_surface": "#243048",
+              "on_background": "#0e1b32",
+              "on_error": "#ffffff",
+              "on_error_container": "#93000a",
+              "on_primary": "#ffffff",
+              "on_primary_container": "#ededff",
+              "on_primary_fixed": "#001257",
+              "on_primary_fixed_variant": "#0034c0",
+              "on_secondary": "#ffffff",
+              "on_secondary_container": "#54647c",
+              "on_secondary_fixed": "#0b1c31",
+              "on_secondary_fixed_variant": "#38485e",
+              "on_surface": "#0e1b32",
+              "on_surface_variant": "#444655",
+              "on_tertiary": "#ffffff",
+              "on_tertiary_container": "#ffebe4",
+              "on_tertiary_fixed": "#360f00",
+              "on_tertiary_fixed_variant": "#7e2c00",
+              "outline": "#747687",
+              "outline_variant": "#c4c5d8",
+              "primary": "#0a3fdc",
+              "primary_container": "#365cf5",
+              "primary_fixed": "#dde1ff",
+              "primary_fixed_dim": "#b9c3ff",
+              "secondary": "#4f5f77",
+              "secondary_container": "#d0e1fd",
+              "secondary_fixed": "#d3e3ff",
+              "secondary_fixed_dim": "#b7c7e3",
+              "surface": "#f9f9ff",
+              "surface_bright": "#f9f9ff",
+              "surface_container": "#e8eeff",
+              "surface_container_high": "#e0e8ff",
+              "surface_container_highest": "#d7e2ff",
+              "surface_container_low": "#f1f3ff",
+              "surface_container_lowest": "#ffffff",
+              "surface_dim": "#cddaf9",
+              "surface_tint": "#214ce7",
+              "surface_variant": "#d7e2ff",
+              "tertiary": "#943500",
+              "tertiary_container": "#bc4600",
+              "tertiary_fixed": "#ffdbcd",
+              "tertiary_fixed_dim": "#ffb597"
+            },
+            "overrideNeutralColor": "#17243b",
+            "overridePrimaryColor": "#365cf5",
+            "overrideSecondaryColor": "#52627a",
+            "roundness": "ROUND_FOUR",
+            "spacing": {
+              "gutter": "1rem",
+              "gutter-desktop": "1.5rem",
+              "margin": "1rem",
+              "margin-desktop": "2rem",
+              "space-lg": "1.5rem",
+              "space-md": "1rem",
+              "space-sm": "0.5rem",
+              "space-xl": "2rem",
+              "space-xs": "0.25rem"
+            },
+            "spacingScale": 2,
+            "typography": {
+              "body-default": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "14px",
+                "fontWeight": "400",
+                "lineHeight": "22px"
+              },
+              "body-medium": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "14px",
+                "fontWeight": "500",
+                "lineHeight": "22px"
+              },
+              "code-table": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "13px",
+                "fontWeight": "400",
+                "lineHeight": "18px"
+              },
+              "display": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "32px",
+                "fontWeight": "600",
+                "lineHeight": "40px"
+              },
+              "headline-card": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "18px",
+                "fontWeight": "600",
+                "lineHeight": "26px"
+              },
+              "headline-page": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "28px",
+                "fontWeight": "600",
+                "lineHeight": "36px"
+              },
+              "headline-page-mobile": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "22px",
+                "fontWeight": "600",
+                "lineHeight": "30px"
+              },
+              "label-caption": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "12px",
+                "fontWeight": "400",
+                "lineHeight": "16px"
+              },
+              "label-default": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "13px",
+                "fontWeight": "500",
+                "lineHeight": "18px"
+              },
+              "subheading": {
+                "fontFamily": "Noto Sans",
+                "fontSize": "16px",
+                "fontWeight": "500",
+                "lineHeight": "24px"
+              }
+            }
+          }
+        },
+        "name": "assets/f82a75c9d0f54b0a89448b88e894b80a",
+        "version": "1"
+      }
+    },
+    {
+      "design": {
+        "screens": [
+          {
+            "designSystem": {
+              "designSystem": {
+                "displayName": "Siam Enterprise Operations",
+                "styleGuidelines": "## Brand & Style\n\nThis design system is engineered for high-throughput Thai commerce operations teams handling inventory, logistics, order fulfillment, and settlement. The interface reflects an understated, functional aesthetic rooted in modern corporate software: purposeful, balanced, and visually calm to minimize cognitive fatigue during multi-hour operational shifts.\n\nThe emotional baseline focuses on operational trust, speed, and precision. It avoids decorative ornament in favor of strict data legibility, structured scannability, and unambiguous state signifiers. The visual treatment balances crisp, clean white cards over a cool-tinted canvas, reinforced by precise containment borders and a functional royal blue anchor. Bilingual parity is a foundational requirement, ensuring seamless transitions between Thai and English across all density levels and layouts.\n\n## Layout & Spacing\n\nThe layout is built around a persistent desktop shell featuring a fixed 256px vertical navigation sidebar, flanked by a content stage with a centered maximum container width of 1240px.\n\n- **Desktop (1280px and wider)**: Persistent 256px sidebar on the left. The remaining viewport hosts the header and workspace canvas (`#f6f8fc`), with page content contained within a max-width of 1240px, 24px (`space-lg`) column gutters, and 32px (`space-xl`) exterior margins.\n- **Tablet (768px – 1279px)**: Sidebar collapses into a 64px compact icon rail or off-canvas drawer. The content container adopts fluid 100% width with 24px margins and 16px gutters.\n- **Mobile (Below 768px)**: Full-width single column stack. Sidebar converts to a bottom drawer or full-bleed mobile menu. Page margins step down to 16px (`space-md`), and gutters reduce to 12px.\n- **Density Rhythm**: Internal spacing aligns to an 8px grid (with a 4px sub-grid for badges, icon offsets, and tightly bound table controls).\n\n## Elevation & Depth\n\nVisual separation relies on crisp surface boundary lines and soft, neutral ambient shadows rather than dramatic blur layers. This keeps large data sets and complex grids readable.\n\n- **Flat Surface / Base**: Background canvas sits at `#f6f8fc`.\n- **Card Shells**: `#ffffff` with a continuous `1px solid #e1e7f0` border. Ambient drop shadow: `0 1px 3px rgba(23, 36, 59, 0.04)`.\n- **Interactive Hover & Dropdowns**: Cards under direct hover or floating selection panels use `0 4px 12px rgba(23, 36, 59, 0.08)` bordered by `#e1e7f0`.\n- **Modals & Drawers**: Elevation layer utilizes `0 12px 32px rgba(23, 36, 59, 0.14)` over a backdrop tint of `rgba(23, 36, 59, 0.4)`.\n\n## Components\n\n### Buttons\nAll standard desktop and tablet buttons maintain a 40px fixed height with 8px radius and 16px horizontal padding.\n- **Primary**: Background `#365cf5`, text `#ffffff`, hover `#2a4ad8`, active `#1e3ebf`.\n- **Secondary / Outline**: Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, hover background `#f6f8fc`.\n- **Destructive**: Background `#c2333f`, text `#ffffff`, hover `#ab2c36`.\n- **Tertiary / Ghost**: Transparent background, text `#52627a`, hover background `#e1e7f0` at 40% opacity.\n\n### Form Inputs & Search Fields\n- Height: 40px.\n- Corner Radius: 8px.\n- Border: `1px solid #e1e7f0`. Background: `#ffffff`.\n- Text: 14px Noto Sans (`#17243b`). Placeholder: `#94a3b8`.\n- Focus State: Border color `#365cf5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- Error State: Border color `#c2333f` with helper caption in `#c2333f`.\n\n### Cards & Data Containers\n- Container radius is 12px with a 1px solid stroke in `#e1e7f0` and `#ffffff` fill.\n- Standard card padding is 20px or 24px (`space-lg`).\n- Internal divider lines span edge-to-edge using `1px solid #e1e7f0`.\n\n### Data Tables & Operational Lists\n- Header Row: Background `#f6f8fc`, height 44px, text 13px bold `#52627a`, border bottom `1px solid #e1e7f0`.\n- Data Rows: Height 52px, text 14px `#17243b`, alternating row hover `#f8fafc`.\n- Numeric & Financial Cells: Aligned right using monospace/tabular numbers with currency badge (`THB / ฿`).\n\n### Status Badges & Chips\n- Structure: 24px height, horizontal padding 8px, border radius 9999px, font size 12px medium.\n- Variants:\n  - *Success* (e.g., จัดส่งแล้ว / Delivered): Background `#eaf5ef`, text `#157347`.\n  - *Warning* (e.g., รอการชำระ / Pending Payment): Background `#fef9e7`, text `#b08900`.\n  - *Error* (e.g., ยกเลิกแล้ว / Cancelled): Background `#faeaeb`, text `#c2333f`.\n  - *Neutral* (e.g., รอดำเนินการ / Draft): Background `#e1e7f0`, text `#52627a`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 18px × 18px box, 4px corner radius, border `1px solid #cbd5e1`. Checked: `#365cf5` fill with white check icon.\n- Radio: 18px diameter circle with 2px inner dot clearance on check.\n\n### Bilingual Switcher & Sidebar Navigation\n- Navigation Sidebar: Fixed 256px width, `#ffffff` background with `1px solid #e1e7f0` right border. Active nav item has `#f6f8fc` background and `#365cf5` text with a 3px active indicator bar on the left edge.\n- Language Switcher: Positioned in the global header utility cluster. Uses an inline segmented control (TH | EN) at 32px height, 6px radius, toggle text 13px, active segment styled with `#ffffff` fill and subtle elevation over `#e1e7f0` track.",
+                "theme": {
+                  "bodyFont": "NOTO_SANS",
+                  "bodyFontFamily": "Noto Sans",
+                  "colorMode": "LIGHT",
+                  "colorVariant": "FIDELITY",
+                  "customColor": "#365cf5",
+                  "designMd": "---\nname: Siam Enterprise Operations\ncolors:\n  surface: '#f9f9ff'\n  surface-dim: '#cddaf9'\n  surface-bright: '#f9f9ff'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f1f3ff'\n  surface-container: '#e8eeff'\n  surface-container-high: '#e0e8ff'\n  surface-container-highest: '#d7e2ff'\n  on-surface: '#0e1b32'\n  on-surface-variant: '#444655'\n  inverse-surface: '#243048'\n  inverse-on-surface: '#ecf0ff'\n  outline: '#747687'\n  outline-variant: '#c4c5d8'\n  surface-tint: '#214ce7'\n  primary: '#0a3fdc'\n  on-primary: '#ffffff'\n  primary-container: '#365cf5'\n  on-primary-container: '#ededff'\n  inverse-primary: '#b9c3ff'\n  secondary: '#4f5f77'\n  on-secondary: '#ffffff'\n  secondary-container: '#d0e1fd'\n  on-secondary-container: '#54647c'\n  tertiary: '#943500'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#bc4600'\n  on-tertiary-container: '#ffebe4'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dde1ff'\n  primary-fixed-dim: '#b9c3ff'\n  on-primary-fixed: '#001257'\n  on-primary-fixed-variant: '#0034c0'\n  secondary-fixed: '#d3e3ff'\n  secondary-fixed-dim: '#b7c7e3'\n  on-secondary-fixed: '#0b1c31'\n  on-secondary-fixed-variant: '#38485e'\n  tertiary-fixed: '#ffdbcd'\n  tertiary-fixed-dim: '#ffb597'\n  on-tertiary-fixed: '#360f00'\n  on-tertiary-fixed-variant: '#7e2c00'\n  background: '#f9f9ff'\n  on-background: '#0e1b32'\n  surface-variant: '#d7e2ff'\ntypography:\n  display:\n    fontFamily: Noto Sans\n    fontSize: 32px\n    fontWeight: '600'\n    lineHeight: 40px\n  headline-page:\n    fontFamily: Noto Sans\n    fontSize: 28px\n    fontWeight: '600'\n    lineHeight: 36px\n  headline-page-mobile:\n    fontFamily: Noto Sans\n    fontSize: 22px\n    fontWeight: '600'\n    lineHeight: 30px\n  headline-card:\n    fontFamily: Noto Sans\n    fontSize: 18px\n    fontWeight: '600'\n    lineHeight: 26px\n  subheading:\n    fontFamily: Noto Sans\n    fontSize: 16px\n    fontWeight: '500'\n    lineHeight: 24px\n  body-default:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-medium:\n    fontFamily: Noto Sans\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 22px\n  label-default:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '500'\n    lineHeight: 18px\n  label-caption:\n    fontFamily: Noto Sans\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 16px\n  code-table:\n    fontFamily: Noto Sans\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\nrounded:\n  sm: 0.125rem\n  DEFAULT: 0.25rem\n  md: 0.375rem\n  lg: 0.5rem\n  xl: 0.75rem\n  full: 9999px\nspacing:\n  gutter: 1rem\n  gutter-desktop: 1.5rem\n  margin: 1rem\n  margin-desktop: 2rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n---\n\n## Brand & Style\n\nThis design system is engineered for high-throughput Thai commerce operations teams handling inventory, logistics, order fulfillment, and settlement. The interface reflects an understated, functional aesthetic rooted in modern corporate software: purposeful, balanced, and visually calm to minimize cognitive fatigue during multi-hour operational shifts.\n\nThe emotional baseline focuses on operational trust, speed, and precision. It avoids decorative ornament in favor of strict data legibility, structured scannability, and unambiguous state signifiers. The visual treatment balances crisp, clean white cards over a cool-tinted canvas, reinforced by precise containment borders and a functional royal blue anchor. Bilingual parity is a foundational requirement, ensuring seamless transitions between Thai and English across all density levels and layouts.\n\n## Colors\n\nThe palette establishes high semantic contrast designed for daylight data-entry environments and detailed dashboard monitoring:\n\n- **Canvas & Surface**: Backing canvas defaults to `#f6f8fc`. Elevated containers, data tables, and card shells use pure `#ffffff`.\n- **Primary Accent**: `#365cf5` acts as the primary interactive anchor for primary actions, selected navigation items, focused state rings, and critical progress indications.\n- **Ink & Typography Hierarchy**: Primary ink sits at `#17243b`, delivering crisp optical contrast against white backdrops. Secondary labels, supporting metadata, and table column headers map to `#52627a`. Muted hints and disabled states leverage `#94a3b8`.\n- **Structural Lines**: Container division, table cell borders, and form inputs employ `#e1e7f0`. Hover strokes on inputs step to `#cbd5e1`.\n- **Semantic Feedback**:\n  - Success (Fulfilled, Paid, Connected): `#157347` (surface tint `#eaf5ef`)\n  - Warning (Pending, Low Stock, Requires Review): `#b08900` (surface tint `#fef9e7`)\n  - Error (Cancelled, Gateway Failure, Discrepancy): `#c2333f` (surface tint `#faeaeb`)\n\n## Typography\n\nTypography is standardized on `Noto Sans` (with comprehensive support for the Thai loopless and looped scripts via Noto Sans Thai). The baseline line heights are intentionally calibrated with an extra 2px to 4px clearance relative to standard Latin typesets to ensure Thai vowel markers, tone marks, and descenders do not clip or blur during dense information display.\n\nPage titles anchor screens at 28px (`headline-page`). Operational tables and forms run primarily on 14px (`body-default` and `body-medium`) with secondary metadata, form labels, and badge indicators set to 13px (`label-default`). Numeric columns, order IDs, tracking codes, and monetary currencies align using tabular numeric figures (`tnum`).\n\n## Layout & Spacing\n\nThe layout is built around a persistent desktop shell featuring a fixed 256px vertical navigation sidebar, flanked by a content stage with a centered maximum container width of 1240px.\n\n- **Desktop (1280px and wider)**: Persistent 256px sidebar on the left. The remaining viewport hosts the header and workspace canvas (`#f6f8fc`), with page content contained within a max-width of 1240px, 24px (`space-lg`) column gutters, and 32px (`space-xl`) exterior margins.\n- **Tablet (768px – 1279px)**: Sidebar collapses into a 64px compact icon rail or off-canvas drawer. The content container adopts fluid 100% width with 24px margins and 16px gutters.\n- **Mobile (Below 768px)**: Full-width single column stack. Sidebar converts to a bottom drawer or full-bleed mobile menu. Page margins step down to 16px (`space-md`), and gutters reduce to 12px.\n- **Density Rhythm**: Internal spacing aligns to an 8px grid (with a 4px sub-grid for badges, icon offsets, and tightly bound table controls).\n\n## Elevation & Depth\n\nVisual separation relies on crisp surface boundary lines and soft, neutral ambient shadows rather than dramatic blur layers. This keeps large data sets and complex grids readable.\n\n- **Flat Surface / Base**: Background canvas sits at `#f6f8fc`.\n- **Card Shells**: `#ffffff` with a continuous `1px solid #e1e7f0` border. Ambient drop shadow: `0 1px 3px rgba(23, 36, 59, 0.04)`.\n- **Interactive Hover & Dropdowns**: Cards under direct hover or floating selection panels use `0 4px 12px rgba(23, 36, 59, 0.08)` bordered by `#e1e7f0`.\n- **Modals & Drawers**: Elevation layer utilizes `0 12px 32px rgba(23, 36, 59, 0.14)` over a backdrop tint of `rgba(23, 36, 59, 0.4)`.\n\n## Shapes\n\nThe interface balances soft container geometry with sharper functional controls:\n\n- **Cards & Data Panels**: Border radius is strictly 12px (`0.75rem`), providing clear modular separation between discrete operational modules.\n- **Controls & Form Elements**: Input fields, buttons, dropdown toggles, and search filters use an 8px (`0.5rem`) radius.\n- **Status Pills & Chips**: Retain a pill radius of 9999px for rapid scannability in order statuses.\n- **Internal Table Cells & Nested Rows**: Corner radiuses are maintained at 0px inside data grids, reserving rounded corners exclusively for outer perimeter table containers.\n\n## Components\n\n### Buttons\nAll standard desktop and tablet buttons maintain a 40px fixed height with 8px radius and 16px horizontal padding.\n- **Primary**: Background `#365cf5`, text `#ffffff`, hover `#2a4ad8`, active `#1e3ebf`.\n- **Secondary / Outline**: Background `#ffffff`, border `1px solid #e1e7f0`, text `#17243b`, hover background `#f6f8fc`.\n- **Destructive**: Background `#c2333f`, text `#ffffff`, hover `#ab2c36`.\n- **Tertiary / Ghost**: Transparent background, text `#52627a`, hover background `#e1e7f0` at 40% opacity.\n\n### Form Inputs & Search Fields\n- Height: 40px.\n- Corner Radius: 8px.\n- Border: `1px solid #e1e7f0`. Background: `#ffffff`.\n- Text: 14px Noto Sans (`#17243b`). Placeholder: `#94a3b8`.\n- Focus State: Border color `#365cf5` with an outer ring `0 0 0 3px rgba(54, 92, 245, 0.15)`.\n- Error State: Border color `#c2333f` with helper caption in `#c2333f`.\n\n### Cards & Data Containers\n- Container radius is 12px with a 1px solid stroke in `#e1e7f0` and `#ffffff` fill.\n- Standard card padding is 20px or 24px (`space-lg`).\n- Internal divider lines span edge-to-edge using `1px solid #e1e7f0`.\n\n### Data Tables & Operational Lists\n- Header Row: Background `#f6f8fc`, height 44px, text 13px bold `#52627a`, border bottom `1px solid #e1e7f0`.\n- Data Rows: Height 52px, text 14px `#17243b`, alternating row hover `#f8fafc`.\n- Numeric & Financial Cells: Aligned right using monospace/tabular numbers with currency badge (`THB / ฿`).\n\n### Status Badges & Chips\n- Structure: 24px height, horizontal padding 8px, border radius 9999px, font size 12px medium.\n- Variants:\n  - *Success* (e.g., จัดส่งแล้ว / Delivered): Background `#eaf5ef`, text `#157347`.\n  - *Warning* (e.g., รอการชำระ / Pending Payment): Background `#fef9e7`, text `#b08900`.\n  - *Error* (e.g., ยกเลิกแล้ว / Cancelled): Background `#faeaeb`, text `#c2333f`.\n  - *Neutral* (e.g., รอดำเนินการ / Draft): Background `#e1e7f0`, text `#52627a`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 18px × 18px box, 4px corner radius, border `1px solid #cbd5e1`. Checked: `#365cf5` fill with white check icon.\n- Radio: 18px diameter circle with 2px inner dot clearance on check.\n\n### Bilingual Switcher & Sidebar Navigation\n- Navigation Sidebar: Fixed 256px width, `#ffffff` background with `1px solid #e1e7f0` right border. Active nav item has `#f6f8fc` background and `#365cf5` text with a 3px active indicator bar on the left edge.\n- Language Switcher: Positioned in the global header utility cluster. Uses an inline segmented control (TH | EN) at 32px height, 6px radius, toggle text 13px, active segment styled with `#ffffff` fill and subtle elevation over `#e1e7f0` track.",
+                  "font": "NOTO_SANS",
+                  "headlineFont": "NOTO_SANS",
+                  "headlineFontFamily": "Noto Sans",
+                  "labelFont": "NOTO_SANS",
+                  "labelFontFamily": "Noto Sans",
+                  "namedColors": {
+                    "background": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "error_container": "#ffdad6",
+                    "inverse_on_surface": "#ecf0ff",
+                    "inverse_primary": "#b9c3ff",
+                    "inverse_surface": "#243048",
+                    "on_background": "#0e1b32",
+                    "on_error": "#ffffff",
+                    "on_error_container": "#93000a",
+                    "on_primary": "#ffffff",
+                    "on_primary_container": "#ededff",
+                    "on_primary_fixed": "#001257",
+                    "on_primary_fixed_variant": "#0034c0",
+                    "on_secondary": "#ffffff",
+                    "on_secondary_container": "#54647c",
+                    "on_secondary_fixed": "#0b1c31",
+                    "on_secondary_fixed_variant": "#38485e",
+                    "on_surface": "#0e1b32",
+                    "on_surface_variant": "#444655",
+                    "on_tertiary": "#ffffff",
+                    "on_tertiary_container": "#ffebe4",
+                    "on_tertiary_fixed": "#360f00",
+                    "on_tertiary_fixed_variant": "#7e2c00",
+                    "outline": "#747687",
+                    "outline_variant": "#c4c5d8",
+                    "primary": "#0a3fdc",
+                    "primary_container": "#365cf5",
+                    "primary_fixed": "#dde1ff",
+                    "primary_fixed_dim": "#b9c3ff",
+                    "secondary": "#4f5f77",
+                    "secondary_container": "#d0e1fd",
+                    "secondary_fixed": "#d3e3ff",
+                    "secondary_fixed_dim": "#b7c7e3",
+                    "surface": "#f9f9ff",
+                    "surface_bright": "#f9f9ff",
+                    "surface_container": "#e8eeff",
+                    "surface_container_high": "#e0e8ff",
+                    "surface_container_highest": "#d7e2ff",
+                    "surface_container_low": "#f1f3ff",
+                    "surface_container_lowest": "#ffffff",
+                    "surface_dim": "#cddaf9",
+                    "surface_tint": "#214ce7",
+                    "surface_variant": "#d7e2ff",
+                    "tertiary": "#943500",
+                    "tertiary_container": "#bc4600",
+                    "tertiary_fixed": "#ffdbcd",
+                    "tertiary_fixed_dim": "#ffb597"
+                  },
+                  "overrideNeutralColor": "#17243b",
+                  "overridePrimaryColor": "#365cf5",
+                  "overrideSecondaryColor": "#52627a",
+                  "roundness": "ROUND_FOUR",
+                  "spacing": {
+                    "gutter": "1rem",
+                    "gutter-desktop": "1.5rem",
+                    "margin": "1rem",
+                    "margin-desktop": "2rem",
+                    "space-lg": "1.5rem",
+                    "space-md": "1rem",
+                    "space-sm": "0.5rem",
+                    "space-xl": "2rem",
+                    "space-xs": "0.25rem"
+                  },
+                  "spacingScale": 2,
+                  "typography": {
+                    "body-default": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "14px",
+                      "fontWeight": "400",
+                      "lineHeight": "22px"
+                    },
+                    "body-medium": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "14px",
+                      "fontWeight": "500",
+                      "lineHeight": "22px"
+                    },
+                    "code-table": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "13px",
+                      "fontWeight": "400",
+                      "lineHeight": "18px"
+                    },
+                    "display": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "32px",
+                      "fontWeight": "600",
+                      "lineHeight": "40px"
+                    },
+                    "headline-card": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "18px",
+                      "fontWeight": "600",
+                      "lineHeight": "26px"
+                    },
+                    "headline-page": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "28px",
+                      "fontWeight": "600",
+                      "lineHeight": "36px"
+                    },
+                    "headline-page-mobile": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "22px",
+                      "fontWeight": "600",
+                      "lineHeight": "30px"
+                    },
+                    "label-caption": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "12px",
+                      "fontWeight": "400",
+                      "lineHeight": "16px"
+                    },
+                    "label-default": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "13px",
+                      "fontWeight": "500",
+                      "lineHeight": "18px"
+                    },
+                    "subheading": {
+                      "fontFamily": "Noto Sans",
+                      "fontSize": "16px",
+                      "fontWeight": "500",
+                      "lineHeight": "24px"
+                    }
+                  }
+                }
+              },
+              "name": "assets/f82a75c9d0f54b0a89448b88e894b80a",
+              "version": "1"
+            },
+            "deviceType": "DESKTOP",
+            "generatedBy": "figaro_agent",
+            "height": "3950",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzdiZjllZTcwYzU4YjRiOTA5YTA3MzA4MmNjY2I1YmM1EgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/ea177f514461489f91c3e88bdf61e146"
+            },
+            "id": "53c7fbe45ffd47498167db945d1fa208",
+            "name": "projects/18348214526789030153/screens/53c7fbe45ffd47498167db945d1fa208",
+            "prompt": "Generate a complete, high-fidelity desktop screen for Commerce Platform Thai operations admin.\nRoute identifier: admin-1982d2d7cf20\nRoute URL: /j/bot/intent-rules/edit/:id\nScreen Title: \"แก้ไข Intent Rule\" (with fallback / initial state handling for \"กำลังโหลด...\")\nView type: Edit form\nApp: admin\nCategory: ลูกค้าและบริการ (highlighted in 256px sidebar, with subnav showing \"บอท & Intent Rules\" active).\n\nDesign specifications & layout:\n1. Shell:\n   - Sidebar 256px fixed on the left with 7 core areas: สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ (expanded with submenus: ลูกค้าแพลตฟอร์ม, จัดการผู้ใช้ (All Users), KYC — ยืนยันตัวตน, แชตกับลูกค้า (Live chat), บอท & Intent Rules [ACTIVE], งานบริการลูกค้า (CS Desk), ข้อร้องเรียนและบริการ), การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน.\n   - Top Header: Compact search bar (\"ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)\"), yellow badge \"ข้อมูลตัวอย่าง\", Language Switcher buttons (\"ไทย\" active, \"English\"), and user profile \"จินดา นวลอนันต์ หัวหน้าทีมบริการลูกค้า (CS)\".\n   - Bottom left: Developer Portal link route: admin-1982d2d7cf20 /j/bot/intent-rules/edit/check_order_status.\n\n2. Breadcrumbs & Header:\n   - Breadcrumbs: ลูกค้าและบริการ > บอท & Intent Rules > แก้ไข Intent Rule\n   - Page Title: \"แก้ไข Intent Rule\" (h1 28px bold, ink #17243b) with badge `check_order_status` (ORDER category badge) and status toggle \"เปิดใช้งาน (ACTIVE)\".\n   - Subtitle: \"กำหนดรูปแบบ Regex, คำสำคัญ และการส่งต่อ Action Response สำหรับ Commerce Bot อัตโนมัติ\"\n   - Action buttons in header: \"ย้อนกลับ\" (Back to list) and \"ทดสอบกับ Live Bot\" button.\n\n3. Form Grouping (approx 1240px container, light canvas #f6f8fc, white cards with 12px corners, #e1e7f0 borders):\n   - Card 1: ข้อมูลพื้นฐานและ Intent Key\n     - Intent Key / Identifier: \"check_order_status\" (Read-only / Slug input with hint \"เช่น order_status_lookup\")\n     - หมวดหมู่ (Category): Select dropdown with choices (ORDER, PRODUCT, FINANCE, LEGAL, SUPPORT, MARKETING)\n     - คำอธิบายการทำงาน (Description): \"สอบถามสถานะคำสั่งซื้อหรือเลขพัสดุจัดส่ง\"\n     - สลับภาษาข้อความช่วยเหลือ / Localized description: toggle / button \"แปลทั้งหมด EN → TH\" and field \"ข้อความ (EN)\"\n   - Card 2: รูปแบบข้อความและการตรวจจับ (Pattern Regex & Keywords) - Required Fields:\n     - Pattern (Regex)*: Input field with value `(ออเดอร์|คำสั่งซื้อ|พัสดุ|เลขแทร็ก|ติดตามพัสดุ|ord-\\d+)`\n     - Inline validator indicator: \"Pattern ถูกต้องตามรูปแบบ PCRE\" (Inline error message placeholder: \"กรุณากรอก Pattern\")\n     - Interactive / Visual Pattern Tester (Regex Playground mini-card inside):\n       - Input sample test message: \"ช่วยเช็คสถานะพัสดุ ord-98214 ให้หน่อยครับ\"\n       - Result badge: \"✓ ตรวจพบคำว่า ord-98214 (Match Confidence: 99.2%)\"\n     - Case sensitivity & Accent matching checkboxes.\n   - Card 3: การตอบกลับและการดำเนินการ (Action Response):\n     - เลือกประเภท Action: Radio cards / Select\n       1. \"API Lookup: Order Tracking\" (/v1/orders/lookup) [Selected]\n       2. \"Send Card: B2B Catalog\"\n       3. \"Form: e-Tax Portal Form\"\n       4. \"Route to CS Desk Queue\"\n       5. \"Auto-Text: Custom Template\"\n     - พารามิเตอร์ของ Action:\n       - Endpoint URL / Routing Key: `/v1/orders/lookup`\n       - ตัวเลือกการแสดงผล: \"ลิงก์หน้าสินค้า\", \"สินค้า (PDP)\"\n       - Payload Template หรือ Fallback behavior: \"ส่ง order ผ่าน commerce · ทดลองคู่กัน\"\n   - Card 4: \"ตั้งค่าแบบละเอียด\" (Advanced Settings / Collapsible section):\n     - ลำดับความสำคัญ (Priority Order): Input number (1)\n     - ความเชื่อมั่นขั้นต่ำ (Confidence Threshold): Slider & input 85%\n     - จำนวนรายการสูงสุด (maxItems): Input number with label \"จำนวนรายการสูงสุด (maxItems)\"\n     - สิทธิและเงื่อนไขบทบาท: \"เฉพาะลูกค้า B2B ที่ยืนยันตัวตนแล้ว\"\n   - Bottom Sticky Action Bar:\n     - Left: Audit note \"แก้ไขล่าสุดโดย จินดา นวลอนันต์ • 14 ก.พ. 2568 11:20\"\n     - Right: Button \"ยกเลิก\" (Cancel, secondary outline) and Button \"บันทึกการเปลี่ยนแปลง\" (Primary #365cf5, 40px height, 8px radius) with subtle saving/error state notification capability (\"เกิดข้อผิดพลาดในการบันทึก\").\n\n4. CRITICAL EXPORT REQUIREMENT:\n   Include the invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` containing the exact dictionary with every single required string:\n   [\"กำลังโหลด...\",\"กรุณากรอก Pattern\",\"เกิดข้อผิดพลาดในการบันทึก\",\"แก้ไข Intent Rule\",\"ข้อความ (EN)\",\"คอลัมน์\",\"จำนวนรายการสูงสุด (maxItems)\",\"เช่น order_status_lookup\",\"ตั้งค่าแบบละเอียด\",\"บันทึก Segment ก่อน เพื่อดูรายชื่อลูกค้าแบบแบ่งหน้า (ตอนนี้แสดงได้แค่จำนวนโดยประมาณด้านบน)\",\"แปลทั้งหมด EN → TH\",\"มีรายการรอตรวจสอบ\",\"ยอดใช้จ่ายสะสม\",\"รวม {0} เข้าบัญชีนี้ ({1})? การกระทำนี้ย้อนกลับยาก\",\"รายชื่อเหล่านี้ยังไม่ถูกกำหนดว่าจัดส่งที่สาขาใด — ควรผูกกับสาขาเพื่อระบุที่อยู่จัดส่ง\",\"ลิงก์หน้าสินค้า\",\"ส่ง order ผ่าน commerce · ทดลองคู่กัน\",\"สินค้า (PDP)\",\"โหลดข้อมูลประเภทร้านไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง\",\"ส่งไม่สำเร็จ (dead letter)\"]\n   Each mapped to `{\"th\": \"...\", \"en\": \"...\"}` with preserved placeholders like `{0}`, `{1}`.\n   Clean, semantic HTML, Tailwind CSS, high visual polish matching Commerce Platform standards.",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1Wm2gQB4elpqmQUQdM0oeJUSr9sn_e4vcECke-zeAVQl4egFZXZ0Nn7JK87H4An74a7V5ExebI9WA6bZKinJGYYF3lwi7FkR_o_ucq7MeW5XjHK5h6ZAO7zIfbwEks-lQYLapy73yhgTGac816U5qn16c7DdNUQUVgiVK83Fm56uDiiZ4zyag0eJk2yAUiKeFwx271uIc2WabaMOF_g6bOirEGkzudrNNJ7u9lDJfxhBwl9tkBl4_yyKmPi",
+              "name": "projects/18348214526789030153/files/7f6f267507764805804c8b2840962a70"
+            },
+            "theme": {
+              "bodyFont": "NOTO_SANS",
+              "bodyFontFamily": "Noto Sans",
+              "colorMode": "LIGHT",
+              "colorVariant": "FIDELITY",
+              "customColor": "#365cf5",
+              "font": "NOTO_SANS",
+              "headlineFont": "NOTO_SANS",
+              "headlineFontFamily": "Noto Sans",
+              "labelFont": "NOTO_SANS",
+              "labelFontFamily": "Noto Sans",
+              "namedColors": {
+                "background": "#f9f9ff",
+                "error": "#ba1a1a",
+                "error_container": "#ffdad6",
+                "inverse_on_surface": "#ecf0ff",
+                "inverse_primary": "#b9c3ff",
+                "inverse_surface": "#243048",
+                "on_background": "#0e1b32",
+                "on_error": "#ffffff",
+                "on_error_container": "#93000a",
+                "on_primary": "#ffffff",
+                "on_primary_container": "#ededff",
+                "on_primary_fixed": "#001257",
+                "on_primary_fixed_variant": "#0034c0",
+                "on_secondary": "#ffffff",
+                "on_secondary_container": "#54647c",
+                "on_secondary_fixed": "#0b1c31",
+                "on_secondary_fixed_variant": "#38485e",
+                "on_surface": "#0e1b32",
+                "on_surface_variant": "#444655",
+                "on_tertiary": "#ffffff",
+                "on_tertiary_container": "#ffebe4",
+                "on_tertiary_fixed": "#360f00",
+                "on_tertiary_fixed_variant": "#7e2c00",
+                "outline": "#747687",
+                "outline_variant": "#c4c5d8",
+                "primary": "#0a3fdc",
+                "primary_container": "#365cf5",
+                "primary_fixed": "#dde1ff",
+                "primary_fixed_dim": "#b9c3ff",
+                "secondary": "#4f5f77",
+                "secondary_container": "#d0e1fd",
+                "secondary_fixed": "#d3e3ff",
+                "secondary_fixed_dim": "#b7c7e3",
+                "surface": "#f9f9ff",
+                "surface_bright": "#f9f9ff",
+                "surface_container": "#e8eeff",
+                "surface_container_high": "#e0e8ff",
+                "surface_container_highest": "#d7e2ff",
+                "surface_container_low": "#f1f3ff",
+                "surface_container_lowest": "#ffffff",
+                "surface_dim": "#cddaf9",
+                "surface_tint": "#214ce7",
+                "surface_variant": "#d7e2ff",
+                "tertiary": "#943500",
+                "tertiary_container": "#bc4600",
+                "tertiary_fixed": "#ffdbcd",
+                "tertiary_fixed_dim": "#ffb597"
+              },
+              "overrideNeutralColor": "#17243b",
+              "overridePrimaryColor": "#365cf5",
+              "overrideSecondaryColor": "#52627a",
+              "roundness": "ROUND_FOUR",
+              "spacing": {
+                "gutter": "1rem",
+                "gutter-desktop": "1.5rem",
+                "margin": "1rem",
+                "margin-desktop": "2rem",
+                "space-lg": "1.5rem",
+                "space-md": "1rem",
+                "space-sm": "0.5rem",
+                "space-xl": "2rem",
+                "space-xs": "0.25rem"
+              },
+              "spacingScale": 2,
+              "typography": {
+                "body-default": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "14px",
+                  "fontWeight": "400",
+                  "lineHeight": "22px"
+                },
+                "body-medium": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "14px",
+                  "fontWeight": "500",
+                  "lineHeight": "22px"
+                },
+                "code-table": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "13px",
+                  "fontWeight": "400",
+                  "lineHeight": "18px"
+                },
+                "display": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "32px",
+                  "fontWeight": "600",
+                  "lineHeight": "40px"
+                },
+                "headline-card": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "18px",
+                  "fontWeight": "600",
+                  "lineHeight": "26px"
+                },
+                "headline-page": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "28px",
+                  "fontWeight": "600",
+                  "lineHeight": "36px"
+                },
+                "headline-page-mobile": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "22px",
+                  "fontWeight": "600",
+                  "lineHeight": "30px"
+                },
+                "label-caption": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "12px",
+                  "fontWeight": "400",
+                  "lineHeight": "16px"
+                },
+                "label-default": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "13px",
+                  "fontWeight": "500",
+                  "lineHeight": "18px"
+                },
+                "subheading": {
+                  "fontFamily": "Noto Sans",
+                  "fontSize": "16px",
+                  "fontWeight": "500",
+                  "lineHeight": "24px"
+                }
+              }
+            },
+            "title": "แก้ไข Intent Rule (EditBotIntentRule)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **แก้ไข Intent Rule (EditBotIntentRule)** สำหรับระบบ Commerce Platform เรียบร้อยแล้ว (รหัสเส้นทาง `admin-1982d2d7cf20` / URL `/j/bot/intent-rules/edit/:id`)\n\n### ไฮไลต์การออกแบบและการจัดวางฟังก์ชัน\n1. **โครงสร้างสถาปัตยกรรมระดับองค์กร (Commerce Platform Shell)**:\n   - แถบเมนูด้านซ้ายขนาดความกว้างมาตรฐาน 256px พร้อม 7 หมวดหมู่งานหลัก ไฮไลต์หมวด **ลูกค้าและบริการ** และเมนูย่อย **บอท & Intent Rules**\n   - ส่วนหัวด้านบน (Header) มีช่องค้นหาเฉพาะหน้าปัจจุบัน, ป้ายกำกับ **ข้อมูลตัวอย่าง**, ปุ่มสลับภาษา **ไทย / English** และข้อมูลผู้ใช้งานระบบ\n   - การแสดง Breadcrumbs ที่ชัดเจน: `ลูกค้าและบริการ > บอท & Intent Rules > แก้ไข Intent Rule`\n\n2. **การจัดกลุ่มฟอร์มแก้ไขข้อมูลอย่างเป็นลำดับขั้น (Form Hierarchy)**:\n   - **ข้อมูลพื้นฐานและ Intent Key**: รหัส Intent `check_order_status` (พร้อมคำแนะนำ `เช่น order_status_lookup`), หมวดหมู่บริการ, คำอธิบายภาษาไทยและ `ข้อความ (EN)` พร้อมปุ่มฟังก์ชัน `แปลทั้งหมด EN → TH`\n   - **รูปแบบข้อความและการตรวจจับ (Pattern Regex & Keywords)**: ช่องกรอกนิพจน์ Pattern ที่มีตัวตรวจจับ PCRE Engine และมีระบบ **Regex Playground** ทดสอบจับคู่คำค้นจากข้อความตัวอย่าง พร้อมข้อความแจ้งเตือนความถูกต้อง (`กรุณากรอก Pattern`)\n   - **การตอบกลับและการดำเนินการ (Action Response)**: การเลือกประเภท Action เช่น API Lookup, ส่ง Card แคตตาล็อก, e-Tax Form และการตั้งค่า Endpoint พร้อมตัวเลือกการแสดงผล `ลิงก์หน้าสินค้า` และ `สินค้า (PDP)` ตลอดจนคำอธิบายพฤติกรรมสำรอง `ส่ง order ผ่าน commerce · ทดลองคู่กัน`\n   - **ตั้งค่าแบบละเอียด (Advanced Parameters)**: ปรับแต่งลำดับความสำคัญ (Priority Order), เกณฑ์ความเชื่อมั่น (Threshold 85%), และ `จำนวนรายการสูงสุด (maxItems)`\n\n3. **แถบการทำงานด้านล่าง (Sticky Action Bar)**:\n   - แสดงประวัติการแก้ไขล่าสุดโดยผู้รับผิดชอบ พร้อมปุ่ม **ยกเลิก** และปุ่มหลัก **บันทึกการเปลี่ยนแปลง** (พร้อมการเตรียมรองรับสถานะ `เกิดข้อผิดพลาดในการบันทึก`)\n\n4. **พจนานุกรมคำแปล UI สองภาษา (Bilingual UI Translation)**:\n   - ฝังแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` ครบถ้วนทั้ง 20 คีย์ตามข้อกำหนด พร้อมค่าแปลภาษาไทยและภาษาอังกฤษ (`th` / `en`) และคงตัวแปร placeholder เช่น `{0}`, `{1}` ไว้อย่างถูกต้องสมบูรณ์"
+    },
+    {
+      "suggestion": "ดูการทำงานของ Regex Playground เมื่อมีข้อความที่ไม่ตรงกับเงื่อนไข"
+    },
+    {
+      "suggestion": "ทดสอบการสลับภาษาหน้าจอเป็น English (EN) ทั้งหมด"
+    },
+    {
+      "suggestion": "เพิ่ม Modal ยืนยันการออกจากหน้าจอเมื่อมีการแก้ไขค้างอยู่"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "3200929772207841764"
+}

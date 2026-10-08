@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>หมวดที่ย้ายของในตะกร้าได้ (Unlock Move Categories) - Commerce Platform</title>
+<!-- Google Fonts: Noto Sans Thai & Noto Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config verbatum -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#0e1b32",
+            "tertiary-container": "#bc4600",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface-variant": "#d7e2ff",
+            "on-tertiary-fixed": "#360f00",
+            "on-secondary-fixed-variant": "#38485e",
+            "error-container": "#ffdad6",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "primary": "#0a3fdc",
+            "outline-variant": "#c4c5d8",
+            "primary-container": "#365cf5",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-background": "#0e1b32",
+            "primary-fixed": "#dde1ff",
+            "on-primary": "#ffffff",
+            "surface-tint": "#214ce7",
+            "on-tertiary-container": "#ffebe4",
+            "background": "#f9f9ff",
+            "secondary-container": "#d0e1fd",
+            "secondary-fixed": "#d3e3ff",
+            "on-primary-container": "#ededff",
+            "on-primary-fixed-variant": "#0034c0",
+            "surface-container": "#e8eeff",
+            "on-surface-variant": "#444655",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-container-highest": "#d7e2ff",
+            "surface-dim": "#cddaf9",
+            "surface-bright": "#f9f9ff",
+            "on-tertiary": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-error-container": "#93000a",
+            "tertiary": "#943500",
+            "surface-container-high": "#e0e8ff",
+            "secondary": "#4f5f77",
+            "on-primary-fixed": "#001257",
+            "surface-container-lowest": "#ffffff",
+            "surface": "#f9f9ff",
+            "tertiary-fixed-dim": "#ffb597",
+            "outline": "#747687",
+            "inverse-surface": "#243048",
+            "error": "#ba1a1a",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-container-low": "#f1f3ff",
+            "on-secondary-fixed": "#0b1c31",
+            "on-error": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "margin": "1rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "gutter-desktop": "1.5rem",
+            "margin-desktop": "2rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "headline-page": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ],
+            "display": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ],
+            "label-default": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ],
+            "code-table": [
+              "Noto Sans", "Noto Sans Thai", "monospace"
+            ],
+            "body-medium": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ],
+            "subheading": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ],
+            "label-caption": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ],
+            "headline-page-mobile": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ],
+            "headline-card": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ],
+            "body-default": [
+              "Noto Sans", "Noto Sans Thai", "sans-serif"
+            ]
+          },
+          "fontSize": {
+            "headline-page": [
+              "28px",
+              {
+                "lineHeight": "36px",
+                "fontWeight": "600"
+              }
+            ],
+            "display": [
+              "32px",
+              {
+                "lineHeight": "40px",
+                "fontWeight": "600"
+              }
+            ],
+            "label-default": [
+              "13px",
+              {
+                "lineHeight": "18px",
+                "fontWeight": "500"
+              }
+            ],
+            "code-table": [
+              "13px",
+              {
+                "lineHeight": "18px",
+                "fontWeight": "400"
+              }
+            ],
+            "body-medium": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "500"
+              }
+            ],
+            "subheading": [
+              "16px",
+              {
+                "lineHeight": "24px",
+                "fontWeight": "500"
+              }
+            ],
+            "label-caption": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "fontWeight": "400"
+              }
+            ],
+            "headline-page-mobile": [
+              "22px",
+              {
+                "lineHeight": "30px",
+                "fontWeight": "600"
+              }
+            ],
+            "headline-card": [
+              "18px",
+              {
+                "lineHeight": "26px",
+                "fontWeight": "600"
+              }
+            ],
+            "body-default": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "400"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans', 'Noto Sans Thai', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1;
+    }
+    /* Subtle custom tree connectors */
+    .tree-branch {
+      border-left: 1.5px dashed #cbd5e1;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#f6f8fc] text-[#17243b] antialiased">
+<!-- ==================== SIDEBAR COMPONENT (256px / w-64) ==================== -->
+<aside class="fixed top-0 left-0 h-full w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm flex flex-col justify-between">
+<!-- Brand & Top Workspace Header -->
+<div>
+<div class="h-16 px-4 flex items-center gap-3 border-b border-[#e1e7f0]">
+<div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-bold text-lg shadow-sm">
+<span class="material-symbols-outlined text-[22px]">storefront</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-headline-card font-headline-card font-bold text-on-surface truncate leading-tight">Commerce Admin</span>
+<span class="text-label-caption font-label-caption text-secondary truncate">ศูนย์จัดการระบบ</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<div class="p-3">
+<button class="w-full h-10 px-3 bg-surface-container-low hover:bg-surface-container text-primary text-body-medium font-body-medium rounded-xl border border-primary/20 flex items-center justify-center gap-2 transition-colors duration-150 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>สร้างรายการใหม่</span>
+</button>
+</div>
+<!-- Main Navigation Menu (7 Top Level Tabs as per JSON) -->
+<nav class="px-2 space-y-1 overflow-y-auto max-h-[calc(100vh-230px)]">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">inventory_2</span>
+<span class="truncate">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">receipt_long</span>
+<span class="truncate">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ (ACTIVE WORK AREA with Sub-menu) -->
+<div class="rounded-xl bg-surface-container-low/70 border border-primary/10 overflow-hidden">
+<div class="flex items-center justify-between px-3 py-2.5 bg-surface-container text-primary font-body-medium border-l-[3px] border-primary">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-primary fill-1">support_agent</span>
+<span class="text-body-medium font-body-medium">ลูกค้าและบริการ</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-primary">expand_more</span>
+</div>
+<!-- Sub-menu list -->
+<div class="py-1.5 pl-6 pr-2 space-y-0.5 text-label-default font-label-default">
+<a class="flex items-center gap-2 py-1.5 px-2.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container/50 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="truncate">รายชื่อลูกค้าและร้านค้า</span>
+</a>
+<a class="flex items-center gap-2 py-1.5 px-2.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container/50 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="truncate">งานบริการลูกค้า (CS Desk)</span>
+</a>
+<a class="flex items-center gap-2 py-1.5 px-2.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container/50 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="truncate">แชตกับลูกค้า</span>
+</a>
+<!-- Active Sub-Item -->
+<a class="flex items-center gap-2 py-1.5 px-2.5 rounded-lg bg-surface-container-highest text-primary font-body-medium font-medium shadow-2xs" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="truncate font-semibold text-primary">หมวดที่ย้ายของในตะกร้าได้</span>
+</a>
+<a class="flex items-center gap-2 py-1.5 px-2.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container/50 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="truncate">บันทึกและกฎอัตโนมัติ</span>
+</a>
+</div>
+</div>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">campaign</span>
+<span class="truncate">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">analytics</span>
+<span class="truncate">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">hub</span>
+<span class="truncate">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">settings</span>
+<span class="truncate">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="p-3 border-t border-[#e1e7f0] bg-surface-container-lowest space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">help_center</span>
+<span>คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-error hover:bg-error-container/30 text-label-default font-label-default transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ==================== TOP NAVIGATION BAR ==================== -->
+<header class="sticky top-0 right-0 w-[calc(100%-16rem)] ml-auto z-30 h-16 bg-surface-container-lowest border-b border-[#e1e7f0] shadow-sm">
+<div class="flex justify-between items-center h-16 px-8 w-full">
+<!-- Left: Search Box & Route Meta Badge -->
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative w-full max-w-md">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="w-full h-10 pl-10 pr-4 text-body-default font-body-default bg-surface-container-low border border-[#e1e7f0] rounded-xl text-on-surface placeholder:text-outline/70 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-150" placeholder="ค้นหาเมนู, สินค้า, ตะกร้า หรือคำสั่ง..." type="text"/>
+</div>
+<div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fef9e7] border border-[#f5dfa8] text-[#947000] text-label-caption font-label-caption font-medium">
+<span class="material-symbols-outlined text-[14px]">database</span>
+<span>ข้อมูลตัวอย่าง</span>
+</div>
+</div>
+<!-- Right: Utility Cluster & User Profile -->
+<div class="flex items-center gap-4">
+<!-- Bilingual Switcher -->
+<div class="inline-flex p-0.5 rounded-lg bg-[#e1e7f0]/60 border border-[#e1e7f0]">
+<button class="px-2.5 py-1 text-label-caption font-semibold rounded-md bg-white text-primary shadow-xs">ไทย</button>
+<button class="px-2.5 py-1 text-label-caption font-medium rounded-md text-secondary hover:text-on-surface">EN</button>
+</div>
+<!-- Notification Bell -->
+<button class="relative w-9 h-9 rounded-xl flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors duration-150" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error ring-2 ring-white"></span>
+</button>
+<!-- Help Outlined -->
+<button class="w-9 h-9 rounded-xl flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors duration-150" title="ศูนย์ช่วยเหลือ">
+<span class="material-symbols-outlined text-[22px]">help_outline</span>
+</button>
+<div class="h-6 w-px bg-[#e1e7f0]"></div>
+<!-- User Profile Pill -->
+<div class="flex items-center gap-3 pl-1">
+<div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-primary-container text-white flex items-center justify-center font-bold text-label-default shadow-xs ring-2 ring-white">
+            จน
+          </div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-label-default font-semibold text-on-surface leading-tight">จินดา นวลอนันต์</span>
+<span class="text-label-caption text-secondary">หัวหน้าทีมบริการลูกค้า (CS)</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== MAIN CONTENT CANVAS (Max 1240px) ==================== -->
+<main class="w-[calc(100%-16rem)] ml-auto min-h-[calc(100vh-4rem)] p-6 lg:p-8 flex flex-col items-center">
+<div class="w-full max-w-[1240px] space-y-6 pb-24">
+<!-- Breadcrumbs & Quick Route Meta -->
+<div class="flex flex-wrap items-center justify-between gap-3 text-label-caption font-label-caption text-secondary">
+<nav class="flex items-center gap-2">
+<a class="hover:text-primary transition-colors" href="#">หน้าหลัก</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">ลูกค้าและบริการ</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">หมวดที่ย้ายของในตะกร้าได้</span>
+</nav>
+<div class="flex items-center gap-2 font-code-table text-[11px] text-secondary bg-surface-container px-2.5 py-1 rounded-md border border-[#e1e7f0]">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>route admin-43b0b0cc3a65</span>
+<span class="text-outline-variant">|</span>
+<span>/j/cs/cart-move-categories</span>
+</div>
+</div>
+<!-- Page Header & Key Actions Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-6 shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+<div class="space-y-2">
+<div class="flex flex-wrap items-center gap-3">
+<h1 class="text-headline-page font-headline-page text-on-surface tracking-tight">
+                หมวดที่ย้ายของในตะกร้าได้
+              </h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-caption font-semibold bg-primary-fixed text-on-primary-fixed-variant border border-primary/20">
+                Unlock Move Categories
+              </span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-caption font-medium bg-[#eaf5ef] text-[#157347] border border-[#bce2cd]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                เปิดใช้งาน (Active)
+              </span>
+</div>
+<p class="text-body-default font-body-default text-secondary max-w-3xl">
+              หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate
+            </p>
+</div>
+<!-- Top Action Group -->
+<div class="flex items-center gap-3 shrink-0">
+<button class="h-10 px-4 rounded-xl border border-[#e1e7f0] bg-white text-on-surface hover:bg-[#f6f8fc] text-body-medium font-body-medium flex items-center gap-2 shadow-2xs transition-colors">
+<span class="material-symbols-outlined text-[18px]">undo</span>
+<span>ย้อนกลับ</span>
+</button>
+<button class="h-10 px-5 rounded-xl bg-primary text-white hover:bg-[#2a4ad8] active:bg-[#1e3ebf] text-body-medium font-body-medium flex items-center gap-2 shadow-sm transition-all duration-150" id="topSaveBtn">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span class="btn-text">บันทึก</span>
+</button>
+</div>
+</div>
+<!-- Meta info & Last Updated Timestamp -->
+<div class="mt-5 pt-4 border-t border-[#e1e7f0] flex flex-wrap items-center justify-between gap-4 text-label-caption text-secondary">
+<div class="flex flex-wrap items-center gap-4">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">check_box</span>
+<span>เลือกแล้ว: <strong class="text-on-surface font-semibold">18 หมวด</strong></span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">edit_note</span>
+<span>แก้ไขแล้ว: <strong class="text-tertiary font-semibold">3 รายการ</strong></span>
+</span>
+<span class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>อัปเดตล่าสุด: 14 ก.พ. 2568 15:30 น. โดย จินดา นวลอนันต์</span>
+</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-outline">สิทธิ์การแก้ไข:</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-medium text-[11px]">CS Admin Tier-2</span>
+</div>
+</div>
+</div>
+<!-- Information & Operational Guidance Alert Banner -->
+<div class="rounded-xl border border-blue-200 bg-[#f0f5ff] p-4 flex items-start gap-3.5 shadow-2xs">
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">info</span>
+</div>
+<div class="space-y-1 text-body-default font-body-default">
+<h4 class="font-semibold text-primary text-body-medium">ข้อกำหนดการเคลื่อนย้ายสินค้าในตะกร้า (Cart Move Rule)</h4>
+<p class="text-secondary leading-relaxed">
+            สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา) ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่
+          </p>
+</div>
+</div>
+<!-- Category Filter & Tree Toolbar -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-4 shadow-sm space-y-3">
+<div class="flex flex-col md:flex-row items-center justify-between gap-3">
+<!-- Search in Tree -->
+<div class="relative w-full md:w-96">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="w-full h-10 pl-9 pr-9 text-body-default font-body-default bg-white border border-[#e1e7f0] rounded-xl text-on-surface placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/20" id="categorySearchInput" placeholder="ค้นหาหมวดหมู่สินค้าในหน้านี้..." type="text"/>
+<button class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-on-surface" id="clearSearchBtn">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Dropdowns & Tree Toggles -->
+<div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
+<!-- Filter Dropdown 1 -->
+<select class="h-10 px-3 bg-white border border-[#e1e7f0] rounded-xl text-label-default font-label-default text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20">
+<option value="all">สถานะการเลือก: ทั้งหมด</option>
+<option selected="" value="selected">สถานะการเลือก: เลือกแล้ว (18)</option>
+<option value="unselected">สถานะการเลือก: ยังไม่เลือก</option>
+</select>
+<!-- Filter Dropdown 2 -->
+<select class="h-10 px-3 bg-white border border-[#e1e7f0] rounded-xl text-label-default font-label-default text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20">
+<option value="all">ระดับชั้น: ทุกระดับ</option>
+<option value="tier1">ระดับชั้น: หมวดหลัก Tier 1</option>
+<option value="tier2-3">ระดับชั้น: หมวดย่อย Tier 2-3</option>
+</select>
+<div class="h-6 w-px bg-[#e1e7f0] hidden sm:block"></div>
+<!-- Tree Toggle Action Buttons -->
+<button class="h-10 px-3 rounded-xl border border-[#e1e7f0] bg-white text-secondary hover:text-on-surface hover:bg-[#f6f8fc] text-label-default font-label-default flex items-center gap-1.5 transition-colors" id="btnExpandAll">
+<span class="material-symbols-outlined text-[16px]">unfold_more</span>
+<span>Expand ทั้งหมด</span>
+</button>
+<button class="h-10 px-3 rounded-xl border border-[#e1e7f0] bg-white text-secondary hover:text-on-surface hover:bg-[#f6f8fc] text-label-default font-label-default flex items-center gap-1.5 transition-colors" id="btnCollapseAll">
+<span class="material-symbols-outlined text-[16px]">unfold_less</span>
+<span>Collapse ทั้งหมด</span>
+</button>
+</div>
+</div>
+<!-- Filter Sub-info -->
+<div class="flex items-center justify-between text-label-caption text-secondary pt-2 border-t border-[#f0f4f9]">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">filter_alt</span>
+<span>แสดง 4 หมวดหลัก, 24 หมวดย่อย (ข้อมูลตัวอย่าง)</span>
+</span>
+<span class="text-outline">คลิกที่แถวหรือไอคอนสามเหลี่ยมเพื่อกางดูหมวดย่อย</span>
+</div>
+</div>
+<!-- Interactive Category Tree Selection Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+<!-- Table Header -->
+<div class="bg-[#f6f8fc] border-b border-[#e1e7f0] px-6 py-3.5 grid grid-cols-12 items-center text-label-default font-semibold text-secondary">
+<div class="col-span-6 flex items-center gap-3">
+<input class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" id="masterSelectAll" title="เลือกทั้งหมด" type="checkbox"/>
+<span>หมวด / โครงสร้างหมวดหมู่สินค้า</span>
+</div>
+<div class="col-span-2 text-left">ระดับชั้น</div>
+<div class="col-span-2 text-left">ข้อจำกัดการย้ายข้ามวัน</div>
+<div class="col-span-2 text-right">สถานะครอบคลุม</div>
+</div>
+<!-- Category Rows Container -->
+<div class="divide-y divide-[#e1e7f0] text-body-default font-body-default" id="categoryTreeBody">
+<!-- ================= GROUP 1: CAT-DRK เครื่องดื่มและน้ำดื่ม (PARENTS CHECKED -> CHILDREN AUTO INHERITED) ================= -->
+<div class="tree-node" data-category="CAT-DRK" data-tier="1">
+<!-- Tier 1 Row -->
+<div class="px-6 py-3.5 grid grid-cols-12 items-center hover:bg-[#f8fafc] transition-colors bg-white font-medium">
+<div class="col-span-6 flex items-center gap-3">
+<input checked="" class="parent-checkbox w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" data-cat="CAT-DRK" type="checkbox"/>
+<button class="node-toggle flex items-center justify-center w-6 h-6 rounded hover:bg-surface-container text-secondary transition-colors" data-target="drk-children">
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200">expand_more</span>
+</button>
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center shrink-0 border border-blue-100">
+<span class="material-symbols-outlined text-[18px]">local_cafe</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-semibold">CAT-DRK เครื่องดื่มและน้ำดื่ม</span>
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-table bg-surface-container text-primary">Unlock Free Shipping: elligible</span>
+</div>
+<span class="text-label-caption text-secondary">เครื่องดื่มสำเร็จรูป น้ำอัดลม นม และน้ำแร่ธรรมชาติ</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-medium bg-blue-50 text-primary border border-blue-200">หมวดหลัก Tier 1</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">check_circle</span>
+<span>ย้ายได้ข้าม shipment</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-medium bg-[#eaf5ef] text-[#157347] border border-[#bce2cd]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                  เลือกแล้ว (ครอบทั้งต้นไม้)
+                </span>
+</div>
+</div>
+<!-- Tier 1 Children Group -->
+<div class="bg-[#fafcff] border-t border-[#f0f4f9]" id="drk-children">
+<!-- Sub 1.1 -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input checked="" class="child-checkbox w-4 h-4 rounded border-gray-300 text-slate-400 bg-slate-100 cursor-not-allowed" disabled="" title="ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">water_drop</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-DRK-01 น้ำดื่มและน้ำแร่</span>
+<span class="text-label-caption text-outline">ครอบอัตโนมัติโดยหมวดหลัก CAT-DRK</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-slate-400">inventory</span>
+<span>Ambient Dry</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2 py-0.5 rounded-full text-label-caption text-secondary bg-surface-container border border-outline-variant/30">
+                    ครอบอัตโนมัติ
+                  </span>
+</div>
+</div>
+<!-- Sub 1.2 -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14 border-t border-[#f0f4f9]">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input checked="" class="child-checkbox w-4 h-4 rounded border-gray-300 text-slate-400 bg-slate-100 cursor-not-allowed" disabled="" title="ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">emoji_food_beverage</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-DRK-02 ชา กาแฟ และเครื่องดื่มชง</span>
+<span class="text-label-caption text-outline">ครอบอัตโนมัติโดยหมวดหลัก CAT-DRK</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-slate-400">inventory</span>
+<span>Ambient Dry</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2 py-0.5 rounded-full text-label-caption text-secondary bg-surface-container border border-outline-variant/30">
+                    ครอบอัตโนมัติ
+                  </span>
+</div>
+</div>
+<!-- Sub 1.3 -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14 border-t border-[#f0f4f9]">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input checked="" class="child-checkbox w-4 h-4 rounded border-gray-300 text-slate-400 bg-slate-100 cursor-not-allowed" disabled="" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">liquor</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-DRK-03 น้ำอัดลมและน้ำผลไม้</span>
+<span class="text-label-caption text-outline">ครอบอัตโนมัติโดยหมวดหลัก CAT-DRK</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-slate-400">inventory</span>
+<span>Ambient Dry</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2 py-0.5 rounded-full text-label-caption text-secondary bg-surface-container border border-outline-variant/30">
+                    ครอบอัตโนมัติ
+                  </span>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= GROUP 2: CAT-SNK ขนมขบเคี้ยว (PARENT UNCHECKED -> CHOSEN SPECIFIC SUB-CATEGORIES) ================= -->
+<div class="tree-node" data-category="CAT-SNK" data-tier="1">
+<!-- Tier 1 Row -->
+<div class="px-6 py-3.5 grid grid-cols-12 items-center hover:bg-[#f8fafc] transition-colors bg-white font-medium">
+<div class="col-span-6 flex items-center gap-3">
+<input class="parent-checkbox w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" data-cat="CAT-SNK" type="checkbox"/>
+<button class="node-toggle flex items-center justify-center w-6 h-6 rounded hover:bg-surface-container text-secondary transition-colors" data-target="snk-children">
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200">expand_more</span>
+</button>
+<div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200">
+<span class="material-symbols-outlined text-[18px]">cookie</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-semibold">CAT-SNK ขนมขบเคี้ยวและของว่าง</span>
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-table bg-amber-50 text-amber-800 border border-amber-200">เลือกเฉพาะบางรายการ</span>
+</div>
+<span class="text-label-caption text-secondary">เบเกอรี่ ขนมกรุบกรอบ มันฝรั่งทอด และถั่วแปรรูป</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-medium bg-amber-50 text-amber-800 border border-amber-200">หมวดหลัก Tier 1</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">check_circle</span>
+<span>ย้ายได้ข้าม shipment</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-medium bg-blue-50 text-primary border border-blue-200">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  เลือกแล้ว (เฉพาะบาง subcate)
+                </span>
+</div>
+</div>
+<!-- Tier 1 Children Group -->
+<div class="bg-[#fafcff] border-t border-[#f0f4f9]" id="snk-children">
+<!-- Sub 2.1 (Checked) -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input checked="" class="child-standalone w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">bakery_dining</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-SNK-01 เบเกอรี่และขนมปังอบกรอบ</span>
+<span class="text-label-caption text-secondary">อนุญาตย้ายเมื่อมีสินค้าโปรโมชัน Unlock Free Shipping</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-slate-400">inventory</span>
+<span>Ambient Dry</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-caption font-medium bg-[#eaf5ef] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    เลือกเดี่ยว
+                  </span>
+</div>
+</div>
+<!-- Sub 2.2 (Unchecked) -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14 border-t border-[#f0f4f9]">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input class="child-standalone w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">lunch_dining</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium text-secondary">CAT-SNK-02 มันฝรั่งทอดและถั่วปรุงรส</span>
+<span class="text-label-caption text-outline">ยังไม่ได้เปิดให้ย้ายข้าม shipment</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-slate-400">inventory</span>
+<span>Ambient Dry</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2 py-0.5 rounded-full text-label-caption text-outline bg-surface-container">
+                    ยังไม่เลือก
+                  </span>
+</div>
+</div>
+<!-- Sub 2.3 (Checked) -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14 border-t border-[#f0f4f9]">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input checked="" class="child-standalone w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">cake</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-SNK-03 ช็อกโกแลตและลูกอมนำเข้า</span>
+<span class="text-label-caption text-secondary">คูปอง Unlock Free Shipping เข้าเงื่อนไข</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-amber-700">
+<span class="material-symbols-outlined text-[14px]">thermostat</span>
+<span>ควบคุมอุณหภูมิ ≤ 25°C</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-caption font-medium bg-[#eaf5ef] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    เลือกเดี่ยว
+                  </span>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= GROUP 3: CAT-DRY อาหารแห้งและเครื่องปรุง (ORDER-TAKING RESTRICTED MENTION) ================= -->
+<div class="tree-node" data-category="CAT-DRY" data-tier="1">
+<!-- Tier 1 Row -->
+<div class="px-6 py-3.5 grid grid-cols-12 items-center hover:bg-[#f8fafc] transition-colors bg-white font-medium">
+<div class="col-span-6 flex items-center gap-3">
+<input checked="" class="parent-checkbox w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" data-cat="CAT-DRY" type="checkbox"/>
+<button class="node-toggle flex items-center justify-center w-6 h-6 rounded hover:bg-surface-container text-secondary transition-colors" data-target="dry-children">
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200">expand_more</span>
+</button>
+<div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-200">
+<span class="material-symbols-outlined text-[18px]">rice_bowl</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-semibold">CAT-DRY อาหารแห้งและเครื่องปรุงรส</span>
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-table bg-teal-50 text-teal-800 border border-teal-200">Unlock Free Shipping</span>
+</div>
+<span class="text-label-caption text-secondary">ข้าวสาร เส้นบะหมี่ ซอสปรุงรส น้ำมันพืช และอาหารกระป๋อง</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-medium bg-teal-50 text-teal-800 border border-teal-200">หมวดหลัก Tier 1</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">check_circle</span>
+<span>ย้ายได้ปกติ</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-medium bg-[#eaf5ef] text-[#157347] border border-[#bce2cd]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                  เลือกแล้ว (ครอบทั้งต้นไม้)
+                </span>
+</div>
+</div>
+<!-- Tier 1 Children Group -->
+<div class="bg-[#fafcff] border-t border-[#f0f4f9]" id="dry-children">
+<!-- Sub 3.1 -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input checked="" class="child-checkbox w-4 h-4 rounded border-gray-300 text-slate-400 bg-slate-100 cursor-not-allowed" disabled="" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">grain</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-DRY-01 ข้าวสารและธัญพืช</span>
+<span class="text-label-caption text-outline">ครอบอัตโนมัติโดยหมวดหลัก CAT-DRY</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-slate-400">inventory</span>
+<span>Ambient Dry</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2 py-0.5 rounded-full text-label-caption text-secondary bg-surface-container border border-outline-variant/30">
+                    ครอบอัตโนมัติ
+                  </span>
+</div>
+</div>
+<!-- Sub 3.2 with order-taking note -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14 border-t border-[#f0f4f9]">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input checked="" class="child-checkbox w-4 h-4 rounded border-gray-300 text-slate-400 bg-slate-100 cursor-not-allowed" disabled="" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">soup_kitchen</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-DRY-02 ซอส น้ำปลา และเครื่องปรุง</span>
+<span class="text-label-caption text-outline">ครอบอัตโนมัติโดยหมวดหลัก CAT-DRY</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-secondary">
+<span class="material-symbols-outlined text-[14px] text-slate-400">inventory</span>
+<span>Ambient Dry</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2 py-0.5 rounded-full text-label-caption text-secondary bg-surface-container border border-outline-variant/30">
+                    ครอบอัตโนมัติ
+                  </span>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= GROUP 4: CAT-CHL ของสดและแช่เย็น (ORDER-TAKING RESTRICTED BANNER) ================= -->
+<div class="tree-node" data-category="CAT-CHL" data-tier="1">
+<!-- Tier 1 Row -->
+<div class="px-6 py-3.5 grid grid-cols-12 items-center hover:bg-[#f8fafc] transition-colors bg-white font-medium">
+<div class="col-span-6 flex items-center gap-3">
+<input class="parent-checkbox w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" data-cat="CAT-CHL" type="checkbox"/>
+<button class="node-toggle flex items-center justify-center w-6 h-6 rounded hover:bg-surface-container text-secondary transition-colors" data-target="chl-children">
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200">expand_more</span>
+</button>
+<div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-200">
+<span class="material-symbols-outlined text-[18px]">ac_unit</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-semibold">CAT-CHL ของสดและแช่เย็น (Cold Chain)</span>
+<span class="px-1.5 py-0.5 rounded text-[11px] font-code-table bg-red-50 text-red-700 border border-red-200">Cold Chain 4°C</span>
+</div>
+<span class="text-label-caption text-secondary">ผัก ผลไม้สด นมสดพาสเจอร์ไรส์ เนื้อสัตว์ และอาหารพร้อมปรุง</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-medium bg-sky-50 text-sky-800 border border-sky-200">หมวดหลัก Tier 1</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-[#ba1a1a]">
+<span class="material-symbols-outlined text-[14px]">block</span>
+<span class="font-medium">Order-taking: ไม่อนุญาตย้ายข้ามวันส่ง</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2.5 py-0.5 rounded-full text-label-caption font-normal text-secondary bg-surface-container border border-[#e1e7f0]">
+                  ยังไม่เลือก
+                </span>
+</div>
+</div>
+<!-- Tier 1 Children Group -->
+<div class="bg-[#fafcff] border-t border-[#f0f4f9]" id="chl-children">
+<!-- Sub 4.1 -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input class="child-standalone w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">egg</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-CHL-01 นม เนย และผลิตภัณฑ์จากนมสด</span>
+<span class="text-label-caption text-outline">สินค้าควบคุมความเย็น ไม่สามารถรวมกับกล่องสินค้าแห้ง</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-[#ba1a1a]">
+<span class="material-symbols-outlined text-[14px]">thermostat</span>
+<span>Cold Chain 2-6°C</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2 py-0.5 rounded-full text-label-caption text-outline bg-surface-container">
+                    ยังไม่เลือก
+                  </span>
+</div>
+</div>
+<!-- Sub 4.2 -->
+<div class="px-6 py-3 grid grid-cols-12 items-center hover:bg-[#f1f5fa] transition-colors pl-14 border-t border-[#f0f4f9]">
+<div class="col-span-6 flex items-center gap-3">
+<span class="text-outline-variant font-code-table text-xs">└─</span>
+<input class="child-standalone w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-secondary">set_meal</span>
+<div class="flex flex-col">
+<span class="text-on-surface text-body-medium">CAT-CHL-02 เนื้อสัตว์สดและอาหารทะเลพร้อมปรุง</span>
+<span class="text-label-caption text-outline">สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้</span>
+</div>
+</div>
+<div class="col-span-2">
+<span class="inline-flex px-2 py-0.5 rounded text-label-caption font-normal bg-white text-secondary border border-[#e1e7f0]">Subcategory Tier 2</span>
+</div>
+<div class="col-span-2">
+<span class="inline-flex items-center gap-1 text-label-caption text-[#ba1a1a]">
+<span class="material-symbols-outlined text-[14px]">block</span>
+<span>Order-taking Lock</span>
+</span>
+</div>
+<div class="col-span-2 text-right">
+<span class="inline-flex px-2 py-0.5 rounded-full text-label-caption text-outline bg-surface-container">
+                    ยังไม่เลือก
+                  </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Table Footer / Empty State Hint -->
+<div class="hidden p-12 text-center flex-col items-center justify-center space-y-3" id="emptyCategoryState">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-[28px]">search_off</span>
+</div>
+<div class="text-headline-card font-semibold text-on-surface">ไม่พบหมวดหมู่</div>
+<p class="text-body-default text-secondary max-w-sm">ไม่พบหมวดหมู่สินค้าที่ตรงกับคำค้นหา กรุณาตรวจสอบคำค้นหรือปรับเปลี่ยนตัวกรอง</p>
+<button class="px-4 py-2 rounded-xl bg-surface-container text-primary font-body-medium hover:bg-surface-container-high transition-colors" id="resetSearchBtn">
+            ล้างคำค้นหา
+          </button>
+</div>
+<div class="bg-[#f6f8fc] border-t border-[#e1e7f0] px-6 py-3 flex flex-wrap items-center justify-between text-label-caption text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">lightbulb</span>
+<span>หมายเหตุ: การย้ายของในตะกร้าข้าม shipment จะมีผลกับทั้งระบบแอปพลิเคชันลูกค้าและ CS Desk ทันทีหลังกดบันทึก</span>
+</div>
+<div class="flex items-center gap-3">
+<span>แสดงทั้งหมด 4 หมวดหลัก (รวม 8 หมวดย่อย)</span>
+</div>
+</div>
+</div>
+<!-- Quick Guidance & Operational FAQ Card -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-5 space-y-2 shadow-2xs">
+<div class="flex items-center gap-2 text-primary font-semibold text-body-medium">
+<span class="material-symbols-outlined text-[18px]">account_tree</span>
+<span>กฎการสืบทอด (Tree Inheritance)</span>
+</div>
+<p class="text-label-default text-secondary leading-relaxed">
+            เมื่อทำการเลือกที่หมวดระดับ Tier 1 ระบบจะเลือกและล็อคหมวดย่อยทั้งหมดโดยอัตโนมัติ หากต้องการแยกย่อยเฉพาะสินค้าโปรโมชัน ให้ปลดหมวดแม่แล้วเลือกรายตัว
+          </p>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-5 space-y-2 shadow-2xs">
+<div class="flex items-center gap-2 text-tertiary-container font-semibold text-body-medium">
+<span class="material-symbols-outlined text-[18px]">lock_clock</span>
+<span>ข้อจำกัด Order-taking</span>
+</div>
+<p class="text-label-default text-secondary leading-relaxed">
+            สินค้าที่สั่งผลิตล่วงหน้าหรือมีข้อกำหนดรอบส่งแบบ Order-taking จะไม่สามารถย้ายตะกร้าข้ามรอบส่งได้ แม้จะเปิดให้ย้ายหมวดหมู่นี้ในระบบแล้วก็ตาม
+          </p>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-[#e1e7f0] p-5 space-y-2 shadow-2xs">
+<div class="flex items-center gap-2 text-emerald-700 font-semibold text-body-medium">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+<span>Unlock Free Shipping</span>
+</div>
+<p class="text-label-default text-secondary leading-relaxed">
+            เฉพาะสินค้าในหมวดที่เลือกเท่านั้นที่จะได้รับอนุญาตให้รวมของเข้าสู่ shipment หลัก เพื่อปลดล็อกเงื่อนไขส่งฟรีตามยอดขั้นต่ำ ฿ ของโปรโมชัน
+          </p>
+</div>
+</div>
+</div>
+</main>
+<!-- ==================== STICKY BOTTOM ACTION BAR ==================== -->
+<div class="sticky bottom-0 right-0 w-[calc(100%-16rem)] ml-auto z-30 bg-surface-container-lowest/95 backdrop-blur-md border-t border-[#e1e7f0] px-8 py-3.5 shadow-lg">
+<div class="max-w-[1240px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+<!-- Left Notice & Changes Badge -->
+<div class="flex items-center gap-3">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+</span>
+<div class="flex items-center gap-2">
+<span class="text-body-medium font-semibold text-on-surface">มีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก:</span>
+<span class="px-2 py-0.5 rounded-full text-label-caption font-bold bg-[#fef9e7] text-[#947000] border border-[#f5dfa8]">
+            2 หมวดหมู่
+          </span>
+</div>
+<span class="hidden md:inline text-label-caption text-secondary border-l border-[#e1e7f0] pl-3">
+          คลิก "บันทึก" เพื่อปรับปรุงกฎการย้ายตะกร้าบนหน้าเว็บ
+        </span>
+</div>
+<!-- Right Action CTAs -->
+<div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+<button class="h-10 px-4 rounded-xl border border-[#e1e7f0] bg-white text-secondary hover:text-on-surface hover:bg-[#f6f8fc] text-body-medium font-body-medium flex items-center gap-2 transition-colors" id="bottomRevertBtn">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+<span>ย้อนกลับ</span>
+</button>
+<button class="h-10 px-6 rounded-xl bg-primary text-white hover:bg-[#2a4ad8] active:bg-[#1e3ebf] text-body-medium font-semibold flex items-center gap-2 shadow-sm transition-all duration-150" id="bottomSaveBtn">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span class="btn-text">บันทึก</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Toast Notification simulation -->
+<div class="fixed top-20 right-8 z-50 transform translate-y-[-20px] opacity-0 pointer-events-none transition-all duration-300" id="toastNotification">
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-on-surface text-white shadow-xl">
+<span class="material-symbols-outlined text-emerald-400 text-[20px]">check_circle</span>
+<span class="text-body-default font-medium" id="toastMessage">บันทึกการตั้งค่าหมวดหมู่เรียบร้อยแล้ว</span>
+</div>
+</div>
+<!-- ==================== CRITICAL TRANSLATION EXPORT REQUIREMENT ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "หมวด": {
+      "th": "หมวด",
+      "en": "Category"
+    },
+    "บันทึก": {
+      "th": "บันทึก",
+      "en": "Save"
+    },
+    "กำลังโหลด...": {
+      "th": "กำลังโหลด...",
+      "en": "Loading..."
+    },
+    "กำลังบันทึก...": {
+      "th": "กำลังบันทึก...",
+      "en": "Saving..."
+    },
+    "Unlock Move Categories": {
+      "th": "Unlock Move Categories",
+      "en": "Unlock Move Categories"
+    },
+    "Collapse": {
+      "th": "Collapse",
+      "en": "Collapse"
+    },
+    "Expand": {
+      "th": "Expand",
+      "en": "Expand"
+    },
+    "หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate": {
+      "th": "หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate",
+      "en": "Categories allowed to move across shipments in Unlock Free Shipping — check parent to cover entire tree, or choose specific subcategories."
+    },
+    "สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา) ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่": {
+      "th": "สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา) ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่",
+      "en": "Order-taking items cannot always be moved; delivery date shifts do not apply here. Checking parent automatically covers children (child checkboxes appear greyed out). If only specific subcategories are needed, check children without selecting parent."
+    },
+    "เลือกแล้ว": {
+      "th": "เลือกแล้ว",
+      "en": "Selected"
+    },
+    "ไม่พบหมวดหมู่": {
+      "th": "ไม่พบหมวดหมู่",
+      "en": "Category not found"
+    },
+    "แก้ไขแล้ว": {
+      "th": "แก้ไขแล้ว",
+      "en": "Modified"
+    },
+    "ค้นหาบริษัทไม่สำเร็จ": {
+      "th": "ค้นหาบริษัทไม่สำเร็จ",
+      "en": "Failed to search company"
+    },
+    "คูปองนี้เคยตั้ง \"ขั้นต่ำสินค้าเข้าเงื่อนไข ฿\"": {
+      "th": "คูปองนี้เคยตั้ง \"ขั้นต่ำสินค้าเข้าเงื่อนไข ฿\"",
+      "en": "This coupon had \"Minimum eligible product amount ฿\" set"
+    },
+    "เฉพาะบริษัทที่เลือก": {
+      "th": "เฉพาะบริษัทที่เลือก",
+      "en": "Specific selected companies only"
+    },
+    "เช่น vip-customers": {
+      "th": "เช่น vip-customers",
+      "en": "e.g., vip-customers"
+    },
+    "ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ": {
+      "th": "ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ",
+      "en": "Review pending web-admin access requests"
+    },
+    "ถึง/เกิน (≥)": {
+      "th": "ถึง/เกิน (≥)",
+      "en": "Greater than or equal to (≥)"
+    },
+    "บันทึกโจทย์": {
+      "th": "บันทึกโจทย์",
+      "en": "Save task prompt"
+    },
+    "เปิดใช้ Global Frequency Cap": {
+      "th": "เปิดใช้ Global Frequency Cap",
+      "en": "Enable Global Frequency Cap"
+    },
+    "เพิ่ม Coupon": {
+      "th": "เพิ่ม Coupon",
+      "en": "Add Coupon"
+    },
+    "ไม่ต้องตั้งค่าเพิ่มเติมสำหรับ rule นี้": {
+      "th": "ไม่ต้องตั้งค่าเพิ่มเติมสำหรับ rule นี้",
+      "en": "No additional configuration required for this rule"
+    },
+    "ย้อนกลับไปใช้เวอร์ชันนี้? การแก้ไขปัจจุบันที่ยังไม่ได้บันทึกจะหายไป": {
+      "th": "ย้อนกลับไปใช้เวอร์ชันนี้? การแก้ไขปัจจุบันที่ยังไม่ได้บันทึกจะหายไป",
+      "en": "Revert to this version? Unsaved current edits will be lost."
+    },
+    "รวมบัญชีไม่สำเร็จ": {
+      "th": "รวมบัญชีไม่สำเร็จ",
+      "en": "Failed to merge accounts"
+    },
+    "ร้านอาหารจีน, ร้านกาแฟ": {
+      "th": "ร้านอาหารจีน, ร้านกาแฟ",
+      "en": "Chinese restaurants, cafes"
+    },
+    "ลบ {0}": {
+      "th": "ลบ {0}",
+      "en": "Delete {0}"
+    },
+    "เลือกคูปอง": {
+      "th": "เลือกคูปอง",
+      "en": "Select coupon"
+    },
+    "สถานะ shipment {0}": {
+      "th": "สถานะ shipment {0}",
+      "en": "Shipment status {0}"
+    },
+    "สินค้าที่นับเข้าเงื่อนไข": {
+      "th": "สินค้าที่นับเข้าเงื่อนไข",
+      "en": "Eligible counted products"
+    },
+    "หัวเรื่อง:": {
+      "th": "หัวเรื่อง:",
+      "en": "Subject:"
+    },
+    "อัปเดตล่าสุด:": {
+      "th": "อัปเดตล่าสุด:",
+      "en": "Last updated:"
+    },
+    "ทุกคนที่เข้าเว็บช่วงเงื่อนไขได้ action": {
+      "th": "ทุกคนที่เข้าเว็บช่วงเงื่อนไขได้ action",
+      "en": "All visitors during campaign timeframe qualify for action"
+    },
+    "เงื่อนไข SKU ขั้นต่ำเดิม {0} รายการ": {
+      "th": "เงื่อนไข SKU ขั้นต่ำเดิม {0} รายการ",
+      "en": "Existing minimum SKU condition: {0} items"
+    },
+    "พรีวิวไม่สำเร็จ": {
+      "th": "พรีวิวไม่สำเร็จ",
+      "en": "Preview failed"
+    },
+    "กรุณาเลือกประเภทร้านหรือกลุ่มอย่างน้อย 1 รายการ": {
+      "th": "กรุณาเลือกประเภทร้านหรือกลุ่มอย่างน้อย 1 รายการ",
+      "en": "Please select at least 1 store type or segment"
+    },
+    "บันทึกไม่สำเร็จ": {
+      "th": "บันทึกไม่สำเร็จ",
+      "en": "Save failed"
+    }
+  }
+  </script>
+<!-- ==================== INTERACTIVITY JAVASCRIPT ==================== -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Expand / Collapse individual tree rows
+      const toggleButtons = document.querySelectorAll('.node-toggle');
+      toggleButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const targetId = btn.getAttribute('data-target');
+          const targetEl = document.getElementById(targetId);
+          const icon = btn.querySelector('.material-symbols-outlined');
+
+          if (targetEl) {
+            targetEl.classList.toggle('hidden');
+            if (targetEl.classList.contains('hidden')) {
+              icon.textContent = 'chevron_right';
+            } else {
+              icon.textContent = 'expand_more';
+            }
+          }
+        });
+      });
+
+      // 2. Global Expand All & Collapse All
+      const btnExpandAll = document.getElementById('btnExpandAll');
+      const btnCollapseAll = document.getElementById('btnCollapseAll');
+      const allSubcontainers = document.querySelectorAll('[id$="-children"]');
+
+      btnExpandAll?.addEventListener('click', () => {
+        allSubcontainers.forEach(el => el.classList.remove('hidden'));
+        toggleButtons.forEach(btn => {
+          const icon = btn.querySelector('.material-symbols-outlined');
+          if (icon) icon.textContent = 'expand_more';
+        });
+      });
+
+      btnCollapseAll?.addEventListener('click', () => {
+        allSubcontainers.forEach(el => el.classList.add('hidden'));
+        toggleButtons.forEach(btn => {
+          const icon = btn.querySelector('.material-symbols-outlined');
+          if (icon) icon.textContent = 'chevron_right';
+        });
+      });
+
+      // 3. Parent checkbox toggling children logic (as detailed in requirements)
+      const parentCheckboxes = document.querySelectorAll('.parent-checkbox');
+      parentCheckboxes.forEach(parentCb => {
+        parentCb.addEventListener('change', () => {
+          const node = parentCb.closest('.tree-node');
+          const childrenContainer = node.querySelector('[id$="-children"]');
+          if (!childrenContainer) return;
+
+          const childInputs = childrenContainer.querySelectorAll('input[type="checkbox"]');
+          const statusBadge = node.querySelector('.col-span-2.text-right span');
+
+          if (parentCb.checked) {
+            // Disable and set checked for all children
+            childInputs.forEach(child => {
+              child.checked = true;
+              child.disabled = true;
+              child.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+              child.title = "ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ";
+            });
+            if (statusBadge) {
+              statusBadge.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-medium bg-[#eaf5ef] text-[#157347] border border-[#bce2cd]";
+              statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>เลือกแล้ว (ครอบทั้งต้นไม้)';
+            }
+          } else {
+            // Enable all children and uncheck them
+            childInputs.forEach(child => {
+              child.disabled = false;
+              child.checked = false;
+              child.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+              child.title = "";
+            });
+            if (statusBadge) {
+              statusBadge.className = "inline-flex px-2.5 py-0.5 rounded-full text-label-caption font-normal text-secondary bg-surface-container border border-[#e1e7f0]";
+              statusBadge.textContent = "ยังไม่เลือก";
+            }
+          }
+        });
+      });
+
+      // 4. Save button state transitions ('บันทึก' -> 'กำลังบันทึก...')
+      const saveButtons = [document.getElementById('topSaveBtn'), document.getElementById('bottomSaveBtn')];
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+
+      saveButtons.forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+          const textSpan = btn.querySelector('.btn-text');
+          const originalText = textSpan.textContent;
+
+          // Transition to saving state
+          btn.disabled = true;
+          textSpan.textContent = 'กำลังบันทึก...';
+          btn.classList.add('opacity-80', 'cursor-wait');
+
+          setTimeout(() => {
+            btn.disabled = false;
+            textSpan.textContent = originalText;
+            btn.classList.remove('opacity-80', 'cursor-wait');
+
+            // Show Toast
+            if (toast) {
+              toastMsg.textContent = 'บันทึกการตั้งค่าหมวดหมู่เรียบร้อยแล้ว';
+              toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+              toast.classList.add('opacity-100', 'translate-y-0');
+
+              setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+              }, 3000);
+            }
+          }, 900);
+        });
+      });
+
+      // 5. Revert Confirmation
+      const revertBtn = document.getElementById('bottomRevertBtn');
+      revertBtn?.addEventListener('click', () => {
+        const confirmRevert = confirm('ย้อนกลับไปใช้เวอร์ชันนี้? การแก้ไขปัจจุบันที่ยังไม่ได้บันทึกจะหายไป');
+        if (confirmRevert) {
+          window.location.reload();
+        }
+      });
+
+      // 6. Search filtering inside tree
+      const searchInput = document.getElementById('categorySearchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+      const resetSearchBtn = document.getElementById('resetSearchBtn');
+      const treeNodes = document.querySelectorAll('.tree-node');
+      const emptyState = document.getElementById('emptyCategoryState');
+
+      function filterTree(query) {
+        let matchCount = 0;
+        const q = query.trim().toLowerCase();
+
+        treeNodes.forEach(node => {
+          const text = node.textContent.toLowerCase();
+          if (text.includes(q)) {
+            node.classList.remove('hidden');
+            matchCount++;
+          } else {
+            node.classList.add('hidden');
+          }
+        });
+
+        if (matchCount === 0) {
+          emptyState?.classList.remove('hidden');
+          emptyState?.classList.add('flex');
+        } else {
+          emptyState?.classList.add('hidden');
+          emptyState?.classList.remove('flex');
+        }
+
+        if (q.length > 0) {
+          clearSearchBtn?.classList.remove('hidden');
+        } else {
+          clearSearchBtn?.classList.add('hidden');
+        }
+      }
+
+      searchInput?.addEventListener('input', (e) => filterTree(e.target.value));
+
+      clearSearchBtn?.addEventListener('click', () => {
+        searchInput.value = '';
+        filterTree('');
+        searchInput.focus();
+      });
+
+      resetSearchBtn?.addEventListener('click', () => {
+        searchInput.value = '';
+        filterTree('');
+      });
+
+      // 7. Master Select All Checkbox
+      const masterSelectAll = document.getElementById('masterSelectAll');
+      masterSelectAll?.addEventListener('change', () => {
+        const shouldCheck = masterSelectAll.checked;
+        parentCheckboxes.forEach(cb => {
+          cb.checked = shouldCheck;
+          cb.dispatchEvent(new Event('change'));
+        });
+      });
+    });
+  </script>
+</body></html>

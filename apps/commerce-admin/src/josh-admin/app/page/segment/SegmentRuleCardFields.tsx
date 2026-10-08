@@ -11,6 +11,8 @@ import {
   type SegmentRuleFormState,
 } from './segment-rule.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   ruleType: UserSegmentRuleType;
   ruleForm: SegmentRuleFormState;
@@ -21,13 +23,13 @@ type Props = {
 };
 
 const CARDS: Array<{ card: SegmentRuleCard; title: string; hint: string }> = [
-  { card: 'cuisine', title: 'ประเภทร้าน (Cuisine)', hint: 'กำหนดกลุ่มลูกค้าตามประเภทร้านที่ขาย' },
+  { card: 'cuisine', get title() { return __uiText("ประเภทร้าน (Cuisine)"); }, get hint() { return __uiText("กำหนดกลุ่มลูกค้าตามประเภทร้านที่ขาย"); } },
   {
     card: 'manual_user_list',
-    title: 'รายชื่อลูกค้า (อัปโหลด CSV / อีเมล)',
-    hint: 'ระบุลูกค้าเป็นรายคน ด้วยไฟล์ CSV หรือวางรายชื่อ',
+    get title() { return __uiText("รายชื่อลูกค้า (อัปโหลด CSV / อีเมล)"); },
+    get hint() { return __uiText("ระบุลูกค้าเป็นรายคน ด้วยไฟล์ CSV หรือวางรายชื่อ"); },
   },
-  { card: 'other', title: 'เงื่อนไขอื่นๆ', hint: 'เงื่อนไขอื่น เช่น role, ยอดสั่งซื้อ, วันที่สมัคร' },
+  { card: 'other', get title() { return __uiText("เงื่อนไขอื่นๆ"); }, get hint() { return __uiText("เงื่อนไขอื่น เช่น role, ยอดสั่งซื้อ, วันที่สมัคร"); } },
 ];
 
 /** "กำหนดกลุ่มลูกค้าโดย" — สามการ์ดเลือกได้ (radio semantics) + เนื้อหาของการ์ดที่เลือก. */
@@ -38,6 +40,7 @@ export function SegmentRuleCardFields({
   onRuleFormChange,
   manualUsersInitialLoad,
 }: Props) {
+  __useUiLocale();
   const activeCard = getSegmentCard(ruleType);
 
   const selectCard = (card: SegmentRuleCard) => {
@@ -49,8 +52,8 @@ export function SegmentRuleCardFields({
 
   return (
     <div className="space-y-3">
-      <span className="block text-sm font-medium text-gray-700">กำหนดกลุ่มลูกค้าโดย *</span>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3" role="radiogroup" aria-label="กำหนดกลุ่มลูกค้าโดย">
+      <span className="block text-sm font-medium text-gray-700">{__uiText("กำหนดกลุ่มลูกค้าโดย *")}</span>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3" role="radiogroup" aria-label={__uiText("กำหนดกลุ่มลูกค้าโดย")}>
         {CARDS.map((option) => {
           const selected = activeCard === option.card;
           return (
@@ -99,7 +102,7 @@ export function SegmentRuleCardFields({
         <div className="space-y-3">
           <Select
             id="segment-rule-type-other"
-            label="เงื่อนไข"
+            label={__uiText("เงื่อนไข")}
             hint={OTHER_RULE_TYPE_OPTIONS.find((option) => option.value === ruleType)?.description}
             value={ruleType}
             onChange={(event) => onRuleTypeChange(event.target.value as UserSegmentRuleType)}

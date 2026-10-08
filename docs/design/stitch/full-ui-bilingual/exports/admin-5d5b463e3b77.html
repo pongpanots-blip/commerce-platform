@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เอกสารภายใน - Commerce Platform (/josh/internal_docs)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- Translation Catalogue JSON (Invisible export requirement) -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "ล้างตัวกรอง": { "th": "ล้างตัวกรอง", "en": "Clear filters" },
+    "Refresh": { "th": "รีเฟรช", "en": "Refresh" },
+    "ค้นหา": { "th": "ค้นหา", "en": "Search" },
+    "ทั้งหมด": { "th": "ทั้งหมด", "en": "All" },
+    "สั่ง josh ได้ · ตามสิทธิ์ใน josh": { "th": "สั่ง josh ได้ · ตามสิทธิ์ใน josh", "en": "Executable in Josh · Based on Josh permissions" },
+    "อ่านอย่างเดียว · ข้อมูลจาก josh": { "th": "อ่านอย่างเดียว · ข้อมูลจาก josh", "en": "Read-only · Synced from Josh" },
+    "แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (": { "th": "แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (", "en": "Other edits are still managed at Josh web-admin (" },
+    ") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง": { "th": ") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง", "en": ") · Phone, email, personal names are masked" },
+    "ค้นหา…": { "th": "ค้นหา…", "en": "Search…" },
+    "พบ": { "th": "พบ", "en": "Found" },
+    "รายการ": { "th": "รายการ", "en": "items" },
+    "จัดการ": { "th": "จัดการ", "en": "Manage" },
+    "ไม่มีรายการ": { "th": "ไม่มีรายการ", "en": "No items found" },
+    "&larr; กลับไปหน้าแก้ไข Workflow": { "th": "&larr; กลับไปหน้าแก้ไข Workflow", "en": "&larr; Back to Workflow Editor" },
+    "Android": { "th": "Android", "en": "Android" },
+    "Credit Term (วัน)": { "th": "Credit Term (วัน)", "en": "Credit Term (Days)" },
+    "files": { "th": "files", "en": "files" },
+    "login เป็น user นี้บน shop": { "th": "login เป็น user นี้บน shop", "en": "Log in as this user on shop" },
+    "Payment Link": { "th": "Payment Link", "en": "Payment Link" },
+    "rich_text": { "th": "rich_text", "en": "rich_text" },
+    "Test your connection": { "th": "Test your connection", "en": "Test your connection" },
+    "กรุณากรอกชื่อ และ slug": { "th": "กรุณากรอกชื่อ และ slug", "en": "Please enter name and slug" },
+    "เก็บที่เหลือตอนนี้เลย เว็บใหญ่ใช้เวลาหลายชั่วโมงและเปิดเว็บคู่แข่งระหว่างวัน": { "th": "เก็บที่เหลือตอนนี้เลย เว็บใหญ่ใช้เวลาหลายชั่วโมงและเปิดเว็บคู่แข่งระหว่างวัน", "en": "Fetch the rest immediately; large portals may take hours and query competitors" },
+    "เข้าชมหน้าค้าง": { "th": "เข้าชมหน้าค้าง", "en": "Stale Page Visits" },
+    "คีย์ข้อมูล (Key)": { "th": "คีย์ข้อมูล (Key)", "en": "Data Key" },
+    "แจ้งเตือน+EMAIL": { "th": "แจ้งเตือน+EMAIL", "en": "Alert + Email" },
+    "เช่น ระบบร้านค้า": { "th": "เช่น ระบบร้านค้า", "en": "e.g. Store POS / Core" },
+    "ต่อเงื่อนไขเอง เช่น \"order เดียวเกิน 5,000 ครั้งแรก\" หรือ \"ยอดสะสมถึง 100,000 ครั้งแรก\" — ทำงานคนละ 1 ครั้ง": { "th": "ต่อเงื่อนไขเอง เช่น \"order เดียวเกิน 5,000 ครั้งแรก\" หรือ \"ยอดสะสมถึง 100,000 ครั้งแรก\" — ทำงานคนละ 1 ครั้ง", "en": "Custom condition e.g. \"single order over 5,000 first time\" or \"cumulative spend reach 100,000 first time\" — triggers once per customer" },
+    "น. — ส่งให้ Audience ที่เลือกด้านล่าง (ไม่เลือก Audience = ทุกคน) คนละ 1 ครั้งต่อรอบ": { "th": "น. — ส่งให้ Audience ที่เลือกด้านล่าง (ไม่เลือก Audience = ทุกคน) คนละ 1 ครั้งต่อรอบ", "en": "hrs. — Dispatched to selected Audience below (unselected = all) once per cycle" },
+    "ประวัติ revision และการตรวจ": { "th": "ประวัติ revision และการตรวจ", "en": "Revision history & audit log" },
+    "พร้อมสร้างร่าง": { "th": "พร้อมสร้างร่าง", "en": "Ready to draft" },
+    "ไม่บังคับ ใช้ตรวจสอบลายเซ็น HMAC ของ Webhook": { "th": "ไม่บังคับ ใช้ตรวจสอบลายเซ็น HMAC ของ Webhook", "en": "Optional, used to verify Webhook HMAC signature" },
+    "ยังไม่กำหนดวัน": { "th": "ยังไม่กำหนดวัน", "en": "Unscheduled" },
+    "รวมทั้งหมด": { "th": "รวมทั้งหมด", "en": "Total overall" },
+    "ราคาสาธารณะที่เลือกเก็บรวม VAT หรือยกเว้น VAT": { "th": "ราคาสาธารณะที่เลือกเก็บรวม VAT หรือยกเว้น VAT", "en": "Public pricing stored inclusive of VAT or VAT-exempt" },
+    "ลบหน้าโปรโมชันนี้?": { "th": "ลบหน้าโปรโมชันนี้?", "en": "Delete this promotional page?" },
+    "วงเงิน": { "th": "วงเงิน", "en": "Credit limit" },
+    "สร้าง/แก้ไข template (drag &amp; drop) →": { "th": "สร้าง/แก้ไข template (drag & drop) →", "en": "Create/Edit template (drag & drop) →" },
+    "แสดงแบนเนอร์บนหน้าแรก": { "th": "แสดงแบนเนอร์บนหน้าแรก", "en": "Display banner on home page" },
+    "ให้สิทธิ์": { "th": "ให้สิทธิ์", "en": "Grant Permission" }
+  }
+  </script>
+
+  <!-- Top Global Header -->
+  <header class="bg-white border-b border-[#e1e7f0] h-16 sticky top-0 z-30 flex items-center justify-between px-6">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-sm tracking-tight shadow-sm">
+          CP
+        </div>
+        <div>
+          <span class="font-bold text-base text-[#17243b] tracking-tight">Commerce Admin</span>
+          <span class="ml-2.5 px-2 py-0.5 text-xs bg-[#eff4ff] text-[#365cf5] rounded border border-[#d0e0ff] font-medium" data-i18n="sample_badge">ข้อมูลตัวอย่าง</span>
+        </div>
+      </div>
+      <div class="h-4 w-px bg-[#e1e7f0] mx-1"></div>
+      <div class="text-xs text-[#52627a] flex items-center space-x-1">
+        <span data-i18n="store_label">ร้าน:</span>
+        <span class="font-medium text-[#17243b]">สยาม สโตร์ ออนไลน์ (สาขาหลัก)</span>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <!-- Language Selector -->
+      <div class="flex items-center bg-[#f1f5f9] p-0.5 rounded-lg border border-[#e1e7f0] text-xs font-medium">
+        <button id="lang-btn-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded bg-white text-[#17243b] shadow-sm font-semibold transition-all">ไทย</button>
+        <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all">English</button>
+      </div>
+
+      <!-- User avatar & identity -->
+      <div class="flex items-center space-x-3 pl-2 border-l border-[#e1e7f0]">
+        <div class="w-8 h-8 rounded-full bg-[#e8edfb] text-[#365cf5] flex items-center justify-center font-bold text-xs">
+          ภช
+        </div>
+        <div class="text-left text-xs leading-tight">
+          <div class="font-semibold text-[#17243b] flex items-center gap-1.5">
+            <span>ภานุชญา ส.</span>
+            <span class="px-1.5 py-0.2 text-[10px] bg-[#dcfce7] text-[#157347] rounded font-medium">คุณ</span>
+          </div>
+          <div class="text-[#52627a] text-[11px]">Admin (ผู้ดูแลระบบ)</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex-1 flex overflow-hidden">
+    <!-- Sidebar (256px wide) -->
+    <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col shrink-0">
+      <!-- Workspace selector -->
+      <div class="p-4 border-b border-[#e1e7f0]">
+        <div class="text-[11px] font-medium text-[#52627a] uppercase tracking-wider mb-1.5" data-i18n="workspace_header">พื้นที่ทำงาน</div>
+        <div class="flex items-center justify-between p-2 rounded-lg bg-[#f8fafc] border border-[#e1e7f0] cursor-pointer hover:bg-slate-50 transition-colors">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+            <span class="text-xs font-semibold text-[#17243b]">Commerce Hub v2.4</span>
+          </div>
+          <svg class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+      </div>
+
+      <!-- 7 Work Areas Navigation -->
+      <nav class="flex-1 overflow-y-auto p-3 space-y-1 text-sm custom-scrollbar">
+        <div class="px-2 pt-1 pb-1 text-[11px] font-medium text-[#52627a] uppercase tracking-wider" data-i18n="nav_main_group">หมวดงานหลัก</div>
+
+        <a href="#inventory" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 text-[#718096]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+          <span data-i18n="nav_inventory">สินค้าและสต็อก</span>
+        </a>
+
+        <a href="#orders" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 text-[#718096]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span data-i18n="nav_orders">ออเดอร์และการเงิน</span>
+        </a>
+
+        <a href="#customers" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 text-[#718096]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <span data-i18n="nav_customers">ลูกค้าและบริการ</span>
+        </a>
+
+        <a href="#marketing" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 text-[#718096]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+          <span data-i18n="nav_marketing">การตลาด</span>
+        </a>
+
+        <a href="#reports" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 text-[#718096]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          <span data-i18n="nav_reports">รายงานและข้อมูล</span>
+        </a>
+
+        <a href="#integrations" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 text-[#718096]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+          <span data-i18n="nav_integrations">ระบบเชื่อมต่อ</span>
+        </a>
+
+        <!-- Active Section: ตั้งค่าและทีมงาน -->
+        <div class="pt-2">
+          <div class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-[#eff4ff] text-[#365cf5] font-semibold">
+            <svg class="w-4 h-4 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span data-i18n="nav_settings">ตั้งค่าและทีมงาน</span>
+          </div>
+
+          <!-- Sub-items under Settings -->
+          <div class="mt-1 ml-4 pl-3 border-l border-[#d0e0ff] space-y-1 text-xs">
+            <a href="/workspaces/settings" class="block py-1.5 text-[#52627a] hover:text-[#17243b]" data-i18n="sub_overview">ภาพรวมหมวดนี้</a>
+            <a href="/settings/staff" class="block py-1.5 text-[#52627a] hover:text-[#17243b]" data-i18n="sub_staff">บัญชีทีมงาน</a>
+            <a href="/settings/josh-staff" class="block py-1.5 text-[#52627a] hover:text-[#17243b]" data-i18n="sub_josh_staff">บัญชี josh (staff)</a>
+            <a href="/josh/internal_docs" class="block py-1.5 font-bold text-[#365cf5] bg-[#eff4ff] -ml-3 pl-3 rounded-r" data-i18n="sub_internal_docs">เอกสารภายใน (Josh Docs)</a>
+            <a href="/account/password" class="block py-1.5 text-[#52627a] hover:text-[#17243b]" data-i18n="sub_password">เปลี่ยนรหัสผ่าน</a>
+            <a href="/settings/roles" class="block py-1.5 text-[#52627a] hover:text-[#17243b]" data-i18n="sub_roles">บทบาทและสิทธิ์</a>
+            <a href="/settings/store" class="block py-1.5 text-[#52627a] hover:text-[#17243b]" data-i18n="sub_store">ข้อมูลร้านค้า</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Bottom link: Developer Portal -->
+      <div class="p-3 border-t border-[#e1e7f0]">
+        <a href="#devportal" class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors border border-dashed border-[#cbd5e1]">
+          <div class="flex items-center space-x-2">
+            <svg class="w-3.5 h-3.5 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            <span>Developer Portal</span>
+          </div>
+          <span class="text-[10px] text-[#52627a]">API & Keys →</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area (~1240px container) -->
+    <main class="flex-1 overflow-y-auto custom-scrollbar p-8">
+      <div class="max-w-[1240px] mx-auto space-y-6">
+
+        <!-- Breadcrumbs & Context Header -->
+        <div>
+          <nav class="flex items-center space-x-2 text-xs text-[#52627a] mb-2">
+            <a href="/workspaces/settings" class="hover:underline" data-i18n="crumb_settings">ตั้งค่าและทีมงาน</a>
+            <span>/</span>
+            <span class="text-[#52627a]">Josh Backoffice</span>
+            <span>/</span>
+            <span class="text-[#17243b] font-medium" data-i18n="crumb_docs">เอกสารภายใน</span>
+          </nav>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <div class="flex items-center space-x-3">
+                <h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-tight" data-i18n="page_title">เอกสารภายใน</h1>
+                <span class="px-2 py-0.5 rounded text-xs font-mono font-medium bg-[#f1f5f9] text-[#52627a] border border-[#e2e8f0]">/josh/internal_docs</span>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eff4ff] text-[#365cf5] border border-[#d0e0ff]">Admin JoshBackoffice</span>
+              </div>
+              <p class="text-sm text-[#52627a] mt-1" data-i18n="page_subtitle">
+                จัดการคู่มือการทำงาน เอกสารแนบ ระบบความปลอดภัย และนโยบายควบคุมร้านค้าที่ซิงค์กับโมดูล josh
+              </p>
+            </div>
+
+            <!-- Primary Actions Toolbar -->
+            <div class="flex items-center space-x-3 shrink-0">
+              <button onclick="handleRefresh()" class="inline-flex items-center space-x-1.5 px-3 py-2 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#17243b] rounded-lg text-xs font-semibold shadow-sm transition-all">
+                <svg class="w-3.5 h-3.5 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span data-i18n="Refresh">Refresh</span>
+              </button>
+
+              <button onclick="openCreateModal()" class="inline-flex items-center space-x-1.5 px-4 py-2 bg-[#365cf5] hover:bg-blue-600 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <span data-i18n="create_doc_btn">สร้างเอกสารใหม่</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner: Josh Integration Status & Boundaries -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+          <div class="flex items-start space-x-3.5">
+            <div class="w-9 h-9 rounded-lg bg-[#eff4ff] text-[#365cf5] flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </div>
+            <div class="text-xs">
+              <div class="font-semibold text-[#17243b] flex items-center gap-2">
+                <span data-i18n="josh_rule_title">นโยบายและการอนุญาตเอกสาร josh</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#eff6ff] text-[#365cf5] border border-[#d0e0ff]">
+                  <span data-i18n="สั่ง josh ได้ · ตามสิทธิ์ใน josh">สั่ง josh ได้ · ตามสิทธิ์ใน josh</span>
+                </span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#f1f5f9] text-[#52627a] border border-[#e2e8f0]">
+                  <span data-i18n="อ่านอย่างเดียว · ข้อมูลจาก josh">อ่านอย่างเดียว · ข้อมูลจาก josh</span>
+                </span>
+              </div>
+              <p class="text-[#52627a] mt-1 leading-relaxed">
+                <span data-i18n="แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (">แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (</span>
+                <a href="#josh-admin" class="text-[#365cf5] underline hover:text-blue-700 font-mono text-[11px]">admin.josh.internal/docs</a>
+                <span data-i18n=") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง">) · เบอร์ อีเมล ชื่อคน ถูกปิดบัง</span>
+                <span class="text-[#52627a] ml-1" data-i18n="pci_note">(ตามมาตรการ PDPA / Security audit)</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Quick Action helper button -->
+          <div class="flex items-center space-x-2 shrink-0">
+            <a href="/workflow/edit" class="text-xs text-[#52627a] hover:text-[#17243b] px-3 py-1.5 rounded-lg border border-[#e1e7f0] hover:bg-[#f8fafc] font-medium transition-colors">
+              <span data-i18n="&larr; กลับไปหน้าแก้ไข Workflow">&larr; กลับไปหน้าแก้ไข Workflow</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar Card -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm space-y-3">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+
+            <!-- Category Tab Filters -->
+            <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 md:pb-0 text-xs">
+              <button onclick="filterCategory('all')" id="tab-all" class="px-3 py-1.5 rounded-lg bg-[#365cf5] text-white font-medium shadow-sm transition-all">
+                <span data-i18n="ทั้งหมด">ทั้งหมด</span> <span class="ml-1 opacity-80">(8)</span>
+              </button>
+              <button onclick="filterCategory('policy')" id="tab-policy" class="px-3 py-1.5 rounded-lg bg-[#f8fafc] text-[#52627a] hover:bg-slate-100 hover:text-[#17243b] font-medium transition-all">
+                <span data-i18n="cat_policy">นโยบายร้านค้า & ข้อบังคับ</span>
+              </button>
+              <button onclick="filterCategory('workflow')" id="tab-workflow" class="px-3 py-1.5 rounded-lg bg-[#f8fafc] text-[#52627a] hover:bg-slate-100 hover:text-[#17243b] font-medium transition-all">
+                <span data-i18n="cat_workflow">Workflow & ระบบร้านค้า</span>
+              </button>
+              <button onclick="filterCategory('technical')" id="tab-technical" class="px-3 py-1.5 rounded-lg bg-[#f8fafc] text-[#52627a] hover:bg-slate-100 hover:text-[#17243b] font-medium transition-all">
+                <span data-i18n="cat_tech">คู่มือเทคนิค & Webhook</span>
+              </button>
+            </div>
+
+            <!-- Frontend search & clear filter -->
+            <div class="flex items-center space-x-2">
+              <div class="relative w-full md:w-72">
+                <input type="text" id="doc-search-input" onkeyup="handleSearch(this.value)" placeholder="ค้นหา… (เฉพาะในหน้านี้)" class="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-[#e1e7f0] rounded-lg text-[#17243b] placeholder-[#94a3b8] focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] transition-all">
+                <svg class="w-4 h-4 text-[#94a3b8] absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </div>
+
+              <button onclick="resetSearch()" class="px-2.5 py-1.5 text-xs text-[#52627a] hover:text-[#c2333f] hover:bg-red-50 rounded-lg border border-[#e1e7f0] transition-colors whitespace-nowrap">
+                <span data-i18n="ล้างตัวกรอง">ล้างตัวกรอง</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Result Meta Count -->
+          <div class="pt-2 border-t border-[#f1f5f9] flex items-center justify-between text-xs text-[#52627a]">
+            <div>
+              <span data-i18n="พบ">พบ</span> <span id="record-count" class="font-bold text-[#17243b]">8</span> <span data-i18n="รายการ">รายการ</span>
+              <span class="text-[#94a3b8] ml-2">(<span data-i18n="page_pagination_note">แสดงข้อมูลหน้าปัจจุบันตามสิทธิ์ JoshBackoffice · ข้อมูลตัวอย่าง</span>)</span>
+            </div>
+            <div class="text-[11px] text-[#52627a] flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-[#157347]"></span>
+              <span>Josh Sync Engine: Healthy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents Table Card -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] overflow-hidden shadow-sm">
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-[#f8fafc] text-[#52627a] border-b border-[#e1e7f0] font-semibold">
+                  <th class="py-3 px-4 w-12 text-center">#</th>
+                  <th class="py-3 px-4" data-i18n="th_title">ชื่อเอกสาร / Slug / คำอธิบาย</th>
+                  <th class="py-3 px-4 w-36" data-i18n="th_category">หมวด & คีย์ข้อมูล</th>
+                  <th class="py-3 px-4 w-32" data-i18n="th_format">รูปแบบเนื้อหา</th>
+                  <th class="py-3 px-4 w-40" data-i18n="th_security">ระดับสิทธิ์ (Permission)</th>
+                  <th class="py-3 px-4 w-32" data-i18n="th_date">อัปเดตล่าสุด</th>
+                  <th class="py-3 px-4 w-28 text-right" data-i18n="th_action">การดำเนินการ</th>
+                </tr>
+              </thead>
+              <tbody id="docs-tbody" class="divide-y divide-[#f1f5f9] text-[#17243b]">
+
+                <!-- Row 1: Store POS & Operations Rules -->
+                <tr class="hover:bg-slate-50 transition-colors doc-row" data-cat="workflow">
+                  <td class="py-3.5 px-4 text-center text-[#94a3b8] font-mono">01</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-[#17243b] hover:text-[#365cf5] cursor-pointer flex items-center gap-1.5" onclick="openDetailModal('doc-1')">
+                      <span>คู่มือการเชื่อมต่อ POS และคำสั่งซื้อหน้าร้าน (เช่น ระบบร้านค้า)</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#e8edfb] text-[#365cf5] font-normal">Active</span>
+                    </div>
+                    <div class="text-[11px] font-mono text-[#52627a] mt-0.5">slug: pos-system-store-sync-rules</div>
+                    <div class="text-xs text-[#52627a] mt-1 leading-snug">
+                      แนวทางปฏิบัติเมื่อแคชเชียร์สแกนสินค้าและออกใบเสร็จ การตรวจสอบสถานะสินค้าคงคลังแบบ Realtime
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-[11px] block w-fit mb-1">Workflow & POS</span>
+                    <span class="text-[10px] font-mono text-[#52627a]">key: <span data-i18n="เช่น ระบบร้านค้า">เช่น ระบบร้านค้า</span></span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-[#f0fdf4] text-[#157347] border border-[#bbf7d0] font-mono text-[11px]">
+                      rich_text
+                    </span>
+                    <div class="text-[10px] text-[#52627a] mt-0.5">+ 2 <span data-i18n="files">files</span> (.pdf)</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      <span class="text-xs text-[#17243b] font-medium" data-i18n="role_all">เจ้าหน้าที่ทุกคน</span>
+                    </div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5">รวม Cashier & CS</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="text-xs text-[#17243b]">14 ม.ค. 2024</div>
+                    <div class="text-[11px] text-[#94a3b8]">10:35 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openDetailModal('doc-1')" class="px-2.5 py-1 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#365cf5] font-semibold rounded text-xs shadow-sm transition-all">
+                      <span data-i18n="จัดการ">จัดการ</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 2: Customer Trigger Rules & Audience -->
+                <tr class="hover:bg-slate-50 transition-colors doc-row" data-cat="workflow">
+                  <td class="py-3.5 px-4 text-center text-[#94a3b8] font-mono">02</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-[#17243b] hover:text-[#365cf5] cursor-pointer flex items-center gap-1.5" onclick="openDetailModal('doc-2')">
+                      <span>ระเบียบเงื่อนไขทริกเกอร์แคมเปญอัตโนมัติ (Trigger & Audience)</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#fef9c3] text-[#854d0e] font-normal">Audit Req</span>
+                    </div>
+                    <div class="text-[11px] font-mono text-[#52627a] mt-0.5">slug: marketing-trigger-audience-dispatch</div>
+                    <div class="text-xs text-[#52627a] mt-1 leading-snug">
+                      <span data-i18n="ต่อเงื่อนไขเอง เช่น &quot;order เดียวเกิน 5,000 ครั้งแรก&quot; หรือ &quot;ยอดสะสมถึง 100,000 ครั้งแรก&quot; — ทำงานคนละ 1 ครั้ง">ต่อเงื่อนไขเอง เช่น "order เดียวเกิน 5,000 ครั้งแรก" หรือ "ยอดสะสมถึง 100,000 ครั้งแรก" — ทำงานคนละ 1 ครั้ง</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-[11px] block w-fit mb-1">Marketing Rules</span>
+                    <span class="text-[10px] font-mono text-[#52627a]">key: trigger.rules</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-[#eff4ff] text-[#365cf5] border border-[#d0e0ff] font-mono text-[11px]">
+                      rich_text
+                    </span>
+                    <div class="text-[10px] text-[#52627a] mt-0.5">Logic Rulebook</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+                      <span class="text-xs text-[#17243b] font-medium">Admin & MER</span>
+                    </div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5">ฝ่ายการตลาดและสินค้า</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="text-xs text-[#17243b]">12 ม.ค. 2024</div>
+                    <div class="text-[11px] text-[#94a3b8]">14:20 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openDetailModal('doc-2')" class="px-2.5 py-1 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#365cf5] font-semibold rounded text-xs shadow-sm transition-all">
+                      <span data-i18n="จัดการ">จัดการ</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 3: Dispatch & Audience Time Schedule -->
+                <tr class="hover:bg-slate-50 transition-colors doc-row" data-cat="workflow">
+                  <td class="py-3.5 px-4 text-center text-[#94a3b8] font-mono">03</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-[#17243b] hover:text-[#365cf5] cursor-pointer flex items-center gap-1.5" onclick="openDetailModal('doc-3')">
+                      <span>ตารางส่งข้อความและการบรอดแคสต์ลูกค้าตามรอบเวลา</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#e8edfb] text-[#365cf5] font-normal">Active</span>
+                    </div>
+                    <div class="text-[11px] font-mono text-[#52627a] mt-0.5">slug: audience-broadcast-timing-policy</div>
+                    <div class="text-xs text-[#52627a] mt-1 leading-snug">
+                      กำหนดเวลาบรอดแคสต์ 10:00 - 18:00 <span data-i18n="น. — ส่งให้ Audience ที่เลือกด้านล่าง (ไม่เลือก Audience = ทุกคน) คนละ 1 ครั้งต่อรอบ">น. — ส่งให้ Audience ที่เลือกด้านล่าง (ไม่เลือก Audience = ทุกคน) คนละ 1 ครั้งต่อรอบ</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-[11px] block w-fit mb-1">CRM & Audience</span>
+                    <span class="text-[10px] font-mono text-[#52627a]">key: crm.broadcast</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-[#f1f5f9] text-[#52627a] font-mono text-[11px]">
+                      rich_text
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+                      <span class="text-xs text-[#17243b] font-medium">Admin & CS Lead</span>
+                    </div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5">อนุมัติรอบส่งบรอดแคสต์</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="text-xs text-[#17243b]">09 ม.ค. 2024</div>
+                    <div class="text-[11px] text-[#94a3b8]">08:15 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openDetailModal('doc-3')" class="px-2.5 py-1 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#365cf5] font-semibold rounded text-xs shadow-sm transition-all">
+                      <span data-i18n="จัดการ">จัดการ</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 4: Pricing, Public Catalog & VAT Policy -->
+                <tr class="hover:bg-slate-50 transition-colors doc-row" data-cat="policy">
+                  <td class="py-3.5 px-4 text-center text-[#94a3b8] font-mono">04</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-[#17243b] hover:text-[#365cf5] cursor-pointer flex items-center gap-1.5" onclick="openDetailModal('doc-4')">
+                      <span>นโยบายจัดเก็บภาษีมูลค่าเพิ่มและการแสดงราคาสินค้า</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#e8edfb] text-[#365cf5] font-normal">Active</span>
+                    </div>
+                    <div class="text-[11px] font-mono text-[#52627a] mt-0.5">slug: vat-pricing-tax-policy-rules</div>
+                    <div class="text-xs text-[#52627a] mt-1 leading-snug">
+                      <span data-i18n="ราคาสาธารณะที่เลือกเก็บรวม VAT หรือยกเว้น VAT">ราคาสาธารณะที่เลือกเก็บรวม VAT หรือยกเว้น VAT</span> และการออกใบกำกับภาษีเต็มรูปอัตโนมัติ
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-[11px] block w-fit mb-1">Finance & Tax</span>
+                    <span class="text-[10px] font-mono text-[#52627a]">key: tax.vat_policy</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-[#f0fdf4] text-[#157347] border border-[#bbf7d0] font-mono text-[11px]">
+                      rich_text
+                    </span>
+                    <div class="text-[10px] text-[#52627a] mt-0.5">+ 1 <span data-i18n="files">files</span> (.pdf)</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      <span class="text-xs text-[#17243b] font-medium">ทุกฝ่าย (Read-only)</span>
+                    </div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5">แก้ไขได้เฉพาะ Admin</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="text-xs text-[#17243b]">05 ม.ค. 2024</div>
+                    <div class="text-[11px] text-[#94a3b8]">11:00 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openDetailModal('doc-4')" class="px-2.5 py-1 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#365cf5] font-semibold rounded text-xs shadow-sm transition-all">
+                      <span data-i18n="จัดการ">จัดการ</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 5: Credit Term & B2B Customer Limit -->
+                <tr class="hover:bg-slate-50 transition-colors doc-row" data-cat="policy">
+                  <td class="py-3.5 px-4 text-center text-[#94a3b8] font-mono">05</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-[#17243b] hover:text-[#365cf5] cursor-pointer flex items-center gap-1.5" onclick="openDetailModal('doc-5')">
+                      <span>ระเบียบการอนุมัติวงเงินสินเชื่อและการให้เครดิตเทอม B2B</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#e8edfb] text-[#365cf5] font-normal">Active</span>
+                    </div>
+                    <div class="text-[11px] font-mono text-[#52627a] mt-0.5">slug: b2b-credit-term-limit-protocol</div>
+                    <div class="text-xs text-[#52627a] mt-1 leading-snug">
+                      หลักเกณฑ์การตั้งค่า <span data-i18n="Credit Term (วัน)">Credit Term (วัน)</span> และการกำหนด <span data-i18n="วงเงิน">วงเงิน</span> สำหรับคู่ค้าองค์กร
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-[11px] block w-fit mb-1">B2B Commercial</span>
+                    <span class="text-[10px] font-mono text-[#52627a]">key: b2b.credit</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-[#f1f5f9] text-[#52627a] font-mono text-[11px]">
+                      rich_text
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+                      <span class="text-xs text-[#17243b] font-medium">Finance & Admin</span>
+                    </div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5">ระดับผู้จัดการฝ่ายบัญชี</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="text-xs text-[#17243b]">28 ธ.ค. 2023</div>
+                    <div class="text-[11px] text-[#94a3b8]">16:45 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openDetailModal('doc-5')" class="px-2.5 py-1 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#365cf5] font-semibold rounded text-xs shadow-sm transition-all">
+                      <span data-i18n="จัดการ">จัดการ</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 6: Webhook & Security HMAC verification -->
+                <tr class="hover:bg-slate-50 transition-colors doc-row" data-cat="technical">
+                  <td class="py-3.5 px-4 text-center text-[#94a3b8] font-mono">06</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-[#17243b] hover:text-[#365cf5] cursor-pointer flex items-center gap-1.5" onclick="openDetailModal('doc-6')">
+                      <span>มาตรฐานความปลอดภัย Webhook และการตรวจสอบลายเซ็น HMAC</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#e8edfb] text-[#365cf5] font-normal">Active</span>
+                    </div>
+                    <div class="text-[11px] font-mono text-[#52627a] mt-0.5">slug: webhook-hmac-security-signature-spec</div>
+                    <div class="text-xs text-[#52627a] mt-1 leading-snug">
+                      ข้อกำหนดพารามิเตอร์ลับ (<span data-i18n="ไม่บังคับ ใช้ตรวจสอบลายเซ็น HMAC ของ Webhook">ไม่บังคับ ใช้ตรวจสอบลายเซ็น HMAC ของ Webhook</span>) และ API Gateway
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-[11px] block w-fit mb-1">Technical Spec</span>
+                    <span class="text-[10px] font-mono text-[#52627a]">key: sec.hmac_spec</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-[#fef2f2] text-[#c2333f] border border-[#fecaca] font-mono text-[11px]">
+                      files
+                    </span>
+                    <div class="text-[10px] text-[#52627a] mt-0.5">OpenAPI 3.0 / JSON</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#17243b]"></span>
+                      <span class="text-xs text-[#17243b] font-medium">Developer & Admin</span>
+                    </div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5">เชื่อมต่อ Developer Portal</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="text-xs text-[#17243b]">22 ธ.ค. 2023</div>
+                    <div class="text-[11px] text-[#94a3b8]">09:30 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openDetailModal('doc-6')" class="px-2.5 py-1 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#365cf5] font-semibold rounded text-xs shadow-sm transition-all">
+                      <span data-i18n="จัดการ">จัดการ</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 7: Crawler & Competitor Price Watch rules -->
+                <tr class="hover:bg-slate-50 transition-colors doc-row" data-cat="technical">
+                  <td class="py-3.5 px-4 text-center text-[#94a3b8] font-mono">07</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-[#17243b] hover:text-[#365cf5] cursor-pointer flex items-center gap-1.5" onclick="openDetailModal('doc-7')">
+                      <span>ระเบียบการสำรวจราคาและระบบ Crawling อัตโนมัติ</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#fef9c3] text-[#854d0e] font-normal">Internal Only</span>
+                    </div>
+                    <div class="text-[11px] font-mono text-[#52627a] mt-0.5">slug: crawler-batch-competitor-watch</div>
+                    <div class="text-xs text-[#52627a] mt-1 leading-snug">
+                      คำแนะนำการดึงข้อมูล: <span data-i18n="เก็บที่เหลือตอนนี้เลย เว็บใหญ่ใช้เวลาหลายชั่วโมงและเปิดเว็บคู่แข่งระหว่างวัน">เก็บที่เหลือตอนนี้เลย เว็บใหญ่ใช้เวลาหลายชั่วโมงและเปิดเว็บคู่แข่งระหว่างวัน</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-[11px] block w-fit mb-1">Data & Sync</span>
+                    <span class="text-[10px] font-mono text-[#52627a]">key: crawler.batch</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-[#eff4ff] text-[#365cf5] border border-[#d0e0ff] font-mono text-[11px]">
+                      rich_text
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#17243b]"></span>
+                      <span class="text-xs text-[#17243b] font-medium">Data Eng & Merchandiser</span>
+                    </div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5">สิทธิ์เฉพาะทีมข้อมูล</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="text-xs text-[#17243b]">18 ธ.ค. 2023</div>
+                    <div class="text-[11px] text-[#94a3b8]">17:10 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openDetailModal('doc-7')" class="px-2.5 py-1 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#365cf5] font-semibold rounded text-xs shadow-sm transition-all">
+                      <span data-i18n="จัดการ">จัดการ</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 8: Promotion & Hero Banner Guideline -->
+                <tr class="hover:bg-slate-50 transition-colors doc-row" data-cat="workflow">
+                  <td class="py-3.5 px-4 text-center text-[#94a3b8] font-mono">08</td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-sm text-[#17243b] hover:text-[#365cf5] cursor-pointer flex items-center gap-1.5" onclick="openDetailModal('doc-8')">
+                      <span>ข้อกำหนดการจัดการหน้าโปรโมชันและการจัดวางแบนเนอร์หน้าร้าน</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#e8edfb] text-[#365cf5] font-normal">Active</span>
+                    </div>
+                    <div class="text-[11px] font-mono text-[#52627a] mt-0.5">slug: promo-landing-banner-guidelines</div>
+                    <div class="text-xs text-[#52627a] mt-1 leading-snug">
+                      การกำหนดเงื่อนไข <span data-i18n="แสดงแบนเนอร์บนหน้าแรก">แสดงแบนเนอร์บนหน้าแรก</span> และการกู้คืนหากพบข้อผิดพลาด
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded bg-[#f1f5f9] text-[#17243b] font-medium text-[11px] block w-fit mb-1">Marketing & CMS</span>
+                    <span class="text-[10px] font-mono text-[#52627a]">key: cms.banner_spec</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-[#f1f5f9] text-[#52627a] font-mono text-[11px]">
+                      rich_text
+                    </span>
+                    <div class="text-[10px] text-[#52627a] mt-0.5">+ 4 <span data-i18n="files">files</span> (.png, .svg)</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+                      <span class="text-xs text-[#17243b] font-medium">MER & Designer</span>
+                    </div>
+                    <div class="text-[11px] text-[#52627a] mt-0.5">ทีมแคมเปญและการตลาด</div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="text-xs text-[#17243b]">15 ธ.ค. 2023</div>
+                    <div class="text-[11px] text-[#94a3b8]">13:40 น.</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openDetailModal('doc-8')" class="px-2.5 py-1 bg-white border border-[#e1e7f0] hover:bg-slate-50 text-[#365cf5] font-semibold rounded text-xs shadow-sm transition-all">
+                      <span data-i18n="จัดการ">จัดการ</span>
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty Search State Container (hidden by default) -->
+          <div id="empty-state" class="hidden p-12 text-center">
+            <div class="w-12 h-12 rounded-full bg-[#f1f5f9] text-[#94a3b8] flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="font-semibold text-sm text-[#17243b]" data-i18n="ไม่มีรายการ">ไม่มีรายการ</div>
+            <p class="text-xs text-[#52627a] mt-1" data-i18n="empty_desc">ไม่พบเอกสารภายในที่ตรงกับคำค้นหาหรือตัวกรองที่เลือกในหน้านี้</p>
+            <button onclick="resetSearch()" class="mt-4 px-3 py-1.5 bg-[#eff4ff] text-[#365cf5] rounded-lg text-xs font-semibold hover:bg-blue-100 transition-colors">
+              <span data-i18n="ล้างตัวกรอง">ล้างตัวกรอง</span>
+            </button>
+          </div>
+
+          <!-- Pagination Footer -->
+          <div class="p-4 border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+            <div>
+              <span data-i18n="showing_prefix">แสดง 1 - 8 จาก</span> <span class="font-bold text-[#17243b]">8</span> <span data-i18n="รวมทั้งหมด">รวมทั้งหมด</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button disabled class="px-3 py-1.5 rounded border border-[#e1e7f0] text-[#94a3b8] bg-slate-50 cursor-not-allowed font-medium" data-i18n="btn_prev">ก่อนหน้า</button>
+              <span class="px-2.5 py-1 text-xs font-semibold text-[#17243b]">หน้า 1 / 1</span>
+              <button disabled class="px-3 py-1.5 rounded border border-[#e1e7f0] text-[#94a3b8] bg-slate-50 cursor-not-allowed font-medium" data-i18n="btn_next">ถัดไป</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-Column Info & Governance Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- Card 1: Revision & Audit History -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-[#17243b]" data-i18n="ประวัติ revision และการตรวจ">ประวัติ revision และการตรวจ</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#eff6ff] text-[#365cf5]">v2.4.1</span>
+              </div>
+              <p class="text-xs text-[#52627a] leading-relaxed">
+                บันทึกการแก้ไขทุกครั้งจะถูกประทับเวลาและจัดเก็บเป็น snapshot เพื่อตรวจสอบย้อนหลังตามนโยบายความปลอดภัย
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
+              <span class="text-[#52627a]">บันทึกการตรวจล่าสุด</span>
+              <span class="font-medium text-[#17243b]">14 ม.ค. 2024 โดย Admin</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Template Builder & Workflow link -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-[#17243b]" data-i18n="template_card_title">การจัดทำเอกสารและเทมเพลต</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-[#f0fdf4] text-[#157347]">Drag & Drop</span>
+              </div>
+              <p class="text-xs text-[#52627a] leading-relaxed">
+                ออกแบบเอกสารด้วยตัวช่วยจัดวางองค์ประกอบอัตโนมัติ สำหรับทีมปฏิบัติการและหน้าร้านสาขา
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#f1f5f9]">
+              <a href="#template-builder" class="text-xs font-bold text-[#365cf5] hover:underline flex items-center gap-1">
+                <span data-i18n="สร้าง/แก้ไข template (drag &amp; drop) →">สร้าง/แก้ไข template (drag & drop) →</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 3: App & Device Support -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-4 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-[#17243b]" data-i18n="channel_card_title">ช่องทางการเข้าถึงเอกสาร</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-[#f1f5f9] text-[#52627a]" data-i18n="Android">Android</span>
+              </div>
+              <p class="text-xs text-[#52627a] leading-relaxed">
+                รองรับการอ่านเอกสารผ่านแอปพนักงาน Josh บนอุปกรณ์ POS, แท็บเล็ต และเว็บแอดมินระบบหลังบ้าน
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
+              <span class="text-[#52627a]">สถานะระบบการอ่าน</span>
+              <span class="font-semibold text-[#157347]">พร้อมใช้งานทุกสาขา</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: สร้างเอกสารใหม่ (Create Document Modal) -->
+  <div id="create-modal" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4 backdrop-blur-xs">
+    <div class="bg-white rounded-xl shadow-xl border border-[#e1e7f0] w-full max-w-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-[#17243b]" data-i18n="modal_create_title">สร้างเอกสารภายในใหม่</h3>
+          <p class="text-xs text-[#52627a] mt-0.5" data-i18n="modal_create_sub">ระบุข้อมูลเอกสาร คีย์อ้างอิง และกำหนดบทบาทผู้มีสิทธิ์เข้าถึง</p>
+        </div>
+        <button onclick="closeCreateModal()" class="text-[#94a3b8] hover:text-[#17243b] p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Modal Form Body -->
+      <form id="create-doc-form" onsubmit="handleCreateDoc(event)" class="p-6 space-y-4 text-xs">
+
+        <!-- Validation Error Banner (Conditional) -->
+        <div id="form-error-alert" class="hidden p-3 rounded-lg bg-[#fef2f2] border border-[#fecaca] text-[#c2333f] flex items-center gap-2">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          <span data-i18n="กรุณากรอกชื่อ และ slug">กรุณากรอกชื่อ และ slug</span>
+        </div>
+
+        <!-- Title -->
+        <div>
+          <label class="block font-semibold text-[#17243b] mb-1">
+            <span data-i18n="form_lbl_title">ชื่อเอกสาร</span> <span class="text-[#c2333f]">*</span>
+          </label>
+          <input type="text" id="input-doc-title" placeholder="เช่น แนวทางปฏิบัติการคืนสินค้าและยกเลิกออเดอร์" class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg text-[#17243b] placeholder-[#94a3b8] focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5]">
+        </div>
+
+        <!-- Slug & Key Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-[#17243b] mb-1">
+              <span>Slug (URL path)</span> <span class="text-[#c2333f]">*</span>
+            </label>
+            <input type="text" id="input-doc-slug" placeholder="e.g. order-return-policy" class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg font-mono text-[11px] text-[#17243b] placeholder-[#94a3b8] focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5]">
+          </div>
+          <div>
+            <label class="block font-semibold text-[#17243b] mb-1">
+              <span data-i18n="คีย์ข้อมูล (Key)">คีย์ข้อมูล (Key)</span>
+            </label>
+            <input type="text" id="input-doc-key" placeholder="e.g. order.return_sop" class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg font-mono text-[11px] text-[#17243b] placeholder-[#94a3b8] focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5]">
+          </div>
+        </div>
+
+        <!-- Category & Format -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-[#17243b] mb-1" data-i18n="form_lbl_category">หมวดเอกสาร</label>
+            <select class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg text-[#17243b] bg-white focus:outline-none focus:border-[#365cf5]">
+              <option value="workflow">Workflow & ระบบร้านค้า</option>
+              <option value="policy">นโยบายร้านค้า & ข้อบังคับ</option>
+              <option value="technical">คู่มือเทคนิค & Webhook</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-[#17243b] mb-1" data-i18n="form_lbl_format">รูปแบบเนื้อหา</label>
+            <select class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg text-[#17243b] bg-white focus:outline-none focus:border-[#365cf5]">
+              <option value="rich_text">rich_text</option>
+              <option value="files">files</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Description / Summary -->
+        <div>
+          <label class="block font-semibold text-[#17243b] mb-1" data-i18n="form_lbl_desc">คำอธิบายหรือสรุปสาระสำคัญ</label>
+          <textarea rows="2" placeholder="ระบุวัตถุประสงค์ของเอกสารนี้เพื่อการอ้างอิงของทีมงาน..." class="w-full px-3 py-2 border border-[#e1e7f0] rounded-lg text-[#17243b] placeholder-[#94a3b8] focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5]"></textarea>
+        </div>
+
+        <!-- Permission scope -->
+        <div>
+          <label class="block font-semibold text-[#17243b] mb-1" data-i18n="form_lbl_permission">การกำหนดสิทธิ์ (Permission Scope)</label>
+          <div class="p-3 bg-[#f8fafc] rounded-lg border border-[#e1e7f0] space-y-2">
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="checkbox" checked class="rounded text-[#365cf5] focus:ring-0">
+              <span class="text-[#17243b] font-medium" data-i18n="ให้สิทธิ์">ให้สิทธิ์</span>
+              <span class="text-[#52627a]">— สิทธิ์เข้าถึงตามบทบาท (Admin, MER, CS, Cashier)</span>
+            </label>
+            <div class="text-[11px] text-[#52627a] pl-5">
+              สถานะ: <span class="text-[#157347] font-semibold" data-i18n="พร้อมสร้างร่าง">พร้อมสร้างร่าง</span> (เอกสารจะถูกบันทึกเป็น Draft ก่อนเริ่มเปิดใช้งาน)
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky Modal Footer -->
+        <div class="pt-4 border-t border-[#e1e7f0] flex items-center justify-end space-x-3">
+          <button type="button" onclick="closeCreateModal()" class="px-4 py-2 border border-[#e1e7f0] rounded-lg text-[#52627a] hover:bg-slate-50 font-semibold transition-colors" data-i18n="btn_cancel">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-4 py-2 bg-[#365cf5] hover:bg-blue-600 text-white rounded-lg font-semibold shadow-sm transition-all" data-i18n="btn_save_draft">
+            บันทึกร่างเอกสาร
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: รายละเอียดและจัดการเอกสาร (Document Detail Modal) -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4 backdrop-blur-xs">
+    <div class="bg-white rounded-xl shadow-xl border border-[#e1e7f0] w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+
+      <!-- Detail Header -->
+      <div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-[#eff6ff] text-[#365cf5] border border-[#d0e0ff]">DOC-ID: #0412</span>
+            <span class="text-xs text-[#52627a]" data-i18n="detail_modal_badge">เอกสารภายใน josh</span>
+          </div>
+          <h3 id="modal-detail-title" class="text-base font-bold text-[#17243b] mt-1">คู่มือการเชื่อมต่อ POS และคำสั่งซื้อหน้าร้าน</h3>
+        </div>
+        <button onclick="closeDetailModal()" class="text-[#94a3b8] hover:text-[#17243b] p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Detail Body -->
+      <div class="p-6 space-y-5 text-xs max-h-[75vh] overflow-y-auto custom-scrollbar">
+
+        <!-- Fact sheet -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-[#f8fafc] rounded-xl border border-[#e1e7f0]">
+          <div>
+            <div class="text-[11px] text-[#52627a]" data-i18n="modal_status">สถานะ</div>
+            <div class="font-bold text-[#157347] mt-0.5 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+              <span>Published</span>
+            </div>
+          </div>
+          <div>
+            <div class="text-[11px] text-[#52627a]" data-i18n="modal_format">ชนิดข้อมูล</div>
+            <div class="font-mono font-medium text-[#17243b] mt-0.5">rich_text + PDF</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-[#52627a]" data-i18n="modal_security">การซิงค์</div>
+            <div class="font-medium text-[#17243b] mt-0.5">Josh Engine Sync</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-[#52627a]" data-i18n="modal_expiry">วันหมดอายุ</div>
+            <div class="text-[#52627a] mt-0.5" data-i18n="ยังไม่กำหนดวัน">ยังไม่กำหนดวัน</div>
+          </div>
+        </div>
+
+        <!-- Notification & Webhook triggers connected -->
+        <div>
+          <h4 class="font-bold text-[#17243b] mb-2" data-i18n="connected_channels">ช่องทางเชื่อมต่อและการแจ้งเตือน</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#eff4ff] text-[#365cf5] border border-[#d0e0ff] font-medium text-xs">
+              <span data-i18n="แจ้งเตือน+EMAIL">แจ้งเตือน+EMAIL</span>
+            </span>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-[#17243b] border border-[#e2e8f0] font-medium text-xs">
+              <span data-i18n="Payment Link">Payment Link</span>
+            </span>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#f8fafc] text-[#52627a] border border-[#e2e8f0] font-medium text-xs">
+              <span data-i18n="login เป็น user นี้บน shop">login เป็น user นี้บน shop</span>
+            </span>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#f8fafc] text-[#52627a] border border-[#e2e8f0] font-medium text-xs">
+              <span data-i18n="เข้าชมหน้าค้าง">เข้าชมหน้าค้าง</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Sample Document Excerpt -->
+        <div class="space-y-2">
+          <h4 class="font-bold text-[#17243b]" data-i18n="doc_content_excerpt">เนื้อหาเอกสาร (สาระสำคัญ)</h4>
+          <div class="p-4 rounded-lg border border-[#e1e7f0] bg-white leading-relaxed text-[#52627a] space-y-2">
+            <p>1. พนักงานหน้าร้านทุกคนต้องใช้อุปกรณ์ที่ลงทะเบียนในระบบ Josh App เพื่อเปิดกะและพิมพ์ใบส่งมอบสินค้า</p>
+            <p>2. สำหรับการชำระเงินที่ต้องการสร้าง <strong class="text-[#17243b]">Payment Link</strong> ให้ตรวจสอบความถูกต้องของยอดรวมและ VAT ก่อนส่งลิงก์แก่ลูกค้า</p>
+            <p>3. หากเกิดข้อผิดพลาดในการเชื่อมต่อเครือข่าย ให้กดปุ่ม <strong class="text-[#365cf5]">Test your connection</strong> เพื่อตรวจสอบสถานะ Webhook Gateway ทันที</p>
+          </div>
+        </div>
+
+        <!-- Action warning & External admin link -->
+        <div class="p-3 bg-[#fffbeb] border border-[#fef08a] rounded-lg text-[#854d0e] flex items-start gap-2.5">
+          <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <div class="text-[11px] leading-relaxed">
+            <span data-i18n="แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (">แก้ไขอื่นๆ ยังทำที่ web-admin ของ josh (</span>
+            <a href="#josh" class="underline font-semibold">josh-admin.internal/documents/412</a>
+            <span data-i18n=") · เบอร์ อีเมล ชื่อคน ถูกปิดบัง">) · เบอร์ อีเมล ชื่อคน ถูกปิดบัง</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Detail Modal Footer -->
+      <div class="px-6 py-3.5 border-t border-[#e1e7f0] bg-[#f8fafc] flex items-center justify-between">
+        <button onclick="confirmDeleteDoc()" class="text-[#c2333f] hover:underline font-semibold text-xs flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          <span data-i18n="ลบหน้าโปรโมชันนี้?">ลบหน้าโปรโมชันนี้?</span>
+        </button>
+
+        <div class="flex items-center space-x-2">
+          <button onclick="closeDetailModal()" class="px-3.5 py-1.5 border border-[#e1e7f0] rounded-lg bg-white text-[#52627a] hover:bg-slate-50 font-semibold text-xs transition-colors" data-i18n="btn_close">
+            ปิด
+          </button>
+          <button onclick="testConnection()" class="px-3.5 py-1.5 bg-[#eff4ff] border border-[#d0e0ff] text-[#365cf5] hover:bg-blue-100 rounded-lg font-semibold text-xs transition-colors flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <span data-i18n="Test your connection">Test your connection</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client-side Interactive Script -->
+  <script>
+    // Bilingual dictionary for dynamic UI elements
+    const i18nCustom = {
+      th: {
+        sample_badge: "ข้อมูลตัวอย่าง",
+        store_label: "ร้าน:",
+        workspace_header: "พื้นที่ทำงาน",
+        nav_main_group: "หมวดงานหลัก",
+        nav_inventory: "สินค้าและสต็อก",
+        nav_orders: "ออเดอร์และการเงิน",
+        nav_customers: "ลูกค้าและบริการ",
+        nav_marketing: "การตลาด",
+        nav_reports: "รายงานและข้อมูล",
+        nav_integrations: "ระบบเชื่อมต่อ",
+        nav_settings: "ตั้งค่าและทีมงาน",
+        sub_overview: "ภาพรวมหมวดนี้",
+        sub_staff: "บัญชีทีมงาน",
+        sub_josh_staff: "บัญชี josh (staff)",
+        sub_internal_docs: "เอกสารภายใน (Josh Docs)",
+        sub_password: "เปลี่ยนรหัสผ่าน",
+        sub_roles: "บทบาทและสิทธิ์",
+        sub_store: "ข้อมูลร้านค้า",
+        crumb_settings: "ตั้งค่าและทีมงาน",
+        crumb_docs: "เอกสารภายใน",
+        page_title: "เอกสารภายใน",
+        page_subtitle: "จัดการคู่มือการทำงาน เอกสารแนบ ระบบความปลอดภัย และนโยบายควบคุมร้านค้าที่ซิงค์กับโมดูล josh",
+        create_doc_btn: "สร้างเอกสารใหม่",
+        josh_rule_title: "นโยบายและการอนุญาตเอกสาร josh",
+        cat_policy: "นโยบายร้านค้า & ข้อบังคับ",
+        cat_workflow: "Workflow & ระบบร้านค้า",
+        cat_tech: "คู่มือเทคนิค & Webhook",
+        page_pagination_note: "แสดงข้อมูลหน้าปัจจุบันตามสิทธิ์ JoshBackoffice · ข้อมูลตัวอย่าง",
+        th_title: "ชื่อเอกสาร / Slug / คำอธิบาย",
+        th_category: "หมวด & คีย์ข้อมูล",
+        th_format: "รูปแบบเนื้อหา",
+        th_security: "ระดับสิทธิ์ (Permission)",
+        th_date: "อัปเดตล่าสุด",
+        th_action: "การดำเนินการ",
+        role_all: "เจ้าหน้าที่ทุกคน",
+        empty_desc: "ไม่พบเอกสารภายในที่ตรงกับคำค้นหาหรือตัวกรองที่เลือกในหน้านี้",
+        showing_prefix: "แสดง 1 - 8 จาก",
+        btn_prev: "ก่อนหน้า",
+        btn_next: "ถัดไป",
+        template_card_title: "การจัดทำเอกสารและเทมเพลต",
+        channel_card_title: "ช่องทางการเข้าถึงเอกสาร",
+        modal_create_title: "สร้างเอกสารภายในใหม่",
+        modal_create_sub: "ระบุข้อมูลเอกสาร คีย์อ้างอิง และกำหนดบทบาทผู้มีสิทธิ์เข้าถึง",
+        form_lbl_title: "ชื่อเอกสาร",
+        form_lbl_category: "หมวดเอกสาร",
+        form_lbl_format: "รูปแบบเนื้อหา",
+        form_lbl_desc: "คำอธิบายหรือสรุปสาระสำคัญ",
+        form_lbl_permission: "การกำหนดสิทธิ์ (Permission Scope)",
+        btn_cancel: "ยกเลิก",
+        btn_save_draft: "บันทึกร่างเอกสาร",
+        detail_modal_badge: "เอกสารภายใน josh",
+        modal_status: "สถานะ",
+        modal_format: "ชนิดข้อมูล",
+        modal_security: "การซิงค์",
+        modal_expiry: "วันหมดอายุ",
+        connected_channels: "ช่องทางเชื่อมต่อและการแจ้งเตือน",
+        doc_content_excerpt: "เนื้อหาเอกสาร (สาระสำคัญ)",
+        btn_close: "ปิด",
+        pci_note: "(ตามมาตรการ PDPA / Security audit)"
+      },
+      en: {
+        sample_badge: "Sample Data",
+        store_label: "Store:",
+        workspace_header: "Workspaces",
+        nav_main_group: "Main Work Areas",
+        nav_inventory: "Products & Stock",
+        nav_orders: "Orders & Finance",
+        nav_customers: "Customers & Service",
+        nav_marketing: "Marketing",
+        nav_reports: "Reports & Data",
+        nav_integrations: "Integrations",
+        nav_settings: "Settings & Team",
+        sub_overview: "Category Overview",
+        sub_staff: "Staff Accounts",
+        sub_josh_staff: "Josh Staff Accounts",
+        sub_internal_docs: "Internal Docs (Josh Docs)",
+        sub_password: "Change Password",
+        sub_roles: "Roles & Permissions",
+        sub_store: "Store Profile",
+        crumb_settings: "Settings & Team",
+        crumb_docs: "Internal Docs",
+        page_title: "Internal Documents",
+        page_subtitle: "Manage standard operating procedures, policies, security guidelines, and rules synced with Josh modules.",
+        create_doc_btn: "Create Document",
+        josh_rule_title: "Josh Document Policy & Governance",
+        cat_policy: "Store Policies & Compliance",
+        cat_workflow: "Workflow & Store Systems",
+        cat_tech: "Technical Guides & Webhooks",
+        page_pagination_note: "Showing current page records via JoshBackoffice API · Sample data",
+        th_title: "Document Title / Slug / Summary",
+        th_category: "Category & Data Key",
+        th_format: "Content Format",
+        th_security: "Permission Scope",
+        th_date: "Last Updated",
+        th_action: "Actions",
+        role_all: "All Active Staff",
+        empty_desc: "No internal documents match the search keyword or selected category on this page.",
+        showing_prefix: "Showing 1 - 8 of",
+        btn_prev: "Previous",
+        btn_next: "Next",
+        template_card_title: "Templates & Document Builder",
+        channel_card_title: "Access Channels & Devices",
+        modal_create_title: "Create Internal Document",
+        modal_create_sub: "Define document details, reference keys, and access scopes.",
+        form_lbl_title: "Document Title",
+        form_lbl_category: "Category",
+        form_lbl_format: "Format",
+        form_lbl_desc: "Summary / Notes",
+        form_lbl_permission: "Permission Scope",
+        btn_cancel: "Cancel",
+        btn_save_draft: "Save Draft",
+        detail_modal_badge: "Josh Internal Document",
+        modal_status: "Status",
+        modal_format: "Format Type",
+        modal_security: "Sync Mode",
+        modal_expiry: "Expiration Date",
+        connected_channels: "Connected Channels & Alerts",
+        doc_content_excerpt: "Document Excerpt (Core Rules)",
+        btn_close: "Close",
+        pci_note: "(Compliant with PDPA / Security audit)"
+      }
+    };
+
+    let currentLanguage = 'th';
+    const translationScript = document.getElementById('commerce-ui-translations');
+    const catalogData = JSON.parse(translationScript.textContent);
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+
+      // Toggle button styles
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded bg-white text-[#17243b] shadow-sm font-semibold transition-all";
+        btnEn.className = "px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded bg-white text-[#17243b] shadow-sm font-semibold transition-all";
+        btnTh.className = "px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all";
+      }
+
+      // Update elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (catalogData[key]) {
+          el.innerHTML = catalogData[key][lang];
+        } else if (i18nCustom[lang] && i18nCustom[lang][key]) {
+          el.innerHTML = i18nCustom[lang][key];
+        }
+      });
+    }
+
+    // Modal controls
+    function openCreateModal() {
+      document.getElementById('create-modal').classList.remove('hidden');
+      document.getElementById('form-error-alert').classList.add('hidden');
+      document.getElementById('input-doc-title').focus();
+    }
+
+    function closeCreateModal() {
+      document.getElementById('create-modal').classList.add('hidden');
+    }
+
+    function handleCreateDoc(e) {
+      e.preventDefault();
+      const title = document.getElementById('input-doc-title').value.trim();
+      const slug = document.getElementById('input-doc-slug').value.trim();
+      if (!title || !slug) {
+        document.getElementById('form-error-alert').classList.remove('hidden');
+        return;
+      }
+      alert(currentLanguage === 'th' ? "บันทึกร่างเอกสารสำเร็จ (ข้อมูลตัวอย่าง)" : "Document draft saved successfully (Sample data)");
+      closeCreateModal();
+    }
+
+    function openDetailModal(id) {
+      document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+    }
+
+    function confirmDeleteDoc() {
+      const msg = catalogData["ลบหน้าโปรโมชันนี้?"][currentLanguage];
+      if (confirm(msg)) {
+        closeDetailModal();
+      }
+    }
+
+    function testConnection() {
+      alert(currentLanguage === 'th' ? "การเชื่อมต่อ Webhook ปกติ: 200 OK (Latency 48ms)" : "Webhook connection verified: 200 OK (Latency 48ms)");
+    }
+
+    function handleRefresh() {
+      const refreshBtn = document.querySelector('[data-i18n="Refresh"]');
+      const originalText = refreshBtn.innerText;
+      refreshBtn.innerText = currentLanguage === 'th' ? 'กำลังซิงค์...' : 'Syncing...';
+      setTimeout(() => {
+        refreshBtn.innerText = originalText;
+        alert(currentLanguage === 'th' ? "ซิงค์เอกสารล่าสุดจาก JoshBackoffice เรียบร้อยแล้ว" : "Synced latest documents from JoshBackoffice.");
+      }, 500);
+    }
+
+    // Client search and category filter
+    let activeCat = 'all';
+
+    function filterCategory(cat) {
+      activeCat = cat;
+      const tabs = ['all', 'policy', 'workflow', 'technical'];
+      tabs.forEach(t => {
+        const el = document.getElementById('tab-' + t);
+        if (t === cat) {
+          el.className = "px-3 py-1.5 rounded-lg bg-[#365cf5] text-white font-medium shadow-sm transition-all";
+        } else {
+          el.className = "px-3 py-1.5 rounded-lg bg-[#f8fafc] text-[#52627a] hover:bg-slate-100 hover:text-[#17243b] font-medium transition-all";
+        }
+      });
+      applyFilters();
+    }
+
+    function handleSearch(query) {
+      applyFilters();
+    }
+
+    function resetSearch() {
+      document.getElementById('doc-search-input').value = '';
+      filterCategory('all');
+    }
+
+    function applyFilters() {
+      const query = (document.getElementById('doc-search-input').value || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('.doc-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const rowCat = row.getAttribute('data-cat');
+        const text = row.innerText.toLowerCase();
+        const matchesCategory = (activeCat === 'all' || rowCat === activeCat);
+        const matchesQuery = !query || text.includes(query);
+
+        if (matchesCategory && matchesQuery) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('record-count').innerText = visibleCount;
+      const emptyState = document.getElementById('empty-state');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    // Keyboard support: Escape closes modals
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCreateModal();
+        closeDetailModal();
+      }
+    });
+  </script>
+</body>
+</html>

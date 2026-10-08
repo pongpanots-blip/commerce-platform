@@ -8,6 +8,8 @@ import {
 import { Link, useNavigate, type LinkProps } from 'react-router-dom';
 import CouponConfirmDialog from '../coupon/CouponConfirmDialog';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type LeaveGuard = {
   dirty: boolean;
   requestLeave: (go: () => void) => void;
@@ -53,7 +55,7 @@ export function useUnsavedChangesGuard(dirty: boolean): LeaveGuard & {
     dialog: (
       <CouponConfirmDialog
         open={!!pendingLeave}
-        title="ออกโดยไม่บันทึก?"
+        title={__uiText("ออกโดยไม่บันทึก?")}
         body="มีการแก้ไขที่ยังไม่ได้บันทึก — ถ้าออกตอนนี้ส่วนที่แก้จะหายไป"
         confirmLabel="ออกโดยไม่บันทึก"
         cancelLabel="อยู่ต่อ"

@@ -1,11 +1,19 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 // Stitch screen: docs/design/stitch/admin-overview.html
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ArrowLink, Button, Chip, Empty, ErrorText, Icon, Loading, Page, PageHeader, Panel, PanelHead, SectionTitle,
-  StatGrid, StatTile, StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
+  StatGrid, StatTile, StatusChip, TBody, TD, TH, THead, TR, Table, fmt, useNavigation,
 } from '@cp/ui';
 import { AdminStats, Integration, SyncJob, api, webhookApi } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { WORKSPACES } from '../navigation';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const pct = (n: number, d: number) => (d ? `${((n / d) * 100).toFixed(1)}%` : '—');
 
 function duration(job: SyncJob): string {
@@ -19,6 +27,7 @@ const host = (url: string) => {
 };
 
 export function Dashboard() {
+  __useUiLocale();
   const stats = useAsync(() => api.get<AdminStats>('/admin/stats'));
   const jobs = useAsync(() => api.get<SyncJob[]>('/sync-jobs'));
   const integrations = useAsync(() => api.get<Integration[]>('/integrations'));
@@ -29,7 +38,9 @@ export function Dashboard() {
   const integrationName = new Map((integrations.data ?? []).map((i) => [i.id, i.name]));
   const recentJobs = (jobs.data ?? []).slice(0, 6);
   const failures = (deliveries.data ?? []).filter((x) => x.status === 'failed').slice(0, 5);
-  const updatedAt = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  const nav = useNavigation();
+  const [updatedAt, setUpdatedAt] = useState('—');
+  useEffect(() => { if (stats.data) setUpdatedAt(new Date().toLocaleTimeString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { hour: '2-digit', minute: '2-digit' })); }, [stats.data]);
 
   function reloadAll() {
     stats.reload();
@@ -41,19 +52,28 @@ export function Dashboard() {
   return (
     <Page>
       <PageHeader
-        title="Overview"
-        subtitle="Commerce Platform health at a glance."
+        title={__uiText("ภาพรวมการทำงาน")}
+        subtitle={__uiText("เริ่มจากงานที่ต้องทำ แล้วติดตามรายการที่ต้องดูแลในวันนี้")}
         actions={
           <>
             <span className="flex items-center gap-1.5 text-xs text-outline">
               <Icon name="schedule" size={14} />
-              Last updated <span className="tabular-nums">{updatedAt}</span>
+              {__uiText("อัปเดตล่าสุด ")}<span className="tabular-nums">{updatedAt}</span>
             </span>
-            <Button icon="refresh" onClick={reloadAll}>Refresh</Button>
+            <Button icon="refresh" onClick={reloadAll} disabled={stats.loading}>{__uiText("รีเฟรชข้อมูล")}</Button>
           </>
         }
       />
-      <div className="border-t border-secondary-container" />
+      <section aria-label={__uiText("เลือกหมวดงาน")}>
+        <div className="mb-3 flex items-center gap-2"><h2 className="font-semibold">{__uiText("เลือกหมวดงาน")}</h2><span className="text-xs text-on-surface-variant">{__uiText("ทุกเครื่องมือ จัดตามงานที่คุณทำ")}</span></div>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {WORKSPACES.map(workspace => <Link key={workspace.id} to={`/workspaces/${workspace.id}`} className="group rounded-xl border border-secondary-container bg-white p-4 transition-colors hover:border-primary/50 hover:bg-primary-container/20 focus-visible:outline-2 focus-visible:outline-primary">
+            <div className="flex items-center justify-between"><span className="flex size-9 items-center justify-center rounded-lg bg-surface-container-low text-primary"><Icon name={workspace.icon} size={21} /></span><Icon name="arrow_forward" size={17} className="text-outline group-hover:text-primary" /></div>
+            <h3 className="mt-3 text-sm font-semibold">{__uiText(workspace.title)}</h3><p className="mt-1 text-xs leading-relaxed text-on-surface-variant">{__uiText(workspace.description)}</p>
+            <p className="mt-3 text-[11px] text-outline">{Math.max(0, (nav.find(group => group.group === workspace.title)?.links.length ?? 1) - 1)} {__uiText(" เมนู")}</p>
+          </Link>)}
+        </div>
+      </section>
 
       <ErrorText error={stats.error} />
       {stats.loading && !s ? (
@@ -61,18 +81,18 @@ export function Dashboard() {
       ) : s && d ? (
         <>
           <div>
-            <SectionTitle note="Active alerts requiring operator action">Needs attention</SectionTitle>
+            <SectionTitle note={__uiText("รายการจากระบบที่ต้องติดตาม")}>{__uiText("งานที่ต้องดูแล")}</SectionTitle>
             <StatGrid cols={3}>
               <StatTile
                 accent
                 tone={s.webhooksPending ? 'warn' : 'ok'}
                 icon={s.webhooksPending ? 'hourglass_top' : 'check_circle'}
-                label="Webhooks pending"
+                label={__uiText("Webhooks pending")}
                 value={fmt.num(s.webhooksPending)}
                 foot={
                   <>
-                    <span>{d.oldestPendingWebhookAt ? `Oldest waiting: ${fmt.ago(d.oldestPendingWebhookAt)}` : 'Queue is empty'}</span>
-                    <ArrowLink to="/webhooks" tone={s.webhooksPending ? 'warn' : 'muted'}>View</ArrowLink>
+                    <span>{d.oldestPendingWebhookAt ? __uiText("Oldest waiting: {0}", {"0": fmt.ago(d.oldestPendingWebhookAt)}) : __uiText("Queue is empty")}</span>
+                    <ArrowLink to="/webhooks" tone={s.webhooksPending ? 'warn' : 'muted'}>{__uiText("View")}</ArrowLink>
                   </>
                 }
               />
@@ -80,12 +100,12 @@ export function Dashboard() {
                 accent
                 tone={s.webhooksFailed ? 'danger' : 'ok'}
                 icon={s.webhooksFailed ? 'error' : 'check_circle'}
-                label="Inbound webhooks failed"
+                label={__uiText("Inbound webhooks failed")}
                 value={fmt.num(s.webhooksFailed)}
                 foot={
                   <>
-                    <span className={s.webhooksFailed ? 'text-[#c2333f]' : 'text-[#157347]'}>{s.webhooksFailed ? 'Needs replay or fix' : 'No failures'}</span>
-                    <ArrowLink to="/webhooks" tone={s.webhooksFailed ? 'danger' : 'muted'}>View</ArrowLink>
+                    <span className={s.webhooksFailed ? 'text-[#c2333f]' : 'text-[#157347]'}>{s.webhooksFailed ? __uiText("Needs replay or fix") : __uiText("No failures")}</span>
+                    <ArrowLink to="/webhooks" tone={s.webhooksFailed ? 'danger' : 'muted'}>{__uiText("View")}</ArrowLink>
                   </>
                 }
               />
@@ -93,12 +113,12 @@ export function Dashboard() {
                 accent
                 tone={s.outboxBacklog ? 'warn' : 'ok'}
                 icon={s.outboxBacklog ? 'outbox' : 'check_circle'}
-                label="Outbox backlog"
+                label={__uiText("Outbox backlog")}
                 value={fmt.num(s.outboxBacklog)}
                 foot={
                   <>
-                    <span className={s.outboxBacklog ? undefined : 'text-[#157347]'}>{s.outboxBacklog ? 'Events waiting to publish' : 'All channels normalized'}</span>
-                    <ArrowLink to="/subscriptions" tone={s.outboxBacklog ? 'warn' : 'muted'}>View</ArrowLink>
+                    <span className={s.outboxBacklog ? undefined : 'text-[#157347]'}>{s.outboxBacklog ? __uiText("Events waiting to publish") : __uiText("All channels normalized")}</span>
+                    <ArrowLink to="/subscriptions" tone={s.outboxBacklog ? 'warn' : 'muted'}>{__uiText("View")}</ArrowLink>
                   </>
                 }
               />
@@ -106,35 +126,35 @@ export function Dashboard() {
           </div>
 
           <div>
-            <SectionTitle>Data</SectionTitle>
+            <SectionTitle note={__uiText("ข้อมูลจริงจากแพลตฟอร์ม")}>{__uiText("ข้อมูลการทำงาน")}</SectionTitle>
             <StatGrid cols={5}>
               <StatTile
                 to="/integrations"
                 icon="hub"
-                label="Integrations"
+                label={__uiText("Integrations")}
                 value={fmt.num(s.integrations)}
                 foot={
                   <span className={`inline-flex items-center gap-1 ${d.integrationsActive === s.integrations ? 'text-[#157347]' : 'text-[#b08900]'}`}>
                     <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                    {d.integrationsActive === s.integrations ? 'All connected' : `${d.integrationsActive} of ${s.integrations} active`}
+                    {d.integrationsActive === s.integrations ? __uiText("All connected") : __uiText("{0} of {1} active", {"0": d.integrationsActive, "1": s.integrations})}
                   </span>
                 }
               />
               <StatTile
                 to="/sync-jobs"
                 icon="sync"
-                label="Sync jobs (24h)"
+                label={__uiText("Sync jobs (24h)")}
                 value={fmt.num(d.syncJobs24h.total)}
-                foot={`${pct(d.syncJobs24h.completed, d.syncJobs24h.total)} success rate`}
+                foot={__uiText("{0} success rate",{'0':pct(d.syncJobs24h.completed, d.syncJobs24h.total)})}
               />
-              <StatTile to="/customers" icon="group" label="Customers" value={fmt.num(s.customers)} foot={`+${fmt.num(d.customersNew7d)} this week`} />
-              <StatTile to="/products" icon="inventory_2" label="Products" value={fmt.num(s.products)} foot={`Across ${fmt.num(d.warehouses)} warehouse${d.warehouses === 1 ? '' : 's'}`} />
+              <StatTile to="/customers" icon="group" label={__uiText("Customers")} value={fmt.num(s.customers)} foot={__uiText("+{0} this week",{'0':fmt.num(d.customersNew7d)})} />
+              <StatTile to="/products" icon="inventory_2" label={__uiText("Products")} value={fmt.num(s.products)} foot={__uiText(d.warehouses === 1 ? 'Across {0} warehouse' : 'Across {0} warehouses', { '0': fmt.num(d.warehouses) })} />
               <StatTile
                 to="/inventory"
                 icon="stacks"
-                label="Inventory levels"
+                label={__uiText("Inventory levels")}
                 value={fmt.num(s.inventoryLevels)}
-                foot={d.inventoryUpdatedAt ? `Updated ${fmt.ago(d.inventoryUpdatedAt)}` : 'No stock yet'}
+                foot={d.inventoryUpdatedAt ? __uiText("Updated {0}",{'0':fmt.ago(d.inventoryUpdatedAt)}) : __uiText("No stock yet")}
               />
             </StatGrid>
           </div>
@@ -143,15 +163,15 @@ export function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-4">
         <Panel className="overflow-hidden">
-          <PanelHead title="Recent sync jobs" badge={<Chip tone="muted">Live Feed</Chip>} actions={<ArrowLink to="/sync-jobs">View all jobs</ArrowLink>} />
+          <PanelHead title={__uiText("Recent sync jobs")} badge={<Chip tone="muted">{__uiText("Live Feed")}</Chip>} actions={<ArrowLink to="/sync-jobs">{__uiText("View all jobs")}</ArrowLink>} />
           <ErrorText error={jobs.error} />
           <Table>
             <THead>
-              <TH>Job</TH>
-              <TH>Platform</TH>
-              <TH>Status</TH>
-              <TH>Started</TH>
-              <TH right>Duration</TH>
+              <TH>{__uiText("Job")}</TH>
+              <TH>{__uiText("Platform")}</TH>
+              <TH>{__uiText("Status")}</TH>
+              <TH>{__uiText("Started")}</TH>
+              <TH right>{__uiText("Duration")}</TH>
             </THead>
             <TBody>
               {recentJobs.map((j) => (
@@ -164,30 +184,29 @@ export function Dashboard() {
                   </TD>
                   <TD kind="muted">{integrationName.get(j.integrationId) ?? j.integrationId.slice(0, 8)}</TD>
                   <TD><StatusChip status={j.status} /></TD>
-                  <TD kind="time">{new Date(j.createdAt).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</TD>
+                  <TD kind="time">{new Date(j.createdAt).toLocaleTimeString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</TD>
                   <TD kind="num">{duration(j)}</TD>
                 </TR>
               ))}
             </TBody>
           </Table>
-          {jobs.loading && !jobs.data ? <Loading /> : recentJobs.length === 0 && <Empty icon="sync">No sync jobs yet</Empty>}
+          {jobs.loading && !jobs.data ? <Loading /> : recentJobs.length === 0 && <Empty icon="sync">{__uiText("No sync jobs yet")}</Empty>}
         </Panel>
 
         <Panel className="overflow-hidden">
           <PanelHead
             title={
               <span className="inline-flex items-center gap-2">
-                Recent webhook failures
-                {failures.length > 0 && <span className="w-2 h-2 rounded-full bg-rose-500" />}
+                {__uiText("Recent webhook failures")}{failures.length > 0 && <span className="w-2 h-2 rounded-full bg-rose-500" />}
               </span>
             }
-            actions={<ArrowLink to="/erp/webhook-dead-letter">Open dead letter</ArrowLink>}
+            actions={<ArrowLink to="/erp/webhook-dead-letter">{__uiText("Open dead letter")}</ArrowLink>}
           />
           <ErrorText error={deliveries.error} />
           {deliveries.loading && !deliveries.data ? (
             <Loading />
           ) : failures.length === 0 ? (
-            <Empty icon="task_alt">No failed deliveries</Empty>
+            <Empty icon="task_alt">{__uiText("No failed deliveries")}</Empty>
           ) : (
             <ul className="divide-y divide-secondary-container/70">
               {failures.map((f) => (
@@ -199,7 +218,7 @@ export function Dashboard() {
                     </span>
                   </div>
                   <div className="font-mono text-[11px] text-on-surface-variant truncate" title={f.error ?? undefined}>
-                    {f.statusCode ? `HTTP ${f.statusCode} ` : ''}{f.error ?? 'Delivery failed'}
+                    {f.statusCode ? __uiText("HTTP {0} ", {"0": f.statusCode}) : ''}{f.error ?? __uiText("Delivery failed")}
                   </div>
                 </li>
               ))}

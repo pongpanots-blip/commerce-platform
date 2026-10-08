@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>สร้างเวิร์กโฟลว์ใหม่ (Workflow Editor) - Siam Commerce</title>
+<!-- Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#0e1b32",
+            "surface-container-highest": "#d7e2ff",
+            "on-error": "#ffffff",
+            "surface-container": "#e8eeff",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-tertiary-fixed-variant": "#00522f",
+            "secondary": "#4f5f77",
+            "surface-container-low": "#f1f3ff",
+            "surface-container-high": "#e0e8ff",
+            "primary-container": "#365cf5",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-primary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed": "#001257",
+            "inverse-primary": "#b9c3ff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-background": "#0e1b32",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-secondary-fixed": "#0b1c31",
+            "error": "#ba1a1a",
+            "background": "#f9f9ff",
+            "on-error-container": "#93000a",
+            "secondary-fixed": "#d3e3ff",
+            "tertiary-fixed-dim": "#82d8a3",
+            "surface-bright": "#f9f9ff",
+            "secondary-container": "#d0e1fd",
+            "surface-tint": "#214ce7",
+            "error-container": "#ffdad6",
+            "primary-fixed": "#dde1ff",
+            "outline-variant": "#c4c5d8",
+            "tertiary-container": "#217b4e",
+            "on-secondary-container": "#54647c",
+            "surface-variant": "#d7e2ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-tertiary-fixed": "#002110",
+            "on-tertiary": "#ffffff",
+            "on-primary-container": "#ededff",
+            "primary": "#0a3fdc",
+            "tertiary": "#006139",
+            "on-tertiary-container": "#b7ffcf",
+            "inverse-surface": "#243048",
+            "on-surface-variant": "#444655",
+            "surface-dim": "#cddaf9",
+            "on-secondary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "gutter": "1rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "gutter-desktop": "1.5rem",
+            "margin": "1rem",
+            "margin-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "display-lg": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "label-md": ["Noto Sans"]
+          },
+          "fontSize": {
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+    }
+    input, select, textarea {
+      font-family: 'Noto Sans', sans-serif;
+    }
+    /* Stepper connector line */
+    .step-connector::after {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 44px;
+      bottom: -16px;
+      width: 2px;
+      background-color: #E1E7F0;
+      z-index: 0;
+    }
+    .last-step::after {
+      display: none;
+    }
+  </style>
+</head>
+<body class="h-full font-body-md text-on-surface bg-[#F6F8FC] antialiased flex">
+<!-- ========================================================================= -->
+<!-- SIDE NAVIGATION BAR (256px Fixed)                                         -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md select-none transition-colors duration-150 ease-in-out">
+<div class="flex flex-col gap-y-4">
+<!-- Brand & Header -->
+<div class="flex items-center gap-space-sm px-space-xs py-space-xs">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold shadow-sm">
+<span class="material-symbols-outlined text-white" style="font-size:24px;">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight" data-i18n="header_brand">สยาม คอมเมิร์ซ</span>
+<span class="text-body-sm font-body-sm text-secondary" data-i18n="header_sub">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full flex items-center justify-center gap-space-xs bg-primary hover:bg-[#2848D6] text-on-primary font-label-lg text-label-lg py-2 rounded-lg transition-colors duration-150 shadow-sm" type="button">
+<span class="material-symbols-outlined" style="font-size:18px;">add_circle</span>
+<span data-i18n="cta_new">สร้างรายการใหม่</span>
+</button>
+<!-- 7 Navigation Tabs -->
+<nav class="flex flex-col gap-1 mt-2">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-md font-label-md" data-i18n="tab_inventory">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-label-md font-label-md" data-i18n="tab_orders">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md" data-i18n="tab_customers">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด (Active Navigation Container) -->
+<div class="flex flex-col">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary" href="#marketing">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="text-label-md font-label-md font-semibold" data-i18n="tab_marketing">การตลาด</span>
+</a>
+<!-- Nested sub-navigation for Marketing -->
+<div class="pl-9 pr-2 py-1.5 flex flex-col gap-1 text-body-sm font-body-sm">
+<a class="py-1 text-secondary hover:text-on-surface" data-i18n="sub_growth" href="#growth">Growth Workspace</a>
+<a class="py-1 text-primary font-semibold flex items-center justify-between" data-i18n="sub_workflows" href="#workflows">
+<span>Marketing Workflows</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="py-1 text-secondary hover:text-on-surface" data-i18n="sub_assistant" href="#ai-assistant">ผู้ช่วยวิเคราะห์การตลาด</a>
+<a class="py-1 text-secondary hover:text-on-surface" data-i18n="sub_calendar" href="#calendar">แผนและปฏิทิน</a>
+</div>
+</div>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#reports">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md" data-i18n="tab_analytics">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#integrations">
+<span class="material-symbols-outlined">hub</span>
+<span class="text-label-md font-label-md" data-i18n="tab_hub">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md" data-i18n="tab_settings">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="pt-4 border-t border-outline-variant flex flex-col gap-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#help">
+<span class="material-symbols-outlined">help</span>
+<span class="text-label-md font-label-md" data-i18n="footer_help">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors duration-150" href="#logout">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md" data-i18n="footer_logout">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE LAYOUT (Margin left 256px)                                  -->
+<!-- ========================================================================= -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TOP CONTEXTUAL NAV BAR (64px) -->
+<header class="h-16 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-gutter-desktop sticky top-0 z-30">
+<!-- Breadcrumb & Route identifier -->
+<div class="flex items-center gap-3">
+<nav aria-label="Breadcrumb" class="flex items-center text-label-md font-label-md text-secondary gap-1.5">
+<span data-i18n="bc_marketing">การตลาด</span>
+<span class="text-outline-variant">/</span>
+<span data-i18n="bc_workflows">Marketing Workflows</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold" data-i18n="bc_editor">สร้างเวิร์กโฟลว์ใหม่</span>
+</nav>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-surface-container text-secondary border border-outline-variant/60">
+          route: admin-5618203e8d39
+        </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-primary border border-primary-fixed">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span data-i18n="badge_sample">ข้อมูลตัวอย่าง / Sample data</span>
+</span>
+</div>
+<!-- Actions & Utilities -->
+<div class="flex items-center gap-3">
+<!-- Interactive Language Switcher -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container text-label-md font-label-md text-on-surface transition-all" id="langToggleBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">translate</span>
+<span id="langLabel">ไทย / English</span>
+</button>
+<!-- Notification & Help icons -->
+<button class="p-2 text-secondary hover:text-on-surface hover:bg-surface-container rounded-lg relative transition-colors" title="Notifications" type="button">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="p-2 text-secondary hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="Help Guide" type="button">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant"></div>
+<!-- User Profile -->
+<div class="flex items-center gap-2 pl-1">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs ring-1 ring-white">
+            SC
+          </div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-label-md font-label-md text-on-surface leading-tight" data-i18n="admin_title">แอดมินผู้ดูแลระบบ</span>
+<span class="text-[11px] text-secondary">Siam Commerce Hub</span>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS CONTENT -->
+<main class="flex-1 p-space-lg pb-32">
+<div class="max-w-[1240px] mx-auto flex flex-col gap-6">
+<!-- HEADER BANNER / ACTION BAR -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-outline-variant">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center text-secondary hover:text-primary text-body-sm transition-colors" href="#back">
+<span class="material-symbols-outlined text-[18px] mr-1">arrow_back</span>
+<span data-i18n="btn_back">กลับไปรายการเวิร์กโฟลว์</span>
+</a>
+<span class="text-outline-variant">•</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-secondary">
+                Draft Mode
+              </span>
+</div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface" data-i18n="page_title">สร้างเวิร์กโฟลว์ใหม่ (Workflow Editor)</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-md font-label-md bg-[#FFF8E6] text-[#B08900] border border-[#FFE8A3]">
+<span class="w-2 h-2 rounded-full bg-[#B08900]"></span>
+<span data-i18n="badge_draft">แบบร่าง (Draft)</span>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface text-label-lg font-label-lg hover:bg-surface-container transition-all" data-i18n="btn_cancel" type="button">
+              ยกเลิก
+            </button>
+<button class="px-4 py-2 rounded-lg bg-surface-container-low text-primary border border-primary-fixed hover:bg-surface-container text-label-lg font-label-lg transition-all" data-i18n="btn_save_draft" type="button">
+              บันทึกแบบร่าง
+            </button>
+<button class="px-5 py-2 rounded-lg bg-primary hover:bg-[#2848D6] text-on-primary text-label-lg font-label-lg shadow-sm flex items-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span data-i18n="btn_activate">บันทึกและเปิดใช้งาน</span>
+</button>
+</div>
+</div>
+<!-- FORM SECTIONS (Bento Grid Architecture) -->
+<div class="grid grid-cols-12 gap-6">
+<!-- ================================================================= -->
+<!-- SECTION A: ข้อมูลพื้นฐานเวิร์กโฟลว์                               -->
+<!-- ================================================================= -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-space-lg shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">A</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="sec_basic">ข้อมูลพื้นฐานเวิร์กโฟลว์ (Basic Workflow Information)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary uppercase tracking-wider" data-i18n="tag_core">Core Metadata</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Workflow Name -->
+<div class="flex flex-col gap-1.5 md:col-span-2">
+<label class="text-label-lg font-label-lg text-on-surface flex items-center gap-1">
+<span data-i18n="lbl_wf_name">ชื่อเวิร์กโฟลว์ (Workflow Name)</span>
+<span class="text-error">*</span>
+</label>
+<input class="h-10 px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" type="text" value="แจ้งเตือนลูกค้าค้างซื้อเกิน 14 วัน (B2B Re-engagement)"/>
+</div>
+<!-- Workflow Key -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-lg font-label-lg text-on-surface flex items-center gap-1">
+<span data-i18n="lbl_wf_code">รหัสระบบ / System Key</span>
+<span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-10 px-3.5 pl-8 rounded-lg border border-outline-variant bg-surface-container-lowest font-mono text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" type="text" value="wf-b2b-dormant-v2"/>
+<span class="material-symbols-outlined text-secondary absolute left-2.5 top-2.5 text-[16px]">key</span>
+</div>
+</div>
+<!-- Category Dropdown -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-lg font-label-lg text-on-surface" data-i18n="lbl_category">ประเภทการตลาด (Category)</label>
+<select class="h-10 px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+<option selected="">Retention &amp; Sales</option>
+<option>LINE Messaging</option>
+<option>Loyalty &amp; VIP</option>
+<option>SMS Direct</option>
+<option>Broadcasting</option>
+</select>
+</div>
+<!-- Description / Goal -->
+<div class="flex flex-col gap-1.5 md:col-span-2">
+<label class="text-label-lg font-label-lg text-on-surface" data-i18n="lbl_goal">เป้าหมายของเวิร์กโฟลว์ (Workflow Goal &amp; Description)</label>
+<textarea class="p-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="ระบุวัตถุประสงค์เพื่อการรายงานผลยอดขาย..." rows="2">กระตุ้นร้านค้าเบเกอรี่คู่ค้าที่ไม่มีคำสั่งซื้อใหม่เกิน 14 วัน เพื่อดึงดูดกลับมาเปิดออเดอร์พร้อมคูปองส่วนลดวัตถุดิบรอบพิเศษ</textarea>
+</div>
+</div>
+</div>
+<!-- ================================================================= -->
+<!-- SECTION B: เงื่อนไขการทริกเกอร์ (Trigger Condition)               -->
+<!-- ================================================================= -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-space-lg shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">B</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="sec_trigger">เงื่อนไขการทริกเกอร์</h2>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">bolt</span>
+</div>
+<!-- Trigger Mode Tabs -->
+<div class="flex rounded-lg bg-surface-container p-1 text-label-md font-label-md">
+<button class="flex-1 py-1.5 rounded-md text-center bg-surface-container-lowest shadow-sm text-primary font-semibold" data-i18n="opt_event" type="button">
+                เหตุการณ์อัตโนมัติ
+              </button>
+<button class="flex-1 py-1.5 rounded-md text-center text-secondary hover:text-on-surface transition-colors" data-i18n="opt_schedule" type="button">
+                ตั้งเวลาตามรอบ
+              </button>
+</div>
+<!-- Event Trigger Options -->
+<div class="flex flex-col gap-3">
+<div class="flex flex-col gap-1.5">
+<label class="text-label-md font-label-md text-on-surface" data-i18n="lbl_event_type">เลือกเหตุการณ์หลัก (Event Trigger)</label>
+<select class="h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm text-on-surface focus:outline-none focus:border-primary">
+<option selected="">ลูกค้าไม่สั่งซื้อเกินกำหนด (Dormant Customer)</option>
+<option>ตะกร้าค้าง (Abandoned Cart &gt; 24 ชั่วโมง)</option>
+<option>สมัครสมาชิกใหม่ / ผ่านการอนุมัติเอกสาร B2B</option>
+<option>ยอดเครดิตเทอมครบกำหนดชำระ</option>
+</select>
+</div>
+<!-- Day selector -->
+<div class="flex flex-col gap-1.5 pt-1 border-t border-outline-variant/60">
+<div class="flex items-center justify-between">
+<label class="text-label-sm font-label-sm text-secondary" data-i18n="catalogue_day_select">วัน (ไม่เลือก = ทุกวัน)</label>
+<span class="text-[11px] text-primary cursor-pointer hover:underline" data-i18n="act_select_all">เลือกเฉพาะวันทำการ</span>
+</div>
+<div class="grid grid-cols-7 gap-1">
+<button class="h-8 rounded text-xs font-semibold border border-outline-variant text-secondary hover:bg-surface-container" type="button">อา</button>
+<button class="h-8 rounded text-xs font-semibold bg-primary text-on-primary" type="button">จ</button>
+<button class="h-8 rounded text-xs font-semibold bg-primary text-on-primary" type="button">อ</button>
+<button class="h-8 rounded text-xs font-semibold bg-primary text-on-primary" type="button">พ</button>
+<button class="h-8 rounded text-xs font-semibold bg-primary text-on-primary" type="button">พฤ</button>
+<button class="h-8 rounded text-xs font-semibold bg-primary text-on-primary" type="button">ศ</button>
+<button class="h-8 rounded text-xs font-semibold border border-outline-variant text-secondary hover:bg-surface-container" type="button">ส</button>
+</div>
+</div>
+<!-- Execution Time -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/80">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">schedule</span>
+<span class="text-body-sm text-secondary" data-i18n="lbl_time_window">เวลาที่เริ่มรัน:</span>
+</div>
+<span class="text-data-tabular font-data-tabular font-semibold text-on-surface">09:30 น. (ICT)</span>
+</div>
+</div>
+</div>
+<!-- ================================================================= -->
+<!-- SECTION C: กลุ่มเป้าหมายและ Segment (Target Audience & Filters)  -->
+<!-- ================================================================= -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-space-lg shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-4">
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-3 border-b border-outline-variant/60 gap-2">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">C</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="sec_audience">กลุ่มเป้าหมายและ Segment (Target Audience &amp; Filters)</h2>
+</div>
+<!-- TAT & OpenStreetMap lead tool link -->
+<a class="inline-flex items-center gap-1.5 text-body-sm text-primary hover:text-[#2848D6] font-medium bg-surface-container-low px-3 py-1.5 rounded-lg border border-primary-fixed/60 transition-colors" href="#lead-discovery">
+<span class="material-symbols-outlined text-[18px]">travel_explore</span>
+<span data-i18n="catalogue_tat_osm">ค้นรายชื่อธุรกิจจริงจาก ททท. และ OpenStreetMap ฟรี พร้อมหลักฐานอ้างอิง</span>
+</a>
+</div>
+<!-- Mandatory notice callout -->
+<div class="flex items-start gap-3 p-3.5 rounded-lg bg-surface-container-low border border-primary-fixed text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">lock</span>
+<div class="flex-1">
+<span class="font-medium text-primary" data-i18n="notice_lock_lead">ข้อกำหนดความปลอดภัย: </span>
+<span data-i18n="catalogue_lock_condition">เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ — ต้องการรายชื่อใหม่? สร้าง segment ใหม่</span>
+</div>
+<button class="text-label-sm font-label-sm text-primary underline hover:text-[#2848D6]" data-i18n="act_view_policy" type="button">ดูข้อกำหนด</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Target Segment Selector -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-lg font-label-lg text-on-surface" data-i18n="lbl_select_segment">เลือกกลุ่มลูกค้าเป้าหมาย (Customer Segment)</label>
+<div class="relative">
+<select class="w-full h-10 px-3.5 pr-8 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md focus:outline-none focus:border-primary">
+<option selected="">กลุ่มร้านเบเกอรี่ B2B ทั่วประเทศ (342 ร้านค้า)</option>
+<option>ร้านค้ากลุ่มแฟรนไชส์เครื่องดื่มภาคกลาง (180 ร้านค้า)</option>
+<option>คู่ค้าโมเดิร์นเทรดระดับ Tier-1 (45 ร้านค้า)</option>
+<option disabled="">— ยังไม่มีรายชื่อ —</option>
+</select>
+</div>
+<span class="text-body-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">groups</span>
+<span>ยอดลูกค้ารวมในกลุ่มปัจจุบัน: 342 กิจการที่ใช้งานได้จริง</span>
+</span>
+</div>
+<!-- Exclude Filter -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-lg font-label-lg text-on-surface" data-i18n="lbl_exclude">ไม่รวมกลุ่ม (Exclude Filter)</label>
+<div class="flex flex-wrap gap-2 p-2 min-h-10 rounded-lg border border-outline-variant bg-surface-container-lowest">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-secondary text-body-sm">
+<span>ลูกค้าที่ติดเครดิตระงับ</span>
+<button class="hover:text-error" type="button"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-secondary text-body-sm">
+<span>ส่งข้อความแล้วภายใน 7 วัน</span>
+<button class="hover:text-error" type="button"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</span>
+<button class="text-label-sm font-label-sm text-primary hover:underline px-2 py-1" type="button">+ เพิ่มเกณฑ์ยกเว้น</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ================================================================= -->
+<!-- SECTION D: ลำดับขั้นตอนการทำงาน (Workflow Steps Builder)          -->
+<!-- ================================================================= -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-space-lg shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">D</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="sec_builder">ลำดับขั้นตอนการทำงาน (Workflow Steps Builder)</h2>
+</div>
+<span class="text-body-sm text-secondary">4 ขั้นตอนการทำงานที่กำหนดไว้</span>
+</div>
+<!-- Stepper Interactive Canvas -->
+<div class="flex flex-col gap-4">
+<!-- STEP 1: TRIGGER -->
+<div class="relative pl-12 step-connector">
+<div class="absolute left-2.5 top-2.5 w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center text-xs font-bold ring-4 ring-white z-10">
+                  1
+                </div>
+<div class="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">play_circle</span>
+<span class="text-label-lg font-label-lg text-on-surface" data-i18n="step1_title">ทริกเกอร์เริ่มต้น (Initial Trigger)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-label-sm bg-surface-container text-secondary">Trigger Node</span>
+</div>
+<div class="text-body-sm text-on-surface">
+                    เมื่อตรวจพบ: <span class="font-semibold text-primary">ยอดสั่งซื้อหยุดนิ่งเกิน 14 วัน</span> (นับจากออเดอร์สถานะสำเร็จล่าสุด)
+                  </div>
+</div>
+</div>
+<!-- STEP 2: CONDITION -->
+<div class="relative pl-12 step-connector">
+<div class="absolute left-2.5 top-2.5 w-6 h-6 rounded-full bg-surface-container-high text-primary border border-primary flex items-center justify-center text-xs font-bold ring-4 ring-white z-10">
+                  2
+                </div>
+<div class="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[18px]">filter_alt</span>
+<span class="text-label-lg font-label-lg text-on-surface" data-i18n="step2_title">ตรวจสอบเงื่อนไข (Condition Filter)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-label-sm bg-surface-container text-secondary">Filter Node</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-body-sm">
+<div class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-outline-variant/60">
+<span class="material-symbols-outlined text-tertiary text-[16px]">check_circle</span>
+<span>วงเงินเครดิตปกติ (Credit Status = Approved &amp; Active)</span>
+</div>
+<div class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-outline-variant/60">
+<span class="material-symbols-outlined text-tertiary text-[16px]">check_circle</span>
+<span>มียอดซื้อเฉลี่ยสะสม &gt; ฿20,000 ต่อเดือน</span>
+</div>
+</div>
+</div>
+</div>
+<!-- STEP 3: DELAY / WAIT -->
+<div class="relative pl-12 step-connector">
+<div class="absolute left-2.5 top-2.5 w-6 h-6 rounded-full bg-surface-container text-secondary flex items-center justify-center text-xs font-bold ring-4 ring-white z-10">
+                  3
+                </div>
+<div class="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">hourglass_top</span>
+<span class="text-label-lg font-label-lg text-on-surface" data-i18n="step3_title">หน่วงเวลา / รอ (Delay &amp; Window)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-label-sm bg-surface-container text-secondary">Timer Node</span>
+</div>
+<div class="text-body-sm text-on-surface">
+                    รอเงื่อนไขเวลา: <span class="font-semibold">เวลา 09:30 น. ในวันทำการถัดไป</span> (หลีกเลี่ยงการแจ้งเตือนนอกเวลาเปิดร้าน)
+                  </div>
+</div>
+</div>
+<!-- STEP 4: ACTION (LINE OA / SMS) -->
+<div class="relative pl-12 last-step">
+<div class="absolute left-2.5 top-2.5 w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center text-xs font-bold ring-4 ring-white z-10">
+                  4
+                </div>
+<div class="p-4 rounded-xl border-2 border-primary/40 bg-surface-container-low/40 flex flex-col gap-3">
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">send</span>
+<span class="text-label-lg font-label-lg text-on-surface font-semibold" data-i18n="step4_title">ส่งข้อความแจ้งเตือน (Dispatch Action)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-label-sm bg-primary text-on-primary font-semibold">Active Node</span>
+</div>
+<!-- Mandatory Template Protected System Note -->
+<div class="p-3 rounded-lg bg-surface-container-lowest border border-outline-variant flex items-start gap-2.5 text-body-sm">
+<span class="material-symbols-outlined text-[#B08900] text-[20px] mt-0.5">info</span>
+<div class="flex-1">
+<div class="font-semibold text-on-surface" data-i18n="catalogue_template_locked">เทมเพลตระบบลบไม่ได้ — ระบบแจ้งเตือนต้องใช้ key นี้เสมอ (แก้ข้อความได้)</div>
+<div class="text-secondary text-body-sm mt-0.5">Template Identifier: <code class="font-mono text-xs bg-surface-container px-1 py-0.5 rounded">tmpl_b2b_dormant_v1</code></div>
+</div>
+</div>
+<!-- Fields inside Action Step -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<div class="flex flex-col gap-1">
+<label class="text-label-md font-label-md text-on-surface" data-i18n="catalogue_destination">ปลายทาง</label>
+<select class="h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm">
+<option selected="">LINE Official Account (Direct Push)</option>
+<option>SMS Direct (OTP Sender Gateway)</option>
+<option>Email Notification (Enterprise Mail)</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-md font-label-md text-on-surface" data-i18n="catalogue_promo_name">ชื่อโปร</label>
+<input class="h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm" type="text" value="โปรลดพิเศษเติมสต็อกเบเกอรี่ 10%"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-md font-label-md text-on-surface" data-i18n="lbl_discount_code">รหัสคูปอง / Coupon Code</label>
+<input class="h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-mono text-body-sm" type="text" value="B2B-REOPEN-10"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Button to Add New Step -->
+<div class="pt-2 flex justify-start">
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-outline-variant bg-surface-container-lowest text-primary hover:border-primary hover:bg-surface-container-low transition-all text-label-md font-label-md" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle_outline</span>
+<span data-i18n="catalogue_add_step">เพิ่มแถวใหม่</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ================================================================= -->
+<!-- SECTION E: การตั้งค่าผลลัพธ์และการวัดผล (Attribution & Experiment)-->
+<!-- ================================================================= -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-space-lg shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center font-bold text-xs">E</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="sec_attribution">การตั้งค่าผลลัพธ์และการวัดผล (Attribution &amp; Experiment Settings)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">A/B Holdout Testing</span>
+</div>
+<!-- Experiment Controls -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-outline-variant/60">
+<!-- Holdout Control -->
+<div class="flex items-center justify-between p-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest">
+<div class="flex flex-col">
+<span class="text-label-lg font-label-lg text-on-surface" data-i18n="lbl_holdout">กลุ่มควบคุม (Holdout Control Group)</span>
+<span class="text-body-sm text-secondary" data-i18n="lbl_holdout_desc">กันลูกค้า 10% เพื่อวัด Uplift ยอดขายจริงเทียบกับกลุ่มส่งข้อความ</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Attribution Window -->
+<div class="flex items-center justify-between p-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest">
+<div class="flex flex-col">
+<span class="text-label-lg font-label-lg text-on-surface" data-i18n="lbl_attr_win">Attribution Window</span>
+<span class="text-body-sm text-secondary" data-i18n="lbl_attr_win_desc">ระยะเวลาติดตามยอดขายหลังส่งข้อความ</span>
+</div>
+<select class="h-9 px-3 rounded-lg border border-outline-variant text-body-sm bg-surface-container-lowest font-medium">
+<option>3 วัน</option>
+<option selected="">7 วัน (มาตรฐาน)</option>
+<option>14 วัน</option>
+<option>30 วัน</option>
+</select>
+</div>
+</div>
+<!-- Associated SKU & Logistics Management -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h3 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="sec_sku_title">การจัดการสินค้าและสต็อกที่เกี่ยวข้อง (Attached SKUs &amp; Inventory)</h3>
+<div class="flex items-center gap-3">
+<a class="text-body-sm text-primary hover:underline flex items-center gap-1" href="#docs">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span data-i18n="catalogue_view_docs">ดูเอกสาร</span>
+</a>
+<button class="text-body-sm text-secondary hover:text-on-surface flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">link</span>
+<span data-i18n="catalogue_custom_url">หรือวาง URL รูปเอง</span>
+</button>
+</div>
+</div>
+<!-- SKU Search & Fallback Actions -->
+<div class="flex flex-col sm:flex-row items-center gap-3">
+<div class="relative flex-1 w-full">
+<input class="w-full h-10 px-3 pl-9 rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm focus:outline-none focus:border-primary" placeholder="พิมพ์ชื่อสินค้า หรือค้นหารหัส SKU เพื่อผูกกับโปรโมชั่นนี้..." type="text"/>
+<span class="material-symbols-outlined text-secondary absolute left-2.5 top-2.5 text-[18px]">search</span>
+</div>
+<button class="h-10 px-4 rounded-lg border border-outline-variant hover:border-primary bg-surface-container-lowest text-secondary hover:text-primary text-label-md font-label-md whitespace-nowrap transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+<span data-i18n="catalogue_manual_sku">ไม่มีตัวที่ตรง — กรอก SKU เอง</span>
+</button>
+</div>
+<!-- Attached Product Data Table -->
+<div class="border border-outline-variant rounded-xl overflow-hidden mt-1">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#F6F8FC] border-b border-outline-variant text-label-md font-label-md text-secondary uppercase tracking-wider">
+<th class="py-2.5 px-4 font-semibold">SKU / รหัสสินค้า</th>
+<th class="py-2.5 px-4 font-semibold">ชื่อรายการสินค้า</th>
+<th class="py-2.5 px-4 font-semibold text-right" data-i18n="catalogue_retail_vat">ราคาขาย (รวม VAT)</th>
+<th class="py-2.5 px-4 font-semibold text-right">สต็อกคงเหลือ</th>
+<th class="py-2.5 px-4 font-semibold" data-i18n="catalogue_temp">อุณหภูมิเก็บ</th>
+<th class="py-2.5 px-4 font-semibold text-center">การจัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60 text-body-sm text-on-surface">
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-3 px-4 font-mono font-medium text-primary">SKU-BKR-FLOUR-01</td>
+<td class="py-3 px-4 font-medium">แป้งสาลีพรีเมียมตราบัวแดง 22.5 กก. (กระสอบ)</td>
+<td class="py-3 px-4 text-right font-data-tabular font-medium">฿785.00</td>
+<td class="py-3 px-4 text-right font-data-tabular">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-[#EAF7EE] text-[#157347] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> 480 กระสอบ
+                        </span>
+</td>
+<td class="py-3 px-4 text-secondary">
+<span class="inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">thermostat</span>
+                          ห้องปกติ (Ambient 25°C)
+                        </span>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="text-secondary hover:text-error transition-colors" title="ลบรายการ" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-[#F8FAFD] transition-colors">
+<td class="py-3 px-4 font-mono font-medium text-primary">SKU-BKR-BUTTER-04</td>
+<td class="py-3 px-4 font-medium">เนยสดแท้ชนิดจืด Anchor Pure New Zealand 5 กก.</td>
+<td class="py-3 px-4 text-right font-data-tabular font-medium">฿1,420.00</td>
+<td class="py-3 px-4 text-right font-data-tabular">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-[#EAF7EE] text-[#157347] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> 124 ลัง
+                        </span>
+</td>
+<td class="py-3 px-4 text-secondary">
+<span class="inline-flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">ac_unit</span>
+                          แช่เย็น (Chilled 2-4°C)
+                        </span>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="text-secondary hover:text-error transition-colors" title="ลบรายการ" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Shipping & Payment Condition Checkboxes -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+<label class="flex items-center gap-2.5 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-[#F8FAFD] cursor-pointer">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-surface font-semibold" data-i18n="catalogue_cod">เก็บเงินปลายทาง</span>
+<span class="text-body-sm text-secondary">อนุญาตให้ร้านค้าเลือกชำระเมื่อพัสดุจัดส่งถึงหน้าร้าน (Cash On Delivery)</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-[#F8FAFD] cursor-pointer">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-surface font-semibold" data-i18n="catalogue_order_hold">สร้างออเดอร์รอชำระเมื่อจัดส่ง</span>
+<span class="text-body-sm text-secondary">ออกใบสั่งขายและตั้งสถานะเป็นลูกหนี้การค้ารอตัดยอดเมื่อคนขับยืนยันพิกัด</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- BOTTOM STICKY ACTION BAR                                                  -->
+<!-- ========================================================================= -->
+<div class="sticky bottom-0 z-30 bg-surface-container-lowest border-t border-outline-variant px-gutter-desktop py-3 shadow-[0_-2px_10px_rgba(23,36,59,0.06)] flex items-center justify-between">
+<div class="flex items-center gap-2 text-body-sm text-secondary">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+<span data-i18n="status_validate_note">ข้อมูลทั้งหมดจะถูกตรวจสอบระบบเงื่อนไขก่อนเปิดใช้งานอัตโนมัติ (Verification Sandbox Active)</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest text-secondary hover:text-on-surface hover:bg-surface-container text-label-md font-label-md transition-colors" data-i18n="btn_cancel" type="button">
+          ยกเลิก
+        </button>
+<button class="px-4 py-2 rounded-lg border border-primary-fixed bg-surface-container-low text-primary hover:bg-surface-container text-label-md font-label-md transition-colors" data-i18n="btn_save_draft" type="button">
+          บันทึกแบบร่าง
+        </button>
+<button class="px-6 py-2 rounded-lg bg-primary hover:bg-[#2848D6] text-on-primary text-label-md font-label-md font-semibold shadow-sm flex items-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span data-i18n="btn_activate_full">บันทึกและเปิดใช้งานเวิร์กโฟลว์</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- MANDATORY UI TRANSLATIONS CATALOGUE JSON                                  -->
+<!-- ========================================================================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "เก็บเงินปลายทาง": "Cash On Delivery (COD)",
+    "ค้นรายชื่อธุรกิจจริงจาก ททท. และ OpenStreetMap ฟรี พร้อมหลักฐานอ้างอิง": "Discover verified businesses via TAT & OpenStreetMap with evidence",
+    "เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ — ต้องการรายชื่อใหม่? สร้าง segment ใหม่": "Conditions locked on save and immutable — Need fresh leads? Create a new segment",
+    "ชื่อโปร": "Promotion Name",
+    "ดูเอกสาร": "View Documentation",
+    "เทมเพลตระบบลบไม่ได้ — ระบบแจ้งเตือนต้องใช้ key นี้เสมอ (แก้ข้อความได้)": "System template cannot be deleted — Notification triggers require this key (text is editable)",
+    "ปลายทาง": "Destination Channel",
+    "เพิ่มแถวใหม่": "Add New Step",
+    "ไม่มีตัวที่ตรง — กรอก SKU เอง": "No matching item — Enter SKU manually",
+    "ยังไม่มีรายชื่อ": "No contacts available",
+    "ราคาขาย (รวม VAT)": "Retail Price (Inc. VAT)",
+    "ลบไม่สำเร็จ: {0}": "Deletion failed: {0}",
+    "วัน (ไม่เลือก = ทุกวัน)": "Day of week (Unselected = Everyday)",
+    "สร้างออเดอร์รอชำระเมื่อจัดส่ง": "Create pending payment order upon dispatch",
+    "หรือวาง URL รูปเอง": "Or paste custom image URL",
+    "อุณหภูมิเก็บ": "Storage Temperature",
+    "header_brand": "Siam Commerce Hub",
+    "header_sub": "Merchant Operations Center",
+    "cta_new": "Create New Entry",
+    "tab_inventory": "Products & Inventory",
+    "tab_orders": "Orders & Finance",
+    "tab_customers": "Customers & Services",
+    "tab_marketing": "Marketing",
+    "sub_growth": "Growth Workspace",
+    "sub_workflows": "Marketing Workflows",
+    "sub_assistant": "AI Marketing Analyst",
+    "sub_calendar": "Plans & Calendar",
+    "tab_analytics": "Reports & Analytics",
+    "tab_hub": "Integration Hub",
+    "tab_settings": "Settings & Team",
+    "footer_help": "User Guide",
+    "footer_logout": "Sign Out",
+    "bc_marketing": "Marketing",
+    "bc_workflows": "Marketing Workflows",
+    "bc_editor": "Create Workflow",
+    "badge_sample": "Sample data / ข้อมูลตัวอย่าง",
+    "admin_title": "System Administrator",
+    "btn_back": "Back to workflows",
+    "page_title": "Create New Workflow (Workflow Editor)",
+    "badge_draft": "Draft",
+    "btn_cancel": "Cancel",
+    "btn_save_draft": "Save Draft",
+    "btn_activate": "Save & Activate",
+    "btn_activate_full": "Save & Activate Workflow",
+    "sec_basic": "Basic Workflow Information",
+    "tag_core": "CORE METADATA",
+    "lbl_wf_name": "Workflow Name",
+    "lbl_wf_code": "System Key / Code",
+    "lbl_category": "Category",
+    "lbl_goal": "Goal & Description",
+    "sec_trigger": "Trigger Conditions",
+    "opt_event": "Event Triggered",
+    "opt_schedule": "Scheduled Run",
+    "lbl_event_type": "Primary Event Trigger",
+    "act_select_all": "Working days only",
+    "lbl_time_window": "Run start time:",
+    "sec_audience": "Target Audience & Filters",
+    "notice_lock_lead": "Security Constraint: ",
+    "act_view_policy": "View Policy",
+    "lbl_select_segment": "Target Customer Segment",
+    "lbl_exclude": "Exclude Filter",
+    "sec_builder": "Workflow Steps Builder",
+    "step1_title": "Initial Trigger",
+    "step2_title": "Condition Filter",
+    "step3_title": "Delay & Waiting Window",
+    "step4_title": "Dispatch Message Action",
+    "lbl_discount_code": "Coupon Code",
+    "sec_attribution": "Attribution & Experiment Settings",
+    "lbl_holdout": "Holdout Control Group",
+    "lbl_holdout_desc": "Reserve 10% customers to measure genuine incremental uplift against campaign targets",
+    "lbl_attr_win": "Attribution Window",
+    "lbl_attr_win_desc": "Timeframe to track sales post-dispatch",
+    "sec_sku_title": "Attached SKUs & Inventory Management",
+    "status_validate_note": "All workflow conditions will be verified in sandbox prior to live activation"
+  }
+  </script>
+<!-- ========================================================================= -->
+<!-- INTERACTIVE LANGUAGE & INTERACTION SCRIPT                                 -->
+<!-- ========================================================================= -->
+<script>
+    (function() {
+      let currentLang = 'th';
+      const translationsEl = document.getElementById('commerce-ui-translations');
+      let translations = {};
+      try {
+        translations = JSON.parse(translationsEl.textContent);
+      } catch(e) {
+        console.error("Translation parsing error:", e);
+      }
+
+      const elementsWithI18n = document.querySelectorAll('[data-i18n]');
+      const originalThaiTexts = new Map();
+
+      // Store initial text contents
+      elementsWithI18n.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        originalThaiTexts.set(el, el.textContent.trim());
+      });
+
+      const langToggleBtn = document.getElementById('langToggleBtn');
+      const langLabel = document.getElementById('langLabel');
+
+      if (langToggleBtn) {
+        langToggleBtn.addEventListener('click', () => {
+          currentLang = currentLang === 'th' ? 'en' : 'th';
+          langLabel.textContent = currentLang === 'th' ? 'ไทย / English' : 'English / ไทย';
+
+          elementsWithI18n.forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (currentLang === 'en') {
+              // Priority 1: Keyed translation in JSON
+              if (translations[key]) {
+                el.textContent = translations[key];
+              } else {
+                // Priority 2: Direct lookup by original Thai text string
+                const originalText = originalThaiTexts.get(el);
+                if (originalText && translations[originalText]) {
+                  el.textContent = translations[originalText];
+                }
+              }
+            } else {
+              // Restore Thai
+              if (originalThaiTexts.has(el)) {
+                el.textContent = originalThaiTexts.get(el);
+              }
+            }
+          });
+        });
+      }
+    })();
+  </script>
+</body></html>

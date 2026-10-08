@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thai Ops Cockpit - ERP log ของ josh</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter,+Noto+Sans,+sans-serif:wght@100..900&family=Noto+Sans,+Inter,+sans-serif:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "secondary": "#4f5f77",
+            "primary-fixed-dim": "#b9c3ff",
+            "error-container": "#ffdad6",
+            "primary": "#0a3fdc",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#ededff",
+            "on-surface": "#0e1b32",
+            "on-tertiary-container": "#ffebe4",
+            "outline": "#747687",
+            "on-secondary-container": "#54647c",
+            "on-secondary": "#ffffff",
+            "surface-dim": "#cddaf9",
+            "surface": "#f9f9ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "secondary-fixed": "#d3e3ff",
+            "surface-bright": "#f9f9ff",
+            "surface-container-low": "#f1f3ff",
+            "surface-container-highest": "#d7e2ff",
+            "primary-fixed": "#dde1ff",
+            "surface-container-high": "#e0e8ff",
+            "on-primary-fixed": "#001257",
+            "on-surface-variant": "#444655",
+            "surface-container-lowest": "#ffffff",
+            "inverse-surface": "#243048",
+            "inverse-primary": "#b9c3ff",
+            "outline-variant": "#c4c5d8",
+            "surface-tint": "#214ce7",
+            "surface-container": "#e8eeff",
+            "error": "#ba1a1a",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-error": "#ffffff",
+            "primary-container": "#365cf5",
+            "on-tertiary": "#ffffff",
+            "surface-variant": "#d7e2ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "tertiary-container": "#bc4600",
+            "tertiary-fixed": "#ffdbcd",
+            "on-error-container": "#93000a",
+            "on-background": "#0e1b32",
+            "on-tertiary-fixed": "#360f00",
+            "on-secondary-fixed": "#0b1c31",
+            "background": "#f9f9ff",
+            "tertiary": "#943500",
+            "inverse-on-surface": "#ecf0ff",
+            "secondary-container": "#d0e1fd"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-mobile": "1rem",
+            "gutter": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-2xl": "2.5rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "margin": "2rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-lg-mobile": ["\"Noto Sans, Inter, sans-serif\""],
+            "code-sm": ["\"JetBrains Mono, monospace\""],
+            "body-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans, sans-serif\""],
+            "label-sm": ["\"Inter, Noto Sans, sans-serif\""]
+          },
+          "fontSize": {
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full font-body-md text-on-surface antialiased bg-[#f6f8fc] flex overflow-hidden">
+<!-- ==================== SIDEBAR COMPONENT (SideNavBar) ==================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-none flex flex-col justify-between">
+<!-- Brand Header -->
+<div class="p-4 border-b border-outline-variant/40">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm shadow-sm">
+<span class="material-symbols-outlined text-[24px]">dataset</span>
+</div>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface leading-tight">Thai Ops Cockpit</h1>
+<p class="text-body-sm font-body-sm text-secondary truncate max-w-[170px]">ศูนย์บริหารจัดการร้านค้า</p>
+</div>
+</div>
+</div>
+<!-- 7 Thai Navigation Modules -->
+<nav class="flex-1 overflow-y-auto px-3 py-3 space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container dark:bg-surface-container-high text-primary dark:text-inverse-primary font-medium border-l-[3px] border-primary dark:border-inverse-primary hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px] text-primary">sync_alt</span>
+<span class="text-label-md font-label-md font-medium">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+<!-- Sidebar Footer / Environment status -->
+<div class="p-3 border-t border-outline-variant/40 bg-surface-container-low/40">
+<div class="flex items-center justify-between text-code-sm font-code-sm text-secondary px-2">
+<span class="inline-flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          ERP Gateway v2.4
+        </span>
+<span class="text-[11px] bg-white border border-outline-variant/60 rounded px-1.5 py-0.5">TLS 1.3</span>
+</div>
+</div>
+</aside>
+<!-- ==================== MAIN CONTENT WRAPPER ==================== -->
+<div class="pl-64 flex-1 flex flex-col h-screen overflow-hidden">
+<!-- ==================== TOP NAVIGATION BAR (TopNavBar) ==================== -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-6">
+<!-- Breadcrumb Cluster -->
+<div class="flex items-center gap-2">
+<span class="text-secondary text-body-sm font-body-sm">ระบบเชื่อมต่อ</span>
+<span class="text-outline-variant text-[14px]">/</span>
+<span class="text-primary dark:text-inverse-primary font-medium text-body-md font-body-md" data-i18n-key="ERP log ของ josh">ERP log ของ josh</span>
+<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-primary border border-primary/20">
+          ข้อมูลตัวอย่าง
+        </span>
+</div>
+<!-- Action Cluster -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container-low text-label-md font-label-md text-on-surface transition-colors cursor-pointer active:scale-95" id="lang-toggle-btn">
+<span class="material-symbols-outlined text-[18px] text-secondary">translate</span>
+<span class="font-medium" id="lang-label">ไทย / EN</span>
+</button>
+<!-- Notification Button -->
+<button class="w-9 h-9 rounded-lg border border-outline-variant hover:bg-surface-container-low flex items-center justify-center text-secondary relative transition-colors cursor-pointer active:scale-95" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<!-- Help Button -->
+<button class="w-9 h-9 rounded-lg border border-outline-variant hover:bg-surface-container-low flex items-center justify-center text-secondary transition-colors cursor-pointer active:scale-95" title="Help Guide">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<!-- User Profile Pill -->
+<div class="flex items-center gap-2.5 pl-2 ml-1 border-l border-outline-variant/60">
+<img class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="Corporate enterprise administration avatar profile photo of a modern Southeast Asian operations manager wearing formal navy blazer in clean crisp studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAb1lVJhfLPV2LbNOGb_y21mAWrdnkXcOSBNWNriG1RlYce-LKPbqXsWu0VzXb9uoMieI739ePk5_DTQZP72hN9D1SJgqfgqfZyU05oIt39wNvMqaaGx6sA9L4O9AR1JMQ_zmZez7aVshHyA-DrXv6LMuVykcLeNiYyvEloMzh_MUJqbiNntFlZrFBL_LO916pUOdfha1EALC2n8Yp5Vd2WeS1i70N8bXkQD9yYoK-zctJ9oxvmONhSdZ535YRq6enjvkReQG-hjNE"/>
+<div class="text-left hidden lg:block">
+<div class="text-label-md font-label-md font-medium text-on-surface leading-tight">Admin System</div>
+<div class="text-[11px] text-secondary">Super Admin</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== SCROLLABLE OPERATIONAL CANVAS ==================== -->
+<main class="flex-1 overflow-y-auto p-6 space-y-5 bg-[#f6f8fc]">
+<!-- Stage Title & Live Inbound Header Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-2 border-b border-outline-variant/40">
+<div>
+<div class="flex items-center gap-3">
+<h2 class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight" data-i18n-key="ERP log ของ josh">ERP log ของ josh</h2>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              Live Inbound Feed
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1 max-w-4xl" data-i18n-key="สิ่งที่ ERP ส่งเข้า josh (/api/erp/*) และ josh รับได้หรือไม่ · ค่าเริ่มต้น 24 ชม. ล่าสุด ค้นได้ทีละไม่เกิน 7 วัน · josh เก็บไว้ 14 วัน">
+            สิ่งที่ ERP ส่งเข้า josh (/api/erp/*) และ josh รับได้หรือไม่ · ค่าเริ่มต้น 24 ชม. ล่าสุด ค้นได้ทีละไม่เกิน 7 วัน · josh เก็บไว้ 14 วัน
+          </p>
+</div>
+<!-- Header Secondary Actions -->
+<div class="flex items-center gap-2.5">
+<div class="inline-flex rounded-lg border border-outline-variant bg-white p-0.5 text-xs font-medium text-secondary">
+<button class="px-2.5 py-1 rounded bg-surface-container text-primary font-semibold">24 ชม.</button>
+<button class="px-2.5 py-1 rounded hover:text-on-surface">3 วัน</button>
+<button class="px-2.5 py-1 rounded hover:text-on-surface">7 วัน</button>
+</div>
+<button class="h-10 px-3.5 inline-flex items-center gap-2 rounded-lg border border-outline-variant bg-white hover:bg-slate-50 text-on-surface font-label-md text-label-md shadow-xs active:scale-95 transition-all" id="refresh-btn">
+<span class="material-symbols-outlined text-[18px] text-secondary">refresh</span>
+<span data-i18n-key="Refresh">Refresh</span>
+</button>
+</div>
+</div>
+<!-- Info Banner / Operational Restriction Notice -->
+<div class="flex items-center gap-3 px-4 py-3 bg-blue-50/70 border border-blue-200/80 rounded-lg text-body-sm font-body-sm text-slate-800">
+<span class="material-symbols-outlined text-blue-600 text-[20px]">info</span>
+<span class="flex-1" data-i18n-key="— และทุก endpoint ปฏิเสธแถวที่ไม่ใช่รายการทดสอบ (is_test) เสมอ">
+          — และทุก endpoint ปฏิเสธแถวที่ไม่ใช่รายการทดสอบ (is_test) เสมอ
+        </span>
+<span class="text-code-sm font-code-sm text-blue-800 bg-blue-100/80 px-2 py-0.5 rounded">ENV: PRODUCTION-STAGING</span>
+</div>
+<!-- 3 Summary Metrics Bento Grid ("สรุป") -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Metric 1: Request Volume -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex items-center justify-between">
+<div>
+<span class="text-xs font-semibold uppercase tracking-wider text-secondary" data-i18n-key="สรุป">สรุป</span>
+<div class="text-headline-md font-headline-md font-bold text-on-surface mt-1">14,250 <span class="text-body-sm font-normal text-secondary font-body-sm">รายการ / 24 ชม.</span></div>
+<div class="text-body-sm text-emerald-600 flex items-center gap-1 mt-1 font-medium">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+              +8.2% เทียบกับรอบก่อน
+            </div>
+</div>
+<div class="w-12 h-12 rounded-xl bg-blue-50 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">inbox</span>
+</div>
+</div>
+<!-- Metric 2: Success Rate -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex items-center justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-secondary" data-i18n-key="ผล">ผล</span>
+<span class="text-[11px] text-secondary">อัตราความสำเร็จ</span>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-headline-md font-headline-md font-bold text-emerald-700" data-i18n-key="สำเร็จ">สำเร็จ</span>
+<span class="text-headline-md font-headline-md font-bold text-emerald-700">98.4%</span>
+<span class="text-body-sm text-rose-600 font-medium ml-1">
+<span data-i18n-key="ไม่สำเร็จ">ไม่สำเร็จ</span> 1.6%
+              </span>
+</div>
+<div class="w-48 bg-slate-100 rounded-full h-1.5 mt-2 overflow-hidden flex">
+<div class="bg-emerald-600 h-full w-[98.4%]"></div>
+<div class="bg-rose-500 h-full w-[1.6%]"></div>
+</div>
+</div>
+<div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">check_circle</span>
+</div>
+</div>
+<!-- Metric 3: Latency Metric -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex items-center justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-secondary">LATENCY</span>
+<span class="text-[11px] text-secondary font-code-sm" data-i18n-key="ms">ms</span>
+</div>
+<div class="text-headline-md font-headline-md font-bold text-on-surface mt-1">142 <span class="text-body-sm font-normal text-secondary font-body-sm" data-i18n-key="ms">ms</span> <span class="text-body-sm font-normal text-secondary">avg</span></div>
+<div class="text-body-sm text-secondary flex items-center gap-2 mt-1 font-code-sm">
+<span>p95: 380ms</span>
+<span>•</span>
+<span class="text-emerald-600">p99: 890ms</span>
+</div>
+</div>
+<div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">speed</span>
+</div>
+</div>
+</div>
+<!-- Filters Section ("Filters") -->
+<section class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/60 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)]">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/40 mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">filter_list</span>
+<h3 class="text-headline-sm font-headline-sm font-semibold text-on-surface" data-i18n-key="Filters">Filters</h3>
+</div>
+<span class="text-xs text-secondary italic">ค้นหาในหน้านี้เท่านั้น</span>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3.5" id="filter-form">
+<!-- Date From -->
+<div class="lg:col-span-1">
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n-key="ตั้งแต่">ตั้งแต่</label>
+<input class="w-full h-10 px-3 bg-white border border-outline-variant rounded-lg text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" type="datetime-local" value="2025-05-14T00:00"/>
+</div>
+<!-- Date To -->
+<div class="lg:col-span-1">
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n-key="ถึง">ถึง</label>
+<input class="w-full h-10 px-3 bg-white border border-outline-variant rounded-lg text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" type="datetime-local" value="2025-05-15T00:00"/>
+</div>
+<!-- Endpoint Filter -->
+<div class="lg:col-span-1">
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n-key="Endpoint">Endpoint</label>
+<select class="w-full h-10 px-3 bg-white border border-outline-variant rounded-lg text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="endpoint-filter">
+<option data-i18n-key="ทั้งหมด (Endpoint)" value="ALL">ทั้งหมด (Endpoint)</option>
+<option value="/api/erp/orders/create">/api/erp/orders/create</option>
+<option value="/api/erp/inventory/sync">/api/erp/inventory/sync</option>
+<option value="/api/erp/products/batch">/api/erp/products/batch</option>
+<option value="/api/erp/pricing/update">/api/erp/pricing/update</option>
+<option value="/api/erp/shipments/ack">/api/erp/shipments/ack</option>
+</select>
+</div>
+<!-- Result Filter -->
+<div class="lg:col-span-1">
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n-key="ผล">ผล</label>
+<select class="w-full h-10 px-3 bg-white border border-outline-variant rounded-lg text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="status-filter">
+<option data-i18n-key="ทั้งหมด (ผล)" value="ALL">ทั้งหมด (ผล)</option>
+<option data-i18n-key="สำเร็จ" value="SUCCESS">สำเร็จ</option>
+<option data-i18n-key="ไม่สำเร็จ" value="FAILED">ไม่สำเร็จ</option>
+</select>
+</div>
+<!-- Search Query Input -->
+<div class="lg:col-span-2">
+<label class="block text-label-sm font-label-sm text-secondary mb-1" data-i18n-key="ค้นหา: รหัสสินค้า / เลข order / รหัสลูกค้า">ค้นหา: รหัสสินค้า / เลข order / รหัสลูกค้า</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[20px]">search</span>
+<input class="w-full h-10 pl-9 pr-3 bg-white border border-outline-variant rounded-lg text-body-sm text-on-surface placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="keyword-input" placeholder="เช่น ORD-2025-8821, SKU-TH-092..." type="text"/>
+</div>
+</div>
+<!-- Action Buttons Bar -->
+<div class="lg:col-span-6 flex justify-end items-center gap-3 pt-2">
+<button class="h-10 px-4 rounded-lg border border-outline-variant hover:bg-slate-50 text-secondary text-label-md font-label-md transition-colors active:scale-95 cursor-pointer" data-i18n-key="ล้างตัวกรอง" id="reset-filter-btn" type="button">
+              ล้างตัวกรอง
+            </button>
+<button class="h-10 px-5 rounded-lg bg-primary-container text-white hover:bg-blue-700 text-label-md font-label-md font-medium transition-colors shadow-sm active:scale-95 flex items-center gap-2 cursor-pointer" id="apply-filter-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">search</span>
+<span data-i18n-key="ค้นหา">ค้นหา</span>
+</button>
+</div>
+</form>
+</section>
+<!-- Results Table Card ("Results") -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant/60 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] overflow-hidden">
+<div class="flex items-center justify-between px-5 py-3.5 border-b border-outline-variant/40 bg-white">
+<div class="flex items-center gap-2.5">
+<h3 class="text-headline-sm font-headline-sm font-semibold text-on-surface" data-i18n-key="Results">Results</h3>
+<span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-secondary font-mono font-medium" id="results-count">5 รายการ (จากทั้งหมด 14,250)</span>
+</div>
+<div class="text-xs text-secondary flex items-center gap-2">
+<span>แสดง 25 รายการ</span>
+<span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+<span class="font-mono text-slate-500">Auto-refresh ทุก 15 วินาที</span>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-11 bg-slate-50/80 border-b border-outline-variant/60 text-secondary text-label-sm font-label-sm">
+<th class="px-5 font-semibold" data-i18n-key="เวลา">เวลา</th>
+<th class="px-4 font-semibold" data-i18n-key="Endpoint">Endpoint</th>
+<th class="px-4 font-semibold" data-i18n-key="Type">Type</th>
+<th class="px-4 font-semibold" data-i18n-key="ผล">ผล</th>
+<th class="px-4 font-semibold text-right" data-i18n-key="ms">ms</th>
+<th class="px-5 font-semibold text-center" data-i18n-key="Payload">Payload</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40 text-body-sm font-body-sm" id="log-rows-container">
+<!-- Row 1: Order Create (Success) -->
+<tr class="h-13 hover:bg-slate-50 transition-colors cursor-pointer group" onclick="openPayloadModal('ORD-CREATE-992')">
+<td class="px-5 font-code-sm text-secondary whitespace-nowrap">
+                  14:32:08.112 <span class="text-[11px] text-slate-400">14 พ.ค.</span>
+</td>
+<td class="px-4">
+<div class="font-code-sm font-medium text-slate-900">/api/erp/orders/create</div>
+<div class="text-[11px] text-secondary font-mono">Ref: ERP-ORD-991823 • Cust: CUST-8831</div>
+</td>
+<td class="px-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#e8f5ed] text-[#157347]">POST</span>
+</td>
+<td class="px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n-key="สำเร็จ">สำเร็จ</span> (200 OK)
+                  </span>
+</td>
+<td class="px-4 text-right font-code-sm text-secondary">
+                  118 <span class="text-[11px] text-slate-400">ms</span>
+</td>
+<td class="px-5 text-center">
+<button class="px-2.5 py-1 rounded text-xs border border-outline-variant bg-white text-secondary group-hover:text-primary group-hover:border-primary transition-colors flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span data-i18n-key="Payload">Payload</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Inventory Sync (Success) -->
+<tr class="h-13 hover:bg-slate-50 transition-colors cursor-pointer group" onclick="openPayloadModal('INV-SYNC-401')">
+<td class="px-5 font-code-sm text-secondary whitespace-nowrap">
+                  14:31:55.801 <span class="text-[11px] text-slate-400">14 พ.ค.</span>
+</td>
+<td class="px-4">
+<div class="font-code-sm font-medium text-slate-900">/api/erp/inventory/sync</div>
+<div class="text-[11px] text-secondary font-mono">SKU-TH-9921 x 40 items • Wh: BKK-CENTRAL</div>
+</td>
+<td class="px-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#fef9e7] text-[#997404]">PUT</span>
+</td>
+<td class="px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n-key="สำเร็จ">สำเร็จ</span> (200 OK)
+                  </span>
+</td>
+<td class="px-4 text-right font-code-sm text-secondary">
+                  94 <span class="text-[11px] text-slate-400">ms</span>
+</td>
+<td class="px-5 text-center">
+<button class="px-2.5 py-1 rounded text-xs border border-outline-variant bg-white text-secondary group-hover:text-primary group-hover:border-primary transition-colors flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span data-i18n-key="Payload">Payload</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Product Batch (Failed / 400 Bad Request) -->
+<tr class="h-13 hover:bg-slate-50 transition-colors cursor-pointer group bg-rose-50/20" onclick="openPayloadModal('PROD-BATCH-ERR')">
+<td class="px-5 font-code-sm text-secondary whitespace-nowrap">
+                  14:30:12.441 <span class="text-[11px] text-slate-400">14 พ.ค.</span>
+</td>
+<td class="px-4">
+<div class="font-code-sm font-medium text-rose-900">/api/erp/products/batch</div>
+<div class="text-[11px] text-rose-700 font-mono">Invalid SKU schema: missing barcode identifier</div>
+</td>
+<td class="px-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#e8f5ed] text-[#157347]">POST</span>
+</td>
+<td class="px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#fdf2f2] text-[#c2333f]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+<span data-i18n-key="ไม่สำเร็จ">ไม่สำเร็จ</span> (400 Bad Request)
+                  </span>
+</td>
+<td class="px-4 text-right font-code-sm text-rose-600 font-bold">
+                  1,420 <span class="text-[11px] text-rose-400">ms</span>
+</td>
+<td class="px-5 text-center">
+<button class="px-2.5 py-1 rounded text-xs border border-rose-200 bg-rose-50 text-rose-700 group-hover:bg-rose-100 transition-colors flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[16px]">bug_report</span>
+<span data-i18n-key="Payload">Payload</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Pricing Update (Success) -->
+<tr class="h-13 hover:bg-slate-50 transition-colors cursor-pointer group" onclick="openPayloadModal('PRICE-UPD-882')">
+<td class="px-5 font-code-sm text-secondary whitespace-nowrap">
+                  14:28:40.092 <span class="text-[11px] text-slate-400">14 พ.ค.</span>
+</td>
+<td class="px-4">
+<div class="font-code-sm font-medium text-slate-900">/api/erp/pricing/update</div>
+<div class="text-[11px] text-secondary font-mono">B2B Tier-3 contract wholesale pricing</div>
+</td>
+<td class="px-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#fef9e7] text-[#997404]">PUT</span>
+</td>
+<td class="px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n-key="สำเร็จ">สำเร็จ</span> (200 OK)
+                  </span>
+</td>
+<td class="px-4 text-right font-code-sm text-secondary">
+                  165 <span class="text-[11px] text-slate-400">ms</span>
+</td>
+<td class="px-5 text-center">
+<button class="px-2.5 py-1 rounded text-xs border border-outline-variant bg-white text-secondary group-hover:text-primary group-hover:border-primary transition-colors flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span data-i18n-key="Payload">Payload</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Shipments Ack (Success) -->
+<tr class="h-13 hover:bg-slate-50 transition-colors cursor-pointer group" onclick="openPayloadModal('SHIP-ACK-102')">
+<td class="px-5 font-code-sm text-secondary whitespace-nowrap">
+                  14:25:19.519 <span class="text-[11px] text-slate-400">14 พ.ค.</span>
+</td>
+<td class="px-4">
+<div class="font-code-sm font-medium text-slate-900">/api/erp/shipments/ack</div>
+<div class="text-[11px] text-secondary font-mono">Flash Express Tracking: TH9018291038</div>
+</td>
+<td class="px-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm font-bold bg-[#eef2ff] text-[#314bb5]">GET</span>
+</td>
+<td class="px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n-key="สำเร็จ">สำเร็จ</span> (200 OK)
+                  </span>
+</td>
+<td class="px-4 text-right font-code-sm text-secondary">
+                  82 <span class="text-[11px] text-slate-400">ms</span>
+</td>
+<td class="px-5 text-center">
+<button class="px-2.5 py-1 rounded text-xs border border-outline-variant bg-white text-secondary group-hover:text-primary group-hover:border-primary transition-colors flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span data-i18n-key="Payload">Payload</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty Filter State Container (Hidden by default, can be triggered) -->
+<div class="hidden p-12 text-center border-t border-outline-variant/40" id="empty-state-container">
+<div class="w-12 h-12 rounded-full bg-slate-100 text-secondary flex items-center justify-center mx-auto mb-3">
+<span class="material-symbols-outlined text-[24px]">search_off</span>
+</div>
+<div class="text-headline-sm font-headline-sm font-semibold text-on-surface" data-i18n-key="ไม่มีรายการในช่วงนี้">ไม่มีรายการในช่วงนี้</div>
+<p class="text-body-sm font-body-sm text-secondary max-w-md mx-auto mt-1" data-i18n-key="ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป">
+            ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป
+          </p>
+<button class="mt-4 px-4 py-2 bg-white border border-outline-variant rounded-lg text-label-md font-label-md text-primary font-medium hover:bg-slate-50" onclick="resetFilters()">
+            ล้างตัวกรองทันที
+          </button>
+</div>
+<!-- Pagination Controls -->
+<div class="flex items-center justify-between px-5 py-3.5 border-t border-outline-variant/40 bg-white">
+<div class="text-body-sm font-body-sm text-secondary">
+            กำลังแสดง 1 ถึง 5 จากทั้งหมด 14,250 รายการ
+          </div>
+<div class="flex items-center gap-1">
+<button class="h-8 px-3 rounded border border-outline-variant text-body-sm text-secondary hover:bg-slate-50 disabled:opacity-50" data-i18n-key="ก่อนหน้า" disabled="">
+              ก่อนหน้า
+            </button>
+<button class="h-8 w-8 rounded bg-primary-container text-white font-medium text-body-sm">1</button>
+<button class="h-8 w-8 rounded border border-outline-variant text-body-sm text-secondary hover:bg-slate-50">2</button>
+<button class="h-8 w-8 rounded border border-outline-variant text-body-sm text-secondary hover:bg-slate-50">3</button>
+<span class="px-1 text-secondary">...</span>
+<button class="h-8 w-8 rounded border border-outline-variant text-body-sm text-secondary hover:bg-slate-50">570</button>
+<button class="h-8 px-3 rounded border border-outline-variant text-body-sm text-secondary hover:bg-slate-50">
+              ถัดไป
+            </button>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- ==================== PAYLOAD INSPECT DRAWER / MODAL ==================== -->
+<div class="fixed inset-0 z-50 hidden" id="payload-modal">
+<!-- Backdrop Scrim -->
+<div class="absolute inset-0 bg-[#17243b]/40 backdrop-blur-[2px] transition-opacity" onclick="closePayloadModal()"></div>
+<!-- Slide-out Inspect Drawer (Right Edge) -->
+<div class="absolute top-0 right-0 h-full w-full max-w-[560px] bg-white shadow-[-4px_0_24px_0_rgba(23,36,59,0.12)] flex flex-col z-10 border-l border-outline-variant">
+<!-- Modal Header -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">data_object</span>
+</span>
+<div>
+<div class="text-headline-sm font-headline-sm font-bold text-on-surface" id="modal-log-id">Inspect Inbound Payload</div>
+<div class="text-[12px] text-secondary font-mono" id="modal-log-endpoint">/api/erp/orders/create</div>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg hover:bg-slate-100 text-secondary flex items-center justify-center transition-colors" onclick="closePayloadModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Notice Banner inside Drawer -->
+<div class="bg-amber-50 border-b border-amber-200/80 px-6 py-2.5 text-xs text-amber-900 font-medium" data-i18n-key="ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน">
+        ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน
+      </div>
+<!-- Drawer Tabs -->
+<div class="flex border-b border-outline-variant px-6 bg-slate-50/50">
+<button class="py-2.5 px-3 border-b-2 border-primary text-primary font-medium text-xs">JSON Request</button>
+<button class="py-2.5 px-3 text-secondary hover:text-on-surface text-xs font-medium">Headers</button>
+<button class="py-2.5 px-3 text-secondary hover:text-on-surface text-xs font-medium">Response (200)</button>
+</div>
+<!-- Code Viewer Body -->
+<div class="flex-1 p-6 overflow-y-auto bg-slate-900 text-slate-100 font-code-sm text-[12px] leading-relaxed">
+<div class="flex justify-between items-center pb-2 mb-2 border-b border-slate-700 text-slate-400 text-[11px]">
+<span>MIME: application/json; charset=utf-8</span>
+<button class="text-blue-400 hover:text-blue-300 font-sans text-xs flex items-center gap-1" onclick="navigator.clipboard.writeText(document.getElementById('json-preview').innerText)">
+<span class="material-symbols-outlined text-[14px]">content_copy</span> คัดลอก
+          </button>
+</div>
+<pre class="overflow-x-auto text-emerald-300" id="json-preview">{
+  "system_caller": "SAP-S4HANA-PROD",
+  "batch_id": "BATCH-TH-20250514-9921",
+  "is_test": false,
+  "transaction_timestamp": "2025-05-14T14:32:08.112+07:00",
+  "orders": [
+    {
+      "erp_order_ref": "ERP-ORD-991823",
+      "customer_id": "CUST-8831",
+      "billing_name": "Siam Logistics & Retail Ltd.",
+      "channel": "B2B_PORTAL",
+      "currency": "THB",
+      "total_amount": 45890.00,
+      "items": [
+        {
+          "sku": "SKU-TH-8821",
+          "barcode": "8851729012391",
+          "quantity": 120,
+          "unit_price": 382.41,
+          "inventory_loc": "WH-BKK-01"
+        }
+      ],
+      "shipping": {
+        "provider": "FLASH_EXPRESS",
+        "dropoff_point": "CENTRAL_HUB_LADPRAO"
+      }
+    }
+  ]
+}
+        </pre>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-4 border-t border-outline-variant bg-white flex items-center justify-between">
+<span class="text-xs text-secondary font-mono">Payload Size: 4.8 KB</span>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-lg border border-outline-variant text-label-md font-label-md text-secondary hover:bg-slate-50 transition-colors" onclick="closePayloadModal()">
+            ปิด
+          </button>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-white text-label-md font-label-md font-medium hover:bg-blue-700 transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">replay</span>
+            ส่งคำขอซ้ำ (Re-play)
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- ==================== BILINGUAL TRANSLATION CATALOGUE (CRITICAL REQUIREMENT) ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ERP log ของ josh": {
+      "th": "ERP log ของ josh",
+      "en": "josh ERP Logs"
+    },
+    "Refresh": {
+      "th": "Refresh",
+      "en": "Refresh"
+    },
+    "เวลา": {
+      "th": "เวลา",
+      "en": "Timestamp"
+    },
+    "ค้นหา": {
+      "th": "ค้นหา",
+      "en": "Search"
+    },
+    "Filters": {
+      "th": "Filters",
+      "en": "Filters"
+    },
+    "ms": {
+      "th": "ms",
+      "en": "ms"
+    },
+    "สำเร็จ": {
+      "th": "สำเร็จ",
+      "en": "Success"
+    },
+    "Payload": {
+      "th": "Payload",
+      "en": "Payload"
+    },
+    "ผล": {
+      "th": "ผล",
+      "en": "Status"
+    },
+    "ตั้งแต่": {
+      "th": "ตั้งแต่",
+      "en": "From"
+    },
+    "สิ่งที่ ERP ส่งเข้า josh (/api/erp/*) และ josh รับได้หรือไม่ · ค่าเริ่มต้น 24 ชม. ล่าสุด ค้นได้ทีละไม่เกิน 7 วัน · josh เก็บไว้ 14 วัน": {
+      "th": "สิ่งที่ ERP ส่งเข้า josh (/api/erp/*) และ josh รับได้หรือไม่ · ค่าเริ่มต้น 24 ชม. ล่าสุด ค้นได้ทีละไม่เกิน 7 วัน · josh เก็บไว้ 14 วัน",
+      "en": "Inbound payloads sent from ERP into josh (/api/erp/*) and ingestion receipt state · Default: Last 24h, search up to 7d max · Stored for 14 days"
+    },
+    "ทั้งหมด (Endpoint)": {
+      "th": "ทั้งหมด (Endpoint)",
+      "en": "All Endpoints"
+    },
+    "ทั้งหมด (ผล)": {
+      "th": "ทั้งหมด (ผล)",
+      "en": "All Statuses"
+    },
+    "ไม่สำเร็จ": {
+      "th": "ไม่สำเร็จ",
+      "en": "Failed"
+    },
+    "ถึง": {
+      "th": "ถึง",
+      "en": "To"
+    },
+    "ค้นหา: รหัสสินค้า / เลข order / รหัสลูกค้า": {
+      "th": "ค้นหา: รหัสสินค้า / เลข order / รหัสลูกค้า",
+      "en": "Search: SKU / Order ID / Customer ID"
+    },
+    "Results": {
+      "th": "Results",
+      "en": "Results"
+    },
+    "Endpoint": {
+      "th": "Endpoint",
+      "en": "Endpoint"
+    },
+    "สรุป": {
+      "th": "สรุป",
+      "en": "Summary"
+    },
+    "ไม่มีรายการในช่วงนี้": {
+      "th": "ไม่มีรายการในช่วงนี้",
+      "en": "No records in this time range"
+    },
+    "— และทุก endpoint ปฏิเสธแถวที่ไม่ใช่รายการทดสอบ (is_test) เสมอ": {
+      "th": "— และทุก endpoint ปฏิเสธแถวที่ไม่ใช่รายการทดสอบ (is_test) เสมอ",
+      "en": "— All endpoints strictly reject rows that are not marked as test records (is_test)."
+    },
+    "+ แจกคูปอง": {
+      "th": "+ แจกคูปอง",
+      "en": "+ Issue Coupon"
+    },
+    "billing@acme.test": {
+      "th": "billing@acme.test",
+      "en": "billing@acme.test"
+    },
+    "DELIVERED": {
+      "th": "DELIVERED",
+      "en": "DELIVERED"
+    },
+    "Holdout:": {
+      "th": "Holdout:",
+      "en": "Holdout:"
+    },
+    "Message text...": {
+      "th": "Message text...",
+      "en": "Message text..."
+    },
+    "Previous image": {
+      "th": "Previous image",
+      "en": "Previous image"
+    },
+    "Send as josh →": {
+      "th": "Send as josh →",
+      "en": "Send as josh →"
+    },
+    "Type": {
+      "th": "Type",
+      "en": "Type"
+    },
+    "ก่อนหน้า": {
+      "th": "ก่อนหน้า",
+      "en": "Previous"
+    },
+    "แก้ไขข้อมูลภายใน": {
+      "th": "แก้ไขข้อมูลภายใน",
+      "en": "Edit Internal Details"
+    },
+    "ค้นหา…": {
+      "th": "ค้นหา…",
+      "en": "Search…"
+    },
+    "โค้ด HTML (Raw HTML)": {
+      "th": "โค้ด HTML (Raw HTML)",
+      "en": "Raw HTML Code"
+    },
+    "ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน": {
+      "th": "ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน",
+      "en": "Empty fields will not erase existing data (josh skips blanks) · Customer/Contract pricing can be managed in Staff Pricing"
+    },
+    "ซ่อนกล่อง “โค้ดที่ใช้ได้” และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง": {
+      "th": "ซ่อนกล่อง “โค้ดที่ใช้ได้” และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง",
+      "en": "Hide 'Available Promo Codes' and copy trigger — intended for pre-granted account coupons without manual input"
+    },
+    "ตั้งรหัสผ่านใหม่ก่อนใช้งาน": {
+      "th": "ตั้งรหัสผ่านใหม่ก่อนใช้งาน",
+      "en": "Reset password before proceeding"
+    },
+    "เนื้อหาอีเมลอยู่ที่ canvas นี้ · หัวข้อด้านบน = subject ที่ส่งจริง · แท็บ Push / In-app ยังใช้ตั้งแจ้งเตือนแยกได้": {
+      "th": "เนื้อหาอีเมลอยู่ที่ canvas นี้ · หัวข้อด้านบน = subject ที่ส่งจริง · แท็บ Push / In-app ยังใช้ตั้งแจ้งเตือนแยกได้",
+      "en": "Email content lives in this canvas · Top heading = final email subject · Push / In-app tab can still configure separate push alerts"
+    },
+    "ปิดฟอร์ม": {
+      "th": "ปิดฟอร์ม",
+      "en": "Close Form"
+    },
+    "เพิ่มการเชื่อมต่อเรียบร้อยแล้ว": {
+      "th": "เพิ่มการเชื่อมต่อเรียบร้อยแล้ว",
+      "en": "Connection added successfully"
+    },
+    "ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป": {
+      "th": "ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป",
+      "en": "No matching records found on this page. Reset filters or navigate forward."
+    },
+    "ยังไม่มี shipment": {
+      "th": "ยังไม่มี shipment",
+      "en": "No shipments yet"
+    },
+    "รหัสสินค้าคงคลัง (Product Inventory ID)": {
+      "th": "รหัสสินค้าคงคลัง (Product Inventory ID)",
+      "en": "Product Inventory ID"
+    },
+    "รายงานที่เปิดอยู่": {
+      "th": "รายงานที่เปิดอยู่",
+      "en": "Active Reports"
+    },
+    "ล้างตัวกรอง": {
+      "th": "ล้างตัวกรอง",
+      "en": "Clear Filters"
+    },
+    "วันส่ง (ว่าง = ตามรอบ)": {
+      "th": "วันส่ง (ว่าง = ตามรอบ)",
+      "en": "Delivery Date (Empty = Default Schedule)"
+    },
+    "สร้างออเดอร์รอชำระ — ส่ง QR ให้ลูกค้า": {
+      "th": "สร้างออเดอร์รอชำระ — ส่ง QR ให้ลูกค้า",
+      "en": "Create Pending Payment Order — Dispatch PromptPay QR to Customer"
+    },
+    "หน้าที่อ่าน:": {
+      "th": "หน้าที่อ่าน:",
+      "en": "Viewed Page:"
+    },
+    "ออเดอร์ที่สร้างแล้ว": {
+      "th": "ออเดอร์ที่สร้างแล้ว",
+      "en": "Orders Created"
+    }
+  }
+  </script>
+<!-- ==================== INTERACTIVE JAVASCRIPT LOGIC ==================== -->
+<script>
+    // --- 1. Bilingual Language Switcher ---
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    const langToggleBtn = document.getElementById('lang-toggle-btn');
+    const langLabel = document.getElementById('lang-label');
+
+    function updateLanguage(targetLang) {
+      currentLang = targetLang;
+      langLabel.textContent = targetLang === 'th' ? 'ไทย / EN' : 'EN / ไทย';
+
+      // Scan all DOM elements tagged with data-i18n-key
+      document.querySelectorAll('[data-i18n-key]').forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (translationsData[key] && translationsData[key][targetLang]) {
+          el.textContent = translationsData[key][targetLang];
+        }
+      });
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      const nextLang = currentLang === 'th' ? 'en' : 'th';
+      updateLanguage(nextLang);
+    });
+
+    // --- 2. Payload Modal Inspector Control ---
+    const payloadModal = document.getElementById('payload-modal');
+    const modalLogId = document.getElementById('modal-log-id');
+    const modalLogEndpoint = document.getElementById('modal-log-endpoint');
+    const jsonPreview = document.getElementById('json-preview');
+
+    const samplePayloads = {
+      'ORD-CREATE-992': {
+        endpoint: '/api/erp/orders/create',
+        title: 'ERP-ORD-991823 (Inbound Ingestion)',
+        json: {
+          "system_caller": "SAP-S4HANA-PROD",
+          "batch_id": "BATCH-TH-20250514-9921",
+          "is_test": false,
+          "transaction_timestamp": "2025-05-14T14:32:08.112+07:00",
+          "orders": [{
+            "erp_order_ref": "ERP-ORD-991823",
+            "customer_id": "CUST-8831",
+            "billing_name": "Siam Logistics & Retail Ltd.",
+            "channel": "B2B_PORTAL",
+            "total_amount": 45890.00,
+            "items": [{ "sku": "SKU-TH-8821", "qty": 120, "price": 382.41 }]
+          }]
+        }
+      },
+      'INV-SYNC-401': {
+        endpoint: '/api/erp/inventory/sync',
+        title: 'Wh: BKK-CENTRAL (Stock Level Sync)',
+        json: {
+          "warehouse_code": "WH-BKK-CENTRAL",
+          "sync_type": "INCREMENTAL",
+          "records": [
+            { "sku": "SKU-TH-9921", "on_hand": 840, "allocated": 120, "safety": 50 },
+            { "sku": "SKU-TH-9922", "on_hand": 1250, "allocated": 300, "safety": 100 }
+          ]
+        }
+      },
+      'PROD-BATCH-ERR': {
+        endpoint: '/api/erp/products/batch',
+        title: 'PROD-BATCH-FAIL (Validation Reject)',
+        json: {
+          "error": "BAD_REQUEST",
+          "code": 40012,
+          "message": "Required property 'barcode' is missing on row index 4 (sku: SKU-RAW-5501)",
+          "rejected_at": "2025-05-14T14:30:12.441+07:00",
+          "action": "Payload discarded. Correct ERP mapping before retry."
+        }
+      },
+      'PRICE-UPD-882': {
+        endpoint: '/api/erp/pricing/update',
+        title: 'TIER-3-CONTRACT (B2B Pricing Table)',
+        json: {
+          "pricing_tier": "B2B_TIER_3",
+          "effective_date": "2025-06-01",
+          "rules": [
+            { "sku": "SKU-TH-092", "discount_pct": 14.5, "min_order_qty": 50 }
+          ]
+        }
+      },
+      'SHIP-ACK-102': {
+        endpoint: '/api/erp/shipments/ack',
+        title: 'TH9018291038 (Courier Handshake)',
+        json: {
+          "carrier": "FLASH_EXPRESS",
+          "tracking_number": "TH9018291038",
+          "status": "MANIFEST_RECEIVED",
+          "pickup_slot": "2025-05-14T17:00:00+07:00"
+        }
+      }
+    };
+
+    function openPayloadModal(logKey) {
+      const data = samplePayloads[logKey] || samplePayloads['ORD-CREATE-992'];
+      modalLogId.textContent = data.title;
+      modalLogEndpoint.textContent = data.endpoint;
+      jsonPreview.textContent = JSON.stringify(data.json, null, 2);
+      payloadModal.classList.remove('hidden');
+    }
+
+    function closePayloadModal() {
+      payloadModal.classList.add('hidden');
+    }
+
+    // --- 3. Filtering Simulation Logic ---
+    const applyFilterBtn = document.getElementById('apply-filter-btn');
+    const resetFilterBtn = document.getElementById('reset-filter-btn');
+    const endpointFilter = document.getElementById('endpoint-filter');
+    const statusFilter = document.getElementById('status-filter');
+    const keywordInput = document.getElementById('keyword-input');
+    const logRowsContainer = document.getElementById('log-rows-container');
+    const emptyStateContainer = document.getElementById('empty-state-container');
+    const resultsCount = document.getElementById('results-count');
+
+    applyFilterBtn.addEventListener('click', () => {
+      const epVal = endpointFilter.value;
+      const stVal = statusFilter.value;
+      const kwVal = keywordInput.value.trim().toLowerCase();
+
+      // Simulated filtering: if keyword is 'empty' or an unmatched query, show empty state
+      if (kwVal === 'empty' || kwVal === '999999') {
+        logRowsContainer.classList.add('hidden');
+        emptyStateContainer.classList.remove('hidden');
+        resultsCount.textContent = '0 รายการ';
+      } else {
+        logRowsContainer.classList.remove('hidden');
+        emptyStateContainer.classList.add('hidden');
+        resultsCount.textContent = '5 รายการ (จากทั้งหมด 14,250)';
+      }
+    });
+
+    function resetFilters() {
+      endpointFilter.value = 'ALL';
+      statusFilter.value = 'ALL';
+      keywordInput.value = '';
+      logRowsContainer.classList.remove('hidden');
+      emptyStateContainer.classList.add('hidden');
+      resultsCount.textContent = '5 รายการ (จากทั้งหมด 14,250)';
+    }
+
+    resetFilterBtn.addEventListener('click', resetFilters);
+
+    // Refresh simulation
+    const refreshBtn = document.getElementById('refresh-btn');
+    refreshBtn.addEventListener('click', () => {
+      refreshBtn.classList.add('opacity-50');
+      setTimeout(() => {
+        refreshBtn.classList.remove('opacity-50');
+      }, 400);
+    });
+  </script>
+</body></html>

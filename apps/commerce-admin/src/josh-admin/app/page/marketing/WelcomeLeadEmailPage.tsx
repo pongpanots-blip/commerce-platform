@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 // @ts-nocheck — copied unchanged from josh web-admin, which has the same type errors in this file (josh type debt, not a commerce change).
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -16,6 +17,8 @@ import {
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { RichTextEditor } from '../../components/rich-text/RichTextEditor';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const INPUT_CLASS =
   'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none';
 
@@ -38,29 +41,29 @@ type CopyFieldType = 'text' | 'richLimited' | 'richFull' | 'url';
 
 /** Row order + Thai label for every copy field, mirroring the mock (`E-Mail Template_with_logo`). */
 const COPY_FIELDS: { key: keyof WelcomeLeadEmailCopy; label: string; type: CopyFieldType }[] = [
-  { key: 'subject', label: 'หัวเรื่องอีเมล (subject)', type: 'text' },
-  { key: 'taglineTop', label: 'ข้อความข้างโลโก้ บรรทัด 1 (taglineTop)', type: 'text' },
-  { key: 'taglineBottom', label: 'ข้อความข้างโลโก้ บรรทัด 2 – ตัวหนา (taglineBottom)', type: 'text' },
-  { key: 'headlineTop', label: 'หัวข้อ บรรทัด 1 (headlineTop)', type: 'text' },
-  { key: 'headlineBottom', label: 'หัวข้อ บรรทัด 2 – ตัวหนา (headlineBottom)', type: 'text' },
-  { key: 'body', label: 'เนื้อหา (body)', type: 'richFull' },
-  { key: 'cta', label: 'ปุ่ม (cta)', type: 'text' },
-  { key: 'footerLegal', label: 'ข้อความลิขสิทธิ์ (footerLegal)', type: 'richLimited' },
-  { key: 'terms', label: 'ข้อความ — Terms (terms)', type: 'text' },
-  { key: 'termsUrl', label: 'URL — Terms (termsUrl)', type: 'url' },
-  { key: 'privacy', label: 'ข้อความ — Privacy (privacy)', type: 'text' },
-  { key: 'privacyUrl', label: 'URL — Privacy (privacyUrl)', type: 'url' },
+  { key: 'subject', get label(){return __uiText("หัวเรื่องอีเมล (subject)");}, type: 'text' },
+  { key: 'taglineTop', get label(){return __uiText("ข้อความข้างโลโก้ บรรทัด 1 (taglineTop)");}, type: 'text' },
+  { key: 'taglineBottom', get label(){return __uiText("ข้อความข้างโลโก้ บรรทัด 2 – ตัวหนา (taglineBottom)");}, type: 'text' },
+  { key: 'headlineTop', get label(){return __uiText("หัวข้อ บรรทัด 1 (headlineTop)");}, type: 'text' },
+  { key: 'headlineBottom', get label(){return __uiText("หัวข้อ บรรทัด 2 – ตัวหนา (headlineBottom)");}, type: 'text' },
+  { key: 'body', get label(){return __uiText("เนื้อหา (body)");}, type: 'richFull' },
+  { key: 'cta', get label(){return __uiText("ปุ่ม (cta)");}, type: 'text' },
+  { key: 'footerLegal', get label(){return __uiText("ข้อความลิขสิทธิ์ (footerLegal)");}, type: 'richLimited' },
+  { key: 'terms', get label(){return __uiText("ข้อความ — Terms (terms)");}, type: 'text' },
+  { key: 'termsUrl', get label(){return __uiText("URL — Terms (termsUrl)");}, type: 'url' },
+  { key: 'privacy', get label(){return __uiText("ข้อความ — Privacy (privacy)");}, type: 'text' },
+  { key: 'privacyUrl', get label(){return __uiText("URL — Privacy (privacyUrl)");}, type: 'url' },
 ];
 
 /** Fields that get translated (text + rich); URLs are never translated. */
 const TRANSLATABLE_COPY_FIELDS = COPY_FIELDS.filter((field) => field.type !== 'url');
 
 const STYLE_FIELDS: { key: keyof WelcomeLeadEmailStyle; label: string }[] = [
-  { key: 'taglineSize', label: 'ข้อความข้างโลโก้ (taglineSize)' },
-  { key: 'headlineSize', label: 'หัวข้อ (headlineSize)' },
-  { key: 'bodySize', label: 'เนื้อหา (bodySize)' },
-  { key: 'ctaSize', label: 'ปุ่ม (ctaSize)' },
-  { key: 'footerSize', label: 'Footer (footerSize)' },
+  { key: 'taglineSize', get label(){return __uiText("ข้อความข้างโลโก้ (taglineSize)");} },
+  { key: 'headlineSize', get label(){return __uiText("หัวข้อ (headlineSize)");} },
+  { key: 'bodySize', get label(){return __uiText("เนื้อหา (bodySize)");} },
+  { key: 'ctaSize', get label(){return __uiText("ปุ่ม (ctaSize)");} },
+  { key: 'footerSize', get label(){return __uiText("Footer (footerSize)");} },
 ];
 
 /** One copy row: label left, TH input | EN input, per-box translate buttons. Text inputs for plain/url, RichTextEditor for rich fields. */
@@ -85,19 +88,20 @@ function CopyRow({
   onTranslateBox: ((direction: 'th' | 'en') => void) | null;
   disabled: boolean;
 }) {
+  __useUiLocale();
   const thId = useId();
   const enId = useId();
   const isRich = type === 'richLimited' || type === 'richFull';
   const inputType = type === 'url' ? 'url' : 'text';
 
   return (
-    <div className="grid gap-3 rounded-lg border border-gray-100 p-3 md:grid-cols-[220px,1fr,1fr]">
+    <div className="grid gap-3 rounded-lg border border-gray-100 p-3 xl:grid-cols-[220px,minmax(0,1fr),minmax(0,1fr)]">
       <label htmlFor={isRich ? undefined : thId} className="text-xs font-medium text-gray-500">
         {label}
       </label>
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <span className="text-[11px] text-gray-400">ไทย</span>
+          <span className="text-[11px] text-gray-400">{__uiText("ไทย")}</span>
           {onTranslateBox ? (
             <button
               type="button"
@@ -105,7 +109,7 @@ function CopyRow({
               disabled={disabled}
               onClick={() => onTranslateBox('th')}
             >
-              {translatingKey === 'th' ? 'กำลังแปล...' : '← แปลจาก EN'}
+              {translatingKey === 'th' ? __uiText("กำลังแปล...") : __uiText("← แปลจาก EN")}
             </button>
           ) : null}
         </div>
@@ -124,7 +128,7 @@ function CopyRow({
       </div>
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <span className="text-[11px] text-gray-400">English</span>
+          <span className="text-[11px] text-gray-400">{__uiText("English")}</span>
           {onTranslateBox ? (
             <button
               type="button"
@@ -132,7 +136,7 @@ function CopyRow({
               disabled={disabled}
               onClick={() => onTranslateBox('en')}
             >
-              {translatingKey === 'en' ? 'กำลังแปล...' : 'แปลจาก ไทย →'}
+              {translatingKey === 'en' ? __uiText("กำลังแปล...") : __uiText("แปลจาก ไทย →")}
             </button>
           ) : null}
         </div>
@@ -168,9 +172,10 @@ function StyleRow({
   onChangeEn: (value: number) => void;
   disabled: boolean;
 }) {
+  __useUiLocale();
   const parse = (raw: string): number => Math.round(Number(raw)) || 0;
   return (
-    <div className="grid gap-3 rounded-lg border border-gray-100 p-3 md:grid-cols-[220px,1fr,1fr] md:items-center">
+    <div className="grid gap-3 rounded-lg border border-gray-100 p-3 xl:grid-cols-[220px,minmax(0,1fr),minmax(0,1fr)] xl:items-center">
       <span className="text-xs font-medium text-gray-500">{label}</span>
       <input
         type="number"
@@ -200,9 +205,9 @@ const IMAGE_ASSET_CONFIG: {
   hint: string;
   checkered?: boolean;
 }[] = [
-  { kind: 'hero', label: 'Hero image', hint: 'PNG พื้นใส แนะนำ 1200×643px' },
-  { kind: 'logo', label: 'Logo', hint: 'PNG พื้นใส แนะนำ 500×163px', checkered: true },
-  { kind: 'enjosh', label: 'Enjosh signature', hint: 'PNG พื้นใส แนะนำ 480×277px', checkered: true },
+  { kind: 'hero', get label() { return __uiText("Hero image"); }, get hint() { return __uiText("PNG พื้นใส แนะนำ 1200×643px"); } },
+  { kind: 'logo', get label() { return __uiText("Logo"); }, get hint() { return __uiText("PNG พื้นใส แนะนำ 500×163px"); }, checkered: true },
+  { kind: 'enjosh', get label() { return __uiText("Enjosh signature"); }, get hint() { return __uiText("PNG พื้นใส แนะนำ 480×277px"); }, checkered: true },
 ];
 
 /** Landing order (`apps/landing-web/src/social.ts`). */
@@ -216,25 +221,25 @@ const SOCIAL_FIELDS: {
     key: 'socialInstagramUrl',
     resolvedKey: 'resolvedSocialInstagramUrl',
     defaultsKey: 'socialInstagramUrl',
-    label: 'Instagram URL',
+    get label(){return __uiText("Instagram URL");},
   },
   {
     key: 'socialTiktokUrl',
     resolvedKey: 'resolvedSocialTiktokUrl',
     defaultsKey: 'socialTiktokUrl',
-    label: 'TikTok URL',
+    get label(){return __uiText("TikTok URL");},
   },
   {
     key: 'socialFacebookUrl',
     resolvedKey: 'resolvedSocialFacebookUrl',
     defaultsKey: 'socialFacebookUrl',
-    label: 'Facebook URL',
+    get label(){return __uiText("Facebook URL");},
   },
   {
     key: 'socialLinkedinUrl',
     resolvedKey: 'resolvedSocialLinkedinUrl',
     defaultsKey: 'socialLinkedinUrl',
-    label: 'LinkedIn URL',
+    get label(){return __uiText("LinkedIn URL");},
   },
 ];
 
@@ -272,6 +277,7 @@ function ImageAssetCard({
   onUpload: (file: File) => void;
   onReset: () => void;
 }) {
+  __useUiLocale();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const busy = uploading || resetting;
 
@@ -281,13 +287,13 @@ function ImageAssetCard({
       {previewUrl ? (
         <img
           src={previewUrl}
-          alt={`${label} preview`}
+          alt={__uiText("{0} preview", {"0": label})}
           className={`max-h-40 w-full rounded-lg border border-gray-100 object-contain ${
             checkered ? 'bg-gray-100' : ''
           }`}
         />
       ) : (
-        <p className="text-sm text-gray-500">ไม่มีรูปพรีวิว</p>
+        <p className="text-sm text-gray-500">{__uiText("ไม่มีรูปพรีวิว")}</p>
       )}
       <p className="text-xs text-gray-400">{hint}</p>
       <div className="flex flex-wrap items-center gap-2">
@@ -308,7 +314,7 @@ function ImageAssetCard({
           disabled={busy}
           onClick={() => fileInputRef.current?.click()}
         >
-          {uploading ? 'กำลังอัปโหลด…' : 'อัปโหลด'}
+          {uploading ? __uiText("กำลังอัปโหลด…") : __uiText("อัปโหลด")}
         </button>
         <button
           type="button"
@@ -316,7 +322,7 @@ function ImageAssetCard({
           disabled={busy || !hasOverride}
           onClick={onReset}
         >
-          {resetting ? 'กำลังรีเซ็ต…' : 'ใช้ค่าเริ่มต้น'}
+          {resetting ? __uiText("กำลังรีเซ็ต…") : __uiText("ใช้ค่าเริ่มต้น")}
         </button>
       </div>
     </div>
@@ -348,6 +354,7 @@ const FALLBACK_STYLE: WelcomeLeadEmailStyle = {
 };
 
 export default function WelcomeLeadEmailPage() {
+  __useUiLocale();
   const [assets, setAssets] = useState<WelcomeLeadEmailAssets>(EMPTY_ASSETS);
   const [copy, setCopy] = useState<CopyDraft>({ th: FALLBACK_COPY, en: FALLBACK_COPY });
   const [style, setStyle] = useState<StyleDraft>({ th: FALLBACK_STYLE, en: FALLBACK_STYLE });
@@ -396,7 +403,7 @@ export default function WelcomeLeadEmailPage() {
           en: data.style?.en ?? data.defaults?.style.en ?? FALLBACK_STYLE,
         });
       })
-      .catch((err: Error) => setError(err.message || 'โหลดไม่สำเร็จ'))
+      .catch((err: Error) => setError(err.message || __uiMessage("โหลดไม่สำเร็จ")))
       .finally(() => setLoading(false));
   }, []);
 
@@ -428,7 +435,7 @@ export default function WelcomeLeadEmailPage() {
       setPreviewSubject(result.subject);
       setPreviewHtml(result.html);
     } catch (err: any) {
-      setPreviewError(err?.response?.data?.message || 'พรีวิวไม่สำเร็จ');
+      setPreviewError(err?.response?.data?.message || __uiMessage("พรีวิวไม่สำเร็จ"));
     } finally {
       setPreviewLoading(false);
     }
@@ -473,7 +480,7 @@ export default function WelcomeLeadEmailPage() {
   };
 
   const handleImageReset = async (kind: WelcomeLeadImageKind) => {
-    if (!window.confirm('ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ')) return;
+    if (!window.confirm(__uiText("ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ"))) return;
     setResettingKind(kind);
     setError(null);
     setMessage(null);
@@ -514,7 +521,7 @@ export default function WelcomeLeadEmailPage() {
 
   const translateAll = async (from: 'th' | 'en', to: 'th' | 'en') => {
     const targetName = to === 'en' ? 'อังกฤษ' : 'ไทย';
-    if (!window.confirm(`การแปลจะเขียนทับข้อความภาษา${targetName}ทั้งหมด ยืนยัน?`)) return;
+    if (!window.confirm(__uiText("การแปลจะเขียนทับข้อความภาษา{0}ทั้งหมด ยืนยัน?", {"0": targetName}))) return;
     const sourceCopy = copy[from];
     const sourceDefaults = defaultsCopy[from];
     const items = TRANSLATABLE_COPY_FIELDS.map(({ key }) => sourceCopy[key] || sourceDefaults[key]);
@@ -538,33 +545,31 @@ export default function WelcomeLeadEmailPage() {
   };
 
   const resetCopy = () => {
-    if (!window.confirm('รีเซ็ตข้อความอีเมลทั้งสองภาษาเป็นค่าเริ่มต้น?')) return;
+    if (!window.confirm(__uiText("รีเซ็ตข้อความอีเมลทั้งสองภาษาเป็นค่าเริ่มต้น?"))) return;
     setCopy({ th: defaultsCopy.th, en: defaultsCopy.en });
   };
 
   const resetStyle = () => {
-    if (!window.confirm('รีเซ็ตขนาดตัวอักษรทั้งสองภาษาเป็นค่าเริ่มต้น?')) return;
+    if (!window.confirm(__uiText("รีเซ็ตขนาดตัวอักษรทั้งสองภาษาเป็นค่าเริ่มต้น?"))) return;
     setStyle({ th: defaultsStyle.th, en: defaultsStyle.en });
   };
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">กำลังโหลด…</div>;
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด…")}</div>;
   }
 
   return (
     <div className="mx-auto max-w-[1500px] space-y-6 p-6">
       <div>
         <Link to={ADMIN_ROUTES.marketingSettings} className="text-sm text-gray-500 hover:text-gray-700">
-          ← Marketing Settings
-        </Link>
-        <h1 className="mt-2 text-xl font-semibold text-gray-900">Welcome Lead Email</h1>
+          {__uiText("← Marketing Settings")}</Link>
+        <h1 className="mt-2 text-xl font-semibold text-gray-900">{__uiText("Welcome Lead Email")}</h1>
         <p className="mt-1 text-sm text-gray-500">
-          แก้ไขข้อความ ขนาดตัวอักษร และรูป/URL ของอีเมลต้อนรับหลัง lead intake — มีผลทันทีใน prod ไม่ต้อง redeploy
-        </p>
+          {__uiText("แก้ไขข้อความ ขนาดตัวอักษร และรูป/URL ของอีเมลต้อนรับหลัง lead intake — มีผลทันทีใน prod ไม่ต้อง redeploy")}</p>
       </div>
 
       {error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{(typeof error === 'string' ? __uiText(error) : error)}</div>
       ) : null}
       {message ? (
         <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
@@ -572,13 +577,13 @@ export default function WelcomeLeadEmailPage() {
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr,660px]">
+      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr),660px]">
         <div className="space-y-6">
           <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-sm font-semibold text-gray-900">รูปภาพ</h2>
+              <h2 className="text-sm font-semibold text-gray-900">{__uiText("รูปภาพ")}</h2>
               {assets.updatedAt ? (
-                <span className="text-xs text-gray-400">อัปเดตล่าสุด: {assets.updatedAt}</span>
+                <span className="text-xs text-gray-400">{__uiText("อัปเดตล่าสุด: ")}{assets.updatedAt}</span>
               ) : null}
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
@@ -600,9 +605,9 @@ export default function WelcomeLeadEmailPage() {
           </section>
 
           <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-5">
-            <h2 className="text-sm font-semibold text-gray-900">Assets อื่นๆ</h2>
+            <h2 className="text-sm font-semibold text-gray-900">{__uiText("Assets อื่นๆ")}</h2>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">CTA URL</label>
+              <label className="mb-1 block text-xs font-medium text-gray-500">{__uiText("CTA URL")}</label>
               <input
                 type="url"
                 className={INPUT_CLASS}
@@ -611,7 +616,7 @@ export default function WelcomeLeadEmailPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">สีพื้นหลังอีเมล</label>
+              <label className="mb-1 block text-xs font-medium text-gray-500">{__uiText("สีพื้นหลังอีเมล")}</label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
@@ -630,8 +635,7 @@ export default function WelcomeLeadEmailPage() {
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">
-                ไล่สีจากขาวถึง (% ของความสูง)
-              </label>
+                {__uiText("ไล่สีจากขาวถึง (% ของความสูง)")}</label>
               <div className="flex items-center gap-3">
                 <input
                   type="range"
@@ -649,13 +653,12 @@ export default function WelcomeLeadEmailPage() {
                 </span>
               </div>
               <p className="mt-1 text-xs text-gray-400">
-                0 = สีพื้นล้วน, 50 ≈ ใต้ลายเซ็น Enjosh (ตาม mock)
-              </p>
+                {__uiText("0 = สีพื้นล้วน, 50 ≈ ใต้ลายเซ็น Enjosh (ตาม mock)")}</p>
             </div>
           </section>
 
           <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-5">
-            <h2 className="text-sm font-semibold text-gray-900">โซเชียล</h2>
+            <h2 className="text-sm font-semibold text-gray-900">{__uiText("โซเชียล")}</h2>
             {SOCIAL_FIELDS.map(({ key, defaultsKey, label }) => (
               <div key={key}>
                 <label className="mb-1 block text-xs font-medium text-gray-500">{label}</label>
@@ -673,17 +676,16 @@ export default function WelcomeLeadEmailPage() {
                       setAssets((prev) => ({ ...prev, [key]: defaultsAssets[defaultsKey] }))
                     }
                   >
-                    ใช้ค่าเริ่มต้น
-                  </button>
+                    {__uiText("ใช้ค่าเริ่มต้น")}</button>
                 </div>
-                <p className="mt-1 text-xs text-gray-400">ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน</p>
+                <p className="mt-1 text-xs text-gray-400">{__uiText("ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน")}</p>
               </div>
             ))}
           </section>
 
           <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold text-gray-900">ข้อความอีเมล</h2>
+              <h2 className="text-sm font-semibold text-gray-900">{__uiText("ข้อความอีเมล")}</h2>
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -691,24 +693,21 @@ export default function WelcomeLeadEmailPage() {
                   disabled={translating}
                   onClick={() => void translateAll('th', 'en')}
                 >
-                  แปลทั้งหมด TH → EN
-                </button>
+                  {__uiText("แปลทั้งหมด TH → EN")}</button>
                 <button
                   type="button"
                   className={TRANSLATE_BUTTON_CLASS}
                   disabled={translating}
                   onClick={() => void translateAll('en', 'th')}
                 >
-                  แปลทั้งหมด EN → TH
-                </button>
+                  {__uiText("แปลทั้งหมด EN → TH")}</button>
                 <button
                   type="button"
                   className={TRANSLATE_BUTTON_CLASS}
                   disabled={translating}
                   onClick={resetCopy}
                 >
-                  รีเซ็ตเป็นค่าเริ่มต้น
-                </button>
+                  {__uiText("รีเซ็ตเป็นค่าเริ่มต้น")}</button>
               </div>
             </div>
             {translateStatus && <p className="text-xs text-gray-500">{translateStatus}</p>}
@@ -732,10 +731,9 @@ export default function WelcomeLeadEmailPage() {
 
           <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold text-gray-900">ขนาดตัวอักษร (px)</h2>
+              <h2 className="text-sm font-semibold text-gray-900">{__uiText("ขนาดตัวอักษร (px)")}</h2>
               <button type="button" className={TRANSLATE_BUTTON_CLASS} disabled={translating} onClick={resetStyle}>
-                รีเซ็ตเป็นค่าเริ่มต้น
-              </button>
+                {__uiText("รีเซ็ตเป็นค่าเริ่มต้น")}</button>
             </div>
             <div className="space-y-2">
               {STYLE_FIELDS.map(({ key, label }) => (
@@ -753,14 +751,14 @@ export default function WelcomeLeadEmailPage() {
           </section>
 
           <button type="button" className={SAVE_BUTTON_CLASS} disabled={saving || translating} onClick={() => void handleSave()}>
-            {saving ? 'กำลังบันทึก…' : 'บันทึก'}
+            {saving ? __uiText("กำลังบันทึก…") : __uiText("บันทึก")}
           </button>
         </div>
 
-        <div className="lg:sticky lg:top-6 lg:self-start">
+        <div className="min-w-0 2xl:sticky 2xl:top-6 2xl:self-start">
           <section className="space-y-3 rounded-xl border border-gray-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-sm font-semibold text-gray-900">Preview</h2>
+              <h2 className="text-sm font-semibold text-gray-900">{__uiText("Preview")}</h2>
               <div className="flex gap-2">
                 {(['th', 'en'] as const).map((locale) => (
                   <button
@@ -771,7 +769,7 @@ export default function WelcomeLeadEmailPage() {
                     }`}
                     onClick={() => setPreviewLocale(locale)}
                   >
-                    {locale === 'th' ? 'ไทย' : 'English'}
+                    {locale === 'th' ? __uiText("ไทย") : __uiText("English")}
                   </button>
                 ))}
                 <span className="mx-1 border-l border-gray-200" />
@@ -784,7 +782,7 @@ export default function WelcomeLeadEmailPage() {
                     }`}
                     onClick={() => setPreviewWidth(width)}
                   >
-                    {width === 600 ? 'Desktop' : 'Mobile'}
+                    {width === 600 ? __uiText("Desktop") : __uiText("Mobile")}
                   </button>
                 ))}
               </div>
@@ -795,13 +793,13 @@ export default function WelcomeLeadEmailPage() {
               disabled={previewLoading || translating}
               onClick={() => void refreshPreview()}
             >
-              {previewLoading ? 'กำลังโหลด preview…' : 'รีเฟรช preview'}
+              {previewLoading ? __uiText("กำลังโหลด preview…") : __uiText("รีเฟรช preview")}
             </button>
-            {previewError && <p className="text-xs text-red-500">{previewError}</p>}
-            <p className="text-xs font-medium text-gray-700">หัวเรื่อง: {previewSubject || '—'}</p>
+            {previewError && <p className="text-xs text-red-500">{(typeof (previewError) === 'string' ? __uiText(previewError) : previewError)}</p>}
+            <p className="text-xs font-medium text-gray-700">{__uiText("หัวเรื่อง: ")}{previewSubject || '—'}</p>
             <div style={{ overflowX: 'auto' }}>
               <iframe
-                title="welcome-lead-email-preview"
+                title={__uiText("welcome-lead-email-preview")}
                 sandbox=""
                 srcDoc={previewHtml}
                 style={{ width: previewWidth, height: 'calc(100vh - 230px)', minHeight: 700 }}
@@ -814,3 +812,5 @@ export default function WelcomeLeadEmailPage() {
     </div>
   );
 }
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

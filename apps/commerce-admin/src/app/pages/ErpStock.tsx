@@ -3,7 +3,10 @@ import { Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageH
 import { api, ErpStubStockRow, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function ErpStock() {
+  __useUiLocale();
   const { data, loading, error, reload } = useAsync(
     () => api.get<Paginated<ErpStubStockRow>>('/erp-stub/stock'), []);
   const [form, setForm] = useState({ sku: '', qty: '' });
@@ -27,29 +30,29 @@ export function ErpStock() {
   return (
     <Page>
       <PageHeader
-        title="ERP stub stock"
-        subtitle="Simulated ERP inventory — set stock levels for the on_hand fulfillment mode."
-        actions={<Button icon="refresh" variant="secondary" onClick={reload}>Refresh</Button>}
+        title={__uiText("ERP stub stock")}
+        subtitle={__uiText("Simulated ERP inventory — set stock levels for the on_hand fulfillment mode.")}
+        actions={<Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("Refresh")}</Button>}
       />
 
       <FormPanel
-        title="Set stock level"
+        title={__uiText("Set stock level")}
         icon="inventory_2"
         cols={2}
         error={formError}
-        submitLabel="Set stock"
+        submitLabel={__uiText("Set stock")}
         busy={submitting}
         onSubmit={handleSubmit}
       >
-        <Field label="SKU">
+        <Field label={__uiText("SKU")}>
           <Input
             required
             value={form.sku}
             onChange={(e) => setForm({ ...form, sku: e.target.value })}
-            placeholder="e.g. SKU-A"
+            placeholder={__uiText("e.g. SKU-A")}
           />
         </Field>
-        <Field label="Quantity">
+        <Field label={__uiText("Quantity")}>
           <Input
             required
             value={form.qty}
@@ -60,17 +63,17 @@ export function ErpStock() {
       </FormPanel>
 
       <Panel>
-        <PanelHead title="Stock levels" />
+        <PanelHead title={__uiText("Stock levels")} />
         <ErrorText error={error} />
         {loading && !data ? (
           <Loading />
         ) : !data?.items.length ? (
-          <Empty>No stock rows yet.</Empty>
+          <Empty>{__uiText("No stock rows yet.")}</Empty>
         ) : (
           <Table>
             <THead>
-              <TH>SKU</TH>
-              <TH right>Qty</TH>
+              <TH>{__uiText("SKU")}</TH>
+              <TH right>{__uiText("Qty")}</TH>
             </THead>
             <TBody>
               {data.items.map((s) => (

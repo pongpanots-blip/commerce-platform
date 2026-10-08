@@ -1,3 +1,6 @@
+// ui-render-cache-locale: refresh memoized UI labels when the language changes
+import { getUiLocale as __getUiLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import {
   bulkDeleteBranchContractPrices,
   createBranchContractPrice,
@@ -10,10 +13,12 @@ import { DateRangeInput, Input, Select, Table, TableColumn } from '@josh/shared-
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS_LABELS = {
-  active: 'ใช้งาน',
-  scheduled: 'รอเริ่ม',
-  expired: 'หมดอายุ',
+  get active(){return __uiText("ใช้งาน");},
+  get scheduled(){return __uiText("รอเริ่ม");},
+  get expired(){return __uiText("หมดอายุ");},
 } as const;
 
 const STATUS_STYLES = {
@@ -32,6 +37,7 @@ type Props = {
 
 /** Branch-scoped contract prices only. Special/private prices live on the company. */
 export function BranchPricingPanel({ branches, companyEditHref }: Props) {
+  __useUiLocale();
   const [branchId, setBranchId] = useState(branches[0]?.id ?? '');
   const [contractRows, setContractRows] = useState<BranchContractPriceListItem[]>(
     [],
@@ -67,7 +73,7 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
           ? (err as { response?: { data?: { message?: string } } }).response
               ?.data?.message
           : undefined;
-      setError(message ?? 'โหลดราคาสัญญาไม่สำเร็จ');
+      setError(message ?? __uiMessage("โหลดราคาสัญญาไม่สำเร็จ"));
     } finally {
       setLoading(false);
     }
@@ -85,7 +91,7 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
 
   const handleBulkDelete = async () => {
     if (!selectedIds.length) return;
-    if (!window.confirm(`ลบ ${selectedIds.length} รายการ?`)) return;
+    if (!window.confirm(__uiText("ลบ {0} รายการ?", {"0": selectedIds.length}))) return;
     await bulkDeleteBranchContractPrices(selectedIds);
     setSelectedIds([]);
     await load();
@@ -96,7 +102,7 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
     if (!branchId) return;
     const price = Number(form.price);
     if (!form.sku.trim() || Number.isNaN(price)) {
-      setError('กรุณาระบุ SKU และราคา');
+      setError(__uiMessage("กรุณาระบุ SKU และราคา"));
       return;
     }
 
@@ -119,7 +125,7 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
       });
       await load();
     } catch {
-      setError('บันทึกราคาสัญญาไม่สำเร็จ');
+      setError(__uiMessage("บันทึกราคาสัญญาไม่สำเร็จ"));
     } finally {
       setSaving(false);
     }
@@ -133,17 +139,17 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
         render: (_, row) => (
           <input
             type="checkbox"
-            aria-label={`เลือกราคาสัญญาของ ${row.sku}`}
+            aria-label={__uiText("เลือกราคาสัญญาของ {0}", {"0": row.sku})}
             checked={selectedIds.includes(row.id)}
             onChange={() => toggleSelect(row.id)}
           />
         ),
       },
-      { key: 'sku', label: 'SKU' },
-      { key: 'contract_ref', label: 'เลขสัญญา' },
+      { key: 'sku', label: __uiText("SKU") },
+      { key: 'contract_ref', label: __uiText("เลขสัญญา") },
       {
         key: 'contract_price',
-        label: 'ราคาสัญญา',
+        label: __uiText("ราคาสัญญา"),
         render: (value, row) => (
           <button
             type="button"
@@ -159,19 +165,19 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
               await load();
             }}
           >
-            ฿{Number(value).toLocaleString()}
+            {__uiText("฿")}{Number(value).toLocaleString()}
           </button>
         ),
       },
       {
         key: 'start_date',
-        label: 'ช่วงเวลา',
+        label: __uiText("ช่วงเวลา"),
         render: (_, row) =>
           `${row.start_date} – ${row.end_date ?? 'ไม่กำหนด'}`,
       },
       {
         key: 'status',
-        label: 'สถานะ',
+        label: __uiText("สถานะ"),
         render: (value: BranchContractPriceListItem['status']) => (
           <span
             className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[value]}`}
@@ -188,37 +194,33 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
             type="button"
             className="text-xs text-red-600 hover:underline"
             onClick={async () => {
-              if (!window.confirm('ลบราคาสัญญานี้?')) return;
+              if (!window.confirm(__uiText("ลบราคาสัญญานี้?"))) return;
               await deleteBranchContractPrice(row.id);
               await load();
             }}
           >
-            ลบ
-          </button>
+            {__uiText("ลบ")}</button>
         ),
       },
     ],
-    [load, selectedIds],
+    [load, selectedIds, __getUiLocale()],
   );
 
   if (!branches.length) {
     return (
       <p className="p-4 text-sm text-gray-500">
-        ยังไม่มีสาขา — ไม่สามารถกำหนดราคาสัญญาตาม branch ได้
-      </p>
+        {__uiText("ยังไม่มีสาขา — ไม่สามารถกำหนดราคาสัญญาตาม branch ได้")}</p>
     );
   }
 
   return (
     <div className="grid gap-4">
       <p className="text-sm text-gray-500">
-        ราคาสัญญาต่อสาขา · ราคาพิเศษ (Customer SKU) จัดการที่หน้าบริษัท
-        {companyEditHref ? (
+        {__uiText("ราคาสัญญาต่อสาขา · ราคาพิเศษ (Customer SKU) จัดการที่หน้าบริษัท")}{companyEditHref ? (
           <>
             {' '}
             <Link to={companyEditHref} className="text-primary hover:underline">
-              ไปที่บริษัท
-            </Link>
+              {__uiText("ไปที่บริษัท")}</Link>
           </>
         ) : null}
       </p>
@@ -226,7 +228,7 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
       <div className="flex flex-wrap items-center gap-3">
         <div className="w-48">
           <Select
-            label="สาขา"
+            label={__uiText("สาขา")}
             value={branchId}
             onChange={(e) => {
               setBranchId(e.target.value);
@@ -242,7 +244,7 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
 
       {selectedIds.length > 0 && (
         <button
@@ -250,7 +252,7 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
           onClick={() => void handleBulkDelete()}
           className="w-fit rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
         >
-          ลบที่เลือก ({selectedIds.length})
+          {__uiText("ลบที่เลือก (")}{selectedIds.length})
         </button>
       )}
 
@@ -259,25 +261,25 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
         className="grid gap-3 rounded-lg border border-gray-100 bg-gray-50 p-4 md:grid-cols-[1fr_1fr_1fr_2fr_auto]"
       >
         <Input
-          label="รหัสสินค้า (SKU)"
+          label={__uiText("รหัสสินค้า (SKU)")}
           value={form.sku}
           onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))}
         />
         <Input
-          label="ราคาสัญญา (บาท)"
+          label={__uiText("ราคาสัญญา (บาท)")}
           type="number"
           value={form.price}
           onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
         />
         <Input
-          label="เลขที่สัญญา (ถ้ามี)"
+          label={__uiText("เลขที่สัญญา (ถ้ามี)")}
           value={form.contract_ref}
           onChange={(e) =>
             setForm((f) => ({ ...f, contract_ref: e.target.value }))
           }
         />
         <DateRangeInput
-          label="ช่วงวันที่มีผล"
+          label={__uiText("ช่วงวันที่มีผล")}
           startDate={form.start_date}
           endDate={form.end_date}
           onStartDateChange={(v) => setForm((f) => ({ ...f, start_date: v }))}
@@ -289,14 +291,14 @@ export function BranchPricingPanel({ branches, companyEditHref }: Props) {
           disabled={saving}
           className="h-10 self-end rounded-lg bg-gray-900 px-4 text-sm font-medium text-white disabled:opacity-50"
         >
-          {saving ? 'กำลังบันทึก...' : 'เพิ่มราคาสัญญา'}
+          {saving ? __uiText("กำลังบันทึก...") : __uiText("เพิ่มราคาสัญญา")}
         </button>
       </form>
 
       {loading ? (
-        <p className="text-sm text-gray-500">กำลังโหลด...</p>
+        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : contractRows.length === 0 ? (
-        <p className="text-sm text-gray-500">ยังไม่มีราคาสัญญาสำหรับสาขานี้</p>
+        <p className="text-sm text-gray-500">{__uiText("ยังไม่มีราคาสัญญาสำหรับสาขานี้")}</p>
       ) : (
         <Table columns={contractColumns} data={contractRows} idKey="id" />
       )}

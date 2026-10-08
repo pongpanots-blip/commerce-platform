@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>คลังข้อมูลเว็บคู่แข่ง - Siam Commerce</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN & Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed-dim": "#b9c3ff",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-secondary-container": "#54647c",
+            "surface-variant": "#d7e2ff",
+            "on-primary": "#ffffff",
+            "tertiary-container": "#217b4e",
+            "secondary": "#4f5f77",
+            "on-error": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-primary-container": "#ededff",
+            "surface-bright": "#f9f9ff",
+            "tertiary-fixed-dim": "#82d8a3",
+            "surface-tint": "#214ce7",
+            "on-primary-fixed": "#001257",
+            "surface-container-high": "#e0e8ff",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#00522f",
+            "surface-container-low": "#f1f3ff",
+            "secondary-fixed": "#d3e3ff",
+            "secondary-container": "#d0e1fd",
+            "inverse-surface": "#243048",
+            "surface-dim": "#cddaf9",
+            "on-tertiary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed": "#002110",
+            "error": "#ba1a1a",
+            "surface-container-highest": "#d7e2ff",
+            "surface-container": "#e8eeff",
+            "primary-container": "#365cf5",
+            "on-background": "#0e1b32",
+            "primary": "#0a3fdc",
+            "on-surface-variant": "#444655",
+            "background": "#f6f8fc",
+            "outline": "#747687",
+            "on-secondary-fixed": "#0b1c31",
+            "outline-variant": "#e1e7f0",
+            "primary-fixed": "#dde1ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "tertiary-fixed": "#9ef5be",
+            "surface": "#f9f9ff",
+            "tertiary": "#006139",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-surface": "#0e1b32",
+            "on-error-container": "#93000a",
+            "on-tertiary-container": "#b7ffcf"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "margin-desktop": "1.5rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "gutter-desktop": "1.5rem",
+            "space-md": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "display-lg": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "label-md": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body { font-family: 'Noto Sans', sans-serif; background-color: #f6f8fc; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      font-size: 18px;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased overflow-x-hidden">
+<!-- Side Navigation Bar (Anchored from JSON, active: การตลาด) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-space-md select-none">
+<div class="flex flex-col gap-space-md">
+<!-- Header / Logo -->
+<div class="flex items-center gap-space-sm px-space-xs py-space-xs">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-md font-bold text-headline-md">
+<span class="material-symbols-outlined" style="font-size: 22px;">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight">สยาม คอมเมิร์ซ</span>
+<span class="text-label-sm font-label-sm text-secondary">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full flex items-center justify-center gap-space-xs py-2 px-3 rounded-lg bg-primary-container text-on-primary text-label-md font-label-md transition-colors duration-150 ease-in-out hover:bg-primary shadow-sm">
+<span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1 mt-2">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-lg font-label-lg transition-colors duration-150 ease-in-out" href="#inventory">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-lg font-label-lg transition-colors duration-150 ease-in-out" href="#orders">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-lg font-label-lg transition-colors duration-150 ease-in-out" href="#customers">
+<span class="material-symbols-outlined">group</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- ACTIVE TAB: การตลาด -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm text-headline-sm border-l-4 border-primary transition-colors duration-150 ease-in-out shadow-xs" href="#marketing">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span>การตลาด</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-lg font-label-lg transition-colors duration-150 ease-in-out" href="#analytics">
+<span class="material-symbols-outlined">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-lg font-label-lg transition-colors duration-150 ease-in-out" href="#integrations">
+<span class="material-symbols-outlined">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-lg font-label-lg transition-colors duration-150 ease-in-out" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="flex flex-col gap-1 pt-space-sm border-t border-outline-variant">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-md font-label-md transition-colors duration-150 ease-in-out" href="#help">
+<span class="material-symbols-outlined">help</span>
+<span>คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface text-label-md font-label-md transition-colors duration-150 ease-in-out" href="#logout">
+<span class="material-symbols-outlined">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-gutter-desktop">
+<!-- Left: Breadcrumb / Page Title -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-headline-sm font-headline-sm">
+<span class="text-secondary font-medium">การตลาด</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold" data-translate="คลังข้อมูลเว็บคู่แข่ง">คลังข้อมูลเว็บคู่แข่ง</span>
+</div>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container text-secondary border border-outline-variant/60" data-translate="ข้อมูลตัวอย่าง / Sample data">
+        ข้อมูลตัวอย่าง / Sample data
+      </span>
+</div>
+<!-- Right Controls -->
+<div class="flex items-center gap-4">
+<!-- Language Switcher Interactive -->
+<button class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-label-md font-label-md text-on-surface transition-all duration-150 ease-in-out" id="langToggleBtn" onclick="toggleLanguage()">
+<span class="material-symbols-outlined" style="font-size: 16px;">translate</span>
+<span id="currentLangLabel">ไทย / English</span>
+</button>
+<!-- System Quick Icons -->
+<div class="flex items-center gap-1 text-secondary">
+<button class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-surface-container-low transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-surface-container-low transition-colors" title="ช่วยเหลือ">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<!-- User Profile Badge -->
+<div class="flex items-center gap-2 pl-3 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-headline-sm text-label-md font-semibold">
+          SC
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold text-on-surface">แอดมินผู้ดูแลระบบ</span>
+<span class="text-label-sm font-label-sm text-secondary">Siam Commerce Hub</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas Container -->
+<main class="ml-64 pt-20 pb-16 px-gutter-desktop min-h-screen">
+<div class="max-w-[1240px] mx-auto flex flex-col gap-6">
+<!-- Breadcrumbs & Meta Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface font-semibold" data-translate="คลังข้อมูลเว็บคู่แข่ง">คลังข้อมูลเว็บคู่แข่ง</h1>
+<p class="text-body-md font-body-md text-secondary mt-0.5" data-translate="ค้นหาสินค้า ตรวจข้อมูลต้นทาง แล้วเลือกจับคู่กับ SKU ของเรา">ค้นหาสินค้า ตรวจข้อมูลต้นทาง แล้วเลือกจับคู่กับ SKU ของเรา</p>
+</div>
+<div class="flex items-center gap-2.5">
+<!-- Action: View Comparison -->
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-label-md font-label-md transition-all shadow-sm">
+<span class="material-symbols-outlined text-secondary">monitoring</span>
+<span data-translate="ดูเทียบราคา">ดูเทียบราคา</span>
+</button>
+<!-- Action: Scraping Config -->
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-label-md font-label-md font-semibold transition-all shadow-sm">
+<span class="material-symbols-outlined">settings_suggest</span>
+<span data-translate="ตั้งค่า / เริ่มเก็บเว็บ">ตั้งค่า / เริ่มเก็บเว็บ</span>
+</button>
+</div>
+</div>
+<!-- Notice & Metadata Strip -->
+<div class="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant text-label-md font-label-md">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+<span data-translate="ราคาที่แสดง: THB รวม VAT · น้ำหนักที่ไม่ระบุให้ตรวจเอง">ราคาที่แสดง: THB รวม VAT · น้ำหนักที่ไม่ระบุให้ตรวจเอง</span>
+</div>
+<div class="flex items-center gap-3 text-secondary text-label-sm font-label-sm">
+<span><span data-translate="โหลดล่าสุด">โหลดล่าสุด</span>: <strong class="font-data-tabular font-medium text-on-surface">18 นาทีที่แล้ว (09:42 น.)</strong></span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span><span data-translate="จำนวนสินค้า">จำนวนสินค้า</span>: <strong class="font-data-tabular font-medium text-on-surface">1,428</strong></span>
+</div>
+</div>
+<!-- Filter & Search Bento Bar -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+<div class="flex flex-1 flex-wrap items-center gap-3">
+<!-- Search Box -->
+<div class="relative flex-1 min-w-[260px]">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary">search</span>
+<input class="w-full pl-9 pr-4 py-2 h-[38px] text-body-md font-body-md bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" id="catalogSearchInput" oninput="filterTable()" placeholder="ค้นหา: เช่น เนื้อ 1 กก. หรือ SKU" type="text"/>
+</div>
+<!-- Web Source Filter -->
+<div class="w-48">
+<select class="w-full h-[38px] text-body-md font-body-md bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" id="sourceFilter" onchange="filterTable()">
+<option data-translate="ทุกเว็บ" value="ALL">ทุกเว็บ (Competitor Sources)</option>
+<option value="Makro PRO">Makro PRO</option>
+<option value="Big C Online">Big C Online</option>
+<option value="Freshket">Freshket</option>
+<option value="Lotus's">Lotus's</option>
+</select>
+</div>
+<!-- Status Match Filter -->
+<div class="w-56">
+<select class="w-full h-[38px] text-body-md font-body-md bg-surface-container-lowest border border-outline-variant rounded-lg px-3 text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" id="statusFilter" onchange="filterTable()">
+<option value="ALL">ทุกสถานะการจับคู่ (All Statuses)</option>
+<option value="MATCHED">✓ จับคู่แล้ว</option>
+<option value="SIMILAR">· ชื่อคล้าย (รอตรวจสอบ)</option>
+<option value="WEIGHT_UNCLEAR">น้ำหนักยังไม่ชัดเจน</option>
+<option value="CONFIG_CHANGED">ตั้งค่าเว็บเปลี่ยนแล้ว</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-2 h-[38px] text-label-md font-label-md text-secondary hover:text-on-surface border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors" data-translate="ค้นหา" onclick="resetFilters()">
+            ล้างตัวกรอง
+          </button>
+</div>
+</div>
+<!-- Scraped Data Table Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xs overflow-hidden">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse" id="catalogTable">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-label-md font-label-md text-secondary">
+<th class="py-3 px-4 w-12 text-center" data-translate="รูปภาพ (ไม่บังคับ)">รูป</th>
+<th class="py-3 px-4 min-w-[260px]" data-translate="ชื่อสินค้า / SKU">ชื่อสินค้าจากเว็บ / เว็บต้นทาง</th>
+<th class="py-3 px-4 text-right min-w-[140px]" data-translate="ราคาที่แสดง: THB รวม VAT · น้ำหนักที่ไม่ระบุให้ตรวจเอง">ราคา (THB รวม VAT)</th>
+<th class="py-3 px-4 text-center min-w-[130px]" data-translate="น้ำหนักสุทธิต่อแพ็กคู่แข่ง (กก.)">น้ำหนักสุทธิ (กก.)</th>
+<th class="py-3 px-4 min-w-[120px]" data-translate="เก็บเมื่อ">เก็บเมื่อ</th>
+<th class="py-3 px-4 min-w-[210px]">สถานะการจับคู่</th>
+<th class="py-3 px-4 text-right min-w-[160px]">การจัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-md font-body-md">
+<!-- Row 1: Fully Matched -->
+<tr class="hover:bg-[#f8fafd] transition-colors group">
+<td class="py-3 px-4 text-center">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-size: 20px;">restaurant</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-semibold text-on-surface">เนื้อสันคอวัวนำเข้า ออสเตรเลีย สไลซ์ 1 กก.</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-secondary">
+<span class="font-medium text-primary-container">Makro PRO</span>
+<span class="text-outline-variant">|</span>
+<span class="font-data-tabular">SKU-MKP-99201</span>
+<a class="text-primary hover:underline inline-flex items-center gap-0.5" data-translate="ดูแหล่งที่มา ↗" href="#">
+                      ดูแหล่งที่มา ↗
+                    </a>
+</div>
+</td>
+<td class="py-3 px-4 text-right font-data-tabular font-medium text-on-surface">
+<span class="text-base font-semibold">฿389.00</span>
+<div class="text-label-sm font-label-sm text-secondary">฿389.00 / กก.</div>
+</td>
+<td class="py-3 px-4 text-center font-data-tabular text-on-surface font-medium">
+                  1.00 กก.
+                </td>
+<td class="py-3 px-4 text-label-md font-label-md text-secondary font-data-tabular">
+                  วันนี้ 08:30 น.
+                </td>
+<td class="py-3 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-label-sm font-label-sm font-medium bg-[#157347]/10 text-[#157347]">
+<span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
+<span data-translate="✓ จับคู่กับ">✓ จับคู่กับ</span>
+<span class="font-data-tabular font-semibold">SKU-BF-001</span>
+</div>
+<div class="text-label-sm font-label-sm text-secondary mt-1">เนื้อสันคอสไลซ์เกรดเอ (1 กก.)</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 text-label-md font-label-md rounded border border-outline-variant hover:bg-surface-container-low text-on-surface transition-colors" data-translate="จับคู่ SKU ของเรา" onclick="openSkuModal('เนื้อสันคอวัวนำเข้า ออสเตรเลีย สไลซ์ 1 กก.', 'Makro PRO', '389.00', '1.00', 'SKU-BF-001')">
+                      จับคู่ใหม่
+                    </button>
+<button class="p-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low" onclick="openDrawer('เนื้อสันคอวัวนำเข้า ออสเตรเลีย สไลซ์ 1 กก.', 'Makro PRO', '389.00', 'https://makropro.co.th/p/99201', 'รวมภาษีมูลค่าเพิ่ม 7%, สั่งขั้นต่ำ 1 กก.')" title="ดูรายละเอียดจากเว็บ">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Similar Name Suggestion -->
+<tr class="hover:bg-[#f8fafd] transition-colors group">
+<td class="py-3 px-4 text-center">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-size: 20px;">local_mall</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-semibold text-on-surface">อกไก่สดปลอดสาร ลอกหนัง แพ็ก 2 กิโลกรัม</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-secondary">
+<span class="font-medium text-primary-container">Freshket</span>
+<span class="text-outline-variant">|</span>
+<span class="font-data-tabular">FK-CK-8831</span>
+<a class="text-primary hover:underline inline-flex items-center gap-0.5" data-translate="ดูแหล่งที่มา ↗" href="#">
+                      ดูแหล่งที่มา ↗
+                    </a>
+</div>
+</td>
+<td class="py-3 px-4 text-right font-data-tabular font-medium text-on-surface">
+<span class="text-base font-semibold">฿178.00</span>
+<div class="text-label-sm font-label-sm text-secondary">฿89.00 / กก.</div>
+</td>
+<td class="py-3 px-4 text-center font-data-tabular text-on-surface font-medium">
+                  2.00 กก.
+                </td>
+<td class="py-3 px-4 text-label-md font-label-md text-secondary font-data-tabular">
+                  วันนี้ 07:15 น.
+                </td>
+<td class="py-3 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-label-sm font-label-sm font-medium bg-[#b08900]/10 text-[#b08900]">
+<span class="material-symbols-outlined" style="font-size: 14px;">auto_awesome</span>
+<span data-translate="· ชื่อคล้าย">· ชื่อคล้าย</span>
+<span class="font-data-tabular font-semibold">SKU-CK-020 (85%)</span>
+</div>
+<div class="text-label-sm font-label-sm text-secondary mt-1">อกไก่ลอกหนัง สด (2 กก.)</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 text-label-md font-label-md rounded bg-primary-container text-on-primary hover:bg-primary transition-colors font-medium shadow-xs" data-translate="จับคู่ SKU ของเรา" onclick="openSkuModal('อกไก่สดปลอดสาร ลอกหนัง แพ็ก 2 กิโลกรัม', 'Freshket', '178.00', '2.00', 'SKU-CK-020')">
+                      จับคู่ SKU ของเรา
+                    </button>
+<button class="p-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low" onclick="openDrawer('อกไก่สดปลอดสาร ลอกหนัง แพ็ก 2 กิโลกรัม', 'Freshket', '178.00', 'https://freshket.co/p/8831', 'ควบคุมอุณหภูมิความเย็น 0-4 C, ตัดรอบส่ง 22:00')" title="ดูรายละเอียดจากเว็บ">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Weight Unclear -->
+<tr class="hover:bg-[#f8fafd] transition-colors group">
+<td class="py-3 px-4 text-center">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-size: 20px;">scale</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-semibold text-on-surface">แซลมอนสดนอร์เวย์ ฟิลเลต์ ตัดชิ้นกลาง</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-secondary">
+<span class="font-medium text-primary-container">Big C Online</span>
+<span class="text-outline-variant">|</span>
+<span class="font-data-tabular">BC-SEA-0912</span>
+<a class="text-primary hover:underline inline-flex items-center gap-0.5" data-translate="ดูแหล่งที่มา ↗" href="#">
+                      ดูแหล่งที่มา ↗
+                    </a>
+</div>
+</td>
+<td class="py-3 px-4 text-right font-data-tabular font-medium text-on-surface">
+<span class="text-base font-semibold">฿450.00</span>
+<div class="text-label-sm font-label-sm text-secondary">ราคาต่อถาด</div>
+</td>
+<td class="py-3 px-4 text-center font-data-tabular text-error font-medium">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-error-container text-on-error-container text-label-sm">ไม่ระบุ</span>
+</td>
+<td class="py-3 px-4 text-label-md font-label-md text-secondary font-data-tabular">
+                  เมื่อวาน 19:20 น.
+                </td>
+<td class="py-3 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-label-sm font-label-sm font-medium bg-[#c2333f]/10 text-[#c2333f]">
+<span class="material-symbols-outlined" style="font-size: 14px;">warning</span>
+<span data-translate="น้ำหนักยังไม่ชัดเจน">น้ำหนักยังไม่ชัดเจน</span>
+</div>
+<div class="text-label-sm font-label-sm text-secondary mt-1">ต้องตรวจหน่วยสเปกน้ำหนักก่อนผูก</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 text-label-md font-label-md rounded border border-outline-variant hover:bg-surface-container-low text-on-surface transition-colors" data-translate="จับคู่ SKU ของเรา" onclick="openSkuModal('แซลมอนสดนอร์เวย์ ฟิลเลต์ ตัดชิ้นกลาง', 'Big C Online', '450.00', '0.00', '')">
+                      จับคู่ SKU ของเรา
+                    </button>
+<button class="p-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low" onclick="openDrawer('แซลมอนสดนอร์เวย์ ฟิลเลต์ ตัดชิ้นกลาง', 'Big C Online', '450.00', 'https://bigc.co.th/p/salmon-0912', 'ชั่งน้ำหนักตามจริง ณ จุดจัดส่ง (ประมาณ 400g - 650g)')" title="ดูรายละเอียดจากเว็บ">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Config Changed Notice -->
+<tr class="hover:bg-[#f8fafd] transition-colors group">
+<td class="py-3 px-4 text-center">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-size: 20px;">sync_problem</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-semibold text-on-surface">น้ำมันปาล์ม ตรามรกต ขนาด 1 ลิตร แพ็ก 3 ขวด</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-secondary">
+<span class="font-medium text-primary-container">Lotus's</span>
+<span class="text-outline-variant">|</span>
+<span class="font-data-tabular">LOT-OIL-44</span>
+<a class="text-primary hover:underline inline-flex items-center gap-0.5" data-translate="ดูแหล่งที่มา ↗" href="#">
+                      ดูแหล่งที่มา ↗
+                    </a>
+</div>
+</td>
+<td class="py-3 px-4 text-right font-data-tabular font-medium text-on-surface">
+<span class="text-base font-semibold">฿135.00</span>
+<div class="text-label-sm font-label-sm text-secondary">฿45.00 / ขวด</div>
+</td>
+<td class="py-3 px-4 text-center font-data-tabular text-on-surface font-medium">
+                  3.00 กก.
+                </td>
+<td class="py-3 px-4 text-label-md font-label-md text-secondary font-data-tabular">
+                  2 วันที่แล้ว
+                </td>
+<td class="py-3 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-label-sm font-label-sm font-medium bg-error-container text-on-error-container">
+<span class="material-symbols-outlined" style="font-size: 14px;">published_with_changes</span>
+<span data-translate="ตั้งค่าเว็บเปลี่ยนแล้ว ควรดึงใหม่ก่อนจับคู่">ตั้งค่าเว็บเปลี่ยนแล้ว ควรดึงใหม่ก่อนจับคู่</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 text-label-md font-label-md rounded border border-outline-variant hover:bg-surface-container-low text-secondary transition-colors" title="ดึงข้อมูลซ้ำ">
+<span class="material-symbols-outlined text-sm">refresh</span> ดึงใหม่
+                    </button>
+<button class="p-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low" onclick="openDrawer('น้ำมันปาล์ม ตรามรกต ขนาด 1 ลิตร แพ็ก 3 ขวด', 'Lotus\'s', '135.00', 'https://lotuss.com/p/morakot-3pk', 'จำกัดไม่เกิน 6 แพ็กต่อครอบครัว')" title="ดูรายละเอียดจากเว็บ">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty State (Hidden by default, used when filtering) -->
+<div class="hidden py-12 px-4 flex-col items-center justify-center text-center" id="tableEmptyState">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-secondary mb-3">
+<span class="material-symbols-outlined" style="font-size: 24px;">search_off</span>
+</div>
+<div class="text-headline-sm font-headline-sm text-on-surface" data-translate="ยังไม่มีรายการที่ตรงคำค้น">ยังไม่มีรายการที่ตรงคำค้น</div>
+<p class="text-body-md font-body-md text-secondary mt-1 max-w-md" data-translate="ลองเปลี่ยนคำค้น หรือเพิ่มเว็บและเริ่มเก็บข้อมูล">ลองเปลี่ยนคำค้น หรือเพิ่มเว็บและเริ่มเก็บข้อมูล</p>
+<button class="mt-4 px-4 py-2 bg-surface-container hover:bg-surface-container-high rounded-lg text-label-md font-label-md text-primary font-medium transition-colors" onclick="resetFilters()">
+            ล้างตัวกรองทั้งหมด
+          </button>
+</div>
+<!-- Pagination Bar -->
+<div class="px-4 py-3 bg-surface-container-low/60 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-3 text-label-md font-label-md text-secondary">
+<div class="flex items-center gap-1 font-data-tabular">
+<span>แสดง 1 - 4 จาก 1,428 <span data-translate="รายการ">รายการ</span></span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low disabled:opacity-40 text-on-surface flex items-center gap-1" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+<span data-translate="ก่อนหน้า">ก่อนหน้า</span>
+</button>
+<div class="flex items-center gap-1 px-1">
+<span data-translate="หน้า">หน้า</span>
+<span class="px-2 py-0.5 rounded bg-primary text-on-primary font-data-tabular font-medium">1</span>
+<span>จาก 357</span>
+</div>
+<button class="px-3 py-1.5 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface flex items-center gap-1">
+<span data-translate="ถัดไป">ถัดไป</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- SKU MATCHING MODAL -->
+<div class="fixed inset-0 z-50 bg-[#17243b]/40 backdrop-blur-xs hidden items-center justify-center p-4" id="skuMatchingModal">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in duration-150">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+<div class="flex flex-col">
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-semibold" data-translate="SKU ของเราตัวไหนตรงกับสินค้านี้?">
+            SKU ของเราตัวไหนตรงกับสินค้านี้?
+          </h3>
+<span class="text-label-sm font-label-sm text-secondary">จับคู่ข้อมูลเพื่อเทียบราคาอัตโนมัติ</span>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container-low" onclick="closeSkuModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-6 flex flex-col gap-4">
+<!-- Target Scraped Product Card -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant flex items-start gap-3">
+<div class="w-10 h-10 rounded-md bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined">shopping_cart</span>
+</div>
+<div class="flex-1">
+<div class="text-body-md font-body-md font-semibold text-on-surface" id="modalTargetTitle">
+              อกไก่สดปลอดสาร ลอกหนัง แพ็ก 2 กิโลกรัม
+            </div>
+<div class="flex items-center gap-2 mt-1 text-label-sm font-label-sm text-secondary">
+<span class="font-medium text-primary" id="modalTargetSource">Freshket</span>
+<span>·</span>
+<span>ราคา: <strong class="text-on-surface" id="modalTargetPrice">฿178.00</strong></span>
+<span>·</span>
+<span>น้ำหนัก: <strong class="text-on-surface" id="modalTargetWeight">2.00 กก.</strong></span>
+</div>
+</div>
+</div>
+<!-- System Guidance Warning -->
+<div class="flex items-start gap-2 p-3 rounded-lg bg-[#b08900]/10 border border-[#b08900]/20 text-label-sm font-label-sm text-[#b08900]">
+<span class="material-symbols-outlined text-base">info</span>
+<span data-translate="ระบบเสนอจากชื่อและน้ำหนักเท่านั้น ตรวจแบรนด์ แพ็ก และสเปกก่อนบันทึก">
+            ระบบเสนอจากชื่อและน้ำหนักเท่านั้น ตรวจแบรนด์ แพ็ก และสเปกก่อนบันทึก
+          </span>
+</div>
+<!-- Suggested Matches Cluster -->
+<div class="flex flex-col gap-2">
+<label class="text-label-md font-label-md font-semibold text-on-surface">รายการ SKU ของเราที่แนะนำ</label>
+<!-- Suggested Option 1 -->
+<div class="p-3 rounded-lg border-2 border-primary bg-primary/5 flex items-center justify-between cursor-pointer">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-primary text-on-primary text-label-sm font-semibold font-data-tabular">SKU-CK-020</span>
+<span class="text-body-md font-body-md font-semibold text-on-surface">อกไก่ลอกหนัง สด (แพ็ก 2 กก.)</span>
+</div>
+<div class="text-label-sm font-label-sm text-secondary mt-1">
+                ราคาของเรา: ฿175.00 · น้ำหนักมาตรฐาน: 2.00 กก. · สต็อก: 84 แพ็ก
+              </div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-on-primary text-label-sm font-label-sm font-semibold flex items-center gap-1 shadow-xs" data-translate="✓ ตัวนี้">
+<span class="material-symbols-outlined text-sm">check</span>
+              ✓ ตัวนี้
+            </button>
+</div>
+<!-- Suggested Option 2 -->
+<div class="p-3 rounded-lg border border-outline-variant hover:border-outline hover:bg-surface-container-lowest flex items-center justify-between cursor-pointer transition-colors">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-label-sm font-semibold font-data-tabular">SKU-CK-021</span>
+<span class="text-body-md font-body-md font-semibold text-on-surface">สันในไก่สด ไม่ติดหนัง (2 กก.)</span>
+</div>
+<div class="text-label-sm font-label-sm text-secondary mt-1">
+                ราคาของเรา: ฿185.00 · น้ำหนักมาตรฐาน: 2.00 กก.
+              </div>
+</div>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface-container-low text-on-surface text-label-sm font-label-sm">
+              เลือกตัวนี้
+            </button>
+</div>
+</div>
+<!-- Fallback Manual SKU Entry -->
+<div class="pt-2 border-t border-outline-variant flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-secondary" data-translate="ไม่มีตัวที่ตรง — กรอก SKU เอง">
+            ไม่มีตัวที่ตรง — กรอก SKU เอง
+          </label>
+<div class="flex gap-2">
+<input class="flex-1 h-[38px] px-3 text-body-md font-body-md border border-outline-variant rounded-lg focus:outline-none focus:border-primary" placeholder="ระบุ SKU เช่น SKU-BF-109" type="text"/>
+<button class="px-4 py-2 bg-surface-container hover:bg-surface-container-high rounded-lg text-label-md font-label-md text-on-surface font-medium transition-colors">
+              ตรวจสอบ
+            </button>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-6 py-3.5 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-[#157347] hidden items-center gap-1 font-medium" id="saveStatusIndicator">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span data-translate="บันทึกสถานะสำเร็จ">บันทึกสถานะสำเร็จ</span>
+</span>
+<div class="flex items-center gap-2 ml-auto">
+<button class="px-4 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-label-md font-label-md text-on-surface" data-translate="ปิด" onclick="closeSkuModal()">
+            ปิด
+          </button>
+<button class="px-4 py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-label-md font-label-md font-semibold transition-all" id="saveMatchBtn" onclick="saveMatchingState()">
+            บันทึกการจับคู่
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- DETAILS DRAWER -->
+<div class="fixed inset-0 z-50 bg-[#17243b]/30 backdrop-blur-xs hidden justify-end" id="detailsDrawer">
+<div class="w-full max-w-md bg-surface-container-lowest h-full shadow-2xl border-l border-outline-variant flex flex-col justify-between animate-in slide-in-from-right duration-200">
+<div class="p-6 flex flex-col gap-5 overflow-y-auto custom-scrollbar">
+<!-- Drawer Header -->
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant">
+<div class="flex items-center gap-2 text-headline-sm font-headline-sm font-semibold text-on-surface">
+<span class="material-symbols-outlined text-primary">data_object</span>
+<span data-translate="รายละเอียดข้อมูลจากเว็บ">รายละเอียดข้อมูลจากเว็บ</span>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container" onclick="closeDrawer()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Product Name & Source -->
+<div>
+<span class="text-label-sm font-label-sm text-secondary" data-translate="เว็บต้นทาง">เว็บต้นทาง</span>
+<div class="text-headline-sm font-semibold text-primary mt-0.5" id="drawerSource">Makro PRO</div>
+<div class="text-body-lg font-body-lg font-semibold text-on-surface mt-1" id="drawerTitle">เนื้อสันคอวัวนำเข้า ออสเตรเลีย สไลซ์ 1 กก.</div>
+</div>
+<!-- URL Scraped -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant flex flex-col gap-1">
+<span class="text-label-sm font-label-sm text-secondary" data-translate="หน้าที่อ่าน:">หน้าที่อ่าน:</span>
+<a class="text-label-md font-label-md text-primary hover:underline break-all" href="#" id="drawerUrl" target="_blank">
+            https://makropro.co.th/p/99201
+          </a>
+</div>
+<!-- Conditions & Scraped Terms -->
+<div class="flex flex-col gap-1.5">
+<span class="text-label-md font-label-md font-semibold text-on-surface" data-translate="เงื่อนไข:">เงื่อนไข:</span>
+<p class="text-body-md font-body-md text-on-surface-variant bg-surface-container-low p-3 rounded-lg border border-outline-variant" id="drawerConditions">
+            รวมภาษีมูลค่าเพิ่ม 7%, สั่งขั้นต่ำ 1 กก.
+          </p>
+</div>
+<!-- Raw Extraction Metadata Preview -->
+<div class="flex flex-col gap-2">
+<span class="text-label-md font-label-md font-semibold text-on-surface">ข้อมูลการวิเคราะห์โครงสร้าง DOM</span>
+<div class="bg-inverse-surface text-inverse-on-surface p-3.5 rounded-lg text-label-sm font-data-tabular space-y-1.5 overflow-x-auto">
+<div><span class="text-tertiary-fixed">status:</span> 200 OK</div>
+<div><span class="text-tertiary-fixed">extractor_model:</span> TH-GROCERY-V3.4</div>
+<div><span class="text-tertiary-fixed">currency_parsed:</span> THB (VAT Included)</div>
+<div><span class="text-tertiary-fixed">confidence_score:</span> 0.984</div>
+</div>
+</div>
+</div>
+<!-- Drawer Footer -->
+<div class="p-4 border-t border-outline-variant bg-surface-container-low flex justify-end">
+<button class="px-4 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant text-label-md font-label-md text-on-surface hover:bg-surface-container" data-translate="ปิด" onclick="closeDrawer()">
+          ปิด
+        </button>
+</div>
+</div>
+</div>
+<!-- Translation JSON Map Script Required by System -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ค้นหา": { "th": "ค้นหา", "en": "Search" },
+    "ก่อนหน้า": { "th": "ก่อนหน้า", "en": "Previous" },
+    "หน้า": { "th": "หน้า", "en": "Page" },
+    "ถัดไป": { "th": "ถัดไป", "en": "Next" },
+    "รายการ": { "th": "รายการ", "en": "items" },
+    "ปิด": { "th": "ปิด", "en": "Close" },
+    "กำลังบันทึก…": { "th": "กำลังบันทึก…", "en": "Saving…" },
+    "เก็บเมื่อ": { "th": "เก็บเมื่อ", "en": "Scraped At" },
+    "ข้อมูลจากเว็บ": { "th": "ข้อมูลจากเว็บ", "en": "Web Data" },
+    "· ชื่อคล้าย": { "th": "· ชื่อคล้าย", "en": "· Similar Name" },
+    "✓ ตัวนี้": { "th": "✓ ตัวนี้", "en": "✓ This One" },
+    "กำลังหา SKU ที่ชื่อใกล้เคียง…": { "th": "กำลังหา SKU ที่ชื่อใกล้เคียง…", "en": "Searching similar SKUs…" },
+    "โหลดล่าสุด": { "th": "โหลดล่าสุด", "en": "Last updated" },
+    "ทุกเว็บ": { "th": "ทุกเว็บ", "en": "All Sites" },
+    "ค้นหาสินค้า ตรวจข้อมูลต้นทาง แล้วเลือกจับคู่กับ SKU ของเรา": { "th": "ค้นหาสินค้า ตรวจข้อมูลต้นทาง แล้วเลือกจับคู่กับ SKU ของเรา", "en": "Search products, inspect source data, and match with your store SKUs" },
+    "ตั้งค่า / เริ่มเก็บเว็บ": { "th": "ตั้งค่า / เริ่มเก็บเว็บ", "en": "Configure / Run Scraping" },
+    "เว็บต้นทาง": { "th": "เว็บต้นทาง", "en": "Source Site" },
+    "ชื่อสินค้า / SKU": { "th": "ชื่อสินค้า / SKU", "en": "Product Name / SKU" },
+    "เช่น เนื้อ 1 กก.": { "th": "เช่น เนื้อ 1 กก.", "en": "e.g., Beef 1 kg" },
+    "ราคาที่แสดง: THB รวม VAT · น้ำหนักที่ไม่ระบุให้ตรวจเอง": { "th": "ราคาที่แสดง: THB รวม VAT · น้ำหนักที่ไม่ระบุให้ตรวจเอง", "en": "Prices shown: THB incl. VAT · Verify unspecified weights manually" },
+    "กำลังโหลดรายการ…": { "th": "กำลังโหลดรายการ…", "en": "Loading catalog…" },
+    "ยังไม่มีรายการที่ตรงคำค้น": { "th": "ยังไม่มีรายการที่ตรงคำค้น", "en": "No matching items found" },
+    "ลองเปลี่ยนคำค้น หรือเพิ่มเว็บและเริ่มเก็บข้อมูล": { "th": "ลองเปลี่ยนคำค้น หรือเพิ่มเว็บและเริ่มเก็บข้อมูล", "en": "Try adjusting your search or add scraping sources" },
+    "ไม่มี SKU ต้นทาง": { "th": "ไม่มี SKU ต้นทาง", "en": "No Source SKU" },
+    "น้ำหนักยังไม่ชัดเจน": { "th": "น้ำหนักยังไม่ชัดเจน", "en": "Unclear Weight" },
+    "ยังไม่มีราคา THB รวม VAT ที่ชัดเจน": { "th": "ยังไม่มีราคา THB รวม VAT ที่ชัดเจน", "en": "No definite THB incl. VAT price" },
+    "ตั้งค่าเว็บเปลี่ยนแล้ว ควรดึงใหม่ก่อนจับคู่": { "th": "ตั้งค่าเว็บเปลี่ยนแล้ว ควรดึงใหม่ก่อนจับคู่", "en": "Source layout changed: scrape again before matching" },
+    "ดูแหล่งที่มา ↗": { "th": "ดูแหล่งที่มา ↗", "en": "View Source ↗" },
+    "✓ จับคู่กับ": { "th": "✓ จับคู่กับ", "en": "✓ Matched with" },
+    "ดูเทียบราคา": { "th": "ดูเทียบราคา", "en": "Compare Prices" },
+    "SKU ของเราตัวไหนตรงกับสินค้านี้?": { "th": "SKU ของเราตัวไหนตรงกับสินค้านี้?", "en": "Which of our SKUs matches this product?" },
+    "ไม่พบ SKU ที่ชื่อใกล้เคียง": { "th": "ไม่พบ SKU ที่ชื่อใกล้เคียง", "en": "No similar SKU found" },
+    "ไม่มีตัวที่ตรง — กรอก SKU เอง": { "th": "ไม่มีตัวที่ตรง — กรอก SKU เอง", "en": "No exact match — Enter SKU manually" },
+    "ดูข้อมูลทั้งหมด": { "th": "ดูข้อมูลทั้งหมด", "en": "View Full Details" },
+    "จับคู่ SKU ของเรา": { "th": "จับคู่ SKU ของเรา", "en": "Match Our SKU" },
+    "รายละเอียดข้อมูลจากเว็บ": { "th": "รายละเอียดข้อมูลจากเว็บ", "en": "Scraped Web Details" },
+    "หน้าที่อ่าน:": { "th": "หน้าที่อ่าน:", "en": "Page Read:" },
+    "เงื่อนไข:": { "th": "เงื่อนไข:", "en": "Conditions:" },
+    "เก็บ % ของผู้ใช้ไว้เป็นกลุ่มควบคุม (ไม่ส่งข้อความ) เพื่อเปรียบเทียบผล": { "th": "เก็บ % ของผู้ใช้ไว้เป็นกลุ่มควบคุม (ไม่ส่งข้อความ) เพื่อเปรียบเทียบผล", "en": "Keep % of users in holdout control group (do not send) to benchmark" },
+    "ข้อมูลโปร": { "th": "ข้อมูลโปร", "en": "Promotion Data" },
+    "ค่าเริ่มต้นขาว · กดโปร่งใสถ้าไม่ต้องการพื้นหลัง · overlay ล็อกเสมอ": { "th": "ค่าเริ่มต้นขาว · กดโปร่งใสถ้าไม่ต้องการพื้นหลัง · overlay ล็อกเสมอ", "en": "Default white · Click transparent for clear background · Overlay always locked" },
+    "จำนวนสินค้า": { "th": "จำนวนสินค้า", "en": "Product Count" },
+    "ชุดนี้ถูกแก้ไขหลังบันทึกโปร": { "th": "ชุดนี้ถูกแก้ไขหลังบันทึกโปร", "en": "This set was edited after saving promo" },
+    "ดึงค่าไม่สำเร็จ: {0}": { "th": "ดึงค่าไม่สำเร็จ: {0}", "en": "Extraction failed: {0}" },
+    "ตามโปรโมชันของหน้านี้": { "th": "ตามโปรโมชันของหน้านี้", "en": "Based on page promotion" },
+    "น้ำหนักสุทธิต่อแพ็กคู่แข่ง (กก.)": { "th": "น้ำหนักสุทธิต่อแพ็กคู่แข่ง (กก.)", "en": "Net Weight / Competitor Pack (kg)" },
+    "ประเภทร้าน (Cuisine)": { "th": "ประเภทร้าน (Cuisine)", "en": "Cuisine Type" },
+    "แผนที่ร้านในผลค้นหา": { "th": "แผนที่ร้านในผลค้นหา", "en": "Store Map in Search Results" },
+    "มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด": { "th": "มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด", "en": "Total order amount below threshold" },
+    "ไม่สามารถโหลดข้อมูล Product Notify Funnel ได้": { "th": "ไม่สามารถโหลดข้อมูล Product Notify Funnel ได้", "en": "Unable to load Product Notify Funnel data" },
+    "ยังไม่ระบุที่อยู่จัดส่ง": { "th": "ยังไม่ระบุที่อยู่จัดส่ง", "en": "Delivery address not yet specified" },
+    "ระบบเสนอจากชื่อและน้ำหนักเท่านั้น ตรวจแบรนด์ แพ็ก และสเปกก่อนบันทึก": { "th": "ระบบเสนอจากชื่อและน้ำหนักเท่านั้น ตรวจแบรนด์ แพ็ก และสเปกก่อนบันทึก", "en": "System recommends based on name & weight only; verify brand, pack, and spec before saving" },
+    "รูปภาพ (ไม่บังคับ)": { "th": "รูปภาพ (ไม่บังคับ)", "en": "Image (Optional)" },
+    "ลูกค้าใหม่ 30 วัน": { "th": "ลูกค้าใหม่ 30 วัน", "en": "New Customers 30 Days" },
+    "วิธีทดสอบ (Test)": { "th": "วิธีทดสอบ (Test)", "en": "Testing Procedure (Test)" },
+    "ส่วนลดของคูปองนี้กำหนดในส่วน \"ประเภทและส่วนลด\" ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ": { "th": "ส่วนลดของคูปองนี้กำหนดในส่วน \"ประเภทและส่วนลด\" ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ", "en": "This coupon's discount is configured under 'Type & Discounts' below; top section defines auto-award triggers only" },
+    "หน้าตา POPUP (แก้เองได้)": { "th": "หน้าตา POPUP (แก้เองได้)", "en": "POPUP Appearance (Customizable)" },
+    "องค์ประกอบที่เลือก": { "th": "องค์ประกอบที่เลือก", "en": "Selected Element" },
+    "เส้นทางหน้าเว็บ (Shop path)": { "th": "เส้นทางหน้าเว็บ (Shop path)", "en": "Shop Path" },
+    "ข้าม (นอก schedule)": { "th": "ข้าม (นอก schedule)", "en": "Skip (Off schedule)" },
+    "บันทึกสถานะสำเร็จ": { "th": "บันทึกสถานะสำเร็จ", "en": "Status saved successfully" },
+    "กรุณากรอกสินค้าที่ร่วมรายการ (ไทยและอังกฤษ)": { "th": "กรุณากรอกสินค้าที่ร่วมรายการ (ไทยและอังกฤษ)", "en": "Please enter participating products (Thai & English)" }
+  }
+  </script>
+<!-- Interactive Logic Script -->
+<script>
+    let currentLanguage = 'th';
+
+    function toggleLanguage() {
+      const transScript = document.getElementById('commerce-ui-translations');
+      if (!transScript) return;
+      const translations = JSON.parse(transScript.textContent);
+
+      currentLanguage = currentLanguage === 'th' ? 'en' : 'th';
+      document.getElementById('currentLangLabel').textContent = currentLanguage === 'th' ? 'ไทย / English' : 'English / ไทย';
+
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (translations[key] && translations[key][currentLanguage]) {
+          el.textContent = translations[key][currentLanguage];
+        }
+      });
+    }
+
+    function openSkuModal(title, source, price, weight, skuCode) {
+      document.getElementById('modalTargetTitle').textContent = title;
+      document.getElementById('modalTargetSource').textContent = source;
+      document.getElementById('modalTargetPrice').textContent = '฿' + price;
+      document.getElementById('modalTargetWeight').textContent = weight + ' กก.';
+
+      const saveIndicator = document.getElementById('saveStatusIndicator');
+      saveIndicator.classList.add('hidden');
+      saveIndicator.classList.remove('inline-flex');
+
+      const modal = document.getElementById('skuMatchingModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeSkuModal() {
+      const modal = document.getElementById('skuMatchingModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveMatchingState() {
+      const btn = document.getElementById('saveMatchBtn');
+      const saveIndicator = document.getElementById('saveStatusIndicator');
+
+      btn.textContent = 'กำลังบันทึก…';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.textContent = 'บันทึกการจับคู่';
+        btn.disabled = false;
+        saveIndicator.classList.remove('hidden');
+        saveIndicator.classList.add('inline-flex');
+
+        setTimeout(() => {
+          closeSkuModal();
+        }, 800);
+      }, 600);
+    }
+
+    function openDrawer(title, source, price, url, conditions) {
+      document.getElementById('drawerTitle').textContent = title;
+      document.getElementById('drawerSource').textContent = source;
+      document.getElementById('drawerUrl').textContent = url;
+      document.getElementById('drawerUrl').href = url;
+      document.getElementById('drawerConditions').textContent = conditions;
+
+      const drawer = document.getElementById('detailsDrawer');
+      drawer.classList.remove('hidden');
+      drawer.classList.add('flex');
+    }
+
+    function closeDrawer() {
+      const drawer = document.getElementById('detailsDrawer');
+      drawer.classList.add('hidden');
+      drawer.classList.remove('flex');
+    }
+
+    function filterTable() {
+      const query = document.getElementById('catalogSearchInput').value.toLowerCase().trim();
+      const source = document.getElementById('sourceFilter').value;
+      const rows = document.querySelectorAll('#catalogTable tbody tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const matchesQuery = !query || text.includes(query);
+        const matchesSource = source === 'ALL' || text.includes(source.toLowerCase());
+
+        if (matchesQuery && matchesSource) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const emptyState = document.getElementById('tableEmptyState');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('catalogSearchInput').value = '';
+      document.getElementById('sourceFilter').value = 'ALL';
+      document.getElementById('statusFilter').value = 'ALL';
+      filterTable();
+    }
+  </script>
+</body></html>

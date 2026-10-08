@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Commerce Platform - สุขภาพระบบ (System Health)</title>
+  <!-- Google Fonts: Noto Sans Thai and Latin -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <!-- Material Symbols Outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+  <!-- Tailwind CSS v3 -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Tailwind Configuration matching Siam Enterprise Operations -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#365cf5",
+            "primary-hover": "#2548db",
+            "ink": "#17243b",
+            "on-surface": "#17243b",
+            "secondary": "#52627a",
+            "canvas": "#f6f8fc",
+            "surface-border": "#e1e7f0",
+            "success": "#157347",
+            "success-bg": "#edf7f1",
+            "warning": "#b08900",
+            "warning-bg": "#fff9e6",
+            "error": "#c2333f",
+            "error-bg": "#fdf2f2"
+          },
+          fontFamily: {
+            sans: ['Noto Sans', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .num-tabular {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-[#17243b] antialiased overflow-x-hidden min-h-screen">
+
+  <!-- ========================================================================= -->
+  <!-- 1. FIXED NAVIGATION SIDEBAR (256px wide)                                   -->
+  <!-- ========================================================================= -->
+  <aside class="fixed top-0 left-0 w-64 h-screen z-40 bg-white border-r border-[#e1e7f0] flex flex-col justify-between p-4">
+    <div class="flex flex-col gap-5">
+      <!-- Tenant Brand Header -->
+      <div class="flex items-center gap-3 px-2 py-1">
+        <div class="w-9 h-9 rounded-lg bg-[#365cf5] text-white flex items-center justify-center font-bold text-lg shadow-sm">
+          CP
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[16px] leading-6 font-bold text-[#17243b] tracking-tight">Commerce Platform</span>
+          <span class="text-[11px] leading-4 font-medium text-[#52627a]">Jagota ERP Connected</span>
+        </div>
+      </div>
+
+      <!-- Navigation Work Areas (7 Areas) -->
+      <nav aria-label="Main Navigation" class="flex flex-col gap-1">
+        <!-- 1. สินค้าและสต็อก -->
+        <a href="#inventory" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[13px] font-medium transition-colors">
+          <span class="material-symbols-outlined text-[#52627a]">inventory_2</span>
+          <span>สินค้าและสต็อก</span>
+        </a>
+        <!-- 2. ออเดอร์และการเงิน -->
+        <a href="#orders" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[13px] font-medium transition-colors">
+          <span class="material-symbols-outlined text-[#52627a]">receipt_long</span>
+          <span>ออเดอร์และการเงิน</span>
+        </a>
+        <!-- 3. ลูกค้าและบริการ -->
+        <a href="#customers" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[13px] font-medium transition-colors">
+          <span class="material-symbols-outlined text-[#52627a]">group</span>
+          <span>ลูกค้าและบริการ</span>
+        </a>
+        <!-- 4. การตลาด -->
+        <a href="#marketing" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[13px] font-medium transition-colors">
+          <span class="material-symbols-outlined text-[#52627a]">campaign</span>
+          <span>การตลาด</span>
+        </a>
+        <!-- 5. รายงานและข้อมูล (ACTIVE) -->
+        <a href="#reports" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#e8eeff] text-[#365cf5] font-semibold border-l-4 border-[#365cf5] transition-all text-[13px]">
+          <span class="material-symbols-outlined text-[#365cf5]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+          <span>รายงานและข้อมูล</span>
+        </a>
+        <!-- 6. ระบบเชื่อมต่อ -->
+        <a href="#integrations" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[13px] font-medium transition-colors">
+          <span class="material-symbols-outlined text-[#52627a]">hub</span>
+          <span>ระบบเชื่อมต่อ</span>
+        </a>
+        <!-- 7. ตั้งค่าและทีมงาน -->
+        <a href="#settings" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[13px] font-medium transition-colors">
+          <span class="material-symbols-outlined text-[#52627a]">settings</span>
+          <span>ตั้งค่าและทีมงาน</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="flex flex-col gap-2 pt-3 border-t border-[#e1e7f0]">
+      <a href="#help" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[13px] font-medium transition-colors">
+        <span class="material-symbols-outlined text-[#52627a]">help_outline</span>
+        <span>ช่วยเหลือและคู่มือ</span>
+      </a>
+      <div class="px-3 py-2 bg-[#f1f3ff] rounded-lg text-[11px] font-medium text-[#52627a] flex items-center justify-between">
+        <span>Node: cluster-bkk-02</span>
+        <span class="inline-flex items-center gap-1.5 text-[#157347]">
+          <span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+          <span>ปกติ</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- 2. CONTEXTUAL TOP NAVBAR (PINNED LEFT-64)                                 -->
+  <!-- ========================================================================= -->
+  <header class="fixed top-0 left-64 right-0 h-16 z-30 bg-white border-b border-[#e1e7f0] px-6 flex items-center justify-between">
+    <!-- Breadcrumb & Route Badge -->
+    <div class="flex items-center gap-3">
+      <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-[14px] font-medium text-[#52627a]">
+        <span class="hover:text-[#365cf5] cursor-pointer">หน้าหลัก</span>
+        <span class="material-symbols-outlined text-[#c4c5d8] text-[16px]">chevron_right</span>
+        <span class="hover:text-[#365cf5] cursor-pointer">รายงานและข้อมูล</span>
+        <span class="material-symbols-outlined text-[#c4c5d8] text-[16px]">chevron_right</span>
+        <span class="text-[#17243b] font-semibold" data-i18n="Error และสุขภาพระบบ">Error และสุขภาพระบบ</span>
+      </nav>
+      <!-- Technical Route Pill -->
+      <span class="ml-2 px-2.5 py-0.5 rounded text-[11px] font-mono bg-[#f1f3ff] text-[#52627a] border border-[#e1e7f0]">
+        admin-98f936cbc3f8
+      </span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#fff9e6] text-[#b08900] border border-[#ffe082]">
+        ข้อมูลตัวอย่าง
+      </span>
+    </div>
+
+    <!-- Right Controls: Status, Switcher, Profile -->
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#edf7f1] text-[#157347] text-[12px] font-medium border border-[#b7eb8f]">
+        <span class="w-2 h-2 rounded-full bg-[#157347] animate-pulse"></span>
+        <span>Jagota ERP Connected (Replica)</span>
+      </div>
+
+      <!-- Bilingual Switcher Pill -->
+      <div class="flex items-center bg-[#f6f8fc] p-1 rounded-lg border border-[#e1e7f0] h-9" role="group" aria-label="Language Selector">
+        <button id="lang-btn-th" onclick="setLanguage('th')" type="button" class="px-3 py-1 text-[12px] rounded font-semibold bg-white text-[#365cf5] shadow-xs transition-all">
+          ไทย
+        </button>
+        <button id="lang-btn-en" onclick="setLanguage('en')" type="button" class="px-3 py-1 text-[12px] rounded font-medium text-[#52627a] hover:text-[#17243b] transition-all">
+          English
+        </button>
+      </div>
+
+      <!-- Notification -->
+      <button type="button" class="relative p-2 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] transition-colors" aria-label="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+
+      <!-- User Profile -->
+      <div class="flex items-center gap-2.5 pl-3 border-l border-[#e1e7f0]">
+        <div class="w-8 h-8 rounded-full bg-[#d0e1fd] text-[#0a3fdc] flex items-center justify-center font-bold text-[12px]">
+          VS
+        </div>
+        <div class="flex flex-col text-left">
+          <span class="text-[13px] font-semibold text-[#17243b] leading-tight">Verapong S.</span>
+          <span class="text-[11px] text-[#52627a] leading-tight">Financial Reconciler</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MAIN CONTENT (1240px centered inside ml-64)                           -->
+  <!-- ========================================================================= -->
+  <main class="ml-64 pt-16 min-h-screen p-8 max-w-[1240px]">
+
+    <!-- Sub-navigation Tabs under รายงานและข้อมูล -->
+    <div class="flex items-center gap-2 border-b border-[#e1e7f0] mb-6 pb-2">
+      <a href="/reports/sales" class="px-3.5 py-2 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[14px] font-medium transition-colors" data-i18n="ยอดขาย">
+        ยอดขาย
+      </a>
+      <a href="/reports/orders" class="px-3.5 py-2 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[14px] font-medium transition-colors" data-i18n="ออเดอร์">
+        ออเดอร์
+      </a>
+      <a href="/reports/traffic" class="px-3.5 py-2 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[14px] font-medium transition-colors" data-i18n="Traffic">
+        Traffic
+      </a>
+      <!-- Active Tab: Error และสุขภาพระบบ -->
+      <a href="/reports/health" class="px-3.5 py-2 rounded-lg bg-[#e8eeff] text-[#365cf5] font-semibold border-b-2 border-[#365cf5] transition-colors flex items-center gap-1.5 text-[14px]">
+        <span class="material-symbols-outlined text-[18px]">monitor_heart</span>
+        <span data-i18n="Error และสุขภาพระบบ">Error และสุขภาพระบบ</span>
+      </a>
+      <a href="/reports/pricing" class="px-3.5 py-2 rounded-lg text-[#52627a] hover:bg-[#f1f3ff] text-[14px] font-medium transition-colors" data-i18n="ราคา · commerce คิดคู่กับ josh (ทดลอง)">
+        ราคา · commerce คิดคู่กับ josh (ทดลอง)
+      </a>
+    </div>
+
+    <!-- Header & Action Bar -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-[28px] leading-9 font-semibold text-[#17243b] tracking-tight" data-i18n="Error และสุขภาพระบบ">Error และสุขภาพระบบ</h1>
+          <span class="px-2.5 py-1 rounded-md text-[12px] font-medium bg-[#edf7f1] text-[#157347] border border-[#b7eb8f] flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+            <span data-i18n="ปกติ">ปกติ</span>
+          </span>
+          <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-[#f1f3ff] text-[#52627a] border border-[#e1e7f0]">
+            /reports/health
+          </span>
+        </div>
+        <p class="text-[14px] text-[#52627a] mt-1" data-i18n="ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh">
+          ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh
+        </p>
+      </div>
+
+      <!-- Action Button -->
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="triggerRefresh(this)" class="inline-flex items-center gap-2 px-4 py-2 bg-[#365cf5] hover:bg-[#2548db] text-white rounded-lg text-[14px] font-semibold shadow-xs transition-colors h-10">
+          <span class="material-symbols-outlined text-[18px]">refresh</span>
+          <span data-i18n="Refresh">Refresh</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Banner: Sync & Latency -->
+    <div class="bg-[#edf7f1] border border-[#b7eb8f] rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-3 text-[#157347]">
+      <div class="flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-[22px]">check_circle</span>
+        <span class="text-[14px] font-medium" data-i18n="การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง">
+          การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง
+        </span>
+      </div>
+      <div class="flex items-center gap-3 text-[12px]">
+        <span class="bg-white px-2.5 py-1 rounded border border-[#b7eb8f] font-mono font-medium">Latency 42ms</span>
+        <span class="bg-white px-2.5 py-1 rounded border border-[#b7eb8f] text-[#52627a]">Last Sync: <span class="num-tabular font-mono text-[#17243b]">14 พ.ย. 16:42:10</span></span>
+      </div>
+    </div>
+
+    <!-- Filter Bar: Date Presets & Custom Inputs -->
+    <div class="bg-white border border-[#e1e7f0] rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Date presets">
+        <button type="button" class="px-3 py-1.5 rounded-lg text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] border border-transparent transition-colors" data-i18n="วันนี้">วันนี้</button>
+        <button type="button" class="px-3 py-1.5 rounded-lg text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] border border-transparent transition-colors" data-i18n="เมื่อวาน">เมื่อวาน</button>
+        <button type="button" class="px-3 py-1.5 rounded-lg text-[13px] font-semibold bg-[#365cf5] text-white shadow-xs" data-i18n="สัปดาห์นี้">สัปดาห์นี้</button>
+        <button type="button" class="px-3 py-1.5 rounded-lg text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] border border-transparent transition-colors" data-i18n="เดือนนี้">เดือนนี้</button>
+        <button type="button" class="px-3 py-1.5 rounded-lg text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] border border-transparent transition-colors" data-i18n="เดือนที่แล้ว">เดือนที่แล้ว</button>
+        <button type="button" class="px-3 py-1.5 rounded-lg text-[13px] font-medium text-[#52627a] hover:bg-[#f6f8fc] border border-transparent transition-colors" data-i18n="กำหนดเอง">กำหนดเอง</button>
+      </div>
+
+      <!-- Date Range Controls -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 text-[13px] text-[#52627a]">
+          <span data-i18n="ตั้งแต่">ตั้งแต่</span>
+          <input type="date" value="2024-11-08" class="h-10 px-3 text-[13px] bg-white border border-[#e1e7f0] rounded-lg focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] outline-none text-[#17243b]"/>
+        </div>
+        <span class="text-[#52627a]">-</span>
+        <div class="flex items-center gap-1 text-[13px] text-[#52627a]">
+          <span data-i18n="ถึง">ถึง</span>
+          <input type="date" value="2024-11-14" class="h-10 px-3 text-[13px] bg-white border border-[#e1e7f0] rounded-lg focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] outline-none text-[#17243b]"/>
+        </div>
+        <button type="button" class="h-10 px-3 py-1.5 rounded-lg bg-[#f1f3ff] text-[#365cf5] hover:bg-[#e0e8ff] text-[13px] font-semibold transition-colors" data-i18n="ตอนนี้">
+          ตอนนี้
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 4. CORE 4 HEALTH STATUS KPI CARDS                                         -->
+    <!-- ========================================================================= -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+      <!-- Metric 1: ส่งข้อมูลถึง platform สำเร็จ -->
+      <div class="bg-white border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[13px] font-semibold text-[#17243b] flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[#157347] text-[18px]">verified</span>
+            <span data-i18n="ส่งข้อมูลถึง platform สำเร็จ">ส่งข้อมูลถึง platform สำเร็จ</span>
+          </span>
+          <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#edf7f1] text-[#157347]">
+            99.98%
+          </span>
+        </div>
+        <div class="mt-2">
+          <div class="text-[28px] leading-8 font-bold text-[#17243b] num-tabular">
+            18,416 <span class="text-[13px] text-[#52627a] font-normal" data-i18n="ครั้ง">ครั้ง</span>
+          </div>
+          <p class="text-[12px] text-[#52627a] mt-1 flex items-center justify-between">
+            <span>ส่งผ่าน OData / Webhook</span>
+            <span class="text-[#157347] font-medium">ไม่มีค้างสะสม</span>
+          </p>
+        </div>
+        <div class="mt-3 pt-2.5 border-t border-[#f1f3ff] flex items-center justify-between text-[11px] text-[#52627a]">
+          <span data-i18n="Commerce">Commerce</span>
+          <span class="text-[#157347] font-medium flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> Healthy
+          </span>
+        </div>
+      </div>
+
+      <!-- Metric 2: ส่งไม่สำเร็จ (dead letter) -->
+      <div class="bg-white border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[13px] font-semibold text-[#17243b] flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[#52627a] text-[18px]">mark_email_read</span>
+            <span data-i18n="ส่งไม่สำเร็จ (dead letter)">ส่งไม่สำเร็จ (dead letter)</span>
+          </span>
+          <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#edf7f1] text-[#157347]">
+            Queue Empty
+          </span>
+        </div>
+        <div class="mt-2">
+          <div class="text-[28px] leading-8 font-bold text-[#17243b] num-tabular">
+            0 <span class="text-[13px] text-[#52627a] font-normal" data-i18n="ครั้ง">ครั้ง</span>
+          </div>
+          <p class="text-[12px] text-[#52627a] mt-1 flex items-center justify-between">
+            <span>Dead Letter Queue</span>
+            <span class="text-[#157347] font-medium">0 รายการ</span>
+          </p>
+        </div>
+        <div class="mt-3 pt-2.5 border-t border-[#f1f3ff] flex items-center justify-between text-[11px] text-[#52627a]">
+          <span>Retry Policy</span>
+          <span class="text-[#52627a] font-mono">Backoff 3x OK</span>
+        </div>
+      </div>
+
+      <!-- Metric 3: ชำระเงินไม่สำเร็จ -->
+      <div class="bg-white border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[13px] font-semibold text-[#17243b] flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[#b08900] text-[18px]">payment</span>
+            <span data-i18n="ชำระเงินไม่สำเร็จ">ชำระเงินไม่สำเร็จ</span>
+          </span>
+          <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#fff9e6] text-[#b08900]">
+            User Action
+          </span>
+        </div>
+        <div class="mt-2">
+          <div class="text-[28px] leading-8 font-bold text-[#b08900] num-tabular">
+            4 <span class="text-[13px] text-[#52627a] font-normal" data-i18n="ครั้ง">ครั้ง</span>
+          </div>
+          <p class="text-[12px] text-[#52627a] mt-1 flex items-center justify-between">
+            <span>Payment Gateway Timeout</span>
+            <span class="text-[#b08900] font-medium">OTP หมดอายุ (ผู้ใช้)</span>
+          </p>
+        </div>
+        <div class="mt-3 pt-2.5 border-t border-[#f1f3ff] flex items-center justify-between text-[11px] text-[#52627a]">
+          <span>ไม่กระทบยอดคงเหลือ</span>
+          <span class="text-[#52627a]">ยกเลิกตาม SLA</span>
+        </div>
+      </div>
+
+      <!-- Metric 4: ส่งออเดอร์ไป Jagota ไม่สำเร็จ -->
+      <div class="bg-white border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[13px] font-semibold text-[#17243b] flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[#157347] text-[18px]">sync_saved_locally</span>
+            <span data-i18n="ส่งออเดอร์ไป Jagota ไม่สำเร็จ">ส่งออเดอร์ไป Jagota ไม่สำเร็จ</span>
+          </span>
+          <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#edf7f1] text-[#157347]">
+            Synced
+          </span>
+        </div>
+        <div class="mt-2">
+          <div class="text-[28px] leading-8 font-bold text-[#17243b] num-tabular">
+            0 <span class="text-[13px] text-[#52627a] font-normal" data-i18n="ครั้ง">ครั้ง</span>
+          </div>
+          <p class="text-[12px] text-[#52627a] mt-1 flex items-center justify-between">
+            <span data-i18n="Jagota sync error">Jagota sync error</span>
+            <span class="text-[#157347] font-medium">0 รายการ</span>
+          </p>
+        </div>
+        <div class="mt-3 pt-2.5 border-t border-[#f1f3ff] flex items-center justify-between text-[11px] text-[#52627a]">
+          <span data-i18n="josh">josh</span>
+          <span class="text-[#157347] font-medium flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> Sync OK
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 5. FAILURE INCIDENT & EVENT LOG TABLE                                     -->
+    <!-- ========================================================================= -->
+    <div class="bg-white border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden mb-6">
+      <div class="p-5 border-b border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-[16px] font-semibold text-[#17243b]">รายการตรวจสอบและประวัติการส่งข้อมูล</h2>
+            <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#f1f3ff] text-[#365cf5]">
+              Realtime Event Log
+            </span>
+          </div>
+          <p class="text-[12px] text-[#52627a] mt-0.5">
+            บันทึกการส่งออเดอร์, การซิงค์ OData ไปยัง Jagota ERP, และสถานะ Webhook ล่าสุด (ค้นหาเฉพาะหน้าปัจจุบัน)
+          </p>
+        </div>
+
+        <!-- Filter Search inside table -->
+        <div class="flex items-center gap-2">
+          <div class="relative w-64">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-[#52627a] text-[18px]">search</span>
+            <input id="table-search-input" onkeyup="filterLogTable()" type="text" placeholder="ค้นหา รหัสออเดอร์, SKU หรือบริการ..." class="w-full h-10 pl-9 pr-3 text-[13px] bg-white border border-[#e1e7f0] rounded-lg focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] outline-none text-[#17243b]"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse" id="health-log-table">
+          <thead>
+            <tr class="h-11 bg-[#f6f8fc] border-b border-[#e1e7f0] text-[12px] font-semibold text-[#52627a] uppercase tracking-wider">
+              <th class="px-5 py-2">เวลา</th>
+              <th class="px-5 py-2">ระบบ</th>
+              <th class="px-5 py-2">ประเภทเหตุการณ์</th>
+              <th class="px-5 py-2">อ้างอิง (Reference)</th>
+              <th class="px-5 py-2">สถานะ</th>
+              <th class="px-5 py-2">การดำเนินการ / รายละเอียด</th>
+              <th class="px-5 py-2 text-right">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#f1f3ff] text-[14px]">
+            <!-- Row 1: Healthy Sync -->
+            <tr class="h-13 hover:bg-[#f9fafc] transition-colors">
+              <td class="px-5 py-3 text-[13px] text-[#52627a] num-tabular">14 พ.ย. 16:42:01</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[12px] font-medium bg-[#f1f3ff] text-[#365cf5]">
+                  <span class="material-symbols-outlined text-[14px]">sync</span>
+                  <span data-i18n="Commerce">Commerce</span> → Jagota
+                </span>
+              </td>
+              <td class="px-5 py-3 font-medium text-[#17243b]">ส่งออเดอร์ (OData SalesOrder)</td>
+              <td class="px-5 py-3 font-mono text-[13px] text-[#365cf5]">ORD-2024-8841</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[12px] font-semibold bg-[#edf7f1] text-[#157347]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> สำเร็จ (200 OK)
+                </span>
+              </td>
+              <td class="px-5 py-3 text-[13px] text-[#52627a]">
+                DocumentEntry #994102 บันทึกเข้า Jagota เรียบร้อย
+              </td>
+              <td class="px-5 py-3 text-right">
+                <button type="button" class="px-2.5 py-1 text-[12px] font-semibold text-[#365cf5] hover:bg-[#f1f3ff] rounded transition-colors">
+                  ดูบันทึก
+                </button>
+              </td>
+            </tr>
+
+            <!-- Row 2: Payment Timeout -->
+            <tr class="h-13 hover:bg-[#f9fafc] transition-colors">
+              <td class="px-5 py-3 text-[13px] text-[#52627a] num-tabular">14 พ.ย. 15:20:18</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[12px] font-medium bg-[#fff9e6] text-[#b08900]">
+                  <span class="material-symbols-outlined text-[14px]">account_balance_wallet</span>
+                  Payment Gateway
+                </span>
+              </td>
+              <td class="px-5 py-3 font-medium text-[#17243b]" data-i18n="ชำระเงินไม่สำเร็จ">ชำระเงินไม่สำเร็จ</td>
+              <td class="px-5 py-3 font-mono text-[13px] text-[#52627a]">PAY-BBL-9921</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[12px] font-semibold bg-[#fff9e6] text-[#b08900]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span> OTP Timeout
+                </span>
+              </td>
+              <td class="px-5 py-3 text-[13px] text-[#52627a]">
+                ผู้ใช้ไม่ได้ยืนยันรหัส OTP ภายในกำหนด 5 นาที ระบบยกเลิกเซสชัน
+              </td>
+              <td class="px-5 py-3 text-right">
+                <button type="button" class="px-2.5 py-1 text-[12px] font-semibold text-[#52627a] hover:bg-[#f1f3ff] rounded transition-colors">
+                  ประวัติ
+                </button>
+              </td>
+            </tr>
+
+            <!-- Row 3: Product Shadow Pricing -->
+            <tr class="h-13 hover:bg-[#f9fafc] transition-colors">
+              <td class="px-5 py-3 text-[13px] text-[#52627a] num-tabular">14 พ.ย. 14:15:44</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[12px] font-medium bg-[#f1f3ff] text-[#365cf5]">
+                  <span class="material-symbols-outlined text-[14px]">calculate</span>
+                  <span data-i18n="josh">josh</span> Shadow Replica
+                </span>
+              </td>
+              <td class="px-5 py-3 font-medium text-[#17243b]">ตรวจสอบสูตรราคาคู่ขนาน</td>
+              <td class="px-5 py-3 font-mono text-[13px] text-[#365cf5]">ORD-2024-8839</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[12px] font-semibold bg-[#edf7f1] text-[#157347]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> ตรงตามเกณฑ์
+                </span>
+              </td>
+              <td class="px-5 py-3 text-[13px] text-[#52627a]">
+                Diff ฿0.00 คำนวณตรงกับฐานข้อมูลหลักของ josh
+              </td>
+              <td class="px-5 py-3 text-right">
+                <button type="button" class="px-2.5 py-1 text-[12px] font-semibold text-[#365cf5] hover:bg-[#f1f3ff] rounded transition-colors">
+                  ดูบันทึก
+                </button>
+              </td>
+            </tr>
+
+            <!-- Row 4: Webhook Dispatch -->
+            <tr class="h-13 hover:bg-[#f9fafc] transition-colors">
+              <td class="px-5 py-3 text-[13px] text-[#52627a] num-tabular">14 พ.ย. 13:05:12</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[12px] font-medium bg-[#f1f3ff] text-[#365cf5]">
+                  <span class="material-symbols-outlined text-[14px]">webhook</span>
+                  Webhook Dispatcher
+                </span>
+              </td>
+              <td class="px-5 py-3 font-medium text-[#17243b]">order.created Event</td>
+              <td class="px-5 py-3 font-mono text-[13px] text-[#52627a]">WH-EVT-7729</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[12px] font-semibold bg-[#edf7f1] text-[#157347]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> สำเร็จ
+                </span>
+              </td>
+              <td class="px-5 py-3 text-[13px] text-[#52627a]">
+                ปลายทาง CRM ได้รับ Payload ภายใน 28ms ไม่มี Dead Letter
+              </td>
+              <td class="px-5 py-3 text-right">
+                <button type="button" class="px-2.5 py-1 text-[12px] font-semibold text-[#365cf5] hover:bg-[#f1f3ff] rounded transition-colors">
+                  ดูบันทึก
+                </button>
+              </td>
+            </tr>
+
+            <!-- Row 5: Inbound Catalog Sync -->
+            <tr class="h-13 hover:bg-[#f9fafc] transition-colors">
+              <td class="px-5 py-3 text-[13px] text-[#52627a] num-tabular">14 พ.ย. 12:00:00</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[12px] font-medium bg-[#f1f3ff] text-[#365cf5]">
+                  <span class="material-symbols-outlined text-[14px]">inventory</span>
+                  Jagota Master Data
+                </span>
+              </td>
+              <td class="px-5 py-3 font-medium text-[#17243b]">อัปเดตสต็อกและราคากลาง</td>
+              <td class="px-5 py-3 font-mono text-[13px] text-[#52627a]">SYNC-JOB-1029</td>
+              <td class="px-5 py-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[12px] font-semibold bg-[#edf7f1] text-[#157347]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> สำเร็จ
+                </span>
+              </td>
+              <td class="px-5 py-3 text-[13px] text-[#52627a]">
+                ซิงค์รายการสินค้า 1,420 SKU เรียบร้อยสมบูรณ์
+              </td>
+              <td class="px-5 py-3 text-right">
+                <button type="button" class="px-2.5 py-1 text-[12px] font-semibold text-[#365cf5] hover:bg-[#f1f3ff] rounded transition-colors">
+                  ดูบันทึก
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer / Search Scope Clarification -->
+      <div class="px-5 py-3.5 bg-[#f6f8fc] border-t border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center justify-between text-[13px] text-[#52627a] gap-2">
+        <span>* ช่องค้นหาจะกรองข้อมูลในหน้านี้เท่านั้น ไม่ใช่การค้นหาประวัติย้อนหลังทั้งหมดของระบบ</span>
+        <div class="flex items-center gap-2">
+          <span>แสดง 5 จากทั้งหมด 5 เหตุการณ์ล่าสุด</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 6. SUBSYSTEM STATUS BREAKDOWN & QUEUE DETAILS                              -->
+    <!-- ========================================================================= -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+      <!-- Subsystem 1: Commerce & Josh Integration -->
+      <div class="bg-white border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-[16px] font-semibold text-[#17243b] flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#365cf5]">hub</span>
+              <span>สถานะเชื่อมต่อ Commerce และ Josh Replica</span>
+            </h3>
+            <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#edf7f1] text-[#157347]">
+              Active v2.4
+            </span>
+          </div>
+          <p class="text-[13px] text-[#52627a] mb-4">
+            อ่านข้อมูลธุรกรรม, ตะกร้าสินค้า และยอดขายจากฐานข้อมูล replica แบบ read-only เพื่อไม่ให้กระทบระบบขายจริง
+          </p>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0]">
+              <span class="text-[13px] font-medium text-[#17243b]">Replication Lag</span>
+              <span class="text-[13px] font-mono font-semibold text-[#157347]">0.4 วินาที (เรียลไทม์)</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0]">
+              <span class="text-[13px] font-medium text-[#17243b]">API Gateway Availability</span>
+              <span class="text-[13px] font-mono font-semibold text-[#157347]">100% (30 วันที่ผ่านมา)</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0]">
+              <span class="text-[13px] font-medium text-[#17243b]">DB Connection Pool</span>
+              <span class="text-[13px] font-mono font-semibold text-[#17243b]">14 / 64 connections (21%)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-[#f1f3ff] text-[12px] text-[#52627a] flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-[#157347]">check_circle</span>
+          <span>ระบบสำรองอัตโนมัติพร้อมสลับการทำงานเมื่อเกิดความขัดข้อง (Failover Ready)</span>
+        </div>
+      </div>
+
+      <!-- Subsystem 2: ERP Integration & Delivery Queue -->
+      <div class="bg-white border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-[16px] font-semibold text-[#17243b] flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#365cf5]">dns</span>
+              <span>สถานะเชื่อมต่อ Jagota ERP (OData v4)</span>
+            </h3>
+            <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#edf7f1] text-[#157347]">
+              OData Online
+            </span>
+          </div>
+          <p class="text-[13px] text-[#52627a] mb-4">
+            ช่องทางการเชื่อมส่งออเดอร์, ตัดสต็อกคลังสุวรรณภูมิ/บางนา, และซิงค์ใบแจ้งหนี้แบบ 2-way handshake
+          </p>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0]">
+              <span class="text-[13px] font-medium text-[#17243b]">OData Outbound Queue</span>
+              <span class="text-[13px] font-mono font-semibold text-[#157347]">0 คิวค้างสะสม</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0]">
+              <span class="text-[13px] font-medium text-[#17243b]">Average Response Time</span>
+              <span class="text-[13px] font-mono font-semibold text-[#157347]">184 ms</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0]">
+              <span class="text-[13px] font-medium text-[#17243b]">Signature Verification (HMAC)</span>
+              <span class="text-[13px] font-mono font-semibold text-[#157347]">SHA256 Valid</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-[#f1f3ff] text-[12px] text-[#52627a] flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-[#157347]">check_circle</span>
+          <span>ซิงค์ตรงกับฐานข้อมูลหลักของ ERP โดยไม่มีรายการข้อผิดพลาด</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- 7. TRANSLATION CATALOGUE (Invisible JSON with exact source keys)          -->
+  <!-- ========================================================================= -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "ยอดขาย": {
+      "th": "ยอดขาย",
+      "en": "Sales Revenue"
+    },
+    "Traffic": {
+      "th": "Traffic",
+      "en": "Traffic"
+    },
+    "Refresh": {
+      "th": "Refresh",
+      "en": "Refresh"
+    },
+    "ค้นหา": {
+      "th": "ค้นหา",
+      "en": "Search"
+    },
+    "SKU": {
+      "th": "SKU",
+      "en": "SKU"
+    },
+    "สินค้า": {
+      "th": "สินค้า",
+      "en": "Products"
+    },
+    "จำนวน": {
+      "th": "จำนวน",
+      "en": "Quantity"
+    },
+    "ครั้ง": {
+      "th": "ครั้ง",
+      "en": "times"
+    },
+    "ล่าสุด": {
+      "th": "ล่าสุด",
+      "en": "Latest"
+    },
+    "ตั้งแต่": {
+      "th": "ตั้งแต่",
+      "en": "From"
+    },
+    "ถึง": {
+      "th": "ถึง",
+      "en": "To"
+    },
+    "ตอนนี้": {
+      "th": "ตอนนี้",
+      "en": "Now"
+    },
+    "josh": {
+      "th": "josh",
+      "en": "josh"
+    },
+    "ไม่มีข้อมูลช่วงก่อน": {
+      "th": "ไม่มีข้อมูลช่วงก่อน",
+      "en": "No previous period data"
+    },
+    "ออเดอร์ที่จ่ายแล้ว (paid/preparing/shipped/delivered) · บาทรวม VAT หลังส่วนลด · อ่านจาก replica ของ josh": {
+      "th": "ออเดอร์ที่จ่ายแล้ว (paid/preparing/shipped/delivered) · บาทรวม VAT หลังส่วนลด · อ่านจาก replica ของ josh",
+      "en": "Paid orders (paid/preparing/shipped/delivered) · THB incl. VAT after discount · Loaded from josh replica"
+    },
+    "· เทียบกับ": {
+      "th": "· เทียบกับ",
+      "en": "· Compared with"
+    },
+    "ออเดอร์": {
+      "th": "ออเดอร์",
+      "en": "Orders"
+    },
+    "เฉลี่ยต่อออเดอร์": {
+      "th": "เฉลี่ยต่อออเดอร์",
+      "en": "Average Order Value"
+    },
+    "ลูกค้าที่ซื้อ": {
+      "th": "ลูกค้าที่ซื้อ",
+      "en": "Purchasing Customers"
+    },
+    "บริษัท · ใหม่": {
+      "th": "บริษัท · ใหม่",
+      "en": "Companies · New"
+    },
+    "ส่วนลดรวม": {
+      "th": "ส่วนลดรวม",
+      "en": "Total Discounts"
+    },
+    "รอชำระ / ยกเลิก": {
+      "th": "รอชำระ / ยกเลิก",
+      "en": "Pending Payment / Cancelled"
+    },
+    "ไม่นับเป็นยอดขาย": {
+      "th": "ไม่นับเป็นยอดขาย",
+      "en": "Excluded from sales"
+    },
+    "ออเดอร์ · ดูที่ Orders (josh)": {
+      "th": "ออเดอร์ · ดูที่ Orders (josh)",
+      "en": "Orders · See Orders (josh)"
+    },
+    "คืนเงิน": {
+      "th": "คืนเงิน",
+      "en": "Refunds"
+    },
+    "ยังไม่มีข้อมูลคืนเงินใน commerce": {
+      "th": "ยังไม่มีข้อมูลคืนเงินใน commerce",
+      "en": "No refund records in commerce yet"
+    },
+    "ไม่มีข้อมูลในช่วงนี้": {
+      "th": "ไม่มีข้อมูลในช่วงนี้",
+      "en": "No data available in this range"
+    },
+    "สินค้าขายดี": {
+      "th": "สินค้าขายดี",
+      "en": "Best Selling Products"
+    },
+    "เลือกวันที่ให้ครบ": {
+      "th": "เลือกวันที่ให้ครบ",
+      "en": "Please select full date range"
+    },
+    "ผู้เข้าชม การค้นหา และ funnel ของหน้าร้าน josh · อ่านจาก replica ของ josh": {
+      "th": "ผู้เข้าชม การค้นหา และ funnel ของหน้าร้าน josh · อ่านจาก replica ของ josh",
+      "en": "Visitors, queries and funnel of josh storefront · Loaded from josh replica"
+    },
+    "Sessions": {
+      "th": "Sessions",
+      "en": "Sessions"
+    },
+    "Visitors": {
+      "th": "Visitors",
+      "en": "Visitors"
+    },
+    "Login แล้ว": {
+      "th": "Login แล้ว",
+      "en": "Authenticated"
+    },
+    "ดูสินค้า": {
+      "th": "ดูสินค้า",
+      "en": "View Products"
+    },
+    "ใส่ตะกร้า": {
+      "th": "ใส่ตะกร้า",
+      "en": "Add to Cart"
+    },
+    "ซื้อ": {
+      "th": "ซื้อ",
+      "en": "Purchase"
+    },
+    "Funnel (sessions)": {
+      "th": "Funnel (sessions)",
+      "en": "Funnel (sessions)"
+    },
+    "Sessions รายวัน": {
+      "th": "Sessions รายวัน",
+      "en": "Daily Sessions"
+    },
+    "แยกตาม platform": {
+      "th": "แยกตาม platform",
+      "en": "By Platform"
+    },
+    "คำค้นยอดนิยม": {
+      "th": "คำค้นยอดนิยม",
+      "en": "Top Search Queries"
+    },
+    "คำค้น": {
+      "th": "คำค้น",
+      "en": "Search Query"
+    },
+    "ไม่เจอสินค้า": {
+      "th": "ไม่เจอสินค้า",
+      "en": "Zero Results"
+    },
+    "Error และสุขภาพระบบ": {
+      "th": "Error และสุขภาพระบบ",
+      "en": "System Health & Errors"
+    },
+    "ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh": {
+      "th": "ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh",
+      "en": "Real-time error health checks and failure logs across Commerce and Josh"
+    },
+    "ปกติ": {
+      "th": "ปกติ",
+      "en": "Healthy"
+    },
+    "การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง": {
+      "th": "การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง",
+      "en": "Data dispatch to platform on time, zero queue backlog"
+    },
+    "Commerce": {
+      "th": "Commerce",
+      "en": "Commerce"
+    },
+    "Jagota sync error": {
+      "th": "Jagota sync error",
+      "en": "Jagota sync error"
+    },
+    "กำหนดวัน (ไทย)": {
+      "th": "กำหนดวัน (ไทย)",
+      "en": "Date Specification (TH)"
+    },
+    "คนขับ": {
+      "th": "คนขับ",
+      "en": "Driver"
+    },
+    "งาน {0}": {
+      "th": "งาน {0}",
+      "en": "Job {0}"
+    },
+    "ชื่อที่ลูกค้าเห็น — เป็นหัวข้อ (h1) และชื่อแท็บของหน้าโปร, ชื่อการ์ดในรายการโปรโมชัน และชื่อแบนเนอร์หน้าแรก": {
+      "th": "ชื่อที่ลูกค้าเห็น — เป็นหัวข้อ (h1) และชื่อแท็บของหน้าโปร, ชื่อการ์ดในรายการโปรโมชัน และชื่อแบนเนอร์หน้าแรก",
+      "en": "Public title — h1 and promotion page tab, promotion card title, and home banner title"
+    },
+    "ดูรายการที่เพิ่ม": {
+      "th": "ดูรายการที่เพิ่ม",
+      "en": "View added entries"
+    },
+    "ทุกบรรทัดใน order ใหม่ของ josh · commerce คิดราคาใหม่ด้วยโค้ดราคาของ josh (สำเนา) ตามบริษัท สาขา จำนวน และเวลาที่สั่ง แล้วเทียบกับที่ josh เก็บจริง · ไม่แก้อะไรใน josh": {
+      "th": "ทุกบรรทัดใน order ใหม่ของ josh · commerce คิดราคาใหม่ด้วยโค้ดราคาของ josh (สำเนา) ตามบริษัท สาขา จำนวน และเวลาที่สั่ง แล้วเทียบกับที่ josh เก็บจริง · ไม่แก้อะไรใน josh",
+      "en": "Every line in new josh order · commerce recalculates price using josh price engine replica against actual josh storage · read-only"
+    },
+    "ประวัติการแจ้งเตือนของผู้ใช้ (อ่านอย่างเดียว) — สำหรับทีมซัพพอร์ต": {
+      "th": "ประวัติการแจ้งเตือนของผู้ใช้ (อ่านอย่างเดียว) — สำหรับทีมซัพพอร์ต",
+      "en": "User notification history (Read-only) — For support team"
+    },
+    "เพิ่ม/ลบรูปภาพได้เฉพาะในโหมดไทยเท่านั้น": {
+      "th": "เพิ่ม/ลบรูปภาพได้เฉพาะในโหมดไทยเท่านั้น",
+      "en": "Add/remove images is supported in Thai mode only"
+    },
+    "ไม่มี SKU ต้นทาง": {
+      "th": "ไม่มี SKU ต้นทาง",
+      "en": "No source SKU"
+    },
+    "ยังไม่มีแผนที่รอตรวจ": {
+      "th": "ยังไม่มีแผนที่รอตรวจ",
+      "en": "No pending plan to review"
+    },
+    "ราคา · commerce คิดคู่กับ josh (ทดลอง)": {
+      "th": "ราคา · commerce คิดคู่กับ josh (ทดลอง)",
+      "en": "Pricing · Commerce shadow comparison with josh (Pilot)"
+    },
+    "ลบคอลัมน์นี้": {
+      "th": "ลบคอลัมน์นี้",
+      "en": "Delete this column"
+    },
+    "ไล่ไม่ได้ในรอบ 1": {
+      "th": "ไล่ไม่ได้ในรอบ 1",
+      "en": "Cannot purge in cycle 1"
+    },
+    "สร้างรายชื่อจากกลุ่ม = ดึงสมาชิกใหม่ของ segment เข้ามาเพิ่ม · แจ้งเตือนทั้งหมด = ส่งแจ้งเตือนในแอปให้คนที่ยังไม่ได้รับ": {
+      "th": "สร้างรายชื่อจากกลุ่ม = ดึงสมาชิกใหม่ของ segment เข้ามาเพิ่ม · แจ้งเตือนทั้งหมด = ส่งแจ้งเตือนในแอปให้คนที่ยังไม่ได้รับ",
+      "en": "Create list from segment = sync new segment members · Notify all = trigger in-app notification to remaining recipients"
+    },
+    "หมายเหตุ CS สำหรับคำขอคืนเงิน {0}": {
+      "th": "หมายเหตุ CS สำหรับคำขอคืนเงิน {0}",
+      "en": "CS notes for refund request {0}"
+    },
+    "อ่านค่าจาก (dot path)": {
+      "th": "อ่านค่าจาก (dot path)",
+      "en": "Read from (dot path)"
+    },
+    "ยอดขาย{0}": {
+      "th": "ยอดขาย{0}",
+      "en": "Sales revenue {0}"
+    },
+    "วันนี้": {
+      "th": "วันนี้",
+      "en": "Today"
+    },
+    "เมื่อวาน": {
+      "th": "เมื่อวาน",
+      "en": "Yesterday"
+    },
+    "สัปดาห์นี้": {
+      "th": "สัปดาห์นี้",
+      "en": "This Week"
+    },
+    "เดือนนี้": {
+      "th": "เดือนนี้",
+      "en": "This Month"
+    },
+    "เดือนที่แล้ว": {
+      "th": "เดือนที่แล้ว",
+      "en": "Last Month"
+    },
+    "กำหนดเอง": {
+      "th": "กำหนดเอง",
+      "en": "Custom"
+    },
+    "ส่งข้อมูลถึง platform สำเร็จ": {
+      "th": "ส่งข้อมูลถึง platform สำเร็จ",
+      "en": "Delivered to platform successfully"
+    },
+    "ส่งไม่สำเร็จ (dead letter)": {
+      "th": "ส่งไม่สำเร็จ (dead letter)",
+      "en": "Delivery failed (dead letter)"
+    },
+    "ชำระเงินไม่สำเร็จ": {
+      "th": "ชำระเงินไม่สำเร็จ",
+      "en": "Payment gateway failure"
+    },
+    "ส่งออเดอร์ไป Jagota ไม่สำเร็จ": {
+      "th": "ส่งออเดอร์ไป Jagota ไม่สำเร็จ",
+      "en": "Failed sending orders to Jagota"
+    }
+  }
+  </script>
+
+  <!-- ========================================================================= -->
+  <!-- 8. CLIENT SCRIPT LOGIC (Translations & Interactive Refresh)               -->
+  <!-- ========================================================================= -->
+  <script>
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-3 py-1 text-[12px] rounded font-semibold bg-white text-[#365cf5] shadow-xs transition-all";
+        btnEn.className = "px-3 py-1 text-[12px] rounded font-medium text-[#52627a] hover:text-[#17243b] transition-all";
+      } else {
+        btnEn.className = "px-3 py-1 text-[12px] rounded font-semibold bg-white text-[#365cf5] shadow-xs transition-all";
+        btnTh.className = "px-3 py-1 text-[12px] rounded font-medium text-[#52627a] hover:text-[#17243b] transition-all";
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+    }
+
+    function triggerRefresh(button) {
+      const icon = button.querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      button.disabled = true;
+      button.classList.add('opacity-75');
+
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        button.disabled = false;
+        button.classList.remove('opacity-75');
+      }, 600);
+    }
+
+    function filterLogTable() {
+      const input = document.getElementById("table-search-input");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("health-log-table");
+      const trs = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+      for (let i = 0; i < trs.length; i++) {
+        const text = trs[i].textContent || trs[i].innerText;
+        if (text.toLowerCase().indexOf(filter) > -1) {
+          trs[i].style.display = "";
+        } else {
+          trs[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+</body>
+</html>

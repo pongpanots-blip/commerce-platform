@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Portal - Dashboard & Status | Commerce Platform</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Sans Thai & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#365cf5',
+              600: '#2b4ce0',
+              700: '#203ec4'
+            },
+            ink: '#17243b',
+            canvas: '#f6f8fc',
+            bordercol: '#e1e7f0',
+            secondaryText: '#52627a',
+            success: '#157347',
+            'success-bg': '#eefbf4',
+            warning: '#b08900',
+            'warning-bg': '#fef9e8',
+            error: '#c2333f',
+            'error-bg': '#fef2f2'
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      font-size: 14px;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#f6f8fc] text-[#17243b] antialiased">
+
+  <!-- Top Global Header -->
+  <header class="bg-white border-b border-[#e1e7f0] sticky top-0 z-40 h-16 px-6 flex items-center justify-between">
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-[#365cf5] text-white flex items-center justify-center font-bold text-base shadow-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-[#17243b] text-base leading-none tracking-tight">Commerce Platform</span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#eef2ff] text-[#365cf5] border border-[#e0e7ff]">API v2.4</span>
+          </div>
+          <span class="text-xs text-[#52627a] leading-none mt-1 block">Developer Portal</span>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-2 pl-4 border-l border-[#e1e7f0]">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#eefbf4] text-[#157347] border border-[#d1f2e1]">
+          <span class="w-2 h-2 rounded-full bg-[#157347] animate-pulse"></span>
+          <span data-i18n="All systems operational">ระบบพร้อมใช้งานปกติ (All Systems Operational)</span>
+        </div>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">portal-8a5edab28263</span>
+      </div>
+    </div>
+
+    <!-- Right Actions: Language Switcher, Doc Links, Profile -->
+    <div class="flex items-center gap-4">
+      <!-- Language Switcher -->
+      <div class="inline-flex items-center p-0.5 bg-[#f1f4f9] rounded-lg border border-[#e1e7f0] text-xs font-medium">
+        <button id="lang-btn-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all">
+          ไทย
+        </button>
+        <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">
+          English
+        </button>
+      </div>
+
+      <a href="#reference" class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-[#52627a] hover:text-[#365cf5] transition-colors py-1.5 px-2.5 rounded-md hover:bg-slate-100">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span data-i18n="View API Reference">ดูเอกสาร API Reference</span>
+      </a>
+
+      <!-- Environment selector pill -->
+      <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#e1e7f0] bg-white text-xs text-[#17243b] font-medium">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Sandbox</span>
+        <span class="text-slate-400 text-[10px]">▼</span>
+      </div>
+
+      <!-- Account avatar -->
+      <div class="flex items-center gap-2 pl-2 border-l border-[#e1e7f0]">
+        <div class="w-8 h-8 rounded-full bg-[#365cf5] text-white flex items-center justify-center font-semibold text-xs shadow-xs">
+          CP
+        </div>
+        <div class="hidden lg:block text-left">
+          <div class="text-xs font-semibold text-[#17243b] leading-tight">merchant_lead@payment.co.th</div>
+          <div class="text-[11px] text-[#52627a] leading-tight" data-i18n="Admin สาขา">Admin สาขา</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Layout: Sidebar + Main Content -->
+  <div class="flex-1 flex w-full">
+
+    <!-- 4-Item Developer Portal Sidebar (256px) -->
+    <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col justify-between shrink-0 select-none">
+      <div class="p-4 space-y-6">
+        <div>
+          <div class="px-3 pb-2 text-[11px] font-semibold tracking-wider text-[#52627a] uppercase" data-i18n="Developer Portal">
+            Developer Portal
+          </div>
+          <nav class="space-y-1">
+            <!-- Active 1: Dashboard / Status -->
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#eef2ff] text-[#365cf5] font-semibold text-sm">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-[#365cf5]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span data-i18n="Dashboard">ภาพรวมและสถานะ</span>
+              </div>
+              <span class="w-2 h-2 rounded-full bg-[#365cf5]"></span>
+            </a>
+
+            <!-- Item 2: API Keys -->
+            <a href="#apikeys" class="flex items-center justify-between px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 font-medium text-sm transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+                <span data-i18n="API keys">API Keys (คีย์ใช้งาน)</span>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono">2</span>
+            </a>
+
+            <!-- Item 3: Webhooks -->
+            <a href="#webhooks" class="flex items-center justify-between px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 font-medium text-sm transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span data-i18n="Webhooks">Webhooks (เว็บฮุก)</span>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono">1</span>
+            </a>
+
+            <!-- Item 4: Docs & Reference -->
+            <a href="#docs" class="flex items-center justify-between px-3 py-2 rounded-lg text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 font-medium text-sm transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span data-i18n="Docs & Reference">เอกสาร & อ้างอิง API</span>
+              </div>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Commerce Admin Work Area Switcher Notice -->
+        <div class="pt-4 border-t border-[#e1e7f0]">
+          <div class="text-[11px] font-semibold text-[#52627a] uppercase mb-2" data-i18n="Commerce Ops">
+            ระบบปฏิบัติการหลัก (7 หมวด)
+          </div>
+          <div class="bg-[#f8fafc] p-2.5 rounded-lg border border-[#e1e7f0] text-xs text-[#52627a] space-y-1.5">
+            <div class="flex items-center gap-2 text-[#17243b] font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+              <span>เชื่อมต่อไปยัง Merchant Admin</span>
+            </div>
+            <div class="text-[11px] text-[#52627a] leading-relaxed">
+              สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน
+            </div>
+            <a href="/admin" class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#365cf5] hover:underline pt-1">
+              <span>เปิดแผงควบคุมร้านค้า</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Info inside Sidebar -->
+      <div class="p-4 border-t border-[#e1e7f0] bg-slate-50 text-[11px] text-[#52627a]">
+        <div class="flex items-center justify-between font-mono mb-1">
+          <span>SDK Status</span>
+          <span class="text-[#157347] font-semibold" data-i18n="active">active</span>
+        </div>
+        <div class="text-[10px] text-slate-400">
+          PCI-DSS Level 1 & PDPA Compliant
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Container (max-w ~1240px centered) -->
+    <main class="flex-1 p-6 lg:p-8 overflow-y-auto">
+      <div class="max-w-[1240px] mx-auto space-y-6">
+
+        <!-- Page Header & Hero Task Statement -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2 border-b border-[#e1e7f0]">
+          <div>
+            <div class="flex items-center gap-2 text-xs text-[#52627a] mb-1">
+              <span>Developer Portal</span>
+              <span>/</span>
+              <span class="text-[#365cf5] font-semibold" data-i18n="Dashboard">Dashboard</span>
+              <span>/</span>
+              <span class="font-medium text-[#17243b]" data-i18n="Status">Status</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-2xl lg:text-[28px] font-bold text-[#17243b] tracking-tight leading-tight" data-i18n="Status">
+                สถานะระบบและภาพรวม (Status)
+              </h1>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eefbf4] text-[#157347] border border-[#bbf7d0]">
+                ● Live Production & Sandbox
+              </span>
+            </div>
+            <p class="text-[#52627a] text-sm mt-1 max-w-2xl leading-relaxed" data-i18n="Connect your application in three steps, then monitor your API keys and event deliveries.">
+              เชื่อมต่อแอปพลิเคชันของคุณใน 3 ขั้นตอน จากนั้นตรวจสอบและควบคุมการทำงานของ API keys และการจัดส่ง Webhook events แบบเรียลไทม์
+            </p>
+          </div>
+
+          <!-- Primary Actions -->
+          <div class="flex items-center gap-3 shrink-0">
+            <button onclick="openModal('create-key-modal')" class="h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-[#2b4ce0] text-white font-medium text-sm flex items-center gap-2 shadow-sm transition-all focus:ring-2 focus:ring-[#365cf5] focus:ring-offset-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              <span data-i18n="Create key">สร้างคีย์ใหม่ (Create key)</span>
+            </button>
+            <button onclick="refreshDeliveryLogs()" class="h-10 px-3.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-slate-50 text-[#17243b] font-medium text-sm flex items-center gap-2 transition-all">
+              <svg id="refresh-icon" class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span data-i18n="Refresh logs">รีเฟรชประวัติ</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Notification Banner: Sample Data Warning -->
+        <div class="flex items-start justify-between p-3.5 rounded-xl bg-[#f0f4ff] border border-[#d6e2ff] text-xs text-[#203ec4]">
+          <div class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-[#365cf5] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <div>
+              <span class="font-bold mr-1">ข้อมูลตัวอย่าง (Sample Data):</span>
+              <span data-i18n="Counts and operational status in the application must come from its API. Prototype samples must be labeled ข้อมูลตัวอย่าง; never copy sample figures into application code.">
+                ตัวเลขสถิติและผลการทดสอบที่แสดงในหน้านี้เป็นข้อมูลจำลองเพื่อการพัฒนา การเชื่อมต่อจริงจะแสดงข้อมูลสดผ่าน Gateway
+              </span>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono bg-white px-2 py-0.5 rounded border border-[#d6e2ff]">API v2.4 Gateway</span>
+        </div>
+
+        <!-- 3-Step Onboarding Checklist Card -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] p-6 shadow-xs relative">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5">
+            <div>
+              <div class="flex items-center gap-2.5">
+                <h2 class="text-base font-bold text-[#17243b]" data-i18n="Getting started checklist">
+                  ขั้นตอนการเริ่มต้นใช้งาน (Getting started checklist)
+                </h2>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eef2ff] text-[#365cf5]">
+                  2 <span data-i18n="of 3 completed">จาก 3 รายการสำเร็จ</span>
+                </span>
+              </div>
+              <p class="text-xs text-[#52627a] mt-0.5" data-i18n="Connect your application in three steps, then monitor your API keys and event deliveries.">
+                สร้างคีย์ กำหนด Endpoint รับ Webhook และตรวจสอบ Signature
+              </p>
+            </div>
+            <button onclick="dismissChecklist()" class="text-xs text-[#52627a] hover:text-[#17243b] underline font-medium self-start sm:self-center" data-i18n="Dismiss checklist">
+              ซ่อนขั้นตอนแนะนำ (Dismiss checklist)
+            </button>
+          </div>
+
+          <!-- Progress bar -->
+          <div class="w-full bg-slate-100 h-2 rounded-full mb-6 overflow-hidden">
+            <div class="bg-[#365cf5] h-full rounded-full transition-all duration-500" style="width: 66.6%;"></div>
+          </div>
+
+          <!-- 3 Steps Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <!-- Step 1: Create Key (Done) -->
+            <div class="p-4 rounded-xl border border-[#d1f2e1] bg-[#f7fcf9] relative flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="w-6 h-6 rounded-full bg-[#157347] text-white flex items-center justify-center text-xs font-bold">
+                    ✓
+                  </span>
+                  <span class="text-xs font-semibold text-[#157347] uppercase" data-i18n="Done">สำเร็จแล้ว (Done)</span>
+                </div>
+                <h3 class="font-semibold text-sm text-[#17243b] mb-1" data-i18n="Create your first key">
+                  1. สร้าง API Key ตัวแรก
+                </h3>
+                <p class="text-xs text-[#52627a] leading-relaxed" data-i18n="An active API key is ready">
+                  มี API Key สถานะ Active สำหรับ Environment Sandbox พร้อมใช้งานแล้ว
+                </p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-[#e2f5ec] flex items-center justify-between">
+                <span class="text-xs text-[#157347] font-medium font-mono">pk_test_...c053</span>
+                <a href="#apikeys" class="text-xs text-[#365cf5] font-semibold hover:underline" data-i18n="Manage">จัดการ</a>
+              </div>
+            </div>
+
+            <!-- Step 2: Connect Webhook (Done) -->
+            <div class="p-4 rounded-xl border border-[#d1f2e1] bg-[#f7fcf9] relative flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="w-6 h-6 rounded-full bg-[#157347] text-white flex items-center justify-center text-xs font-bold">
+                    ✓
+                  </span>
+                  <span class="text-xs font-semibold text-[#157347] uppercase" data-i18n="Done">สำเร็จแล้ว (Done)</span>
+                </div>
+                <h3 class="font-semibold text-sm text-[#17243b] mb-1" data-i18n="Connect a webhook">
+                  2. เชื่อมต่อ Webhook
+                </h3>
+                <p class="text-xs text-[#52627a] leading-relaxed" data-i18n="An active webhook is configured">
+                  ลงทะเบียน Endpoint รับเหตุการณ์คำสั่งซื้อและการชำระเงินเรียบร้อย
+                </p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-[#e2f5ec] flex items-center justify-between">
+                <span class="text-xs text-[#157347] font-medium font-mono truncate max-w-[140px]">https://api.partner.co.th/...</span>
+                <a href="#webhooks" class="text-xs text-[#365cf5] font-semibold hover:underline" data-i18n="Manage">จัดการ</a>
+              </div>
+            </div>
+
+            <!-- Step 3: Test Connection (Pending Action) -->
+            <div class="p-4 rounded-xl border-2 border-dashed border-[#365cf5] bg-[#f4f7ff] relative flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="w-6 h-6 rounded-full bg-[#365cf5] text-white flex items-center justify-center text-xs font-bold">
+                    3
+                  </span>
+                  <span class="text-xs font-semibold text-[#365cf5] uppercase" data-i18n="Pending">รอทดสอบ (Pending)</span>
+                </div>
+                <h3 class="font-semibold text-sm text-[#17243b] mb-1" data-i18n="Test your connection">
+                  3. ทดสอบส่ง Event ทดลอง
+                </h3>
+                <p class="text-xs text-[#52627a] leading-relaxed" data-i18n="Verify signature & receiver handler">
+                  ส่ง Payload ทดสอบเพื่อยืนยัน HMAC signature verification และระบบ Handler ปลายทาง
+                </p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-[#e0e7ff] flex items-center justify-between">
+                <button onclick="triggerWebhookTest()" id="test-btn" class="h-8 px-3 rounded-lg bg-[#365cf5] hover:bg-[#2b4ce0] text-white text-xs font-medium flex items-center gap-1.5 transition-all">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span data-i18n="Test webhook">ส่ง Event ทดสอบ (Test webhook)</span>
+                </button>
+                <span class="text-[11px] text-[#52627a]" data-i18n="order.created">event: order.created</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 3 Quick KPI Stat Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- API Keys Stat Card -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-xs flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-xs font-semibold uppercase tracking-wider text-[#52627a]" data-i18n="API keys">API Keys</span>
+              <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-[#17243b] font-mono">2</span>
+                <span class="text-xs text-[#52627a]" data-i18n="total keys">คีย์ทั้งหมดในระบบ</span>
+              </div>
+              <div class="flex items-center gap-2 pt-1 text-xs">
+                <span class="inline-flex items-center gap-1 font-medium text-[#157347]">
+                  <span class="w-2 h-2 rounded-full bg-[#157347]"></span> 2 <span data-i18n="active">active</span>
+                </span>
+                <span class="text-slate-300">•</span>
+                <span class="text-[#52627a]">0 sandbox expired</span>
+              </div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-[#365cf5] flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Webhooks Stat Card -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-xs flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-xs font-semibold uppercase tracking-wider text-[#52627a]" data-i18n="Webhooks">Webhooks Subscriptions</span>
+              <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-[#17243b] font-mono">1</span>
+                <span class="text-xs text-[#52627a]" data-i18n="subscriptions">ปลายทางที่ลงทะเบียน</span>
+              </div>
+              <div class="flex items-center gap-2 pt-1 text-xs">
+                <span class="inline-flex items-center gap-1 font-medium text-[#157347]">
+                  <span class="w-2 h-2 rounded-full bg-[#157347]"></span> 1 <span data-i18n="active">active</span>
+                </span>
+                <span class="text-slate-300">•</span>
+                <span class="text-[#52627a]">4 events listened</span>
+              </div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Delivery Success Rate Card -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-xs flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-xs font-semibold uppercase tracking-wider text-[#52627a]" data-i18n="Delivery status">อัตราการจัดส่ง Webhook</span>
+              <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-[#157347] font-mono">98.4%</span>
+                <span class="text-xs text-[#157347] font-medium" data-i18n="{0} ของที่ส่งสำเร็จ">{0} ของที่ส่งสำเร็จ</span>
+              </div>
+              <div class="flex items-center gap-2 pt-1 text-xs text-[#52627a]">
+                <span data-i18n="Requests per hour">128 คำขอใน 1 ชม. ล่าสุด</span>
+                <span class="text-slate-300">•</span>
+                <span class="text-emerald-600 font-medium">Avg latency 142ms</span>
+              </div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#157347] flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Recent Webhook Deliveries Table with Filter Tabs -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs overflow-hidden">
+
+          <!-- Table Toolbar -->
+          <div class="p-5 border-b border-[#e1e7f0] flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-base font-bold text-[#17243b]" data-i18n="Recent webhook deliveries">
+                  ประวัติการจัดส่ง Webhook ล่าสุด (Recent webhook deliveries)
+                </h2>
+                <span class="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                  <span data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+                </span>
+              </div>
+              <p class="text-xs text-[#52627a] mt-0.5" data-i18n="Delivery status">
+                ตรวจสอบ Response HTTP Status Code, จำนวนครั้งการพยายามส่ง (Attempts) และ Event Payload
+              </p>
+            </div>
+
+            <!-- Filter Status Pill Group -->
+            <div class="flex items-center gap-1.5 p-1 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0] text-xs">
+              <span class="text-[11px] font-semibold text-[#52627a] px-2" data-i18n="กรอง:">กรอง:</span>
+              <button onclick="filterDeliveries('all')" id="filter-all" class="filter-tab px-3 py-1.5 rounded-md font-semibold bg-white text-[#365cf5] shadow-xs transition-all" data-i18n="All statuses">
+                สถานะทั้งหมด (All statuses)
+              </button>
+              <button onclick="filterDeliveries('success')" id="filter-success" class="filter-tab px-3 py-1.5 rounded-md font-medium text-[#52627a] hover:text-[#17243b] transition-all" data-i18n="Success">
+                สำเร็จ (Success)
+              </button>
+              <button onclick="filterDeliveries('failed')" id="filter-failed" class="filter-tab px-3 py-1.5 rounded-md font-medium text-[#52627a] hover:text-[#17243b] transition-all" data-i18n="Failed">
+                ไม่สำเร็จ (Failed)
+              </button>
+              <button onclick="filterDeliveries('superseded')" id="filter-superseded" class="filter-tab px-3 py-1.5 rounded-md font-medium text-[#52627a] hover:text-[#17243b] transition-all" data-i18n="Superseded">
+                ถูกแทนที่ (Superseded)
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse min-w-[760px]">
+              <thead>
+                <tr class="bg-slate-50 border-b border-[#e1e7f0] text-[12px] font-semibold text-[#52627a] uppercase tracking-wider">
+                  <th class="py-3 px-4" data-i18n="Delivery status">สถานะ (Status)</th>
+                  <th class="py-3 px-4" data-i18n="Event">เหตุการณ์ (Event)</th>
+                  <th class="py-3 px-4">Delivery ID & Target</th>
+                  <th class="py-3 px-4 text-center" data-i18n="HTTP">HTTP Code</th>
+                  <th class="py-3 px-4 text-center" data-i18n="Attempts">Attempts</th>
+                  <th class="py-3 px-4" data-i18n="Time">เวลาจัดส่ง (Time)</th>
+                  <th class="py-3 px-4 text-right" data-i18n="Expand">ดูรายละเอียด</th>
+                </tr>
+              </thead>
+              <tbody id="deliveries-table-body" class="divide-y divide-[#e1e7f0] text-xs">
+
+                <!-- Row 1: Success -->
+                <tr class="delivery-row hover:bg-slate-50/80 transition-colors" data-status="success">
+                  <td class="py-3.5 px-4 whitespace-nowrap">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#eefbf4] text-[#157347] border border-[#bbf7d0]">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                      <span data-i18n="Success">สำเร็จ (Success)</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#17243b]">
+                    order.created
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-mono text-[11px] text-[#17243b]">del_9b4e72a8c01</div>
+                    <div class="text-[11px] text-[#52627a] truncate max-w-[220px]">https://api.partner.co.th/v1/wh/orders</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-emerald-100 text-emerald-800">200 OK</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-center font-mono">
+                    1 / 3
+                  </td>
+                  <td class="py-3.5 px-4 whitespace-nowrap text-[#52627a]">
+                    วันนี้ 14:32:08 (2 นาทีที่แล้ว)
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="toggleDetails('detail-1')" class="text-xs font-medium text-[#365cf5] hover:underline" data-i18n="Expand">
+                      รายละเอียด ▼
+                    </button>
+                  </td>
+                </tr>
+                <!-- Accordion Detail 1 -->
+                <tr id="detail-1" class="hidden bg-slate-50 border-b border-[#e1e7f0]">
+                  <td colspan="7" class="p-4">
+                    <div class="bg-white rounded-lg border border-[#e1e7f0] p-4 text-xs font-mono space-y-2">
+                      <div class="flex items-center justify-between text-[#52627a]">
+                        <span>Header: X-Commerce-Signature: sha256=9f83ac038bfe4129...</span>
+                        <span>Latency: 112ms</span>
+                      </div>
+                      <div class="p-2.5 rounded bg-slate-900 text-emerald-400 text-[11px] overflow-x-auto">
+                        {"event": "order.created", "id": "evt_9b4e72", "data": {"order_id": "ORD-2025-9981", "amount": 2450.00, "currency": "THB", "status": "paid"}}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 2: Success -->
+                <tr class="delivery-row hover:bg-slate-50/80 transition-colors" data-status="success">
+                  <td class="py-3.5 px-4 whitespace-nowrap">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#eefbf4] text-[#157347] border border-[#bbf7d0]">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                      <span data-i18n="Success">สำเร็จ (Success)</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#17243b]">
+                    payment.captured
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-mono text-[11px] text-[#17243b]">del_7f1a30c5e92</div>
+                    <div class="text-[11px] text-[#52627a] truncate max-w-[220px]">https://api.partner.co.th/v1/wh/payments</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-emerald-100 text-emerald-800">200 OK</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-center font-mono">
+                    1 / 3
+                  </td>
+                  <td class="py-3.5 px-4 whitespace-nowrap text-[#52627a]">
+                    วันนี้ 14:15:42 (18 นาทีที่แล้ว)
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="toggleDetails('detail-2')" class="text-xs font-medium text-[#365cf5] hover:underline" data-i18n="Expand">
+                      รายละเอียด ▼
+                    </button>
+                  </td>
+                </tr>
+                <tr id="detail-2" class="hidden bg-slate-50 border-b border-[#e1e7f0]">
+                  <td colspan="7" class="p-4">
+                    <div class="bg-white rounded-lg border border-[#e1e7f0] p-4 text-xs font-mono space-y-2">
+                      <div class="p-2.5 rounded bg-slate-900 text-emerald-400 text-[11px] overflow-x-auto">
+                        {"event": "payment.captured", "id": "evt_7f1a30", "data": {"payment_id": "PAY-88192", "method": "PromptPay", "captured_at": "2025-05-12T07:15:40Z"}}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 3: Failed (504 Gateway Timeout) -->
+                <tr class="delivery-row hover:bg-slate-50/80 transition-colors" data-status="failed">
+                  <td class="py-3.5 px-4 whitespace-nowrap">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#fef2f2] text-[#c2333f] border border-[#fecaca]">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      <span data-i18n="Failed">ไม่สำเร็จ (Failed)</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#17243b]">
+                    inventory.depleted
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-mono text-[11px] text-[#17243b]">del_4c99d12a640</div>
+                    <div class="text-[11px] text-[#52627a] truncate max-w-[220px]">https://api.partner.co.th/v1/wh/inventory</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-rose-100 text-rose-800">504 Gateway Timeout</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-center font-mono text-[#c2333f] font-bold">
+                    3 / 3 (Retry maxed)
+                  </td>
+                  <td class="py-3.5 px-4 whitespace-nowrap text-[#52627a]">
+                    วันนี้ 13:48:10 (45 นาทีที่แล้ว)
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="toggleDetails('detail-3')" class="text-xs font-medium text-[#365cf5] hover:underline" data-i18n="Expand">
+                      รายละเอียด ▼
+                    </button>
+                  </td>
+                </tr>
+                <tr id="detail-3" class="hidden bg-rose-50/40 border-b border-[#e1e7f0]">
+                  <td colspan="7" class="p-4">
+                    <div class="bg-white rounded-lg border border-rose-200 p-4 text-xs font-mono space-y-2">
+                      <div class="text-rose-700 font-semibold">Error: Receiver endpoint took longer than 5000ms to respond. Automatic retries exhausted.</div>
+                      <div class="p-2.5 rounded bg-slate-900 text-slate-300 text-[11px] overflow-x-auto">
+                        {"error": "ETIMEDOUT", "attempts": 3, "last_attempt": "2025-05-12T06:48:10Z"}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 4: Superseded -->
+                <tr class="delivery-row hover:bg-slate-50/80 transition-colors" data-status="superseded">
+                  <td class="py-3.5 px-4 whitespace-nowrap">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#fef9e8] text-[#b08900] border border-[#fef08a]">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      <span data-i18n="Superseded">ถูกแทนที่ (Superseded)</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#17243b]">
+                    order.updated
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-mono text-[11px] text-[#17243b]">del_2b11e9a4f78</div>
+                    <div class="text-[11px] text-[#52627a] truncate max-w-[220px]">https://api.partner.co.th/v1/wh/orders</div>
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="px-2 py-0.5 rounded font-mono font-semibold text-xs bg-slate-100 text-slate-700">Superseded</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-center font-mono">
+                    1 / 3
+                  </td>
+                  <td class="py-3.5 px-4 whitespace-nowrap text-[#52627a]">
+                    วันนี้ 12:20:19 (2 ชม. ที่แล้ว)
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="toggleDetails('detail-4')" class="text-xs font-medium text-[#365cf5] hover:underline" data-i18n="Expand">
+                      รายละเอียด ▼
+                    </button>
+                  </td>
+                </tr>
+                <tr id="detail-4" class="hidden bg-slate-50 border-b border-[#e1e7f0]">
+                  <td colspan="7" class="p-4">
+                    <div class="bg-white rounded-lg border border-[#e1e7f0] p-4 text-xs font-mono">
+                      <div class="text-[#52627a]">Event state superseded by later event del_9b4e72a8c01.</div>
+                    </div>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+
+            <!-- Filtered Empty State Container -->
+            <div id="table-filtered-empty" class="hidden p-12 text-center">
+              <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center mb-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+              <h3 class="text-sm font-bold text-[#17243b]" data-i18n="No recent deliveries match this status.">
+                ไม่พบประวัติการจัดส่งตามสถานะที่เลือก
+              </h3>
+              <p class="text-xs text-[#52627a] mt-1" data-i18n="No webhook deliveries yet.">
+                ลองเปลี่ยนตัวกรองเป็น "สถานะทั้งหมด" เพื่อดูประวัติการส่งทั้งหมด
+              </p>
+            </div>
+          </div>
+
+          <!-- Table Footer Pagination note -->
+          <div class="p-4 border-t border-[#e1e7f0] bg-slate-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-[#52627a] gap-2">
+            <div>
+              <span>แสดง 4 รายการล่าสุด</span>
+              <span class="mx-1">•</span>
+              <span class="font-medium text-[#17243b]">ค้นหาเฉพาะรายการในหน้านี้ (Frontend page filter)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs">หน้า 1 จาก 1</span>
+              <button disabled class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-white text-slate-300 cursor-not-allowed">ก่อนหน้า</button>
+              <button disabled class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-white text-slate-300 cursor-not-allowed">ถัดไป</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Developer Quickstart & Code Reference with Security Notice -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <!-- cURL Authenticate snippet (2 cols) -->
+          <div class="lg:col-span-2 bg-white rounded-xl border border-[#e1e7f0] p-6 shadow-xs space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#eef2ff] text-[#365cf5] uppercase font-mono">Quickstart</span>
+                  <h3 class="text-sm font-bold text-[#17243b]" data-i18n="Authenticate with X-Api-Key">
+                    การยืนยันตัวตนด้วย X-Api-Key Header
+                  </h3>
+                </div>
+                <p class="text-xs text-[#52627a] mt-1" data-i18n="Include your live or sandbox partner key inside the HTTP header of every request.">
+                  ระบุ Sandbox Key หรือ Production Key ใน HTTP Header ของคำขอ API ทุกครั้ง
+                </p>
+              </div>
+              <span class="text-xs font-mono text-[#52627a]">cURL / Bash</span>
+            </div>
+
+            <!-- Code snippet box -->
+            <div class="relative bg-slate-900 rounded-lg p-4 font-mono text-xs text-slate-100 overflow-x-auto border border-slate-800">
+              <div class="flex items-center justify-between text-slate-400 text-[11px] pb-2 border-b border-slate-800 mb-3 select-none">
+                <span data-i18n="cURL request">cURL Request ตัวอย่าง</span>
+                <button onclick="copySnippet()" id="copy-btn" class="hover:text-white transition-colors flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  <span id="copy-text">คัดลอกคำสั่ง</span>
+                </button>
+              </div>
+              <pre class="leading-relaxed"><code>curl -X GET "https://api.commerceplatform.co.th/v2.4/orders" \
+  -H "X-Api-Key: pk_test_7f849b2c01994ad6" \
+  -H "Content-Type: application/json" \
+  -H "Accept-Language: th"</code></pre>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs">
+              <a href="#docs" class="text-[#365cf5] font-semibold hover:underline flex items-center gap-1">
+                <span data-i18n="View API Reference">ดูคู่มือ API Reference ฉบับสมบูรณ์</span> →
+              </a>
+              <a href="#webhook-signatures" class="text-[#52627a] hover:text-[#17243b] font-medium flex items-center gap-1">
+                <span data-i18n="Webhook signatures guide">คู่มือการตรวจสอบ Webhook Signatures (HMAC-SHA256)</span> ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Security Policy / Key Storage Warning (1 col) -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-6 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 class="text-sm font-bold text-[#17243b] mb-1" data-i18n="Keep keys server-side">
+                เก็บ API Key บนฝั่ง Server เท่านั้น
+              </h3>
+              <p class="text-xs text-[#52627a] leading-relaxed mt-2" data-i18n="Send the key in the X-Api-Key header from your server only. Revocation can take up to 30 seconds while validation caches expire.">
+                ห้ามใส่ API Key ในโค้ดฝั่ง Client-side หรือแอปมือถือสาธารณะ ในกรณีที่ทำการเพิกถอนคีย์ ระบบจะใช้เวลาล้างแคชตรวจสอบสิทธิ์สูงสุด 30 วินาที
+              </p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-[#e1e7f0] bg-slate-50 p-3 rounded-lg text-[11px] text-[#52627a] space-y-1">
+              <div class="flex items-center justify-between">
+                <span>Key Rotation Policy:</span>
+                <span class="font-semibold text-[#17243b]">90 วัน</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Revocation Propagation:</span>
+                <span class="font-mono text-[#b08900] font-semibold">≤ 30s</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer Component -->
+  <footer class="bg-white border-t border-[#e1e7f0] py-4 px-6 text-xs text-[#52627a]">
+    <div class="max-w-[1240px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="font-semibold text-[#17243b]">Commerce Platform</span>
+        <span>•</span>
+        <span>© 2025 Commerce Platform Southeast Asia Pte. Ltd. All rights reserved. PCI-DSS Level 1 Certified.</span>
+      </div>
+      <div class="flex items-center gap-4 text-xs">
+        <a href="#security" class="hover:text-[#365cf5] transition-colors">Security Architecture</a>
+        <a href="#compliance" class="hover:text-[#365cf5] transition-colors">Compliance & PDPA</a>
+        <a href="#terms" class="hover:text-[#365cf5] transition-colors">Developer Terms</a>
+        <a href="#privacy" class="hover:text-[#365cf5] transition-colors">Privacy Policy</a>
+        <span class="inline-flex items-center gap-1 text-[#157347] font-semibold">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> API Status: Healthy
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal: Create Key Dialog (Named dialog per guidelines) -->
+  <div id="create-key-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl border border-[#e1e7f0] w-full max-w-lg overflow-hidden transform transition-all">
+      <div class="p-6 border-b border-[#e1e7f0] flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-[#17243b]" data-i18n="Create an API key">
+            สร้าง API Key ใหม่ (Create an API key)
+          </h3>
+          <p class="text-xs text-[#52627a] mt-0.5">ระบุชื่อเรียกและระดับสิทธิ์การเข้าถึงสำหรับ Service หรือ Integration</p>
+        </div>
+        <button onclick="closeModal('create-key-modal')" class="text-slate-400 hover:text-slate-600 text-lg p-1">✕</button>
+      </div>
+
+      <form id="create-key-form" onsubmit="handleCreateKeySubmit(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            ชื่อคีย์ (Key Label / Description) <span class="text-rose-500">*</span>
+          </label>
+          <input type="text" id="key-label-input" required placeholder="เช่น ERP Production Connector, POS Sync Hub" class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] text-sm focus:outline-none focus:ring-2 focus:ring-[#365cf5]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            Environment <span class="text-rose-500">*</span>
+          </label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="flex items-center gap-2 p-3 rounded-lg border border-[#365cf5] bg-[#eef2ff] cursor-pointer">
+              <input type="radio" name="env" value="sandbox" checked class="text-[#365cf5] focus:ring-[#365cf5]">
+              <div>
+                <div class="text-xs font-bold text-[#17243b]">Sandbox</div>
+                <div class="text-[11px] text-[#52627a]">ทดสอบระบบ ไม่หักเงินจริง</div>
+              </div>
+            </label>
+            <label class="flex items-center gap-2 p-3 rounded-lg border border-[#e1e7f0] bg-white cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="env" value="production" class="text-[#365cf5] focus:ring-[#365cf5]">
+              <div>
+                <div class="text-xs font-bold text-[#17243b]">Production</div>
+                <div class="text-[11px] text-[#52627a]">ระบบจริง เชื่อมต่อร้านค้า</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-[#17243b] mb-1">
+            สิทธิ์การเรียกใช้งาน (Scopes)
+          </label>
+          <div class="space-y-2 text-xs">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" checked class="rounded text-[#365cf5] focus:ring-[#365cf5]">
+              <span class="text-[#17243b]">Orders & Fulfillment (Read & Write)</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" checked class="rounded text-[#365cf5] focus:ring-[#365cf5]">
+              <span class="text-[#17243b]">Inventory & Stock Management (Read & Write)</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" class="rounded text-[#365cf5] focus:ring-[#365cf5]">
+              <span class="text-[#17243b]">Customer & Webhooks Management (Read)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900 leading-relaxed">
+          <span class="font-bold">คำเตือน:</span> API Secret จะแสดงให้เห็นเพียงครั้งเดียวหลังการสร้าง โปรดบันทึกไว้ใน Secret Vault ทันที
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-[#e1e7f0]">
+          <button type="button" onclick="closeModal('create-key-modal')" class="h-10 px-4 rounded-lg border border-[#e1e7f0] text-xs font-semibold text-[#52627a] hover:bg-slate-50 transition-colors">
+            ยกเลิก (Cancel)
+          </button>
+          <button type="submit" class="h-10 px-5 rounded-lg bg-[#365cf5] hover:bg-[#2b4ce0] text-xs font-semibold text-white shadow-xs transition-colors">
+            สร้างคีย์ (Generate Key)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg text-xs flex items-center gap-2.5">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">คัดลอกคำสั่งเรียบร้อยแล้ว</span>
+  </div>
+
+  <!-- Invisible JSON translation catalogue as strictly required -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "Status": {
+      "th": "สถานะระบบ",
+      "en": "Status"
+    },
+    "All statuses": {
+      "th": "สถานะทั้งหมด",
+      "en": "All statuses"
+    },
+    "Event": {
+      "th": "เหตุการณ์",
+      "en": "Event"
+    },
+    "Attempts": {
+      "th": "จำนวนครั้งที่พยายาม",
+      "en": "Attempts"
+    },
+    "HTTP": {
+      "th": "รหัส HTTP",
+      "en": "HTTP"
+    },
+    "Success": {
+      "th": "สำเร็จ",
+      "en": "Success"
+    },
+    "Failed": {
+      "th": "ไม่สำเร็จ",
+      "en": "Failed"
+    },
+    "Dashboard": {
+      "th": "ภาพรวม",
+      "en": "Dashboard"
+    },
+    "Pending": {
+      "th": "รอดำเนินการ",
+      "en": "Pending"
+    },
+    "active": {
+      "th": "เปิดใช้งาน",
+      "en": "active"
+    },
+    "Webhooks": {
+      "th": "เว็บฮุก",
+      "en": "Webhooks"
+    },
+    "Create key": {
+      "th": "สร้างคีย์",
+      "en": "Create key"
+    },
+    "Connect your application in three steps, then monitor your API keys and event deliveries.": {
+      "th": "เชื่อมต่อแอปพลิเคชันของคุณใน 3 ขั้นตอน จากนั้นตรวจสอบและควบคุมการทำงานของ API keys และการจัดส่ง Webhook events แบบเรียลไทม์",
+      "en": "Connect your application in three steps, then monitor your API keys and event deliveries."
+    },
+    "Create your first key": {
+      "th": "สร้างคีย์แรกของคุณ",
+      "en": "Create your first key"
+    },
+    "Connect a webhook": {
+      "th": "เชื่อมต่อเว็บฮุก",
+      "en": "Connect a webhook"
+    },
+    "Test your connection": {
+      "th": "ทดสอบการเชื่อมต่อ",
+      "en": "Test your connection"
+    },
+    "Getting started checklist": {
+      "th": "รายการเริ่มต้นใช้งาน",
+      "en": "Getting started checklist"
+    },
+    "of 3 completed": {
+      "th": "จาก 3 รายการสำเร็จ",
+      "en": "of 3 completed"
+    },
+    "Dismiss checklist": {
+      "th": "ปิดรายการแนะนำ",
+      "en": "Dismiss checklist"
+    },
+    "Create an API key": {
+      "th": "สร้าง API key",
+      "en": "Create an API key"
+    },
+    "An active API key is ready": {
+      "th": "API key ที่เปิดใช้งานพร้อมแล้ว",
+      "en": "An active API key is ready"
+    },
+    "Start by creating your first API key": {
+      "th": "เริ่มต้นโดยการสร้าง API key แรกของคุณ",
+      "en": "Start by creating your first API key"
+    },
+    "Done": {
+      "th": "สำเร็จ",
+      "en": "Done"
+    },
+    "Subscribe a webhook": {
+      "th": "ลงทะเบียนรับเว็บฮุก",
+      "en": "Subscribe a webhook"
+    },
+    "An active webhook is configured": {
+      "th": "เว็บฮุกที่เปิดใช้งานถูกกำหนดค่าแล้ว",
+      "en": "An active webhook is configured"
+    },
+    "Set up a webhook endpoint": {
+      "th": "ตั้งค่าปลายทางรับเว็บฮุก",
+      "en": "Set up a webhook endpoint"
+    },
+    "Set up webhook": {
+      "th": "ตั้งค่าเว็บฮุก",
+      "en": "Set up webhook"
+    },
+    "Send a test event": {
+      "th": "ส่งเหตุการณ์ทดสอบ",
+      "en": "Send a test event"
+    },
+    "Verify signature & receiver handler": {
+      "th": "ตรวจสอบลายเซ็นและตัวรับข้อมูล",
+      "en": "Verify signature & receiver handler"
+    },
+    "Test your webhook setup": {
+      "th": "ทดสอบการตั้งค่าเว็บฮุกของคุณ",
+      "en": "Test your webhook setup"
+    },
+    "Test webhook": {
+      "th": "ทดสอบเว็บฮุก",
+      "en": "Test webhook"
+    },
+    "API keys": {
+      "th": "API keys",
+      "en": "API keys"
+    },
+    "Manage": {
+      "th": "จัดการ",
+      "en": "Manage"
+    },
+    "total keys": {
+      "th": "คีย์ทั้งหมด",
+      "en": "total keys"
+    },
+    "subscriptions": {
+      "th": "การลงทะเบียน",
+      "en": "subscriptions"
+    },
+    "Recent webhook deliveries": {
+      "th": "ประวัติการจัดส่งเว็บฮุกล่าสุด",
+      "en": "Recent webhook deliveries"
+    },
+    "Delivery status": {
+      "th": "สถานะการจัดส่ง",
+      "en": "Delivery status"
+    },
+    "Superseded": {
+      "th": "ถูกแทนที่",
+      "en": "Superseded"
+    },
+    "Refresh logs": {
+      "th": "รีเฟรชบันทึก",
+      "en": "Refresh logs"
+    },
+    "No recent deliveries match this status.": {
+      "th": "ไม่พบการจัดส่งล่าสุดที่ตรงกับสถานะนี้",
+      "en": "No recent deliveries match this status."
+    },
+    "No webhook deliveries yet.": {
+      "th": "ยังไม่มีการจัดส่งเว็บฮุก",
+      "en": "No webhook deliveries yet."
+    },
+    "Time": {
+      "th": "เวลา",
+      "en": "Time"
+    },
+    "Docs & Reference": {
+      "th": "เอกสารและข้อมูลอ้างอิง",
+      "en": "Docs & Reference"
+    },
+    "Quickstart": {
+      "th": "เริ่มต้นใช้งานด่วน",
+      "en": "Quickstart"
+    },
+    "Authenticate with X-Api-Key": {
+      "th": "ยืนยันตัวตนด้วย X-Api-Key",
+      "en": "Authenticate with X-Api-Key"
+    },
+    "Include your live or sandbox partner key inside the HTTP header of every request.": {
+      "th": "ใส่คีย์ partner ทั้งแบบสดหรือ sandbox ใน HTTP header ของทุกคำขอ",
+      "en": "Include your live or sandbox partner key inside the HTTP header of every request."
+    },
+    "cURL request": {
+      "th": "คำขอ cURL",
+      "en": "cURL request"
+    },
+    "View API Reference": {
+      "th": "ดูข้อมูลอ้างอิง API",
+      "en": "View API Reference"
+    },
+    "Webhook signatures guide": {
+      "th": "คู่มือลายเซ็นเว็บฮุก",
+      "en": "Webhook signatures guide"
+    },
+    "Keep keys server-side": {
+      "th": "เก็บคีย์ไว้ฝั่งเซิร์ฟเวอร์เท่านั้น",
+      "en": "Keep keys server-side"
+    },
+    "Send the key in the X-Api-Key header from your server only. Revocation can take up to 30 seconds while validation caches expire.": {
+      "th": "ส่งคีย์ใน X-Api-Key header จากเซิร์ฟเวอร์ของคุณเท่านั้น การเพิกถอนอาจใช้เวลาสูงสุด 30 วินาทีในขณะที่แคชตรวจสอบสิทธิ์หมดอายุ",
+      "en": "Send the key in the X-Api-Key header from your server only. Revocation can take up to 30 seconds while validation caches expire."
+    },
+    "{0} ของที่ส่งสำเร็จ": {
+      "th": "{0} ของที่ส่งสำเร็จ",
+      "en": "{0} successfully delivered"
+    },
+    "Admin สาขา": {
+      "th": "Admin สาขา",
+      "en": "Branch Admin"
+    },
+    "Create account": {
+      "th": "สร้างบัญชีผู้ใช้",
+      "en": "Create account"
+    },
+    "Expand": {
+      "th": "ขยาย",
+      "en": "Expand"
+    },
+    "Legacy:": {
+      "th": "รุ่นเดิม:",
+      "en": "Legacy:"
+    },
+    "orderStatus flags": {
+      "th": "แฟล็ก orderStatus",
+      "en": "orderStatus flags"
+    },
+    "Requests per hour": {
+      "th": "คำขอต่อชั่วโมง",
+      "en": "Requests per hour"
+    },
+    "summer-sale": {
+      "th": "summer-sale",
+      "en": "summer-sale"
+    },
+    "กรอง:": {
+      "th": "กรอง:",
+      "en": "Filter:"
+    },
+    "กำหนดราคาและติดตามคำขอจากลูกค้า": {
+      "th": "กำหนดราคาและติดตามคำขอจากลูกค้า",
+      "en": "Set pricing and track customer requests"
+    },
+    "ขอวงเงินค้าง": {
+      "th": "ขอวงเงินค้าง",
+      "en": "Request credit limit"
+    },
+    "คำขอสินค้าตัวอย่าง": {
+      "th": "คำขอสินค้าตัวอย่าง",
+      "en": "Sample product request"
+    },
+    "จำนวนสูงสุด": {
+      "th": "จำนวนสูงสุด",
+      "en": "Maximum amount"
+    },
+    "เช่น BIDBEK666640977": {
+      "th": "เช่น BIDBEK666640977",
+      "en": "e.g. BIDBEK666640977"
+    },
+    "ตรวจสอบการเปลี่ยนแปลงไม่สำเร็จ": {
+      "th": "ตรวจสอบการเปลี่ยนแปลงไม่สำเร็จ",
+      "en": "Failed to verify changes"
+    },
+    "ทุกหมวด": {
+      "th": "ทุกหมวด",
+      "en": "All categories"
+    },
+    "ประเภทการจับคู่": {
+      "th": "ประเภทการจับคู่",
+      "en": "Matching type"
+    },
+    "แผน Growth": {
+      "th": "แผน Growth",
+      "en": "Growth Plan"
+    },
+    "ไม่เจอในข้อมูลที่เก็บไว้": {
+      "th": "ไม่เจอในข้อมูลที่เก็บไว้",
+      "en": "Not found in stored records"
+    },
+    "ยอดรวม ฿": {
+      "th": "ยอดรวม ฿",
+      "en": "Total ฿"
+    },
+    "ยืนยันการลบคูปองนี้?": {
+      "th": "ยืนยันการลบคูปองนี้?",
+      "en": "Confirm deleting this coupon?"
+    },
+    "ราคาที่เห็นบนเว็บนี้ (ต้องเลือก)": {
+      "th": "ราคาที่เห็นบนเว็บนี้ (ต้องเลือก)",
+      "en": "Price visible on web (required)"
+    },
+    "ลบงาน": {
+      "th": "ลบงาน",
+      "en": "Delete task"
+    },
+    "เลือกวันที่ให้ครบ": {
+      "th": "เลือกวันที่ให้ครบ",
+      "en": "Select complete date range"
+    },
+    "สมาชิก": {
+      "th": "สมาชิก",
+      "en": "Member"
+    },
+    "สีพื้นหลัง popup": {
+      "th": "สีพื้นหลัง popup",
+      "en": "Popup background color"
+    },
+    "โหลดราคาสัญญาไม่สำเร็จ": {
+      "th": "โหลดราคาสัญญาไม่สำเร็จ",
+      "en": "Failed to load contract pricing"
+    }
+  }
+  </script>
+
+  <!-- Interactive Logic for Language Selector, Table Filter, Modal, Toast -->
+  <script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        enBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        thBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+      }
+
+      // Update text in elements matching catalog keys
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[key] && translationsData[key][lang]) {
+          el.textContent = translationsData[key][lang];
+        }
+      });
+
+      showToast(lang === 'th' ? 'เปลี่ยนภาษาเป็น ไทย แล้ว' : 'Language switched to English');
+    }
+
+    function filterDeliveries(status) {
+      const tabs = ['all', 'success', 'failed', 'superseded'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('filter-' + t);
+        if (t === status) {
+          btn.className = "filter-tab px-3 py-1.5 rounded-md font-semibold bg-white text-[#365cf5] shadow-xs transition-all";
+        } else {
+          btn.className = "filter-tab px-3 py-1.5 rounded-md font-medium text-[#52627a] hover:text-[#17243b] transition-all";
+        }
+      });
+
+      const rows = document.querySelectorAll('.delivery-row');
+      let visibleCount = 0;
+      rows.forEach(r => {
+        const rowStatus = r.getAttribute('data-status');
+        if (status === 'all' || rowStatus === status) {
+          r.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          r.classList.add('hidden');
+        }
+      });
+
+      // hide details
+      document.querySelectorAll('[id^="detail-"]').forEach(d => d.classList.add('hidden'));
+
+      const emptyEl = document.getElementById('table-filtered-empty');
+      if (visibleCount === 0) {
+        emptyEl.classList.remove('hidden');
+      } else {
+        emptyEl.classList.add('hidden');
+      }
+    }
+
+    function toggleDetails(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('hidden');
+      }
+    }
+
+    function dismissChecklist() {
+      const card = document.querySelector('.bg-white.rounded-xl.border.border-\\[\\#e1e7f0\\].p-6.shadow-xs.relative');
+      if (card) {
+        card.style.display = 'none';
+        showToast(currentLang === 'th' ? 'ซ่อนรายการเริ่มต้นใช้งานแล้ว' : 'Checklist dismissed');
+      }
+    }
+
+    function triggerWebhookTest() {
+      const btn = document.getElementById('test-btn');
+      btn.innerHTML = `<span class="inline-block animate-spin mr-1">↻</span> กำลังส่ง...`;
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = `✓ ส่งสำเร็จ (200 OK)`;
+        btn.className = "h-8 px-3 rounded-lg bg-[#157347] text-white text-xs font-medium flex items-center gap-1.5";
+        showToast(currentLang === 'th' ? 'ส่ง Test Event (order.created) สำเร็จ รับ 200 OK' : 'Test Event sent successfully (200 OK)');
+      }, 1000);
+    }
+
+    function refreshDeliveryLogs() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast(currentLang === 'th' ? 'รีเฟรชประวัติการส่ง Webhook เรียบร้อย' : 'Delivery logs refreshed');
+      }, 700);
+    }
+
+    function copySnippet() {
+      const snippet = `curl -X GET "https://api.commerceplatform.co.th/v2.4/orders" \\\n  -H "X-Api-Key: pk_test_7f849b2c01994ad6" \\\n  -H "Content-Type: application/json" \\\n  -H "Accept-Language: th"`;
+      navigator.clipboard.writeText(snippet).then(() => {
+        showToast(currentLang === 'th' ? 'คัดลอก cURL คำสั่งเรียบร้อย' : 'cURL command copied');
+      });
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function handleCreateKeySubmit(e) {
+      e.preventDefault();
+      const label = document.getElementById('key-label-input').value;
+      closeModal('create-key-modal');
+      showToast(currentLang === 'th' ? `สร้าง API Key "${label}" เรียบร้อย (pk_test_...)` : `API Key "${label}" created successfully`);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      msgEl.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+
+    // Keyboard accessibility for modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal('create-key-modal');
+      }
+    });
+  </script>
+</body>
+</html>

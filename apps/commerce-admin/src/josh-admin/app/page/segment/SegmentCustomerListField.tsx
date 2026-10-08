@@ -12,6 +12,8 @@ import { mergeResolvedUsers, type ResolvedSegmentUser } from './segment-user-lis
 
 /** Status of resolving a segment's already-saved `user_ids` (edit page only — a fresh/create
  * list has nothing to load). While this isn't 'loaded', the page must block Save. */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type ManualUsersInitialLoad = {
   status: ManualUsersLoadStatus;
   /** How many of the stored ids came back in `not_found` (stale/deleted users). */
@@ -41,6 +43,7 @@ const NOT_FOUND_PREVIEW_LIMIT = 10;
  * card. `email`/`name` may come back masked (e.g. `na***@joshcompany.com`) from the backend —
  * this component only displays and dedupes by `id`, never tries to unmask. */
 export function SegmentCustomerListField({ value, onChange, initialLoad }: Props) {
+  __useUiLocale();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileRows, setFileRows] = useState<CsvImportRow[]>([]);
   const [fileName, setFileName] = useState('');
@@ -55,13 +58,13 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
     try {
       const rows = parseCouponRecipientCsv(await file.text());
       if (rows.length === 0) {
-        setFileError('ไม่พบข้อมูลในไฟล์');
+        setFileError(__uiMessage("ไม่พบข้อมูลในไฟล์"));
         return;
       }
       setFileRows(rows);
       setFileName(file.name);
     } catch {
-      setFileError('อ่านไฟล์ไม่สำเร็จ');
+      setFileError(__uiMessage("อ่านไฟล์ไม่สำเร็จ"));
     }
   };
 
@@ -80,7 +83,7 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
       setFileName('');
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch {
-      setCheckError('ตรวจสอบรายชื่อไม่สำเร็จ');
+      setCheckError(__uiMessage("ตรวจสอบรายชื่อไม่สำเร็จ"));
     } finally {
       setChecking(false);
     }
@@ -91,21 +94,20 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
   return (
     <div className="space-y-3">
       {initialLoad?.status === 'loading' && (
-        <p className="text-xs text-gray-500">กำลังโหลดรายชื่อเดิม...</p>
+        <p className="text-xs text-gray-500">{__uiText("กำลังโหลดรายชื่อเดิม...")}</p>
       )}
       {initialLoad?.status === 'error' && (
         <div
           role="alert"
           className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-700"
         >
-          <span>โหลดรายชื่อเดิมไม่สำเร็จ — กดลองใหม่</span>
+          <span>{__uiText("โหลดรายชื่อเดิมไม่สำเร็จ — กดลองใหม่")}</span>
           <button
             type="button"
             onClick={initialLoad.onRetry}
             className="font-medium text-red-700 underline hover:text-red-800"
           >
-            ลองใหม่
-          </button>
+            {__uiText("ลองใหม่")}</button>
         </div>
       )}
       {initialLoad?.status === 'loaded' && manualUsersNotFoundWarning(initialLoad.notFoundCount) && (
@@ -116,7 +118,7 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
 
       <div className="flex flex-wrap items-center gap-3">
         <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-black text-primary transition-colors hover:bg-primary/20">
-          <span>อัปโหลด CSV</span>
+          <span>{__uiText("อัปโหลด CSV")}</span>
           <input
             ref={fileInputRef}
             type="file"
@@ -133,26 +135,22 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
           download="segment-users-template.csv"
           className="text-xs text-blue-600 hover:underline"
         >
-          ดาวน์โหลด template
-        </a>
+          {__uiText("ดาวน์โหลด template")}</a>
         {fileName && (
           <span className="text-xs text-gray-500">
-            ไฟล์ {fileName}: {fileRows.length} รายการ
-          </span>
+            {__uiText("ไฟล์ ")}{fileName}: {fileRows.length} {__uiText(" รายการ")}</span>
         )}
       </div>
       <p className="text-xs text-gray-500">
-        คอลัมน์ <code>user_id</code>, <code>email</code>, <code>custcode</code> — ไม่บังคับทุกช่อง
-        แต่ละแถวใส่อย่างน้อย 1 ช่อง (ไม่มีหัวคอลัมน์ก็ได้ ระบบเดาจากรูปแบบ)
-      </p>
+        {__uiText("คอลัมน์ ")}<code>{__uiText("user_id")}</code>, <code>{__uiText("email")}</code>, <code>{__uiText("custcode")}</code> {__uiText(" — ไม่บังคับทุกช่อง แต่ละแถวใส่อย่างน้อย 1 ช่อง (ไม่มีหัวคอลัมน์ก็ได้ ระบบเดาจากรูปแบบ)")}</p>
       {fileError && (
         <p role="alert" className="text-xs text-red-600">
-          {fileError}
+          {(typeof (fileError) === 'string' ? __uiText(fileError) : fileError)}
         </p>
       )}
 
       <Textarea
-        label="หรือวาง email / user_id / custcode (คั่นด้วย comma หรือขึ้นบรรทัดใหม่)"
+        label={__uiText("หรือวาง email / user_id / custcode (คั่นด้วย comma หรือขึ้นบรรทัดใหม่)")}
         rows={3}
         value={pasteText}
         onChange={(event) => setPasteText(event.target.value)}
@@ -164,16 +162,16 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
         disabled={checking || (fileRows.length === 0 && !pasteText.trim())}
         className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 disabled:opacity-50"
       >
-        {checking ? 'กำลังตรวจสอบ...' : 'ตรวจสอบรายชื่อ'}
+        {checking ? __uiText("กำลังตรวจสอบ...") : __uiText("ตรวจสอบรายชื่อ")}
       </button>
       {checkError && (
         <p role="alert" className="text-xs text-red-600">
-          {checkError}
+          {(typeof (checkError) === 'string' ? __uiText(checkError) : checkError)}
         </p>
       )}
       {lastResult && (
         <p className="text-xs text-gray-500">
-          พบ {lastResult.found} คน · ไม่พบ {lastResult.notFound.length}
+          {__uiText("พบ ")}{lastResult.found} {__uiText(" คน · ไม่พบ ")}{lastResult.notFound.length}
           {lastResult.notFound.length > 0
             ? ` (${lastResult.notFound.slice(0, NOT_FOUND_PREVIEW_LIMIT).join(', ')}${
                 lastResult.notFound.length > NOT_FOUND_PREVIEW_LIMIT
@@ -186,19 +184,18 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
 
       <div className="rounded-lg border border-gray-100 p-3">
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm text-gray-700">รายชื่อ: {value.length} คน</span>
+          <span className="text-sm text-gray-700">{__uiText("รายชื่อ: ")}{value.length} {__uiText(" คน")}</span>
           {value.length > 0 && (
             <button
               type="button"
               onClick={() => onChange([])}
               className="text-xs text-red-500 hover:underline"
             >
-              ล้างรายการ
-            </button>
+              {__uiText("ล้างรายการ")}</button>
           )}
         </div>
         {value.length === 0 ? (
-          <p className="text-xs text-gray-400">ยังไม่มีรายชื่อ</p>
+          <p className="text-xs text-gray-400">{__uiText("ยังไม่มีรายชื่อ")}</p>
         ) : (
           <ul className="max-h-48 space-y-1 overflow-y-auto text-sm">
             {value.slice(0, LIST_PREVIEW_LIMIT).map((user) => (
@@ -207,7 +204,7 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
                 <button
                   type="button"
                   onClick={() => removeUser(user.id)}
-                  aria-label={`นำ ${user.email} ออก`}
+                  aria-label={__uiText("นำ {0} ออก", {"0": user.email})}
                   className="text-gray-400 hover:text-red-500"
                 >
                   ×
@@ -217,7 +214,7 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
           </ul>
         )}
         {value.length > LIST_PREVIEW_LIMIT && (
-          <p className="mt-1 text-xs text-gray-400">+{value.length - LIST_PREVIEW_LIMIT} คน</p>
+          <p className="mt-1 text-xs text-gray-400">+{value.length - LIST_PREVIEW_LIMIT} {__uiText(" คน")}</p>
         )}
       </div>
     </div>
@@ -225,3 +222,5 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
 }
 
 export default SegmentCustomerListField;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

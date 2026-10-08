@@ -1,6 +1,9 @@
+// ui-metadata-migration: static labels and UI notices only
 import { revealPii, type PiiField, type PiiSubjectType } from '@josh/shared-api';
 import { useId, useState } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface RevealPiiButtonProps {
   subjectType: PiiSubjectType;
   subjectId: string;
@@ -20,6 +23,7 @@ export function RevealPiiButton({
   masked,
   label,
 }: RevealPiiButtonProps) {
+  __useUiLocale();
   const [value, setValue] = useState<string | null>(null);
   const [asking, setAsking] = useState(false);
   const [reason, setReason] = useState('');
@@ -36,7 +40,7 @@ export function RevealPiiButton({
       setAsking(false);
       setReason('');
     } catch {
-      setError('ขอดูข้อมูลไม่สำเร็จ กรุณาลองใหม่');
+      setError(__uiMessage("ขอดูข้อมูลไม่สำเร็จ กรุณาลองใหม่"));
     } finally {
       setBusy(false);
     }
@@ -50,8 +54,7 @@ export function RevealPiiButton({
         <span className="font-medium text-gray-900">{value}</span>
         {isPhone && value !== '—' && (
           <a href={`tel:${value}`} className="text-primary hover:underline">
-            โทร
-          </a>
+            {__uiText("โทร")}</a>
         )}
       </span>
     );
@@ -69,20 +72,18 @@ export function RevealPiiButton({
           className="rounded border border-gray-200 px-2 py-1 text-xs font-medium text-primary hover:bg-gray-50"
           onClick={() => setAsking(true)}
         >
-          ขอดูข้อมูลเต็ม
-        </button>
+          {__uiText("ขอดูข้อมูลเต็ม")}</button>
       )}
       {canReveal && asking && (
         <span className="inline-flex flex-wrap items-center gap-2">
           <label htmlFor={reasonId} className="text-xs text-gray-500">
-            เหตุผล
-          </label>
+            {__uiText("เหตุผล")}</label>
           <input
             id={reasonId}
             className="rounded border border-gray-200 px-2 py-1 text-xs"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            placeholder="อย่างน้อย 10 ตัวอักษร"
+            placeholder={__uiText("อย่างน้อย 10 ตัวอักษร")}
           />
           <button
             type="button"
@@ -90,7 +91,7 @@ export function RevealPiiButton({
             className="rounded bg-primary px-2 py-1 text-xs font-medium text-white disabled:opacity-40"
             onClick={() => void submit()}
           >
-            {busy ? 'กำลังขอข้อมูล…' : 'ยืนยัน'}
+            {busy ? __uiText("กำลังขอข้อมูล…") : __uiText("ยืนยัน")}
           </button>
           <button
             type="button"
@@ -101,11 +102,10 @@ export function RevealPiiButton({
               setError(null);
             }}
           >
-            ยกเลิก
-          </button>
+            {__uiText("ยกเลิก")}</button>
           {error && (
             <span role="alert" className="text-xs text-red-600">
-              {error}
+              {(typeof error === 'string' ? __uiText(error) : error)}
             </span>
           )}
         </span>

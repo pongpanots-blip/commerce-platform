@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import type { MechanicAudience } from '@josh/shared-api';
 import { Input } from '@josh/shared-ui-web';
 import { useId, useState } from 'react';
@@ -5,6 +6,8 @@ import { AiOutlineClose } from 'react-icons/ai';
 import { useCompanySearch } from '../../components/useCompanySearch';
 import type { AudienceCompany } from './promotion-mechanic-form.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   audience: MechanicAudience;
   companies: AudienceCompany[];
@@ -18,6 +21,7 @@ type Props = {
  * shared `useCompanySearch` hook (`GET /company?search=`, also used by the Push-campaign page); the picks show as chips.
  */
 export default function PromotionMechanicAudience({ audience, companies, onChange, error, errorId }: Props) {
+  __useUiLocale();
   const radioName = useId();
   const [query, setQuery] = useState('');
   const { hits, failed: searchFailed } = useCompanySearch(query);
@@ -27,7 +31,7 @@ export default function PromotionMechanicAudience({ audience, companies, onChang
 
   return (
     <div className="space-y-3">
-      <div role="radiogroup" aria-label="กลุ่มลูกค้า" className="flex flex-col gap-2">
+      <div role="radiogroup" aria-label={__uiText("กลุ่มลูกค้า")} className="flex flex-col gap-2">
         <label className="flex items-center gap-2">
           <input
             type="radio"
@@ -36,7 +40,7 @@ export default function PromotionMechanicAudience({ audience, companies, onChang
             checked={audience === 'all'}
             onChange={() => onChange({ audience: 'all' })}
           />
-          <span className="text-sm text-ink">ทุกคน (รวมลูกค้าที่ยังไม่ล็อกอิน)</span>
+          <span className="text-sm text-ink">{__uiText("ทุกคน (รวมลูกค้าที่ยังไม่ล็อกอิน)")}</span>
         </label>
         <label className="flex items-center gap-2">
           <input
@@ -46,7 +50,7 @@ export default function PromotionMechanicAudience({ audience, companies, onChang
             checked={audience === 'companies'}
             onChange={() => onChange({ audience: 'companies' })}
           />
-          <span className="text-sm text-ink">เฉพาะบริษัทที่เลือก</span>
+          <span className="text-sm text-ink">{__uiText("เฉพาะบริษัทที่เลือก")}</span>
         </label>
       </div>
 
@@ -54,17 +58,17 @@ export default function PromotionMechanicAudience({ audience, companies, onChang
         <div className="space-y-2">
           <div className="sm:w-1/2 sm:pr-2">
             <Input
-              label="ค้นหาบริษัท"
-              hint="ค้นจากชื่อบริษัทหรือเลขทะเบียน — คนที่ไม่ได้อยู่ในบริษัทเหล่านี้จะไม่เห็นโปรนี้เลย"
+              label={__uiText("ค้นหาบริษัท")}
+              hint={__uiText("ค้นจากชื่อบริษัทหรือเลขทะเบียน — คนที่ไม่ได้อยู่ในบริษัทเหล่านี้จะไม่เห็นโปรนี้เลย")}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="ชื่อบริษัท / เลขทะเบียน"
+              placeholder={__uiText("ชื่อบริษัท / เลขทะเบียน")}
             />
           </div>
 
-          {searchFailed && <p className="text-sm text-alert">ค้นหาบริษัทไม่สำเร็จ</p>}
+          {searchFailed && <p className="text-sm text-alert">{__uiText("ค้นหาบริษัทไม่สำเร็จ")}</p>}
           {choices.length > 0 && (
-            <ul aria-label="ผลการค้นหาบริษัท" className="space-y-1 sm:w-1/2">
+            <ul aria-label={__uiText("ผลการค้นหาบริษัท")} className="space-y-1 sm:w-1/2">
               {choices.map((hit) => (
                 <li key={hit.id}>
                   <button
@@ -81,7 +85,7 @@ export default function PromotionMechanicAudience({ audience, companies, onChang
           )}
 
           {companies.length > 0 ? (
-            <ul aria-label="บริษัทที่เลือก" className="flex flex-wrap gap-2">
+            <ul aria-label={__uiText("บริษัทที่เลือก")} className="flex flex-wrap gap-2">
               {companies.map((company) => (
                 <li
                   key={company.id}
@@ -91,7 +95,7 @@ export default function PromotionMechanicAudience({ audience, companies, onChang
                   <button
                     type="button"
                     className="rounded-full p-0.5 hover:bg-white"
-                    aria-label={`เอา ${company.name} ออก`}
+                    aria-label={__uiText("เอา {0} ออก", {"0": company.name})}
                     onClick={() =>
                       onChange({ audienceCompanies: companies.filter((item) => item.id !== company.id) })
                     }
@@ -102,12 +106,12 @@ export default function PromotionMechanicAudience({ audience, companies, onChang
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-ink-muted">ยังไม่ได้เลือกบริษัท</p>
+            <p className="text-sm text-ink-muted">{__uiText("ยังไม่ได้เลือกบริษัท")}</p>
           )}
 
           {error && (
             <p id={errorId} className="text-sm text-alert">
-              {error}
+              {(typeof error === 'string' ? __uiText(error) : error)}
             </p>
           )}
         </div>

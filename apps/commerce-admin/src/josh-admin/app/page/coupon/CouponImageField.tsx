@@ -1,6 +1,8 @@
 import { DragDropUpload } from '@josh/shared-ui-web';
 import React, { useMemo } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const API_BASE =
   (typeof import.meta !== 'undefined' &&
     (import.meta as { env?: Record<string, string> }).env?.VITE_API_BASE_URL) ||
@@ -19,6 +21,7 @@ export default function CouponImageField({
   onPendingFileChange,
   disabled = false,
 }: CouponImageFieldProps) {
+  __useUiLocale();
   const previewSrc = useMemo(() => {
     if (pendingFile) {
       return URL.createObjectURL(pendingFile);
@@ -30,22 +33,21 @@ export default function CouponImageField({
   return (
     <div className="space-y-3">
       <label className="block text-sm font-medium text-gray-700">
-        รูปคูปอง
-      </label>
+        {__uiText("รูปคูปอง")}</label>
       <DragDropUpload
         onFileSelect={(file) => onPendingFileChange(file)}
         accept="image/*"
         maxSizeMB={5}
       />
       {disabled && (
-        <p className="text-xs text-gray-400">กำลังบันทึก...</p>
+        <p className="text-xs text-gray-400">{__uiText("กำลังบันทึก...")}</p>
       )}
       {previewSrc && (
         <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
-          <p className="mb-2 text-xs text-gray-500">ตัวอย่างรูปคูปอง</p>
+          <p className="mb-2 text-xs text-gray-500">{__uiText("ตัวอย่างรูปคูปอง")}</p>
           <img
             src={previewSrc}
-            alt="Coupon preview"
+            alt={__uiText("Coupon preview")}
             className="h-40 w-full max-w-sm rounded-lg border object-cover"
           />
           {pendingFile && !disabled && (
@@ -54,14 +56,12 @@ export default function CouponImageField({
               className="mt-2 text-xs text-red-600 hover:underline"
               onClick={() => onPendingFileChange(null)}
             >
-              ลบรูปที่เลือก
-            </button>
+              {__uiText("ลบรูปที่เลือก")}</button>
           )}
         </div>
       )}
       <p className="text-xs text-gray-500">
-        รองรับ JPG, PNG, WebP สูงสุด 5MB — แสดงในกระเป๋าคูปองของลูกค้า
-      </p>
+        {__uiText("รองรับ JPG, PNG, WebP สูงสุด 5MB — แสดงในกระเป๋าคูปองของลูกค้า")}</p>
     </div>
   );
 }

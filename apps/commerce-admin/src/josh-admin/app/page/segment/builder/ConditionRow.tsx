@@ -13,6 +13,8 @@ import {
   valueOptionsWithCurrent,
 } from './segment-definition.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   leaf: SegmentLeaf;
   fields: SegmentFieldSummary[];
@@ -33,6 +35,7 @@ const INTEGER_FIELD_KEYS = new Set(['lifetime_order_count', 'order_count_90d']);
  * (Task 9 step 2).
  */
 export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Props) {
+  __useUiLocale();
   const field = fields.find((f) => f.key === leaf.field);
   // Include the leaf's own current value(s) even if they've since dropped
   // out of the live option list (see valueOptionsWithCurrent) — otherwise a
@@ -65,7 +68,7 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
       return (
         <div className="flex items-end gap-2">
           <Input
-            label="ต่ำสุด"
+            label={__uiText("ต่ำสุด")}
             type="number"
             step={step}
             value={String(from ?? '')}
@@ -73,9 +76,9 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
               onChange({ ...leaf, value: [Number(e.target.value) || 0, to as number] })
             }
           />
-          <span className="self-end pb-2.5 text-xs text-gray-400">ถึง</span>
+          <span className="self-end pb-2.5 text-xs text-gray-400">{__uiText("ถึง")}</span>
           <Input
-            label="สูงสุด"
+            label={__uiText("สูงสุด")}
             type="number"
             step={step}
             value={String(to ?? '')}
@@ -93,7 +96,7 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
       if (valueOptions.length > 0) {
         return (
           <fieldset className="flex max-h-40 flex-col gap-1.5 overflow-y-auto rounded-lg border border-gray-100 p-2.5">
-            <legend className="text-xs text-gray-500">ค่า</legend>
+            <legend className="text-xs text-gray-500">{__uiText("ค่า")}</legend>
             {valueOptions.map((opt) => (
               <label
                 key={opt.value}
@@ -119,7 +122,7 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
       // Free-text "in" (e.g. manual_user_ids) — comma/newline separated.
       return (
         <label className="block">
-          <span className="text-xs text-gray-500">ค่า</span>
+          <span className="text-xs text-gray-500">{__uiText("ค่า")}</span>
           <textarea
             className="min-h-20 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
             value={selected.join('\n')}
@@ -132,12 +135,11 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
                   .filter(Boolean),
               })
             }
-            placeholder="ค่าหนึ่งบรรทัดต่อหนึ่งค่า"
+            placeholder={__uiText("ค่าหนึ่งบรรทัดต่อหนึ่งค่า")}
           />
           {leaf.field === 'manual_user_ids' && (
             <span className="mt-1 block text-xs text-gray-400">
-              รับเฉพาะ user UUID เท่านั้น (ไม่ใช่อีเมลหรือรหัสลูกค้า) — บันทึกไม่ได้ถ้ามีค่าอื่นปน
-            </span>
+              {__uiText("รับเฉพาะ user UUID เท่านั้น (ไม่ใช่อีเมลหรือรหัสลูกค้า) — บันทึกไม่ได้ถ้ามีค่าอื่นปน")}</span>
           )}
         </label>
       );
@@ -146,9 +148,9 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
     if (field.valueType === 'enum') {
       return (
         <div className="grid gap-1">
-          <span className="text-xs text-gray-500">ค่า</span>
+          <span className="text-xs text-gray-500">{__uiText("ค่า")}</span>
           <Select
-            aria-label="ค่า"
+            aria-label={__uiText("ค่า")}
             value={String(leaf.value ?? '')}
             onChange={(e) => onChange({ ...leaf, value: e.target.value })}
           >
@@ -165,7 +167,7 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
     if (field.valueType === 'number') {
       return (
         <Input
-          label="ค่า"
+          label={__uiText("ค่า")}
           type="number"
           step={INTEGER_FIELD_KEYS.has(leaf.field) ? 1 : undefined}
           value={String(leaf.value ?? 0)}
@@ -177,7 +179,7 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
     if (field.valueType === 'date') {
       return (
         <Input
-          label="ค่า"
+          label={__uiText("ค่า")}
           type="date"
           value={String(leaf.value ?? '')}
           onChange={(e) => onChange({ ...leaf, value: e.target.value })}
@@ -187,7 +189,7 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
 
     return (
       <Input
-        label="ค่า"
+        label={__uiText("ค่า")}
         value={String(leaf.value ?? '')}
         onChange={(e) => onChange({ ...leaf, value: e.target.value })}
       />
@@ -197,24 +199,24 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
   return (
     <div className="flex flex-wrap items-end gap-2 rounded-lg border border-gray-100 bg-white p-2.5">
       <div className="grid gap-1">
-        <span className="text-xs text-gray-500">ฟิลด์</span>
+        <span className="text-xs text-gray-500">{__uiText("ฟิลด์")}</span>
         <Select
-          aria-label="ฟิลด์"
+          aria-label={__uiText("ฟิลด์")}
           value={leaf.field}
           onChange={(e) => handleFieldChange(e.target.value)}
         >
           {fields.map((f) => (
             <option key={f.key} value={f.key}>
-              {f.label}
+              {__uiText(f.label)}
             </option>
           ))}
         </Select>
       </div>
 
       <div className="grid gap-1">
-        <span className="text-xs text-gray-500">เงื่อนไข</span>
+        <span className="text-xs text-gray-500">{__uiText("เงื่อนไข")}</span>
         <Select
-          aria-label="เงื่อนไข"
+          aria-label={__uiText("เงื่อนไข")}
           value={leaf.operator}
           onChange={(e) => handleOperatorChange(e.target.value as SegmentOperator)}
         >
@@ -233,8 +235,7 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
         onClick={onRemove}
         className="ml-auto shrink-0 text-xs text-red-500 hover:underline"
       >
-        ลบเงื่อนไข
-      </button>
+        {__uiText("ลบเงื่อนไข")}</button>
     </div>
   );
 }

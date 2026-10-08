@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>เพิ่ม Template | Commerce Admin</title>
+<!-- Google Fonts: Noto Sans Thai & Noto Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-secondary-container": "#54647c",
+            "surface": "#f9f9ff",
+            "outline": "#747687",
+            "on-surface-variant": "#444655",
+            "primary-fixed": "#dde1ff",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-primary-fixed": "#001257",
+            "error-container": "#ffdad6",
+            "surface-container": "#e8eeff",
+            "surface-container-highest": "#d7e2ff",
+            "on-primary-container": "#ededff",
+            "surface-container-high": "#e0e8ff",
+            "on-tertiary-fixed": "#360f00",
+            "tertiary": "#943500",
+            "on-primary-fixed-variant": "#0034c0",
+            "secondary-fixed-dim": "#b7c7e3",
+            "primary-container": "#365cf5",
+            "on-secondary-fixed": "#0b1c31",
+            "surface-dim": "#cddaf9",
+            "tertiary-container": "#bc4600",
+            "surface-tint": "#214ce7",
+            "on-primary": "#ffffff",
+            "primary": "#0a3fdc",
+            "on-tertiary": "#ffffff",
+            "on-background": "#0e1b32",
+            "surface-container-low": "#f1f3ff",
+            "inverse-surface": "#243048",
+            "on-tertiary-container": "#ffebe4",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-bright": "#f9f9ff",
+            "outline-variant": "#c4c5d8",
+            "inverse-primary": "#b9c3ff",
+            "error": "#ba1a1a",
+            "background": "#f9f9ff",
+            "on-error-container": "#93000a",
+            "secondary-container": "#d0e1fd",
+            "tertiary-fixed-dim": "#ffb597",
+            "secondary-fixed": "#d3e3ff",
+            "on-surface": "#0e1b32",
+            "surface-variant": "#d7e2ff",
+            "secondary": "#4f5f77",
+            "primary-fixed-dim": "#b9c3ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "margin-desktop": "2rem",
+            "margin": "1rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "gutter-desktop": "1.5rem"
+          },
+          "fontFamily": {
+            "code-table": ["Noto Sans Thai", "Noto Sans", "monospace"],
+            "display": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-page": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-card": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "subheading": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-medium": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-page-mobile": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-caption": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "code-table": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+            "display": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+            "label-default": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+            "headline-page": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+            "headline-card": ["18px", {"lineHeight": "26px", "fontWeight": "600"}],
+            "subheading": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+            "body-medium": ["14px", {"lineHeight": "22px", "fontWeight": "500"}],
+            "headline-page-mobile": ["22px", {"lineHeight": "30px", "fontWeight": "600"}],
+            "label-caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+            "body-default": ["14px", {"lineHeight": "22px", "fontWeight": "400"}]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .border-standard {
+      border: 1px solid #e1e7f0;
+    }
+    .chat-bubble-tail::after {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 12px;
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-right: 6px solid #ffffff;
+    }
+  </style>
+<!-- Required UI Translation Data -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "เพิ่ม Template": {"th": "เพิ่ม Template", "en": "Create Template"},
+    "เกิดข้อผิดพลาดในการบันทึก": {"th": "เกิดข้อผิดพลาดในการบันทึก", "en": "An error occurred while saving"},
+    "กรุณากรอกชื่อ Template": {"th": "กรุณากรอกชื่อ Template", "en": "Please enter template name"},
+    "กำหนดรูปแบบการตอบกลับของ chatbot": {"th": "กำหนดรูปแบบการตอบกลับของ chatbot", "en": "Define chatbot response format and templates"},
+    "ข้อความ (Text) *": {"th": "ข้อความ (Text) *", "en": "Message (Text) *"},
+    "คำค้นหา (utm_term)": {"th": "คำค้นหา (utm_term)", "en": "Search term (utm_term)"},
+    "ชื่อ Action": {"th": "ชื่อ Action", "en": "Action Name"},
+    "ตรวจคู่สินค้าแบบละเอียด": {"th": "ตรวจคู่สินค้าแบบละเอียด", "en": "Detailed Product Pair Inspection"},
+    "นำเข้า CSV (SKU, price, start_date, end_date)": {"th": "นำเข้า CSV (SKU, price, start_date, end_date)", "en": "Import CSV (SKU, price, start_date, end_date)"},
+    "แปลทั้งหมด TH → EN": {"th": "แปลทั้งหมด TH → EN", "en": "Translate All TH → EN"},
+    "เมื่อจบช่วง (หรือให้เช็คจาก URL อัตโนมัติด้านบน) · ใช้ Schedule จำกัดวัน/เวลาเพิ่มได้ · บันทึกเป็น Preset ไว้ใช้ซ้ำได้": {"th": "เมื่อจบช่วง (หรือให้เช็คจาก URL อัตโนมัติด้านบน) · ใช้ Schedule จำกัดวัน/เวลาเพิ่มได้ · บันทึกเป็น Preset ไว้ใช้ซ้ำได้", "en": "When period ends (or verify from URL above) · Use Schedule to restrict date/time · Save as Preset for reuse"},
+    "ยังไม่มี segment": {"th": "ยังไม่มี segment", "en": "No segment available"},
+    "ราคาเรา/กก.": {"th": "ราคาเรา/กก.", "en": "Our Price / kg"},
+    "ลิงก์เมื่อคลิกสไลด์ที่ {0} (URL, ไม่บังคับ)": {"th": "ลิงก์เมื่อคลิกสไลด์ที่ {0} (URL, ไม่บังคับ)", "en": "Link when clicking slide {0} (URL, optional)"},
+    "สถานะปัจจุบัน": {"th": "สถานะปัจจุบัน", "en": "Current Status"},
+    "หน้าโปร": {"th": "หน้าโปร", "en": "Promotion Page"},
+    "ร่าง (Draft)": {"th": "ร่าง (Draft)", "en": "Draft"},
+    "ต่อ SKU (แบบเดิม)": {"th": "ต่อ SKU (แบบเดิม)", "en": "Per SKU (Legacy)"},
+    "ระบุ % ระหว่าง 0 ถึง 100": {"th": "ระบุ % ระหว่าง 0 ถึง 100", "en": "Specify % between 0 and 100"},
+    "Schema ไม่ใช่ JSON ที่ถูกต้อง": {"th": "Schema ไม่ใช่ JSON ที่ถูกต้อง", "en": "Schema is not valid JSON"},
+    "Example ไม่ใช่ JSON ที่ถูกต้อง": {"th": "Example ไม่ใช่ JSON ที่ถูกต้อง", "en": "Example is not valid JSON"}
+  }
+  </script>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased min-h-screen">
+<!-- ========================================================================= -->
+<!-- SIDE NAVIGATION BAR (256px Fixed Shell from Shared Components)           -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-full w-64 z-40 bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col justify-between p-4">
+<div class="flex flex-col gap-5">
+<!-- Brand Logo / Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-white font-bold shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="smart_toy">smart_toy</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-card font-headline-card font-bold text-on-surface leading-tight">Commerce Admin</span>
+<span class="text-label-caption font-label-caption text-secondary">ศูนย์จัดการระบบ</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-surface-container-low hover:bg-surface-container text-primary font-body-medium rounded-xl border border-outline-variant transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Main Navigation Menu (7 Core Categories) -->
+<nav class="flex flex-col gap-1 overflow-y-auto max-h-[calc(100vh-320px)] pr-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ (ACTIVE WORK AREA) -->
+<div class="flex flex-col">
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-container text-primary font-body-medium border-l-[3px] border-primary transition-all duration-150" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]" data-icon="support_agent" data-weight="fill" style="font-variation-settings: 'FILL' 1;">support_agent</span>
+<span class="font-medium">ลูกค้าและบริการ</span>
+</div>
+<span class="material-symbols-outlined text-[18px]" data-icon="expand_more">expand_more</span>
+</a>
+<!-- Sub-navigation tree -->
+<div class="ml-5 pl-3 mt-1 flex flex-col gap-1 border-l border-outline-variant py-1">
+<a class="px-2 py-1.5 text-label-default font-label-default text-secondary hover:text-on-surface" href="#">ห้องแชทสด (Live Chat)</a>
+<a class="px-2 py-1.5 text-label-default font-label-default text-secondary hover:text-on-surface" href="#">ประวัติลูกค้า (CRM)</a>
+<a class="px-2 py-1.5 text-label-default font-label-default bg-surface-container-low text-primary font-semibold rounded-md flex items-center justify-between" href="#">
+<span>Bot Templates</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="px-2 py-1.5 text-label-default font-label-default text-secondary hover:text-on-surface" href="#">คลังคำตอบอัตโนมัติ</a>
+</div>
+</div>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="campaign">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="analytics">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="hub">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="pt-3 border-t border-outline-variant flex flex-col gap-1.5">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-body-default transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_center">help_center</span>
+<span>คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container/20 text-body-default transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+<!-- Route identifier & metadata stamp -->
+<div class="mt-2 p-2 bg-surface-container-low/70 rounded border border-outline-variant/60 text-[11px] font-mono text-secondary leading-snug">
+<div class="truncate text-on-surface-variant font-medium">admin-2fee89100243</div>
+<div class="truncate text-secondary">/j/bot/templates/create</div>
+<div class="text-[10px] text-outline mt-0.5">CreateBotTemplate · v2.4.1</div>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOP APP BAR / HEADER (Sticky Header)                                      -->
+<!-- ========================================================================= -->
+<header class="sticky top-0 right-0 w-[calc(100%-16rem)] ml-auto z-30 h-16 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-6">
+<!-- Left search & view metadata -->
+<div class="flex items-center gap-4 w-96">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[20px] text-secondary" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low/50 hover:bg-surface-container-low focus:bg-white text-on-surface border border-outline-variant rounded-xl text-body-default placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)" type="text"/>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-caption font-medium bg-secondary-container text-on-secondary-fixed">
+        ข้อมูลตัวอย่าง
+      </span>
+</div>
+<!-- Right Controls: Bilingual Switcher, Notifications, Help, User Avatar -->
+<div class="flex items-center gap-4">
+<!-- Bilingual Switcher Segmented Control -->
+<div class="flex items-center bg-[#f1f3ff] p-0.5 rounded-lg border border-outline-variant">
+<button class="px-2.5 py-1 text-label-caption font-semibold rounded-md bg-white text-primary shadow-xs transition-all" id="lang-btn-th" onclick="switchLanguage('th')" type="button">
+          ไทย
+        </button>
+<button class="px-2.5 py-1 text-label-caption font-medium text-secondary hover:text-on-surface transition-all" id="lang-btn-en" onclick="switchLanguage('en')" type="button">
+          English
+        </button>
+</div>
+<div class="h-5 w-[1px] bg-outline-variant"></div>
+<!-- Action Icons -->
+<div class="flex items-center gap-1">
+<button class="relative p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" title="การแจ้งเตือน" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-white"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" title="ศูนย์ช่วยเหลือ" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-5 w-[1px] bg-outline-variant"></div>
+<!-- User Profile Card -->
+<div class="flex items-center gap-3 pl-1 cursor-pointer select-none">
+<div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait photograph of a female Thai corporate customer support director smiling in a modern bright glass-walled Bangkok headquarters, wearing crisp dark blue executive attire, sharp studio depth of field with neutral corporate ambient lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh_t5TIs67cHKf_DcTDfOSTJrXljyKvL-XWjXfmeGiywO-UM0sbYR4R6TCpN3-uHUTcr7KzdkhgrgnDgPZHAVzrqnO789kdaLGYFkGcs0elZRItzxP6FJPT5o5pDm5JBWHQPxLaFU3g4UsUy2GcrbFIeYZNRmHCfpJTKjNYuadkgNQqxd1Z_PU0MqlBAeqsWEDrVaQXPF2nxFEWgbvs6plmRkZYtRGuUOhkmgoLrpL1_KYZkuiuXk2i7pCBoUsls5lEPdo-OQ5gGX1"/>
+</div>
+<div class="flex flex-col text-left">
+<span class="text-body-medium font-body-medium text-on-surface leading-tight">จินดา นวลอนันต์</span>
+<span class="text-label-caption font-label-caption text-secondary">หัวหน้าทีมบริการลูกค้า (CS)</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CONTENT CONTAINER (calc(100%-16rem))                       -->
+<!-- ========================================================================= -->
+<main class="w-[calc(100%-16rem)] ml-auto min-h-[calc(100vh-4rem)] p-8 pb-32">
+<div class="max-w-[1240px] mx-auto space-y-6">
+<!-- Breadcrumbs & Top Utilities -->
+<div class="flex items-center justify-between">
+<nav class="flex items-center gap-2 text-label-default font-label-default text-secondary">
+<a class="hover:text-primary transition-colors" href="#">ลูกค้าและบริการ</a>
+<span class="text-outline">/</span>
+<a class="hover:text-primary transition-colors" href="#">Bot Templates</a>
+<span class="text-outline">/</span>
+<span class="text-on-surface font-semibold" data-i18n="เพิ่ม Template">เพิ่ม Template</span>
+</nav>
+<div class="flex items-center gap-3">
+<a class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-outline-variant text-on-surface hover:bg-surface-container-low text-label-default font-medium rounded-xl transition-all shadow-xs" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_back">arrow_back</span>
+<span>ย้อนกลับไปรายการ</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-primary hover:bg-surface-container-highest text-label-default font-medium rounded-xl transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="terminal">terminal</span>
+<span>ทดสอบกับ Live Bot</span>
+</button>
+</div>
+</div>
+<!-- Page Header Banner -->
+<div class="bg-white rounded-xl p-6 border border-standard shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-3">
+<h1 class="text-headline-page font-headline-page text-on-surface font-bold tracking-tight" data-i18n="เพิ่ม Template">
+              เพิ่ม Template
+            </h1>
+<span class="px-2.5 py-0.5 rounded-full text-label-caption font-mono bg-surface-container-low text-secondary border border-outline-variant">
+              /j/bot/templates/create
+            </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-caption font-medium bg-[#fef9e7] text-[#b08900] border border-[#f5e6a8]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="ร่าง (Draft)">ร่าง (Draft)</span>
+</span>
+</div>
+<p class="text-body-default font-body-default text-secondary" data-i18n="กำหนดรูปแบบการตอบกลับของ chatbot">
+            กำหนดรูปแบบการตอบกลับของ chatbot
+          </p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Translation Button Action -->
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low border border-primary/30 text-primary hover:bg-surface-container text-body-medium font-body-medium rounded-xl transition-colors" onclick="triggerAutoTranslate()" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="translate">translate</span>
+<span data-i18n="แปลทั้งหมด TH → EN">แปลทั้งหมด TH → EN</span>
+</button>
+</div>
+</div>
+<!-- Information & Validation Banner Alert -->
+<div class="bg-[#f0f4ff] border border-primary/20 rounded-xl p-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5" data-icon="info">info</span>
+<div class="text-body-default font-body-default text-on-surface-variant flex-1">
+<span class="font-medium text-on-surface">คำแนะนำสำหรับการตั้งค่า Template:</span>
+          รองรับการใช้งานตัวแปรไดนามิกในรูปแบบแท็ก <code class="bg-white px-1.5 py-0.5 rounded text-primary font-mono text-[13px]">{customer_name}</code>, <code class="bg-white px-1.5 py-0.5 rounded text-primary font-mono text-[13px]">{order_id}</code> และระบบตรวจสอบข้อผิดพลาด JSON Schema แบบเรียลไทม์
+        </div>
+</div>
+<!-- ===================================================================== -->
+<!-- TWO-COLUMN WORKBENCH (Left: Forms ~780px, Right: Preview ~440px)     -->
+<!-- ===================================================================== -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- ======================= LEFT COLUMN ======================= -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<!-- Card 1: ข้อมูลพื้นฐาน Template -->
+<div class="bg-white rounded-xl border border-standard p-6 shadow-xs space-y-5">
+<div class="flex items-center justify-between pb-3 border-b border-standard">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]" data-icon="edit_note">edit_note</span>
+<h2 class="text-headline-card font-headline-card text-on-surface">ข้อมูลพื้นฐาน Template</h2>
+</div>
+<span class="text-label-caption text-secondary">ขั้นตอนที่ 1 จาก 3</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Template Name -->
+<div class="space-y-1.5 md:col-span-2">
+<div class="flex items-center justify-between">
+<label class="text-label-default font-label-default text-on-surface font-semibold">
+                    ชื่อ Template (Template Name) <span class="text-error">*</span>
+</label>
+<span class="text-label-caption text-error font-medium" data-i18n="กรุณากรอกชื่อ Template">กรุณากรอกชื่อ Template</span>
+</div>
+<input class="w-full h-10 px-3 bg-white border border-standard rounded-xl text-body-default text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="template_name" placeholder="เช่น ข้อความต้อนรับลูกค้าใหม่" type="text" value="ตอบรับคำสั่งซื้อและแจ้งเลขพัสดุ (Auto Order Notification)"/>
+</div>
+<!-- Template Code / Slug -->
+<div class="space-y-1.5">
+<label class="text-label-default font-label-default text-on-surface font-medium">
+                  รหัส Template (Slug Identifier) <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="absolute left-3 top-2.5 text-outline text-label-default font-mono">tpl_</span>
+<input class="w-full h-10 pl-11 pr-3 bg-white border border-standard rounded-xl font-mono text-body-default text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" type="text" value="order_tracking_auto_th"/>
+</div>
+</div>
+<!-- Category Selector -->
+<div class="space-y-1.5">
+<label class="text-label-default font-label-default text-on-surface font-medium">
+                  หมวดหมู่การใช้งาน (Category)
+                </label>
+<select class="w-full h-10 px-3 bg-white border border-standard rounded-xl text-body-default text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+<option selected="">ลูกค้าและบริการ (Customer Support)</option>
+<option>ข้อมูลสินค้าและสต็อก (Product Info)</option>
+<option>คำสั่งซื้อและการเงิน (Orders &amp; Payment)</option>
+<option>การตลาดและแคมเปญ (Promotions)</option>
+</select>
+</div>
+<!-- Template Format / Type -->
+<div class="space-y-1.5 md:col-span-2">
+<label class="text-label-default font-label-default text-on-surface font-medium">
+                  ประเภทข้อความ (Message Format)
+                </label>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+<label class="flex flex-col items-center p-3 rounded-xl border border-standard hover:border-primary/50 cursor-pointer bg-surface-container-low/30 transition-all text-center">
+<input checked="" class="text-primary focus:ring-primary h-4 w-4 mb-1.5" name="msg_type" type="radio"/>
+<span class="text-body-medium font-medium text-on-surface">ข้อความ + ปุ่ม</span>
+<span class="text-[11px] text-secondary">Card with Actions</span>
+</label>
+<label class="flex flex-col items-center p-3 rounded-xl border border-standard hover:border-primary/50 cursor-pointer bg-white transition-all text-center">
+<input class="text-primary focus:ring-primary h-4 w-4 mb-1.5" name="msg_type" type="radio"/>
+<span class="text-body-medium font-medium text-on-surface">ข้อความธรรมดา</span>
+<span class="text-[11px] text-secondary">Plain Text</span>
+</label>
+<label class="flex flex-col items-center p-3 rounded-xl border border-standard hover:border-primary/50 cursor-pointer bg-white transition-all text-center">
+<input class="text-primary focus:ring-primary h-4 w-4 mb-1.5" name="msg_type" type="radio"/>
+<span class="text-body-medium font-medium text-on-surface">Rich Carousel</span>
+<span class="text-[11px] text-secondary">สไลด์การ์ดหลายใบ</span>
+</label>
+<label class="flex flex-col items-center p-3 rounded-xl border border-standard hover:border-primary/50 cursor-pointer bg-white transition-all text-center">
+<input class="text-primary focus:ring-primary h-4 w-4 mb-1.5" name="msg_type" type="radio"/>
+<span class="text-body-medium font-medium text-on-surface">Flex Template</span>
+<span class="text-[11px] text-secondary">JSON อิสระ</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2: เนื้อหาข้อความและ Action Buttons -->
+<div class="bg-white rounded-xl border border-standard p-6 shadow-xs space-y-5">
+<div class="flex items-center justify-between pb-3 border-b border-standard">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]" data-icon="chat_bubble_outline">chat_bubble_outline</span>
+<h2 class="text-headline-card font-headline-card text-on-surface">เนื้อหาข้อความและ Action Buttons</h2>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-caption text-secondary">แทรกตัวแปร:</span>
+<button class="px-2 py-0.5 bg-surface-container hover:bg-surface-container-highest text-primary rounded text-[11px] font-mono transition-colors" onclick="insertVariable('{customer_name}')" type="button">+{customer_name}</button>
+<button class="px-2 py-0.5 bg-surface-container hover:bg-surface-container-highest text-primary rounded text-[11px] font-mono transition-colors" onclick="insertVariable('{order_id}')" type="button">+{order_id}</button>
+<button class="px-2 py-0.5 bg-surface-container hover:bg-surface-container-highest text-primary rounded text-[11px] font-mono transition-colors" onclick="insertVariable('{tracking_no}')" type="button">+{tracking_no}</button>
+</div>
+</div>
+<!-- Multiline message text input -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="text-label-default font-label-default text-on-surface font-semibold" data-i18n="ข้อความ (Text) *">
+                  ข้อความ (Text) *
+                </label>
+<span class="text-label-caption text-secondary" id="char-count">134 / 500 ตัวอักษร</span>
+</div>
+<textarea class="w-full p-3 bg-white border border-standard rounded-xl text-body-default text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-default" id="message_text" placeholder="ระบุข้อความตอบกลับที่ต้องการให้ Chatbot ส่งหาลูกค้า..." rows="4">สวัสดีคุณ {customer_name} แอดมินขอแจ้งสถานะคำสั่งซื้อหมายเลข #{order_id} สินค้าของท่านจัดส่งเรียบร้อยแล้ว เลขพัสดุคือ {tracking_no} ขอบคุณที่ใช้บริการกับเราค่ะ</textarea>
+</div>
+<!-- Action Button Builder Section -->
+<div class="p-4 bg-surface-container-low/40 rounded-xl border border-standard space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="smart_button">smart_button</span>
+<span>การตั้งค่าปุ่ม Action (Interactive Buttons)</span>
+</span>
+<span class="text-label-caption text-secondary">ปุ่มที่ 1 จากสูงสุด 3 ปุ่ม</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<div class="space-y-1">
+<label class="text-label-caption text-secondary font-medium" data-i18n="ชื่อ Action">ชื่อ Action</label>
+<input class="w-full h-9 px-3 bg-white border border-standard rounded-lg text-body-default text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" id="action_btn_title" type="text" value="เช็คสถานะพัสดุ (Live Tracking)"/>
+</div>
+<div class="space-y-1">
+<label class="text-label-caption text-secondary font-medium">ประเภท Action (Type)</label>
+<select class="w-full h-9 px-3 bg-white border border-standard rounded-lg text-body-default text-on-surface focus:outline-none">
+<option selected="">URL / เปิดหน้าเว็บภายนอก</option>
+<option>Postback / ยิงคำสั่งแชทต่อ</option>
+<option>โทรศัพท์ (Tel URI)</option>
+<option>ส่งต่อเจ้าหน้าที่ฝ่ายบริการ</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-label-caption text-secondary font-medium" data-i18n="คำค้นหา (utm_term)">คำค้นหา (utm_term)</label>
+<input class="w-full h-9 px-3 bg-white border border-standard rounded-lg text-body-default text-on-surface focus:outline-none font-mono" type="text" value="order_status_followup"/>
+</div>
+</div>
+<!-- Carousel Slide Link setting -->
+<div class="space-y-1 pt-1">
+<label class="text-label-caption text-secondary font-medium" data-i18n="ลิงก์เมื่อคลิกสไลด์ที่ {0} (URL, ไม่บังคับ)">
+                  ลิงก์เมื่อคลิกสไลด์ที่ {0} (URL, ไม่บังคับ)
+                </label>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-primary text-label-caption font-semibold" data-i18n="หน้าโปร">
+                    หน้าโปร
+                  </span>
+<input class="w-full h-9 px-3 bg-white border border-standard rounded-lg font-mono text-[13px] text-on-surface focus:outline-none" type="text" value="https://track.commerce.th/parcel?id={tracking_no}&amp;utm_source=line_bot&amp;utm_medium=auto_reply"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3: เงื่อนไขการแสดงผล ตารางเวลา และ Preset -->
+<div class="bg-white rounded-xl border border-standard p-6 shadow-xs space-y-5">
+<div class="flex items-center justify-between pb-3 border-b border-standard">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]" data-icon="tune">tune</span>
+<h2 class="text-headline-card font-headline-card text-on-surface">เงื่อนไขการแสดงผล ตารางเวลา และ Preset</h2>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-caption font-medium" data-i18n="สถานะปัจจุบัน">สถานะปัจจุบัน:</span>
+<span class="px-2 py-0.5 rounded text-[12px] font-semibold bg-[#fef9e7] text-[#b08900]" data-i18n="ร่าง (Draft)">ร่าง (Draft)</span>
+</div>
+</div>
+<!-- Instruction Banner Requirement -->
+<div class="text-body-default font-body-default text-secondary bg-surface-container-low p-3.5 rounded-xl border border-outline-variant/60 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5" data-icon="schedule">schedule</span>
+<p class="leading-relaxed" data-i18n="เมื่อจบช่วง (หรือให้เช็คจาก URL อัตโนมัติด้านบน) · ใช้ Schedule จำกัดวัน/เวลาเพิ่มได้ · บันทึกเป็น Preset ไว้ใช้ซ้ำได้">
+                เมื่อจบช่วง (หรือให้เช็คจาก URL อัตโนมัติด้านบน) · ใช้ Schedule จำกัดวัน/เวลาเพิ่มได้ · บันทึกเป็น Preset ไว้ใช้ซ้ำได้
+              </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+<!-- Customer Segment Selector -->
+<div class="space-y-2 p-3.5 rounded-xl border border-standard bg-white">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default font-medium text-on-surface">กลุ่มเป้าหมายลูกค้า (Target Segment)</span>
+<button class="text-primary text-[12px] font-medium hover:underline" type="button">+ เชื่อมต่อ Segment</button>
+</div>
+<!-- Empty State representation -->
+<div class="py-5 flex flex-col items-center justify-center text-center bg-surface-container-low/40 rounded-lg border border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-outline text-[24px]" data-icon="group_off">group_off</span>
+<span class="text-label-caption font-label-caption text-secondary mt-1" data-i18n="ยังไม่มี segment">ยังไม่มี segment</span>
+<span class="text-[11px] text-outline mt-0.5">เทมเพลตนี้จะพร้อมใช้งานสำหรับลูกค้าทุกกลุ่มตามค่าเริ่มต้น</span>
+</div>
+</div>
+<!-- Schedule & Time Constraints -->
+<div class="space-y-2 p-3.5 rounded-xl border border-standard bg-white">
+<span class="text-label-default font-label-default font-medium text-on-surface">ช่วงเวลาทำการของ Bot (Auto-trigger Window)</span>
+<div class="space-y-2 mt-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-primary w-4 h-4 border-outline" type="checkbox"/>
+<span class="text-body-default text-on-surface">เปิดใช้งานตลอด 24 ชั่วโมง (ค่าแนะนำ)</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="rounded text-primary focus:ring-primary w-4 h-4 border-outline" type="checkbox"/>
+<span class="text-body-default text-secondary">จำกัดเฉพาะนอกเวลาทำการเจ้าหน้าที่ CS (18:00 - 09:00)</span>
+</label>
+</div>
+<div class="pt-2 text-right">
+<button class="text-primary hover:text-primary/80 text-label-caption font-semibold flex items-center justify-end gap-1 ml-auto" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="bookmark_add">bookmark_add</span>
+<span>บันทึกการตั้งค่านี้เป็น Preset</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ======================= RIGHT COLUMN ======================= -->
+<!-- Live Chat Simulator & Payload Validator (approx 440px) -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<!-- Card: พรีวิวแบบเรียลไทม์ (Live Chatbot Simulator) -->
+<div class="bg-white rounded-xl border border-standard p-5 shadow-xs space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-standard">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="smartphone">smartphone</span>
+<h3 class="text-headline-card font-headline-card text-on-surface">พรีวิวแบบเรียลไทม์</h3>
+</div>
+<span class="flex items-center gap-1 text-label-caption font-medium text-[#157347] bg-[#eaf5ef] px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347] animate-pulse"></span>
+<span>Active Simulator</span>
+</span>
+</div>
+<!-- Mobile Phone Mock Frame -->
+<div class="bg-[#e9ecf2] rounded-2xl p-3 border-2 border-[#d0d7e5] shadow-inner space-y-3">
+<!-- Chat Header -->
+<div class="bg-white px-3 py-2 rounded-xl flex items-center justify-between shadow-2xs">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-[12px] font-bold">
+<span class="material-symbols-outlined text-[14px]" data-icon="smart_toy">smart_toy</span>
+</div>
+<div class="text-left">
+<div class="text-[12px] font-bold text-on-surface leading-none">Commerce Support Bot</div>
+<div class="text-[10px] text-[#157347] leading-none mt-0.5">ตอบกลับทันที (Official)</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="more_vert">more_vert</span>
+</div>
+<!-- Message Stream Simulation -->
+<div class="space-y-3 py-2 min-h-[220px]">
+<div class="flex justify-end">
+<div class="bg-primary text-white text-[12px] p-2.5 rounded-2xl rounded-tr-xs max-w-[85%] shadow-2xs">
+                    ขอดูเลขพัสดุสำหรับคำสั่งซื้อล่าสุดหน่อยครับ
+                  </div>
+</div>
+<!-- Bot Response Bubble -->
+<div class="flex justify-start items-start gap-1.5">
+<div class="w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] mt-1 shrink-0">
+                    AI
+                  </div>
+<div class="bg-white rounded-2xl rounded-tl-xs p-3.5 max-w-[88%] border border-standard shadow-xs space-y-2.5">
+<p class="text-body-default text-on-surface text-[13px] leading-relaxed" id="preview-text">
+                      สวัสดีคุณ สมศักดิ์ แอดมินขอแจ้งสถานะคำสั่งซื้อหมายเลข #TH-8902 สินค้าของท่านจัดส่งเรียบร้อยแล้ว เลขพัสดุคือ TH8829104 ขอบคุณที่ใช้บริการกับเราค่ะ
+                    </p>
+<!-- Preview Action Button -->
+<div class="pt-1 border-t border-slate-100 flex flex-col gap-1.5">
+<a class="w-full py-2 bg-surface-container-low hover:bg-surface-container text-primary text-[12px] font-semibold rounded-lg text-center flex items-center justify-center gap-1 border border-primary/20 transition-colors" href="#" id="preview-btn-action">
+<span class="material-symbols-outlined text-[14px]" data-icon="local_shipping">local_shipping</span>
+<span id="preview-btn-label">เช็คสถานะพัสดุ (Live Tracking)</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<div class="text-center text-[10px] text-secondary">
+                แสดงผลจำลองตามตัวแปรจำลองของ Mock Profile
+              </div>
+</div>
+</div>
+<!-- Card: Schema & Payload Validator -->
+<div class="bg-white rounded-xl border border-standard p-5 shadow-xs space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-standard">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="data_object">data_object</span>
+<h3 class="text-headline-card font-headline-card text-on-surface">Schema &amp; Payload Validator</h3>
+</div>
+<span class="text-label-caption font-mono text-outline">JSON Schema v7</span>
+</div>
+<!-- JSON Schema Validation Status Pills -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low border border-standard text-[12px]">
+<span class="flex items-center gap-1.5 text-on-surface font-medium">
+<span class="material-symbols-outlined text-[#157347] text-[16px]" data-icon="check_circle">check_circle</span>
+<span>สถานะการตรวจสอบโครงสร้าง JSON:</span>
+</span>
+<span class="font-mono text-[#157347] font-semibold">VALIDATED</span>
+</div>
+<!-- Exact Error Strings Specified for Validation Engine Alerts -->
+<div class="space-y-1.5 text-[11px] text-secondary">
+<div class="flex items-center justify-between text-outline">
+<span>ตัวดักจับข้อผิดพลาด Schema:</span>
+<span class="font-mono text-error font-medium" data-i18n="Schema ไม่ใช่ JSON ที่ถูกต้อง">Schema ไม่ใช่ JSON ที่ถูกต้อง</span>
+</div>
+<div class="flex items-center justify-between text-outline">
+<span>ตัวดักจับข้อผิดพลาด Example Payload:</span>
+<span class="font-mono text-error font-medium" data-i18n="Example ไม่ใช่ JSON ที่ถูกต้อง">Example ไม่ใช่ JSON ที่ถูกต้อง</span>
+</div>
+</div>
+</div>
+<!-- Payload JSON Viewer -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-label-caption text-secondary">
+<span>Payload Data Block (Raw)</span>
+<button class="text-primary hover:underline text-[11px] font-mono" type="button">คัดลอก JSON</button>
+</div>
+<pre class="bg-[#17243b] text-[#e0e8ff] p-3 rounded-xl text-[11px] font-mono overflow-x-auto leading-relaxed border border-[#243048]">{
+  "template_id": "tpl_order_tracking_auto_th",
+  "version": "1.0",
+  "channel": "line_bot_customer_service",
+  "type": "template_card",
+  "actions": [
+    {
+      "type": "uri",
+      "label": "เช็คสถานะพัสดุ",
+      "uri": "https://track.commerce.th/parcel?id={tracking_no}"
+    }
+  ]
+}</pre>
+</div>
+<!-- Domain Rules & Validation Checklist Checklist -->
+<div class="pt-2 border-t border-standard space-y-2">
+<span class="text-label-caption font-semibold text-on-surface block">เกณฑ์การตรวจสอบระดับสินค้าและแคมเปญ:</span>
+<div class="grid grid-cols-1 gap-1.5 text-[12px] text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]" data-icon="verified">verified</span>
+<span data-i18n="ระบุ % ระหว่าง 0 ถึง 100">ระบุ % ระหว่าง 0 ถึง 100</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]" data-icon="verified">verified</span>
+<span data-i18n="ตรวจคู่สินค้าแบบละเอียด">ตรวจคู่สินค้าแบบละเอียด</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]" data-icon="verified">verified</span>
+<span data-i18n="นำเข้า CSV (SKU, price, start_date, end_date)">นำเข้า CSV (SKU, price, start_date, end_date)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[15px]" data-icon="verified">verified</span>
+<span data-i18n="ราคาเรา/กก.">ราคาเรา/กก.</span> · <span data-i18n="ต่อ SKU (แบบเดิม)">ต่อ SKU (แบบเดิม)</span>
+</div>
+<div class="flex items-center gap-2 text-outline">
+<span class="material-symbols-outlined text-[15px]" data-icon="info">info</span>
+<span data-i18n="เกิดข้อผิดพลาดในการบันทึก">เกิดข้อผิดพลาดในการบันทึก</span> (ระบบจะแจ้งเตือนทันทีหากค่าไม่สมบูรณ์)
+                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- BOTTOM STICKY ACTION BAR                                                  -->
+<!-- ========================================================================= -->
+<footer class="fixed bottom-0 right-0 w-[calc(100%-16rem)] z-30 h-16 bg-surface-container-lowest border-t border-outline-variant px-8 flex items-center justify-between shadow-[0_-4px_16px_rgba(23,36,59,0.04)]">
+<!-- Status indicator on left of footer -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-label-default font-label-default text-secondary">
+<span class="w-2.5 h-2.5 rounded-full bg-[#b08900]"></span>
+<span>สถานะ: บันทึกไปยังฐานข้อมูล Template (Draft)</span>
+</div>
+<span class="text-outline text-label-caption">|</span>
+<span class="text-label-caption text-secondary">อัปเดตล่าสุด: เมื่อสักครู่ โดย จินดา นวลอนันต์</span>
+</div>
+<!-- Action buttons -->
+<div class="flex items-center gap-3">
+<a class="px-5 py-2 h-10 border border-outline-variant bg-white hover:bg-surface-container-low text-on-surface font-body-medium rounded-xl transition-all shadow-xs flex items-center justify-center" href="#">
+        ยกเลิก
+      </a>
+<button class="px-6 py-2 h-10 bg-primary-container hover:bg-primary text-white font-body-medium rounded-xl transition-all shadow-sm flex items-center gap-2" onclick="simulateSaveTemplate()" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="save">save</span>
+<span>บันทึก Template</span>
+</button>
+</div>
+</footer>
+<!-- ========================================================================= -->
+<!-- CLIENT JAVASCRIPT: BILINGUAL SWITCHER & INTERACTIVE MICRO-ACTIONS         -->
+<!-- ========================================================================= -->
+<script>
+    // Translation dictionary parsing
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+    let currentLang = 'th';
+
+    function switchLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 text-label-caption font-semibold rounded-md bg-white text-primary shadow-xs transition-all";
+        enBtn.className = "px-2.5 py-1 text-label-caption font-medium text-secondary hover:text-on-surface transition-all";
+        document.documentElement.lang = "th";
+      } else {
+        enBtn.className = "px-2.5 py-1 text-label-caption font-semibold rounded-md bg-white text-primary shadow-xs transition-all";
+        thBtn.className = "px-2.5 py-1 text-label-caption font-medium text-secondary hover:text-on-surface transition-all";
+        document.documentElement.lang = "en";
+      }
+
+      // Apply translations across all marked elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[key] && translationsData[key][lang]) {
+          el.textContent = translationsData[key][lang];
+        }
+      });
+    }
+
+    function triggerAutoTranslate() {
+      // Toggle to English or Thai
+      const targetLang = currentLang === 'th' ? 'en' : 'th';
+      switchLanguage(targetLang);
+
+      // Also dynamically update input placeholders or values for simulation feel
+      const msgInput = document.getElementById('message_text');
+      if (targetLang === 'en') {
+        msgInput.value = "Hello {customer_name}, Support team would like to update your order #{order_id}. Your package is fulfilled and tracking no. is {tracking_no}. Thank you for shopping with us!";
+        document.getElementById('action_btn_title').value = "Track Package Status (Live)";
+      } else {
+        msgInput.value = "สวัสดีคุณ {customer_name} แอดมินขอแจ้งสถานะคำสั่งซื้อหมายเลข #{order_id} สินค้าของท่านจัดส่งเรียบร้อยแล้ว เลขพัสดุคือ {tracking_no} ขอบคุณที่ใช้บริการกับเราค่ะ";
+        document.getElementById('action_btn_title').value = "เช็คสถานะพัสดุ (Live Tracking)";
+      }
+      updatePreview();
+    }
+
+    // Dynamic Preview Updating & Variable Insertion
+    const messageInput = document.getElementById('message_text');
+    const previewText = document.getElementById('preview-text');
+    const actionBtnInput = document.getElementById('action_btn_title');
+    const previewBtnLabel = document.getElementById('preview-btn-label');
+    const charCount = document.getElementById('char-count');
+
+    function updatePreview() {
+      if (!messageInput || !previewText) return;
+      let text = messageInput.value;
+      // Simulated replacement of placeholders for customer mock
+      let simulated = text
+        .replace(/{customer_name}/g, 'สมศักดิ์')
+        .replace(/{order_id}/g, 'TH-8902')
+        .replace(/{tracking_no}/g, 'TH8829104');
+
+      previewText.textContent = simulated || 'กรุณาระบุข้อความสำหรับแสดงผล...';
+      if (charCount) {
+        charCount.textContent = `${text.length} / 500 ตัวอักษร`;
+      }
+      if (actionBtnInput && previewBtnLabel) {
+        previewBtnLabel.textContent = actionBtnInput.value || 'ปุ่มการกระทำ';
+      }
+    }
+
+    messageInput.addEventListener('input', updatePreview);
+    if (actionBtnInput) {
+      actionBtnInput.addEventListener('input', updatePreview);
+    }
+
+    function insertVariable(variableTag) {
+      const curPos = messageInput.selectionStart;
+      const text = messageInput.value;
+      messageInput.value = text.slice(0, curPos) + variableTag + text.slice(curPos);
+      messageInput.focus();
+      messageInput.setSelectionRange(curPos + variableTag.length, curPos + variableTag.length);
+      updatePreview();
+    }
+
+    function simulateSaveTemplate() {
+      const nameInput = document.getElementById('template_name');
+      if (!nameInput.value.trim()) {
+        alert(translationsData["กรุณากรอกชื่อ Template"][currentLang]);
+        nameInput.focus();
+        return;
+      }
+      // Simple friendly toast feedback
+      const originalText = event.currentTarget.innerHTML;
+      event.currentTarget.innerHTML = '<span class="material-symbols-outlined text-[18px]" data-icon="check">check</span><span>บันทึกสำเร็จ!</span>';
+      setTimeout(() => {
+        event.currentTarget.innerHTML = originalText;
+      }, 2000);
+    }
+
+    // Initialize initial text preview
+    updatePreview();
+  </script>
+</body></html>

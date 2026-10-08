@@ -1,3 +1,5 @@
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 /**
  * KYC queue types — UI-only for now.
  *
@@ -11,9 +13,9 @@ export type KycDocumentStatus = 'none' | 'pending' | 'approved' | 'rejected';
 export type KycDocumentType = 'id_card' | 'selfie' | 'storefront';
 
 export const KYC_DOCUMENT_TYPES: { key: KycDocumentType; label: string; thumbnailLabel: string }[] = [
-  { key: 'id_card', label: 'บัตรประจำตัวประชาชน', thumbnailLabel: 'บัตรประชาชน' },
-  { key: 'selfie', label: 'เซลฟี่ถือบัตรประชาชน', thumbnailLabel: 'เซลฟี่ถือบัตร' },
-  { key: 'storefront', label: 'รูปหน้าร้าน / สถานประกอบการ', thumbnailLabel: 'หน้าร้าน' },
+  { key: 'id_card', get label(){return uiText("บัตรประจำตัวประชาชน");}, get thumbnailLabel(){return uiText("บัตรประชาชน");} },
+  { key: 'selfie', get label(){return uiText("เซลฟี่ถือบัตรประชาชน");}, get thumbnailLabel(){return uiText("เซลฟี่ถือบัตร");} },
+  { key: 'storefront', get label(){return uiText("รูปหน้าร้าน / สถานประกอบการ");}, get thumbnailLabel(){return uiText("หน้าร้าน");} },
 ];
 
 export interface KycDocument {

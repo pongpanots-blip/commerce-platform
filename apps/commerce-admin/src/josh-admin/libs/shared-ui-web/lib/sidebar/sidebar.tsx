@@ -17,6 +17,8 @@ import {
   AiOutlineSearch,
 } from 'react-icons/ai';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type SidebarMenuChild = {
   label: string;
   path: string;
@@ -114,6 +116,7 @@ export function Sidebar({
   onNavigate,
   searchable = true,
 }: SidebarProps) {
+  __useUiLocale();
   const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({
     storefront: true,
     promotions: true,
@@ -187,16 +190,16 @@ export function Sidebar({
         <div>
           <div className="mb-4 flex items-start justify-between gap-2 border-b border-gray-100 px-2 py-4">
             <div className="flex min-w-0 flex-col gap-1">
-              <span className="text-xl font-bold tracking-wider text-primary">JOSH ADMIN</span>
+              <span className="text-xl font-bold tracking-wider text-primary">{__uiText("JOSH ADMIN")}</span>
               <span className="w-max rounded bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                Role: {role.replace('_', ' ')}
+                {__uiText("Role: ")}{role.replace('_', ' ')}
               </span>
             </div>
             {onClose && (
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="ปิดเมนู"
+                aria-label={__uiText("ปิดเมนู")}
                 className="shrink-0 rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800"
               >
                 <AiOutlineClose size={18} />
@@ -215,15 +218,15 @@ export function Sidebar({
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ค้นหาเมนู..."
-                aria-label="ค้นหาเมนู"
+                placeholder={__uiText("ค้นหาเมนู...")}
+                aria-label={__uiText("ค้นหาเมนู")}
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-9 pr-8 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-colors focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  aria-label="ล้างคำค้นหา"
+                  aria-label={__uiText("ล้างคำค้นหา")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-400 hover:text-gray-700"
                 >
                   <AiOutlineClose size={14} />
@@ -234,7 +237,7 @@ export function Sidebar({
 
           <nav className="space-y-1">
             {menus.length === 0 && (
-              <p className="px-4 py-6 text-center text-sm text-gray-400">ไม่พบเมนูที่ตรงกับคำค้นหา</p>
+              <p className="px-4 py-6 text-center text-sm text-gray-400">{__uiText("ไม่พบเมนูที่ตรงกับคำค้นหา")}</p>
             )}
             {menus.map((item) => {
               const icon = MENU_ICONS[item.id];
@@ -298,11 +301,10 @@ export function Sidebar({
 
         <div className="-mx-4 flex items-center gap-3 border-t border-gray-100 bg-gray-50/50 px-4 pb-2 pt-4">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-            JD
-          </div>
+            {__uiText("JD")}</div>
           <div className="overflow-hidden">
-            <p className="truncate text-xs font-semibold text-gray-800">John Doe</p>
-            <p className="truncate text-[10px] capitalize text-gray-400">{role.replace('_', ' ')} Staff</p>
+            <p className="truncate text-xs font-semibold text-gray-800">{__uiText("John Doe")}</p>
+            <p className="truncate text-[10px] capitalize text-gray-400">{role.replace('_', ' ')} {__uiText(" Staff")}</p>
           </div>
         </div>
       </aside>

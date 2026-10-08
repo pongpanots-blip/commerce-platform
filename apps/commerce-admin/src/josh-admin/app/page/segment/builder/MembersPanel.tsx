@@ -1,7 +1,10 @@
+// ui-metadata-migration: static labels and UI notices only
 import { getSegmentMembers, type SegmentMemberRow } from '@josh/shared-api';
 import { Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_LIMIT = 20;
 
 const TIER_BADGE_CLASS: Record<string, string> = {
@@ -25,6 +28,7 @@ type Props = {
  * this only renders once the segment has been saved (see SegmentBuilder).
  */
 export function MembersPanel({ segmentId }: Props) {
+  __useUiLocale();
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<SegmentMemberRow[]>([]);
   const [total, setTotal] = useState(0);
@@ -60,11 +64,11 @@ export function MembersPanel({ segmentId }: Props) {
   }, [page]);
 
   const columns: TableColumn<SegmentMemberRow>[] = [
-    { key: 'name', label: 'ชื่อ' },
-    { key: 'email', label: 'อีเมล' },
+    { key: 'name', label: __uiText("ชื่อ") },
+    { key: 'email', label: __uiText("อีเมล") },
     {
       key: 'tier',
-      label: 'Tier',
+      label: __uiText("Tier"),
       render: (value: string | null) =>
         value ? (
           <span
@@ -80,7 +84,7 @@ export function MembersPanel({ segmentId }: Props) {
     },
     {
       key: 'lifetime_spend',
-      label: 'ยอดใช้จ่ายสะสม',
+      label: __uiText("ยอดใช้จ่ายสะสม"),
       render: (value: number) => formatBaht(Number(value ?? 0)),
     },
   ];
@@ -88,7 +92,7 @@ export function MembersPanel({ segmentId }: Props) {
   return (
     <div className="flex flex-col gap-2">
       {loading && rows.length === 0 ? (
-        <p className="text-sm text-gray-400">กำลังโหลดรายชื่อ...</p>
+        <p className="text-sm text-gray-400">{__uiText("กำลังโหลดรายชื่อ...")}</p>
       ) : (
         <Table
           columns={columns}

@@ -1,3 +1,4 @@
+import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import React, { ReactNode } from 'react';
 
 // สืบทอดคุณสมบัติมาตรฐานของแท็ก <input> มาทั้งหมดเพื่อให้ใช้งานง่าย
@@ -27,14 +28,16 @@ export function Input({
   required,
   ...props
 }: InputProps) {
+  __useUiLocale();
   const generatedId = React.useId();
   const inputId = label ? (id ?? generatedId) : id;
+  const messageId = `${generatedId}-message`;
 
   return (
     <div className="w-full">
       {label && (
         <label htmlFor={inputId} className="mb-1 block text-sm text-ink-secondary">
-          {label}
+          {__uiText(label)}
           {required && <span className="text-alert"> *</span>}
         </label>
       )}
@@ -47,35 +50,37 @@ export function Input({
         <input
           id={inputId}
           type={type}
-          placeholder={placeholder}
+          placeholder={placeholder ? __uiText(placeholder) : undefined}
           disabled={disabled}
           required={required}
           // Figma "Data Entry / Basic Input" — h-40 px-12 radius-8, ขอบ #DEEAFF → primary ตอน hover/focus
           // ponytail: border-2 คงที่ตลอด (ไม่ใช่ 1px→2px) กันความสูงกระโดดตอนโฟกัส — สีเข้มขึ้นแทนความหนา
           className={`
-            h-10 w-full rounded-lg border-2 bg-white px-3 text-sm text-ink placeholder-ink-muted
+            h-10 w-full rounded-lg border bg-white px-3 text-sm text-ink placeholder-ink-muted
             transition-colors
             ${icon ? 'pl-9' : ''}
             ${unit ? 'pr-9' : ''}
             ${error
               ? 'border-alert'
-              : 'border-primary-border hover:border-primary focus:border-primary'}
+              : 'border-gray-200 hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/10'}
             focus:outline-none
             disabled:border-surface-disabled disabled:bg-surface-disabled disabled:text-ink-disabled
             ${className}
           `}
           {...props}
+          aria-invalid={error ? true : props['aria-invalid']}
+          aria-describedby={[props['aria-describedby'], (error || hint) && messageId].filter(Boolean).join(' ') || undefined}
         />
         {unit && (
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-ink-muted">
-            {unit}
+            {__uiText(unit)}
           </span>
         )}
       </div>
       {error ? (
-        <p className="mt-1 text-sm text-alert">{error}</p>
+        <p id={messageId} className="mt-1 text-sm text-alert">{__uiText(error)}</p>
       ) : (
-        hint && <p className="mt-1 text-xs text-ink-muted">{hint}</p>
+        hint && <p id={messageId} className="mt-1 text-xs text-ink-muted">{__uiText(hint)}</p>
       )}
     </div>
   );

@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "3306",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzk1ZTU4MDdiODc2YTQ3MzY5M2EwYWQwNjg0ODQ0OGU4EgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/1bdd844ca83e472881fc3608409da399"
+            },
+            "id": "f60dcabbe8cb4f95849025bc8b725a63",
+            "name": "projects/9809859018179965476/screens/f60dcabbe8cb4f95849025bc8b725a63",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UqycnoicW6QpF-iW0h2riY7bxrwwiDZ6US7JMzt7_E2YsAFb7ULDkLeQ3AdUD3a0CBAUnoVTNbUdQJSLHVz9Lka53q4sE6PEtC-eG6cHn4VYJWFUjGJonuloUGvLvjXJxWu3iWPuUT2L48hoJuETy8Qx4y3kU1CohdfxGIYcWinbu1-ZT1dB5DwhXAlF_Dv6AGp6LdSHbm78RX6FBM2KvCIFTvlBB_Xh4tWqKV-RsWRGuddLTrJkVis2I",
+              "name": "projects/9809859018179965476/files/b2a8c9007cd44d0bb407513da68cc622"
+            },
+            "theme": {},
+            "title": "ERP stub stock (/erp-stock)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ออกแบบหน้า **ERP stub stock (/erp-stock)** ตามสเปกของระบบ Commerce Platform เรียบร้อยแล้ว:\n\n### จุดเด่นและการนำไปใช้งาน:\n1. **Visual Language & System Cohesion:**\n   - ใช้โทนสีระบบ `#365cf5` (Primary blue), แคนวาส `#f6f8fc`, การ์ดสีขาวขอบ `#e1e7f0` พร้อมมุมมน 12px และปุ่มควบคุม 8px/40px ความสูง\n   - ฟอนต์ Noto Sans Thai และสัดส่วนระยะ 16/24/32px ความกว้างเนื้อหาหลักประมาณ 1240px\n   - Sidebar 256px พร้อม 7 กลุ่มงาน โดยเน้นหมวด `สินค้าและสต็อก` และลิงก์ย่อย `ERP stub stock`\n2. **Task-based UI & Usability:**\n   - นำด้วยส่วนหัวหน้าจอที่ชัดเจน พร้อมปุ่มการกระทำหลัก `Refresh` และ `Set stock level`\n   - มีฟอร์มด่วน (Quick set stock) ในการ์ด พร้อมตัวอย่างรหัส SKU เพื่อความรวดเร็วในการทดสอบ Sandbox\n   - ตารางแสดงรายการยอดสต็อกคงคลัง (Stock levels) พร้อมแสดงจำนวน Qty, สถานะสต็อกสีคู่ข้อความ (พร้อมจำหน่าย, สต็อกใกล้หมด, สินค้าหมด) และช่องค้นหาที่ระบุชัดเจนว่าค้นหาเฉพาะในหน้านี้ตามข้อกำหนด Pagination API\n   - กล่องแนวทางปฏิบัติการจำลอง Sandbox Protocol และ Modal สำหรับปรับปรุงสต็อก (รองรับปุ่ม Escape และคีย์บอร์ด)\n3. **Bilingual & Exact UI Copy:**\n   - สลับภาษาได้ทันทีระหว่าง ไทย / English\n   - แนบแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่รวบรวมข้อความตรงตาม Copy catalogue ครบถ้วนทุกคีย์ พร้อมพารามิเตอร์ `{0}`, `{1}` และการแปล th/en อย่างสมบูรณ์"
+    },
+    {
+      "suggestion": "ดูตัวอย่างการเปิดใช้งาน Modal สำหรับตั้งค่าสต็อกหลาย SKU"
+    },
+    {
+      "suggestion": "เพิ่มส่วนจำลอง Webhook Callback เหตุการณ์สต็อกตัดจ่ายจาก Order"
+    },
+    {
+      "suggestion": "ปรับแต่งสถานะจำลองการเชื่อมต่อ SAP ERP เมื่อเกิดข้อผิดพลาด"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "5466041170637799090"
+}

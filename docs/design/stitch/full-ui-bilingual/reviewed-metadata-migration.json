@@ -1,0 +1,66 @@
+[
+  {
+    "file": "apps/commerce-admin/src/app/pages/ErpSimulator.tsx",
+    "edits": 18
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+    "edits": 5
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/StockMoves.tsx",
+    "edits": 12
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEditor.tsx",
+    "edits": 9
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/marketing-workflow.api.ts",
+    "edits": 16
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationCatalog.tsx",
+    "edits": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/campain/MechanicEditorPage.tsx",
+    "edits": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponStatusPill.tsx",
+    "edits": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/coupon-audience.helpers.ts",
+    "edits": 8
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+    "edits": 5
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorReviewGrid.tsx",
+    "edits": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/WelcomeLeadEmailPage.tsx",
+    "edits": 7
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/creative-editor/ChannelCanvas.tsx",
+    "edits": 7
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-common/CampaignStatusPill.tsx",
+    "edits": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentRuleCardFields.tsx",
+    "edits": 6
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/builder/segment-definition.helpers.ts",
+    "edits": 4
+  }
+]

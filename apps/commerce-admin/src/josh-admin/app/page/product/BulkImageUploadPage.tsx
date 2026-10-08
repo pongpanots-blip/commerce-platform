@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import { bulkUploadProductImages } from '@josh/shared-api';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +24,8 @@ import {
 } from './bulk-image-upload.helpers';
 
 // ---- constants (per docs/superpowers/plans/2026-08-17-sku-image-dropzone.html) ----
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const MAX_STAGED_FILES = 500;
 const BATCH_SIZE = 10;
 const VISIBLE_ROWS_STEP = 50;
@@ -123,31 +128,31 @@ type HistoryRow = BulkUploadLogItem & { isNewBatch: boolean };
 const historyColumns: TableColumn<HistoryRow>[] = [
   {
     key: 'createdAt',
-    label: 'เวลา',
+    get label(){return __uiText("เวลา");},
     render: (value: string, row) => (
       <span className={row.isNewBatch ? 'font-semibold text-gray-800' : 'text-gray-600'}>
-        {new Date(value).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}
+        {new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { dateStyle: 'short', timeStyle: 'short' })}
       </span>
     ),
   },
   {
     key: 'mode',
-    label: 'โหมด',
+    get label(){return __uiText("โหมด");},
     render: (value: BulkUploadLogItem['mode']) => HISTORY_MODE_TH[value] ?? value,
   },
   {
     key: 'filename',
-    label: 'ไฟล์',
+    get label(){return __uiText("ไฟล์");},
     render: (value: string) => <span className="font-mono text-xs">{value}</span>,
   },
   {
     key: 'sku',
-    label: 'SKU',
+    get label(){return __uiText("SKU");},
     render: (value: string) => <span className="font-mono text-xs">{value}</span>,
   },
   {
     key: 'status',
-    label: 'สถานะ',
+    get label(){return __uiText("สถานะ");},
     render: (value: string) => (
       <span
         className={`text-xs font-semibold rounded-full px-2.5 py-0.5 ${
@@ -160,7 +165,7 @@ const historyColumns: TableColumn<HistoryRow>[] = [
   },
   {
     key: 'url',
-    label: 'รูป',
+    get label(){return __uiText("รูป");},
     render: (value: string | null) =>
       value ? (
         <img src={value} alt="" className="w-9 h-9 rounded-md object-cover bg-gray-100" />
@@ -171,6 +176,7 @@ const historyColumns: TableColumn<HistoryRow>[] = [
 ];
 
 const BulkImageUploadPage = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [rows, setRows] = useState<StagedRow[]>([]);
   const [pageState, setPageState] = useState<PageState>('idle');
@@ -210,21 +216,21 @@ const BulkImageUploadPage = () => {
       const preview = await pruneSupersededBulkUploadImages(true);
       const candidates = preview.data?.data?.candidates ?? 0;
       if (candidates === 0) {
-        window.alert('ไม่มีรูปเก่าที่ต้องลบ');
+        window.alert(__uiText("ไม่มีรูปเก่าที่ต้องลบ"));
         return;
       }
       if (
         !window.confirm(
-          `พบรูปเก่าที่กู้คืนไม่ได้แล้ว ${candidates} ไฟล์\nลบออกจาก S3 ถาวร? ย้อนกลับไม่ได้`,
+          __uiText("พบรูปเก่าที่กู้คืนไม่ได้แล้ว {0} ไฟล์\nลบออกจาก S3 ถาวร? ย้อนกลับไม่ได้", {"0": candidates}),
         )
       ) {
         return;
       }
       const result = await pruneSupersededBulkUploadImages(false);
-      window.alert(result.data?.message ?? 'ล้างรูปเก่าเรียบร้อย');
+      window.alert(result.data?.message ?? __uiText("ล้างรูปเก่าเรียบร้อย"));
       refetchHistory();
     } catch {
-      window.alert('ล้างรูปเก่าไม่สำเร็จ');
+      window.alert(__uiText("ล้างรูปเก่าไม่สำเร็จ"));
     } finally {
       setPruning(false);
     }
@@ -452,21 +458,20 @@ const BulkImageUploadPage = () => {
         onClick={() => navigate(ADMIN_ROUTES.products)}
         className="text-sm text-gray-500 hover:text-gray-800 mb-2"
       >
-        ← กลับ
-      </button>
+        {__uiText("← กลับ")}</button>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-900">อัปโหลดรูปสินค้าแบบชุด</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{__uiText("อัปโหลดรูปสินค้าแบบชุด")}</h1>
         <p className="text-sm text-gray-500 mt-1">
           {mode === 'replace'
-            ? 'ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วแทนที่รูปตามลำดับที่ระบุในชื่อไฟล์ (รูปเดิมที่ลำดับนั้นถูกทับ)'
-            : 'ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วเพิ่มต่อท้ายแกลเลอรีเดิม (ไม่ลบ/ไม่แทนที่รูปเดิม)'}
+            ? __uiText("ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วแทนที่รูปตามลำดับที่ระบุในชื่อไฟล์ (รูปเดิมที่ลำดับนั้นถูกทับ)")
+            : __uiText("ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับ SKU จากชื่อไฟล์ แล้วเพิ่มต่อท้ายแกลเลอรีเดิม (ไม่ลบ/ไม่แทนที่รูปเดิม)")}
         </p>
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-4">
         {pageState !== 'uploading' && pageState !== 'results' && (
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-xs font-semibold text-gray-700">โหมด</span>
+            <span className="text-xs font-semibold text-gray-700">{__uiText("โหมด")}</span>
             <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden" role="group">
               {(
                 [
@@ -483,14 +488,14 @@ const BulkImageUploadPage = () => {
                     mode === option.value ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  {option.label}
+                  {__uiText(option.label)}
                 </button>
               ))}
             </div>
             <span className="text-xs text-gray-500">
               {mode === 'replace'
-                ? 'JG001_2.jpg จะทับรูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องมีลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน'
-                : 'รูปทุกไฟล์ถูกเพิ่มต่อท้ายแกลเลอรีเดิม'}
+                ? __uiText("JG001_2.jpg จะทับรูปที่ 2 ของ JG001 — ชื่อไฟล์ต้องมีลำดับ และห้ามซ้ำลำดับในชุดเดียวกัน")
+                : __uiText("รูปทุกไฟล์ถูกเพิ่มต่อท้ายแกลเลอรีเดิม")}
             </span>
           </div>
         )}
@@ -498,7 +503,7 @@ const BulkImageUploadPage = () => {
         {pageState !== 'uploading' && pageState !== 'results' && (
           <>
             <div
-              aria-label="ลากไฟล์หรือโฟลเดอร์มาวาง หรือเลือกด้วยปุ่มด้านล่าง"
+              aria-label={__uiText("ลากไฟล์หรือโฟลเดอร์มาวาง หรือเลือกด้วยปุ่มด้านล่าง")}
               onDragEnter={handleDrag}
               onDragOver={handleDrag}
               onDragLeave={handleDrag}
@@ -509,48 +514,42 @@ const BulkImageUploadPage = () => {
             >
               {pageState === 'idle' ? (
                 <>
-                  <strong className="block text-sm text-gray-900">ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่</strong>
-                  <span className="block text-xs text-gray-500 mt-1">หรือ</span>
+                  <strong className="block text-sm text-gray-900">{__uiText("ลากไฟล์หรือโฟลเดอร์รูปมาวางที่นี่")}</strong>
+                  <span className="block text-xs text-gray-500 mt-1">{__uiText("หรือ")}</span>
                   <div className="flex items-center justify-center gap-2 mt-3">
                     <button
                       type="button"
                       onClick={openFolderPicker}
                       className="px-3.5 py-1.5 text-xs font-semibold text-blue-600 bg-white border border-gray-200 rounded-lg hover:border-blue-600"
                     >
-                      เลือกโฟลเดอร์
-                    </button>
+                      {__uiText("เลือกโฟลเดอร์")}</button>
                     <button
                       type="button"
                       onClick={openFilePicker}
                       className="px-3.5 py-1.5 text-xs font-semibold text-blue-600 bg-white border border-gray-200 rounded-lg hover:border-blue-600"
                     >
-                      เลือกไฟล์
-                    </button>
+                      {__uiText("เลือกไฟล์")}</button>
                   </div>
                   <div className="text-xs text-gray-500 mt-2.5">
-                    สูงสุด {MAX_STAGED_FILES} ไฟล์ต่อครั้ง · ไฟล์ละไม่เกิน {MAX_FILE_SIZE_BYTES / (1024 * 1024)} MB · jpg, jpeg, png, gif, webp
-                  </div>
+                    {__uiText("สูงสุด ")}{MAX_STAGED_FILES} {__uiText(" ไฟล์ต่อครั้ง · ไฟล์ละไม่เกิน ")}{MAX_FILE_SIZE_BYTES / (1024 * 1024)} {__uiText(" MB · jpg, jpeg, png, gif, webp")}</div>
                 </>
               ) : (
                 <>
                   <strong className="block text-xs text-gray-900">
-                    วางไฟล์เพิ่มได้ (เหลืออีก {Math.max(MAX_STAGED_FILES - rows.length, 0)} ไฟล์)
-                  </strong>
+                    {__uiText("วางไฟล์เพิ่มได้ (เหลืออีก ")}{Math.max(MAX_STAGED_FILES - rows.length, 0)} {__uiText(" ไฟล์)")}</strong>
                   <div className="flex items-center justify-center gap-2 mt-2.5">
                     <button
                       type="button"
                       onClick={openFolderPicker}
                       className="px-3 py-1 text-xs font-semibold text-blue-600 bg-white border border-gray-200 rounded-lg hover:border-blue-600"
                     >
-                      เลือกโฟลเดอร์
-                    </button>
+                      {__uiText("เลือกโฟลเดอร์")}</button>
                     <button
                       type="button"
                       onClick={openFilePicker}
                       className="px-3 py-1 text-xs font-semibold text-blue-600 bg-white border border-gray-200 rounded-lg hover:border-blue-600"
                     >
-                      เลือกไฟล์
-                    </button>
+                      {__uiText("เลือกไฟล์")}</button>
                   </div>
                 </>
               )}
@@ -558,7 +557,7 @@ const BulkImageUploadPage = () => {
                 ref={folderInputRef}
                 type="file"
                 multiple
-                aria-label="เลือกโฟลเดอร์รูปภาพเพื่ออัปโหลด"
+                aria-label={__uiText("เลือกโฟลเดอร์รูปภาพเพื่ออัปโหลด")}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 {...({ webkitdirectory: 'true', directory: 'true' } as any)}
                 accept="image/jpeg,image/png,image/gif,image/webp"
@@ -569,7 +568,7 @@ const BulkImageUploadPage = () => {
                 ref={fileInputRef}
                 type="file"
                 multiple
-                aria-label="เลือกไฟล์รูปภาพเพื่ออัปโหลด"
+                aria-label={__uiText("เลือกไฟล์รูปภาพเพื่ออัปโหลด")}
                 accept="image/jpeg,image/png,image/gif,image/webp"
                 className="hidden"
                 onChange={handleFilesPicked}
@@ -579,39 +578,36 @@ const BulkImageUploadPage = () => {
             {pageState === 'idle' && (
               <div className="bg-blue-50 border border-gray-200 rounded-lg p-3.5 text-xs text-gray-700">
                 <h3 className="text-xs font-bold text-gray-900 mb-1.5">
-                  ตั้งชื่อไฟล์ตามรูปแบบ <code className="font-mono bg-white border border-gray-200 rounded px-1">sku_ลำดับ.นามสกุล</code> — ระบบใช้ชื่อไฟล์จับคู่สินค้า
-                </h3>
+                  {__uiText("ตั้งชื่อไฟล์ตามรูปแบบ ")}<code className="font-mono bg-white border border-gray-200 rounded px-1">{__uiText("sku_ลำดับ.นามสกุล")}</code> {__uiText(" — ระบบใช้ชื่อไฟล์จับคู่สินค้า")}</h3>
                 <table className="mt-1">
                   <tbody>
                     <tr>
-                      <td className="pr-3 py-0.5 font-mono text-xs">JG001_1.jpg</td>
-                      <td className="py-0.5 text-xs">→ SKU <b>JG001</b> รูปที่ 1</td>
+                      <td className="pr-3 py-0.5 font-mono text-xs">{__uiText("JG001_1.jpg")}</td>
+                      <td className="py-0.5 text-xs">{__uiText("→ SKU ")}<b>{__uiText("JG001")}</b> {__uiText(" รูปที่ 1")}</td>
                     </tr>
                     <tr>
-                      <td className="pr-3 py-0.5 font-mono text-xs">JG001_2.jpg</td>
-                      <td className="py-0.5 text-xs">→ SKU <b>JG001</b> รูปที่ 2</td>
+                      <td className="pr-3 py-0.5 font-mono text-xs">{__uiText("JG001_2.jpg")}</td>
+                      <td className="py-0.5 text-xs">{__uiText("→ SKU ")}<b>{__uiText("JG001")}</b> {__uiText(" รูปที่ 2")}</td>
                     </tr>
                     <tr>
-                      <td className="pr-3 py-0.5 font-mono text-xs">JG-001_2.png</td>
+                      <td className="pr-3 py-0.5 font-mono text-xs">{__uiText("JG-001_2.png")}</td>
                       <td className="py-0.5 text-xs">
-                        → SKU <b>JG-001</b> (ขีดในรหัสได้ ระบบตัดเฉพาะ _ตัวเลขท้ายสุด)
-                      </td>
+                        {__uiText("→ SKU ")}<b>{__uiText("JG-001")}</b> {__uiText(" (ขีดในรหัสได้ ระบบตัดเฉพาะ _ตัวเลขท้ายสุด)")}</td>
                     </tr>
                     <tr>
-                      <td className="pr-3 py-0.5 font-mono text-xs">JG002.webp</td>
+                      <td className="pr-3 py-0.5 font-mono text-xs">{__uiText("JG002.webp")}</td>
                       <td className="py-0.5 text-xs">
                         {mode === 'replace' ? (
-                          <>→ <b className="text-red-700">ถูกข้าม</b> — โหมดแทนที่ต้องมีลำดับเสมอ</>
+                          <>→ <b className="text-red-700">{__uiText("ถูกข้าม")}</b> {__uiText(" — โหมดแทนที่ต้องมีลำดับเสมอ")}</>
                         ) : (
-                          <>→ SKU <b>JG002</b> (ไม่ใส่ลำดับก็ได้)</>
+                          <>{__uiText("→ SKU ")}<b>{__uiText("JG002")}</b> {__uiText(" (ไม่ใส่ลำดับก็ได้)")}</>
                         )}
                       </td>
                     </tr>
                   </tbody>
                 </table>
                 <div className="mt-1.5 text-gray-500">
-                  ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งให้ทราบ
-                  {mode === 'replace' && ' · โหมดแทนที่: ลำดับในชื่อไฟล์คือรูปที่จะถูกทับ ถ้าลำดับนั้นยังว่างจะเพิ่มให้แทน'}
+                  {__uiText("ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งให้ทราบ")}{mode === 'replace' && __uiText(" · โหมดแทนที่: ลำดับในชื่อไฟล์คือรูปที่จะถูกทับ ถ้าลำดับนั้นยังว่างจะเพิ่มให้แทน")}
                 </div>
               </div>
             )}
@@ -644,7 +640,7 @@ const BulkImageUploadPage = () => {
                       className="absolute bottom-0 left-0 right-0 px-1 py-0.5 text-[10px] font-mono font-semibold text-white bg-black/60 truncate"
                       title={row.sku ?? undefined}
                     >
-                      {row.sku ?? '— ไม่พบ SKU'}
+                      {row.sku ?? __uiText("— ไม่พบ SKU")}
                     </div>
                   </div>
                   <div className="text-[10px] font-mono text-gray-500 truncate" title={row.file.name}>
@@ -652,13 +648,12 @@ const BulkImageUploadPage = () => {
                   </div>
                   {row.status === 'ready' ? (
                     <span className="inline-block text-[10px] font-semibold rounded-full px-1.5 py-0.5 text-green-700 bg-green-50 self-start">
-                      {mode === 'replace' ? `แทนที่รูปที่ ${row.sequence}` : 'พร้อมอัปโหลด'}
+                      {mode === 'replace' ? __uiText("แทนที่รูปที่ {0}", {"0": row.sequence}) : __uiText("พร้อมอัปโหลด")}
                     </span>
                   ) : (
                     <>
                       <span className="inline-block text-[10px] font-semibold rounded-full px-1.5 py-0.5 text-red-700 bg-red-50 self-start">
-                        ถูกข้าม
-                      </span>
+                        {__uiText("ถูกข้าม")}</span>
                       <div className="text-[10px] text-red-700 leading-tight">
                         {row.reason ? FAIL_REASON_TH[row.reason] : ''}
                       </div>
@@ -673,8 +668,7 @@ const BulkImageUploadPage = () => {
                 onClick={() => setVisibleCount((v) => v + VISIBLE_ROWS_STEP)}
                 className="text-xs text-blue-600 font-semibold self-start"
               >
-                แสดงเพิ่ม ({rows.length - visibleCount} รายการที่เหลือ)
-              </button>
+                {__uiText("แสดงเพิ่ม (")}{rows.length - visibleCount} {__uiText(" รายการที่เหลือ)")}</button>
             )}
 
             <div className="flex items-center gap-2 flex-wrap mt-2">
@@ -684,18 +678,15 @@ const BulkImageUploadPage = () => {
                 onClick={startUpload}
                 className="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white disabled:opacity-45 disabled:cursor-not-allowed"
               >
-                {mode === 'replace' ? 'แทนที่' : 'อัปโหลด'} {readyToSendCount} ไฟล์
-              </button>
+                {mode === 'replace' ? __uiText("แทนที่") : __uiText("อัปโหลด")} {readyToSendCount} {__uiText(" ไฟล์")}</button>
               <button
                 type="button"
                 onClick={clearAll}
                 className="px-4 py-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-700"
               >
-                ล้างรายการ
-              </button>
+                {__uiText("ล้างรายการ")}</button>
               <span className="text-xs text-gray-500 ml-auto">
-                พร้อมอัปโหลด {readyToSendCount} · ถูกข้าม {rejectedRows.length} (ไฟล์ที่ถูกข้ามจะไม่ถูกส่ง)
-              </span>
+                {__uiText("พร้อมอัปโหลด ")}{readyToSendCount} {__uiText(" · ถูกข้าม ")}{rejectedRows.length} {__uiText(" (ไฟล์ที่ถูกข้ามจะไม่ถูกส่ง)")}</span>
             </div>
           </>
         )}
@@ -704,9 +695,8 @@ const BulkImageUploadPage = () => {
           <>
             <div className="flex items-baseline justify-between">
               <strong className="text-sm text-gray-900">
-                กำลังอัปโหลดชุดที่ {batchProgress.current}/{batchProgress.total} ({uploadedFilesCount}/{totalToSendForProgress} ไฟล์)
-              </strong>
-              <span className="text-xs text-gray-500">อย่าปิดหน้านี้จนกว่าจะเสร็จ</span>
+                {__uiText("กำลังอัปโหลดชุดที่ ")}{batchProgress.current}/{batchProgress.total} ({uploadedFilesCount}/{totalToSendForProgress} {__uiText(" ไฟล์)")}</strong>
+              <span className="text-xs text-gray-500">{__uiText("อย่าปิดหน้านี้จนกว่าจะเสร็จ")}</span>
             </div>
             <div
               className="h-1.5 rounded-full bg-gray-200 overflow-hidden"
@@ -737,20 +727,18 @@ const BulkImageUploadPage = () => {
                     <td className="py-2 px-2.5 font-mono text-xs">{row.sku ?? '—'}</td>
                     <td className="py-2 px-2.5">
                       {row.status === 'done' && (
-                        <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-green-700 bg-green-50">สำเร็จ</span>
+                        <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-green-700 bg-green-50">{__uiText("สำเร็จ")}</span>
                       )}
                       {row.status === 'uploading' && (
                         <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-gray-500 bg-gray-50 border border-gray-200">
-                          กำลังอัปโหลด…
-                        </span>
+                          {__uiText("กำลังอัปโหลด…")}</span>
                       )}
                       {row.status === 'queued' && (
                         <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-gray-500 bg-gray-50 border border-gray-200">
-                          รอคิว
-                        </span>
+                          {__uiText("รอคิว")}</span>
                       )}
                       {row.status === 'failed' && (
-                        <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-red-700 bg-red-50">ไม่สำเร็จ</span>
+                        <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-red-700 bg-red-50">{__uiText("ไม่สำเร็จ")}</span>
                       )}
                     </td>
                   </tr>
@@ -763,14 +751,12 @@ const BulkImageUploadPage = () => {
                 onClick={() => setVisibleCount((v) => v + VISIBLE_ROWS_STEP)}
                 className="text-xs text-blue-600 font-semibold self-start"
               >
-                แสดงเพิ่ม ({readyRows.length - visibleCount} รายการที่เหลือ)
-              </button>
+                {__uiText("แสดงเพิ่ม (")}{readyRows.length - visibleCount} {__uiText(" รายการที่เหลือ)")}</button>
             )}
 
             <div className="mt-2">
               <button type="button" disabled className="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white opacity-45 cursor-not-allowed">
-                กำลังอัปโหลด…
-              </button>
+                {__uiText("กำลังอัปโหลด…")}</button>
             </div>
           </>
         )}
@@ -780,17 +766,15 @@ const BulkImageUploadPage = () => {
             <div className="flex gap-2 flex-wrap">
               {allFailed ? (
                 <span className="text-sm font-semibold rounded-lg px-3 py-1.5 bg-red-50 text-red-700">
-                  ไม่สำเร็จทั้งหมด — 0 จาก {rows.length} ไฟล์ถูก{mode === 'replace' ? 'แทนที่' : 'เพิ่ม'}
+                  {__uiText("ไม่สำเร็จทั้งหมด — 0 จาก ")}{rows.length} {__uiText(" ไฟล์ถูก")}{mode === 'replace' ? __uiText("แทนที่") : __uiText("เพิ่ม")}
                 </span>
               ) : (
                 <>
                   <span className="text-sm font-semibold rounded-lg px-3 py-1.5 bg-green-50 text-green-700">
-                    {mode === 'replace' ? 'แทนที่รูปสำเร็จ' : 'เพิ่มรูปสำเร็จ'} {doneRows.length} ไฟล์
-                  </span>
+                    {mode === 'replace' ? __uiText("แทนที่รูปสำเร็จ") : __uiText("เพิ่มรูปสำเร็จ")} {doneRows.length} {__uiText(" ไฟล์")}</span>
                   {failedRows.length > 0 && (
                     <span className="text-sm font-semibold rounded-lg px-3 py-1.5 bg-red-50 text-red-700">
-                      ไม่สำเร็จ {failedRows.length} ไฟล์
-                    </span>
+                      {__uiText("ไม่สำเร็จ ")}{failedRows.length} {__uiText(" ไฟล์")}</span>
                   )}
                 </>
               )}
@@ -798,51 +782,44 @@ const BulkImageUploadPage = () => {
 
             {allFailed && dominantFailReason === 'invalid_filename' && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3.5 text-xs text-amber-800">
-                <h3 className="text-xs font-bold mb-1.5">ทุกไฟล์อ่าน SKU ไม่ได้ — ปัญหาน่าจะอยู่ที่ชื่อไฟล์</h3>
-                ระบบจับคู่รูปกับสินค้าจาก <b>ชื่อไฟล์เท่านั้น</b> ตัวอย่างจากชุดนี้:
-                <div className="my-1.5">
-                  <code className="font-mono bg-white border border-amber-200 rounded px-1">{failedRows[0]?.file.name}</code> → อ่านไม่ได้ ·
-                  ควรเป็น <code className="font-mono bg-white border border-amber-200 rounded px-1">JG001_1.jpg</code>
+                <h3 className="text-xs font-bold mb-1.5">{__uiText("ทุกไฟล์อ่าน SKU ไม่ได้ — ปัญหาน่าจะอยู่ที่ชื่อไฟล์")}</h3>
+                {__uiText("ระบบจับคู่รูปกับสินค้าจาก ")}<b>{__uiText("ชื่อไฟล์เท่านั้น")}</b> {__uiText(" ตัวอย่างจากชุดนี้:")}<div className="my-1.5">
+                  <code className="font-mono bg-white border border-amber-200 rounded px-1">{failedRows[0]?.file.name}</code> {__uiText(" → อ่านไม่ได้ · ควรเป็น ")}<code className="font-mono bg-white border border-amber-200 rounded px-1">{__uiText("JG001_1.jpg")}</code>
                 </div>
-                เปลี่ยนชื่อไฟล์เป็น <code className="font-mono bg-white border border-amber-200 rounded px-1">sku_ลำดับ.นามสกุล</code> (เช่น{' '}
-                <code className="font-mono bg-white border border-amber-200 rounded px-1">JG001_1.jpg</code>,{' '}
-                <code className="font-mono bg-white border border-amber-200 rounded px-1">JG001_2.jpg</code>) แล้วลากมาวางใหม่
-              </div>
+                {__uiText("เปลี่ยนชื่อไฟล์เป็น ")}<code className="font-mono bg-white border border-amber-200 rounded px-1">{__uiText("sku_ลำดับ.นามสกุล")}</code> {__uiText(" (เช่น")}{' '}
+                <code className="font-mono bg-white border border-amber-200 rounded px-1">{__uiText("JG001_1.jpg")}</code>,{' '}
+                <code className="font-mono bg-white border border-amber-200 rounded px-1">{__uiText("JG001_2.jpg")}</code>{__uiText(") แล้วลากมาวางใหม่")}</div>
             )}
 
             {allFailed && dominantFailReason === 'sku_not_found' && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3.5 text-xs text-amber-800">
-                <h3 className="text-xs font-bold mb-1.5">ทุกไฟล์ไม่พบ SKU ในระบบ</h3>
-                ระบบอ่านชื่อไฟล์ได้ แต่ไม่พบรหัสสินค้าที่ตรงกันในระบบ ตัวอย่างจากชุดนี้:
-                <div className="my-1.5">
-                  <code className="font-mono bg-white border border-amber-200 rounded px-1">{failedRows[0]?.file.name}</code> → SKU{' '}
-                  <code className="font-mono bg-white border border-amber-200 rounded px-1">{failedRows[0]?.sku ?? '—'}</code> ไม่พบในระบบ
-                </div>
-                ตรวจสอบว่ารหัสสินค้าตรงกับ SKU ในระบบ แล้วลองใหม่อีกครั้ง
-              </div>
+                <h3 className="text-xs font-bold mb-1.5">{__uiText("ทุกไฟล์ไม่พบ SKU ในระบบ")}</h3>
+                {__uiText("ระบบอ่านชื่อไฟล์ได้ แต่ไม่พบรหัสสินค้าที่ตรงกันในระบบ ตัวอย่างจากชุดนี้:")}<div className="my-1.5">
+                  <code className="font-mono bg-white border border-amber-200 rounded px-1">{failedRows[0]?.file.name}</code> {__uiText(" → SKU")}{' '}
+                  <code className="font-mono bg-white border border-amber-200 rounded px-1">{failedRows[0]?.sku ?? '—'}</code> {__uiText(" ไม่พบในระบบ")}</div>
+                {__uiText("ตรวจสอบว่ารหัสสินค้าตรงกับ SKU ในระบบ แล้วลองใหม่อีกครั้ง")}</div>
             )}
 
             {allFailed && dominantFailReason === 'upload_failed' && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3.5 text-xs text-amber-800">
-                <h3 className="text-xs font-bold mb-1.5">อัปโหลดขัดข้องทั้งหมด</h3>
-                ไฟล์อ่าน SKU ได้ปกติ แต่การอัปโหลดล้มเหลว อาจเกิดจากปัญหาเครือข่ายหรือเซิร์ฟเวอร์ชั่วคราว ลองกด “ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ” ด้านล่าง
-              </div>
+                <h3 className="text-xs font-bold mb-1.5">{__uiText("อัปโหลดขัดข้องทั้งหมด")}</h3>
+                {__uiText("ไฟล์อ่าน SKU ได้ปกติ แต่การอัปโหลดล้มเหลว อาจเกิดจากปัญหาเครือข่ายหรือเซิร์ฟเวอร์ชั่วคราว ลองกด “ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ” ด้านล่าง")}</div>
             )}
 
             {allFailed && (dominantFailReason === 'file_too_large' || dominantFailReason === 'unsupported_type') && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3.5 text-xs text-amber-800">
                 <h3 className="text-xs font-bold mb-1.5">
-                  {dominantFailReason === 'file_too_large' ? 'ไฟล์ใหญ่เกินกำหนดทั้งหมด' : 'ชนิดไฟล์ไม่รองรับทั้งหมด'}
+                  {dominantFailReason === 'file_too_large' ? __uiText("ไฟล์ใหญ่เกินกำหนดทั้งหมด") : __uiText("ชนิดไฟล์ไม่รองรับทั้งหมด")}
                 </h3>
                 {dominantFailReason === 'file_too_large'
-                  ? 'ไฟล์ในชุดนี้ใหญ่เกิน 5 MB — ย่อขนาดไฟล์แล้วลองใหม่'
-                  : 'ระบบรองรับเฉพาะไฟล์ jpg, jpeg, png, gif, webp — ตรวจสอบชนิดไฟล์แล้วลองใหม่'}
+                  ? __uiText("ไฟล์ในชุดนี้ใหญ่เกิน 5 MB — ย่อขนาดไฟล์แล้วลองใหม่")
+                  : __uiText("ระบบรองรับเฉพาะไฟล์ jpg, jpeg, png, gif, webp — ตรวจสอบชนิดไฟล์แล้วลองใหม่")}
               </div>
             )}
 
             {failedRows.length > 0 && (
               <>
-                <div className="text-sm font-bold text-red-700 mt-2">ไม่สำเร็จ ({failedRows.length})</div>
+                <div className="text-sm font-bold text-red-700 mt-2">{__uiText("ไม่สำเร็จ (")}{failedRows.length})</div>
                 <table className="w-full text-sm">
                   <tbody>
                     {failedRows.slice(0, visibleCount).map((row) => (
@@ -861,7 +838,7 @@ const BulkImageUploadPage = () => {
                         <td className="py-2 px-2.5 font-mono text-xs">{row.file.name}</td>
                         <td className="py-2 px-2.5 font-mono text-xs">{row.sku ?? '—'}</td>
                         <td className="py-2 px-2.5">
-                          <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-red-700 bg-red-50">ไม่สำเร็จ</span>
+                          <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-red-700 bg-red-50">{__uiText("ไม่สำเร็จ")}</span>
                           <div className="text-xs text-red-700 mt-0.5">{row.reason ? FAIL_REASON_TH[row.reason] : ''}</div>
                         </td>
                       </tr>
@@ -874,8 +851,7 @@ const BulkImageUploadPage = () => {
                     onClick={() => setVisibleCount((v) => v + VISIBLE_ROWS_STEP)}
                     className="text-xs text-blue-600 font-semibold self-start"
                   >
-                    …อีก {failedRows.length - visibleCount} รายการ
-                  </button>
+                    {__uiText("…อีก ")}{failedRows.length - visibleCount} {__uiText(" รายการ")}</button>
                 )}
                 <div className="flex gap-2 flex-wrap">
                   <button
@@ -883,22 +859,20 @@ const BulkImageUploadPage = () => {
                     onClick={retryFailedOnly}
                     className="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white"
                   >
-                    ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ
-                  </button>
+                    {__uiText("ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ")}</button>
                   <button
                     type="button"
                     onClick={removeFailed}
                     className="px-4 py-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-700"
                   >
-                    ลบไฟล์ที่ไม่สำเร็จออก
-                  </button>
+                    {__uiText("ลบไฟล์ที่ไม่สำเร็จออก")}</button>
                 </div>
               </>
             )}
 
             {!allFailed && doneRows.length > 0 && (
               <>
-                <div className="text-sm font-bold text-green-700 mt-2">สำเร็จ ({doneRows.length})</div>
+                <div className="text-sm font-bold text-green-700 mt-2">{__uiText("สำเร็จ (")}{doneRows.length})</div>
                 <table className="w-full text-sm">
                   <tbody>
                     {doneRows.slice(0, visibleCount).map((row) => (
@@ -918,7 +892,7 @@ const BulkImageUploadPage = () => {
                         <td className="py-2 px-2.5 font-mono text-xs">{row.sku ?? '—'}</td>
                         <td className="py-2 px-2.5">
                           <span className="text-xs font-semibold rounded-full px-2.5 py-0.5 text-green-700 bg-green-50">
-                            {mode === 'replace' ? 'แทนที่แล้ว' : 'เพิ่มแล้ว'}
+                            {mode === 'replace' ? __uiText("แทนที่แล้ว") : __uiText("เพิ่มแล้ว")}
                           </span>
                         </td>
                       </tr>
@@ -931,8 +905,7 @@ const BulkImageUploadPage = () => {
                     onClick={() => setVisibleCount((v) => v + VISIBLE_ROWS_STEP)}
                     className="text-xs text-blue-600 font-semibold self-start"
                   >
-                    …อีก {doneRows.length - visibleCount} รายการ
-                  </button>
+                    {__uiText("…อีก ")}{doneRows.length - visibleCount} {__uiText(" รายการ")}</button>
                 )}
               </>
             )}
@@ -943,7 +916,7 @@ const BulkImageUploadPage = () => {
                 onClick={startNewBatch}
                 className="px-4 py-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-700"
               >
-                {allFailed ? 'เลือกไฟล์ใหม่' : 'อัปโหลดชุดใหม่'}
+                {allFailed ? __uiText("เลือกไฟล์ใหม่") : __uiText("อัปโหลดชุดใหม่")}
               </button>
             </div>
           </>
@@ -952,26 +925,25 @@ const BulkImageUploadPage = () => {
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-3 mt-4">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-base font-bold text-gray-900">ประวัติการอัปโหลด</h2>
+          <h2 className="text-base font-bold text-gray-900">{__uiText("ประวัติการอัปโหลด")}</h2>
           <button
             type="button"
             onClick={runPrune}
             disabled={pruning}
-            title="ลบรูปเก่าที่ถูกแทนที่ซ้ำจนกู้คืนไม่ได้แล้วออกจาก S3 — แต่ละช่องรูปเก็บรูปก่อนหน้าไว้ 1 ภาพเสมอ"
+            title={__uiText("ลบรูปเก่าที่ถูกแทนที่ซ้ำจนกู้คืนไม่ได้แล้วออกจาก S3 — แต่ละช่องรูปเก็บรูปก่อนหน้าไว้ 1 ภาพเสมอ")}
             className="text-xs font-semibold text-red-600 hover:underline disabled:opacity-50"
           >
-            {pruning ? 'กำลังล้าง…' : 'ล้างรูปเก่าที่กู้คืนไม่ได้แล้ว'}
+            {pruning ? __uiText("กำลังล้าง…") : __uiText("ล้างรูปเก่าที่กู้คืนไม่ได้แล้ว")}
           </button>
         </div>
         {historyIsError && (
           <div className="flex items-center justify-between rounded-lg bg-rose-50 px-4 py-2 text-sm text-rose-700">
-            <span>โหลดประวัติไม่สำเร็จ</span>
+            <span>{__uiText("โหลดประวัติไม่สำเร็จ")}</span>
             <button type="button" onClick={() => refetchHistory()} className="font-semibold underline">
-              ลองใหม่
-            </button>
+              {__uiText("ลองใหม่")}</button>
           </div>
         )}
-        {historyLoading && <div className="text-sm text-gray-500">กำลังโหลด…</div>}
+        {historyLoading && <div className="text-sm text-gray-500">{__uiText("กำลังโหลด…")}</div>}
         <Table
           columns={historyColumns}
           data={historyRows}

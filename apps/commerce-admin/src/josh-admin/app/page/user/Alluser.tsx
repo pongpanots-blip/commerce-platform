@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   exportUsersCsv,
   getUsers,
@@ -12,6 +13,8 @@ import AdminListHeader from '../../components/AdminListHeader';
 import { RevealPiiButton } from '../../components/RevealPiiButton';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type BranchItem = {
   id: string;
   name: string;
@@ -41,14 +44,15 @@ type UserRow = {
 };
 
 const ONBOARDING_STEP_LABELS: Record<string, string> = {
-  company: 'ค้าง: กรอกบริษัท',
-  shop: 'ค้าง: กรอกร้าน',
-  branch: 'ค้าง: กรอกสาขา',
+  get company(){return __uiText("ค้าง: กรอกบริษัท");},
+  get shop(){return __uiText("ค้าง: กรอกร้าน");},
+  get branch(){return __uiText("ค้าง: กรอกสาขา");},
 };
 
 const PAGE_SIZE = 20;
 
 const Alluser = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
@@ -169,9 +173,9 @@ const Alluser = () => {
   const selectedSegment = segments.find((segment) => segment.id === segmentId);
 
   const onboardingOptions = [
-    { value: '', label: 'ทั้งหมด' },
-    { value: 'complete', label: 'สมัครเสร็จ' },
-    { value: 'incomplete', label: 'สมัครไม่เสร็จ' },
+    { value: '', label: __uiText("ทั้งหมด") },
+    { value: 'complete', label: __uiText("สมัครเสร็จ") },
+    { value: 'incomplete', label: __uiText("สมัครไม่เสร็จ") },
   ];
   const selectedOnboardingLabel = onboardingOptions.find(
     (option) => option.value === onboarding,
@@ -180,19 +184,19 @@ const Alluser = () => {
   const columns: TableColumn<UserRow>[] = [
     {
       key: 'custcode',
-      label: 'Cust Code',
+      label: __uiText("Cust Code"),
       render: (_, row) => (
         <div className="text-xs leading-5">
           <div className="font-semibold text-gray-800">{row.custcode ?? '-'}</div>
           {row.legacy_custcode && (
-            <div className="text-gray-400">Legacy: {row.legacy_custcode}</div>
+            <div className="text-gray-400">{__uiText("Legacy: ")}{row.legacy_custcode}</div>
           )}
         </div>
       ),
     },
     {
       key: 'full_name',
-      label: 'ชื่อลูกค้า',
+      label: __uiText("ชื่อลูกค้า"),
       render: (_, row) => (
         <div>
           <div className="font-medium text-gray-800">{row.full_name}</div>
@@ -204,20 +208,20 @@ const Alluser = () => {
     },
     {
       key: 'mobile_phone',
-      label: 'เบอร์โทร',
+      label: __uiText("เบอร์โทร"),
       render: (value, row) => (
         <RevealPiiButton subjectType="user" subjectId={row.id} field="mobile_phone" masked={value} />
       ),
     },
     {
       key: 'company',
-      label: 'Company',
+      label: __uiText("Company"),
       render: (_, row) =>
         row.company ? (
           <div className="text-xs leading-5">
             <div className="font-medium text-gray-800">{row.company.name}</div>
             <div className="text-gray-400">
-              {row.company.register_number ?? 'ไม่มีเลขทะเบียน'}
+              {row.company.register_number ?? __uiText("ไม่มีเลขทะเบียน")}
             </div>
           </div>
         ) : (
@@ -226,7 +230,7 @@ const Alluser = () => {
     },
     {
       key: 'branch_count',
-      label: 'Branch',
+      label: __uiText("Branch"),
       render: (_, row) => (
         <button
           type="button"
@@ -235,13 +239,12 @@ const Alluser = () => {
           }
           className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-100"
         >
-          {row.branch_count} สาขา
-        </button>
+          {row.branch_count} {__uiText(" สาขา")}</button>
       ),
     },
     {
       key: 'custype',
-      label: 'Cuisine / Type',
+      label: __uiText("Cuisine / Type"),
       render: (value) => (
         <span className="line-clamp-2 max-w-[180px] text-xs text-gray-600">
           {value ?? '-'}
@@ -250,7 +253,7 @@ const Alluser = () => {
     },
     {
       key: 'role',
-      label: 'Role',
+      label: __uiText("Role"),
       render: (value) => (
         <span className="rounded bg-gray-100 px-2 py-0.5 text-xs uppercase text-gray-600">
           {value}
@@ -259,12 +262,11 @@ const Alluser = () => {
     },
     {
       key: 'onboarding_step',
-      label: 'สถานะสมัคร',
+      label: __uiText("สถานะสมัคร"),
       render: (_, row) =>
         row.onboarding_completed ? (
           <span className="rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-700">
-            เสร็จ
-          </span>
+            {__uiText("เสร็จ")}</span>
         ) : (
           <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
             {ONBOARDING_STEP_LABELS[row.onboarding_step] ?? row.onboarding_step}
@@ -273,17 +275,16 @@ const Alluser = () => {
     },
     {
       key: 'actions',
-      label: 'เครื่องมือ',
+      label: __uiText("เครื่องมือ"),
       render: (_, row) => (
         <button
           type="button"
           onClick={() => navigate(ADMIN_ROUTES.userDetail(row.id))}
           className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-gray-600 transition hover:bg-gray-100 hover:text-primary"
-          title="ดู Dashboard ลูกค้า"
+          title={__uiText("ดู Dashboard ลูกค้า")}
         >
           <AiOutlineEye size={18} />
-          View
-        </button>
+          {__uiText("View")}</button>
       ),
     },
   ];
@@ -295,39 +296,37 @@ const Alluser = () => {
   return (
     <div className="grid mx-auto w-full gap-5 p-4">
       <AdminListHeader
-        title="All Users"
-        subtitle={`รายชื่อลูกค้า B2B · แสดง ${PAGE_SIZE} รายการต่อหน้า${search ? ` · ค้นหา: "${search}"` : ''}${selectedSegment ? ` · Segment: ${selectedSegment.name}` : ''}${onboarding ? ` · สถานะสมัคร: ${selectedOnboardingLabel}` : ''}`}
+        title={__uiText("All Users")}
+        subtitle={__uiText("รายชื่อลูกค้า B2B · แสดง {0} รายการต่อหน้า{1}{2}{3}", {"0": PAGE_SIZE, "1": search ? ` · ค้นหา: "${search}"` : '', "2": selectedSegment ? ` · Segment: ${selectedSegment.name}` : '', "3": onboarding ? ` · สถานะสมัคร: ${selectedOnboardingLabel}` : ''})}
       >
         <div className="flex flex-wrap items-end gap-2">
           <form onSubmit={handleSearch} className="flex items-end gap-2">
             <Input
-              label="ค้นหาผู้ใช้"
+              label={__uiText("ค้นหาผู้ใช้")}
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="ค้นหา ชื่อ, email, custcode, เบอร์โทร, company..."
+              placeholder={__uiText("ค้นหา ชื่อ, email, custcode, เบอร์โทร, company...")}
             />
             <button
               type="submit"
               className="rounded-lg bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
             >
-              ค้นหา
-            </button>
+              {__uiText("ค้นหา")}</button>
             {search && (
               <button
                 type="button"
                 onClick={handleClearSearch}
                 className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
               >
-                ล้าง
-              </button>
+                {__uiText("ล้าง")}</button>
             )}
           </form>
 
           <div className="w-64">
             <Select
-              label="กรองตาม Segment"
+              label={__uiText("กรองตาม Segment")}
               data={segmentOptions}
-              placeholder="กรองตาม Segment"
+              placeholder={__uiText("กรองตาม Segment")}
               value={segmentId}
               onChange={(event) => {
                 setSegmentId(event.target.value);
@@ -341,13 +340,12 @@ const Alluser = () => {
               onClick={handleClearSegment}
               className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
             >
-              ล้าง Segment
-            </button>
+              {__uiText("ล้าง Segment")}</button>
           )}
 
           <div className="w-48">
             <Select
-              label="สถานะสมัคร"
+              label={__uiText("สถานะสมัคร")}
               data={onboardingOptions}
               value={onboarding}
               onChange={(event) => {
@@ -364,7 +362,7 @@ const Alluser = () => {
             className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <AiOutlineDownload size={16} />
-            {exporting ? 'กำลัง Export...' : 'Export CSV'}
+            {exporting ? __uiText("กำลัง Export...") : __uiText("Export CSV")}
           </button>
         </div>
       </AdminListHeader>
@@ -374,10 +372,10 @@ const Alluser = () => {
           <div className="mb-3 flex items-center justify-between">
             <div>
               <h2 className="text-sm font-bold text-gray-800">
-                สาขาของ {expandedUser.full_name}
+                {__uiText("สาขาของ ")}{expandedUser.full_name}
               </h2>
               <p className="text-xs text-gray-500">
-                Company: {expandedUser.company?.name ?? '-'}
+                {__uiText("Company: ")}{expandedUser.company?.name ?? '-'}
               </p>
             </div>
             <button
@@ -385,12 +383,11 @@ const Alluser = () => {
               onClick={() => setExpandedId(null)}
               className="text-xs text-gray-500 hover:text-gray-800"
             >
-              ปิด
-            </button>
+              {__uiText("ปิด")}</button>
           </div>
 
           {expandedUser.branches.length === 0 ? (
-            <p className="text-sm text-gray-500">ไม่มีสาขา</p>
+            <p className="text-sm text-gray-500">{__uiText("ไม่มีสาขา")}</p>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
               {expandedUser.branches.map((branch) => (
@@ -403,7 +400,7 @@ const Alluser = () => {
                     <div className="mt-1 text-xs text-blue-600">{branch.type}</div>
                   )}
                   <div className="mt-2 text-xs leading-5 text-gray-500">
-                    {branch.delivery_address || 'ไม่มีที่อยู่จัดส่ง'}
+                    {branch.delivery_address || __uiText("ไม่มีที่อยู่จัดส่ง")}
                   </div>
                 </div>
               ))}
@@ -415,8 +412,7 @@ const Alluser = () => {
       <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
         {loading && (
           <div className="border-b border-gray-100 px-4 py-2 text-xs text-gray-400">
-            กำลังโหลด...
-          </div>
+            {__uiText("กำลังโหลด...")}</div>
         )}
         <Table
           columns={columns}

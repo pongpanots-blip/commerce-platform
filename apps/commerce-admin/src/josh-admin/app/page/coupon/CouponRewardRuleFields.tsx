@@ -6,6 +6,8 @@ import {
   type CouponRewardForm,
 } from './coupon-reward.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type CouponRewardRuleFieldsProps = {
   value: CouponRewardForm;
   onChange: (next: CouponRewardForm) => void;
@@ -17,12 +19,13 @@ export default function CouponRewardRuleFields({
   onChange,
   disabled = false,
 }: CouponRewardRuleFieldsProps) {
+  __useUiLocale();
   const grantTimingId = React.useId();
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
       <div>
-        <FieldLabel htmlFor={grantTimingId}>เวลามอบคูปอง</FieldLabel>
+        <FieldLabel htmlFor={grantTimingId}>{__uiText("เวลามอบคูปอง")}</FieldLabel>
         <Select
           id={grantTimingId}
           className="w-full"
@@ -45,7 +48,7 @@ export default function CouponRewardRuleFields({
 
       <div>
         <Input
-          label="หน่วงใช้ได้ (วัน)"
+          label={__uiText("หน่วงใช้ได้ (วัน)")}
           type="number"
           min={0}
           value={value.delay_days}
@@ -57,7 +60,7 @@ export default function CouponRewardRuleFields({
 
       <div>
         <Input
-          label="ได้รับสูงสุดต่อคน (ครั้ง)"
+          label={__uiText("ได้รับสูงสุดต่อคน (ครั้ง)")}
           type="number"
           min={1}
           value={value.reward_per_user_limit}
@@ -68,8 +71,7 @@ export default function CouponRewardRuleFields({
           placeholder="1"
         />
         <p className="mt-1 text-xs text-gray-500">
-          จำนวนครั้งที่ลูกค้าคนหนึ่งได้รับคูปองนี้จากการใช้คูปองต้นทางซ้ำ
-        </p>
+          {__uiText("จำนวนครั้งที่ลูกค้าคนหนึ่งได้รับคูปองนี้จากการใช้คูปองต้นทางซ้ำ")}</p>
       </div>
     </div>
   );

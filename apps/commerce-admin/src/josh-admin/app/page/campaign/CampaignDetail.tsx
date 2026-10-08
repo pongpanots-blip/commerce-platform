@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   deleteCampaign,
   getCampaign,
@@ -45,6 +46,8 @@ import {
   type CampaignFormErrors,
 } from './campaign.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Mechanic = CampaignDetailData['mechanics'][number];
 
 /**
@@ -53,6 +56,7 @@ type Mechanic = CampaignDetailData['mechanics'][number];
  * has its own save button — each is a separate API call.
  */
 function CampaignHub({ id }: { id: string }) {
+  __useUiLocale();
   const navigate = useNavigate();
   const [detail, setDetail] = useState<CampaignDetailData | null>(null);
   // `baseline` = what the server last returned, so the PATCH can send only what changed.
@@ -124,7 +128,7 @@ function CampaignHub({ id }: { id: string }) {
     setErrors(found);
     setSaved(false);
     if (Object.keys(found).length > 0) {
-      setSaveError('กรอกข้อมูลไม่ครบหรือไม่ถูกต้อง — ตรวจช่องที่ขึ้นสีแดง');
+      setSaveError(__uiMessage("กรอกข้อมูลไม่ครบหรือไม่ถูกต้อง — ตรวจช่องที่ขึ้นสีแดง"));
       return;
     }
     setSaveError('');
@@ -164,14 +168,14 @@ function CampaignHub({ id }: { id: string }) {
   const guard = useUnsavedChangesGuard(infoDirty || pageDirty);
 
   if (loading)
-    return <div className="p-6 text-sm text-ink-muted">กำลังโหลด...</div>;
+    return <div className="p-6 text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</div>;
   if (loadError || !detail) {
     return (
       <div className="mx-auto max-w-3xl p-6">
-        <CouponFormErrorBanner error={loadError || 'ไม่พบ Campaign'} />
+        <CouponFormErrorBanner error={loadError || __uiText("ไม่พบ Campaign")} />
         <Button
           variant="secondary"
-          text="ลองใหม่"
+          text={__uiText("ลองใหม่")}
           onClick={() => {
             setLoading(true);
             setReloadKey((key) => key + 1);
@@ -184,7 +188,7 @@ function CampaignHub({ id }: { id: string }) {
   const mechanicColumns: TableColumn<Mechanic>[] = [
     {
       key: 'name',
-      label: 'ชื่อโปร',
+      label: __uiText("ชื่อโปร"),
       render: (value: string, row) => (
         <GuardedLink
           to={ADMIN_ROUTES.promotionsMechanicEdit(row.id)}
@@ -196,23 +200,23 @@ function CampaignHub({ id }: { id: string }) {
     },
     {
       key: 'is_active',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: boolean) => <ActivePill active={value} />,
     },
     {
       key: 'sku_count',
-      label: 'จำนวน SKU',
+      label: __uiText("จำนวน SKU"),
       render: (value: number) => value.toLocaleString('th-TH'),
     },
     {
       key: 'actions',
-      label: 'จัดการ',
+      label: __uiText("จัดการ"),
       render: (_value, row) => (
         <GuardedLink
           to={ADMIN_ROUTES.promotionsMechanicEdit(row.id)}
           className="inline-flex rounded-lg p-1.5 text-ink-muted hover:bg-primary-soft hover:text-primary"
-          title="แก้ไข"
-          aria-label={`แก้ไข ${row.name}`}
+          title={__uiText("แก้ไข")}
+          aria-label={__uiText("แก้ไข {0}", {"0": row.name})}
         >
           <AiOutlineEdit size={18} />
         </GuardedLink>
@@ -224,9 +228,9 @@ function CampaignHub({ id }: { id: string }) {
     <LeaveGuardContext.Provider value={guard.context}>
       <AdminInsertLayout
         title={detail.name}
-        subtitle="ปุ่มบันทึกด้านบนบันทึกเฉพาะข้อมูล Campaign — คูปองบันทึกทันทีที่เพิ่ม/ถอด และหน้าโปรมีปุ่มบันทึกของตัวเอง"
+        subtitle={__uiText("ปุ่มบันทึกด้านบนบันทึกเฉพาะข้อมูล Campaign — คูปองบันทึกทันทีที่เพิ่ม/ถอด และหน้าโปรมีปุ่มบันทึกของตัวเอง")}
         saving={saving}
-        saveLabel="บันทึกข้อมูล Campaign"
+        saveLabel={__uiText("บันทึกข้อมูล Campaign")}
         onBack={() =>
           guard.requestLeave(() => navigate(ADMIN_ROUTES.campaigns))
         }
@@ -234,18 +238,17 @@ function CampaignHub({ id }: { id: string }) {
         headerActions={<CampaignStatusPill status={detail.status} />}
         onSave={() => void handleSave()}
       >
-        <Section title="ข้อมูล Campaign">
+        <Section title={__uiText("ข้อมูล Campaign")}>
           <CouponFormErrorBanner error={saveError} />
           {saved && (
             <div
               role="status"
               className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700"
             >
-              บันทึกแล้ว
-            </div>
+              {__uiText("บันทึกแล้ว")}</div>
           )}
           <Input
-            label="ชื่อ Campaign"
+            label={__uiText("ชื่อ Campaign")}
             required
             value={form.name}
             error={errors.name}
@@ -258,7 +261,7 @@ function CampaignHub({ id }: { id: string }) {
             aria-describedby={errors.dates ? datesErrorId : undefined}
           >
             <p id={dateLabelId} className="mb-1 text-sm text-ink-secondary">
-              ระยะเวลา<span className="text-alert"> *</span>
+              {__uiText("ระยะเวลา")}<span className="text-alert"> *</span>
             </p>
             <DateTimeRangeInput
               startValue={form.startAt}
@@ -268,32 +271,30 @@ function CampaignHub({ id }: { id: string }) {
             />
             {errors.dates && (
               <p id={datesErrorId} className="mt-1 text-sm text-alert">
-                {errors.dates}
+                {(typeof (errors.dates) === 'string' ? __uiText(errors.dates) : errors.dates)}
               </p>
             )}
             <p className="mt-1 text-xs text-ink-muted">
-              แก้วันที่แล้วบันทึก = ระบบเขียนวันที่ใหม่ทับทุกโปร หน้าโปร
-              และแบนเนอร์ใน Campaign นี้
-            </p>
+              {__uiText("แก้วันที่แล้วบันทึก = ระบบเขียนวันที่ใหม่ทับทุกโปร หน้าโปร และแบนเนอร์ใน Campaign นี้")}</p>
           </div>
           <SwitchField
-            label="เปิดใช้งาน Campaign"
-            description="ปิด = สถานะรวมของ Campaign เป็น “ปิดใช้งาน” — ไม่ได้ปิดโปร หน้าโปร หรือคูปองทีละตัว (ปิดได้ที่หน้าของแต่ละอัน)"
+            label={__uiText("เปิดใช้งาน Campaign")}
+            description={__uiText("ปิด = สถานะรวมของ Campaign เป็น “ปิดใช้งาน” — ไม่ได้ปิดโปร หน้าโปร หรือคูปองทีละตัว (ปิดได้ที่หน้าของแต่ละอัน)")}
             checked={form.isActive}
             onChange={(checked) => patch({ isActive: checked })}
           />
           <div>
             <Button
               variant="secondaryAlert"
-              text="ลบ Campaign"
+              text={__uiText("ลบ Campaign")}
               onClick={() => setConfirmDelete(true)}
             />
           </div>
         </Section>
 
         <Section
-          title="โปรอัตโนมัติ (Promotion mechanics)"
-          description="ส่วนลดระดับสินค้า — ใช้วันที่ของ Campaign และ SKU จาก Product set"
+          title={__uiText("โปรอัตโนมัติ (Promotion mechanics)")}
+          description={__uiText("ส่วนลดระดับสินค้า — ใช้วันที่ของ Campaign และ SKU จาก Product set")}
         >
           <div>
             <GuardedLink
@@ -301,8 +302,7 @@ function CampaignHub({ id }: { id: string }) {
               className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-3 text-sm font-semibold text-white hover:bg-primary-dark"
             >
               <AiOutlinePlus size={20} />
-              เพิ่มโปร
-            </GuardedLink>
+              {__uiText("เพิ่มโปร")}</GuardedLink>
           </div>
           <Table columns={mechanicColumns} data={detail.mechanics} idKey="id" />
         </Section>
@@ -329,7 +329,7 @@ function CampaignHub({ id }: { id: string }) {
 
         <CouponConfirmDialog
           open={confirmDelete}
-          title="ลบ Campaign นี้?"
+          title={__uiText("ลบ Campaign นี้?")}
           body={`“${detail.name}” — หน้าโปร แบนเนอร์ และคูปองที่ผูกอยู่จะคงอยู่แต่หลุดจาก Campaign (ลบไม่ได้ถ้ายังมีโปรอัตโนมัติ)`}
           confirmLabel="ลบ"
           tone="danger"
@@ -344,7 +344,10 @@ function CampaignHub({ id }: { id: string }) {
 
 /** `/promotions/campaigns/:id`. */
 export default function CampaignDetail() {
+  __useUiLocale();
   const { id } = useParams<{ id: string }>();
   // key: moving between two campaigns must not show the first one's form.
   return id ? <CampaignHub key={id} id={id} /> : null;
 }
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

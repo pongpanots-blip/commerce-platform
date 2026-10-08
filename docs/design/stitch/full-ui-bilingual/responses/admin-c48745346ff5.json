@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "3200",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2M3NjFjMTcwYTZjYzQ3ZmI4M2RlMWI1Mzk1NjE4YzVhEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/ee9ff26fcd734f229e0e254ef12a8829"
+            },
+            "id": "c3fb92d82505449fa0ab00bd1a29b05f",
+            "name": "projects/18348214526789030153/screens/c3fb92d82505449fa0ab00bd1a29b05f",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WLMIBmXLLskPraXh-XkrokEvo2I2gQJvInk7xPtd7iedxC3onbN87xBL3opOvr3Ry_hKeTv2reKeYynnPCDUMsGeM_xMgWA1MKDupy9GzMw-EbH1ZQFNZxxKySWAwlgnnSHWV6QjILmZ1yEdbARVewv6mTPEZ9Hd-ZbfYKDv6xumvnSDfIHZDir1ASYZI3oaILJ1vuoW2aRq-8AUd2808ncH1BIdWnf6T9KJTiZYCCTOvD3dHi2j4s4JI_",
+              "name": "projects/18348214526789030153/files/e58da382e924404da6495bd41986ca4b"
+            },
+            "theme": {},
+            "title": "Bot · intent rules (BotIntentRules)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้ทำการออกแบบหน้าจอ **Bot · intent rules (`BotIntentRules`)** (Route: `admin-c48745346ff5`, URL: `/j/bot/intent-rules`) เรียบร้อยแล้ว โดยสอดคล้องกับมาตรฐานของ Commerce Platform สำหรับทีมปฏิบัติการพาณิชย์ของไทย ดังนี้:\n\n### จุดเด่นและการจัดวางโครงสร้าง\n1. **โครงสร้างสากลของแพลตฟอร์ม (Design System & Standard Layout)**:\n   - Sidebar ด้านซ้ายขนาด 256px แสดง 7 สายงานหลัก พร้อมไฮไลต์หมวดหมู่อยู่ที่ **\"ลูกค้าและบริการ\"** และโฟกัสที่เมนูย่อย **\"บอท & Intent Rules (NLP)\"**\n   - แถบเมนูด้านบน (Header) มีการค้นหาแบบจำกัดขอบเขตหน้านี้โดยเฉพาะ พร้อมป้ายกำกับ `ข้อมูลตัวอย่าง` (Sample data), ปุ่มสลับภาษา **ไทย / English** ที่ใช้งานได้จริง และโปรไฟล์ผู้ใช้งานของทีม CS\n   - กว้างเนื้อหาหลักจำกัดที่ 1,240px พื้นหลัง `#f6f8fc`, การ์ดสีขาวมุมมน 12px, ขอบสี `#e1e7f0` และฟอนต์ `Noto Sans Thai` ผสมผสานความคมชัดของโค้ดด้วย Monospace font\n\n2. **ฟังก์ชันบริหารจัดการ Intent Rules**:\n   - **KPI Summary Cards**: แสดงจำนวนกฎทั้งหมด, กฎที่ Active/Inactive และอัตราการส่งต่อ Fallback CS Desk\n   - **Lead with the Task**: นำด้วยรายการกฎทั้งหมด พร้อมปุ่มสร้างกฎใหม่ (`เพิ่ม Intent Rule`)\n   - **Data Table**: แจกแจง Intent รหัส, Regex Pattern, Action Response, สถานะ (`Active` / `Inactive`), Priority และปุ่มจัดการ (`แก้ไข` / `ลบ`)\n   - **Regex Playground & Filter**: สามารถกรองรายการตามสถานะ และทดสอบข้อความลูกค้าจริงในหน้าต่างจำลอง\n   - **Dialogs & Forms**: รองรับการเปิด Modal เพื่อสร้าง/แก้ไข Intent Rule พร้อมการกด `Escape` ปิดหน้าต่าง และแถบแจ้งเตือน Toast สำหรับการบันทึกข้อมูล\n   - **ตั้งค่าขั้นสูง (Advanced Settings)**: กำหนดเส้นทางสำรอง `ลิงก์สำรอง (Fallback URL)` และค่า NLP Confidence Threshold พร้อมข้อความ Audit Logger โดย Josh\n\n3. **Bilingual & Exact UI Copy Export**:\n   - บรรจุออบเจ็กต์สคริปต์ซ่อน `<script id=\"commerce-ui-translations\" type=\"application/json\">` ครบถ้วนทุกข้อความจาก UI copy catalogue ตามสเปกกำหนดอย่างแม่นยำ พร้อมระบบสลับภาษาหน้าบ้าน (TH / EN) ที่ตอบสนองทันทีแบบไดนามิก"
+    },
+    {
+      "suggestion": "ทดสอบเปิดหน้าต่างสร้างกฎ Intent Rule เพื่อดูฟอร์มและข้อความแจ้งเตือน Audit"
+    },
+    {
+      "suggestion": "เปลี่ยนตัวกรองเป็น Inactive เพื่อดูรายการโปรโมชั่นที่พักการใช้งานไว้"
+    },
+    {
+      "suggestion": "สลับภาษาเป็น English เพื่อดูหน้าจอแบบสากล"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "1636081365448032652"
+}

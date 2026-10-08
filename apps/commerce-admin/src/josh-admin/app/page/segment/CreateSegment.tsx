@@ -19,7 +19,10 @@ import {
   validateRuleForm,
 } from './segment-rule.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CreateSegment = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   // Set when this page was reached from a coupon form's "+ สร้าง segment ใหม่" link — send the
@@ -54,7 +57,7 @@ const CreateSegment = () => {
 
   const handleSubmit = async () => {
     if (!form.slug.trim() || !form.name.trim()) {
-      alert('กรุณากรอกชื่อ Segment');
+      alert(__uiText("กรุณากรอกชื่อ Segment"));
       return;
     }
 
@@ -84,7 +87,7 @@ const CreateSegment = () => {
         navigate(returnDestination);
       }
     } catch {
-      alert('เกิดข้อผิดพลาดในการบันทึก');
+      alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
     } finally {
       setSaving(false);
     }
@@ -92,19 +95,19 @@ const CreateSegment = () => {
 
   return (
     <AdminInsertLayout
-      title="เพิ่ม User Segment"
-      subtitle="สร้างกลุ่มลูกค้าใหม่ด้วย rule ที่กำหนดเอง"
+      title={__uiText("เพิ่ม User Segment")}
+      subtitle={__uiText("สร้างกลุ่มลูกค้าใหม่ด้วย rule ที่กำหนดเอง")}
       backPath={returnDestination}
       saving={saving}
       onSave={handleSubmit}
     >
       <Input
-        label="ชื่อ Segment *"
+        label={__uiText("ชื่อ Segment *")}
         value={form.name}
         onChange={(event) => setForm({ ...form, name: event.target.value })}
       />
       <Input
-        label="คำอธิบาย (ไม่บังคับ)"
+        label={__uiText("คำอธิบาย (ไม่บังคับ)")}
         value={form.description}
         onChange={(event) => setForm({ ...form, description: event.target.value })}
       />
@@ -118,11 +121,10 @@ const CreateSegment = () => {
 
       <details className="rounded-lg border border-gray-100 bg-gray-50/60 p-3">
         <summary className="cursor-pointer text-sm font-medium text-gray-700">
-          ตั้งค่าขั้นสูง
-        </summary>
+          {__uiText("ตั้งค่าขั้นสูง")}</summary>
         <div className="mt-3 space-y-4">
           <Input
-            label="Slug (ตัวระบุ URL)"
+            label={__uiText("Slug (ตัวระบุ URL)")}
             value={form.slug}
             onChange={(event) => {
               setSlugTouched(true);
@@ -131,7 +133,7 @@ const CreateSegment = () => {
                 slug: event.target.value.toLowerCase().replace(/\s+/g, '-'),
               });
             }}
-            placeholder="kebab-case เช่น vip-customers"
+            placeholder={__uiText("kebab-case เช่น vip-customers")}
           />
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
@@ -139,15 +141,13 @@ const CreateSegment = () => {
               checked={form.is_active}
               onChange={(event) => setForm({ ...form, is_active: event.target.checked })}
             />
-            เปิดใช้งาน Segment นี้ (Active)
-          </label>
+            {__uiText("เปิดใช้งาน Segment นี้ (Active)")}</label>
         </div>
       </details>
 
       {!isLiveSegment(form.rule_type) && (
         <p className="text-xs text-gray-500">
-          ระบบจะคำนวณรายชื่อครั้งเดียวตอนบันทึก แล้วล็อกไว้ — แก้ไขเงื่อนไขภายหลังไม่ได้
-        </p>
+          {__uiText("ระบบจะคำนวณรายชื่อครั้งเดียวตอนบันทึก แล้วล็อกไว้ — แก้ไขเงื่อนไขภายหลังไม่ได้")}</p>
       )}
     </AdminInsertLayout>
   );

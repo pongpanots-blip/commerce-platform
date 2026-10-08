@@ -1,3 +1,5 @@
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 import type { MarketingTemplateBlock } from './marketing-workflow.api';
 
 export type TextStyle = {
@@ -969,63 +971,63 @@ export const ELEMENT_FIELD_SCHEMA: Record<
   product_grid: [
     {
       key: 'source.kind',
-      label: 'แหล่งสินค้า',
+      get label(){return uiText("แหล่งสินค้า");},
       control: 'select',
       options: [
-        { value: 'skus', label: 'เลือก SKU เอง' },
-        { value: 'category', label: 'ตามหมวดหมู่' },
-        { value: 'promotion', label: 'ตามโปรโมชันของหน้านี้' },
+        { value: 'skus', get label(){return uiText("เลือก SKU เอง");} },
+        { value: 'category', get label(){return uiText("ตามหมวดหมู่");} },
+        { value: 'promotion', get label(){return uiText("ตามโปรโมชันของหน้านี้");} },
       ],
     },
     {
       key: 'source.skus',
-      label: 'รายการ SKU',
+      get label(){return uiText("รายการ SKU");},
       control: 'sku-picker',
       visibleWhen: { key: 'source.kind', equals: 'skus' },
     },
     {
       key: 'source.categoryId',
-      label: 'หมวดหมู่',
+      get label(){return uiText("หมวดหมู่");},
       control: 'category-picker',
       visibleWhen: { key: 'source.kind', equals: 'category' },
     },
     {
       key: 'source.limit',
-      label: 'จำนวนสูงสุด',
+      get label(){return uiText("จำนวนสูงสุด");},
       control: 'number',
       visibleWhen: { key: 'source.kind', equals: 'category' },
     },
     {
       key: 'columns',
-      label: 'จำนวนคอลัมน์ (จอใหญ่)',
+      get label(){return uiText("จำนวนคอลัมน์ (จอใหญ่)");},
       control: 'select',
       options: [
-        { value: '2', label: '2 คอลัมน์' },
-        { value: '3', label: '3 คอลัมน์' },
-        { value: '4', label: '4 คอลัมน์' },
+        { value: '2', get label(){return uiText("2 คอลัมน์");} },
+        { value: '3', get label(){return uiText("3 คอลัมน์");} },
+        { value: '4', get label(){return uiText("4 คอลัมน์");} },
       ],
     },
-    { key: 'showPrice', label: 'แสดงราคา', control: 'toggle' },
-    { key: 'showBadge', label: 'แสดงป้ายโปรโมชัน', control: 'toggle' },
+    { key: 'showPrice', get label(){return uiText("แสดงราคา");}, control: 'toggle' },
+    { key: 'showBadge', get label(){return uiText("แสดงป้ายโปรโมชัน");}, control: 'toggle' },
   ],
   rich_text: [
-    { key: 'html', label: 'เนื้อหา', control: 'textarea' },
+    { key: 'html', get label(){return uiText("เนื้อหา");}, control: 'textarea' },
     {
       key: 'style.align',
-      label: 'จัดวาง',
+      get label(){return uiText("จัดวาง");},
       control: 'select',
       group: 'style',
       options: [
-        { value: 'left', label: 'ชิดซ้าย' },
-        { value: 'center', label: 'กึ่งกลาง' },
-        { value: 'right', label: 'ชิดขวา' },
+        { value: 'left', get label(){return uiText("ชิดซ้าย");} },
+        { value: 'center', get label(){return uiText("กึ่งกลาง");} },
+        { value: 'right', get label(){return uiText("ชิดขวา");} },
       ],
     },
-    { key: 'style.fontSizePx', label: 'ขนาดตัวอักษร (px)', control: 'number', group: 'style' },
-    { key: 'style.color', label: 'สีตัวอักษร', control: 'color', group: 'style' },
+    { key: 'style.fontSizePx', get label(){return uiText("ขนาดตัวอักษร (px)");}, control: 'number', group: 'style' },
+    { key: 'style.color', get label(){return uiText("สีตัวอักษร");}, control: 'color', group: 'style' },
   ],
   accordion: [
-    { key: 'items', label: 'รายการหัวข้อ', control: 'list' },
-    { key: 'allowMultiOpen', label: 'เปิดพร้อมกันได้หลายหัวข้อ', control: 'toggle' },
+    { key: 'items', get label(){return uiText("รายการหัวข้อ");}, control: 'list' },
+    { key: 'allowMultiOpen', get label(){return uiText("เปิดพร้อมกันได้หลายหัวข้อ");}, control: 'toggle' },
   ],
 };

@@ -11,6 +11,8 @@ import React, { useEffect, useState } from 'react';
 import { RevealPiiButton } from '../../components/RevealPiiButton';
 import CsPlaceOrderPanel from './CsPlaceOrderPanel';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Branch = {
   id: string;
   name: string;
@@ -42,6 +44,7 @@ export function CsUserTools({
   branches,
   onUpdated,
 }: Props) {
+  __useUiLocale();
   const [form, setForm] = useState({
     first_name: '',
     last_name: '',
@@ -185,68 +188,65 @@ export function CsUserTools({
 
   return (
     <div className="space-y-6 rounded-xl border border-gray-100 bg-white p-5">
-      <h3 className="text-base font-bold text-gray-900">เครื่องมือ CS</h3>
+      <h3 className="text-base font-bold text-gray-900">{__uiText("เครื่องมือ CS")}</h3>
       {message && <p className="text-sm text-emerald-700">{message}</p>}
 
       <section className="space-y-2">
-        <h4 className="text-sm font-semibold">แก้ไขข้อมูลลูกค้า</h4>
+        <h4 className="text-sm font-semibold">{__uiText("แก้ไขข้อมูลลูกค้า")}</h4>
         <div className="rounded border border-gray-100 bg-gray-50 p-3">
-          <p className="mb-2 text-xs text-gray-500">ข้อมูลปัจจุบัน (ปิดบางส่วนเพื่อความเป็นส่วนตัว)</p>
+          <p className="mb-2 text-xs text-gray-500">{__uiText("ข้อมูลปัจจุบัน (ปิดบางส่วนเพื่อความเป็นส่วนตัว)")}</p>
           <div className="flex flex-wrap gap-4">
-            <RevealPiiButton subjectType="user" subjectId={userId} field="email" masked={email} label="อีเมล:" />
+            <RevealPiiButton subjectType="user" subjectId={userId} field="email" masked={email} label={__uiText("อีเมล:")} />
             <RevealPiiButton
               subjectType="user"
               subjectId={userId}
               field="mobile_phone"
               masked={mobilePhone}
-              label="เบอร์โทร:"
+              label={__uiText("เบอร์โทร:")}
             />
           </div>
         </div>
         <div className="grid gap-2 md:grid-cols-2">
           <Input
-            label="ชื่อ"
+            label={__uiText("ชื่อ")}
             value={form.first_name}
-            placeholder="กรอกเพื่อแก้ไข"
+            placeholder={__uiText("กรอกเพื่อแก้ไข")}
             onChange={(e) => setForm({ ...form, first_name: e.target.value })}
           />
           <Input
-            label="นามสกุล"
+            label={__uiText("นามสกุล")}
             value={form.last_name}
-            placeholder="กรอกเพื่อแก้ไข"
+            placeholder={__uiText("กรอกเพื่อแก้ไข")}
             onChange={(e) => setForm({ ...form, last_name: e.target.value })}
           />
           <Input
-            label="อีเมล"
+            label={__uiText("อีเมล")}
             value={form.email}
-            placeholder="กรอกเพื่อแก้ไข"
+            placeholder={__uiText("กรอกเพื่อแก้ไข")}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
           <Input
-            label="เบอร์โทร"
+            label={__uiText("เบอร์โทร")}
             value={form.mobile_phone}
-            placeholder="กรอกเพื่อแก้ไข"
+            placeholder={__uiText("กรอกเพื่อแก้ไข")}
             onChange={(e) => setForm({ ...form, mobile_phone: e.target.value })}
           />
         </div>
         <p className="text-xs text-gray-400">
-          ปล่อยว่างไว้เพื่อไม่แก้ไข — ระบบจะไม่บันทึกทับด้วยค่าว่าง
-        </p>
+          {__uiText("ปล่อยว่างไว้เพื่อไม่แก้ไข — ระบบจะไม่บันทึกทับด้วยค่าว่าง")}</p>
         <button type="button" className="rounded bg-primary px-3 py-1.5 text-xs text-white" onClick={() => void saveUser()}>
-          บันทึก
-        </button>
+          {__uiText("บันทึก")}</button>
       </section>
 
       <section className="space-y-2">
-        <h4 className="text-sm font-semibold">ประวัติค้นหาสินค้า</h4>
+        <h4 className="text-sm font-semibold">{__uiText("ประวัติค้นหาสินค้า")}</h4>
         {searchHistory.length === 0 ? (
-          <p className="text-sm text-gray-500">ยังไม่มีข้อมูล</p>
+          <p className="text-sm text-gray-500">{__uiText("ยังไม่มีข้อมูล")}</p>
         ) : (
           <ul className="text-sm text-gray-700 space-y-1">
             {searchHistory.slice(0, 10).map((row) => (
               <li key={`${row.created_at}-${row.query_text}`}>
-                {row.query_text} ({row.result_count} ผลลัพธ์)
-              </li>
+                {row.query_text} ({row.result_count} {__uiText(" ผลลัพธ์)")}</li>
             ))}
           </ul>
         )}
@@ -254,9 +254,9 @@ export function CsUserTools({
 
       {companyId && (
         <section className="space-y-2">
-          <h4 className="text-sm font-semibold">กำหนดพนักงานขาย</h4>
+          <h4 className="text-sm font-semibold">{__uiText("กำหนดพนักงานขาย")}</h4>
           <Input
-            label="รหัสผู้ใช้พนักงานขาย (Sales User ID)"
+            label={__uiText("รหัสผู้ใช้พนักงานขาย (Sales User ID)")}
             value={salesUserId}
             onChange={(e) => setSalesUserId(e.target.value)}
           />
@@ -269,18 +269,16 @@ export function CsUserTools({
               )
             }
           >
-            บันทึก
-          </button>
+            {__uiText("บันทึก")}</button>
         </section>
       )}
 
       <section className="space-y-2">
-        <h4 className="text-sm font-semibold">รวมบัญชีซ้ำ</h4>
+        <h4 className="text-sm font-semibold">{__uiText("รวมบัญชีซ้ำ")}</h4>
         <p className="text-xs text-gray-500">
-          ย้ายออเดอร์ + สาขาจาก duplicate เข้าบัญชีนี้ แล้วปิดอีเมล/เบอร์ของ duplicate
-        </p>
+          {__uiText("ย้ายออเดอร์ + สาขาจาก duplicate เข้าบัญชีนี้ แล้วปิดอีเมล/เบอร์ของ duplicate")}</p>
         <Input
-          label="รหัสผู้ใช้ที่ซ้ำ (Duplicate User ID) *"
+          label={__uiText("รหัสผู้ใช้ที่ซ้ำ (Duplicate User ID) *")}
           value={duplicateUserId}
           onChange={(e) => setDuplicateUserId(e.target.value)}
         />
@@ -289,12 +287,12 @@ export function CsUserTools({
           className="rounded bg-amber-600 px-3 py-1.5 text-xs text-white"
           onClick={() => {
             if (!duplicateUserId.trim()) {
-              alert('ใส่ Duplicate User ID');
+              alert(__uiText("ใส่ Duplicate User ID"));
               return;
             }
             if (
               !window.confirm(
-                `รวม ${duplicateUserId.trim()} เข้าบัญชีนี้ (${userId})?\nการกระทำนี้ย้อนกลับยาก`,
+                __uiText("รวม {0} เข้าบัญชีนี้ ({1})?\nการกระทำนี้ย้อนกลับยาก", {"0": duplicateUserId.trim(), "1": userId}),
               )
             ) {
               return;
@@ -312,17 +310,16 @@ export function CsUserTools({
                 alert(
                   err?.response?.data?.message ??
                     err.message ??
-                    'รวมบัญชีไม่สำเร็จ',
+                    __uiText("รวมบัญชีไม่สำเร็จ"),
                 );
               });
           }}
         >
-          รวมเข้าบัญชีนี้
-        </button>
+          {__uiText("รวมเข้าบัญชีนี้")}</button>
       </section>
 
       <section className="space-y-2">
-        <h4 className="text-sm font-semibold">สาขา / ที่อยู่จัดส่ง / พิกัด</h4>
+        <h4 className="text-sm font-semibold">{__uiText("สาขา / ที่อยู่จัดส่ง / พิกัด")}</h4>
         {branches.map((branch) => {
           const edit = branchEdits[branch.id];
           if (!edit) return null;
@@ -330,7 +327,7 @@ export function CsUserTools({
             <div key={branch.id} className="rounded border border-gray-100 p-3 space-y-2">
               <p className="text-sm font-medium">{branch.name}</p>
               <Input
-                label="ที่อยู่"
+                label={__uiText("ที่อยู่")}
                 value={edit.address}
                 onChange={(e) =>
                   setBranchEdits({
@@ -341,7 +338,7 @@ export function CsUserTools({
               />
               <div className="grid grid-cols-2 gap-2">
                 <Input
-                  label="โทรสาขา"
+                  label={__uiText("โทรสาขา")}
                   value={edit.phone}
                   onChange={(e) =>
                     setBranchEdits({
@@ -351,7 +348,7 @@ export function CsUserTools({
                   }
                 />
                 <Input
-                  label="ชื่อผู้รับ"
+                  label={__uiText("ชื่อผู้รับ")}
                   value={edit.recipient}
                   onChange={(e) =>
                     setBranchEdits({
@@ -363,7 +360,7 @@ export function CsUserTools({
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <Input
-                  label="ละติจูด (Latitude)"
+                  label={__uiText("ละติจูด (Latitude)")}
                   value={edit.lat}
                   placeholder="13.7563"
                   onChange={(e) =>
@@ -374,7 +371,7 @@ export function CsUserTools({
                   }
                 />
                 <Input
-                  label="ลองจิจูด (Longitude)"
+                  label={__uiText("ลองจิจูด (Longitude)")}
                   value={edit.lng}
                   placeholder="100.5018"
                   onChange={(e) =>
@@ -390,23 +387,22 @@ export function CsUserTools({
                 className="rounded border border-gray-200 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
                 onClick={() => void saveBranch(branch.id)}
               >
-                บันทึกสาขานี้
-              </button>
+                {__uiText("บันทึกสาขานี้")}</button>
             </div>
           );
         })}
         <div className="rounded border border-dashed border-gray-200 p-3 space-y-2">
-          <p className="text-xs text-gray-500">เพิ่มสาขาใหม่</p>
-          <Input label="ชื่อสาขา" value={branchForm.name} onChange={(e) => setBranchForm({ ...branchForm, name: e.target.value })} />
-          <Input label="ที่อยู่" value={branchForm.delivery_address} onChange={(e) => setBranchForm({ ...branchForm, delivery_address: e.target.value })} />
+          <p className="text-xs text-gray-500">{__uiText("เพิ่มสาขาใหม่")}</p>
+          <Input label={__uiText("ชื่อสาขา")} value={branchForm.name} onChange={(e) => setBranchForm({ ...branchForm, name: e.target.value })} />
+          <Input label={__uiText("ที่อยู่")} value={branchForm.delivery_address} onChange={(e) => setBranchForm({ ...branchForm, delivery_address: e.target.value })} />
           <div className="grid grid-cols-2 gap-2">
             <Input
-              label="โทรสาขา"
+              label={__uiText("โทรสาขา")}
               value={branchForm.phone}
               onChange={(e) => setBranchForm({ ...branchForm, phone: e.target.value })}
             />
             <Input
-              label="ชื่อผู้รับ"
+              label={__uiText("ชื่อผู้รับ")}
               value={branchForm.recipient_name}
               onChange={(e) =>
                 setBranchForm({ ...branchForm, recipient_name: e.target.value })
@@ -415,26 +411,25 @@ export function CsUserTools({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <Input
-              label="ละติจูด (Latitude)"
+              label={__uiText("ละติจูด (Latitude)")}
               value={branchForm.delivery_latitude}
               placeholder="13.7563"
               onChange={(e) => setBranchForm({ ...branchForm, delivery_latitude: e.target.value })}
             />
             <Input
-              label="ลองจิจูด (Longitude)"
+              label={__uiText("ลองจิจูด (Longitude)")}
               value={branchForm.delivery_longitude}
               placeholder="100.5018"
               onChange={(e) => setBranchForm({ ...branchForm, delivery_longitude: e.target.value })}
             />
           </div>
           <button type="button" className="rounded bg-primary px-3 py-1.5 text-xs text-white" onClick={() => void addBranch()}>
-            เพิ่มสาขา
-          </button>
+            {__uiText("เพิ่มสาขา")}</button>
         </div>
       </section>
 
       <section className="space-y-2">
-        <h4 className="text-sm font-semibold">สั่งซื้อแทนลูกค้า</h4>
+        <h4 className="text-sm font-semibold">{__uiText("สั่งซื้อแทนลูกค้า")}</h4>
         <CsPlaceOrderPanel
           userId={userId}
           branches={branches}

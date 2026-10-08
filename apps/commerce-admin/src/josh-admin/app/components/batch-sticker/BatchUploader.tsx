@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 import { isAcceptedSourceImage } from '../../lib/batch-sticker/image/decodeImage';
 import type { BatchImage } from '../../types/batch-sticker';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const LARGE_LOT_WARNING_THRESHOLD = 800;
 const LARGE_FILE_WARNING_MB = 15;
 
@@ -21,6 +23,7 @@ export function BatchUploader({
   imageCount: number;
   onImagesAdded: (images: BatchImage[]) => void;
 }) {
+  __useUiLocale();
   const [isDragActive, setIsDragActive] = useState(false);
   const filesInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +42,7 @@ export function BatchUploader({
   function handleSelected(fileList: FileList | null) {
     if (!fileList) return;
     if (fileList.length + imageCount > LARGE_LOT_WARNING_THRESHOLD || hasLargeFile(fileList)) {
-      setWarning('This lot contains very large images or a very large image count and may use significant memory.');
+      setWarning(__uiMessage("This lot contains very large images or a very large image count and may use significant memory."));
     } else {
       setWarning(null);
     }
@@ -54,15 +57,13 @@ export function BatchUploader({
           className="rounded-md border border-gray-200 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
           onClick={() => filesInputRef.current?.click()}
         >
-          Select Images
-        </button>
+          {__uiText("Select Images")}</button>
         <button
           type="button"
           className="rounded-md border border-gray-200 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
           onClick={() => folderInputRef.current?.click()}
         >
-          Select Folder
-        </button>
+          {__uiText("Select Folder")}</button>
       </div>
 
       <input
@@ -104,20 +105,21 @@ export function BatchUploader({
           handleSelected(e.dataTransfer.files);
         }}
       >
-        Drop your image lot here
-        <br />
-        <span className="text-xs text-gray-400">JPG / PNG / WebP</span>
+        {__uiText("Drop your image lot here")}<br />
+        <span className="text-xs text-gray-400">{__uiText("JPG / PNG / WebP")}</span>
       </div>
 
       {warning && <p className="text-sm text-amber-600">⚠ {warning}</p>}
 
       {imageCount > 0 ? (
-        <p className="text-sm text-gray-600">{imageCount} images loaded</p>
+        <p className="text-sm text-gray-600">{imageCount} {__uiText(" images loaded")}</p>
       ) : (
-        <p className="text-sm text-gray-400">Drop an image lot, or select images/folder above.</p>
+        <p className="text-sm text-gray-400">{__uiText("Drop an image lot, or select images/folder above.")}</p>
       )}
     </div>
   );
 }
 
 export default BatchUploader;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

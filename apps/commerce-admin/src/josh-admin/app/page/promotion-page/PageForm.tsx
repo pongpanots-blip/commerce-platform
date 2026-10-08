@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   createPromotionPage,
   formatBangkokRange,
@@ -34,6 +35,8 @@ import {
 } from './promotion-page-form.helpers';
 
 /** What the form needs to know about a campaign (list rows and the hub's detail both fit). */
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type PageFormCampaign = Pick<
   CampaignListItem,
   'id' | 'name' | 'start_at' | 'end_at' | 'page'
@@ -120,7 +123,7 @@ export function usePageForm({
   const save = async (attachConfirmed = false) => {
     if (saving) return;
     if (Object.values(uploading).some(Boolean)) {
-      setSaveError('กำลังอัปโหลดรูป — รอสักครู่แล้วกดบันทึกอีกครั้ง');
+      setSaveError(__uiMessage("กำลังอัปโหลดรูป — รอสักครู่แล้วกดบันทึกอีกครั้ง"));
       return;
     }
     const found = validatePageForm(form, original);
@@ -215,6 +218,7 @@ function BannerImageField({
   /** Only the English pair can be emptied — the Thai pair is required. */
   onClear?: () => void;
 }) {
+  __useUiLocale();
   return (
     <div role="group" aria-label={label} className="flex flex-col gap-2">
       <div>
@@ -231,12 +235,12 @@ function BannerImageField({
           onFileSelect={(file) => !disabled && onFile(file)}
         />
       </div>
-      {uploading && <p className="text-xs text-ink-muted">กำลังอัปโหลด...</p>}
+      {uploading && <p className="text-xs text-ink-muted">{__uiText("กำลังอัปโหลด...")}</p>}
       {url && (
         <div className="rounded-lg border-2 border-primary-border p-2">
           <img
             src={resolveAdminAssetUrl(url)}
-            alt={`ตัวอย่าง ${label}`}
+            alt={__uiText("ตัวอย่าง {0}", {"0": label})}
             className="aspect-[3/1] w-full rounded bg-white object-contain"
           />
           {onClear && (
@@ -245,12 +249,11 @@ function BannerImageField({
               className="mt-2 text-xs text-alert hover:underline"
               onClick={onClear}
             >
-              ลบรูป (ใช้ภาพภาษาไทยแทน)
-            </button>
+              {__uiText("ลบรูป (ใช้ภาพภาษาไทยแทน)")}</button>
           )}
         </div>
       )}
-      {error && <p className="text-sm text-alert">{error}</p>}
+      {error && <p className="text-sm text-alert">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
     </div>
   );
 }
@@ -274,6 +277,7 @@ export function PageFormFields({
   /** 3 when embedded under a card heading (campaign hub). */
   headingLevel?: 2 | 3;
 }) {
+  __useUiLocale();
   const {
     isEdit,
     form,
@@ -340,7 +344,7 @@ export function PageFormFields({
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
-                label="Slug (URL ของหน้า)"
+                label={__uiText("Slug (URL ของหน้า)")}
                 required
                 value={form.slug}
                 disabled={isEdit}
@@ -348,26 +352,26 @@ export function PageFormFields({
                 aria-invalid={!!errors.slug}
                 hint={
                   isEdit
-                    ? 'แก้ไม่ได้หลังสร้าง เพราะลิงก์ที่แชร์ไปแล้วจะเสีย'
-                    : 'ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร — แก้ไม่ได้หลังสร้าง'
+                    ? __uiText("แก้ไม่ได้หลังสร้าง เพราะลิงก์ที่แชร์ไปแล้วจะเสีย")
+                    : __uiText("ตัวพิมพ์เล็ก a-z ตัวเลข และ - ยาว 3–80 ตัวอักษร — แก้ไม่ได้หลังสร้าง")
                 }
-                placeholder="เช่น beef-fest-1111"
+                placeholder={__uiText("เช่น beef-fest-1111")}
                 onChange={(event) => patch({ slug: event.target.value })}
               />
               <Input
-                label="ชื่อหน้า"
+                label={__uiText("ชื่อหน้า")}
                 required
                 value={form.name}
                 error={errors.name}
                 aria-invalid={!!errors.name}
-                hint="ชื่อที่ลูกค้าเห็น — เป็นหัวข้อ (h1) และชื่อแท็บของหน้าโปร, ชื่อการ์ดในรายการโปรโมชัน และชื่อแบนเนอร์หน้าแรก"
-                placeholder="เช่น Beef Fest 11.11"
+                hint={__uiText("ชื่อที่ลูกค้าเห็น — เป็นหัวข้อ (h1) และชื่อแท็บของหน้าโปร, ชื่อการ์ดในรายการโปรโมชัน และชื่อแบนเนอร์หน้าแรก")}
+                placeholder={__uiText("เช่น Beef Fest 11.11")}
                 onChange={(event) => patch({ name: event.target.value })}
               />
             </div>
             {slugOk && (
               <p className="flex flex-wrap items-center gap-x-3 text-xs text-ink-muted">
-                <span>ลูกค้าเปิดที่ {toShopPath(shopPagePath(slug))}</span>
+                <span>{__uiText("ลูกค้าเปิดที่ ")}{toShopPath(shopPagePath(slug))}</span>
                 {isEdit && (
                   <a
                     href={toShopUrl(shopPagePath(slug))}
@@ -376,8 +380,7 @@ export function PageFormFields({
                     className="inline-flex items-center gap-1 text-primary hover:underline"
                   >
                     <HiOutlineExternalLink size={16} />
-                    เปิดใน shop
-                  </a>
+                    {__uiText("เปิดใน shop")}</a>
                 )}
               </p>
             )}
@@ -391,7 +394,7 @@ export function PageFormFields({
             <>
               <div className="sm:w-1/2 sm:pr-2">
                 <Select
-                  label="Campaign"
+                  label={__uiText("Campaign")}
                   data={[
                     {
                       value: '',
@@ -408,8 +411,8 @@ export function PageFormFields({
                   error={errors.campaign}
                   hint={
                     isEdit
-                      ? 'หน้านี้สร้างก่อนมี Campaign และเปิดตลอด — ผูกแล้วหน้าจะแสดงสินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign นั้นเท่านั้น (ไม่ใช่ mechanic เดิม) วันที่ใช้ของ campaign และย้อนกลับจากหน้า admin ไม่ได้ (ระบบจะถามยืนยันก่อนบันทึก)'
-                      : 'แสดงเฉพาะ Campaign ที่ยังไม่มีหน้าโปร'
+                      ? __uiText("หน้านี้สร้างก่อนมี Campaign และเปิดตลอด — ผูกแล้วหน้าจะแสดงสินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign นั้นเท่านั้น (ไม่ใช่ mechanic เดิม) วันที่ใช้ของ campaign และย้อนกลับจากหน้า admin ไม่ได้ (ระบบจะถามยืนยันก่อนบันทึก)")
+                      : __uiText("แสดงเฉพาะ Campaign ที่ยังไม่มีหน้าโปร")
                   }
                   onChange={(event) =>
                     patch({ campaignId: event.target.value })
@@ -419,13 +422,12 @@ export function PageFormFields({
               {campaign && (
                 <p className="text-xs text-ink-muted">
                   {formatBangkokRange(campaign.start_at, campaign.end_at, 'th')}{' '}
-                  (ใช้วันที่ของ campaign)
-                </p>
+                  {__uiText("(ใช้วันที่ของ campaign)")}</p>
               )}
             </>
           ) : (
             <div>
-              <p className="mb-1 text-sm text-ink-secondary">Campaign</p>
+              <p className="mb-1 text-sm text-ink-secondary">{__uiText("Campaign")}</p>
               {campaign ? (
                 <>
                   {isEdit && !campaignLocked ? (
@@ -444,13 +446,11 @@ export function PageFormFields({
                       campaign.end_at,
                       'th',
                     )}{' '}
-                    (ใช้วันที่ของ campaign — แก้ที่ Campaign)
-                  </p>
+                    {__uiText("(ใช้วันที่ของ campaign — แก้ที่ Campaign)")}</p>
                 </>
               ) : (
                 <p className="text-sm text-ink-muted">
-                  ไม่พบ Campaign ของหน้านี้
-                </p>
+                  {__uiText("ไม่พบ Campaign ของหน้านี้")}</p>
               )}
             </div>
           ),
@@ -473,18 +473,18 @@ export function PageFormFields({
           <>
             <div className="flex items-start gap-2">
               <Input
-                label="Mobile deeplink"
+                label={__uiText("Mobile deeplink")}
                 value={form.deeplink}
                 error={errors.deeplink}
                 aria-invalid={!!errors.deeplink}
                 placeholder={defaultDeeplink(slug || '<slug>')}
-                hint="เว้นว่าง = ใช้ค่าเริ่มต้น (ที่แสดงในช่อง)"
+                hint={__uiText("เว้นว่าง = ใช้ค่าเริ่มต้น (ที่แสดงในช่อง)")}
                 onChange={(event) => patch({ deeplink: event.target.value })}
               />
               {form.deeplink && (
                 <Button
                   variant="secondary"
-                  text="ใช้ค่าเริ่มต้น"
+                  text={__uiText("ใช้ค่าเริ่มต้น")}
                   className="mt-6 shrink-0"
                   onClick={() => patch({ deeplink: '' })}
                 />
@@ -493,14 +493,14 @@ export function PageFormFields({
             {state.savedDeeplink && (
               <p className="flex flex-wrap items-center gap-x-1 text-xs text-ink-muted">
                 <span>
-                  Deeplink ที่บันทึกไว้:{' '}
+                  {__uiText("Deeplink ที่บันทึกไว้:")}{' '}
                   <code className="break-all text-ink">
                     {state.savedDeeplink}
                   </code>
                 </span>
                 <CopyIdButton
                   id={state.savedDeeplink}
-                  label="คัดลอก deeplink"
+                  label={__uiText("คัดลอก deeplink")}
                 />
               </p>
             )}
@@ -512,29 +512,29 @@ export function PageFormFields({
           undefined,
           <>
             <SwitchField
-              label="แสดงแบนเนอร์บนหน้าแรก"
-              description="ระบบสร้าง/อัปเดต/ลบแบนเนอร์ HERO ของหน้านี้ให้เอง — ใช้ภาพและวันที่ของหน้า"
+              label={__uiText("แสดงแบนเนอร์บนหน้าแรก")}
+              description={__uiText("ระบบสร้าง/อัปเดต/ลบแบนเนอร์ HERO ของหน้านี้ให้เอง — ใช้ภาพและวันที่ของหน้า")}
               checked={form.showOnHome}
               onChange={(checked) => patch({ showOnHome: checked })}
             />
             <div className="sm:w-1/2 sm:pr-2">
               <Input
-                label="ลำดับบนหน้าแรก"
+                label={__uiText("ลำดับบนหน้าแรก")}
                 type="number"
                 min={0}
                 step={1}
                 value={form.homeSortOrder}
                 disabled={!form.showOnHome}
                 error={errors.homeSortOrder}
-                hint="เลขน้อยขึ้นก่อน"
+                hint={__uiText("เลขน้อยขึ้นก่อน")}
                 onChange={(event) =>
                   patch({ homeSortOrder: event.target.value })
                 }
               />
             </div>
             <SwitchField
-              label="เปิดใช้งาน"
-              description="ปิด = ลูกค้าเปิดหน้านี้ไม่ได้ (404) และแบนเนอร์หน้าแรกถูกปิดด้วย"
+              label={__uiText("เปิดใช้งาน")}
+              description={__uiText("ปิด = ลูกค้าเปิดหน้านี้ไม่ได้ (404) และแบนเนอร์หน้าแรกถูกปิดด้วย")}
               checked={form.isActive}
               onChange={(checked) => patch({ isActive: checked })}
             />
@@ -544,18 +544,14 @@ export function PageFormFields({
 
       <CouponConfirmDialog
         open={state.attachPending}
-        title="ผูกหน้านี้กับ Campaign?"
+        title={__uiText("ผูกหน้านี้กับ Campaign?")}
         body={
           <>
             <p>
-              หลังผูกกับ “{campaign?.name ?? ''}”
-              หน้านี้จะแสดงสินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign นั้นเท่านั้น (รวมสินค้าที่คูปองจำกัดไว้) —
-              สินค้าของโปร (mechanic) เดิมที่หน้านี้ใช้อยู่จะหายไป
-              ถ้าโปรนั้นไม่ได้อยู่ใน campaign นี้
-            </p>
+              {__uiText("หลังผูกกับ “")}{campaign?.name ?? ''}{__uiText("” หน้านี้จะแสดงสินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign นั้นเท่านั้น (รวมสินค้าที่คูปองจำกัดไว้) — สินค้าของโปร (mechanic) เดิมที่หน้านี้ใช้อยู่จะหายไป ถ้าโปรนั้นไม่ได้อยู่ใน campaign นี้")}</p>
             <p className="mt-2">
-              วันที่ของหน้าจะถูกแทนที่ด้วยวันที่ของ campaign และ{' '}
-              <strong>ย้อนกลับหรือเปลี่ยน campaign จากหน้า admin ไม่ได้</strong>
+              {__uiText("วันที่ของหน้าจะถูกแทนที่ด้วยวันที่ของ campaign และ")}{' '}
+              <strong>{__uiText("ย้อนกลับหรือเปลี่ยน campaign จากหน้า admin ไม่ได้")}</strong>
             </p>
           </>
         }
@@ -587,6 +583,7 @@ export default function PageForm({
   onDirtyChange?: (dirty: boolean) => void;
   onSaved: (saved: PromotionPageSummary) => void;
 }) {
+  __useUiLocale();
   const state = usePageForm({ page, campaignId, onSaved });
   useEffect(() => {
     onDirtyChange?.(state.dirty);
@@ -601,8 +598,7 @@ export default function PageForm({
           role="status"
           className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700"
         >
-          บันทึกแล้ว
-        </div>
+          {__uiText("บันทึกแล้ว")}</div>
       )}
       <PageFormFields
         state={state}
@@ -614,10 +610,10 @@ export default function PageForm({
         <Button
           text={
             state.saving
-              ? 'กำลังบันทึก...'
+              ? __uiText("กำลังบันทึก...")
               : state.isEdit
-                ? 'บันทึกหน้าโปร'
-                : 'สร้างหน้าโปร'
+                ? __uiText("บันทึกหน้าโปร")
+                : __uiText("สร้างหน้าโปร")
           }
           disabled={state.saving}
           onClick={() => void state.save()}
@@ -626,3 +622,5 @@ export default function PageForm({
     </div>
   );
 }
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

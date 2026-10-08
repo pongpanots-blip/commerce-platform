@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Webhook Dead Letter - รายการส่งไม่สำเร็จ | Thai Ops Cockpit</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with official config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#e8eeff",
+            "error": "#ba1a1a",
+            "surface": "#f9f9ff",
+            "primary-fixed": "#dde1ff",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-container": "#54647c",
+            "error-container": "#ffdad6",
+            "on-secondary-fixed": "#0b1c31",
+            "on-tertiary-container": "#ffebe4",
+            "on-secondary-fixed-variant": "#38485e",
+            "tertiary": "#943500",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-tertiary": "#ffffff",
+            "secondary": "#4f5f77",
+            "surface-container-low": "#f1f3ff",
+            "primary": "#0a3fdc",
+            "surface-tint": "#214ce7",
+            "outline": "#747687",
+            "on-primary": "#ffffff",
+            "inverse-surface": "#243048",
+            "tertiary-container": "#bc4600",
+            "on-surface-variant": "#444655",
+            "tertiary-fixed-dim": "#ffb597",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-error-container": "#93000a",
+            "surface-variant": "#d7e2ff",
+            "on-background": "#0e1b32",
+            "on-surface": "#0e1b32",
+            "on-primary-fixed": "#001257",
+            "secondary-container": "#d0e1fd",
+            "on-primary-fixed-variant": "#0034c0",
+            "outline-variant": "#c4c5d8",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-container-high": "#e0e8ff",
+            "surface-bright": "#f9f9ff",
+            "on-primary-container": "#ededff",
+            "background": "#f9f9ff",
+            "secondary-fixed": "#d3e3ff",
+            "on-tertiary-fixed": "#360f00",
+            "inverse-primary": "#b9c3ff",
+            "on-error": "#ffffff",
+            "surface-container-highest": "#d7e2ff",
+            "surface-dim": "#cddaf9",
+            "on-secondary": "#ffffff",
+            "primary-container": "#365cf5"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "margin": "2rem",
+            "space-xl": "2rem",
+            "margin-mobile": "1rem",
+            "space-sm": "0.5rem",
+            "space-2xl": "2.5rem",
+            "space-md": "1rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "body-md": ["\"Noto Sans Thai\", Inter, sans-serif"],
+            "headline-sm": ["\"Noto Sans Thai\", Inter, sans-serif"],
+            "body-sm": ["\"Noto Sans Thai\", Inter, sans-serif"],
+            "code-sm": ["\"JetBrains Mono\", monospace"],
+            "headline-md": ["\"Noto Sans Thai\", Inter, sans-serif"],
+            "body-lg": ["\"Noto Sans Thai\", Inter, sans-serif"],
+            "headline-lg": ["\"Noto Sans Thai\", Inter, sans-serif"],
+            "headline-lg-mobile": ["\"Noto Sans Thai\", Inter, sans-serif"],
+            "label-sm": ["\"Noto Sans Thai\", Inter, sans-serif"],
+            "label-md": ["\"Noto Sans Thai\", Inter, sans-serif"]
+          },
+          "fontSize": {
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-[#17243b] font-body-md text-body-md antialiased min-h-screen flex">
+<!-- ==================== SIDEBAR COMPONENT ==================== -->
+<aside class="w-64 fixed top-0 left-0 h-screen z-40 bg-surface-container-lowest border-r border-[#e1e7f0] flex flex-col justify-between p-3 select-none">
+<div class="flex flex-col gap-4">
+<!-- App Header & Logo -->
+<div class="px-3 py-2 flex items-center gap-3 border-b border-[#e1e7f0]/60 pb-4">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-white flex items-center justify-center font-bold text-headline-sm shadow-sm">
+<span class="material-symbols-outlined text-white text-[22px]">hub</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight">Thai Ops Cockpit</span>
+<span class="text-label-sm font-label-sm text-secondary font-normal">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Navigation 7 Domains -->
+<nav class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer" href="#inventory">
+<span class="material-symbols-outlined text-secondary">inventory_2</span>
+<span class="text-body-sm font-body-sm">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer" href="#orders">
+<span class="material-symbols-outlined text-secondary">receipt_long</span>
+<span class="text-body-sm font-body-sm">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer" href="#support">
+<span class="material-symbols-outlined text-secondary">support_agent</span>
+<span class="text-body-sm font-body-sm">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer" href="#marketing">
+<span class="material-symbols-outlined text-secondary">campaign</span>
+<span class="text-body-sm font-body-sm">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer" href="#analytics">
+<span class="material-symbols-outlined text-secondary">analytics</span>
+<span class="text-body-sm font-body-sm">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE TAB) -->
+<div class="flex flex-col">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-medium border-l-[3px] border-primary transition-colors duration-150 cursor-pointer" href="#integrations">
+<span class="material-symbols-outlined text-primary">sync_alt</span>
+<span class="text-body-sm font-body-sm font-semibold">ระบบเชื่อมต่อ</span>
+<span class="ml-auto material-symbols-outlined text-primary text-[18px]">expand_more</span>
+</a>
+<!-- Sub-navigation links under ระบบเชื่อมต่อ -->
+<div class="flex flex-col ml-6 pl-3 border-l border-[#e1e7f0] mt-1 space-y-1">
+<a class="text-secondary hover:text-on-surface text-body-sm py-1.5 px-2 rounded hover:bg-surface-container-low transition-colors flex items-center justify-between" href="#api-log">
+<span>API log ของ josh</span>
+<span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono">v2.4</span>
+</a>
+<a class="text-secondary hover:text-on-surface text-body-sm py-1.5 px-2 rounded hover:bg-surface-container-low transition-colors" href="#erp-log">
+              ERP log ของ josh
+            </a>
+<a class="text-primary font-medium bg-[#eef2ff] text-body-sm py-1.5 px-2 rounded flex items-center justify-between" href="#webhook-dead-letter">
+<span>Webhook Dead Letter</span>
+<span class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-[#ffdad6] text-[#ba1a1a]">14</span>
+</a>
+</div>
+</div>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer" href="#settings">
+<span class="material-symbols-outlined text-secondary">settings</span>
+<span class="text-body-sm font-body-sm">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom Status & User card -->
+<div class="pt-4 border-t border-[#e1e7f0] flex flex-col gap-3">
+<div class="bg-[#f8fafc] border border-[#e1e7f0] rounded-lg p-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-label-sm font-label-sm text-[#52627a]">DLQ Service Active</span>
+</div>
+<span class="text-[11px] font-mono text-slate-400">99.98%</span>
+</div>
+<div class="flex items-center gap-2 px-1">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-bold text-[#0a3fdc] text-xs">
+          SA
+        </div>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm font-medium text-on-surface">Super Admin</span>
+<span class="text-[11px] text-secondary">admin@commerce.co.th</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- ==================== MAIN CONTENT WRAPPER ==================== -->
+<div class="flex-1 ml-64 flex flex-col min-w-0">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest border-b border-[#e1e7f0] flex justify-between items-center px-8 shadow-sm">
+<!-- Breadcrumb context -->
+<div class="flex items-center gap-2">
+<span class="text-secondary text-body-sm">ระบบเชื่อมต่อ</span>
+<span class="text-outline-variant text-body-sm">/</span>
+<span class="text-on-surface font-medium text-body-sm">รายการส่งไม่สำเร็จ (Webhook Dead Letter)</span>
+<!-- ข้อมูลตัวอย่าง badge mandatory -->
+<span class="ml-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-[#eef2ff] text-[#365cf5] border border-[#dde1ff]">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+          ข้อมูลตัวอย่าง
+        </span>
+</div>
+<!-- Trailing controls -->
+<div class="flex items-center gap-4">
+<!-- Bilingual switcher -->
+<div class="flex items-center bg-[#f1f5f9] p-0.5 rounded-lg border border-[#e1e7f0]">
+<button class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white text-on-surface shadow-xs">ไทย</button>
+<button class="px-2.5 py-1 rounded-md text-xs font-medium text-secondary hover:text-on-surface">EN</button>
+</div>
+<div class="h-4 w-[1px] bg-[#e1e7f0]"></div>
+<!-- Notification Bell -->
+<button class="relative p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" title="Notifications">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#ba1a1a] rounded-full"></span>
+</button>
+<!-- Help Outline -->
+<button class="p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" title="คู่มือการใช้งาน">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-4 w-[1px] bg-[#e1e7f0]"></div>
+<!-- Profile Avatar trigger -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-[#dde1ff] text-[#0a3fdc] flex items-center justify-center font-bold text-xs ring-2 ring-white">
+            SA
+          </div>
+<span class="text-body-sm font-medium text-on-surface hidden lg:inline">Super Admin</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">arrow_drop_down</span>
+</div>
+</div>
+</header>
+<!-- Operational Canvas Stage -->
+<main class="flex-1 p-8 max-w-[1320px] w-full mx-auto flex flex-col gap-6">
+<!-- Page Headline & Operational Toolbar -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div class="flex flex-col">
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">Webhook Dead Letter</h1>
+<span class="text-headline-md font-headline-md text-secondary">/ รายการส่งไม่สำเร็จ</span>
+<span class="px-2 py-0.5 rounded text-xs font-medium bg-[#fef9e7] text-[#997404] border border-[#fdebb5]">
+              DLQ Retries Exhausted
+            </span>
+</div>
+<p class="text-secondary text-body-sm mt-1">
+            View and retry failed webhook deliveries. (ดูและส่งซ้ำการเรียก Webhook ที่ไม่สำเร็จ พร้อมตรวจสอบ payload และ stack trace)
+          </p>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-3 self-start md:self-auto">
+<!-- Status Indicator Pill -->
+<div class="flex items-center gap-2 px-3 py-2 bg-surface-container-lowest border border-[#e1e7f0] rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">tune</span>
+<span class="text-label-sm font-label-sm text-secondary">Status:</span>
+<span class="text-label-sm font-label-sm font-semibold text-[#c2333f]">14 In Dead Queue</span>
+</div>
+<!-- Refresh Button -->
+<button class="h-10 px-4 rounded-lg bg-surface-container-lowest border border-[#e1e7f0] hover:bg-[#f1f5f9] text-[#17243b] text-body-sm font-medium flex items-center gap-2 transition-all active:scale-95 shadow-sm" id="refreshBtn" onclick="triggerRefreshAnimation()">
+<span class="material-symbols-outlined text-secondary" id="refreshIcon">sync</span>
+<span>Refresh</span>
+</button>
+<!-- Purge or Bulk Action -->
+<button class="h-10 px-4 rounded-lg bg-primary-container hover:bg-[#2947d1] text-white text-body-sm font-medium flex items-center gap-2 transition-all active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-white text-[18px]">replay</span>
+<span>Retry ทั้งหมด (14 รายการ)</span>
+</button>
+</div>
+</div>
+<!-- TOP SUMMARY KPI CARDS (Bento Grid) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1: Failed Deliveries -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-label-md font-label-md text-secondary font-medium">Failed Deliveries</p>
+<p class="text-headline-lg font-headline-lg text-[#ba1a1a] mt-1 tracking-tight">14 <span class="text-body-sm font-normal text-secondary">รายการ</span></p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-[#fdf2f2] text-[#c2333f] flex items-center justify-center">
+<span class="material-symbols-outlined">send_and_archive</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-label-sm">
+<span class="text-secondary font-normal">จำนวนรายการไม่สำเร็จ</span>
+<span class="text-[#c2333f] font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +4 วันนี้
+            </span>
+</div>
+</div>
+<!-- KPI 2: Error Breakdown -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-full">
+<p class="text-label-md font-label-md text-secondary font-medium">Error Breakdown</p>
+<div class="mt-2 space-y-1.5">
+<div class="flex items-center justify-between text-xs">
+<span class="font-mono text-secondary">504 Gateway Timeout</span>
+<span class="font-semibold text-on-surface bg-slate-100 px-1.5 py-0.2 rounded">8</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="font-mono text-secondary">500 Internal Error</span>
+<span class="font-semibold text-on-surface bg-slate-100 px-1.5 py-0.2 rounded">4</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="font-mono text-secondary">Connection Refused / 403</span>
+<span class="font-semibold text-on-surface bg-slate-100 px-1.5 py-0.2 rounded">2</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-3 pt-2.5 border-t border-[#f1f5f9] text-[11px] text-secondary flex items-center justify-between">
+<span>สรุปตาม Status Code</span>
+<span class="text-primary font-medium cursor-pointer hover:underline">ดูสถิติสัปดาห์</span>
+</div>
+</div>
+<!-- KPI 3: Attempts Exceeded -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-label-md font-label-md text-secondary font-medium">Attempts Exceeded</p>
+<p class="text-headline-lg font-headline-lg text-on-surface mt-1 tracking-tight">5 <span class="text-body-sm font-normal text-secondary">รายการ</span></p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-[#fef9e7] text-[#997404] flex items-center justify-center">
+<span class="material-symbols-outlined">restart_alt</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-label-sm">
+<span class="text-secondary font-normal">ส่งเกินจำนวนครั้ง (Max: 5 ครั้ง)</span>
+<span class="text-amber-700 font-medium">ต้องแก้ไข Endpoint</span>
+</div>
+</div>
+<!-- KPI 4: Queue Status -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-label-md font-label-md text-secondary font-medium">Queue Status</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+<span class="text-headline-sm font-headline-sm text-on-surface">DLQ Active</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-[#e8f5ed] text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined">all_inbox</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-label-sm">
+<span class="text-secondary">Dead Letter Exchange</span>
+<span class="font-mono text-xs text-slate-500">amqp.direct</span>
+</div>
+</div>
+</section>
+<!-- SEARCH & FILTER BAR -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-4 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex flex-wrap items-center justify-between gap-4">
+<!-- Search bar -->
+<div class="relative flex-1 min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-12 rounded-lg border border-[#e1e7f0] text-body-sm text-on-surface placeholder:text-secondary focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="ค้นหาในหน้านี้เท่านั้น (Target URL, Event Type, Trace ID)..." type="text"/>
+<span class="absolute right-3 top-2.5 px-1.5 py-0.5 rounded text-[11px] font-mono text-slate-400 bg-slate-100">⌘K</span>
+</div>
+<!-- Filter Dropdowns -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Event Type Filter -->
+<div class="flex items-center">
+<select class="h-10 px-3 pr-8 rounded-lg border border-[#e1e7f0] text-body-sm text-on-surface bg-white focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">Event Type: ทั้งหมด</option>
+<option value="order.created">order.created</option>
+<option value="inventory.updated">inventory.updated</option>
+<option value="payment.settled">payment.settled</option>
+<option value="shipment.dispatched">shipment.dispatched</option>
+</select>
+</div>
+<!-- Status Code Filter -->
+<div class="flex items-center">
+<select class="h-10 px-3 pr-8 rounded-lg border border-[#e1e7f0] text-body-sm text-on-surface bg-white focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">Status Code: ทั้งหมด</option>
+<option value="5xx">5xx Server Errors</option>
+<option value="4xx">4xx Client Errors</option>
+<option value="timeout">Timeout / Connection Refused</option>
+</select>
+</div>
+<!-- Attempts Filter -->
+<div class="flex items-center">
+<select class="h-10 px-3 pr-8 rounded-lg border border-[#e1e7f0] text-body-sm text-on-surface bg-white focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">Attempts: ทุกระดับ</option>
+<option value="max">ครบกำหนด (5/5)</option>
+<option value="partial">ระหว่างทาง (1-4/5)</option>
+</select>
+</div>
+<!-- Clear Filters -->
+<button class="h-10 px-3 rounded-lg text-secondary hover:text-on-surface hover:bg-slate-100 text-body-sm flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+<span>ล้างค่า</span>
+</button>
+</div>
+</section>
+<!-- FAILED DELIVERIES TABLE -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] overflow-hidden flex flex-col">
+<!-- Table Card Header -->
+<div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-white">
+<div class="flex items-center gap-3">
+<h2 class="text-headline-sm font-headline-sm text-on-surface">รายการส่งไม่สำเร็จ (Dead Deliveries)</h2>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#f1f5f9] text-secondary">
+              แสดง 4 จาก 14 รายการ
+            </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-secondary">Summary &amp; Count</span>
+<button class="p-1.5 rounded hover:bg-slate-100 text-secondary" title="Export CSV">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+</div>
+<!-- Table Viewport -->
+<div class="overflow-x-auto custom-scroll">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-11 bg-[#f8fafc] border-b border-[#e1e7f0] text-[#52627a] text-label-sm font-label-sm uppercase tracking-wider">
+<th class="py-3 px-6 w-12 text-center">
+<input class="rounded border-[#cbd5e1] text-primary focus:ring-primary cursor-pointer" type="checkbox"/>
+</th>
+<th class="py-3 px-4">Event Type</th>
+<th class="py-3 px-4">Target URL</th>
+<th class="py-3 px-4">Status Code</th>
+<th class="py-3 px-4">Error</th>
+<th class="py-3 px-3 text-center">Attempts</th>
+<th class="py-3 px-4">Created</th>
+<th class="py-3 px-4 text-center">Payload</th>
+<th class="py-3 px-6 text-right">Action (Retry)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-sm">
+<!-- Record 1 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-4 px-6 text-center">
+<input class="rounded border-[#cbd5e1] text-primary focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-4 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-[#eef2ff] text-[#314bb5]">POST</span>
+<span class="font-mono font-medium text-on-surface">order.created</span>
+</div>
+</td>
+<td class="py-4 px-4 font-mono text-xs text-secondary max-w-[220px] truncate" title="https://api.partner-warehouse.th/v1/webhook">
+                  https://api.partner-warehouse.th/v1/webhook
+                </td>
+<td class="py-4 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fdf2f2] text-[#c2333f]">
+                    504 Gateway Timeout
+                  </span>
+</td>
+<td class="py-4 px-4 text-secondary max-w-[200px] truncate" title="Connection timed out after 30000ms">
+                  Connection timed out after 30000ms
+                </td>
+<td class="py-4 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-bold bg-[#ffdad6] text-[#ba1a1a]">
+                    5/5
+                  </span>
+</td>
+<td class="py-4 px-4 text-secondary whitespace-nowrap text-xs font-mono">
+                  15 พ.ค. 2024, 14:28:10
+                </td>
+<td class="py-4 px-4 text-center whitespace-nowrap">
+<button class="px-2.5 py-1 rounded bg-[#f1f5f9] hover:bg-[#e2e8f0] text-secondary hover:text-on-surface text-xs font-medium flex items-center gap-1 mx-auto transition-colors" onclick="openInspector('order.created', 'https://api.partner-warehouse.th/v1/webhook', '504 Gateway Timeout', 'Connection timed out after 30000ms', '5/5', '15 พ.ค. 2024, 14:28:10')">
+<span class="material-symbols-outlined text-[16px]">data_object</span>
+<span>ดูข้อมูล</span>
+</button>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="h-8 px-3 rounded bg-white border border-[#e1e7f0] hover:bg-surface-container-low text-primary text-xs font-semibold inline-flex items-center gap-1.5 transition-all active:scale-95 shadow-2xs" onclick="simulateRetry(this)">
+<span class="material-symbols-outlined text-[16px]">replay</span>
+<span>Retry</span>
+</button>
+</td>
+</tr>
+<!-- Record 2 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-4 px-6 text-center">
+<input class="rounded border-[#cbd5e1] text-primary focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-4 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-[#eef2ff] text-[#314bb5]">POST</span>
+<span class="font-mono font-medium text-on-surface">inventory.updated</span>
+</div>
+</td>
+<td class="py-4 px-4 font-mono text-xs text-secondary max-w-[220px] truncate" title="https://pos-bridge.central.co.th/events/stock">
+                  https://pos-bridge.central.co.th/events/stock
+                </td>
+<td class="py-4 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fdf2f2] text-[#c2333f]">
+                    500 Internal Server Error
+                  </span>
+</td>
+<td class="py-4 px-4 text-secondary max-w-[200px] truncate" title="Target server returned schema error">
+                  Target server returned schema error
+                </td>
+<td class="py-4 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-[#fef9e7] text-[#997404]">
+                    3/5
+                  </span>
+</td>
+<td class="py-4 px-4 text-secondary whitespace-nowrap text-xs font-mono">
+                  15 พ.ค. 2024, 14:15:22
+                </td>
+<td class="py-4 px-4 text-center whitespace-nowrap">
+<button class="px-2.5 py-1 rounded bg-[#f1f5f9] hover:bg-[#e2e8f0] text-secondary hover:text-on-surface text-xs font-medium flex items-center gap-1 mx-auto transition-colors" onclick="openInspector('inventory.updated', 'https://pos-bridge.central.co.th/events/stock', '500 Internal Server Error', 'Target server returned schema error', '3/5', '15 พ.ค. 2024, 14:15:22')">
+<span class="material-symbols-outlined text-[16px]">data_object</span>
+<span>ดูข้อมูล</span>
+</button>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="h-8 px-3 rounded bg-white border border-[#e1e7f0] hover:bg-surface-container-low text-primary text-xs font-semibold inline-flex items-center gap-1.5 transition-all active:scale-95 shadow-2xs" onclick="simulateRetry(this)">
+<span class="material-symbols-outlined text-[16px]">replay</span>
+<span>Retry</span>
+</button>
+</td>
+</tr>
+<!-- Record 3 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-4 px-6 text-center">
+<input class="rounded border-[#cbd5e1] text-primary focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-4 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-[#eef2ff] text-[#314bb5]">POST</span>
+<span class="font-mono font-medium text-on-surface">payment.settled</span>
+</div>
+</td>
+<td class="py-4 px-4 font-mono text-xs text-secondary max-w-[220px] truncate" title="https://crm-sync.retail.io/webhooks/pay">
+                  https://crm-sync.retail.io/webhooks/pay
+                </td>
+<td class="py-4 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fef9e7] text-[#997404]">
+                    403 Forbidden
+                  </span>
+</td>
+<td class="py-4 px-4 text-secondary max-w-[200px] truncate" title="HMAC signature verification failed">
+                  HMAC signature verification failed
+                </td>
+<td class="py-4 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-bold bg-[#ffdad6] text-[#ba1a1a]">
+                    5/5
+                  </span>
+</td>
+<td class="py-4 px-4 text-secondary whitespace-nowrap text-xs font-mono">
+                  15 พ.ค. 2024, 13:50:04
+                </td>
+<td class="py-4 px-4 text-center whitespace-nowrap">
+<button class="px-2.5 py-1 rounded bg-[#f1f5f9] hover:bg-[#e2e8f0] text-secondary hover:text-on-surface text-xs font-medium flex items-center gap-1 mx-auto transition-colors" onclick="openInspector('payment.settled', 'https://crm-sync.retail.io/webhooks/pay', '403 Forbidden', 'HMAC signature verification failed', '5/5', '15 พ.ค. 2024, 13:50:04')">
+<span class="material-symbols-outlined text-[16px]">data_object</span>
+<span>ดูข้อมูล</span>
+</button>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="h-8 px-3 rounded bg-white border border-[#e1e7f0] hover:bg-surface-container-low text-primary text-xs font-semibold inline-flex items-center gap-1.5 transition-all active:scale-95 shadow-2xs" onclick="simulateRetry(this)">
+<span class="material-symbols-outlined text-[16px]">replay</span>
+<span>Retry</span>
+</button>
+</td>
+</tr>
+<!-- Record 4 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-4 px-6 text-center">
+<input class="rounded border-[#cbd5e1] text-primary focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-4 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-[#eef2ff] text-[#314bb5]">POST</span>
+<span class="font-mono font-medium text-on-surface">shipment.dispatched</span>
+</div>
+</td>
+<td class="py-4 px-4 font-mono text-xs text-secondary max-w-[220px] truncate" title="https://logistics.flashexpress.co.th/erp-in">
+                  https://logistics.flashexpress.co.th/erp-in
+                </td>
+<td class="py-4 px-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fdf2f2] text-[#c2333f]">
+                    502 Bad Gateway
+                  </span>
+</td>
+<td class="py-4 px-4 text-secondary max-w-[200px] truncate" title="Host unreachable">
+                  Host unreachable
+                </td>
+<td class="py-4 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-[#fef9e7] text-[#997404]">
+                    4/5
+                  </span>
+</td>
+<td class="py-4 px-4 text-secondary whitespace-nowrap text-xs font-mono">
+                  15 พ.ค. 2024, 12:44:19
+                </td>
+<td class="py-4 px-4 text-center whitespace-nowrap">
+<button class="px-2.5 py-1 rounded bg-[#f1f5f9] hover:bg-[#e2e8f0] text-secondary hover:text-on-surface text-xs font-medium flex items-center gap-1 mx-auto transition-colors" onclick="openInspector('shipment.dispatched', 'https://logistics.flashexpress.co.th/erp-in', '502 Bad Gateway', 'Host unreachable', '4/5', '15 พ.ค. 2024, 12:44:19')">
+<span class="material-symbols-outlined text-[16px]">data_object</span>
+<span>ดูข้อมูล</span>
+</button>
+</td>
+<td class="py-4 px-6 text-right whitespace-nowrap">
+<button class="h-8 px-3 rounded bg-white border border-[#e1e7f0] hover:bg-surface-container-low text-primary text-xs font-semibold inline-flex items-center gap-1.5 transition-all active:scale-95 shadow-2xs" onclick="simulateRetry(this)">
+<span class="material-symbols-outlined text-[16px]">replay</span>
+<span>Retry</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- PAGINATION BAR -->
+<div class="px-6 py-4 bg-white border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3 text-body-sm text-secondary">
+<span>แสดงแถวต่อหน้า:</span>
+<select class="h-8 px-2 rounded border border-[#e1e7f0] text-xs font-medium bg-white focus:border-primary">
+<option>25 items per page</option>
+<option>50 items per page</option>
+<option>100 items per page</option>
+</select>
+<span>จากทั้งหมด 14 รายการ</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-body-sm text-secondary mr-2">Page 1 of 3</span>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] flex items-center justify-center text-slate-300 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="h-8 w-8 rounded bg-primary-container text-white text-xs font-semibold flex items-center justify-center shadow-xs">
+              1
+            </button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] hover:bg-slate-100 text-secondary text-xs font-medium flex items-center justify-center">
+              2
+            </button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] hover:bg-slate-100 text-secondary text-xs font-medium flex items-center justify-center">
+              3
+            </button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] hover:bg-slate-100 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- POLICY & SLA RETENTION BANNER -->
+<section class="bg-[#f8fafc] border border-[#e1e7f0] rounded-xl p-4 flex items-start sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#eef2ff] text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">info</span>
+</div>
+<div>
+<p class="text-body-sm font-medium text-on-surface">นโยบายการจัดเก็บ Dead Letter (SLA Retention Policy)</p>
+<p class="text-xs text-secondary">
+              ระบบจะเก็บรายการที่ไม่สำเร็จใน Dead Letter Queue ไว้นานสูงสุด <span class="font-semibold text-on-surface">14 วัน</span> ก่อนจะทำการบันทึก Log ถาวรและลบออกจากคิวอัตโนมัติ กรุณาตรวจสอบหรือสั่ง Retry ก่อนครบกำหนด
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<span class="text-xs font-mono text-slate-500">Auto-purge in: 9 วัน</span>
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] text-xs font-medium hover:bg-white text-secondary">
+            อ่าน SLA Policy
+          </button>
+</div>
+</section>
+</main>
+</div>
+<!-- ==================== INSPECT DRAWER (SLIDE-OVER) ==================== -->
+<div class="fixed inset-0 bg-[#17243b]/40 backdrop-blur-[2px] z-50 hidden transition-opacity duration-200" id="inspectorDrawerScrim" onclick="closeInspector()"></div>
+<aside class="fixed top-0 right-0 h-screen w-full max-w-[560px] bg-white z-50 border-l border-[#e1e7f0] shadow-[-4px_0_24px_0_rgba(23,36,59,0.08)] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between" id="inspectorDrawer">
+<!-- Drawer Header -->
+<div class="p-6 border-b border-[#e1e7f0] flex items-center justify-between bg-[#f8fafc]">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded font-mono text-xs font-bold bg-[#eef2ff] text-[#314bb5]" id="drawerBadge">POST</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface" id="drawerEvent">order.created</h3>
+</div>
+<p class="text-xs font-mono text-secondary mt-1">Trace ID: <span class="text-slate-600 font-semibold">trc_9a87d21b_994</span></p>
+</div>
+<button class="p-2 rounded-lg text-secondary hover:text-on-surface hover:bg-slate-200 transition-colors" onclick="closeInspector()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Drawer Navigation Tabs -->
+<div class="px-6 border-b border-[#e1e7f0] flex gap-6 bg-white text-body-sm">
+<button class="py-3 border-b-2 border-primary text-primary font-semibold">Details &amp; Headers</button>
+<button class="py-3 text-secondary hover:text-on-surface">Raw Payload (JSON)</button>
+<button class="py-3 text-secondary hover:text-on-surface">Audit History</button>
+</div>
+<!-- Drawer Body -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scroll">
+<!-- Status & Target URL info card -->
+<div class="p-4 rounded-lg bg-[#f8fafc] border border-[#e1e7f0] space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-xs text-secondary font-medium">Status Code:</span>
+<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fdf2f2] text-[#c2333f]" id="drawerStatusCode">504 Gateway Timeout</span>
+</div>
+<div class="flex items-start justify-between">
+<span class="text-xs text-secondary font-medium">Target URL:</span>
+<span class="text-xs font-mono text-on-surface break-all text-right max-w-[320px]" id="drawerTargetUrl">https://api.partner-warehouse.th/v1/webhook</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs text-secondary font-medium">Attempts History:</span>
+<span class="text-xs font-mono font-bold text-[#ba1a1a]" id="drawerAttempts">5 of 5 attempts exhausted</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs text-secondary font-medium">Created:</span>
+<span class="text-xs font-mono text-secondary" id="drawerCreated">15 พ.ค. 2024, 14:28:10</span>
+</div>
+</div>
+<!-- Error Stack Trace -->
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-secondary mb-2">Error Stack Trace</label>
+<div class="bg-[#1e293b] text-[#f1f5f9] p-3 rounded-lg font-mono text-xs leading-relaxed overflow-x-auto">
+<p class="text-rose-400 font-semibold" id="drawerError">Error: Connection timed out after 30000ms</p>
+<p class="text-slate-400 mt-1">at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1146:16)</p>
+<p class="text-slate-500">at DeliveryWorker.dispatch (worker/webhook-dispatcher.ts:182:9)</p>
+<p class="text-slate-500">at async DeadLetterManager.handleFailure (queue/dlq.ts:44:13)</p>
+</div>
+</div>
+<!-- Headers snippet -->
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-secondary mb-2">Request Headers</label>
+<div class="bg-[#f8fafc] border border-[#e1e7f0] rounded-lg p-3 font-mono text-xs text-slate-700 space-y-1">
+<div><span class="text-primary">Content-Type:</span> application/json</div>
+<div><span class="text-primary">X-Webhook-Signature:</span> sha256=d34a8f93bc0912e...</div>
+<div><span class="text-primary">X-Event-Key:</span> order.created</div>
+<div><span class="text-primary">X-Attempt-Number:</span> 5</div>
+</div>
+</div>
+<!-- JSON Payload Snippet -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<label class="text-xs font-semibold uppercase tracking-wider text-secondary">Payload Body (application/json)</label>
+<button class="text-xs text-primary hover:underline flex items-center gap-1" onclick="navigator.clipboard.writeText('{}'); alert('Copied JSON payload');">
+<span class="material-symbols-outlined text-[14px]">content_copy</span> คัดลอก
+          </button>
+</div>
+<pre class="bg-[#0f172a] text-[#38bdf8] p-4 rounded-lg font-mono text-xs overflow-x-auto custom-scroll leading-5"><code>{
+  "event": "order.created",
+  "entity_id": "ORD-20240515-9981",
+  "store_id": "TH-BKK-01",
+  "timestamp": "2024-05-15T07:28:10Z",
+  "customer": {
+    "name": "Somchai Jaidee",
+    "phone": "+66819998888",
+    "province": "กรุงเทพมหานคร"
+  },
+  "items": [
+    {
+      "sku": "TH-TEA-001",
+      "qty": 2,
+      "price_thb": 180.00
+    }
+  ],
+  "total_amount": 360.00
+}</code></pre>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-6 border-t border-[#e1e7f0] bg-white flex items-center justify-between">
+<button class="px-4 py-2 rounded-lg border border-[#e1e7f0] text-secondary hover:text-on-surface hover:bg-slate-100 text-body-sm font-medium" onclick="closeInspector()">
+        ปิดหน้าต่าง
+      </button>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg bg-[#fdf2f2] text-[#c2333f] hover:bg-[#ffdad6] text-body-sm font-medium transition-colors">
+          ยกเลิกและทิ้งคิว (Discard)
+        </button>
+<button class="px-4 py-2 rounded-lg bg-primary-container hover:bg-[#2947d1] text-white text-body-sm font-medium flex items-center gap-2 transition-all shadow-sm" onclick="simulateRetryFromDrawer()">
+<span class="material-symbols-outlined text-white text-[18px]">replay</span>
+<span>ส่งซ้ำเดี๋ยวนี้ (Retry)</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- ==================== MANDATORY TRANSLATION DICTIONARY ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Refresh": {
+      "th": "รีเฟรช",
+      "en": "Refresh"
+    },
+    "Status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "Created": {
+      "th": "สร้างเมื่อ",
+      "en": "Created"
+    },
+    "Error": {
+      "th": "ข้อผิดพลาด",
+      "en": "Error"
+    },
+    "Retry": {
+      "th": "ส่งซ้ำ",
+      "en": "Retry"
+    },
+    "Attempts": {
+      "th": "จำนวนครั้งที่พยายาม",
+      "en": "Attempts"
+    },
+    "Payload": {
+      "th": "ข้อมูล Payload",
+      "en": "Payload"
+    },
+    "Target URL": {
+      "th": "Target URL ปลายทาง",
+      "en": "Target URL"
+    },
+    "Webhook Dead Letter": {
+      "th": "Webhook Dead Letter",
+      "en": "Webhook Dead Letter"
+    },
+    "View and retry failed webhook deliveries.": {
+      "th": "ดูและส่งซ้ำการเรียก Webhook ที่ไม่สำเร็จ",
+      "en": "View and retry failed webhook deliveries."
+    },
+    "Failed Deliveries": {
+      "th": "จำนวนรายการไม่สำเร็จ",
+      "en": "Failed Deliveries"
+    },
+    "No failed webhook deliveries.": {
+      "th": "ไม่มีรายการ Webhook ที่ส่งไม่สำเร็จ",
+      "en": "No failed webhook deliveries."
+    },
+    "Event Type": {
+      "th": "ประเภทเหตุการณ์",
+      "en": "Event Type"
+    },
+    "Status Code": {
+      "th": "รหัสสถานะ",
+      "en": "Status Code"
+    },
+    "Summary": {
+      "th": "สรุปข้อมูล",
+      "en": "Summary"
+    },
+    "Count": {
+      "th": "จำนวนนับ",
+      "en": "Count"
+    },
+    "เก็บทุกหน้า ทุกคืน 00:00–06:00 · 20 หน้าแรกเก็บให้ทันที": {
+      "th": "เก็บทุกหน้า ทุกคืน 00:00–06:00 · 20 หน้าแรกเก็บให้ทันที",
+      "en": "Crawl all pages nightly 00:00–06:00 · First 20 pages crawled immediately"
+    },
+    "ค้นหา Users": {
+      "th": "ค้นหา Users",
+      "en": "Search Users"
+    },
+    "เงื่อนไขอื่นๆ": {
+      "th": "เงื่อนไขอื่นๆ",
+      "en": "Other conditions"
+    },
+    "ชื่อฟิลด์ที่แสดง (Label)": {
+      "th": "ชื่อฟิลด์ที่แสดง (Label)",
+      "en": "Field display name (Label)"
+    },
+    "ต้นทุน": {
+      "th": "ต้นทุน",
+      "en": "Cost"
+    },
+    "แทนที่ตามลำดับ": {
+      "th": "แทนที่ตามลำดับ",
+      "en": "Replace in order"
+    },
+    "ปิด = สถานะรวมของ Campaign เป็น “ปิดใช้งาน” — ไม่ได้ปิดโปร หน้าโปร หรือคูปองทีละตัว (ปิดได้ที่หน้าของแต่ละอัน)": {
+      "th": "ปิด = สถานะรวมของ Campaign เป็น “ปิดใช้งาน” — ไม่ได้ปิดโปร หน้าโปร หรือคูปองทีละตัว (ปิดได้ที่หน้าของแต่ละอัน)",
+      "en": "Off = Overall Campaign status is \"Disabled\" — does not disable individual promos, promo pages, or coupons"
+    },
+    "เพิ่มเว็บ": {
+      "th": "เพิ่มเว็บ",
+      "en": "Add website"
+    },
+    "ไม่มีรายการที่ไม่ตรง": {
+      "th": "ไม่มีรายการที่ไม่ตรง",
+      "en": "No mismatched items"
+    },
+    "ยังไม่มีสาขา — ไม่สามารถกำหนดราคาสัญญาตาม branch ได้": {
+      "th": "ยังไม่มีสาขา — ไม่สามารถกำหนดราคาสัญญาตาม branch ได้",
+      "en": "No branches yet — contract price cannot be defined by branch"
+    },
+    "ราคาตามจำนวนซื้อ (Tier)": {
+      "th": "ราคาตามจำนวนซื้อ (Tier)",
+      "en": "Tiered volume pricing"
+    },
+    "ลบล็อกอิน": {
+      "th": "ลบล็อกอิน",
+      "en": "Delete login"
+    },
+    "วันที่วางแผนทำงาน": {
+      "th": "วันที่วางแผนทำงาน",
+      "en": "Planned execution date"
+    },
+    "ส่วนต่าง conversion": {
+      "th": "ส่วนต่าง conversion",
+      "en": "Conversion variance"
+    },
+    "หลังบันทึก ระบบจะ": {
+      "th": "หลังบันทึก ระบบจะ",
+      "en": "After saving, the system will"
+    },
+    "เว็บที่เก็บข้อมูล": {
+      "th": "เว็บที่เก็บข้อมูล",
+      "en": "Stored website"
+    }
+  }
+  </script>
+<!-- ==================== MICRO INTERACTIONS SCRIPT ==================== -->
+<script>
+    function triggerRefreshAnimation() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 800);
+    }
+
+    function openInspector(event, target, statusCode, error, attempts, created) {
+      document.getElementById('drawerEvent').innerText = event;
+      document.getElementById('drawerTargetUrl').innerText = target;
+      document.getElementById('drawerStatusCode').innerText = statusCode;
+      document.getElementById('drawerError').innerText = 'Error: ' + error;
+      document.getElementById('drawerAttempts').innerText = attempts + ' attempts exhausted';
+      document.getElementById('drawerCreated').innerText = created;
+
+      const drawer = document.getElementById('inspectorDrawer');
+      const scrim = document.getElementById('inspectorDrawerScrim');
+
+      scrim.classList.remove('hidden');
+      setTimeout(() => {
+        drawer.classList.remove('translate-x-full');
+      }, 10);
+    }
+
+    function closeInspector() {
+      const drawer = document.getElementById('inspectorDrawer');
+      const scrim = document.getElementById('inspectorDrawerScrim');
+
+      drawer.classList.add('translate-x-full');
+      setTimeout(() => {
+        scrim.classList.add('hidden');
+      }, 300);
+    }
+
+    function simulateRetry(btn) {
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = `<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>กำลังส่ง...</span>`;
+      btn.classList.add('opacity-75');
+      setTimeout(() => {
+        btn.innerHTML = `<span class="material-symbols-outlined text-[16px] text-emerald-600">check</span><span class="text-emerald-700">สำเร็จ!</span>`;
+        btn.classList.remove('opacity-75');
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+        }, 2000);
+      }, 1200);
+    }
+
+    function simulateRetryFromDrawer() {
+      closeInspector();
+      triggerRefreshAnimation();
+    }
+  </script>
+</body></html>

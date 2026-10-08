@@ -1,3 +1,5 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
 import {
   createUserSegment,
   getSegmentFields,
@@ -11,6 +13,7 @@ import {
 } from '@josh/shared-api';
 import { Input } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
+import { LoadError } from '../../components/LoadError';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import ConditionGroup from './builder/ConditionGroup';
@@ -22,6 +25,8 @@ import {
   SEGMENT_PRESETS,
 } from './builder/segment-definition.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const EMPTY_OPTIONS: SegmentFieldsResponse['options'] = {
   tiers: [],
   cuisine: [],
@@ -37,6 +42,7 @@ const EMPTY_OPTIONS: SegmentFieldsResponse['options'] = {
  * existing rule_type-based CRUD at `/segments/create` and `/segments/edit/:id`.
  */
 export function SegmentBuilder() {
+  __useUiLocale();
   const { id: routeId } = useParams<{ id?: string }>();
   const navigate = useNavigate();
 
@@ -44,6 +50,8 @@ export function SegmentBuilder() {
   const [fieldsData, setFieldsData] = useState<SegmentFieldsResponse | null>(null);
   const [loadingFields, setLoadingFields] = useState(true);
   const [loadingSegment, setLoadingSegment] = useState(Boolean(routeId));
+  const [loadError, setLoadError] = useState<unknown>(null);
+  const [reload, setReload] = useState(0);
 
   // Every builder-created segment always carries a `definition`, so it's never "live" — a
   // builder segment opened for edit is always frozen (membership computed + locked at create).
@@ -64,23 +72,31 @@ export function SegmentBuilder() {
   const [showMembers, setShowMembers] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => { setLoadError(null); }, [routeId, reload]);
+
   // Field registry + dynamic option lists (tiers, cuisine) — drives every
   // control in the builder.
   useEffect(() => {
+    let active = true;
+    setLoadingFields(true);
     getSegmentFields()
-      .then(setFieldsData)
-      .catch(() => setFieldsData({ fields: [], options: EMPTY_OPTIONS }))
-      .finally(() => setLoadingFields(false));
-  }, []);
+      .then(data => { if (active) setFieldsData(data); })
+      .catch((error: unknown) => { if (active) { setFieldsData({ fields: [], options: EMPTY_OPTIONS }); setLoadError(error); } })
+      .finally(() => { if (active) setLoadingFields(false); });
+    return () => { active = false; };
+  }, [reload]);
 
   // Edit mode — load the saved segment and normalize its `definition` (a
   // bare leaf is legal at the top level per the backend shape) into a root
   // AND group so the builder always has one group to render.
   useEffect(() => {
+    setLoadingSegment(Boolean(routeId));
     if (!routeId) return;
+    let active = true;
     getUserSegmentById(routeId)
       .then(async (segment) => {
-        if (!segment) return;
+        if (!active) return;
+        if (!segment) { setLoadError(__uiMessage('ไม่พบกลุ่มลูกค้านี้')); return; }
         setSlug(segment.slug);
         setName(segment.name);
         setDescription(segment.description ?? '');
@@ -102,19 +118,21 @@ export function SegmentBuilder() {
           try {
             await previewUserSegmentCount(routeId);
             const refreshed = await getUserSegmentById(routeId);
-            if (refreshed) {
+            if (active && refreshed) {
               setFrozenAt(refreshed.frozen_at);
               setFrozenMemberCount(refreshed.member_count);
             }
           } catch {
             // ponytail: leave count as "—" on failure — nothing to retry from this page.
           } finally {
-            setFreezing(false);
+            if (active) setFreezing(false);
           }
         }
       })
-      .finally(() => setLoadingSegment(false));
-  }, [routeId]);
+      .catch((error: unknown) => { if (active) setLoadError(error); })
+      .finally(() => { if (active) setLoadingSegment(false); });
+    return () => { active = false; };
+  }, [routeId, reload]);
 
   // Live preview (Task 9 step 4) — debounced so we don't fire on every
   // keystroke while typing a value.
@@ -134,7 +152,7 @@ export function SegmentBuilder() {
         .then((count) => setPreviewCount(count))
         .catch(() => {
           setPreviewCount(null);
-          setPreviewError('คำนวณจำนวนไม่สำเร็จ — ตรวจสอบเงื่อนไขที่เลือก');
+          setPreviewError(__uiMessage("คำนวณจำนวนไม่สำเร็จ — ตรวจสอบเงื่อนไขที่เลือก"));
         })
         .finally(() => setPreviewLoading(false));
     }, 500);
@@ -149,17 +167,17 @@ export function SegmentBuilder() {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert('กรุณากรอกชื่อ Segment');
+      alert(__uiText("กรุณากรอกชื่อ Segment"));
       return;
     }
     if (!routeId && !slug.trim()) {
-      alert('กรุณากรอก slug');
+      alert(__uiText("กรุณากรอก slug"));
       return;
     }
     // Locked (edit-mode) segments never re-send their definition — only name/description/active.
     const pruned = locked ? null : pruneEmptyBranches(tree);
     if (!locked && !pruned) {
-      alert('กรุณาเพิ่มอย่างน้อย 1 เงื่อนไข');
+      alert(__uiText("กรุณาเพิ่มอย่างน้อย 1 เงื่อนไข"));
       return;
     }
 
@@ -172,7 +190,7 @@ export function SegmentBuilder() {
           is_active: isActive,
         });
         if (response.status >= 200 && response.status < 300) {
-          alert('บันทึกสำเร็จ');
+          alert(__uiText("บันทึกสำเร็จ"));
         }
       } else {
         const response = await createUserSegment({
@@ -207,7 +225,7 @@ export function SegmentBuilder() {
           ?.message ??
         (error instanceof Error ? error.message : undefined) ??
         'บันทึกไม่สำเร็จ';
-      alert(`เกิดข้อผิดพลาดในการบันทึก: ${message}`);
+      alert(__uiText("เกิดข้อผิดพลาดในการบันทึก: {0}", {"0": message}));
     } finally {
       setSaving(false);
     }
@@ -217,8 +235,9 @@ export function SegmentBuilder() {
   const fields = fieldsData?.fields ?? [];
   const summary = describeDefinition(tree, fields, options);
 
+  if (loadError) return <LoadError title={__uiText('กำหนดกลุ่มลูกค้า')} error={loadError} onRetry={() => { setLoadError(null); setLoadingFields(true); setLoadingSegment(Boolean(routeId)); setReload(value => value + 1); }} />;
   if (loadingFields || loadingSegment) {
-    return <div className="p-6 text-sm text-gray-500">กำลังโหลด...</div>;
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
@@ -230,14 +249,12 @@ export function SegmentBuilder() {
             onClick={() => navigate(ADMIN_ROUTES.segments)}
             className="mb-2 text-sm text-gray-500 hover:text-gray-800"
           >
-            ← กลับ
-          </button>
+            {__uiText("← กลับ")}</button>
           <h1 className="text-2xl font-bold text-gray-900">
-            {routeId ? 'แก้ไข Segment (Visual Builder)' : 'สร้าง Segment ใหม่ (Visual Builder)'}
+            {routeId ? __uiText("แก้ไข Segment (Visual Builder)") : __uiText("สร้าง Segment ใหม่ (Visual Builder)")}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            สร้างกลุ่มลูกค้าด้วยเงื่อนไข AND/OR แบบไม่ต้องเขียนโค้ด
-          </p>
+            {__uiText("สร้างกลุ่มลูกค้าด้วยเงื่อนไข AND/OR แบบไม่ต้องเขียนโค้ด")}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <div className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700">
@@ -246,16 +263,14 @@ export function SegmentBuilder() {
                 'กำลังคำนวณ...'
               ) : (
                 <>
-                  <strong>{frozenMemberCount != null ? frozenMemberCount.toLocaleString() : '—'}</strong> คน
-                  {frozenAt ? ` · ล็อกเมื่อ ${new Date(frozenAt).toLocaleString('th-TH')}` : ''}
+                  <strong>{frozenMemberCount != null ? frozenMemberCount.toLocaleString() : '—'}</strong> {__uiText(" คน")}{frozenAt ? __uiText(" · ล็อกเมื่อ {0}", {"0": new Date(frozenAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}) : ''}
                 </>
               )
             ) : previewLoading ? (
               'กำลังคำนวณ...'
             ) : previewCount != null ? (
               <>
-                ≈ <strong>{previewCount.toLocaleString()}</strong> ลูกค้า
-              </>
+                ≈ <strong>{previewCount.toLocaleString()}</strong> {__uiText(" ลูกค้า")}</>
             ) : (
               '— ลูกค้า'
             )}
@@ -265,50 +280,49 @@ export function SegmentBuilder() {
             onClick={() => navigate(ADMIN_ROUTES.segments)}
             className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
           >
-            ยกเลิก
-          </button>
+            {__uiText("ยกเลิก")}</button>
           <button
             type="button"
             onClick={handleSave}
             disabled={saving}
             className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-light disabled:opacity-50"
           >
-            {saving ? 'กำลังบันทึก...' : 'บันทึก'}
+            {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
           </button>
         </div>
       </div>
 
-      {previewError && <p className="text-sm text-red-500">{previewError}</p>}
+      {previewError && <p className="text-sm text-red-500">{(typeof (previewError) === 'string' ? __uiText(previewError) : previewError)}</p>}
 
       <div className="flex flex-col gap-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Input
-              label={`Slug${!routeId ? ' *' : ''}`}
+              label={__uiText("Slug{0}", {"0": !routeId ? ' *' : ''})}
               value={slug}
               disabled={Boolean(routeId)}
               onChange={(e) =>
                 setSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))
               }
-              placeholder="เช่น vip-customers"
+              placeholder={__uiText("เช่น vip-customers")}
             />
           </div>
           <div>
             <Input
-              label="ชื่อ Segment *"
+              label={__uiText("ชื่อ Segment *")}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="เช่น ลูกค้า VIP"
+              placeholder={__uiText("เช่น ลูกค้า VIP")}
             />
           </div>
         </div>
 
         <div>
           <Input
-            label="คำอธิบาย"
+            label={__uiText("คำอธิบาย")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="ไม่บังคับ"
+            placeholder={__uiText("ไม่บังคับ")}
           />
         </div>
 
@@ -318,17 +332,15 @@ export function SegmentBuilder() {
             checked={isActive}
             onChange={(e) => setIsActive(e.target.checked)}
           />
-          เปิดใช้งาน Segment นี้ (Active)
-        </label>
+          {__uiText("เปิดใช้งาน Segment นี้ (Active)")}</label>
 
         {locked ? (
           <p className="text-xs text-gray-500">
-            เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ — ต้องการรายชื่อใหม่? สร้าง segment ใหม่
-          </p>
+            {__uiText("เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ — ต้องการรายชื่อใหม่? สร้าง segment ใหม่")}</p>
         ) : (
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="text-sm text-gray-600">เริ่มจากแม่แบบ:</span>
+              <span className="text-sm text-gray-600">{__uiText("เริ่มจากแม่แบบ:")}</span>
               {SEGMENT_PRESETS.map((preset) => (
                 <button
                   key={preset.id}
@@ -343,8 +355,7 @@ export function SegmentBuilder() {
 
             {fields.length === 0 ? (
               <p className="text-sm text-gray-400">
-                ไม่พบ field registry — ตรวจสอบ backend `/user-segments/fields`
-              </p>
+                {__uiText("ไม่พบ field registry — ตรวจสอบ backend `/user-segments/fields`")}</p>
             ) : (
               <ConditionGroup
                 branch={tree}
@@ -357,33 +368,32 @@ export function SegmentBuilder() {
         )}
 
         <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-3.5 text-sm text-gray-700">
-          <span className="font-semibold text-blue-800">สรุปเงื่อนไข: </span>
+          <span className="font-semibold text-blue-800">{__uiText("สรุปเงื่อนไข: ")}</span>
           {summary}
         </div>
       </div>
 
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-gray-800">รายชื่อลูกค้าที่ตรงเงื่อนไข</h2>
+          <h2 className="text-sm font-semibold text-gray-800">{__uiText("รายชื่อลูกค้าที่ตรงเงื่อนไข")}</h2>
           {segmentId && (
             <button
               type="button"
               onClick={() => setShowMembers((prev) => !prev)}
               className="text-xs text-blue-600 hover:underline"
             >
-              {showMembers ? 'ซ่อนรายชื่อ' : 'ดูรายชื่อ'}
+              {showMembers ? __uiText("ซ่อนรายชื่อ") : __uiText("ดูรายชื่อ")}
             </button>
           )}
         </div>
 
         {!segmentId ? (
           <p className="text-sm text-gray-400">
-            บันทึก Segment ก่อน เพื่อดูรายชื่อลูกค้าแบบแบ่งหน้า (ตอนนี้แสดงได้แค่จำนวนโดยประมาณด้านบน)
-          </p>
+            {__uiText("บันทึก Segment ก่อน เพื่อดูรายชื่อลูกค้าแบบแบ่งหน้า (ตอนนี้แสดงได้แค่จำนวนโดยประมาณด้านบน)")}</p>
         ) : showMembers ? (
           <MembersPanel segmentId={segmentId} />
         ) : (
-          <p className="text-sm text-gray-400">กด "ดูรายชื่อ" เพื่อแสดงตาราง</p>
+          <p className="text-sm text-gray-400">{__uiText("กด \"ดูรายชื่อ\" เพื่อแสดงตาราง")}</p>
         )}
       </div>
     </div>
@@ -391,3 +401,5 @@ export function SegmentBuilder() {
 }
 
 export default SegmentBuilder;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useState } from 'react';
 import {
   getMarketingDeeplink,
@@ -6,6 +7,8 @@ import {
 } from '@josh/shared-api';
 import { CopyField } from './CopyField';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   type: MarketingLinkParams['type'];
   id?: string;
@@ -26,6 +29,7 @@ export function MarketingLinkField({
   utm,
   buttonLabel = 'สร้างลิงก์ Marketing',
 }: Props) {
+  __useUiLocale();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MarketingLinkResult | null>(null);
@@ -37,7 +41,7 @@ export function MarketingLinkField({
       const res = await getMarketingDeeplink({ type, id, path, utm });
       setResult(res);
     } catch {
-      setError('สร้างลิงก์ไม่สำเร็จ ลองใหม่อีกครั้ง');
+      setError(__uiMessage("สร้างลิงก์ไม่สำเร็จ ลองใหม่อีกครั้ง"));
     } finally {
       setLoading(false);
     }
@@ -52,24 +56,22 @@ export function MarketingLinkField({
           disabled={loading}
           className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
         >
-          {loading ? 'กำลังสร้าง…' : buttonLabel}
+          {loading ? __uiText("กำลังสร้าง…") : buttonLabel}
         </button>
-        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+        {error && <p className="mt-1 text-xs text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
       </div>
     );
   }
 
   return (
     <div className="grid grid-cols-1 gap-3">
-      <CopyField label="ลิงก์ Marketing (ยิง ads)" value={result.shortUrl} />
+      <CopyField label={__uiText("ลิงก์ Marketing (ยิง ads)")} value={result.shortUrl} />
       {result.webUrl !== result.shortUrl && (
-        <CopyField label="Web URL (ปลายทาง)" value={result.webUrl} />
+        <CopyField label={__uiText("Web URL (ปลายทาง)")} value={result.webUrl} />
       )}
       {result.provider === 'fallback' && (
         <p className="text-xs text-amber-600">
-          ยังไม่ได้ตั้งค่า ChottuLink — ลิงก์นี้เป็น web URL ตรง (ใช้ได้เลย) จะกลายเป็น
-          short link อัตโนมัติเมื่อใส่ CHOTTULINK_API_KEY ที่ backend
-        </p>
+          {__uiText("ยังไม่ได้ตั้งค่า ChottuLink — ลิงก์นี้เป็น web URL ตรง (ใช้ได้เลย) จะกลายเป็น short link อัตโนมัติเมื่อใส่ CHOTTULINK_API_KEY ที่ backend")}</p>
       )}
       <button
         type="button"
@@ -77,7 +79,7 @@ export function MarketingLinkField({
         disabled={loading}
         className="justify-self-start text-xs text-gray-400 underline hover:text-gray-600"
       >
-        {loading ? 'กำลังรีเฟรช…' : 'รีเฟรช'}
+        {loading ? __uiText("กำลังรีเฟรช…") : __uiText("รีเฟรช")}
       </button>
     </div>
   );

@@ -1,3 +1,5 @@
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function UndoRedoControls({
   canUndo,
   canRedo,
@@ -9,6 +11,7 @@ export function UndoRedoControls({
   onUndo: () => void;
   onRedo: () => void;
 }) {
+  __useUiLocale();
   return (
     <div className="flex gap-2">
       <button
@@ -16,19 +19,17 @@ export function UndoRedoControls({
         className="rounded-md border border-gray-200 px-2 py-1 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40"
         disabled={!canUndo}
         onClick={onUndo}
-        title="Undo (Ctrl/Cmd+Z)"
+        title={__uiText("Undo (Ctrl/Cmd+Z)")}
       >
-        ↶ Undo
-      </button>
+        {__uiText("↶ Undo")}</button>
       <button
         type="button"
         className="rounded-md border border-gray-200 px-2 py-1 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40"
         disabled={!canRedo}
         onClick={onRedo}
-        title="Redo (Ctrl/Cmd+Shift+Z)"
+        title={__uiText("Redo (Ctrl/Cmd+Shift+Z)")}
       >
-        ↷ Redo
-      </button>
+        {__uiText("↷ Redo")}</button>
     </div>
   );
 }

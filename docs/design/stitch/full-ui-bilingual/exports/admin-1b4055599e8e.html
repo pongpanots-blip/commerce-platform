@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thai Ops Cockpit - การเชื่อมต่อ (Integrations)</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter,+Noto+Sans,+sans-serif:wght@100..900&family=Noto+Sans,+Inter,+sans-serif:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#e8eeff",
+            "on-tertiary-fixed": "#360f00",
+            "outline": "#747687",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-secondary-container": "#54647c",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-primary-container": "#ededff",
+            "secondary-container": "#d0e1fd",
+            "inverse-on-surface": "#ecf0ff",
+            "tertiary": "#943500",
+            "surface-dim": "#cddaf9",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-surface": "#0e1b32",
+            "on-background": "#0e1b32",
+            "surface-variant": "#d7e2ff",
+            "primary-fixed": "#dde1ff",
+            "outline-variant": "#c4c5d8",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-error-container": "#93000a",
+            "inverse-surface": "#243048",
+            "background": "#f9f9ff",
+            "error-container": "#ffdad6",
+            "surface-container-lowest": "#ffffff",
+            "primary-container": "#365cf5",
+            "on-primary": "#ffffff",
+            "surface-container-highest": "#d7e2ff",
+            "error": "#ba1a1a",
+            "surface-bright": "#f9f9ff",
+            "secondary": "#4f5f77",
+            "surface-tint": "#214ce7",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed": "#001257",
+            "tertiary-container": "#bc4600",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-container-low": "#f1f3ff",
+            "surface": "#f9f9ff",
+            "on-error": "#ffffff",
+            "on-surface-variant": "#444655",
+            "tertiary-fixed": "#ffdbcd",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "primary": "#0a3fdc",
+            "on-secondary-fixed": "#0b1c31",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "surface-container-high": "#e0e8ff",
+            "secondary-fixed": "#d3e3ff",
+            "on-tertiary-container": "#ffebe4"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-lg": "1.5rem",
+            "space-2xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "margin": "2rem",
+            "margin-mobile": "1rem",
+            "gutter": "1.5rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "headline-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "label-sm": ["\"Inter, Noto Sans, sans-serif\""],
+            "headline-lg-mobile": ["\"Noto Sans, Inter, sans-serif\""],
+            "code-sm": ["\"JetBrains Mono, monospace\""],
+            "headline-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans, sans-serif\""]
+          },
+          "fontSize": {
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#f6f8fc] text-[#17243b] antialiased min-h-screen flex font-body-md text-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Toast Notification (Success) -->
+<div class="fixed top-5 right-6 z-50 transform transition-all duration-300 translate-y-[-100px] opacity-0 pointer-events-none flex items-center gap-3 bg-surface-container-lowest border border-[#157347]/30 text-[#157347] px-4 py-3 rounded-lg shadow-lg" id="toast-success">
+<span class="material-symbols-outlined text-[#157347]" data-icon="check_circle">check_circle</span>
+<span class="font-label-md text-label-md font-medium" data-i18n-key="เพิ่มการเชื่อมต่อเรียบร้อยแล้ว">เพิ่มการเชื่อมต่อเรียบร้อยแล้ว</span>
+</div>
+<!-- Shared Component: SideNavBar -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-none">
+<div class="w-64 h-full flex flex-col justify-between p-3">
+<!-- Top Branding & Navigation -->
+<div class="flex flex-col gap-4">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-3 py-2 border-b border-[#e1e7f0]">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-bold shadow-sm">
+<span class="material-symbols-outlined text-xl" data-icon="hub">hub</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface truncate">Thai Ops Cockpit</span>
+<span class="text-body-sm font-body-sm text-secondary truncate">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Navigation Links (7 Core Tabs from Shared Components JSON) -->
+<nav class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="support_agent">support_agent</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="campaign">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="analytics">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE ITEM) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container dark:bg-surface-container-high text-primary dark:text-inverse-primary font-medium border-l-[3px] border-primary dark:border-inverse-primary cursor-pointer active:scale-[0.99] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="sync_alt">sync_alt</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer (System telemetry) -->
+<div class="px-3 py-3 border-t border-[#e1e7f0] flex flex-col gap-2">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-sm font-label-sm">Webhook Engine</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-[#e8f5ed] text-[#157347]">v2.4 Online</span>
+</div>
+<p class="text-[11px] text-outline truncate">Latency: 124ms · 99.98% SLA</p>
+</div>
+</div>
+</aside>
+<!-- Main View Area (Offset by 256px sidebar) -->
+<div class="pl-64 flex-1 flex flex-col min-w-0">
+<!-- Shared Component: TopNavBar -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm">
+<div class="flex justify-between items-center h-16 px-6 w-full">
+<!-- Breadcrumb & Route Label -->
+<div class="flex items-center gap-2">
+<span class="text-secondary hover:text-on-surface text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary dark:text-inverse-primary font-medium text-label-md font-label-md flex items-center gap-1.5">
+<span data-i18n-key="การเชื่อมต่อ">การเชื่อมต่อ</span>
+</span>
+</div>
+<!-- Trailing Actions & User Tools -->
+<div class="flex items-center gap-3">
+<!-- Trailing Secondary: Sample Data Badge -->
+<span class="inline-flex items-center px-2.5 py-1 rounded-md text-label-sm font-label-sm bg-surface-container text-[#52627a] border border-[#e1e7f0]" data-i18n-key="ข้อมูลตัวอย่าง">
+            ข้อมูลตัวอย่าง
+          </span>
+<!-- Trailing Primary Action: Language Switcher Toggle -->
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-surface-container-lowest hover:bg-surface-container-low transition-colors duration-150 text-label-md font-label-md text-[#17243b] flex items-center gap-1.5 cursor-pointer active:scale-95" id="lang-toggle-btn">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="translate">translate</span>
+<span id="lang-label">ไทย / EN</span>
+</button>
+<!-- Trailing Icon Actions -->
+<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-secondary transition-colors duration-150 cursor-pointer active:scale-95" title="Notifications">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-secondary transition-colors duration-150 cursor-pointer active:scale-95" title="Help">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+<!-- Divider -->
+<div class="h-6 w-[1px] bg-[#e1e7f0] mx-1"></div>
+<!-- Profile Badge -->
+<div class="flex items-center gap-2 pl-1 cursor-pointer">
+<img class="w-8 h-8 rounded-full object-cover border border-[#e1e7f0]" data-alt="Corporate back-office administrator profile portrait in sharp navy suit, soft diffused studio light, clean bright background, professional gaze." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAP_lRl2omdvPqh4BZStuuKgSQgDLync7iYlYAqEzkTRHX2yOojoOKzM9eosCEROt-C3eze_PzcVNHZoBJFvC-6mv5A1NeOVhii3w5PiUcB3mfBn6keZCOoJdO6yJWVXrtLioYhGQdZA-C-l9x5AoCw_k6Jk6iEk9ug9VBO7YFcslfCvYstMa9JNiFSgfN37eMNULpvz4_qzZiXoSDOTJEybhSIa0ddTuiyKcHmAGfpTYSX8xXx_UDWsYGdKvPGzGkzUMViVK_3VHs"/>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-label-sm font-label-sm text-[#17243b] leading-tight">Admin Josh</span>
+<span class="text-[11px] text-secondary leading-tight">Ops Engineer</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Container (Bounded ~1240px) -->
+<main class="flex-1 p-6 md:p-8 max-w-[1240px] w-full mx-auto space-y-6">
+<!-- Header Section: Title, Subtitle & Action Bar -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-[#17243b] tracking-tight" data-i18n-key="การเชื่อมต่อ">การเชื่อมต่อ</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">Active Webhooks</span>
+</div>
+<p class="text-body-md font-body-md text-[#52627a] mt-1" data-i18n-key="ดูระบบที่เชื่อมต่อและคัดลอก URL สำหรับรับ Webhook">
+            ดูระบบที่เชื่อมต่อและคัดลอก URL สำหรับรับ Webhook
+          </p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Refresh Button -->
+<button class="h-10 px-4 rounded-lg bg-surface-container-lowest border border-[#e1e7f0] hover:bg-[#f1f5f9] text-[#17243b] font-label-md text-label-md flex items-center gap-2 cursor-pointer transition-all active:scale-95 shadow-sm" id="refresh-btn">
+<span class="material-symbols-outlined text-[18px] text-[#52627a] transition-transform duration-300" data-icon="refresh" id="refresh-icon">refresh</span>
+<span data-i18n-key="รีเฟรช">รีเฟรช</span>
+</button>
+<!-- Primary Add Integration Button -->
+<button class="h-10 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-[#2947d1] font-label-md text-label-md font-medium flex items-center gap-2 cursor-pointer transition-all active:scale-95 shadow-sm" id="open-modal-btn">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+<span data-i18n-key="เพิ่มการเชื่อมต่อ">เพิ่มการเชื่อมต่อ</span>
+</button>
+</div>
+</section>
+<!-- Summary / Stats Cards Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-5">
+<!-- Card 1: การเชื่อมต่อทั้งหมด -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex items-start justify-between">
+<div>
+<span class="text-secondary text-label-sm font-label-sm" data-i18n-key="การเชื่อมต่อทั้งหมด">การเชื่อมต่อทั้งหมด</span>
+<div class="text-headline-lg font-headline-lg text-[#17243b] mt-2 tracking-tight" id="stat-total-count">3</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">ปลายทางระบบที่ลงทะเบียน</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="dns">dns</span>
+</div>
+</div>
+<!-- Card 2: สถานะพร้อมใช้งาน -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex items-start justify-between">
+<div>
+<span class="text-secondary text-label-sm font-label-sm">สถานะพร้อมใช้งาน</span>
+<div class="text-headline-lg font-headline-lg text-[#157347] mt-2 tracking-tight">2 <span class="text-body-sm font-body-sm text-secondary font-normal">/ 3</span></div>
+<p class="text-body-sm font-body-sm text-[#b08900] mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="sync_problem">sync_problem</span>
+              1 กำลังลองใหม่
+            </p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-[#e8f5ed] flex items-center justify-center text-[#157347]">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<!-- Card 3: Webhook ขาเข้า -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] flex items-start justify-between">
+<div>
+<span class="text-secondary text-label-sm font-label-sm">Webhook ขาเข้า (24ชม.)</span>
+<div class="text-headline-lg font-headline-lg text-[#17243b] mt-2 tracking-tight font-code-sm">18,429</div>
+<p class="text-body-sm font-body-sm text-[#157347] mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+              +12.4% จากเมื่อวาน
+            </p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="webhook">webhook</span>
+</div>
+</div>
+</section>
+<!-- Main Integration Management Card -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-[0_1px_3px_0_rgba(23,36,59,0.04)] overflow-hidden">
+<!-- Card Header & Filter Bar -->
+<div class="p-5 border-b border-[#e1e7f0] flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]" data-i18n-key="การเชื่อมต่อทั้งหมด">การเชื่อมต่อทั้งหมด</h2>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-surface-container text-[#52627a]" id="badge-count">3 รายการ</span>
+</div>
+<!-- Quick Search & Actions -->
+<div class="flex items-center gap-2">
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-[#8c9bb0]" data-icon="search">search</span>
+<input class="w-full h-10 pl-9 pr-8 text-body-sm bg-surface-container-lowest border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[#17243b] placeholder-[#8c9bb0]" id="filter-input" placeholder="ค้นหาการเชื่อมต่อ..." type="text"/>
+<span class="absolute right-2.5 top-2.5 text-[11px] font-code-sm text-outline bg-surface-container-low px-1.5 py-0.5 rounded border border-[#e1e7f0]">⌘K</span>
+</div>
+</div>
+</div>
+<!-- Table View -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="integrations-table">
+<thead>
+<tr class="h-11 bg-[#f8fafc] border-b border-[#e1e7f0] text-secondary text-label-sm font-label-sm">
+<th class="px-5 font-semibold text-[#52627a]" data-i18n-key="ชื่อ">ชื่อ</th>
+<th class="px-5 font-semibold text-[#52627a]" data-i18n-key="ประเภท">ประเภท</th>
+<th class="px-5 font-semibold text-[#52627a]" data-i18n-key="สถานะ">สถานะ</th>
+<th class="px-5 font-semibold text-[#52627a]" data-i18n-key="ยืนยันลายเซ็น">ยืนยันลายเซ็น</th>
+<th class="px-5 font-semibold text-[#52627a]" data-i18n-key="Webhook URL">Webhook URL</th>
+<th class="px-5 font-semibold text-[#52627a] text-right">การกระทำ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-sm font-body-sm" id="integrations-list">
+<!-- Item 1: Lazada Store Connect -->
+<tr class="h-[56px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-5 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold text-xs">
+                      LZ
+                    </div>
+<div>
+<div class="font-medium text-[#17243b]">Lazada Marketplace API</div>
+<div class="text-[12px] text-secondary">ID: conn_lz_98241</div>
+</div>
+</div>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-code-sm bg-surface-container text-primary font-medium">lazada</span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    พร้อมใช้งาน
+                  </span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 text-[12px] text-[#157347] font-medium" data-i18n-key="ตั้งค่าแล้ว">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock">lock</span>
+                    ตั้งค่าแล้ว
+                  </span>
+</td>
+<td class="px-5 py-3">
+<div class="flex items-center gap-2 max-w-xs">
+<span class="font-code-sm text-[12px] text-[#52627a] truncate bg-[#f1f3ff] px-2 py-1 rounded border border-[#e1e7f0]">https://api.cockpit.th/wh/v1/lazada-primary</span>
+<button class="copy-url-btn p-1.5 text-secondary hover:text-primary hover:bg-surface-container rounded transition-colors" data-url="https://api.cockpit.th/wh/v1/lazada-primary" title="คัดลอก URL สำหรับรับ Webhook">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-5 py-3 text-right">
+<button class="p-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Item 2: Shopee Thai Store -->
+<tr class="h-[56px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-5 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#ffede6] flex items-center justify-center text-[#bc4600] font-bold text-xs">
+                      SH
+                    </div>
+<div>
+<div class="font-medium text-[#17243b]">Shopee Central Store</div>
+<div class="text-[12px] text-secondary">ID: conn_sh_11094</div>
+</div>
+</div>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-code-sm bg-surface-container text-primary font-medium">shopee</span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    พร้อมใช้งาน
+                  </span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 text-[12px] text-[#157347] font-medium" data-i18n-key="ตั้งค่าแล้ว">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock">lock</span>
+                    ตั้งค่าแล้ว
+                  </span>
+</td>
+<td class="px-5 py-3">
+<div class="flex items-center gap-2 max-w-xs">
+<span class="font-code-sm text-[12px] text-[#52627a] truncate bg-[#f1f3ff] px-2 py-1 rounded border border-[#e1e7f0]">https://api.cockpit.th/wh/v1/shopee-sync</span>
+<button class="copy-url-btn p-1.5 text-secondary hover:text-primary hover:bg-surface-container rounded transition-colors" data-url="https://api.cockpit.th/wh/v1/shopee-sync" title="คัดลอก URL สำหรับรับ Webhook">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-5 py-3 text-right">
+<button class="p-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Item 3: ERP Connector (Demonstrating warning/retry status and no secret) -->
+<tr class="h-[56px] hover:bg-[#f8fafc] transition-colors">
+<td class="px-5 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#fef9e7] flex items-center justify-center text-[#b08900] font-bold text-xs">
+                      ERP
+                    </div>
+<div>
+<div class="font-medium text-[#17243b]">SAP Business One ERP</div>
+<div class="text-[12px] text-secondary">ID: conn_erp_00312</div>
+</div>
+</div>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-code-sm bg-surface-container text-primary font-medium">sap_b1</span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-[#fef9e7] text-[#b08900]" data-i18n-key="หลุด — กำลังลองใหม่เอง">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900] animate-pulse"></span>
+                    หลุด — กำลังลองใหม่เอง
+                  </span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 text-[12px] text-[#52627a]" data-i18n-key="ไม่ได้ตั้งค่า">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="lock_open">lock_open</span>
+                    ไม่ได้ตั้งค่า
+                  </span>
+</td>
+<td class="px-5 py-3">
+<div class="flex items-center gap-2 max-w-xs">
+<span class="font-code-sm text-[12px] text-[#52627a] truncate bg-[#f1f3ff] px-2 py-1 rounded border border-[#e1e7f0]">https://api.cockpit.th/wh/v1/erp-inventory</span>
+<button class="copy-url-btn p-1.5 text-secondary hover:text-primary hover:bg-surface-container rounded transition-colors" data-url="https://api.cockpit.th/wh/v1/erp-inventory" title="คัดลอก URL สำหรับรับ Webhook">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-5 py-3 text-right">
+<button class="p-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty State Container (Hidden by default, ready for toggle) -->
+<div class="hidden p-12 text-center flex-col items-center justify-center" id="empty-state-view">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-primary mb-3">
+<span class="material-symbols-outlined text-3xl" data-icon="link_off">link_off</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]">ยังไม่มีข้อมูล</h3>
+<p class="text-body-md font-body-md text-secondary mt-1 max-w-md" data-i18n-key="ยังไม่มีการเชื่อมต่อ เริ่มต้นด้วยปุ่ม “เพิ่มการเชื่อมต่อ”">
+            ยังไม่มีการเชื่อมต่อ เริ่มต้นด้วยปุ่ม “เพิ่มการเชื่อมต่อ”
+          </p>
+<button class="mt-4 px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md" onclick="document.getElementById('open-modal-btn').click()">
+            เพิ่มการเชื่อมต่อ
+          </button>
+</div>
+<!-- Table Footer Pagination/Status -->
+<div class="px-5 py-3 border-t border-[#e1e7f0] bg-[#f8fafc] flex items-center justify-between text-body-sm font-body-sm text-secondary">
+<div>แสดง 1 ถึง 3 จากทั้งหมด 3 รายการ</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-surface-container-lowest text-outline disabled:opacity-50" disabled="">ก่อนหน้า</button>
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-primary-container text-on-primary font-medium">1</button>
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-surface-container-lowest hover:bg-surface-container-low">ถัดไป</button>
+</div>
+</div>
+</section>
+<!-- Contextual Documentation / Hint Bar -->
+<section class="p-4 rounded-xl border border-[#e1e7f0] bg-surface-container-lowest flex items-start gap-3">
+<span class="material-symbols-outlined text-[#365cf5] mt-0.5" data-icon="info">info</span>
+<div class="text-body-sm font-body-sm text-secondary">
+<span class="font-medium text-[#17243b]">คำแนะนำความปลอดภัย Webhook:</span>
+          ระบบรองรับการยืนยันตัวตนผ่าน Signing Secret (HMAC-SHA256) ทุกครั้งที่มีสัญญาณส่งเข้ามา แนะนำให้กำหนด Secret ในระบบภายนอกเพื่อป้องกันการปลอมแปลงคำสั่งซื้อ
+        </div>
+</section>
+</main>
+</div>
+<!-- Modal Dialog: "เพิ่มการเชื่อมต่อ" (Add Integration Modal) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#17243b]/40 backdrop-blur-[2px] opacity-0 pointer-events-none transition-opacity duration-200" id="add-modal">
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl w-full max-w-xl shadow-[0_20px_25px_-5px_rgba(23,36,59,0.1),0_10px_10px_-5px_rgba(23,36,59,0.04)] transform transition-transform duration-200 scale-95 overflow-hidden" id="modal-box">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]" data-i18n-key="ข้อมูลระบบที่เชื่อมต่อ">ข้อมูลระบบที่เชื่อมต่อ</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5" data-i18n-key="ตั้งชื่อให้ทีมงานจำได้ และระบุประเภทตัวเชื่อมต่อที่ระบบรองรับ">
+            ตั้งชื่อให้ทีมงานจำได้ และระบุประเภทตัวเชื่อมต่อที่ระบบรองรับ
+          </p>
+</div>
+<button class="p-1 rounded-lg text-secondary hover:text-[#17243b] hover:bg-surface-container-low transition-colors" id="close-modal-btn">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Modal Body (Form Fields) -->
+<form class="p-6 space-y-4" id="add-integration-form">
+<!-- Field 1: ชื่อการเชื่อมต่อ -->
+<div>
+<label class="block text-label-md font-label-md text-[#17243b] mb-1.5" data-i18n-key="ชื่อการเชื่อมต่อ" for="conn-name">
+            ชื่อการเชื่อมต่อ <span class="text-error">*</span>
+</label>
+<input class="w-full h-10 px-3 text-body-md font-body-md bg-surface-container-lowest border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder-[#8c9bb0] text-[#17243b]" id="conn-name" placeholder="เช่น ระบบร้านค้า" required="" type="text"/>
+</div>
+<!-- Field 2: ประเภทตัวเชื่อมต่อ -->
+<div>
+<label class="block text-label-md font-label-md text-[#17243b] mb-1.5" data-i18n-key="ประเภทตัวเชื่อมต่อ" for="conn-type">
+            ประเภทตัวเชื่อมต่อ <span class="text-error">*</span>
+</label>
+<input class="w-full h-10 px-3 text-body-md font-body-md bg-surface-container-lowest border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder-[#8c9bb0] text-[#17243b]" id="conn-type" placeholder="example" required="" type="text"/>
+<p class="text-body-sm font-body-sm text-secondary mt-1" data-i18n-key="ใช้รหัสประเภทที่ระบบรองรับ เช่น example">
+            ใช้รหัสประเภทที่ระบบรองรับ เช่น example
+          </p>
+</div>
+<!-- Field 3: Webhook slug -->
+<div>
+<label class="block text-label-md font-label-md text-[#17243b] mb-1.5" data-i18n-key="Webhook slug" for="conn-slug">
+            Webhook slug
+          </label>
+<div class="flex items-center">
+<span class="h-10 px-3 flex items-center bg-[#f8fafc] border border-r-0 border-[#e1e7f0] rounded-l-lg text-[12px] font-code-sm text-secondary">/wh/v1/</span>
+<input class="w-full h-10 px-3 text-body-md font-body-md bg-surface-container-lowest border border-[#e1e7f0] rounded-r-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder-[#8c9bb0] text-[#17243b]" id="conn-slug" placeholder="auto from type" type="text"/>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1" data-i18n-key="ไม่บังคับ ระบบกำหนดจากประเภทเมื่อเว้นว่าง">
+            ไม่บังคับ ระบบกำหนดจากประเภทเมื่อเว้นว่าง
+          </p>
+</div>
+<!-- Field 4: Signing secret -->
+<div>
+<label class="block text-label-md font-label-md text-[#17243b] mb-1.5" data-i18n-key="Signing secret" for="conn-secret">
+            Signing secret
+          </label>
+<div class="relative">
+<input class="w-full h-10 pl-3 pr-10 text-body-md font-body-md bg-surface-container-lowest border border-[#e1e7f0] rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder-[#8c9bb0] text-[#17243b]" id="conn-secret" placeholder="for webhook HMAC" type="password"/>
+<button class="absolute right-2 top-2.5 text-secondary hover:text-on-surface" id="toggle-secret-visibility" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1" data-i18n-key="ไม่บังคับ ใช้ตรวจสอบลายเซ็น HMAC ของ Webhook">
+            ไม่บังคับ ใช้ตรวจสอบลายเซ็น HMAC ของ Webhook
+          </p>
+</div>
+<!-- Modal Footer Actions -->
+<div class="pt-4 border-t border-[#e1e7f0] flex items-center justify-end gap-3">
+<button class="h-10 px-4 rounded-lg border border-[#e1e7f0] bg-surface-container-lowest hover:bg-[#f1f5f9] text-[#17243b] font-label-md text-label-md cursor-pointer transition-colors" id="cancel-modal-btn" type="button">
+            ยกเลิก
+          </button>
+<button class="h-10 px-5 rounded-lg bg-primary-container text-on-primary hover:bg-[#2947d1] font-label-md text-label-md font-medium cursor-pointer shadow-sm transition-all active:scale-95" data-i18n-key="เพิ่มการเชื่อมต่อ" type="submit">
+            เพิ่มการเชื่อมต่อ
+          </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Copy Toast -->
+<div class="fixed bottom-5 right-6 z-50 transform transition-all duration-300 translate-y-12 opacity-0 pointer-events-none flex items-center gap-2 bg-[#17243b] text-white px-3.5 py-2 rounded-lg text-body-sm shadow-lg" id="toast-copy">
+<span class="material-symbols-outlined text-[16px] text-[#157347]" data-icon="content_copy">content_copy</span>
+<span>คัดลอก Webhook URL เรียบร้อยแล้ว</span>
+</div>
+<!-- Mandatory UI Translation Object Requirement (Invisible JSON element) -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "รีเฟรช": { "th": "รีเฟรช", "en": "Refresh" },
+    "สถานะ": { "th": "สถานะ", "en": "Status" },
+    "การเชื่อมต่อ": { "th": "การเชื่อมต่อ", "en": "Integrations" },
+    "ดูระบบที่เชื่อมต่อและคัดลอก URL สำหรับรับ Webhook": {
+      "th": "ดูระบบที่เชื่อมต่อและคัดลอก URL สำหรับรับ Webhook",
+      "en": "View connected systems and copy incoming Webhook URLs"
+    },
+    "เพิ่มการเชื่อมต่อ": { "th": "เพิ่มการเชื่อมต่อ", "en": "Add Integration" },
+    "เพิ่มการเชื่อมต่อเรียบร้อยแล้ว": {
+      "th": "เพิ่มการเชื่อมต่อเรียบร้อยแล้ว",
+      "en": "Integration added successfully"
+    },
+    "ข้อมูลระบบที่เชื่อมต่อ": { "th": "ข้อมูลระบบที่เชื่อมต่อ", "en": "Integration Details" },
+    "ตั้งชื่อให้ทีมงานจำได้ และระบุประเภทตัวเชื่อมต่อที่ระบบรองรับ": {
+      "th": "ตั้งชื่อให้ทีมงานจำได้ และระบุประเภทตัวเชื่อมต่อที่ระบบรองรับ",
+      "en": "Give it a memorable team name and specify supported integration type"
+    },
+    "ชื่อการเชื่อมต่อ": { "th": "ชื่อการเชื่อมต่อ", "en": "Integration Name" },
+    "เช่น ระบบร้านค้า": { "th": "เช่น ระบบร้านค้า", "en": "e.g. Store System" },
+    "ประเภทตัวเชื่อมต่อ": { "th": "ประเภทตัวเชื่อมต่อ", "en": "Connector Type" },
+    "ใช้รหัสประเภทที่ระบบรองรับ เช่น example": {
+      "th": "ใช้รหัสประเภทที่ระบบรองรับ เช่น example",
+      "en": "Use supported connector code, e.g. example"
+    },
+    "example": { "th": "example", "en": "example" },
+    "Webhook slug": { "th": "Webhook slug", "en": "Webhook slug" },
+    "ไม่บังคับ ระบบกำหนดจากประเภทเมื่อเว้นว่าง": {
+      "th": "ไม่บังคับ ระบบกำหนดจากประเภทเมื่อเว้นว่าง",
+      "en": "Optional. Automatically generated from type if left blank"
+    },
+    "auto from type": { "th": "auto from type", "en": "auto from type" },
+    "Signing secret": { "th": "Signing secret", "en": "Signing secret" },
+    "ไม่บังคับ ใช้ตรวจสอบลายเซ็น HMAC ของ Webhook": {
+      "th": "ไม่บังคับ ใช้ตรวจสอบลายเซ็น HMAC ของ Webhook",
+      "en": "Optional. Used for verifying Webhook HMAC signatures"
+    },
+    "for webhook HMAC": { "th": "for webhook HMAC", "en": "for webhook HMAC" },
+    "การเชื่อมต่อทั้งหมด": { "th": "การเชื่อมต่อทั้งหมด", "en": "All Integrations" },
+    "ยังไม่มีการเชื่อมต่อ เริ่มต้นด้วยปุ่ม “เพิ่มการเชื่อมต่อ”": {
+      "th": "ยังไม่มีการเชื่อมต่อ เริ่มต้นด้วยปุ่ม “เพิ่มการเชื่อมต่อ”",
+      "en": "No integrations yet. Get started by clicking “Add Integration”"
+    },
+    "ชื่อ": { "th": "ชื่อ", "en": "Name" },
+    "ประเภท": { "th": "ประเภท", "en": "Type" },
+    "ยืนยันลายเซ็น": { "th": "ยืนยันลายเซ็น", "en": "Signature Verified" },
+    "Webhook URL": { "th": "Webhook URL", "en": "Webhook URL" },
+    "ไม่ได้ตั้งค่า": { "th": "ไม่ได้ตั้งค่า", "en": "Not configured" },
+    "ตั้งค่าแล้ว": { "th": "ตั้งค่าแล้ว", "en": "Configured" },
+    "เก็บสูงสุด": { "th": "เก็บสูงสุด", "en": "Maximum retention" },
+    "ค้นหาเครดิตคืน": { "th": "ค้นหาเครดิตคืน", "en": "Search refund credits" },
+    "จะนำ “": { "th": "จะนำ “", "en": "Will apply “" },
+    "ชื่อร้าน / บริษัท": { "th": "ชื่อร้าน / บริษัท", "en": "Shop / Company Name" },
+    "ตรวจ template ข้อความ": { "th": "ตรวจ template ข้อความ", "en": "Verify message template" },
+    "โทรสาขา": { "th": "โทรสาขา", "en": "Call branch" },
+    "ปิดการเก็บเบื้องหลัง": { "th": "ปิดการเก็บเบื้องหลัง", "en": "Disable background collection" },
+    "เพิ่มเว็บใหม่": { "th": "เพิ่มเว็บใหม่", "en": "Add new website" },
+    "ไม่มีรูปถ่าย": { "th": "ไม่มีรูปถ่าย", "en": "No photo available" },
+    "ยังไม่มีหลักฐานการส่ง": { "th": "ยังไม่มีหลักฐานการส่ง", "en": "No proof of delivery yet" },
+    "ราคาที่เก่ากว่ารอบเก็บของเว็บนั้น (เก็บทุกวัน = 48 ชม.) หรือดึงครั้งล่าสุดไม่สำเร็จ จะพักการเทียบจนกว่าจะอัปเดตสำเร็จ · ใช้ราคาฐานแค็ตตาล็อก ไม่มีราคาสัญญารายลูกค้า": {
+      "th": "ราคาที่เก่ากว่ารอบเก็บของเว็บนั้น (เก็บทุกวัน = 48 ชม.) หรือดึงครั้งล่าสุดไม่สำเร็จ จะพักการเทียบจนกว่าจะอัปเดตสำเร็จ · ใช้ราคาฐานแค็ตตาล็อก ไม่มีราคาสัญญารายลูกค้า",
+      "en": "Prices older than the site retention cycle or with failed sync will pause comparison until updated · Uses base catalog prices without customer contract rates"
+    },
+    "ลบองค์ประกอบนี้": { "th": "ลบองค์ประกอบนี้", "en": "Delete this element" },
+    "วันที่สมัครอยู่ในช่วงที่กำหนด": {
+      "th": "วันที่สมัครอยู่ในช่วงที่กำหนด",
+      "en": "Registration date is within designated range"
+    },
+    "ส่วนลดของคูปองนี้กำหนดในส่วน \"ประเภทและส่วนลด\" ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ": {
+      "th": "ส่วนลดของคูปองนี้กำหนดในส่วน \"ประเภทและส่วนลด\" ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ",
+      "en": "This coupon's discount is configured in \"Type & Discount\" below like standard coupons — top section configures automatic eligibility only"
+    },
+    "หลุด — กำลังลองใหม่เอง": { "th": "หลุด — กำลังลองใหม่เอง", "en": "Disconnected — Auto-retrying" },
+    "สรุปข้อมูลจาก ERP": { "th": "สรุปข้อมูลจาก ERP", "en": "Summary from ERP" },
+    "ข้อมูลตัวอย่าง": { "th": "ข้อมูลตัวอย่าง", "en": "Sample Data" },
+    "ยกเลิก": { "th": "ยกเลิก", "en": "Cancel" }
+  }
+  </script>
+<!-- Interactive Logic: Bilingual Toggle, Modals, Clipboard, Add Item Simulation -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Load translations dictionary
+      const translationsScript = document.getElementById("commerce-ui-translations");
+      const translations = JSON.parse(translationsScript.textContent || "{}");
+      let currentLang = "th";
+
+      // Toggle Language function
+      const langToggleBtn = document.getElementById("lang-toggle-btn");
+      const langLabel = document.getElementById("lang-label");
+
+      function updateLanguage(targetLang) {
+        currentLang = targetLang;
+        langLabel.textContent = currentLang === "th" ? "ไทย / EN" : "EN / ไทย";
+
+        // Update elements with data-i18n-key
+        document.querySelectorAll("[data-i18n-key]").forEach(el => {
+          const key = el.getAttribute("data-i18n-key");
+          if (translations[key] && translations[key][currentLang]) {
+            el.textContent = translations[key][currentLang];
+          }
+        });
+
+        // Placeholders
+        const nameInput = document.getElementById("conn-name");
+        if (nameInput) {
+          nameInput.placeholder = currentLang === "th" ? "เช่น ระบบร้านค้า" : "e.g. Store System";
+        }
+      }
+
+      langToggleBtn.addEventListener("click", () => {
+        updateLanguage(currentLang === "th" ? "en" : "th");
+      });
+
+      // Modal open/close controls
+      const openModalBtn = document.getElementById("open-modal-btn");
+      const closeModalBtn = document.getElementById("close-modal-btn");
+      const cancelModalBtn = document.getElementById("cancel-modal-btn");
+      const addModal = document.getElementById("add-modal");
+      const modalBox = document.getElementById("modal-box");
+      const form = document.getElementById("add-integration-form");
+
+      function openModal() {
+        addModal.classList.remove("opacity-0", "pointer-events-none");
+        modalBox.classList.remove("scale-95");
+        modalBox.classList.add("scale-100");
+      }
+
+      function closeModal() {
+        modalBox.classList.remove("scale-100");
+        modalBox.classList.add("scale-95");
+        addModal.classList.add("opacity-0", "pointer-events-none");
+        form.reset();
+      }
+
+      openModalBtn.addEventListener("click", openModal);
+      closeModalBtn.addEventListener("click", closeModal);
+      cancelModalBtn.addEventListener("click", closeModal);
+
+      // Secret visibility toggle
+      const toggleSecretBtn = document.getElementById("toggle-secret-visibility");
+      const secretInput = document.getElementById("conn-secret");
+      toggleSecretBtn.addEventListener("click", () => {
+        const isPassword = secretInput.type === "password";
+        secretInput.type = isPassword ? "text" : "password";
+        toggleSecretBtn.querySelector(".material-symbols-outlined").textContent = isPassword ? "visibility_off" : "visibility";
+      });
+
+      // Copy Webhook URL logic
+      function bindCopyButtons() {
+        document.querySelectorAll(".copy-url-btn").forEach(btn => {
+          btn.onclick = () => {
+            const url = btn.getAttribute("data-url");
+            navigator.clipboard.writeText(url).then(() => {
+              showCopyToast();
+            }).catch(() => {
+              showCopyToast();
+            });
+          };
+        });
+      }
+      bindCopyButtons();
+
+      function showCopyToast() {
+        const toast = document.getElementById("toast-copy");
+        toast.classList.remove("translate-y-12", "opacity-0", "pointer-events-none");
+        toast.classList.add("translate-y-0", "opacity-100");
+        setTimeout(() => {
+          toast.classList.remove("translate-y-0", "opacity-100");
+          toast.classList.add("translate-y-12", "opacity-0", "pointer-events-none");
+        }, 2200);
+      }
+
+      function showSuccessBanner() {
+        const toast = document.getElementById("toast-success");
+        toast.classList.remove("translate-y-[-100px]", "opacity-0", "pointer-events-none");
+        toast.classList.add("translate-y-0", "opacity-100");
+        setTimeout(() => {
+          toast.classList.remove("translate-y-0", "opacity-100");
+          toast.classList.add("translate-y-[-100px]", "opacity-0", "pointer-events-none");
+        }, 3000);
+      }
+
+      // Refresh button micro-animation
+      const refreshBtn = document.getElementById("refresh-btn");
+      const refreshIcon = document.getElementById("refresh-icon");
+      refreshBtn.addEventListener("click", () => {
+        refreshIcon.classList.add("rotate-180");
+        setTimeout(() => refreshIcon.classList.remove("rotate-180"), 400);
+      });
+
+      // Add Integration Form Submission
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("conn-name").value;
+        const type = document.getElementById("conn-type").value;
+        const slug = document.getElementById("conn-slug").value || type.toLowerCase().replace(/[^a-z0-9]/g, "-");
+        const secret = document.getElementById("conn-secret").value;
+
+        // Construct new row
+        const tbody = document.getElementById("integrations-list");
+        const tr = document.createElement("tr");
+        tr.className = "h-[56px] hover:bg-[#f8fafc] transition-colors bg-[#f1f5ff]/30";
+        const hasSecret = Boolean(secret);
+
+        tr.innerHTML = `
+          <td class="px-5 py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold text-xs">
+                ${type.substring(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <div class="font-medium text-[#17243b]">${name}</div>
+                <div class="text-[12px] text-secondary">ID: conn_${Math.random().toString(36).substring(2, 7)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-code-sm bg-surface-container text-primary font-medium">${type}</span>
+          </td>
+          <td class="px-5 py-3">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+              พร้อมใช้งาน
+            </span>
+          </td>
+          <td class="px-5 py-3">
+            <span class="inline-flex items-center gap-1 text-[12px] ${hasSecret ? "text-[#157347] font-medium" : "text-[#52627a]"}">
+              <span class="material-symbols-outlined text-[16px] ${hasSecret ? "text-[#157347]" : "text-outline"}" data-icon="${hasSecret ? 'lock' : 'lock_open'}">${hasSecret ? 'lock' : 'lock_open'}</span>
+              ${hasSecret ? 'ตั้งค่าแล้ว' : 'ไม่ได้ตั้งค่า'}
+            </span>
+          </td>
+          <td class="px-5 py-3">
+            <div class="flex items-center gap-2 max-w-xs">
+              <span class="font-code-sm text-[12px] text-[#52627a] truncate bg-[#f1f3ff] px-2 py-1 rounded border border-[#e1e7f0]">https://api.cockpit.th/wh/v1/${slug}</span>
+              <button class="copy-url-btn p-1.5 text-secondary hover:text-primary hover:bg-surface-container rounded transition-colors" data-url="https://api.cockpit.th/wh/v1/${slug}" title="คัดลอก URL สำหรับรับ Webhook">
+                <span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+              </button>
+            </div>
+          </td>
+          <td class="px-5 py-3 text-right">
+            <button class="p-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+              <span class="material-symbols-outlined text-[18px]" data-icon="more_vert">more_vert</span>
+            </button>
+          </td>
+        `;
+
+        tbody.prepend(tr);
+
+        // Update stats
+        const currentCount = tbody.querySelectorAll("tr").length;
+        document.getElementById("stat-total-count").textContent = currentCount;
+        document.getElementById("badge-count").textContent = `${currentCount} รายการ`;
+
+        closeModal();
+        showSuccessBanner();
+        bindCopyButtons();
+      });
+
+      // Filter input search interaction
+      const filterInput = document.getElementById("filter-input");
+      filterInput.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll("#integrations-list tr");
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          const match = text.includes(query);
+          row.style.display = match ? "" : "none";
+          if (match) visibleCount++;
+        });
+
+        const emptyState = document.getElementById("empty-state-view");
+        const table = document.getElementById("integrations-table");
+        if (visibleCount === 0) {
+          emptyState.classList.remove("hidden");
+          emptyState.classList.add("flex");
+          table.classList.add("hidden");
+        } else {
+          emptyState.classList.add("hidden");
+          emptyState.classList.remove("flex");
+          table.classList.remove("hidden");
+        }
+      });
+    });
+  </script>
+</body></html>

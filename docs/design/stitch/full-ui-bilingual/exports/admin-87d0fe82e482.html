@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ภาพรวมระบบเชื่อมต่อ - Thai Ops Cockpit</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter,+Noto+Sans,+sans-serif:wght@100..900&family=Noto+Sans,+Inter,+sans-serif:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-secondary-fixed": "#0b1c31",
+            "background": "#f9f9ff",
+            "on-surface": "#0e1b32",
+            "on-primary-fixed-variant": "#0034c0",
+            "surface-variant": "#d7e2ff",
+            "tertiary": "#943500",
+            "primary": "#0a3fdc",
+            "outline": "#747687",
+            "tertiary-fixed-dim": "#ffb597",
+            "inverse-surface": "#243048",
+            "on-error-container": "#93000a",
+            "on-background": "#0e1b32",
+            "tertiary-container": "#bc4600",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary-fixed": "#360f00",
+            "primary-container": "#365cf5",
+            "surface": "#f9f9ff",
+            "on-primary-fixed": "#001257",
+            "on-secondary-container": "#54647c",
+            "surface-bright": "#f9f9ff",
+            "surface-container": "#e8eeff",
+            "secondary-container": "#d0e1fd",
+            "on-primary-container": "#ededff",
+            "surface-container-low": "#f1f3ff",
+            "secondary": "#4f5f77",
+            "on-secondary-fixed-variant": "#38485e",
+            "outline-variant": "#c4c5d8",
+            "surface-tint": "#214ce7",
+            "surface-container-high": "#e0e8ff",
+            "on-secondary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-primary": "#ffffff",
+            "error-container": "#ffdad6",
+            "error": "#ba1a1a",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-container": "#ffebe4",
+            "inverse-primary": "#b9c3ff",
+            "surface-dim": "#cddaf9",
+            "primary-fixed": "#dde1ff",
+            "on-surface-variant": "#444655",
+            "on-error": "#ffffff",
+            "primary-fixed-dim": "#b9c3ff",
+            "secondary-fixed": "#d3e3ff",
+            "surface-container-highest": "#d7e2ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "gutter": "1.5rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "1rem",
+            "margin": "2rem",
+            "space-2xl": "2.5rem",
+            "space-lg": "1.5rem",
+            "gutter-mobile": "1rem",
+            "space-md": "1rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "body-sm": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-lg-mobile": ["\"Noto Sans, Inter, sans-serif\""],
+            "code-sm": ["\"JetBrains Mono, monospace\""],
+            "body-lg": ["\"Noto Sans, Inter, sans-serif\""],
+            "label-sm": ["\"Inter, Noto Sans, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans, sans-serif\""],
+            "body-md": ["\"Noto Sans, Inter, sans-serif\""],
+            "headline-sm": ["\"Noto Sans, Inter, sans-serif\""]
+          },
+          "fontSize": {
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex selection:bg-surface-variant">
+<!-- ================= SIDEBAR NAVIGATION (SHARED COMPONENT) ================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-none flex flex-col justify-between p-3 select-none">
+<div class="flex flex-col gap-4">
+<!-- Cockpit Header & Logo -->
+<div class="flex items-center gap-3 px-3 py-2.5">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm shadow-sm">
+<span class="material-symbols-outlined text-white" data-icon="hub">hub</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface tracking-tight leading-none">Thai Ops Cockpit</h1>
+<span class="text-body-sm font-body-sm text-secondary mt-1">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Navigation Tabs Cluster -->
+<nav class="flex flex-col gap-1 mt-2">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#inventory">
+<span class="material-symbols-outlined text-secondary" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-md font-label-md" data-i18n="สินค้าและสต็อก">สินค้าและสต็อก</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#orders">
+<span class="material-symbols-outlined text-secondary" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-md font-label-md" data-i18n="ออเดอร์และการเงิน">ออเดอร์และการเงิน</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#support">
+<span class="material-symbols-outlined text-secondary" data-icon="support_agent">support_agent</span>
+<span class="text-label-md font-label-md" data-i18n="ลูกค้าและบริการ">ลูกค้าและบริการ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#marketing">
+<span class="material-symbols-outlined text-secondary" data-icon="campaign">campaign</span>
+<span class="text-label-md font-label-md" data-i18n="การตลาด">การตลาด</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#reports">
+<span class="material-symbols-outlined text-secondary" data-icon="analytics">analytics</span>
+<span class="text-label-md font-label-md" data-i18n="รายงานและข้อมูล">รายงานและข้อมูล</span>
+</a>
+<!-- ACTIVE TAB: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container dark:bg-surface-container-high text-primary dark:text-inverse-primary font-medium border-l-[3px] border-primary dark:border-inverse-primary transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="/workspaces/connections">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary" data-icon="sync_alt">sync_alt</span>
+<span class="text-label-md font-label-md" data-i18n="ระบบเชื่อมต่อ">ระบบเชื่อมต่อ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#settings">
+<span class="material-symbols-outlined text-secondary" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md" data-i18n="ตั้งค่าและทีมงาน">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom Profile / Quick Status -->
+<div class="pt-3 border-t border-outline-variant flex flex-col gap-2">
+<div class="px-3 py-2 rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-code-sm font-code-sm text-secondary" data-i18n="Webhook Gateway: OK">Webhook Gateway: OK</span>
+</div>
+<span class="text-code-sm font-code-sm text-on-surface-variant font-medium">99.8%</span>
+</div>
+</div>
+</aside>
+<!-- ================= MAIN VIEWPORT CONTENT ================= -->
+<div class="ml-64 flex-1 flex flex-col min-w-0">
+<!-- TOP NAVIGATION BAR (SHARED COMPONENT) -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-6">
+<!-- Left: Breadcrumb / Route Anchor -->
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="sync_alt">sync_alt</span>
+<div class="flex items-center gap-2 text-body-sm font-body-sm">
+<span class="text-secondary dark:text-secondary-fixed-dim" data-i18n="ระบบเชื่อมต่อ">ระบบเชื่อมต่อ</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary dark:text-inverse-primary font-medium" data-i18n="ภาพรวมระบบเชื่อมต่อ">ภาพรวมระบบเชื่อมต่อ</span>
+</div>
+<span class="px-2 py-0.5 rounded text-code-sm font-code-sm bg-surface-container text-secondary font-mono border border-outline-variant/60">admin-87d0fe82e482</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#eef2ff] text-[#314bb5] border border-surface-variant" data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</div>
+<!-- Right: Interactive Controls & Action Hub -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher Button -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors duration-150 text-label-md font-label-md cursor-pointer active:scale-95" id="lang-toggle-btn" title="Switch Language">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="translate">translate</span>
+<span class="font-medium text-primary" id="lang-current-label">ไทย / EN</span>
+</button>
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors duration-150 relative cursor-pointer" title="Notifications">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors duration-150 cursor-pointer" title="Help & Documentation">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-1"></div>
+<!-- Admin Profile Pill -->
+<div class="flex items-center gap-2 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-primary/20 flex items-center justify-center text-primary font-bold text-label-sm">
+            JO
+          </div>
+<div class="hidden lg:flex flex-col leading-none">
+<span class="text-label-md font-label-md text-on-surface font-medium">Josh (Admin)</span>
+<span class="text-code-sm font-code-sm text-secondary">DevOps & Ingest</span>
+</div>
+</div>
+</div>
+</header>
+<!-- STAGE / WORKSPACE MAIN BODY -->
+<main class="p-8 max-w-[1240px] w-full mx-auto flex flex-col gap-6">
+<!-- 1. HUB INTRO & PRIMARY ACTIONS -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-6 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden">
+<div class="flex items-start gap-4 z-10">
+<div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]" data-icon="account_tree">account_tree</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 flex-wrap">
+<h1 class="text-headline-lg font-headline-lg text-on-surface" data-i18n="ภาพรวมระบบเชื่อมต่อ">ภาพรวมระบบเชื่อมต่อ</h1>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347] font-semibold border border-emerald-200">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-[#157347] mr-1"></span>
+<span data-i18n="ระบบทำงานปกติ">ระบบทำงานปกติ</span>
+</span>
+</div>
+<p class="text-body-md font-body-md text-secondary" data-i18n="เลือกทางลัดด้านล่าง หรือค้นหาหน้าที่ต้องการในหมวดนี้">เลือกทางลัดด้านล่าง หรือค้นหาหน้าที่ต้องการในหมวดนี้</p>
+</div>
+</div>
+<!-- Action cluster -->
+<div class="flex items-center gap-3 z-10 shrink-0">
+<button class="h-10 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-label-md font-label-md flex items-center gap-2 cursor-pointer transition-colors active:scale-95 shadow-sm" id="refresh-action-btn">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="refresh" id="refresh-icon">refresh</span>
+<span data-i18n="รีเฟรช">รีเฟรช</span>
+</button>
+<button class="h-10 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-colors text-label-md font-label-md flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_link">add_link</span>
+<span data-i18n="สร้างการเชื่อมต่อใหม่">สร้างการเชื่อมต่อใหม่</span>
+</button>
+</div>
+</div>
+<!-- 2. QUICK TASK SEARCH & FILTER -->
+<div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+<div class="relative flex-1 max-w-xl">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary text-[20px]" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-24 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md font-body-md placeholder:text-secondary/70 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" data-i18n-placeholder="ค้นหาหน้าที่ต้องการ…" id="task-search-input" placeholder="ค้นหาหน้าที่ต้องการ…" type="text"/>
+<div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-code-sm font-code-sm text-secondary bg-surface-container-low px-1.5 py-0.5 rounded border border-outline-variant/60">
+<span>⌘</span><span>K</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-body-sm font-body-sm text-secondary">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="filter_list">filter_list</span>
+<span data-i18n="ค้นหาในหมวด">ค้นหาในหมวด</span>: <span class="font-medium text-on-surface" data-i18n="ระบบเชื่อมต่อ">ระบบเชื่อมต่อ</span>
+</div>
+</div>
+<!-- 3. OPERATIONAL KPI OVERVIEW CARDS (BENTO STYLE) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary" data-i18n="สรุปสถานะการเชื่อมต่อ">สรุปสถานะการเชื่อมต่อ</span>
+<span class="w-8 h-8 rounded-lg bg-emerald-50 text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="text-headline-lg font-headline-lg text-on-surface leading-tight">5 <span class="text-body-md font-body-md text-secondary font-normal" data-i18n="ระบบพร้อมใช้งาน">ระบบพร้อมใช้งาน</span></div>
+<div class="flex items-center gap-1.5 mt-2 text-body-sm font-body-sm text-[#157347]">
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_upward">arrow_upward</span>
+<span data-i18n="ทำงานเสถียร 99.98%">ทำงานเสถียร 99.98%</span>
+</div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary" data-i18n="ข้อมูลขาเข้า (24 ชม.)">ข้อมูลขาเข้า (24 ชม.)</span>
+<span class="w-8 h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="input">input</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="text-headline-lg font-headline-lg text-on-surface leading-tight">1,482 <span class="text-body-md font-body-md text-secondary font-normal" data-i18n="รายการ">รายการ</span></div>
+<div class="flex items-center justify-between mt-2 text-body-sm font-body-sm">
+<span class="text-secondary" data-i18n="จำนวนออเดอร์สะสม">จำนวนออเดอร์สะสม</span>
+<span class="font-code-sm font-code-sm text-primary font-semibold">98.2% Success</span>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary" data-i18n="งานซิงก์รันล่าสุด (Active)">งานซิงก์รันล่าสุด (Active)</span>
+<span class="w-8 h-8 rounded-lg bg-amber-50 text-[#b08900] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="schedule">schedule</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="text-headline-lg font-headline-lg text-on-surface leading-tight">2 <span class="text-body-md font-body-md text-secondary font-normal" data-i18n="กำลังทำงาน">กำลังทำงาน</span></div>
+<div class="flex items-center gap-1.5 mt-2 text-body-sm font-body-sm text-[#b08900]">
+<span class="material-symbols-outlined text-[16px] animate-spin" data-icon="sync">sync</span>
+<span data-i18n="Shopee & TikTok Syncing">Shopee & TikTok Syncing</span>
+</div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-secondary" data-i18n="รายการค้างส่ง/ไม่สำเร็จ (DLQ)">รายการค้างส่ง/ไม่สำเร็จ (DLQ)</span>
+<span class="w-8 h-8 rounded-lg bg-red-50 text-[#c2333f] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="error_outline">error_outline</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="text-headline-lg font-headline-lg text-[#c2333f] leading-tight">14 <span class="text-body-md font-body-md text-secondary font-normal" data-i18n="รายการ">รายการ</span></div>
+<div class="flex items-center gap-1 mt-2 text-body-sm font-body-sm text-[#c2333f] font-medium">
+<span class="material-symbols-outlined text-[16px]" data-icon="priority_high">priority_high</span>
+<span data-i18n="ต้องแก้ไขด่วน (DLQ Stalled)">ต้องแก้ไขด่วน (DLQ Stalled)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. SHORTCUTS & FREQUENTLY USED (ทางลัดในหมวด / ใช้งานบ่อย) -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="bookmarks">bookmarks</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="ทางลัดในหมวด">ทางลัดในหมวด</h2>
+<span class="text-body-sm font-body-sm text-secondary">/</span>
+<span class="text-body-sm font-body-sm text-secondary font-medium" data-i18n="ใช้งานบ่อย">ใช้งานบ่อย</span>
+</div>
+<span class="text-code-sm font-code-sm text-secondary bg-surface-container-low px-2 py-0.5 rounded border border-outline-variant/50" data-i18n="เริ่มรอบใหม่">เริ่มรอบใหม่</span>
+</div>
+<!-- Task Shortcut Cards Grid (Interactive Search target elements) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="shortcuts-grid">
+<!-- Card 1 -->
+<div class="search-target-card bg-surface-container-lowest border border-outline-variant/70 hover:border-primary-container/80 rounded-xl p-5 transition-all duration-150 hover:shadow-md group flex flex-col justify-between" data-search-keys="การเชื่อมต่อ Active Webhooks Platforms endpoints">
+<div>
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]" data-icon="cable">cable</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]" data-i18n="ออนไลน์ 5 แพลตฟอร์ม">ออนไลน์ 5 แพลตฟอร์ม</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors" data-i18n="การเชื่อมต่อ">การเชื่อมต่อ</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="จัดการ Webhooks, Shopee, Lazada, TikTok และจุดเชื่อมต่อระบบ ERP">จัดการ Webhooks, Shopee, Lazada, TikTok และจุดเชื่อมต่อระบบ ERP</p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50 flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-code-sm font-code-sm text-secondary font-mono">/endpoints</span>
+<span class="text-primary font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+<span data-i18n="เข้าสู่เมนู">เข้าสู่เมนู</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="search-target-card bg-surface-container-lowest border border-outline-variant/70 hover:border-primary-container/80 rounded-xl p-5 transition-all duration-150 hover:shadow-md group flex flex-col justify-between" data-search-keys="บันทึกข้อมูลขาเข้า Inbound Ingest Log ขาเข้า API Payload">
+<div>
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]" data-icon="history_edu">history_edu</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#eef2ff] text-[#314bb5] font-code-sm">1,482 Logs</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors" data-i18n="บันทึกข้อมูลขาเข้า">บันทึกข้อมูลขาเข้า</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="ตรวจสอบบันทึก Payload ขาเข้าจากทุกช่องทางพร้อมการแกะโครงสร้าง JSON">ตรวจสอบบันทึก Payload ขาเข้าจากทุกช่องทางพร้อมการแกะโครงสร้าง JSON</p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50 flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-code-sm font-code-sm text-secondary font-mono">/inbound</span>
+<span class="text-primary font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+<span data-i18n="เข้าสู่เมนู">เข้าสู่เมนู</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="search-target-card bg-surface-container-lowest border border-outline-variant/70 hover:border-primary-container/80 rounded-xl p-5 transition-all duration-150 hover:shadow-md group flex flex-col justify-between" data-search-keys="งานซิงก์ข้อมูล Sync Jobs Schedulers อัตโนมัติ Stock Cron">
+<div>
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]" data-icon="update">update</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fef9e7] text-[#b08900]" data-i18n="รันทุก 5 นาที">รันทุก 5 นาที</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors" data-i18n="งานซิงก์ข้อมูล">งานซิงก์ข้อมูล</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="ตั้งเวลาอัปเดตสต็อกอัตโนมัติ คำนวณยอดคงเหลือ และดึงสถานะพัสดุ">ตั้งเวลาอัปเดตสต็อกอัตโนมัติ คำนวณยอดคงเหลือ และดึงสถานะพัสดุ</p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50 flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-code-sm font-code-sm text-secondary font-mono">/sync-jobs</span>
+<span class="text-primary font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+<span data-i18n="เข้าสู่เมนู">เข้าสู่เมนู</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="search-target-card bg-surface-container-lowest border border-outline-variant/70 hover:border-primary-container/80 rounded-xl p-5 transition-all duration-150 hover:shadow-md group flex flex-col justify-between" data-search-keys="การส่งเหตุการณ์ขาออก Outgoing Webhook Deliveries แจ้งเตือน fulfillment">
+<div>
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]" data-icon="send">send</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347]" data-i18n="อัตราสำเร็จ 99.4%">อัตราสำเร็จ 99.4%</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors" data-i18n="การส่งเหตุการณ์ขาออก">การส่งเหตุการณ์ขาออก</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="ยิง Webhook แจ้งเตือนคำสั่งซื้อใหม่และอัปเดตสถานะจัดส่งไปยังคลัง WMS">ยิง Webhook แจ้งเตือนคำสั่งซื้อใหม่และอัปเดตสถานะจัดส่งไปยังคลัง WMS</p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50 flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-code-sm font-code-sm text-secondary font-mono">/outgoing</span>
+<span class="text-primary font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+<span data-i18n="เข้าสู่เมนู">เข้าสู่เมนู</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="search-target-card bg-surface-container-lowest border border-outline-variant/70 hover:border-error/80 rounded-xl p-5 transition-all duration-150 hover:shadow-md group flex flex-col justify-between" data-search-keys="รายการส่งไม่สำเร็จ Dead Letter Queue Retries DLQ ข้อผิดพลาด">
+<div>
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-[#c2333f] group-hover:bg-error group-hover:text-on-error transition-colors">
+<span class="material-symbols-outlined text-[22px]" data-icon="report_problem">report_problem</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fdf2f2] text-[#c2333f] font-semibold border border-red-200">14 รายการติดค้าง</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-1 group-hover:text-error transition-colors" data-i18n="รายการส่งไม่สำเร็จ">รายการส่งไม่สำเร็จ</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="คิว DLQ สำหรับดักจับคำขอที่ปลายทางล้มเหลว รองรับการสั่ง Replay แบบกลุ่ม">คิว DLQ สำหรับดักจับคำขอที่ปลายทางล้มเหลว รองรับการสั่ง Replay แบบกลุ่ม</p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50 flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-code-sm font-code-sm text-secondary font-mono">/dead-letter</span>
+<span class="text-[#c2333f] font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+<span data-i18n="ตรวจสอบด่วน">ตรวจสอบด่วน</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="search-target-card bg-surface-container-lowest border border-outline-variant/70 hover:border-primary-container/80 rounded-xl p-5 transition-all duration-150 hover:shadow-md group flex flex-col justify-between" data-search-keys="การเชื่อมต่อ AI MCP AI Connectors โมเดลภาษา คัดแยก">
+<div>
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]" data-icon="smart_toy">smart_toy</span>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-purple-50 text-purple-700 border border-purple-200">MCP Protocol</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors" data-i18n="การเชื่อมต่อ AI">การเชื่อมต่อ AI</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="เชื่อมโยงเครื่องมือ AI กับบริบทคำสั่งซื้อและสลิปชำระเงินอัตโนมัติ">เชื่อมโยงเครื่องมือ AI กับบริบทคำสั่งซื้อและสลิปชำระเงินอัตโนมัติ</p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50 flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-code-sm font-code-sm text-secondary font-mono">/ai</span>
+<span class="text-primary font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+<span data-i18n="เข้าสู่เมนู">เข้าสู่เมนู</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Empty Search State Component -->
+<div class="hidden bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-10 text-center flex-col items-center justify-center" id="search-empty-state">
+<span class="material-symbols-outlined text-[48px] text-secondary/60 mb-2" data-icon="search_off">search_off</span>
+<h4 class="text-headline-sm font-headline-sm text-on-surface mb-1" data-i18n="ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น">ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น</h4>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="ค้นหาหมวดหมู่ทุกชั้น...">ค้นหาหมวดหมู่ทุกชั้น...</p>
+</div>
+</section>
+<!-- 5. INGESTION PARAMETERS & AUXILIARY OPERATIONAL CONTROLS -->
+<section class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-6 shadow-sm flex flex-col gap-5">
+<div class="flex items-center justify-between border-b border-outline-variant/50 pb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="tune">tune</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="การตั้งค่าการประมวลผลข้อมูลเชื่อมต่อ">การตั้งค่าการประมวลผลข้อมูลเชื่อมต่อ</h3>
+</div>
+<span class="text-body-sm font-body-sm text-secondary">
+<span data-i18n="ใช้รายการเดิม (บันทึกเมื่อ">ใช้รายการเดิม (บันทึกเมื่อ</span> 14:20 น.)
+          </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-body-sm font-body-sm">
+<!-- Parameter 1 -->
+<div class="flex flex-col gap-2">
+<label class="font-medium text-on-surface flex items-center justify-between">
+<span data-i18n="ประเภทขั้นตอน (Step Type) *">ประเภทขั้นตอน (Step Type) *</span>
+<span class="text-code-sm text-secondary">JSON Path</span>
+</label>
+<select class="h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-body-md font-body-md focus:border-primary-container focus:ring-0">
+<option value="1">Direct Webhook Ingest (Realtime)</option>
+<option value="2">Batch Buffered Queue (Queue-First)</option>
+<option value="3">Scheduled Polling Worker</option>
+</select>
+<span class="text-code-sm text-secondary" data-i18n="อย่างน้อย 10 ตัวอักษร">อย่างน้อย 10 ตัวอักษร</span>
+</div>
+<!-- Parameter 2 -->
+<div class="flex flex-col gap-2">
+<label class="font-medium text-on-surface flex items-center justify-between">
+<span data-i18n="ไฟล์">ไฟล์</span> / Payload Buffer
+              <span class="text-secondary font-code-sm" data-i18n="ยอด / คงเหลือ:">ยอด / คงเหลือ:</span>
+</label>
+<div class="h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-low/50 flex items-center justify-between text-body-md text-on-surface">
+<span class="truncate" data-i18n="ว่าง = จากชื่อไฟล์">ว่าง = จากชื่อไฟล์</span>
+<span class="text-code-sm font-code-sm text-secondary">500 MB</span>
+</div>
+<span class="text-code-sm text-secondary truncate">
+<span data-i18n="รองรับไฟล์ตามประเภทที่กำหนด (สูงสุด">รองรับไฟล์ตามประเภทที่กำหนด (สูงสุด</span> 50MB/ไฟล์)
+            </span>
+</div>
+<!-- Parameter 3 -->
+<div class="flex flex-col gap-2">
+<label class="font-medium text-on-surface flex items-center justify-between">
+<span>Header Notification Color</span>
+<span class="text-code-sm text-secondary" data-i18n="สีพื้นหลังอีเมล">สีพื้นหลังอีเมล</span>
+</label>
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 rounded-lg border border-outline-variant bg-[#365cf5] shrink-0"></div>
+<input class="h-10 px-3 rounded-lg border border-outline-variant w-full font-code-sm text-on-surface text-body-md" readonly="" type="text" value="#365cf5"/>
+</div>
+<div class="flex items-center justify-between text-code-sm text-secondary">
+<span>Retry Delay: <strong class="text-on-surface font-code-sm">Wait ({0})</strong></span>
+<span class="text-error font-medium" data-i18n="force-processing ไม่สำเร็จ">force-processing ไม่สำเร็จ</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. RECENT ACTIVITY / SYSTEM AUDIT TABLE -->
+<section class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="px-6 py-4 border-b border-outline-variant/50 flex items-center justify-between flex-wrap gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="receipt_long">receipt_long</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface" data-i18n="งานทั้งหมดในหมวดนี้">งานทั้งหมดในหมวดนี้</h3>
+<span class="text-body-sm font-body-sm text-secondary">| ประวัติการทำงานล่าสุด</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-body-sm font-body-sm text-secondary" data-i18n="จาก">จาก</span>:
+            <span class="text-label-sm font-label-sm text-on-surface font-medium">Gateway 01</span>
+<span class="text-body-sm font-body-sm text-secondary" data-i18n="ถึง:">ถึง:</span>
+<span class="text-label-sm font-label-sm text-on-surface font-medium">PostgreSQL Master</span>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-11 bg-surface-container-low/60 border-b border-outline-variant/70 text-secondary text-label-sm font-label-sm">
+<th class="px-6 font-semibold" data-i18n="เมนู">เมนู</th>
+<th class="px-4 font-semibold">METHOD</th>
+<th class="px-4 font-semibold">ENDPOINT / PATH</th>
+<th class="px-4 font-semibold">STATUS</th>
+<th class="px-4 font-semibold">LATENCY</th>
+<th class="px-4 font-semibold">TIMESTAMP</th>
+<th class="px-6 text-right font-semibold">ACTION</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/50 text-body-sm font-body-sm">
+<!-- Row 1 -->
+<tr class="h-13 hover:bg-surface-container-low/40 transition-colors">
+<td class="px-6 font-medium text-on-surface flex items-center gap-2 py-3.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>Shopee Order Hook</span>
+</td>
+<td class="px-4 font-code-sm">
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#e8f5ed] text-[#157347]">POST</span>
+</td>
+<td class="px-4 font-code-sm text-on-surface font-mono">/v2/orders/inbound/shopee</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347] font-medium" data-i18n="สำเร็จ">
+                    สำเร็จ (200 OK)
+                  </span>
+</td>
+<td class="px-4 font-code-sm text-secondary font-mono">118ms</td>
+<td class="px-4 font-code-sm text-secondary font-mono">14:24:02</td>
+<td class="px-6 text-right">
+<button class="text-primary hover:underline text-body-sm font-medium" data-i18n="ดู Payload">ดู Payload</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="h-13 hover:bg-surface-container-low/40 transition-colors">
+<td class="px-6 font-medium text-on-surface flex items-center gap-2 py-3.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>TikTok Inventory Sync</span>
+</td>
+<td class="px-4 font-code-sm">
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#fef9e7] text-[#997404]">PUT</span>
+</td>
+<td class="px-4 font-code-sm text-on-surface font-mono">/v1/products/stocks/batch</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#e8f5ed] text-[#157347] font-medium" data-i18n="สำเร็จ">
+                    สำเร็จ (200 OK)
+                  </span>
+</td>
+<td class="px-4 font-code-sm text-secondary font-mono">245ms</td>
+<td class="px-4 font-code-sm text-secondary font-mono">14:23:45</td>
+<td class="px-6 text-right">
+<button class="text-primary hover:underline text-body-sm font-medium" data-i18n="ดู Payload">ดู Payload</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="h-13 hover:bg-surface-container-low/40 transition-colors bg-red-50/20">
+<td class="px-6 font-medium text-on-surface flex items-center gap-2 py-3.5">
+<span class="w-2 h-2 rounded-full bg-[#c2333f]"></span>
+<span>Flash Express Tracking</span>
+</td>
+<td class="px-4 font-code-sm">
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#eef2ff] text-[#314bb5]">GET</span>
+</td>
+<td class="px-4 font-code-sm text-on-surface font-mono">/gateway/express/flash/sync</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fdf2f2] text-[#c2333f] font-medium" data-i18n="ข้อผิดพลาด 504 Gateway Timeout">
+                    ข้อผิดพลาด (504 Timeout)
+                  </span>
+</td>
+<td class="px-4 font-code-sm text-[#c2333f] font-mono font-bold">1,820ms</td>
+<td class="px-4 font-code-sm text-secondary font-mono">14:22:18</td>
+<td class="px-6 text-right">
+<button class="text-[#c2333f] hover:underline text-body-sm font-medium" data-i18n="Replay ทันที">Replay ทันที</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="h-13 hover:bg-surface-container-low/40 transition-colors">
+<td class="px-6 font-medium text-on-surface flex items-center gap-2 py-3.5">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+<span>AI Slip OCR Parsing</span>
+</td>
+<td class="px-4 font-code-sm">
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#e8f5ed] text-[#157347]">POST</span>
+</td>
+<td class="px-4 font-code-sm text-on-surface font-mono">/ai/mcp/slip-verification</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fef9e7] text-[#b08900] font-medium" data-i18n="รอดำเนินการ">
+                    รอดำเนินการ (Processing)
+                  </span>
+</td>
+<td class="px-4 font-code-sm text-secondary font-mono">680ms</td>
+<td class="px-4 font-code-sm text-secondary font-mono">14:21:05</td>
+<td class="px-6 text-right">
+<button class="text-primary hover:underline text-body-sm font-medium" data-i18n="ตรวจสอบ">ตรวจสอบ</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination Minimal -->
+<div class="px-6 py-3 border-t border-outline-variant/50 bg-surface-container-low/30 flex items-center justify-between text-body-sm font-body-sm text-secondary">
+<span data-i18n="แสดง 4 จาก 1,482 รายการล่าสุด">แสดง 4 จาก 1,482 รายการล่าสุด</span>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 rounded border border-outline-variant/60 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low text-code-sm" data-i18n="หน้าก่อน">หน้าก่อน</button>
+<button class="px-2.5 py-1 rounded border border-outline-variant/60 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low text-code-sm" data-i18n="ถัดไป">ถัดไป</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- ================= INVISIBLE COMMERCE UI TRANSLATIONS DICTIONARY ================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "เมนู": { "th": "เมนู", "en": "Menu" },
+    "จาก": { "th": "จาก", "en": "From" },
+    "เริ่มจากงานที่ต้องทำ": { "th": "เริ่มจากงานที่ต้องทำ", "en": "Start from tasks to do" },
+    "เลือกทางลัดด้านล่าง หรือค้นหาหน้าที่ต้องการในหมวดนี้": { "th": "เลือกทางลัดด้านล่าง หรือค้นหาหน้าที่ต้องการในหมวดนี้", "en": "Select a shortcut below or search for the page in this category" },
+    "ทางลัดในหมวด": { "th": "ทางลัดในหมวด", "en": "Category Shortcuts" },
+    "ใช้งานบ่อย": { "th": "ใช้งานบ่อย", "en": "Frequently Used" },
+    "งานทั้งหมดในหมวดนี้": { "th": "งานทั้งหมดในหมวดนี้", "en": "All Tasks in this category" },
+    "ค้นหาในหมวด": { "th": "ค้นหาในหมวด", "en": "Search category" },
+    "ค้นหาหน้าที่ต้องการ…": { "th": "ค้นหาหน้าที่ต้องการ…", "en": "Search required page..." },
+    "ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น": { "th": "ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น", "en": "Menu not found, try another keyword" },
+    "ค้นหาหมวดหมู่ทุกชั้น...": { "th": "ค้นหาหมวดหมู่ทุกชั้น...", "en": "Search all nested categories..." },
+    "จำนวนออเดอร์สะสม": { "th": "จำนวนออเดอร์สะสม", "en": "Cumulative Orders" },
+    "ใช้รายการเดิม (บันทึกเมื่อ": { "th": "ใช้รายการเดิม (บันทึกเมื่อ", "en": "Use existing entry (saved at" },
+    "ถึง:": { "th": "ถึง:", "en": "To:" },
+    "ประเภทขั้นตอน (Step Type) *": { "th": "ประเภทขั้นตอน (Step Type) *", "en": "Step Type *" },
+    "ไฟล์": { "th": "ไฟล์", "en": "Files" },
+    "ยอด / คงเหลือ:": { "th": "ยอด / คงเหลือ:", "en": "Total / Remaining:" },
+    "รองรับไฟล์ตามประเภทที่กำหนด (สูงสุด": { "th": "รองรับไฟล์ตามประเภทที่กำหนด (สูงสุด", "en": "Supported file types (max" },
+    "เริ่มรอบใหม่": { "th": "เริ่มรอบใหม่", "en": "Start New Cycle" },
+    "ว่าง = จากชื่อไฟล์": { "th": "ว่าง = จากชื่อไฟล์", "en": "Empty = From file name" },
+    "สีพื้นหลังอีเมล": { "th": "สีพื้นหลังอีเมล", "en": "Email Background Color" },
+    "อย่างน้อย 10 ตัวอักษร": { "th": "อย่างน้อย 10 ตัวอักษร", "en": "At least 10 characters" },
+    "Wait ({0})": { "th": "Wait ({0})", "en": "Wait ({0})" },
+    "force-processing ไม่สำเร็จ": { "th": "force-processing ไม่สำเร็จ", "en": "force-processing failed" },
+    "ภาพรวมระบบเชื่อมต่อ": { "th": "ภาพรวมระบบเชื่อมต่อ", "en": "Connections Workspace Overview" },
+    "ระบบเชื่อมต่อ": { "th": "ระบบเชื่อมต่อ", "en": "Connections & Integrations" },
+    "สินค้าและสต็อก": { "th": "สินค้าและสต็อก", "en": "Products & Stock" },
+    "ออเดอร์และการเงิน": { "th": "ออเดอร์และการเงิน", "en": "Orders & Finance" },
+    "ลูกค้าและบริการ": { "th": "ลูกค้าและบริการ", "en": "Customers & Support" },
+    "การตลาด": { "th": "การตลาด", "en": "Marketing" },
+    "รายงานและข้อมูล": { "th": "รายงานและข้อมูล", "en": "Reports & Analytics" },
+    "ตั้งค่าและทีมงาน": { "th": "ตั้งค่าและทีมงาน", "en": "Settings & Team" },
+    "ข้อมูลตัวอย่าง": { "th": "ข้อมูลตัวอย่าง", "en": "Sample Data" },
+    "รีเฟรช": { "th": "รีเฟรช", "en": "Refresh" },
+    "สร้างการเชื่อมต่อใหม่": { "th": "สร้างการเชื่อมต่อใหม่", "en": "New Connection" },
+    "สรุปสถานะการเชื่อมต่อ": { "th": "สรุปสถานะการเชื่อมต่อ", "en": "Connection Status" },
+    "การเชื่อมต่อ": { "th": "การเชื่อมต่อ", "en": "Active Connections" },
+    "บันทึกข้อมูลขาเข้า": { "th": "บันทึกข้อมูลขาเข้า", "en": "Inbound Ingest Logs" },
+    "งานซิงก์ข้อมูล": { "th": "งานซิงก์ข้อมูล", "en": "Data Sync Jobs" },
+    "การส่งเหตุการณ์ขาออก": { "th": "การส่งเหตุการณ์ขาออก", "en": "Outgoing Deliveries" },
+    "รายการส่งไม่สำเร็จ": { "th": "รายการส่งไม่สำเร็จ", "en": "Dead Letter Queue" },
+    "การเชื่อมต่อ AI": { "th": "การเชื่อมต่อ AI", "en": "AI Connectors" },
+    "ระบบทำงานปกติ": { "th": "ระบบทำงานปกติ", "en": "All Systems Normal" },
+    "เข้าสู่เมนู": { "th": "เข้าสู่เมนู", "en": "Open Module" },
+    "ตรวจสอบด่วน": { "th": "ตรวจสอบด่วน", "en": "Review Now" }
+  }
+  </script>
+<!-- ================= CLIENT LOGIC (SEARCH & BILINGUAL TOGGLE) ================= -->
+<script>
+    (function () {
+      let currentLang = 'th';
+      const dictionary = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+      // Language Switcher Function
+      const langBtn = document.getElementById('lang-toggle-btn');
+      const langLabel = document.getElementById('lang-current-label');
+
+      langBtn.addEventListener('click', () => {
+        currentLang = currentLang === 'th' ? 'en' : 'th';
+        document.documentElement.lang = currentLang;
+        langLabel.textContent = currentLang === 'th' ? 'ไทย / EN' : 'EN / ไทย';
+        applyLanguage(currentLang);
+      });
+
+      function applyLanguage(lang) {
+        // Elements with data-i18n attribute
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const key = el.getAttribute('data-i18n');
+          if (dictionary[key] && dictionary[key][lang]) {
+            el.textContent = dictionary[key][lang];
+          }
+        });
+
+        // Elements with placeholder translations
+        document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+          const key = el.getAttribute('data-i18n-placeholder');
+          if (dictionary[key] && dictionary[key][lang]) {
+            el.placeholder = dictionary[key][lang];
+          }
+        });
+      }
+
+      // Quick Search Filter Interaction
+      const searchInput = document.getElementById('task-search-input');
+      const cards = document.querySelectorAll('.search-target-card');
+      const emptyState = document.getElementById('search-empty-state');
+      const shortcutsGrid = document.getElementById('shortcuts-grid');
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        let matchCount = 0;
+
+        cards.forEach((card) => {
+          const textContent = card.innerText.toLowerCase();
+          const searchKeys = (card.getAttribute('data-search-keys') || '').toLowerCase();
+          const matches = query === '' || textContent.includes(query) || searchKeys.includes(query);
+
+          if (matches) {
+            card.classList.remove('hidden');
+            card.classList.add('flex');
+            matchCount++;
+          } else {
+            card.classList.remove('flex');
+            card.classList.add('hidden');
+          }
+        });
+
+        if (matchCount === 0) {
+          emptyState.classList.remove('hidden');
+          emptyState.classList.add('flex');
+        } else {
+          emptyState.classList.add('hidden');
+          emptyState.classList.remove('flex');
+        }
+      });
+
+      // Keyboard Shortcut ⌘K / Ctrl+K focus
+      window.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          searchInput.focus();
+        }
+      });
+
+      // Refresh Button Microinteraction
+      const refreshBtn = document.getElementById('refresh-action-btn');
+      const refreshIcon = document.getElementById('refresh-icon');
+      refreshBtn.addEventListener('click', () => {
+        refreshIcon.classList.add('animate-spin');
+        setTimeout(() => {
+          refreshIcon.classList.remove('animate-spin');
+        }, 800);
+      });
+    })();
+  </script>
+</body></html>

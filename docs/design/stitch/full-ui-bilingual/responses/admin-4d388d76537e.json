@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2112",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2JjNDk2YWMwNzRkZjRkZDJhOWZlMWEzMzZlMWU3YzMyEgsSBxD36pCxyw0YAZIBJAoKcHJvamVjdF9pZBIWQhQxODM0ODIxNDUyNjc4OTAzMDE1Mw&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/18348214526789030153/files/2eb3e7bd4ccc43b6bb46f3f2517a1e04"
+            },
+            "id": "3f75d8e0d23c4c1da44ad16911da3728",
+            "name": "projects/18348214526789030153/screens/3f75d8e0d23c4c1da44ad16911da3728",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WVVy535spgnDDcNgXLCrJSekJAekxRSjxh4Ee2ZlDtPIhSMLHVSH-kupdcZYjXuX4hInzioPUtqTQMilU8G3tMxwclmGN3JF98V0Q9SjfHpt9Z5M_11LYL52bFQUvLhrGVcEHrp1lIWnBEZRAqj6eUerJg1lKFxXqOx4q1tGiQUhPyw79pQFs3G46-1i9HD58T2Eva8KTXSLX_w9ZDFQC24fGjpPzMzXYOSc6HLjt2aCzwUOVUdQbDg2w",
+              "name": "projects/18348214526789030153/files/467bfa75a84b4777a75e0d9d11ededf2"
+            },
+            "theme": {},
+            "title": "ตรวจสอบตัวตนลูกค้า (KYC Queue)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **ตรวจสอบตัวตนลูกค้า (KYC Queue)** เรียบร้อยแล้ว (รหัสหน้าจอ `ตรวจสอบตัวตนลูกค้า (KYC Queue)`) \n\n### สรุปรายละเอียดการออกแบบ:\n1. **โครงสร้างและงานออกแบบ (Commerce Platform Design System):**\n   - แถบเมนูด้านซ้ายขนาด 256px แบ่ง 7 สายงานหลัก โดยเน้นที่ส่วน **ลูกค้าและบริการ** และเมนูย่อย **KYC — ยืนยันตัวตน** (`/j/kyc`) พร้อมระบุลิงก์ข้อมูล Developer Portal ที่ส่วนล่าง\n   - แถบหัวกระดาษมีแถบค้นหาเฉพาะหน้าปัจจุบันตามกฎข้อบังคับ, ป้ายกำกับ **ข้อมูลตัวอย่าง (Sample data)**, ปุ่มสลับภาษา **ไทย / English**, และโปรไฟล์เจ้าหน้าที่ CS (จินดา นวลอนันต์)\n   - Layout กว้าง 1240px พื้นหลัง `#f6f8fc` พร้อมการ์ดสรุปตัวเลข KPI (ทั้งหมด, มีรายการรอตรวจสอบ, ยืนยันครบทุกเอกสาร, มีรายการถูกปฏิเสธ) มุมโค้ง 12px และปุ่มควบคุมมาตรฐาน 40px\n\n2. **การทำงานของฟีเจอร์และ Usability:**\n   - แถบแจ้งเตือน Read-only ชัดเจนว่าการอนุมัติ/ปฏิเสธจริงจะทำผ่านระบบ CS-CRM ภายนอก ตารางจึงมีเพียงปุ่ม **\"ดูเอกสาร\"**\n   - ตัวกรองสถานะเอกสาร (ทั้งหมด, มีรายการรอตรวจสอบ, ยืนยันครบทุกเอกสาร, มีรายการถูกปฏิเสธ) และช่องค้นหาที่ทำงานได้จริงในหน้าปัจจุบัน\n   - ไดอะล็อกแสดงไฟล์เอกสารแนบ (Modal Dialog) รองรับการปิดด้วยปุ่ม Escape และคืน Focus ไปยังปุ่มที่กดเปิด\n\n3. **ข้อกำหนดด้านภาษาและ Translation Export:**\n   - รวม Invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่บรรจุคำใน Exact UI copy catalogue ทั้งหมดครบถ้วน พร้อมโครงสร้าง `{ \"th\": \"...\", \"en\": \"...\" }` และคงตัวแปร placeholder `{0}` ตามที่กำหนดอย่างเคร่งครัด"
+    },
+    {
+      "suggestion": "ดูตัวอย่างการแสดงผลแบบ Responsive บนหน้าจอมือถือ"
+    },
+    {
+      "suggestion": "เพิ่มตัวอย่าง Dialog สำหรับเชื่อมต่อไปยังระบบ CS-CRM"
+    },
+    {
+      "suggestion": "ปรับแต่งการแสดงผลรายละเอียดเอกสาร PDF ตัวอย่างเพิ่มเติม"
+    }
+  ],
+  "projectId": "18348214526789030153",
+  "sessionId": "15587081485408382392"
+}

@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import {
   getCreditNote,
   listCreditNotes,
@@ -8,11 +11,13 @@ import { Input, Select, Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS_OPTIONS = [
-  { value: '', label: 'ทุกสถานะ' },
-  { value: 'active', label: 'active' },
-  { value: 'exhausted', label: 'exhausted' },
-  { value: 'cancelled', label: 'cancelled' },
+  { value: '', get label(){return __uiText("ทุกสถานะ");} },
+  { value: 'active', get label(){return __uiText("active");} },
+  { value: 'exhausted', get label(){return __uiText("exhausted");} },
+  { value: 'cancelled', get label(){return __uiText("cancelled");} },
 ] as const;
 
 function money(n: number) {
@@ -20,6 +25,7 @@ function money(n: number) {
 }
 
 export default function CreditNotesAdmin() {
+  __useUiLocale();
   const [rows, setRows] = useState<CreditNoteListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -64,39 +70,39 @@ export default function CreditNotesAdmin() {
       const res = await getCreditNote(cnId, 'admin');
       setDetail(res.data?.data ?? null);
     } catch {
-      alert('โหลดรายละเอียดไม่สำเร็จ');
+      alert(__uiText("โหลดรายละเอียดไม่สำเร็จ"));
     } finally {
       setDetailLoading(false);
     }
   };
 
   const columns: TableColumn<CreditNoteListItem>[] = [
-    { key: 'cnNumber', label: 'CN #' },
+    { key: 'cnNumber', label: __uiText("CN #") },
     {
       key: 'issuedFromOrderNumber',
-      label: 'Order',
+      label: __uiText("Order"),
       render: (v) => (v as string | null) ?? '—',
     },
     {
       key: 'branchName',
-      label: 'สาขา',
+      label: __uiText("สาขา"),
       render: (v) => (v as string | null) ?? '—',
     },
     {
       key: 'totalAmountExVat',
-      label: 'ยอด (ex VAT)',
+      label: __uiText("ยอด (ex VAT)"),
       render: (v) => money(Number(v)),
     },
     {
       key: 'remainingAmountExVat',
-      label: 'คงเหลือ',
+      label: __uiText("คงเหลือ"),
       render: (v) => money(Number(v)),
     },
-    { key: 'cnStatus', label: 'สถานะ' },
+    { key: 'cnStatus', label: __uiText("สถานะ") },
     {
       key: 'createdAt',
-      label: 'สร้างเมื่อ',
-      render: (v) => new Date(String(v)).toLocaleDateString('th-TH'),
+      label: __uiText("สร้างเมื่อ"),
+      render: (v) => new Date(String(v)).toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')),
     },
     {
       key: 'cnId',
@@ -107,8 +113,7 @@ export default function CreditNotesAdmin() {
           className="text-xs text-blue-600 hover:underline"
           onClick={() => void openDetail(String(id))}
         >
-          ดู
-        </button>
+          {__uiText("ดู")}</button>
       ),
     },
   ];
@@ -116,25 +121,25 @@ export default function CreditNotesAdmin() {
   return (
     <div className="p-6">
       <AdminListHeader
-        title="Credit Notes"
-        subtitle="ใบลดหนี้จากเคลม — view=admin"
+        title={__uiText("Credit Notes")}
+        subtitle={__uiText("ใบลดหนี้จากเคลม — view=admin")}
       />
 
       <div className="mb-4 flex flex-wrap items-end gap-3">
         <div className="min-w-[200px] flex-1">
           <Input
-            label="ค้นหาใบลดหนี้"
+            label={__uiText("ค้นหาใบลดหนี้")}
             value={search}
             onChange={(e) => {
               setPage(1);
               setSearch(e.target.value);
             }}
-            placeholder="ค้นหา CN # / order #"
+            placeholder={__uiText("ค้นหา CN # / order #")}
           />
         </div>
         <div className="w-48">
           <Select
-            label="สถานะ"
+            label={__uiText("สถานะ")}
             value={cnStatus}
             onChange={(e) => {
               setPage(1);
@@ -153,8 +158,7 @@ export default function CreditNotesAdmin() {
           className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm hover:bg-gray-50"
           onClick={() => void load()}
         >
-          รีเฟรช
-        </button>
+          {__uiText("รีเฟรช")}</button>
       </div>
 
       <Table
@@ -166,7 +170,7 @@ export default function CreditNotesAdmin() {
         onPageChange={setPage}
       />
       {loading ? (
-        <p className="mt-2 text-sm text-gray-500">กำลังโหลด...</p>
+        <p className="mt-2 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : null}
 
       {(detail || detailLoading) && (
@@ -174,36 +178,35 @@ export default function CreditNotesAdmin() {
           <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-xl">
             <div className="mb-3 flex items-start justify-between gap-3">
               <h2 className="text-lg font-semibold text-gray-800">
-                {detail?.cnNumber ?? 'กำลังโหลด...'}
+                {detail?.cnNumber ?? __uiText("กำลังโหลด...")}
               </h2>
               <button
                 type="button"
                 className="text-sm text-gray-500 hover:text-gray-800"
                 onClick={() => setDetail(null)}
               >
-                ปิด
-              </button>
+                {__uiText("ปิด")}</button>
             </div>
             {detailLoading && !detail ? (
-              <p className="text-sm text-gray-500">กำลังโหลด...</p>
+              <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
             ) : detail ? (
               <div className="space-y-3 text-sm text-gray-700">
                 <p>
-                  Order: {detail.issuedFromOrderNumber ?? detail.issuedFromOrderId}
+                  {__uiText("Order: ")}{detail.issuedFromOrderNumber ?? detail.issuedFromOrderId}
                 </p>
-                <p>สาขา: {detail.branchName ?? '—'}</p>
+                <p>{__uiText("สาขา: ")}{detail.branchName ?? '—'}</p>
                 <p>
-                  ยอด / คงเหลือ: {money(detail.totalAmountExVat)} /{' '}
+                  {__uiText("ยอด / คงเหลือ: ")}{money(detail.totalAmountExVat)} /{' '}
                   {money(detail.remainingAmountExVat)}
                 </p>
-                <p>สถานะ: {detail.cnStatus}</p>
+                <p>{__uiText("สถานะ: ")}{detail.cnStatus}</p>
                 {detail.claimReason ? (
-                  <p>เหตุผลเคลม: {detail.claimReason}</p>
+                  <p>{__uiText("เหตุผลเคลม: ")}{detail.claimReason}</p>
                 ) : null}
                 <div>
-                  <p className="mb-1 font-medium text-gray-800">ประวัติการใช้</p>
+                  <p className="mb-1 font-medium text-gray-800">{__uiText("ประวัติการใช้")}</p>
                   {detail.usages.length === 0 ? (
-                    <p className="text-gray-400">ยังไม่เคยใช้</p>
+                    <p className="text-gray-400">{__uiText("ยังไม่เคยใช้")}</p>
                   ) : (
                     <ul className="divide-y divide-gray-50">
                       {detail.usages.map((u) => (

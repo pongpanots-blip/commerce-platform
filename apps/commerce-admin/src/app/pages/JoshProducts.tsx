@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { FormEvent, Fragment, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -6,6 +7,8 @@ import {
 import { joshActionsApi, joshProductApi, JoshProductDetail, ProductIssueKey } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const ISSUES: [ProductIssueKey, string][] = [
   ['pending_approval', 'รออนุมัติข้อมูลจาก ERP'], ['no_image', 'ไม่มีรูป'], ['no_category', 'ไม่มีหมวด'],
   ['no_price', 'ไม่มีราคาขาย'], ['out_of_stock', 'หมด'], ['low_stock', 'ใกล้หมด'],
@@ -16,6 +19,7 @@ const show = (v: unknown) => (v == null || v === '' ? '—' : typeof v === 'obje
 
 /** josh's product catalog from josh's replica. ERP approval and master-data edits go through josh's own services; images stay in josh admin. */
 export function JoshProducts() {
+  __useUiLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const summary = useAsync(() => joshProductApi.summary(), []);
@@ -34,11 +38,11 @@ export function JoshProducts() {
 
   async function decide(action: 'approve' | 'reject', ids: string[]) {
     const verb = action === 'approve' ? 'อนุมัติ' : 'ไม่อนุมัติ';
-    if (!ids.length || !window.confirm(`${verb}ข้อมูลจาก ERP ของสินค้า ${ids.length} รายการ?\n\n${action === 'approve' ? 'สินค้า draft จะขึ้นขาย และค่าที่ ERP ส่งมาจะใช้ทันที' : 'ค่าที่ ERP ส่งมาจะถูกทิ้ง สินค้าคงค่าเดิม'} (josh ทำในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)`)) return;
+    if (!ids.length || !window.confirm(__uiText("{0}ข้อมูลจาก ERP ของสินค้า {1} รายการ?\n\n{2} (josh ทำในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)", {"0": verb, "1": ids.length, "2": action === 'approve' ? 'สินค้า draft จะขึ้นขาย และค่าที่ ERP ส่งมาจะใช้ทันที' : 'ค่าที่ ERP ส่งมาจะถูกทิ้ง สินค้าคงค่าเดิม'}))) return;
     setBusy(true); setMsg('');
     try {
       const r = action === 'approve' ? await joshActionsApi.approveProducts(ids) : await joshActionsApi.rejectProducts(ids);
-      setMsg(`${verb}แล้ว: ${JSON.stringify(r)}`); setPicked(new Set()); summary.reload(); list.reload();
+      setMsg(__uiMessage("{0}แล้ว: {1}", {"0": verb, "1": JSON.stringify(r)})); setPicked(new Set()); summary.reload(); list.reload();
     } catch (e) { setMsg(e instanceof Error ? e.message : String(e)); }
     finally { setBusy(false); }
   }
@@ -48,20 +52,20 @@ export function JoshProducts() {
   return (
     <Page>
       <PageHeader
-        title="สินค้า (josh)"
-        subtitle="แค็ตตาล็อกหน้าร้าน อ่านจาก replica ของ josh · อนุมัติ / ไม่อนุมัติข้อมูลจาก ERP ทำที่นี่ได้ (josh เป็นคนบันทึก) · แก้ไขอื่นๆ / ใส่รูป ยังทำที่ josh admin"
-        actions={<Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>Refresh</Button>}
+        title={__uiText("สินค้า (josh)")}
+        subtitle={__uiText("แค็ตตาล็อกหน้าร้าน อ่านจาก replica ของ josh · อนุมัติ / ไม่อนุมัติข้อมูลจาก ERP ทำที่นี่ได้ (josh เป็นคนบันทึก) · แก้ไขอื่นๆ / ใส่รูป ยังทำที่ josh admin")}
+        actions={<Button icon="refresh" onClick={() => { summary.reload(); list.reload(); }}>{__uiText("Refresh")}</Button>}
       />
       <div className="border-t border-secondary-container" />
 
       <ErrorText error={summary.error || list.error} />
-      {msg && <div className="px-4 py-2 text-xs text-on-surface-variant bg-surface-container-low">{msg}</div>}
+      {msg && <div className="px-4 py-2 text-xs text-on-surface-variant bg-surface-container-low">{(typeof msg === 'string' ? __uiText(msg) : msg)}</div>}
 
       {s && (
         <div>
           <StatGrid cols={2}>
             <StatTile
-              label="สินค้าทั้งหมด"
+              label={__uiText("สินค้าทั้งหมด")}
               value={fmt.num(s.total)}
               foot={s.byStatus.map((b) => `${STATUS[b.status] ?? b.status} ${b.n}`).join(' · ')}
             />
@@ -83,34 +87,34 @@ export function JoshProducts() {
 
       <Panel className="overflow-hidden">
         <form className="flex flex-wrap items-end gap-3 p-4" onSubmit={(e: FormEvent) => { e.preventDefault(); setPage(1); setF({ ...draft, issue: f.issue }); }}>
-          <Field label="ค้นหา" className="flex-1 min-w-48">
-            <Input value={draft.search} onChange={(e) => setDraft({ ...draft, search: e.target.value })} placeholder="SKU หรือชื่อสินค้า" />
+          <Field label={__uiText("ค้นหา")} className="flex-1 min-w-48">
+            <Input value={draft.search} onChange={(e) => setDraft({ ...draft, search: e.target.value })} placeholder={__uiText("SKU หรือชื่อสินค้า")} />
           </Field>
-          <Field label="สถานะ">
+          <Field label={__uiText("สถานะ")}>
             <Select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value })}>
-              <option value="">ทั้งหมด</option>
+              <option value="">{__uiText("ทั้งหมด")}</option>
               {Object.entries(STATUS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </Select>
           </Field>
-          <Field label="หมวด">
+          <Field label={__uiText("หมวด")}>
             <Select value={draft.categoryId} onChange={(e) => setDraft({ ...draft, categoryId: e.target.value })}>
-              <option value="">ทั้งหมด</option>
+              <option value="">{__uiText("ทั้งหมด")}</option>
               {(categories.data ?? []).map((c) => <option key={c.id} value={c.id}>{c.category_path ?? c.category_name_th}</option>)}
             </Select>
           </Field>
-          <Field label="แบบสั่งจอง (order taking)">
+          <Field label={__uiText("แบบสั่งจอง (order taking)")}>
             <Select value={draft.orderTaking} onChange={(e) => setDraft({ ...draft, orderTaking: e.target.value })}>
-              <option value="">ทั้งหมด</option>
-              <option value="Y">ใช่</option>
-              <option value="N">ไม่ใช่</option>
+              <option value="">{__uiText("ทั้งหมด")}</option>
+              <option value="Y">{__uiText("ใช่")}</option>
+              <option value="N">{__uiText("ไม่ใช่")}</option>
             </Select>
           </Field>
-          <Button type="submit">ค้นหา</Button>
+          <Button type="submit">{__uiText("ค้นหา")}</Button>
         </form>
         {f.issue && (
           <div className="px-4 py-2 text-xs text-on-surface-variant border-t border-secondary-container flex items-center gap-2">
-            <span>กรอง: {ISSUES.find(([k]) => k === f.issue)?.[1]}</span>
-            <Button size="sm" variant="ghost" onClick={() => pickIssue(f.issue)}>ล้าง</Button>
+            <span>{__uiText("กรอง: ")}{ISSUES.find(([k]) => k === f.issue)?.[1]}</span>
+            <Button size="sm" variant="ghost" onClick={() => pickIssue(f.issue)}>{__uiText("ล้าง")}</Button>
           </div>
         )}
       </Panel>
@@ -120,11 +124,11 @@ export function JoshProducts() {
       ) : list.data ? (
         <>
           <div className="flex items-center gap-4 px-4 py-3 text-xs text-on-surface-variant">
-            <span>{fmt.num(list.data.total)} รายการ</span>
+            <span>{fmt.num(list.data.total)} {__uiText(" รายการ")}</span>
             {picked.size > 0 && (
               <>
-                <Button size="sm" disabled={busy} onClick={() => decide('approve', [...picked])}>อนุมัติที่เลือก ({picked.size})</Button>
-                <Button size="sm" variant="ghost" disabled={busy} onClick={() => decide('reject', [...picked])}>ไม่อนุมัติที่เลือก</Button>
+                <Button size="sm" disabled={busy} onClick={() => decide('approve', [...picked])}>{__uiText("อนุมัติที่เลือก (")}{picked.size})</Button>
+                <Button size="sm" variant="ghost" disabled={busy} onClick={() => decide('reject', [...picked])}>{__uiText("ไม่อนุมัติที่เลือก")}</Button>
               </>
             )}
           </div>
@@ -135,12 +139,12 @@ export function JoshProducts() {
                 <THead>
                     <TH></TH>
                     <TH></TH>
-                    <TH>SKU</TH>
-                    <TH>สินค้า</TH>
-                    <TH>หมวด</TH>
-                    <TH>ราคาขาย</TH>
-                    <TH>สต็อก</TH>
-                    <TH>สถานะ</TH>
+                    <TH>{__uiText("SKU")}</TH>
+                    <TH>{__uiText("สินค้า")}</TH>
+                    <TH>{__uiText("หมวด")}</TH>
+                    <TH>{__uiText("ราคาขาย")}</TH>
+                    <TH>{__uiText("สต็อก")}</TH>
+                    <TH>{__uiText("สถานะ")}</TH>
                     <TH />
                   </THead>
                 <TBody>
@@ -151,7 +155,7 @@ export function JoshProducts() {
                           <div onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                             <input
                               type="checkbox"
-                              aria-label={`เลือก ${p.product_inventory_sku}`}
+                              aria-label={__uiText("เลือก {0}", {"0": p.product_inventory_sku})}
                               checked={picked.has(p.product_inventory_id)}
                               onChange={() => togglePick(p.product_inventory_id)}
                             />
@@ -162,7 +166,7 @@ export function JoshProducts() {
                         {p.image_url ? (
                           <img src={p.image_url} alt="" width={40} height={40} className="object-cover rounded bg-surface-container-low" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
                         ) : (
-                          <Chip tone="warn">ไม่มีรูป</Chip>
+                          <Chip tone="warn">{__uiText("ไม่มีรูป")}</Chip>
                         )}
                       </TD>
                       <TD kind="code"><RowLink to={`/reports/products/${p.product_inventory_id}`} state={{ from: '/reports/products', search: `?${searchParams.toString()}` }}>{p.product_inventory_sku}</RowLink></TD>
@@ -170,18 +174,18 @@ export function JoshProducts() {
                         {p.name_th ?? p.name_en ?? '—'}
                         <div className="text-[11px] text-on-surface-variant">{[p.brand_name, p.pack_size, p.selling_unit].filter(Boolean).join(' · ')}</div>
                       </TD>
-                      <TD>{p.category_name_th ?? <Chip tone="warn">ไม่มีหมวด</Chip>}</TD>
+                      <TD>{p.category_name_th ?? <Chip tone="warn">{__uiText("ไม่มีหมวด")}</Chip>}</TD>
                       <TD kind="money">
-                        {p.selling_unit_price ? fmt.baht(p.selling_unit_price) : <Chip tone="danger">ไม่มีราคา</Chip>}
+                        {p.selling_unit_price ? fmt.baht(p.selling_unit_price) : <Chip tone="danger">{__uiText("ไม่มีราคา")}</Chip>}
                       </TD>
                       <TD>
-                        {p.order_taking_flag === 'Y' ? <Chip>สั่งจอง</Chip> : p.product_inventory_quantity ?? '—'}
+                        {p.order_taking_flag === 'Y' ? <Chip>{__uiText("สั่งจอง")}</Chip> : p.product_inventory_quantity ?? '—'}
                       </TD>
                       <TD>
                         <Chip tone={p.product_status === 'active' ? 'ok' : 'muted'}>{STATUS[p.product_status] ?? p.product_status}</Chip>
                         {p.erp_pending_at && (
                           <div className="mt-1">
-                            <Chip tone="warn">ERP รออนุมัติ ({p.erp_pending_source})</Chip>
+                            <Chip tone="warn">{__uiText("ERP รออนุมัติ (")}{p.erp_pending_source})</Chip>
                           </div>
                         )}
                       </TD>
@@ -190,7 +194,7 @@ export function JoshProducts() {
                 </TBody>
               </Table>
             ) : (
-              <Empty>ไม่พบสินค้า</Empty>
+              <Empty>{__uiText("ไม่พบสินค้า")}</Empty>
             )}
           </Panel>
 

@@ -1,3 +1,4 @@
+import { uiText as __uiText } from '@cp/ui';
 import type { CouponDiscountScope, CouponProductSetSnapshot } from '@josh/shared-api';
 import type { CouponSkuMinimumRow } from './coupon-redemption.constants';
 import {
@@ -294,55 +295,55 @@ export function describeRedemptionRules(
   if (minCart > 0) {
     parts.push(
       effectiveMinSpendBasis(form, discountScope) === 'eligible_items'
-        ? `ยอดสินค้าที่เข้าเงื่อนไข (ก่อน VAT) ขั้นต่ำ ${minCart.toLocaleString()} บาท`
-        : `ยอดตะกร้าขั้นต่ำ (ก่อน VAT) ${minCart.toLocaleString()} บาท`,
+        ? __uiText("ยอดสินค้าที่เข้าเงื่อนไข (ก่อน VAT) ขั้นต่ำ {0} บาท",{"0":minCart.toLocaleString()})
+        : __uiText("ยอดตะกร้าขั้นต่ำ (ก่อน VAT) {0} บาท",{"0":minCart.toLocaleString()}),
     );
   }
 
   if (form.skuMinimums.length > 0) {
     parts.push(
-      `เงื่อนไข SKU ขั้นต่ำเดิม ${form.skuMinimums.length} รายการ`,
+      __uiText("เงื่อนไข SKU ขั้นต่ำเดิม {0} รายการ",{"0":form.skuMinimums.length}),
     );
   }
 
   if (form.restrictPaymentMethods && form.allowedPaymentMethods.length > 0) {
     parts.push(
-      `ชำระผ่าน ${form.allowedPaymentMethods.map(paymentMethodLabel).join(', ')}`,
+      __uiText("ชำระผ่าน {0}",{"0":form.allowedPaymentMethods.map(paymentMethodLabel).join(', ')}),
     );
   }
 
   if (discountScope !== 'all') {
     const includeParts: string[] = [];
     if (form.includeProductSetIds.length > 0) {
-      includeParts.push(`${form.includeProductSetIds.length} ชุดสินค้า`);
+      includeParts.push(__uiText("{0} ชุดสินค้า",{"0":form.includeProductSetIds.length}));
     }
     if (form.includeCategoryIds.length > 0) {
-      includeParts.push(`${form.includeCategoryIds.length} หมวด`);
+      includeParts.push(__uiText("{0} หมวด",{"0":form.includeCategoryIds.length}));
     }
     if (form.includeProducts.length > 0) {
       includeParts.push(`${form.includeProducts.length} SKU`);
     }
     if (includeParts.length > 0) {
-      parts.push(`นับเฉพาะ ${includeParts.join(' + ')}`);
+      parts.push(__uiText("นับเฉพาะ {0}",{"0":includeParts.join(' + ')}));
     }
   }
 
   const excludeParts: string[] = [];
   if (form.excludeProductSetIds.length > 0) {
-    excludeParts.push(`ไม่รวม ${form.excludeProductSetIds.length} ชุดสินค้า`);
+    excludeParts.push(__uiText("ไม่รวม {0} ชุดสินค้า",{"0":form.excludeProductSetIds.length}));
   }
   if (form.excludeCategoryIds.length > 0) {
-    excludeParts.push(`ไม่รวม ${form.excludeCategoryIds.length} หมวด`);
+    excludeParts.push(__uiText("ไม่รวม {0} หมวด",{"0":form.excludeCategoryIds.length}));
   }
   if (form.excludeProducts.length > 0) {
-    excludeParts.push(`ไม่รวม ${form.excludeProducts.length} SKU`);
+    excludeParts.push(__uiText("ไม่รวม {0} SKU",{"0":form.excludeProducts.length}));
   }
   if (excludeParts.length > 0) {
     parts.push(excludeParts.join(', '));
   }
 
   if (parts.length === 0) {
-    return 'ไม่กำหนดเงื่อนไขพิเศษ';
+    return __uiText("ไม่กำหนดเงื่อนไขพิเศษ");
   }
 
   return parts.join(' · ');
@@ -400,3 +401,5 @@ export function pruneRefreshIds(
 
 // Re-export for consumers importing from helpers
 export { COUPON_PAYMENT_METHOD_OPTIONS, paymentMethodLabel };
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

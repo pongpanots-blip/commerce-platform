@@ -6,6 +6,8 @@ import {
   type PromotionMechanicRowForm,
 } from './promotion-mechanic.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   value: PromotionMechanicForm;
   onChange: (next: PromotionMechanicForm) => void;
@@ -13,6 +15,7 @@ type Props = {
 };
 
 export function PromotionQuantityRuleFields({ value, onChange, compact }: Props) {
+  __useUiLocale();
   const setUnitLabel = (unitLabel: string) => {
     onChange({ ...value, unitLabel });
   };
@@ -57,11 +60,9 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
         {!compact && (
           <div>
             <h3 className="text-sm font-semibold text-gray-800">
-              ราคาตามจำนวน (Quantity Tier)
-            </h3>
+              {__uiText("ราคาตามจำนวน (Quantity Tier)")}</h3>
             <p className="mt-1 text-xs text-gray-500">
-              เช่น ซื้อ 1 ชิ้น = ฿100, ซื้อ 5 ชิ้นขึ้นไป = ฿95/ชิ้น
-            </p>
+              {__uiText("เช่น ซื้อ 1 ชิ้น = ฿100, ซื้อ 5 ชิ้นขึ้นไป = ฿95/ชิ้น")}</p>
           </div>
         )}
         <button
@@ -69,16 +70,15 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
           onClick={addRule}
           className="shrink-0 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100"
         >
-          + เพิ่มขั้นราคา
-        </button>
+          {__uiText("+ เพิ่มขั้นราคา")}</button>
       </div>
 
       <div className="max-w-xs">
         <Input
-          label="หน่วยขาย"
+          label={__uiText("หน่วยขาย")}
           value={value.unitLabel}
           onChange={(e) => setUnitLabel(e.target.value)}
-          placeholder="หน่วย เช่น ชิ้น"
+          placeholder={__uiText("หน่วย เช่น ชิ้น")}
         />
       </div>
 
@@ -87,9 +87,9 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
           <thead className="bg-gray-50 text-left text-xs text-gray-500">
             <tr>
               <th className="px-4 py-2 font-medium">#</th>
-              <th className="px-4 py-2 font-medium">ซื้อขั้นต่ำ</th>
-              <th className="px-4 py-2 font-medium">ราคา/หน่วย (฿)</th>
-              <th className="px-4 py-2 font-medium">ป้ายโปร</th>
+              <th className="px-4 py-2 font-medium">{__uiText("ซื้อขั้นต่ำ")}</th>
+              <th className="px-4 py-2 font-medium">{__uiText("ราคา/หน่วย (฿)")}</th>
+              <th className="px-4 py-2 font-medium">{__uiText("ป้ายโปร")}</th>
               <th className="px-4 py-2 font-medium w-16" />
             </tr>
           </thead>
@@ -99,17 +99,17 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
                 <td className="px-4 py-2 text-xs text-gray-400">{index + 1}</td>
                 <td className="px-4 py-2">
                   <Input
-                    aria-label={`ซื้อขั้นต่ำ แถวที่ ${index + 1}`}
+                    aria-label={__uiText("ซื้อขั้นต่ำ แถวที่ {0}", {"0": index + 1})}
                     type="number"
                     min={1}
                     value={rule.minQty}
                     onChange={(e) => updateRule(rule.id, 'minQty', e.target.value)}
-                    placeholder={index === 0 ? '1' : 'เช่น 5'}
+                    placeholder={index === 0 ? '1' : __uiText("เช่น 5")}
                   />
                 </td>
                 <td className="px-4 py-2">
                   <Input
-                    aria-label={`ราคา/หน่วย (฿) แถวที่ ${index + 1}`}
+                    aria-label={__uiText("ราคา/หน่วย (฿) แถวที่ {0}", {"0": index + 1})}
                     type="number"
                     min={0}
                     step="0.01"
@@ -117,15 +117,15 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
                     onChange={(e) =>
                       updateRule(rule.id, 'promotionPrice', e.target.value)
                     }
-                    placeholder="เช่น 95"
+                    placeholder={__uiText("เช่น 95")}
                   />
                 </td>
                 <td className="px-4 py-2">
                   <Input
-                    aria-label={`ป้ายโปร แถวที่ ${index + 1}`}
+                    aria-label={__uiText("ป้ายโปร แถวที่ {0}", {"0": index + 1})}
                     value={rule.badgeText}
                     onChange={(e) => updateRule(rule.id, 'badgeText', e.target.value)}
-                    placeholder="เช่น ซื้อ 5 ลด"
+                    placeholder={__uiText("เช่น ซื้อ 5 ลด")}
                   />
                 </td>
                 <td className="px-4 py-2 text-right">
@@ -135,8 +135,7 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
                     disabled={value.rules.length <= 1}
                     className="text-xs text-red-500 hover:underline disabled:cursor-not-allowed disabled:text-gray-300"
                   >
-                    ลบ
-                  </button>
+                    {__uiText("ลบ")}</button>
                 </td>
               </tr>
             ))}

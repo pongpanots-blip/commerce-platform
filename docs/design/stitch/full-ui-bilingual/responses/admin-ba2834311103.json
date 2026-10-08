@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "3358",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Y3N2U0Y2UzYWEyZTQyNmJhNGUzMGVmNWIxYWM2ZTRlEgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/cb1bbec691814863a50cb85ce2d005d1"
+            },
+            "id": "6ed277917e454bc89b945592cce234dc",
+            "name": "projects/9809859018179965476/screens/6ed277917e454bc89b945592cce234dc",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1Vh9yud_3GsCXOyWXDZTqGSoskeJNjA3EgfIWljeD0gIMrIqcCZn9af5ThedpbJaJC2O8grVu9VFmUGP1nHORKGy3aD89mAQ0c_WsI6LHfJueTcwrvY8BFKC_2WLsmLL_wnUIRi-C6zouRcaoepbWMGnW1iXvYoR4-QWXMT1lHN4lv7OYyEHy3TGqLRsoIzJEFU1vEU8AvUphCN7C9u-lrFWj5IVSSnASf-0NQChgSLxVWwDYDVcjXvNw",
+              "name": "projects/9809859018179965476/files/3e016df8ea5843e9b7af80409b5b0b60"
+            },
+            "theme": {},
+            "title": "รายละเอียดสินค้า (ProductDetail)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้า **รายละเอียดสินค้า (ProductDetail)** สำหรับเส้นทาง `admin-ba2834311103` (`/products/:id`) เสร็จสมบูรณ์แล้วตามสเปกและดีไซน์ซิสเต็มของ Commerce Platform สำหรับทีมปฏิบัติการไทย:\n\n### 1. โครงสร้างและองค์ประกอบหลัก (Design & Information Architecture)\n- **Navigation & Layout:** ใช้ Sidebar กว้าง 256px พร้อม 7 พื้นที่การทำงาน (สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน) โดยเน้นเมนูย่อย \"รายการสินค้า\" และลิงก์กลับไปยัง \"สต็อกแยกตามคลัง\" ได้อย่างต่อเนื่อง\n- **Contextual Header:** ความสูง 64px แสดง Breadcrumbs, Route identifier `admin-ba2834311103`, ป้ายระบุ `ข้อมูลตัวอย่าง` (Sample data), ตัวสลับภาษา ไทย / English และโปรไฟล์ทีมปฏิบัติการ\n- **Summary Metrics (KPI Cards):** แสดง 4 การ์ดสรุปข้อมูลสำคัญ:\n  1. SKU (`SKU-TH-8890`) พร้อมบาร์โค้ด\n  2. สต็อกคงเหลือรวม (`450 ชิ้น · ทุกคลัง`, จองแล้ว 30, พร้อมใช้ 420)\n  3. รูปแบบจัดส่ง (`Standard Logistics`) และระยะเวลาเตรียมสินค้า (1-2 วันทำการ)\n  4. วันที่อัปเดตล่าสุด (`2024-03-29 14:20`)\n- **Product Information & Visuals:** แสดงหมวดหมู่, แบรนด์, รูปแบบจัดส่ง, รายละเอียดสินค้า (Thai) และพื้นที่จัดการรูปภาพสินค้า (สูงสุด 3 ภาพ)\n- **สต็อกแยกตามคลัง (Inventory per Warehouse):** แสดงตารางแจกแจงสต็อกรายคลัง (คลังกลาง บางนา WH-BKK01, คลังเหนือ เชียงใหม่ WH-CM02, คลังบูรพา ชลบุรี ERP-EAST) พร้อมสถานะปกติ และป้ายระบุ `ยังไม่มีสต็อกที่บันทึกไว้` สำหรับคลังที่ยังไม่ได้บันทึก\n- **ประวัติการเปลี่ยนแปลง & แผงงานปฏิบัติการด้านข้าง:**\n  - ไทม์ไลน์การเปลี่ยนแปลง (Change history) 3 รายการล่าสุด\n  - กล่องแก้ไขสถานะการจำหน่าย และ `งานที่ทีมต้องรับต่อ` (เช่น ตรวจสอบสต็อกคลังชลบุรี / Needs replay or fix)\n  - ข้อมูลลิงก์ Marketing สำหรับแคมเปญ\n  - การกำกับดูแลและข้อมูลคู่ค้า\n\n### 2. ฟังก์ชันโต้ตอบและการรองรับภาษา (Interaction & Localization)\n- **Edit Modal Dialog:** รองรับการเปิดหน้าต่าง \"แก้ไขสินค้า\" พร้อมปุ่ม บันทึก/ยกเลิก และการปิดด้วยปุ่ม Escape\n- **Bilingual Switch:** สลับภาษา ไทย / English ได้ทันทีผ่านปุ่มบน Header พร้อมแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` เก็บพจนานุกรมคำศัพท์ UI ครบถ้วนตามรายการ catalogue ทุกคำ\n- **โทนสีและสเปกระบบ:** ใช้พื้นหลังแคนวาส `#f6f8fc`, การ์ดสีขาวขอบ `#e1e7f0`, สีหลัก `#365cf5`, ฟอนต์ Noto Sans Thai และไม่มีการใช้รูปตกแต่งที่ไม่จำเป็น"
+    },
+    {
+      "suggestion": "เปิดหน้าต่างแก้ไขสินค้า (Edit Modal) ตรวจสอบความพร้อมของฟอร์ม"
+    },
+    {
+      "suggestion": "ทดสอบการสลับภาษาเป็น English"
+    },
+    {
+      "suggestion": "ปรับแต่งตารางสต็อกแยกตามคลังเพิ่มเติม"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "14080917866841631770"
+}

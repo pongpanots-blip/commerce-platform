@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>แก้ไข Smart Link - สยาม คอมเมิร์ซ</title>
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <!-- Google Fonts: Noto Sans Thai and Latin -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <!-- Tailwind CSS v3 -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "canvas": "#f6f8fc",
+            "ink": "#17243b",
+            "secondary-ink": "#52627a",
+            "card-border": "#e1e7f0",
+            "primary": "#365cf5",
+            "primary-hover": "#2648d8",
+            "primary-light": "#eef2ff",
+            "success": "#157347",
+            "success-bg": "#edf7f1",
+            "warning": "#b08900",
+            "warning-bg": "#fef9e8",
+            "error": "#c2333f",
+            "error-bg": "#fdf2f2"
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', '"Noto Sans"', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
+    input::placeholder, textarea::placeholder {
+      color: #8c9ba5;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(54, 92, 245, 0.15);
+      border-color: #365cf5 !important;
+    }
+  </style>
+</head>
+<body class="bg-canvas text-ink font-sans antialiased min-h-screen flex selection:bg-primary-light">
+
+<!-- Invisible translation dictionary containing all required UI copy catalogue strings -->
+<script id="commerce-ui-translations" type="application/json">
+{
+  "ยกเลิก": {"th": "ยกเลิก", "en": "Cancel"},
+  "กำลังบันทึก…": {"th": "กำลังบันทึก…", "en": "Saving…"},
+  "บันทึก": {"th": "บันทึก", "en": "Save"},
+  "summer-sale": {"th": "summer-sale", "en": "summer-sale"},
+  "เปิดใช้งาน (Active)": {"th": "เปิดใช้งาน (Active)", "en": "Active"},
+  "โหลดข้อมูลไม่สำเร็จ": {"th": "โหลดข้อมูลไม่สำเร็จ", "en": "Failed to load data"},
+  "slug ต้องเป็น a-z, 0-9, - เท่านั้น": {"th": "slug ต้องเป็น a-z, 0-9, - เท่านั้น", "en": "Slug must contain only a-z, 0-9, and hyphens"},
+  "ต้องมี Web destination": {"th": "ต้องมี Web destination", "en": "Web destination is required"},
+  "บันทึกไม่สำเร็จ — ตรวจ slug ซ้ำ หรือรูปแบบ URL": {"th": "บันทึกไม่สำเร็จ — ตรวจ slug ซ้ำ หรือรูปแบบ URL", "en": "Save failed — Check duplicate slug or URL format"},
+  "แก้ไข Smart Link": {"th": "แก้ไข Smart Link", "en": "Edit Smart Link"},
+  "สร้าง Smart Link": {"th": "สร้าง Smart Link", "en": "Create Smart Link"},
+  "Slug (ส่วนท้ายลิงก์) *": {"th": "Slug (ส่วนท้ายลิงก์) *", "en": "Slug (Link Path) *"},
+  "ชื่อเรื่อง (Title)": {"th": "ชื่อเรื่อง (Title)", "en": "Title"},
+  "คำอธิบาย (Description)": {"th": "คำอธิบาย (Description)", "en": "Description"},
+  "ลิงก์รูปภาพ (Image URL)": {"th": "ลิงก์รูปภาพ (Image URL)", "en": "Image URL"},
+  "ปลายทางเว็บ (Web destination) *": {"th": "ปลายทางเว็บ (Web destination) *", "en": "Web destination *"},
+  "ปลายทาง iOS (iOS destination)": {"th": "ปลายทาง iOS (iOS destination)", "en": "iOS destination"},
+  "ปลายทาง Android (Android destination)": {"th": "ปลายทาง Android (Android destination)", "en": "Android destination"},
+  "ลิงก์สำรอง (Fallback URL)": {"th": "ลิงก์สำรอง (Fallback URL)", "en": "Fallback URL"},
+  "วันหมดอายุ (Expires at)": {"th": "วันหมดอายุ (Expires at)", "en": "Expires at"},
+  "แสดงหน้า Landing Page": {"th": "แสดงหน้า Landing Page", "en": "Show Landing Page"},
+  "UTM & QR": {"th": "UTM & QR", "en": "UTM & QR"},
+  "Download QR (PNG)": {"th": "Download QR (PNG)", "en": "Download QR (PNG)"},
+  "Download QR (SVG)": {"th": "Download QR (SVG)", "en": "Download QR (SVG)"},
+  "แก้ไข credit limit": {"th": "แก้ไข credit limit", "en": "Edit credit limit"},
+  "ขั้นตอนถัดไป": {"th": "ขั้นตอนถัดไป", "en": "Next step"},
+  "คำสั่งซื้อที่ convert": {"th": "คำสั่งซื้อที่ convert", "en": "Converted orders"},
+  "จำนวนออเดอร์สะสม": {"th": "จำนวนออเดอร์สะสม", "en": "Cumulative orders"},
+  "เช่น (order|สั่งซื้อ).*(status|สถานะ)": {"th": "เช่น (order|สั่งซื้อ).*(status|สถานะ)", "en": "e.g. (order|purchase).*(status)"},
+  "ดู Enrollments": {"th": "ดู Enrollments", "en": "View Enrollments"},
+  "ติ๊กหมวดหมู่ → สินค้าทั้งหมดในหมวดถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกติ๊กเพื่อเอาออก": {"th": "ติ๊กหมวดหมู่ → สินค้าทั้งหมดในหมวดถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกติ๊กเพื่อเอาออก", "en": "Select category → All items auto-added; uncheck to remove"},
+  "บริษัทที่เลือก": {"th": "บริษัทที่เลือก", "en": "Selected company"},
+  "ป้ายปุ่ม เช่น ไม่เห็นอีกในวันนี้": {"th": "ป้ายปุ่ม เช่น ไม่เห็นอีกในวันนี้", "en": "Button label e.g. Don't show again today"},
+  "พบรูปเก่าที่กู้คืนไม่ได้แล้ว {0} ไฟล์ ลบออกจาก S3 ถาวร? ย้อนกลับไม่ได้": {"th": "พบรูปเก่าที่กู้คืนไม่ได้แล้ว {0} ไฟล์ ลบออกจาก S3 ถาวร? ย้อนกลับไม่ได้", "en": "Found {0} unrecoverable legacy files. Permanently delete from S3? Cannot be undone"},
+  "เมื่อใช้คูปองนี้สำเร็จ ลูกค้าจะได้รับ": {"th": "เมื่อใช้คูปองนี้สำเร็จ ลูกค้าจะได้รับ", "en": "Upon successful coupon redemption, customer receives"},
+  "ยอดขั้นต่ำ": {"th": "ยอดขั้นต่ำ", "en": "Minimum amount"},
+  "ยิง webhook ไม่สำเร็จ": {"th": "ยิง webhook ไม่สำเร็จ", "en": "Webhook trigger failed"},
+  "รับเฉพาะ user UUID เท่านั้น (ไม่ใช่อีเมลหรือรหัสลูกค้า) — บันทึกไม่ได้ถ้ามีค่าอื่นปน": {"th": "รับเฉพาะ user UUID เท่านั้น (ไม่ใช่อีเมลหรือรหัสลูกค้า) — บันทึกไม่ได้ถ้ามีค่าอื่นปน", "en": "Accepts user UUID only (not email or customer ID) — cannot save with other values"},
+  "เราถูกกว่า": {"th": "เราถูกกว่า", "en": "We are cheaper"},
+  "เลขที่สัญญา (ถ้ามี)": {"th": "เลขที่สัญญา (ถ้ามี)", "en": "Contract number (if any)"},
+  "เว้นว่างเพื่ออ่าน Product JSON-LD อัตโนมัติ · เมื่อตั้งเองต้องมี name หรือ title · หน้าหลายรายการต้องมี url": {"th": "เว้นว่างเพื่ออ่าน Product JSON-LD อัตโนมัติ · เมื่อตั้งเองต้องมี name หรือ title · หน้าหลายรายการต้องมี url", "en": "Leave blank to read Product JSON-LD auto · When manual must have name/title · Multi-item page requires url"},
+  "สาขาที่": {"th": "สาขาที่", "en": "Branch No."},
+  "หรือ": {"th": "หรือ", "en": "or"},
+  "อยู่ — ปุ่มด้านล่างจะต่อเข้าเส้น": {"th": "อยู่ — ปุ่มด้านล่างจะต่อเข้าเส้น", "en": "active — button below connects to line"},
+  "ยังไม่ระบุประเภท": {"th": "ยังไม่ระบุประเภท", "en": "Uncategorized"},
+  "สาธารณะ": {"th": "สาธารณะ", "en": "Public"},
+  "ไม่พบข้อมูลในไฟล์": {"th": "ไม่พบข้อมูลในไฟล์", "en": "No data found in file"},
+  "ทำรายการไม่สำเร็จ กรุณาลองใหม่": {"th": "ทำรายการไม่สำเร็จ กรุณาลองใหม่", "en": "Transaction failed, please try again"}
+}
+</script>
+
+<!-- SideNavBar Component (256px Fixed Sidebar) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-white border-r border-card-border flex flex-col justify-between p-4 select-none">
+  <div>
+    <!-- Logo & Title -->
+    <div class="flex items-center gap-3 mb-6 px-1">
+      <div class="w-9 h-9 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-lg shadow-sm">
+        <span class="material-symbols-outlined">hub</span>
+      </div>
+      <div class="overflow-hidden">
+        <h1 class="text-base font-bold text-ink truncate leading-tight">สยาม คอมเมิร์ซ</h1>
+        <p class="text-xs text-secondary-ink truncate">ศูนย์จัดการระบบร้านค้า</p>
+      </div>
+    </div>
+
+    <!-- Quick CTA -->
+    <button type="button" class="w-full mb-6 flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white text-[13px] font-medium h-10 px-3 rounded-lg transition-colors shadow-sm">
+      <span class="material-symbols-outlined text-[18px]">add</span>
+      <span>สร้างรายการใหม่</span>
+    </button>
+
+    <!-- Navigation Tabs (7 Standard Work Areas) -->
+    <nav class="space-y-1">
+      <!-- 1: สินค้าและสต็อก -->
+      <a href="#inventory" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-ink hover:bg-canvas hover:text-ink transition-colors text-[13px] font-medium">
+        <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+        <span>สินค้าและสต็อก</span>
+      </a>
+
+      <!-- 2: ออเดอร์และการเงิน -->
+      <a href="#orders" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-ink hover:bg-canvas hover:text-ink transition-colors text-[13px] font-medium">
+        <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+        <span>ออเดอร์และการเงิน</span>
+      </a>
+
+      <!-- 3: ลูกค้าและบริการ -->
+      <a href="#customers" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-ink hover:bg-canvas hover:text-ink transition-colors text-[13px] font-medium">
+        <span class="material-symbols-outlined text-[20px]">group</span>
+        <span>ลูกค้าและบริการ</span>
+      </a>
+
+      <!-- 4: การตลาด (ACTIVE) -->
+      <a href="#marketing" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-light text-primary text-[13px] font-semibold border-l-4 border-primary">
+        <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">campaign</span>
+        <span>การตลาด</span>
+      </a>
+
+      <!-- 5: รายงานและข้อมูล -->
+      <a href="#reports" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-ink hover:bg-canvas hover:text-ink transition-colors text-[13px] font-medium">
+        <span class="material-symbols-outlined text-[20px]">analytics</span>
+        <span>รายงานและข้อมูล</span>
+      </a>
+
+      <!-- 6: ระบบเชื่อมต่อ -->
+      <a href="#integrations" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-ink hover:bg-canvas hover:text-ink transition-colors text-[13px] font-medium">
+        <span class="material-symbols-outlined text-[20px]">hub</span>
+        <span>ระบบเชื่อมต่อ</span>
+      </a>
+
+      <!-- 7: ตั้งค่าและทีมงาน -->
+      <a href="#settings" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-ink hover:bg-canvas hover:text-ink transition-colors text-[13px] font-medium">
+        <span class="material-symbols-outlined text-[20px]">settings</span>
+        <span>ตั้งค่าและทีมงาน</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Bottom Navigation Items -->
+  <div class="pt-4 border-t border-card-border space-y-1">
+    <a href="#help" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-ink hover:bg-canvas hover:text-ink transition-colors text-[13px]">
+      <span class="material-symbols-outlined text-[20px]">help_outline</span>
+      <span>คู่มือใช้งาน</span>
+    </a>
+    <a href="#logout" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary-ink hover:bg-error-bg hover:text-error transition-colors text-[13px]">
+      <span class="material-symbols-outlined text-[20px]">logout</span>
+      <span>ออกจากระบบ</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Top Contextual Header -->
+<header class="fixed top-0 right-0 left-64 h-16 z-30 bg-white border-b border-card-border flex justify-between items-center px-8">
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-secondary-ink">alt_route</span>
+      <span class="text-sm font-semibold text-ink">การตลาด / ลิงก์การตลาด (Smart Links)</span>
+    </div>
+    <span class="text-xs px-2 py-0.5 rounded bg-canvas border border-card-border text-secondary-ink font-mono">
+      admin-4e146783838b
+    </span>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <!-- Language Selector -->
+    <div class="flex items-center gap-1.5 bg-canvas py-1 px-2.5 rounded-lg border border-card-border">
+      <span class="material-symbols-outlined text-secondary-ink text-[16px]">language</span>
+      <button type="button" class="text-xs font-semibold text-primary hover:underline" id="lang-btn">ไทย / English</button>
+    </div>
+
+    <!-- Prototype Sample Badge -->
+    <div class="flex items-center gap-1.5 px-2.5 py-1 bg-canvas rounded border border-card-border text-secondary-ink text-xs">
+      <span class="w-2 h-2 rounded-full bg-success"></span>
+      <span class="font-medium">ข้อมูลตัวอย่าง / Sample data</span>
+    </div>
+
+    <div class="h-5 w-px bg-card-border"></div>
+
+    <!-- Quick Notification & Help -->
+    <button class="relative p-1.5 text-secondary-ink hover:text-ink hover:bg-canvas rounded-lg transition-colors" title="การแจ้งเตือน">
+      <span class="material-symbols-outlined text-[20px]">notifications</span>
+      <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+    </button>
+    <button class="p-1.5 text-secondary-ink hover:text-ink hover:bg-canvas rounded-lg transition-colors" title="ช่วยเหลือ">
+      <span class="material-symbols-outlined text-[20px]">help_outline</span>
+    </button>
+
+    <!-- Admin User Avatar -->
+    <div class="flex items-center gap-2 pl-2">
+      <div class="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold text-xs border border-primary/20">
+        SC
+      </div>
+      <div class="hidden xl:block text-left leading-tight">
+        <p class="text-xs font-semibold text-ink">แอดมินการตลาด Siam Commerce</p>
+        <span class="text-[11px] text-secondary-ink">Admin Ops</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Workspace Content (approx 1240px container) -->
+<main class="ml-64 mt-16 flex-1 p-8 pb-32 overflow-y-auto">
+  <div class="max-w-[1240px] mx-auto">
+    <!-- Breadcrumb Bar -->
+    <nav class="flex items-center gap-2 text-xs text-secondary-ink mb-4">
+      <a href="#marketing" class="hover:text-primary transition-colors">การตลาด</a>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <a href="#smart-links" class="hover:text-primary transition-colors">Smart Links</a>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <span class="text-ink font-semibold">แก้ไข Smart Link</span>
+    </nav>
+
+    <!-- Page Title & Route Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-6 border-b border-card-border gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-[28px] font-bold text-ink tracking-tight leading-tight">แก้ไข Smart Link</h1>
+          <span class="text-xs font-mono font-medium px-2 py-0.5 rounded bg-canvas border border-card-border text-secondary-ink">
+            ID: lnk_98b24a7f
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-bg text-success border border-success/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+            เปิดใช้งาน (Active)
+          </span>
+        </div>
+        <p class="text-sm text-secondary-ink mt-1">
+          ปรับแต่งการกำหนดเส้นทาง Deep Link และพารามิเตอร์การตลาดสำหรับแคมเปญ summer-sale
+        </p>
+      </div>
+
+      <!-- Quick Live Preview Capsule -->
+      <div class="flex items-center gap-2.5 bg-white px-3.5 py-2 rounded-xl border border-card-border shadow-sm">
+        <span class="material-symbols-outlined text-primary text-[20px]">link</span>
+        <div class="text-left font-mono text-xs">
+          <div class="text-[11px] text-secondary-ink font-sans">Live URL ปัจจุบัน:</div>
+          <a href="https://link.siamcommerce.co/summer-sale" target="_blank" class="text-primary font-medium hover:underline">
+            https://link.siamcommerce.co/<span class="font-bold">summer-sale</span>
+          </a>
+        </div>
+        <button type="button" class="p-1.5 text-secondary-ink hover:text-ink hover:bg-canvas rounded transition-colors ml-1" title="คัดลอกลิงก์">
+          <span class="material-symbols-outlined text-[16px]">content_copy</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Informational / Pre-validation Banner -->
+    <div class="mb-6 p-4 rounded-xl bg-white border border-card-border flex items-start gap-3 shadow-sm">
+      <span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5">info</span>
+      <div class="text-xs text-secondary-ink leading-relaxed">
+        <span class="font-semibold text-ink">ข้อกำหนดการแก้ไข:</span>
+        เมื่อแก้ไขปลายทางเว็บหรือ Deep Link ระบบจะอัปเดต Dynamic Routing ภายในเครือข่าย CDN ภายใน 15 วินาทีโดยไม่ต้องสร้าง QR Code ใหม่
+      </div>
+    </div>
+
+    <!-- Main Form & Bento Grid (8 cols Form / 4 cols Preview & QR) -->
+    <form id="edit-smart-link-form" onsubmit="event.preventDefault(); triggerSaveSimulation();" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- Left Column: Primary Sections (8 Cols) -->
+      <div class="lg:col-span-8 space-y-6">
+
+        <!-- Section 1: ข้อมูลพื้นฐานลิงก์ (Basic Information) -->
+        <section class="bg-white rounded-xl border border-card-border p-6 shadow-sm">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-card-border">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[20px]">edit_note</span>
+              <h2 class="text-base font-semibold text-ink">ข้อมูลพื้นฐานลิงก์ (Basic Information)</h2>
+            </div>
+            <span class="text-xs text-secondary-ink bg-canvas px-2 py-0.5 rounded border border-card-border">ส่วนที่ 1/4</span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Slug Field -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="slug" class="block text-[13px] font-semibold text-ink">
+                  Slug (ส่วนท้ายลิงก์) *
+                </label>
+                <span class="text-xs text-secondary-ink">แก้ไขส่วนท้ายของ URL</span>
+              </div>
+              <div class="relative flex rounded-lg shadow-sm">
+                <span class="inline-flex items-center px-3.5 rounded-l-lg border border-r-0 border-card-border bg-canvas text-secondary-ink text-xs font-mono select-none">
+                  https://link.siamcommerce.co/
+                </span>
+                <input type="text" id="slug" name="slug" value="summer-sale" required
+                  pattern="[a-z0-9\-]+"
+                  class="flex-1 min-w-0 block w-full px-3.5 h-10 rounded-none rounded-r-lg border border-card-border text-ink font-mono text-sm focus:border-primary"/>
+              </div>
+              <p class="mt-1.5 text-xs text-secondary-ink flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">info</span>
+                <span>slug ต้องเป็น a-z, 0-9, - เท่านั้น</span>
+              </p>
+            </div>
+
+            <!-- Title -->
+            <div>
+              <label for="title" class="block text-[13px] font-semibold text-ink mb-1.5">
+                ชื่อเรื่อง (Title)
+              </label>
+              <input type="text" id="title" name="title" value="โปรโมชั่นดับร้อน ซัมเมอร์เซลล์ Siam Mega Sale 2025"
+                class="w-full px-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label for="description" class="block text-[13px] font-semibold text-ink mb-1.5">
+                คำอธิบาย (Description)
+              </label>
+              <textarea id="description" name="description" rows="3"
+                class="w-full px-3.5 py-2.5 rounded-lg border border-card-border text-ink text-sm focus:border-primary leading-normal">ดีลเด็ดแฟชั่นและบิวตี้ลดสูงสุด 70% ส่งฟรีทั่วไทยเมื่อสั่งผ่านแอปพลิเคชัน Siam Commerce พร้อมรับแต้มสะสมพิเศษ 2 เท่า</textarea>
+            </div>
+
+            <!-- Image URL -->
+            <div>
+              <label for="image_url" class="block text-[13px] font-semibold text-ink mb-1.5">
+                ลิงก์รูปภาพ (Image URL)
+              </label>
+              <div class="relative">
+                <input type="url" id="image_url" name="image_url" value="https://cdn.siamcommerce.co/assets/promo/summer-og-2025.png"
+                  class="w-full pl-10 pr-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+                <span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary-ink text-[18px]">image</span>
+              </div>
+            </div>
+
+            <!-- Active Toggle Switch -->
+            <div class="pt-2 flex items-center justify-between border-t border-card-border/60">
+              <label class="relative inline-flex items-center cursor-pointer select-none">
+                <input type="checkbox" id="is_active" checked class="sr-only peer"/>
+                <div class="w-11 h-6 bg-card-border rounded-full peer peer-focus:ring-2 peer-focus:ring-primary/20 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-card-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                <span class="ml-3 text-[13px] font-semibold text-ink">เปิดใช้งาน (Active)</span>
+              </label>
+              <span class="text-xs text-secondary-ink">ลิงก์เปิดรับการคลิกและการสแกนปกติ</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: ปลายทางและการทำงาน (Destinations & Platform Routing) -->
+        <section class="bg-white rounded-xl border border-card-border p-6 shadow-sm">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-card-border">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[20px]">alt_route</span>
+              <h2 class="text-base font-semibold text-ink">ปลายทางและการทำงาน (Destinations &amp; Platform Routing)</h2>
+            </div>
+            <span class="text-xs text-secondary-ink bg-canvas px-2 py-0.5 rounded border border-card-border">ส่วนที่ 2/4</span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Web Destination (Mandatory) -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="web_destination" class="block text-[13px] font-semibold text-ink">
+                  ปลายทางเว็บ (Web destination) *
+                </label>
+                <span class="text-xs font-medium text-success flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  <span>ต้องมี Web destination</span>
+                </span>
+              </div>
+              <div class="relative">
+                <input type="url" id="web_destination" name="web_destination" required
+                  value="https://www.siamcommerce.co/campaigns/summer-2025"
+                  class="w-full pl-10 pr-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+                <span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary-ink text-[18px]">language</span>
+              </div>
+              <p class="mt-1 text-xs text-secondary-ink">เส้นทางหลักเมื่อเปิดผ่านเบราว์เซอร์หรือเดสก์ท็อป</p>
+            </div>
+
+            <!-- iOS Destination -->
+            <div>
+              <label for="ios_destination" class="block text-[13px] font-semibold text-ink mb-1.5">
+                ปลายทาง iOS (iOS destination)
+              </label>
+              <div class="relative">
+                <input type="text" id="ios_destination" name="ios_destination"
+                  value="siamcommerce://promo/summer2025"
+                  class="w-full pl-10 pr-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+                <span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary-ink text-[18px]">phone_iphone</span>
+              </div>
+              <p class="mt-1 text-xs text-secondary-ink">Custom Scheme หรือ Universal Link เพื่อเปิดหน้านี้บนแอป iPhone / iPad</p>
+            </div>
+
+            <!-- Android Destination -->
+            <div>
+              <label for="android_destination" class="block text-[13px] font-semibold text-ink mb-1.5">
+                ปลายทาง Android (Android destination)
+              </label>
+              <div class="relative">
+                <input type="text" id="android_destination" name="android_destination"
+                  value="siamcommerce://promo/summer2025"
+                  class="w-full pl-10 pr-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+                <span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary-ink text-[18px]">android</span>
+              </div>
+              <p class="mt-1 text-xs text-secondary-ink">App Links หรือ Deep Link Intent สำหรับเปิดแอปพลิเคชันบน Android</p>
+            </div>
+
+            <!-- Fallback URL -->
+            <div>
+              <label for="fallback_url" class="block text-[13px] font-semibold text-ink mb-1.5">
+                ลิงก์สำรอง (Fallback URL)
+              </label>
+              <div class="relative">
+                <input type="url" id="fallback_url" name="fallback_url"
+                  value="https://www.siamcommerce.co/app-install"
+                  class="w-full pl-10 pr-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+                <span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary-ink text-[18px]">store</span>
+              </div>
+              <p class="mt-1 text-xs text-secondary-ink">ปลายทางสำรองหากผู้ใช้ยังไม่ได้ติดตั้งแอปพลิเคชัน (เช่น หน้าดาวน์โหลด App Store / Play Store)</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: การแสดงผลและการหมดอายุ (Display & Schedule) -->
+        <section class="bg-white rounded-xl border border-card-border p-6 shadow-sm">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-card-border">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+              <h2 class="text-base font-semibold text-ink">การแสดงผลและการหมดอายุ (Display &amp; Schedule)</h2>
+            </div>
+            <span class="text-xs text-secondary-ink bg-canvas px-2 py-0.5 rounded border border-card-border">ส่วนที่ 3/4</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div>
+              <label for="expires_at" class="block text-[13px] font-semibold text-ink mb-1.5">
+                วันหมดอายุ (Expires at)
+              </label>
+              <input type="datetime-local" id="expires_at" name="expires_at" value="2025-05-31T23:59"
+                class="w-full px-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+              <p class="mt-1 text-xs text-secondary-ink">เมื่อถึงกำหนด ลิงก์จะสลับไปที่ Fallback URL หรือหน้าสิ้นสุดโปรโมชั่นอัตโนมัติ</p>
+            </div>
+
+            <div class="pt-1 md:pt-6">
+              <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                <input type="checkbox" id="show_landing_page" checked class="w-4 h-4 rounded text-primary border-card-border focus:ring-primary"/>
+                <span class="text-[13px] font-semibold text-ink">แสดงหน้า Landing Page</span>
+              </label>
+              <p class="ml-6 mt-1 text-xs text-secondary-ink">
+                แสดงหน้าพรีวิวสรุปโปรโมชั่นก่อนเปิดแอปเพื่อเพิ่มอัตรา Conversion
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: UTM & QR (พารามิเตอร์การตลาดและการติดตาม) -->
+        <section class="bg-white rounded-xl border border-card-border p-6 shadow-sm">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-card-border">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[20px]">monitoring</span>
+              <h2 class="text-base font-semibold text-ink">UTM &amp; QR (พารามิเตอร์การตลาดและการติดตาม)</h2>
+            </div>
+            <span class="text-xs text-secondary-ink bg-canvas px-2 py-0.5 rounded border border-card-border">ส่วนที่ 4/4</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="utm_source" class="block text-[13px] font-semibold text-ink mb-1.5">
+                ต้นทาง (utm_source)
+              </label>
+              <input type="text" id="utm_source" name="utm_source" value="facebook_ads"
+                class="w-full px-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+            </div>
+
+            <div>
+              <label for="utm_medium" class="block text-[13px] font-semibold text-ink mb-1.5">
+                สื่อ (utm_medium)
+              </label>
+              <input type="text" id="utm_medium" name="utm_medium" value="cpc"
+                class="w-full px-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+            </div>
+
+            <div>
+              <label for="utm_campaign" class="block text-[13px] font-semibold text-ink mb-1.5">
+                ชื่อแคมเปญ (utm_campaign)
+              </label>
+              <input type="text" id="utm_campaign" name="utm_campaign" value="summer_festival_2025"
+                class="w-full px-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+            </div>
+
+            <div>
+              <label for="utm_content" class="block text-[13px] font-semibold text-ink mb-1.5">
+                เนื้อหา (utm_content)
+              </label>
+              <input type="text" id="utm_content" name="utm_content" value="carousel_beauty_v1"
+                class="w-full px-3.5 h-10 rounded-lg border border-card-border text-ink text-sm focus:border-primary"/>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 rounded-lg bg-canvas border border-card-border text-xs text-secondary-ink flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary-ink text-[16px]">sync_alt</span>
+            <span>พารามิเตอร์ UTM เหล่านี้จะถูกส่งต่อเข้าสู่ระบบวิเคราะห์ข้อมูล (GA4, Mixpanel) และ In-App Event โดยอัตโนมัติ</span>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right Column: Interactive Live Preview, QR & Simulator (4 Cols) -->
+      <aside class="lg:col-span-4 space-y-6 sticky top-24">
+
+        <!-- QR Code & Link Card -->
+        <div class="bg-white rounded-xl border border-card-border p-6 shadow-sm">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-card-border">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[20px]">qr_code_2</span>
+              <h3 class="text-base font-semibold text-ink">UTM &amp; QR</h3>
+            </div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-success-bg text-success border border-success/20">
+              พร้อมใช้งาน
+            </span>
+          </div>
+
+          <!-- Stylized QR Code Box -->
+          <div class="bg-canvas p-4 rounded-xl flex flex-col items-center justify-center border border-card-border">
+            <div class="w-44 h-44 bg-white p-2.5 rounded-lg border border-card-border shadow-sm flex items-center justify-center">
+              <svg class="w-full h-full text-ink" fill="currentColor" viewBox="0 0 100 100">
+                <!-- Outer Corners -->
+                <rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="5" y="5"></rect>
+                <rect height="14" rx="1" width="14" x="11" y="11"></rect>
+                <rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="69" y="5"></rect>
+                <rect height="14" rx="1" width="14" x="75" y="11"></rect>
+                <rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="5" y="69"></rect>
+                <rect height="14" rx="1" width="14" x="11" y="75"></rect>
+                <!-- Matrix Points -->
+                <rect height="5" width="5" x="36" y="8"></rect>
+                <rect height="5" width="5" x="46" y="8"></rect>
+                <rect height="5" width="5" x="56" y="8"></rect>
+                <rect height="5" width="5" x="36" y="18"></rect>
+                <rect height="5" width="5" x="56" y="18"></rect>
+                <rect height="5" width="5" x="36" y="28"></rect>
+                <rect height="5" width="5" x="46" y="28"></rect>
+                <rect height="5" width="5" x="8" y="36"></rect>
+                <rect height="5" width="5" x="18" y="36"></rect>
+                <rect height="5" width="5" x="28" y="36"></rect>
+                <rect height="5" width="5" x="68" y="36"></rect>
+                <rect height="5" width="5" x="78" y="36"></rect>
+                <rect height="5" width="5" x="88" y="36"></rect>
+                <!-- Center Logo Mark -->
+                <circle class="fill-primary" cx="50" cy="50" r="10"></circle>
+                <path d="M47 47 L54 50 L47 53 Z" fill="white"></path>
+                <rect height="6" width="6" x="38" y="68"></rect>
+                <rect height="6" width="6" x="48" y="78"></rect>
+                <rect height="6" width="6" x="68" y="68"></rect>
+                <rect height="6" width="6" x="78" y="78"></rect>
+                <rect height="6" width="6" x="88" y="68"></rect>
+                <rect height="6" width="6" x="68" y="88"></rect>
+                <rect height="6" width="6" x="88" y="88"></rect>
+              </svg>
+            </div>
+            <p class="mt-2 text-xs font-mono text-secondary-ink text-center">
+              https://link.siamcommerce.co/summer-sale
+            </p>
+          </div>
+
+          <!-- QR Download Action Buttons -->
+          <div class="grid grid-cols-2 gap-3 mt-4">
+            <button type="button" class="flex items-center justify-center gap-1.5 h-10 px-3 bg-white border border-card-border hover:bg-canvas text-ink rounded-lg text-xs font-medium transition-colors shadow-sm">
+              <span class="material-symbols-outlined text-[16px]">download</span>
+              <span>Download QR (PNG)</span>
+            </button>
+            <button type="button" class="flex items-center justify-center gap-1.5 h-10 px-3 bg-white border border-card-border hover:bg-canvas text-ink rounded-lg text-xs font-medium transition-colors shadow-sm">
+              <span class="material-symbols-outlined text-[16px]">file_download</span>
+              <span>Download QR (SVG)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Platform Routing Simulation Card -->
+        <div class="bg-white rounded-xl border border-card-border p-6 shadow-sm">
+          <h3 class="text-base font-semibold text-ink mb-1 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[20px]">devices</span>
+            <span>Platform Routing Simulation</span>
+          </h3>
+          <p class="text-xs text-secondary-ink mb-4">
+            การกระจายทราฟฟิกตามสภาพแวดล้อมของผู้ใช้งาน
+          </p>
+
+          <div class="space-y-2.5 text-xs">
+            <!-- Web -->
+            <div class="p-3 rounded-lg border border-card-border bg-canvas flex items-start gap-3">
+              <span class="material-symbols-outlined text-secondary-ink text-[18px] mt-0.5">laptop_mac</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-ink">Desktop / Chrome</span>
+                  <span class="text-[11px] font-medium text-success">Direct 302</span>
+                </div>
+                <div class="text-[11px] text-secondary-ink font-mono truncate mt-0.5">
+                  https://www.siamcommerce.co/campaigns/summer-2025
+                </div>
+              </div>
+            </div>
+
+            <!-- iOS -->
+            <div class="p-3 rounded-lg border border-card-border bg-canvas flex items-start gap-3">
+              <span class="material-symbols-outlined text-secondary-ink text-[18px] mt-0.5">phone_iphone</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-ink">iOS Universal Link</span>
+                  <span class="text-[11px] font-medium text-primary">App Open</span>
+                </div>
+                <div class="text-[11px] text-secondary-ink font-mono truncate mt-0.5">
+                  siamcommerce://promo/summer2025
+                </div>
+              </div>
+            </div>
+
+            <!-- Android -->
+            <div class="p-3 rounded-lg border border-card-border bg-canvas flex items-start gap-3">
+              <span class="material-symbols-outlined text-secondary-ink text-[18px] mt-0.5">android</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-ink">Android App Link</span>
+                  <span class="text-[11px] font-medium text-primary">Intent Launch</span>
+                </div>
+                <div class="text-[11px] text-secondary-ink font-mono truncate mt-0.5">
+                  siamcommerce://promo/summer2025
+                </div>
+              </div>
+            </div>
+
+            <!-- Fallback -->
+            <div class="p-3 rounded-lg border border-card-border bg-canvas flex items-start gap-3">
+              <span class="material-symbols-outlined text-secondary-ink text-[18px] mt-0.5">store</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-ink">ยังไม่ได้ลงแอป</span>
+                  <span class="text-[11px] font-medium text-secondary-ink">Fallback URL</span>
+                </div>
+                <div class="text-[11px] text-secondary-ink font-mono truncate mt-0.5">
+                  https://www.siamcommerce.co/app-install
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Operational Tip -->
+        <div class="bg-primary-light/60 rounded-xl border border-primary/20 p-4 text-xs text-secondary-ink">
+          <div class="flex items-center gap-1.5 text-ink font-semibold mb-1">
+            <span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+            <span>เคล็ดลับการตลาด Siam Commerce</span>
+          </div>
+          การใช้ Deep Link ควบคู่กับ UTM Tracking ช่วยให้ทีมประเมิน Return on Ad Spend (ROAS) ได้แม่นยำยิ่งขึ้นแม้ผู้ใช้จะเปิดผ่าน In-App Browser ของ LINE หรือ TikTok
+        </div>
+
+      </aside>
+
+    </form>
+  </div>
+</main>
+
+<!-- Sticky Bottom Actions Bar (Cancel & Save with Micro-interaction) -->
+<footer class="fixed bottom-0 right-0 left-64 bg-white/95 backdrop-blur-md border-t border-card-border px-8 py-3.5 z-30 shadow-lg">
+  <div class="max-w-[1240px] mx-auto flex items-center justify-between">
+    <!-- Live status indicator -->
+    <div class="flex items-center gap-2 text-xs text-secondary-ink" id="save-status-indicator">
+      <span class="w-2.5 h-2.5 rounded-full bg-success"></span>
+      <span>พร้อมบันทึกการเปลี่ยนแปลง (route: admin-4e146783838b)</span>
+    </div>
+
+    <!-- Actions: Cancel and Save -->
+    <div class="flex items-center gap-3">
+      <!-- ยกเลิก (Cancel) Button -->
+      <a href="#marketing" class="h-10 px-5 rounded-lg border border-card-border bg-white hover:bg-canvas text-ink text-[13px] font-medium transition-colors flex items-center justify-center gap-1.5">
+        <span>ยกเลิก</span>
+      </a>
+
+      <!-- บันทึก (Save) Button -->
+      <button type="button" id="btn-save" onclick="triggerSaveSimulation()" class="h-10 px-6 rounded-lg bg-primary hover:bg-primary-hover text-white text-[13px] font-semibold transition-colors shadow-sm flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">save</span>
+        <span id="btn-save-text">บันทึก</span>
+      </button>
+    </div>
+  </div>
+</footer>
+
+<!-- Interactive Script for Save Simulation and Language Switcher -->
+<script>
+  function triggerSaveSimulation() {
+    const btn = document.getElementById('btn-save');
+    const text = document.getElementById('btn-save-text');
+    const indicator = document.getElementById('save-status-indicator');
+
+    // State: กำลังบันทึก…
+    btn.disabled = true;
+    btn.classList.add('opacity-80', 'cursor-not-allowed');
+    text.innerText = 'กำลังบันทึก…';
+    indicator.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></span><span class="text-primary font-semibold">กำลังบันทึก…</span>';
+
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.classList.remove('opacity-80', 'cursor-not-allowed');
+      text.innerText = 'บันทึก';
+      indicator.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-success"></span><span class="text-success font-medium">บันทึกข้อมูลเรียบร้อยแล้ว (Active)</span>';
+    }, 1000);
+  }
+
+  // Language toggle demonstration hook
+  let currentLang = 'th';
+  document.getElementById('lang-btn').addEventListener('click', function() {
+    currentLang = currentLang === 'th' ? 'en' : 'th';
+    const dict = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+    this.innerText = currentLang === 'th' ? 'ไทย / English' : 'English / ไทย';
+  });
+</script>
+
+</body>
+</html>

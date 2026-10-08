@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   deletePromotionMechanic,
   formatBangkokRange,
@@ -21,7 +22,10 @@ import { CouponFormErrorBanner } from '../coupon/CouponFormSections';
 import { CampaignStatusPill, getErrorMessage } from '../promotion-common';
 import { summarizeMechanicRow } from './promotion-mechanic-form.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PromotionMechanic = () => {
+  __useUiLocale();
   const [items, setItems] = useState<PromotionMechanicRecord[]>([]);
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
   // admin-only flash-sale caps (own guarded endpoint) keyed by mechanic id — no row = no cap
@@ -91,7 +95,7 @@ const PromotionMechanic = () => {
   const columns: TableColumn<PromotionMechanicRecord>[] = [
     {
       key: 'name',
-      label: 'ชื่อโปร',
+      label: __uiText("ชื่อโปร"),
       render: (value: string, row) => (
         <Link
           to={ADMIN_ROUTES.promotionsMechanicEdit(row.id)}
@@ -103,7 +107,7 @@ const PromotionMechanic = () => {
     },
     {
       key: 'campaign_id',
-      label: 'Campaign',
+      label: __uiText("Campaign"),
       render: (value: string | null) =>
         value && campaignName.has(value) ? (
           <Link to={ADMIN_ROUTES.campaignDetail(value)} className="text-blue-600 hover:underline">
@@ -115,7 +119,7 @@ const PromotionMechanic = () => {
     },
     {
       key: 'audience',
-      label: 'กลุ่มลูกค้า',
+      label: __uiText("กลุ่มลูกค้า"),
       // no row = everyone; a targeted mechanic shows how many companies it is for
       render: (_value, row) => {
         const audience = audiences.get(row.id);
@@ -126,18 +130,18 @@ const PromotionMechanic = () => {
     },
     {
       key: 'value',
-      label: 'ส่วนลด',
+      label: __uiText("ส่วนลด"),
       render: (value: PromotionMechanicRecord['value']) => summarizeMechanicRow(value),
     },
     {
       key: 'remaining_units',
-      label: 'เหลือ',
+      label: __uiText("เหลือ"),
       // computed by the server (`remaining_units`) — null / no row = no cap
       render: (_value, row) => {
         const remaining = caps.get(row.id)?.remaining_units;
         if (remaining == null) return '-';
         return remaining === 0 ? (
-          <span className="font-medium text-alert">หมดแล้ว</span>
+          <span className="font-medium text-alert">{__uiText("หมดแล้ว")}</span>
         ) : (
           `${remaining.toLocaleString('th-TH')} ชิ้น`
         );
@@ -145,30 +149,30 @@ const PromotionMechanic = () => {
     },
     {
       key: 'skuItems',
-      label: 'จำนวน SKU',
+      label: __uiText("จำนวน SKU"),
       render: (value: PromotionMechanicRecord['skuItems']) => (value?.length ?? 0).toLocaleString('th-TH'),
     },
     {
       key: 'start_date',
-      label: 'ช่วงเวลา',
+      label: __uiText("ช่วงเวลา"),
       render: (_value, row) => formatBangkokRange(row.start_date, row.end_date, 'th'),
     },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: PromotionMechanicRecord['status'] | undefined) =>
         value ? <CampaignStatusPill status={value} /> : '-',
     },
     {
       key: 'actions',
-      label: 'จัดการ',
+      label: __uiText("จัดการ"),
       render: (_value, row) => (
         <div className="flex items-center gap-1">
           <Link
             to={ADMIN_ROUTES.promotionsMechanicEdit(row.id)}
             className="rounded-lg p-1.5 text-ink-muted hover:bg-primary-soft hover:text-primary"
-            title="แก้ไข"
-            aria-label={`แก้ไข ${row.name}`}
+            title={__uiText("แก้ไข")}
+            aria-label={__uiText("แก้ไข {0}", {"0": row.name})}
           >
             <AiOutlineEdit size={18} />
           </Link>
@@ -176,8 +180,8 @@ const PromotionMechanic = () => {
             type="button"
             onClick={() => setPendingDelete(row)}
             className="rounded-lg p-1.5 text-ink-muted hover:bg-alert-soft hover:text-alert"
-            title="ลบ"
-            aria-label={`ลบ ${row.name}`}
+            title={__uiText("ลบ")}
+            aria-label={__uiText("ลบ {0}", {"0": row.name})}
           >
             <AiOutlineDelete size={18} />
           </button>
@@ -189,22 +193,22 @@ const PromotionMechanic = () => {
   return (
     <div className="flex flex-col gap-5 p-4">
       <AdminListHeader
-        title="Promotion Mechanics"
-        subtitle="ส่วนลดระดับสินค้า — SKU มาจาก Product set, วันที่ตาม Campaign"
-        createLabel="สร้าง Promotion Mechanic"
+        title={__uiText("Promotion Mechanics")}
+        subtitle={__uiText("ส่วนลดระดับสินค้า — SKU มาจาก Product set, วันที่ตาม Campaign")}
+        createLabel={__uiText("สร้าง Promotion Mechanic")}
         createPath={ADMIN_ROUTES.promotionsMechanicCreate}
       />
 
       <CouponFormErrorBanner error={deleteError} />
 
       {loading ? (
-        <p className="text-sm text-ink-muted">กำลังโหลด...</p>
+        <p className="text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</p>
       ) : loadError ? (
         <div className="flex flex-col items-start gap-3">
           <CouponFormErrorBanner error={loadError} />
           <Button
             variant="secondary"
-            text="ลองใหม่"
+            text={__uiText("ลองใหม่")}
             onClick={() => {
               setLoading(true);
               setReloadKey((key) => key + 1);
@@ -215,7 +219,7 @@ const PromotionMechanic = () => {
         <>
           <div className="rounded-lg bg-white p-3 shadow-level-1">
             <Input
-              label="ค้นหาชื่อโปร"
+              label={__uiText("ค้นหาชื่อโปร")}
               icon={<AiOutlineSearch size={20} />}
               className="md:w-[296px]"
               value={search}
@@ -228,7 +232,7 @@ const PromotionMechanic = () => {
 
       <CouponConfirmDialog
         open={!!pendingDelete}
-        title="ลบ Promotion Mechanic นี้?"
+        title={__uiText("ลบ Promotion Mechanic นี้?")}
         body={`“${pendingDelete?.name ?? ''}” — การลบไม่สามารถย้อนกลับได้`}
         confirmLabel="ลบ"
         tone="danger"

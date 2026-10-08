@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ตั้งค่าเก็บข้อมูลเว็บ (Scraping Sources Setup &amp; Management) - Siam Commerce Hub</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Noto Sans Thai and Latin font family -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config Verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-variant": "#d7e2ff",
+            "secondary-container": "#d0e1fd",
+            "on-tertiary": "#ffffff",
+            "on-surface": "#0e1b32",
+            "on-error-container": "#93000a",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-bright": "#f9f9ff",
+            "secondary-fixed": "#d3e3ff",
+            "outline": "#747687",
+            "inverse-surface": "#243048",
+            "tertiary": "#006139",
+            "surface-tint": "#214ce7",
+            "on-tertiary-fixed": "#002110",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#9ef5be",
+            "surface-container": "#e8eeff",
+            "tertiary-fixed-dim": "#82d8a3",
+            "surface": "#f9f9ff",
+            "inverse-on-surface": "#ecf0ff",
+            "on-secondary": "#ffffff",
+            "on-secondary-fixed": "#0b1c31",
+            "primary-container": "#365cf5",
+            "error": "#ba1a1a",
+            "on-secondary-container": "#54647c",
+            "primary-fixed": "#dde1ff",
+            "surface-container-low": "#f1f3ff",
+            "on-primary-fixed": "#001257",
+            "tertiary-container": "#217b4e",
+            "surface-container-highest": "#d7e2ff",
+            "on-tertiary-fixed-variant": "#00522f",
+            "on-primary": "#ffffff",
+            "inverse-primary": "#b9c3ff",
+            "on-primary-container": "#ededff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface-dim": "#cddaf9",
+            "surface-container-lowest": "#ffffff",
+            "on-surface-variant": "#444655",
+            "outline-variant": "#c4c5d8",
+            "surface-container-high": "#e0e8ff",
+            "on-background": "#0e1b32",
+            "on-primary-fixed-variant": "#0034c0",
+            "secondary": "#4f5f77",
+            "background": "#f9f9ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "error-container": "#ffdad6",
+            "on-tertiary-container": "#b7ffcf",
+            "primary": "#0a3fdc"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "margin-desktop": "1.5rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "label-md": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"],
+            "label-sm": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "display-lg": ["Noto Sans"],
+            "data-tabular": ["Noto Sans"],
+            "body-lg": ["Noto Sans"]
+          },
+          "fontSize": {
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "data-tabular": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Tabular lining figures */
+    .num-tabular {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Custom subtle scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #747687;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-[#17243b] min-h-screen flex antialiased">
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT: SideNavBar (Fixed 256px)                               -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-[#e1e7f0] flex flex-col justify-between p-space-md">
+<!-- Top Group: Logo & Main Navigation -->
+<div class="flex flex-col gap-space-md">
+<!-- App Header / Logo -->
+<div class="flex items-center gap-3 px-space-xs py-1 border-b border-[#e1e7f0] pb-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-bold shadow-sm">
+<span class="material-symbols-outlined text-[22px]">hub</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight truncate">สยาม คอมเมิร์ซ</span>
+<span class="text-label-sm font-label-sm text-secondary truncate">ศูนย์จัดการระบบร้านค้า</span>
+</div>
+</div>
+<!-- Main Navigation Menu Tabs -->
+<nav aria-label="แถบนำทางหลัก" class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary">group</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด (Active Navigation Item) -->
+<a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-low text-primary font-headline-sm border-l-4 border-primary transition-colors duration-150 shadow-sm" href="#">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="text-label-md font-label-md font-semibold">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary">hub</span>
+<span class="text-label-md font-label-md">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-secondary">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Group: CTA & System Footers -->
+<div class="flex flex-col gap-2 pt-3 border-t border-[#e1e7f0]">
+<!-- Quick CTA -->
+<button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-primary-container hover:bg-[#2848D6] text-on-primary text-label-md font-label-md font-semibold transition-all shadow-sm" onclick="document.getElementById('manual-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Footer navigation tabs -->
+<a class="flex items-center gap-space-sm px-space-md py-1.5 rounded-lg text-secondary hover:bg-surface-container hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span class="text-label-md font-label-md">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-1.5 rounded-lg text-[#c2333f] hover:bg-[#ffdad6]/40 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="text-label-md font-label-md">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE & TOP BAR                                                  -->
+<!-- ========================================================================= -->
+<div class="ml-64 flex-1 flex flex-col min-w-0">
+<!-- SHARED COMPONENT: TopNavBar (Fixed Height 64px) -->
+<header class="h-16 fixed top-0 right-0 left-64 z-30 bg-surface-container-lowest border-b border-[#e1e7f0] flex justify-between items-center px-gutter-desktop">
+<!-- Breadcrumb, Route & Identity -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 text-secondary text-label-md font-label-md">
+<span class="text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary">campaign</span>
+            การตลาด / Marketing Workflows
+          </span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-medium">scraping-sources</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-surface-container-low text-[#4f5f77] border border-[#e1e7f0]">
+          admin-f72339d86a2f
+        </span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-primary font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+          ข้อมูลตัวอย่าง / Sample data
+        </span>
+</div>
+<!-- Trailing Navigation & Controls -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher -->
+<button class="flex items-center gap-1 px-2.5 py-1 text-label-md font-label-md text-secondary hover:text-on-surface border border-[#e1e7f0] rounded-md bg-white hover:bg-[#f6f8fc] transition-colors">
+<span class="material-symbols-outlined text-[16px]">language</span>
+<span>ไทย / English</span>
+</button>
+<!-- Secondary Action: Import Data -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] text-label-md font-label-md hover:bg-[#f6f8fc] hover:border-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>นำเข้าข้อมูล</span>
+</button>
+<!-- Primary Action: Create Workflow -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-white text-label-md font-label-md font-semibold hover:bg-[#2848D6] transition-all shadow-sm" onclick="document.getElementById('manual-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>สร้างเวิร์กโฟลว์</span>
+</button>
+<div class="h-6 w-[1px] bg-[#e1e7f0] mx-1"></div>
+<!-- Trailing Icon Actions -->
+<button class="relative p-1.5 text-secondary hover:text-on-surface rounded-lg hover:bg-surface-container-low transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#c2333f]"></span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface rounded-lg hover:bg-surface-container-low transition-colors" title="ช่วยเหลือ">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<!-- Admin Profile -->
+<div class="flex items-center gap-2 pl-1 border-l border-[#e1e7f0]">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold text-label-md border border-[#e1e7f0]">
+            SC
+          </div>
+<div class="flex flex-col text-left leading-none">
+<span class="text-label-md font-semibold text-on-surface">แอดมินระบบ</span>
+<span class="text-[11px] text-secondary mt-0.5">Siam Commerce Hub</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ======================================================================= -->
+<!-- CONTENT CANVAS (1240px container, padding-top 64px for header)          -->
+<!-- ======================================================================= -->
+<main class="mt-16 p-space-lg flex-1">
+<div class="max-w-[1240px] mx-auto flex flex-col gap-space-lg">
+<!-- 1. Header & Operational Global Controls -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#e1e7f0]">
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-headline-lg font-headline-lg text-[#17243b]">ตั้งค่าเก็บข้อมูลเว็บ (Scraping Sources Setup &amp; Management)</h1>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-[#157347]/10 text-[#157347] font-semibold">
+                ระบบเปิดใช้งานปกติ
+              </span>
+</div>
+<p class="text-body-md font-body-md text-secondary mt-1">
+              ระบบดึงข้อมูลและสำรวจราคาสินค้าคู่แข่งอัตโนมัติ (Competitor Price Scraping &amp; Web Crawling) เพื่อวิเคราะห์ราคาตลาดแบบเรียลไทม์
+            </p>
+</div>
+<!-- Quick Header Action Buttons -->
+<div class="flex items-center gap-2 flex-wrap">
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-[#17243b] text-label-md font-medium transition-colors" onclick="location.reload()">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>รีเฟรช</span>
+</button>
+<a class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-[#17243b] text-label-md font-medium transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-primary">query_stats</span>
+<span>เทียบราคาคู่แข่ง</span>
+</a>
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-primary-container text-primary-container hover:bg-[#f1f3ff] text-label-md font-semibold transition-colors shadow-sm" onclick="document.getElementById('manual-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>+ ตั้งค่าเองแบบละเอียด</span>
+</button>
+</div>
+</div>
+<!-- Master Switch Card: สวิตช์เก็บข้อมูลเบื้องหลัง -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-[#157347]/10 text-[#157347] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">sync</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]">สวิตช์เก็บข้อมูลเบื้องหลัง (Background scraping master switch)</h2>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-label-sm font-bold bg-[#157347]/10 text-[#157347]">
+                  ● เปิดอยู่ (Active)
+                </span>
+<span class="text-label-sm text-secondary bg-surface-container px-2 py-0.5 rounded">ช่วงทดลอง Beta</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1">
+                การเก็บข้อมูลเบื้องหลัง (ช่วงทดลอง): เว็บที่ตั้งเก็บอัตโนมัติจะทำงานตามรอบ · ปิดแล้วทุกเว็บหยุดหลังหน้าที่กำลังอ่าน ความคืบหน้ายังอยู่ครบถ้วน
+              </p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#c2333f]/10 text-[#c2333f] hover:bg-[#c2333f]/20 text-label-md font-semibold transition-all" id="master-toggle-btn" onclick="toggleMasterSwitch()">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+<span id="master-toggle-text">ปิดการเก็บเบื้องหลัง</span>
+</button>
+</div>
+</div>
+<!-- 2. Step 1 & 2: Quick Wizard / URL Explorer (สำรวจเว็บอัตโนมัติ) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- PANEL 1: ใส่ลิงก์เว็บ แล้วลองดึงข้อมูล 1 รอบ (Step 1) -->
+<div class="lg:col-span-6 bg-white rounded-xl border border-[#e1e7f0] p-space-md flex flex-col justify-between shadow-[0_1px_2px_rgba(23,36,59,0.04)]">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary-container text-white flex items-center justify-center text-label-sm font-bold">1</span>
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]">ใส่ลิงก์เว็บ แล้วลองดึงข้อมูล 1 รอบ</h3>
+</div>
+<span class="text-label-sm text-secondary font-medium">ขั้นตอนสำรวจเบื้องต้น</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-2.5">
+                ระบบเปิดดูไม่เกิน 6 หน้า แล้วบอกว่าเว็บนี้มีข้อมูลอะไร เช่น ชื่อสินค้า ราคา — <span class="font-semibold text-[#17243b]">ยังไม่เริ่มเก็บจริงจนกว่าจะกดยืนยันในขั้นตอนที่ 2</span>
+</p>
+<!-- URL Input Form -->
+<div class="mt-4 flex flex-col gap-3">
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">
+                    ลิงก์เว็บ (หรือชื่อ Makro PRO, Big C, Freshket) <span class="text-[#c2333f]">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[20px]">link</span>
+<input class="w-full h-[38px] pl-9 pr-3 rounded-lg border border-[#e1e7f0] text-body-md text-[#17243b] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 outline-none transition-all" id="explore-url-input" placeholder="เช่น https://example.com/products" type="url" value="https://www.makro.pro/c/fresh-food/meat-poultry"/>
+</div>
+<div class="flex items-center gap-2 mt-1 text-[11px] text-secondary">
+<span>เว็บยอดนิยม:</span>
+<button class="hover:text-primary underline" onclick="setExploreUrl('https://www.makro.pro/c/dairy-chilled')" type="button">Makro PRO</button>
+<span>·</span>
+<button class="hover:text-primary underline" onclick="setExploreUrl('https://www.bigc.co.th/category/fresh-food')" type="button">Big C Online</button>
+<span>·</span>
+<button class="hover:text-primary underline" onclick="setExploreUrl('https://freshket.co/market/vegetables')" type="button">Freshket</button>
+</div>
+</div>
+<!-- Validation Checkbox: สิทธิ์การเข้าถึง -->
+<div class="p-2.5 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0]">
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input checked="" class="mt-0.5 rounded text-primary-container border-[#e1e7f0] focus:ring-primary-container" id="terms-check" type="checkbox"/>
+<span class="text-body-sm font-medium text-[#17243b]">
+                      เป็นข้อมูลสาธารณะ และเรามีสิทธิ์อ่าน/เก็บข้อมูลจากเว็บนี้
+                      <span class="block text-label-sm text-secondary font-normal mt-0.5">ระบบจะทำการจัดเก็บตามอัตราความเร็วปกติ ไม่รบกวนการทำงานของเซิร์ฟเวอร์ปลายทาง</span>
+</span>
+</label>
+</div>
+<!-- Inline Login Helper -->
+<details class="group rounded-lg border border-[#e1e7f0] p-2.5 bg-white">
+<summary class="flex items-center justify-between cursor-pointer text-label-md font-semibold text-[#17243b] select-none">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">lock</span>
+                      เว็บนี้ต้องล็อกอิน? ใช้บัญชีสมาชิกของบริษัท (ไม่บังคับ)
+                    </span>
+<span class="material-symbols-outlined text-secondary group-open:rotate-180 transition-transform text-[18px]">expand_more</span>
+</summary>
+<div class="mt-2.5 pt-2 border-t border-[#e1e7f0] text-body-sm text-secondary flex flex-col gap-2">
+<p class="text-[12px] leading-relaxed text-[#52627A]">
+                      ใช้เฉพาะบัญชีของบริษัทเราเอง · รหัสผ่านเก็บแบบเข้ารหัสและจะไม่แสดงอีก · ราคาที่เห็นหลังล็อกอินนับเป็น “ราคาสมาชิก” แยกจากราคาปกติ · <strong class="text-[#c2333f]">เว็บที่มี CAPTCHA/OTP ล็อกอินอัตโนมัติไม่ได้</strong>
+</p>
+<div class="grid grid-cols-2 gap-2 mt-1">
+<input class="h-[34px] px-2.5 rounded text-body-sm border border-[#e1e7f0] focus:border-primary-container outline-none" placeholder="ชื่อผู้ใช้ / อีเมลสมาชิก" type="text"/>
+<input class="h-[34px] px-2.5 rounded text-body-sm border border-[#e1e7f0] focus:border-primary-container outline-none" placeholder="รหัสผ่าน (เข้ารหัส AES-256)" type="password"/>
+</div>
+</div>
+</details>
+</div>
+</div>
+<!-- Panel 1 Action Button -->
+<div class="mt-4 pt-3 border-t border-[#e1e7f0] flex items-center justify-between">
+<span class="text-label-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-[#157347]">verified_user</span>
+                ติ๊กยืนยันสิทธิ์ก่อนกดดึงข้อมูล
+              </span>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container hover:bg-[#2848D6] text-white text-label-md font-semibold transition-all shadow-sm" id="btn-sample-fetch" onclick="simulateFetch()">
+<span class="material-symbols-outlined text-[18px]">travel_explore</span>
+<span id="btn-sample-text">ลองดึงข้อมูล</span>
+</button>
+</div>
+</div>
+<!-- PANEL 2: ตรวจผลดึง ถ้าถูกต้องกดเริ่มเก็บ (Step 2) -->
+<div class="lg:col-span-6 bg-white rounded-xl border border-[#e1e7f0] p-space-md flex flex-col justify-between shadow-[0_1px_2px_rgba(23,36,59,0.04)]">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-[#157347] text-white flex items-center justify-center text-label-sm font-bold">2</span>
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]">ตรวจผลดึง ถ้าถูกต้องกดเริ่มเก็บ</h3>
+</div>
+<span class="px-2 py-0.5 rounded text-label-sm font-bold bg-[#157347]/10 text-[#157347]">
+                  ผลสำรวจตัวอย่างสมบูรณ์
+                </span>
+</div>
+<!-- Summary Metrics Strip -->
+<div class="grid grid-cols-4 gap-2 my-3 p-2.5 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0] text-center">
+<div class="flex flex-col">
+<span class="text-label-sm text-secondary">สินค้าที่พบ</span>
+<span class="text-headline-sm font-bold text-primary num-tabular">24 รายการ</span>
+</div>
+<div class="flex flex-col border-l border-[#e1e7f0]">
+<span class="text-label-sm text-secondary">ตรวจแล้ว</span>
+<span class="text-headline-sm font-bold text-[#17243b] num-tabular">6 หน้า</span>
+</div>
+<div class="flex flex-col border-l border-[#e1e7f0]">
+<span class="text-label-sm text-secondary">ระบบเลื่อนหน้า</span>
+<span class="text-body-sm font-semibold text-[#157347] truncate">✓ เลื่อนหน้าเองได้</span>
+</div>
+<div class="flex flex-col border-l border-[#e1e7f0]">
+<span class="text-label-sm text-secondary">จำนวนหน้าสูงสุด</span>
+<span class="text-headline-sm font-bold text-[#17243b] num-tabular">500 หน้า</span>
+</div>
+</div>
+<!-- Field Selection Toggles & Data Selection -->
+<div class="flex flex-col gap-3">
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1.5">
+                    เลือกข้อมูลที่จะเก็บ
+                  </label>
+<div class="flex flex-wrap gap-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-primary text-label-sm font-semibold border border-[#d7e2ff]">
+<span class="material-symbols-outlined text-[14px]">check</span> ชื่อสินค้า
+                    </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-primary text-label-sm font-semibold border border-[#d7e2ff]">
+<span class="material-symbols-outlined text-[14px]">check</span> ราคา
+                    </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-primary text-label-sm font-semibold border border-[#d7e2ff]">
+<span class="material-symbols-outlined text-[14px]">check</span> รูปภาพ
+                    </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container text-primary text-label-sm font-semibold border border-[#d7e2ff]">
+<span class="material-symbols-outlined text-[14px]">check</span> สต็อกสินค้า
+                    </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-white text-secondary text-label-sm font-medium border border-[#e1e7f0] hover:bg-[#f6f8fc] cursor-pointer">
+                      + รหัส SKU / บาร์โค้ด
+                    </span>
+</div>
+</div>
+<!-- Price VAT Determination (Mandatory Option) -->
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">
+                    ราคาที่เห็นบนเว็บนี้ (ต้องเลือก) <span class="text-[#c2333f]">*</span>
+</label>
+<div class="flex flex-col gap-1.5">
+<label class="flex items-start gap-2 p-2 rounded border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] cursor-pointer">
+<input checked="" class="mt-0.5 text-primary-container focus:ring-primary-container" name="vat-mode" type="radio"/>
+<div class="text-body-sm">
+<span class="font-medium text-[#17243b]">ราคาที่ลูกค้าจ่ายจริง รวม VAT แล้ว หรือสินค้ายกเว้น VAT</span>
+<span class="text-label-sm text-[#157347] block font-semibold">— ใช้เทียบราคากับระบบขายของสยามคอมเมิร์ซได้ทันที</span>
+</div>
+</label>
+<label class="flex items-start gap-2 p-2 rounded border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] cursor-pointer">
+<input class="mt-0.5 text-primary-container focus:ring-primary-container" name="vat-mode" type="radio"/>
+<div class="text-body-sm">
+<span class="font-medium text-[#17243b]">ไม่รวม VAT หรือไม่แน่ใจ</span>
+<span class="text-label-sm text-[#b08900] block">— เก็บไว้ดูอ้างอิงอย่างเดียว ยังไม่นำไปคำนวณกำไรเปรียบเทียบ</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Scheduling Options -->
+<div class="p-2.5 rounded-lg bg-white border border-[#e1e7f0] flex flex-col gap-1.5">
+<div class="text-label-md font-semibold text-[#17243b] flex items-center justify-between">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+                      รอบเก็บข้อมูล: เก็บซ้ำอัตโนมัติทุกวัน
+                    </span>
+<span class="text-label-sm text-[#157347] font-semibold">แนะนำ</span>
+</div>
+<label class="flex items-start gap-2 cursor-pointer mt-0.5">
+<input checked="" class="rounded text-primary-container border-[#e1e7f0] focus:ring-primary-container mt-0.5" type="checkbox"/>
+<span class="text-body-sm text-[#52627a]">
+                      เก็บเฉพาะช่วงกลางคืน 00:00–06:00 (แนะนำสำหรับเว็บใหญ่ · เก็บไม่จบจะพักและเก็บต่อคืนถัดไป)
+                    </span>
+</label>
+</div>
+</div>
+</div>
+<!-- Panel 2 Action Button -->
+<div class="mt-4 pt-3 border-t border-[#e1e7f0] flex flex-col gap-1">
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-[#157347] hover:bg-[#006139] text-white text-label-md font-semibold transition-all shadow-sm" onclick="addNewSourceToast()">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+<span>ข้อมูลถูกต้อง เริ่มเก็บเบื้องหลัง</span>
+</button>
+<p class="text-[11px] text-center text-secondary">
+                ระบบเก็บต่อเองทีละหน้าเบื้องหลัง ปิดหน้านี้ได้ ดูความคืบหน้าได้ที่การ์ดด้านล่าง
+              </p>
+</div>
+</div>
+</div>
+<!-- 3. Active Scraping Sources Cards & Status List (เว็บที่ตั้งค่าไว้) -->
+<div class="flex flex-col gap-4">
+<!-- Section Title & Status Filters -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-[#e1e7f0]">
+<div class="flex items-center gap-2">
+<h2 class="text-headline-md font-headline-md text-[#17243b]">เว็บที่ตั้งค่าไว้ (Configured Sources)</h2>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-bold bg-surface-container text-primary num-tabular">
+                4 เว็บไซต์
+              </span>
+</div>
+<!-- Quick Filter Tabs -->
+<div class="flex items-center gap-1 bg-white p-1 rounded-lg border border-[#e1e7f0] text-label-md">
+<button class="px-3 py-1 rounded bg-primary-container text-white font-semibold">ทั้งหมด (4)</button>
+<button class="px-3 py-1 rounded text-secondary hover:text-on-surface hover:bg-[#f6f8fc]">เปิดอยู่ (3)</button>
+<button class="px-3 py-1 rounded text-secondary hover:text-on-surface hover:bg-[#f6f8fc]">กำลังเก็บ (1)</button>
+<button class="px-3 py-1 rounded text-secondary hover:text-on-surface hover:bg-[#f6f8fc]">ปิดอยู่ (1)</button>
+</div>
+</div>
+<!-- Cards Grid for Sources -->
+<div class="grid grid-cols-1 gap-4">
+<!-- CARD 1: Makro PRO (Active Background Job with Legacy Warning) -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-3.5 hover:border-primary-container transition-all">
+<!-- Top Row: Source identity & status -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[24px]">storefront</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]">Makro PRO (แม็คโคร โปร)</h3>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347] animate-pulse"></span>
+                        เปิดอยู่ (กำลังเก็บ)
+                      </span>
+<span class="text-[11px] text-secondary font-mono">ID: SRC-MKR-01</span>
+</div>
+<div class="text-body-sm text-secondary truncate max-w-xl">
+                      https://www.makro.pro/c/fresh-food/meat-poultry
+                    </div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-sm text-secondary font-mono">รอบถัดไป: อัตโนมัติ</span>
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-label-md font-medium text-[#17243b]">
+                    ดูรายการสินค้า (3,420)
+                  </button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="document.getElementById('manual-modal').classList.remove('hidden')" title="ตั้งค่าเว็บนี้">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</div>
+</div>
+<!-- Legacy Scraping Warning Banner -->
+<div class="p-3 rounded-lg bg-[#fff8e1] border border-[#ffe082] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[#b08900] text-[20px] mt-0.5">warning</span>
+<div class="text-body-sm text-[#17243b]">
+<span class="font-semibold text-[#b08900]">เว็บนี้ยังเก็บแบบเก่า:</span> อ่านเฉพาะลิงก์ที่เห็น ไม่ได้กดไปหน้าถัดไป จึงได้สินค้าไม่ครบ · กดแล้วเริ่มเก็บเบื้องหลังทันที (20 หน้าแรกตอนนี้ ที่เหลือคืนนี้)
+                  </div>
+</div>
+<button class="shrink-0 px-3 py-1.5 rounded bg-[#b08900] hover:bg-[#8f6f00] text-white text-label-sm font-bold transition-colors">
+                  เก็บทุกหน้า (อัปเกรด)
+                </button>
+</div>
+<!-- Login & Account Badge -->
+<div class="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0]">
+<div class="flex items-center gap-2 text-label-md text-[#17243b]">
+<span class="material-symbols-outlined text-[18px] text-[#157347]">lock</span>
+<span>🔒 ล็อกอินเป็น: <strong class="font-semibold">member_corp@siam.co.th</strong> · ราคาที่เก็บนับเป็นราคาสมาชิก</span>
+</div>
+<button class="text-label-sm font-semibold text-primary hover:underline">
+                  แก้ล็อกอิน
+                </button>
+</div>
+<!-- Progress Bar & Operational Stats -->
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between items-center text-label-md text-secondary">
+<span>ความคืบหน้ารอบปัจจุบัน: <strong>อ่านแล้ว 142 จาก ~200 หน้า</strong></span>
+<span class="font-semibold text-[#17243b]">71%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-[#e1e7f0] overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 71%"></div>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-2 text-label-sm text-secondary pt-1">
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1 font-semibold text-[#17243b]">
+<span class="material-symbols-outlined text-[16px] text-primary">inventory_2</span> พบ 3,420 รายการ
+                    </span>
+<span class="flex items-center gap-1 text-[#c2333f]">
+<span class="material-symbols-outlined text-[16px]">error</span> ไม่สำเร็จ 2 หน้า
+                    </span>
+<span class="text-secondary">เพดาน 500 หน้า</span>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 rounded bg-[#f6f8fc] hover:bg-[#e1e7f0] text-secondary text-label-sm font-semibold">
+                      หยุดเก็บชั่วคราว
+                    </button>
+<button class="px-2.5 py-1 rounded bg-primary-container text-white text-label-sm font-semibold hover:bg-[#2848D6]">
+                      เก็บต่อเลยตอนนี้
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 2: Big C Online (Night Schedule Queued) -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-3.5 hover:border-primary-container transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[24px]">shopping_cart</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]">Big C Online (บิ๊กซี ออนไลน์)</h3>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-label-sm font-semibold bg-[#b08900]/10 text-[#b08900]">
+<span class="material-symbols-outlined text-[14px]">nightlight</span>
+                        รอเก็บคืนนี้ 00:00–06:00
+                      </span>
+<span class="text-[11px] text-secondary font-mono">ID: SRC-BGC-02</span>
+</div>
+<div class="text-body-sm text-secondary truncate max-w-xl">
+                      https://www.bigc.co.th/category/fresh-food-meat
+                    </div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-label-md font-medium text-[#17243b]">
+                    ดูรายการสินค้า (1,850)
+                  </button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="document.getElementById('manual-modal').classList.remove('hidden')" title="ตั้งค่าเว็บนี้">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</div>
+</div>
+<!-- Login & Account Badge (Public) -->
+<div class="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0]">
+<div class="flex items-center gap-2 text-label-md text-secondary">
+<span class="material-symbols-outlined text-[18px]">public</span>
+<span>ไม่ได้ล็อกอิน · ราคาสาธารณะ (Public General Price)</span>
+</div>
+<button class="text-label-sm font-semibold text-primary hover:underline">
+                  + ตั้งค่าล็อกอินเพื่อดูราคาสมาชิก
+                </button>
+</div>
+<!-- Operational Stats -->
+<div class="flex flex-wrap items-center justify-between gap-2 text-label-sm text-secondary pt-1">
+<div class="flex items-center gap-3">
+<span class="font-semibold text-[#17243b]">อ่านแล้วครบ 85 หน้าในรอบที่แล้ว</span>
+<span>พบ 1,850 รายการ</span>
+<span class="text-[#157347]">✓ ไม่พบหน้าผิดพลาด</span>
+<span>เพดาน 300 หน้า</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 rounded bg-[#f6f8fc] hover:bg-[#e1e7f0] text-[#17243b] text-label-sm font-semibold">
+                    เริ่มรอบใหม่ทันที
+                  </button>
+</div>
+</div>
+</div>
+<!-- CARD 3: Freshket B2B (Connection Interruption - Self Healing) -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-3.5 hover:border-primary-container transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-[#ffdad6]/40 text-[#c2333f] flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[24px]">local_shipping</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]">Freshket B2B (เฟรชเก็ต)</h3>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-label-sm font-semibold bg-[#c2333f]/10 text-[#c2333f]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f] animate-ping"></span>
+                        หลุด — กำลังลองใหม่เอง (รอบที่ 2/5)
+                      </span>
+<span class="text-[11px] text-secondary font-mono">ID: SRC-FKT-03</span>
+</div>
+<div class="text-body-sm text-secondary truncate max-w-xl">
+                      https://freshket.co/market/vegetables-roots
+                    </div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-label-md font-medium text-[#17243b]">
+                    ดูรายการสินค้า (920)
+                  </button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="document.getElementById('manual-modal').classList.remove('hidden')" title="ตั้งค่าเว็บนี้">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</div>
+</div>
+<!-- Login & Account Badge -->
+<div class="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0]">
+<div class="flex items-center gap-2 text-label-md text-[#17243b]">
+<span class="material-symbols-outlined text-[18px] text-[#157347]">lock</span>
+<span>🔒 ล็อกอินเป็น: <strong class="font-semibold">procure_th@siam.co.th</strong> · ราคาสมาชิก B2B</span>
+</div>
+<button class="text-label-sm font-semibold text-primary hover:underline">
+                  แก้ล็อกอิน
+                </button>
+</div>
+<div class="p-2.5 rounded bg-[#ffdad6]/20 text-[#ba1a1a] text-body-sm flex items-center justify-between">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">wifi_off</span>
+                  เซิร์ฟเวอร์ปลายทางตอบสนองช้า (Timeout &gt; 30s) · ระบบหน่วงเวลา 15 วินาทีก่อนอ่านหน้าถัดไปอัตโนมัติ
+                </span>
+<span class="text-label-sm font-mono font-bold">Error 504 Gateway</span>
+</div>
+</div>
+<!-- CARD 4: Lotus's Online (Completed Success State) -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] p-space-md shadow-[0_1px_2px_rgba(23,36,59,0.04)] flex flex-col gap-3.5 hover:border-primary-container transition-all">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[24px]">local_mall</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-headline-sm font-headline-sm text-[#17243b]">Lotus's Online (โลตัส ออนไลน์)</h3>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-label-sm font-semibold bg-[#157347]/10 text-[#157347]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                        สำเร็จ (รอบสมบูรณ์)
+                      </span>
+<span class="text-[11px] text-secondary font-mono">ID: SRC-LTS-04</span>
+</div>
+<div class="text-body-sm text-secondary truncate max-w-xl">
+                      https://shoponline.lotuss.com/th/category/fresh-food
+                    </div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-label-md font-medium text-[#17243b]">
+                    ดูรายการสินค้า (4,110)
+                  </button>
+<button class="p-1.5 text-secondary hover:text-primary rounded hover:bg-surface-container" onclick="document.getElementById('manual-modal').classList.remove('hidden')" title="ตั้งค่าเว็บนี้">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</div>
+</div>
+<!-- Operational Stats -->
+<div class="flex flex-wrap items-center justify-between gap-2 text-label-sm text-secondary pt-1">
+<div class="flex items-center gap-3">
+<span class="font-semibold text-[#17243b]">อ่านครบ 220 หน้า</span>
+<span>พบ 4,110 รายการ</span>
+<span class="text-[#157347]">✓ รวบรวมราคาสมบูรณ์</span>
+<span>เวลาประมวลผล: 42 นาที</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 rounded bg-[#f6f8fc] hover:bg-[#e1e7f0] text-secondary text-label-sm font-semibold">
+                    ประวัติการเก็บ
+                  </button>
+<button class="px-2.5 py-1 rounded bg-white border border-[#e1e7f0] text-primary text-label-sm font-semibold hover:bg-[#f6f8fc]">
+                    เริ่มรอบใหม่
+                  </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- ========================================================================= -->
+<!-- 4. DETAILED SETTINGS MODAL / SLIDE-OUT PANEL (+ ตั้งค่าเองแบบละเอียด)      -->
+<!-- ========================================================================= -->
+<div aria-modal="true" class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(23,36,59,0.4)] backdrop-blur-sm hidden" id="manual-modal" role="dialog">
+<div class="bg-white rounded-xl border border-[#e1e7f0] w-full max-w-3xl max-h-[921px] flex flex-col shadow-[0_12px_32px_-4px_rgba(23,36,59,0.14)] overflow-hidden m-4">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-surface-container-lowest">
+<div>
+<h3 class="text-headline-md font-headline-md text-[#17243b]">เพิ่มเว็บใหม่ / ตั้งค่าเก็บข้อมูลจากเว็บ</h3>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">กำหนดหน้าที่เก็บและฟิลด์เองได้ ทั้งสินค้า ราคา รายละเอียด และข้อมูลอื่น</p>
+</div>
+<button class="p-1.5 text-secondary hover:text-on-surface rounded-lg hover:bg-surface-container-low transition-colors" onclick="document.getElementById('manual-modal').classList.add('hidden')">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<!-- Modal Body (Scrollable form) -->
+<div class="p-6 overflow-y-auto flex flex-col gap-4 text-body-md text-[#17243b]">
+<!-- Two Column General Details -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">ชื่อเว็บ <span class="text-[#c2333f]">*</span></label>
+<input class="w-full h-[38px] px-3 rounded-lg border border-[#e1e7f0] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 text-body-md outline-none" placeholder="เช่น Makro PRO สาขาลาดพร้าว" type="text" value="Makro PRO B2B Hub"/>
+</div>
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">ที่อยู่เว็บหลัก <span class="text-[#c2333f]">*</span></label>
+<input class="w-full h-[38px] px-3 rounded-lg border border-[#e1e7f0] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 text-body-md outline-none" placeholder="https://www.makro.pro" type="url" value="https://www.makro.pro"/>
+</div>
+</div>
+<!-- Sitemap / Start URLs -->
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">
+            หน้าเริ่มต้น / Sitemap (หนึ่งลิงก์ต่อบรรทัด)
+          </label>
+<textarea class="w-full p-2.5 rounded-lg border border-[#e1e7f0] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-mono text-body-sm outline-none" placeholder="https://example.com/sitemap.xml
+https://example.com/categories" rows="2">https://www.makro.pro/c/fresh-food
+https://www.makro.pro/c/frozen-food</textarea>
+</div>
+<!-- Scope / Allowed Path -->
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">
+            ขอบเขต path ที่ตามลิงก์ (หนึ่ง path ต่อบรรทัด)
+          </label>
+<input class="w-full h-[38px] px-3 rounded-lg border border-[#e1e7f0] font-mono text-body-sm focus:border-primary-container outline-none" placeholder="/products/" type="text" value="/c/fresh-food/, /p/"/>
+</div>
+<!-- Engine mode: HTML vs Browser -->
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1.5">วิธีเปิดหน้าเว็บ</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<label class="flex items-start gap-2.5 p-3 rounded-lg border border-[#e1e7f0] bg-[#f6f8fc] cursor-pointer hover:border-primary-container">
+<input class="mt-1 text-primary-container focus:ring-primary-container" name="engine-type" type="radio"/>
+<div>
+<span class="text-label-md font-semibold text-[#17243b] block">HTML ธรรมดา</span>
+<span class="text-label-sm text-secondary">เร็วและใช้ทรัพยากรน้อย เหมาะกับเว็บทั่วไปที่ข้อมูลติดมากับ HTML</span>
+</div>
+</label>
+<label class="flex items-start gap-2.5 p-3 rounded-lg border border-primary-container bg-surface-container-low cursor-pointer">
+<input checked="" class="mt-1 text-primary-container focus:ring-primary-container" name="engine-type" type="radio"/>
+<div>
+<span class="text-label-md font-semibold text-primary block">เบราว์เซอร์จำลอง (Headless)</span>
+<span class="text-label-sm text-secondary">สำหรับเว็บที่โหลดด้วย JavaScript, React, Next.js หรือเลื่อนหน้าแบบ Ajax</span>
+</div>
+</label>
+</div>
+</div>
+<!-- CSS Selectors Configuration -->
+<div class="pt-2 border-t border-[#e1e7f0] flex flex-col gap-3">
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">ตัวเลือกแต่ละรายการ (CSS Selector สำหรับกล่องสินค้า)</label>
+<input class="w-full h-[38px] px-3 rounded-lg border border-[#e1e7f0] font-mono text-body-sm focus:border-primary-container outline-none" type="text" value=".product-card, [data-testid='product-item']"/>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-label-md font-semibold text-[#17243b]">ฟิลด์ที่ต้องการเก็บ</span>
+<button class="text-label-sm font-semibold text-primary hover:underline flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span> + เพิ่มฟิลด์
+            </button>
+</div>
+<!-- Selectors rows -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-[#f6f8fc] p-3 rounded-lg border border-[#e1e7f0]">
+<div>
+<span class="text-label-sm font-medium text-secondary">ชื่อสินค้า (Selector)</span>
+<input class="w-full h-[34px] mt-1 px-2.5 rounded border border-[#e1e7f0] font-mono text-body-sm" type="text" value="h3.title, .product-title"/>
+</div>
+<div>
+<span class="text-label-sm font-medium text-secondary">ราคาขาย (Selector)</span>
+<input class="w-full h-[34px] mt-1 px-2.5 rounded border border-[#e1e7f0] font-mono text-body-sm" type="text" value=".price-current, [data-price]"/>
+</div>
+</div>
+</div>
+<!-- Throttle & Page ceilings -->
+<div class="grid grid-cols-2 gap-4 pt-2">
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">พักระหว่างหน้า (วินาที)</label>
+<input class="w-full h-[38px] px-3 rounded-lg border border-[#e1e7f0] text-body-md" step="0.5" type="number" value="2.5"/>
+</div>
+<div>
+<label class="block text-label-md font-semibold text-[#17243b] mb-1">เพดานหน้าต่อรอบ (หน้าสูงสุด)</label>
+<input class="w-full h-[38px] px-3 rounded-lg border border-[#e1e7f0] text-body-md" type="number" value="500"/>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-6 py-3.5 border-t border-[#e1e7f0] flex items-center justify-end gap-3 bg-[#f6f8fc]">
+<button class="px-4 py-2 rounded-lg border border-[#e1e7f0] bg-white hover:bg-[#f6f8fc] text-[#17243b] text-label-md font-semibold transition-colors" onclick="document.getElementById('manual-modal').classList.add('hidden')">
+          ยกเลิก
+        </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container hover:bg-[#2848D6] text-white text-label-md font-semibold transition-colors shadow-sm" onclick="saveManualConfig()">
+          บันทึกการตั้งค่า
+        </button>
+</div>
+</div>
+</div>
+<!-- Toast Notification element -->
+<div class="fixed bottom-6 right-6 z-50 bg-[#17243b] text-white px-4 py-3 rounded-xl shadow-lg border border-[#38485e] flex items-center gap-3 transition-opacity duration-300 opacity-0 pointer-events-none" id="toast">
+<span class="material-symbols-outlined text-[#157347]">check_circle</span>
+<span class="text-body-sm font-medium" id="toast-message">บันทึกข้อมูลและเริ่มกระบวนการสำเร็จ</span>
+</div>
+<!-- ========================================================================= -->
+<!-- 5. MANDATORY INVISIBLE TRANSLATION DICTIONARY                             -->
+<!-- ========================================================================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "route": "admin-f72339d86a2f",
+    "url": "/j/marketing/scraping-sources",
+    "app": "admin",
+    "category": "การตลาด",
+    "translations": {
+      "th": {
+        "header_title": "สยาม คอมเมิร์ซ",
+        "header_subtext": "ศูนย์จัดการระบบร้านค้า",
+        "page_title": "ตั้งค่าเก็บข้อมูลเว็บ (Scraping Sources Setup & Management)",
+        "page_subtitle": "ระบบดึงข้อมูลและสำรวจราคาสินค้าคู่แข่งอัตโนมัติ (Competitor Price Scraping & Web Crawling) เพื่อวิเคราะห์ราคาตลาดแบบเรียลไทม์",
+        "master_switch_title": "สวิตช์เก็บข้อมูลเบื้องหลัง (Background scraping master switch)",
+        "master_switch_desc": "การเก็บข้อมูลเบื้องหลัง (ช่วงทดลอง): เว็บที่ตั้งเก็บอัตโนมัติจะทำงานตามรอบ · ปิดแล้วทุกเว็บหยุดหลังหน้าที่กำลังอ่าน ความคืบหน้ายังอยู่",
+        "master_switch_active": "เปิดอยู่",
+        "action_stop_background": "ปิดการเก็บเบื้องหลัง",
+        "action_start_background": "เปิดการเก็บเบื้องหลัง",
+        "step_1_title": "1. ใส่ลิงก์เว็บ แล้วลองดึงข้อมูล 1 รอบ",
+        "step_1_desc": "ระบบเปิดดูไม่เกิน 6 หน้า แล้วบอกว่าเว็บนี้มีข้อมูลอะไร เช่น ชื่อสินค้า ราคา — ยังไม่เริ่มเก็บจริงจนกว่าจะกดยืนยัน",
+        "url_input_label": "ลิงก์เว็บ (หรือชื่อ Makro PRO, Big C, Freshket)",
+        "url_placeholder": "เช่น https://example.com/products",
+        "terms_checkbox": "เป็นข้อมูลสาธารณะ และเรามีสิทธิ์อ่าน/เก็บข้อมูลจากเว็บนี้",
+        "terms_note": "ติ๊กยืนยันสิทธิ์ก่อน",
+        "login_helper_title": "เว็บนี้ต้องล็อกอิน? ใช้บัญชีสมาชิกของบริษัท (ไม่บังคับ)",
+        "login_helper_desc": "ใช้เฉพาะบัญชีของบริษัทเราเอง · รหัสผ่านเก็บแบบเข้ารหัสและจะไม่แสดงอีก · ราคาที่เห็นหลังล็อกอินนับเป็น “ราคาสมาชิก” แยกจากราคาปกติ · เว็บที่มี CAPTCHA/OTP ล็อกอินอัตโนมัติไม่ได้",
+        "btn_sample_fetch": "ลองดึงข้อมูล",
+        "btn_sample_loading": "กำลังดึงข้อมูล… (อาจใช้ถึง 2 นาที)",
+        "step_2_title": "2. ตรวจผลดึง ถ้าถูกต้องกดเริ่มเก็บ",
+        "field_select_title": "เลือกข้อมูลที่จะเก็บ",
+        "price_vat_title": "ราคาที่เห็นบนเว็บนี้ (ต้องเลือก)",
+        "vat_included_option": "ราคาที่ลูกค้าจ่ายจริง รวม VAT แล้ว หรือสินค้ายกเว้น VAT — ใช้เทียบราคาได้",
+        "vat_excluded_option": "ไม่รวม VAT หรือไม่แน่ใจ — เก็บไว้ดูอย่างเดียว ยังไม่เอาไปเทียบ",
+        "schedule_daily": "เก็บซ้ำอัตโนมัติทุกวัน",
+        "schedule_night": "เก็บเฉพาะกลางคืน 00:00–06:00 (แนะนำสำหรับเว็บใหญ่ · เก็บไม่จบจะพักและเก็บต่อคืนถัดไป)",
+        "btn_start_background": "ข้อมูลถูกต้อง เริ่มเก็บเบื้องหลัง",
+        "btn_start_hint": "ระบบเก็บต่อเองทีละหน้าเบื้องหลัง ปิดหน้านี้ได้ ดูความคืบหน้าได้ที่การ์ดด้านล่าง",
+        "sources_count": "เว็บที่ตั้งค่าไว้",
+        "legacy_warning": "เว็บนี้ยังเก็บแบบเก่า: อ่านเฉพาะลิงก์ที่เห็น ไม่ได้กดไปหน้าถัดไป จึงได้สินค้าไม่ครบ · กดแล้วเริ่มเก็บเบื้องหลังทันที (20 หน้าแรกตอนนี้ ที่เหลือคืนนี้)",
+        "btn_upgrade_crawl": "เก็บทุกหน้า",
+        "login_corp_badge": "🔒 ล็อกอินเป็น: member_corp@siam.co.th · ราคาที่เก็บนับเป็นราคาสมาชิก",
+        "login_public_badge": "ไม่ได้ล็อกอิน · ราคาสาธารณะ",
+        "btn_edit_login": "แก้ล็อกอิน",
+        "btn_set_login": "ตั้งค่าล็อกอิน",
+        "btn_manual_setup": "+ ตั้งค่าเองแบบละเอียด",
+        "modal_title": "เพิ่มเว็บใหม่ / ตั้งค่าเก็บข้อมูลจากเว็บ",
+        "modal_subtitle": "กำหนดหน้าที่เก็บและฟิลด์เองได้ ทั้งสินค้า ราคา รายละเอียด และข้อมูลอื่น",
+        "input_source_name": "ชื่อเว็บ",
+        "input_base_url": "ที่อยู่เว็บหลัก",
+        "input_sitemap": "หน้าเริ่มต้น / Sitemap (หนึ่งลิงก์ต่อบรรทัด)",
+        "input_path_scope": "ขอบเขต path ที่ตามลิงก์ (หนึ่ง path ต่อบรรทัด)",
+        "render_mode_html": "HTML — เร็วและใช้ทรัพยากรน้อย",
+        "render_mode_browser": "เบราว์เซอร์ — เว็บที่โหลดด้วย JavaScript",
+        "input_item_selector": "ตัวเลือกแต่ละรายการ (CSS selector)",
+        "btn_add_field": "+ เพิ่มฟิลด์",
+        "input_throttle": "พักระหว่างหน้า (วินาที)",
+        "input_page_ceiling": "เพดานหน้าต่อรอบ",
+        "btn_save_config": "บันทึกการตั้งค่า",
+        "btn_cancel": "ยกเลิก"
+      },
+      "en": {
+        "header_title": "Siam Commerce",
+        "header_subtext": "Merchant Operations Hub",
+        "page_title": "Scraping Sources Setup & Management",
+        "page_subtitle": "Automated competitor price crawling & product data collection for market intelligence.",
+        "master_switch_title": "Background scraping master switch",
+        "master_switch_desc": "Background scraping (Trial): Scheduled sites run periodically · Turning off stops immediately after current page. Progress remains intact.",
+        "master_switch_active": "Active",
+        "action_stop_background": "Disable Background Scraping",
+        "action_start_background": "Enable Background Scraping",
+        "step_1_title": "1. Enter URL and test 1 sample cycle",
+        "step_1_desc": "System inspects up to 6 pages to evaluate extractable data (title, price) — Extraction will not run continuously until verified.",
+        "url_input_label": "Website URL (e.g., Makro PRO, Big C, Freshket)",
+        "url_placeholder": "e.g., https://example.com/products",
+        "terms_checkbox": "This is public data and we possess scraping/reading authorization",
+        "terms_note": "Please verify legal access first",
+        "login_helper_title": "Login required? Use company account (Optional)",
+        "login_helper_desc": "Use company-owned accounts only · Passwords are AES encrypted and never disclosed · Logged-in prices count as Member Prices · Sites with CAPTCHA/OTP cannot log in automatically.",
+        "btn_sample_fetch": "Inspect Web Structure",
+        "btn_sample_loading": "Inspecting website… (may take up to 2 min)",
+        "step_2_title": "2. Verify results & trigger background crawler",
+        "field_select_title": "Select fields to capture",
+        "price_vat_title": "Price VAT state on this website (Required)",
+        "vat_included_option": "Final customer price including VAT or VAT-exempt — ready for price parity comparison",
+        "vat_excluded_option": "Excludes VAT or uncertain — archived for reference only",
+        "schedule_daily": "Recrawl daily automatically",
+        "schedule_night": "Night window only 00:00–06:00 (Recommended for large catalogs · paused state resumes next cycle)",
+        "btn_start_background": "Verify & Start Background Crawler",
+        "btn_start_hint": "Crawls autonomously in background. You may close this tab and track progress on cards below.",
+        "sources_count": "Configured Sources",
+        "legacy_warning": "Legacy crawling mode detected: only scrapes static visible links without pagination. Missing items possible · Upgrade now to crawl all pages.",
+        "btn_upgrade_crawl": "Crawl All Pages",
+        "login_corp_badge": "🔒 Logged in as: member_corp@siam.co.th · Captures Member Prices",
+        "login_public_badge": "Not logged in · Public Retail Prices",
+        "btn_edit_login": "Edit Credentials",
+        "btn_set_login": "Configure Login",
+        "btn_manual_setup": "+ Advanced Manual Setup",
+        "modal_title": "Add New Source / Detailed Web Scraper Config",
+        "modal_subtitle": "Define crawl routes, DOM selectors, target fields, and throttle rules manually.",
+        "input_source_name": "Source Name",
+        "input_base_url": "Primary Base URL",
+        "input_sitemap": "Start URLs / Sitemap (one per line)",
+        "input_path_scope": "Scope path restriction (one per line)",
+        "render_mode_html": "HTML — Fast, minimal compute",
+        "render_mode_browser": "Headless Browser — For JS-heavy web apps",
+        "input_item_selector": "Item Container CSS Selector",
+        "btn_add_field": "+ Add Field",
+        "input_throttle": "Page delay (seconds)",
+        "input_page_ceiling": "Max pages per cycle",
+        "btn_save_config": "Save Configuration",
+        "btn_cancel": "Cancel"
+      }
+    }
+  }
+  </script>
+<!-- ========================================================================= -->
+<!-- LIGHTWEIGHT INTERACTIVITY SCRIPTS                                        -->
+<!-- ========================================================================= -->
+<script>
+    // Quick helper to fill sample URL
+    function setExploreUrl(url) {
+      document.getElementById('explore-url-input').value = url;
+    }
+
+    // Master Switch Toggle simulation
+    let isMasterActive = true;
+    function toggleMasterSwitch() {
+      const btnText = document.getElementById('master-toggle-text');
+      const btn = document.getElementById('master-toggle-btn');
+      isMasterActive = !isMasterActive;
+      if (!isMasterActive) {
+        btnText.textContent = "เปิดการเก็บเบื้องหลัง";
+        btn.classList.remove('bg-[#c2333f]/10', 'text-[#c2333f]');
+        btn.classList.add('bg-[#157347]/10', 'text-[#157347]');
+        showToast("ปิดการเก็บข้อมูลเบื้องหลังชั่วคราวแล้ว");
+      } else {
+        btnText.textContent = "ปิดการเก็บเบื้องหลัง";
+        btn.classList.remove('bg-[#157347]/10', 'text-[#157347]');
+        btn.classList.add('bg-[#c2333f]/10', 'text-[#c2333f]');
+        showToast("เปิดระบบเก็บข้อมูลเบื้องหลังทำงานตามรอบแล้ว");
+      }
+    }
+
+    // Step 1 Sample inspection simulation
+    function simulateFetch() {
+      const btn = document.getElementById('btn-sample-fetch');
+      const btnText = document.getElementById('btn-sample-text');
+      const check = document.getElementById('terms-check');
+
+      if (!check.checked) {
+        alert("กรุณาติ๊กยืนยันสิทธิ์การเข้าถึงข้อมูลก่อนลองดึงข้อมูล");
+        return;
+      }
+
+      btnText.textContent = "กำลังดึงข้อมูล… (อาจใช้ถึง 2 นาที)";
+      btn.disabled = true;
+      btn.classList.add('opacity-75');
+
+      setTimeout(() => {
+        btnText.textContent = "ลองดึงข้อมูล";
+        btn.disabled = false;
+        btn.classList.remove('opacity-75');
+        showToast("สำรวจเว็บเรียบร้อย: พบ 24 รายการตัวอย่าง ตรวจสอบได้ที่ขั้นตอนที่ 2");
+      }, 1200);
+    }
+
+    // Trigger crawler from Step 2
+    function addNewSourceToast() {
+      showToast("เริ่มเก็บข้อมูลเบื้องหลังสำเร็จ ระบบกำลังอ่านหน้าสินค้าทีละหน้า");
+    }
+
+    // Modal save simulation
+    function saveManualConfig() {
+      document.getElementById('manual-modal').classList.add('hidden');
+      showToast("บันทึกการตั้งค่าเว็บแบบละเอียดเรียบร้อยแล้ว");
+    }
+
+    // Toast banner display helper
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.textContent = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+  </script>
+</body></html>

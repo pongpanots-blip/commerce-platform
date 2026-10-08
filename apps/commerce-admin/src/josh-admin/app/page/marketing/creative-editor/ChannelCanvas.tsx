@@ -16,6 +16,8 @@ import type {
   PopupChrome,
 } from './creative-editor.types';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 function textAlignClass(align?: 'left' | 'center' | 'right'): string {
   if (align === 'center') return 'text-center';
   if (align === 'right') return 'text-right';
@@ -37,9 +39,9 @@ function closeButtonCornerClass(corner: 'tl' | 'tr' | 'bl' | 'br' = 'tr'): strin
 }
 
 const ROW_LAYOUT_PRESETS: Array<{ columns: RowColumnPreset; label: string; title: string }> = [
-  { columns: 1, label: '□', title: '1 คอลัมน์' },
-  { columns: 2, label: '□□', title: '2 คอลัมน์ (50/50)' },
-  { columns: 3, label: '□□□', title: '3 คอลัมน์ (33/33/33)' },
+  { columns: 1, get label() { return __uiText("□"); }, get title() { return __uiText("1 คอลัมน์"); } },
+  { columns: 2, get label() { return __uiText("□□"); }, get title() { return __uiText("2 คอลัมน์ (50/50)"); } },
+  { columns: 3, get label() { return __uiText("□□□"); }, get title() { return __uiText("3 คอลัมน์ (33/33/33)"); } },
 ];
 
 function RowLayoutPicker({
@@ -49,10 +51,11 @@ function RowLayoutPicker({
   columnCount: number;
   onChange: (columns: RowColumnPreset) => void;
 }) {
+  __useUiLocale();
   const active = Math.min(3, Math.max(1, columnCount)) as RowColumnPreset;
   return (
     <div className="mb-1 flex items-center gap-1">
-      <span className="mr-1 text-[9px] font-semibold tracking-wide text-neutral-400">Layout</span>
+      <span className="mr-1 text-[9px] font-semibold tracking-wide text-neutral-400">{__uiText("Layout")}</span>
       {ROW_LAYOUT_PRESETS.map((preset) => (
         <button
           key={preset.columns}
@@ -86,6 +89,7 @@ function ColumnResizeDivider({
   /** Explicit track. Auto-placement is not safe once columns are pinned. */
   gridColumn: number;
 }) {
+  __useUiLocale();
   const [dragging, setDragging] = useState(false);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -145,7 +149,7 @@ function ColumnResizeDivider({
       onPointerDown={handlePointerDown}
       className={`relative z-10 shrink-0 cursor-col-resize select-none self-stretch ${dragging ? 'bg-primary/40' : 'hover:bg-primary/20'}`}
       style={{ gridColumn }}
-      title="ลากเพื่อปรับความกว้างคอลัมน์"
+      title={__uiText("ลากเพื่อปรับความกว้างคอลัมน์")}
     />
   );
 }
@@ -163,6 +167,7 @@ function ElementResizeHandle({
   max: number;
   onCommit: (value: number) => void;
 }) {
+  __useUiLocale();
   const isRight = direction === 'right';
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -225,7 +230,7 @@ function ElementResizeHandle({
           ? 'right-0 top-1/2 -translate-y-1/2 h-8 w-1.5 cursor-col-resize'
           : 'bottom-0 left-1/2 -translate-x-1/2 h-1.5 w-8 cursor-row-resize'
       }`}
-      title={isRight ? 'ลากเพื่อปรับความกว้าง' : 'ลากเพื่อปรับความสูง'}
+      title={isRight ? __uiText("ลากเพื่อปรับความกว้าง") : __uiText("ลากเพื่อปรับความสูง")}
     />
   );
 }
@@ -250,7 +255,7 @@ export function renderElementPreview(element: CreativeElement) {
           {element.text.trim() ? (
             element.text
           ) : (
-            <span className="text-xs text-neutral-300">คลิกแล้วพิมพ์ข้อความในแผงขวา...</span>
+            <span className="text-xs text-neutral-300">{__uiText("คลิกแล้วพิมพ์ข้อความในแผงขวา...")}</span>
           )}
         </p>
       );
@@ -264,8 +269,7 @@ export function renderElementPreview(element: CreativeElement) {
         />
       ) : (
         <div className="grid h-16 place-items-center rounded-md border border-dashed border-neutral-300 text-[11px] text-neutral-400">
-          คลิกเพื่อเลือกรูปจากคลัง Banner
-        </div>
+          {__uiText("คลิกเพื่อเลือกรูปจากคลัง Banner")}</div>
       );
     case 'button':
       return (
@@ -292,17 +296,16 @@ export function renderElementPreview(element: CreativeElement) {
               : undefined,
           }}
         >
-          {element.label || 'ปุ่ม'}
+          {element.label || __uiText("ปุ่ม")}
         </span>
       );
     case 'coupon':
       return (
         <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-2.5 py-2">
           <p className="text-[9px] font-medium uppercase tracking-wide text-neutral-500">
-            โค้ดที่ใช้ได้
-          </p>
+            {__uiText("โค้ดที่ใช้ได้")}</p>
           <p className="font-mono text-sm font-semibold text-neutral-900">
-            {element.legacyCode || 'เลือกคูปองในแผงขวา'}
+            {element.legacyCode || __uiText("เลือกคูปองในแผงขวา")}
           </p>
         </div>
       );
@@ -327,7 +330,7 @@ export function renderElementPreview(element: CreativeElement) {
     case 'video':
       return (
         <div className="flex items-center justify-center rounded bg-gray-100 text-xs text-gray-400" style={{ aspectRatio: element.style?.aspectRatio ?? '16/9', width: `${element.style?.widthPercent ?? 100}%` }}>
-          🎬 {element.src ? (() => { try { return new URL(element.src).hostname; } catch { return element.src; } })() : 'วิดีโอ (ใส่ URL)'}
+          🎬 {element.src ? (() => { try { return new URL(element.src).hostname; } catch { return element.src; } })() : __uiText("วิดีโอ (ใส่ URL)")}
         </div>
       );
     case 'html':
@@ -344,7 +347,7 @@ export function renderElementPreview(element: CreativeElement) {
           {(element.images ?? []).slice(0, 3).map((img, i) => (
             <img key={i} src={img.src} alt="" className="h-16 w-16 flex-shrink-0 rounded object-cover bg-gray-100" onError={(e) => { (e.target as HTMLImageElement).src = ''; }} />
           ))}
-          {(!element.images?.length) && <div className="flex h-16 w-full items-center justify-center rounded bg-gray-100 text-xs text-gray-400">🖼 ยังไม่มีรูปภาพ</div>}
+          {(!element.images?.length) && <div className="flex h-16 w-full items-center justify-center rounded bg-gray-100 text-xs text-gray-400">{__uiText("🖼 ยังไม่มีรูปภาพ")}</div>}
         </div>
       );
     case 'product_grid': {
@@ -361,8 +364,7 @@ export function renderElementPreview(element: CreativeElement) {
       return (
         <div className="rounded-md border border-dashed border-gray-300 p-2">
           <p className="mb-1.5 text-[9px] font-semibold tracking-wide text-gray-400">
-            ตารางสินค้า · {element.columns} คอลัมน์ · ~{count} รายการ
-          </p>
+            {__uiText("ตารางสินค้า · ")}{element.columns} {__uiText(" คอลัมน์ · ~")}{count} {__uiText(" รายการ")}</p>
           <div
             className="grid gap-1.5"
             style={{ gridTemplateColumns: `repeat(${element.columns}, minmax(0, 1fr))` }}
@@ -393,11 +395,11 @@ export function renderElementPreview(element: CreativeElement) {
       return (
         <div className="divide-y divide-gray-200 rounded-md border border-gray-200">
           {items.length === 0 && (
-            <p className="px-2 py-1.5 text-[11px] text-gray-300">ยังไม่มีหัวข้อ</p>
+            <p className="px-2 py-1.5 text-[11px] text-gray-300">{__uiText("ยังไม่มีหัวข้อ")}</p>
           )}
           {items.map((item) => (
             <div key={item.id} className="flex items-center justify-between px-2 py-1.5">
-              <span className="text-[11px] text-gray-600">{item.title || 'หัวข้อ'}</span>
+              <span className="text-[11px] text-gray-600">{item.title || __uiText("หัวข้อ")}</span>
               <span className="text-[11px] text-gray-300">⌄</span>
             </div>
           ))}
@@ -423,6 +425,7 @@ function ColumnQuickAdd({
   elementTypes: Array<{ type: CreativeElement['type']; label: string }>;
   onQuickAddElement: (type: CreativeElement['type'], columnId: string) => void;
 }) {
+  __useUiLocale();
   const [open, setOpen] = useState(false);
 
   // Escape closes the popover — click-away alone strands keyboard users, and a
@@ -448,7 +451,7 @@ function ColumnQuickAdd({
         className={`flex w-full items-center justify-center rounded border border-dashed border-neutral-200 py-0.5 text-neutral-300 transition-opacity hover:border-primary hover:text-primary ${
           open ? 'opacity-100' : 'opacity-0 group-hover/column:opacity-100'
         }`}
-        title="เพิ่มองค์ประกอบลงคอลัมน์นี้"
+        title={__uiText("เพิ่มองค์ประกอบลงคอลัมน์นี้")}
       >
         <MdAdd size={13} />
       </button>
@@ -524,6 +527,7 @@ function CanvasColumn({
   elementTypes?: Array<{ type: CreativeElement['type']; label: string }>;
   onQuickAddElement?: (type: CreativeElement['type'], columnId: string) => void;
 }) {
+  __useUiLocale();
   const canNest = depth === 0;
   const columnCount = row.columns.length;
   const isEmpty = column.elements.length === 0 && !column.rows?.length;
@@ -569,15 +573,14 @@ function CanvasColumn({
         >
           {isAddTarget && (
             <span className="pointer-events-none absolute -top-2 left-1 z-10 rounded bg-primary px-1 py-px text-[8px] font-semibold text-white">
-              เพิ่มที่นี่
-            </span>
+              {__uiText("เพิ่มที่นี่")}</span>
           )}
           {row.columns.length > 1 && (
             <button
               type="button"
               onClick={() => onRemoveColumn(row.id, column.id)}
               className="absolute -top-1 right-0 z-10 rounded-full bg-gray-900/70 p-0.5 text-white opacity-60 hover:opacity-100"
-              title="ลบคอลัมน์นี้"
+              title={__uiText("ลบคอลัมน์นี้")}
             >
               <MdOutlineClose size={10} />
             </button>
@@ -617,12 +620,12 @@ function CanvasColumn({
                           }
                         : undefined),
                     }}
-                    title={span > 1 ? `ครอบคลุม ${span} คอลัมน์` : undefined}
+                    title={span > 1 ? __uiText("ครอบคลุม {0} คอลัมน์", {"0": span}) : undefined}
                   >
                     <span
                       {...dragProvided.dragHandleProps}
                       className="mt-0.5 shrink-0 cursor-grab touch-none text-neutral-400 hover:text-neutral-700 active:cursor-grabbing"
-                      title="ลากเพื่อย้ายช่องเริ่มต้น / จัดลำดับ"
+                      title={__uiText("ลากเพื่อย้ายช่องเริ่มต้น / จัดลำดับ")}
                       onClick={(event) => event.stopPropagation()}
                     >
                       <MdDragIndicator size={18} />
@@ -630,7 +633,7 @@ function CanvasColumn({
                     <div className="min-w-0 flex-1">
                       {renderElementPreview(element)}
                       {span > 1 && (
-                        <p className="mt-0.5 text-[9px] font-medium text-primary">span ×{span}</p>
+                        <p className="mt-0.5 text-[9px] font-medium text-primary">{__uiText("span ×")}{span}</p>
                       )}
                     </div>
                     <button
@@ -640,7 +643,7 @@ function CanvasColumn({
                         onRemoveElement(element.id);
                       }}
                       className="shrink-0 rounded p-0.5 text-neutral-300 hover:text-red-500"
-                      title="ลบองค์ประกอบนี้"
+                      title={__uiText("ลบองค์ประกอบนี้")}
                     >
                       <MdOutlineClose size={14} />
                     </button>
@@ -688,7 +691,7 @@ function CanvasColumn({
                 onSelectColumn ? 'cursor-pointer' : ''
               } ${isDragActive ? 'border-primary/40 text-primary/60' : 'border-neutral-200 text-neutral-300'}`}
             >
-              วางที่นี่ (= คอลัมน์ {columnIndex + 1})
+              {__uiText("วางที่นี่ (= คอลัมน์ ")}{columnIndex + 1})
             </div>
           )}
           {elementTypes && onQuickAddElement && (
@@ -705,14 +708,13 @@ function CanvasColumn({
               className="rounded border border-neutral-200 bg-white/90 p-1.5"
             >
               <div className="mb-1 flex items-center justify-between gap-1">
-                <span className="text-[9px] font-semibold text-neutral-400">แถวย่อย</span>
+                <span className="text-[9px] font-semibold text-neutral-400">{__uiText("แถวย่อย")}</span>
                 <button
                   type="button"
                   onClick={() => onRemoveNestedRow(column.id, nestedRow.id)}
                   className="text-[9px] text-red-400 hover:text-red-600"
                 >
-                  ลบแถวย่อย
-                </button>
+                  {__uiText("ลบแถวย่อย")}</button>
               </div>
               <CanvasRow
                 row={nestedRow}
@@ -742,8 +744,7 @@ function CanvasColumn({
               onClick={() => onAddNestedRow(column.id)}
               className="flex w-full items-center justify-center gap-0.5 rounded border border-dashed border-neutral-300 py-1 text-[9px] text-neutral-400 hover:border-primary hover:text-primary"
             >
-              <MdAdd size={11} /> แถวย่อยในคอลัมน์นี้
-            </button>
+              <MdAdd size={11} /> {__uiText(" แถวย่อยในคอลัมน์นี้")}</button>
           )}
         </div>
       )}
@@ -788,6 +789,7 @@ function CanvasRow({
   elementTypes?: Array<{ type: CreativeElement['type']; label: string }>;
   onQuickAddElement?: (type: CreativeElement['type'], columnId: string) => void;
 }) {
+  __useUiLocale();
   const gridTemplateColumns =
     onChangeAdjacentColumnWidths && row.columns.length > 1
       ? row.columns.map((col) => `${col.widthPercent}fr`).join(' 8px ')
@@ -910,6 +912,7 @@ export function ChannelCanvas({
   elementTypes?: Array<{ type: CreativeElement['type']; label: string }>;
   onQuickAddElement?: (type: CreativeElement['type'], columnId: string) => void;
 }) {
+  __useUiLocale();
   const isEmail = mode === 'email';
   // Internal DragDropContext case (popup/email editors): track drag state here.
   const [internalDragActive, setInternalDragActive] = useState(false);
@@ -965,9 +968,9 @@ export function ChannelCanvas({
           {!isEmail && onTitleChange && (
             <input
               type="text"
-              aria-label="หัวข้อ popup"
+              aria-label={__uiText("หัวข้อ popup")}
               className="min-h-[2.75rem] w-full border-0 bg-transparent pr-7 text-sm font-semibold text-neutral-900 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-primary/40"
-              placeholder="พิมพ์หัวข้อ popup ตรงนี้..."
+              placeholder={__uiText("พิมพ์หัวข้อ popup ตรงนี้...")}
               value={title ?? ''}
               onChange={(event) => onTitleChange(event.target.value)}
             />
@@ -1035,8 +1038,7 @@ export function ChannelCanvas({
             onClick={onAddRow}
             className="flex w-full items-center justify-center gap-1 rounded-md border border-dashed border-neutral-300 py-1.5 text-[11px] text-neutral-400 hover:border-primary hover:text-primary"
           >
-            <MdAdd size={13} /> เพิ่มแถวใหม่
-          </button>
+            <MdAdd size={13} /> {__uiText(" เพิ่มแถวใหม่")}</button>
         </div>
       </div>
     </div>

@@ -3,6 +3,8 @@ import { uploadImage } from '@josh/shared-api';
 import React, { useState } from 'react';
 import { resolveAdminAssetUrl } from '../lib/asset-url';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type LogoUploadFieldProps = {
   label?: string;
   value: string;
@@ -14,6 +16,7 @@ export function LogoUploadField({
   value,
   onChange,
 }: LogoUploadFieldProps) {
+  __useUiLocale();
   const [uploading, setUploading] = useState(false);
 
   const previewSrc = resolveAdminAssetUrl(value);
@@ -25,10 +28,10 @@ export function LogoUploadField({
       if (response.data?.status && response.data.data?.url) {
         onChange(response.data.data.url);
       } else {
-        alert('อัปโหลดไม่สำเร็จ');
+        alert(__uiText("อัปโหลดไม่สำเร็จ"));
       }
     } catch {
-      alert('เกิดข้อผิดพลาดในการอัปโหลด');
+      alert(__uiText("เกิดข้อผิดพลาดในการอัปโหลด"));
     } finally {
       setUploading(false);
     }
@@ -44,18 +47,18 @@ export function LogoUploadField({
         maxSizeMB={5}
       />
       {uploading && (
-        <p className="text-xs text-primary animate-pulse">กำลังอัปโหลด...</p>
+        <p className="text-xs text-primary animate-pulse">{__uiText("กำลังอัปโหลด...")}</p>
       )}
       <Input
-        label="หรือวาง URL รูปภาพเอง"
+        label={__uiText("หรือวาง URL รูปภาพเอง")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="เช่น /uploads/brands/..."
+        placeholder={__uiText("เช่น /uploads/brands/...")}
       />
       {previewSrc && (
         <img
           src={previewSrc}
-          alt="preview"
+          alt={__uiText("preview")}
           className="w-32 h-32 object-contain rounded-xl border border-primary-border bg-primary-soft p-2"
         />
       )}

@@ -9,6 +9,8 @@ import React from 'react';
 import ConditionRow from './ConditionRow';
 import { createEmptyGroup, createEmptyLeaf } from './segment-definition.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   branch: SegmentBranch;
   fields: SegmentFieldSummary[];
@@ -32,6 +34,7 @@ export function ConditionGroup({
   onRemove,
   depth = 0,
 }: Props) {
+  __useUiLocale();
   const updateChild = (index: number, next: SegmentDefinition) => {
     const children = branch.children.slice();
     children[index] = next;
@@ -69,8 +72,7 @@ export function ConditionGroup({
               branch.op === 'AND' ? 'bg-primary text-white' : 'text-gray-500 hover:bg-gray-50'
             }`}
           >
-            และ (AND)
-          </button>
+            {__uiText("และ (AND)")}</button>
           <button
             type="button"
             onClick={() => onChange({ ...branch, op: 'OR' })}
@@ -78,8 +80,7 @@ export function ConditionGroup({
               branch.op === 'OR' ? 'bg-primary text-white' : 'text-gray-500 hover:bg-gray-50'
             }`}
           >
-            หรือ (OR)
-          </button>
+            {__uiText("หรือ (OR)")}</button>
         </div>
 
         {onRemove && depth > 0 && (
@@ -88,14 +89,13 @@ export function ConditionGroup({
             onClick={onRemove}
             className="text-xs text-red-500 hover:underline"
           >
-            ลบกลุ่มนี้
-          </button>
+            {__uiText("ลบกลุ่มนี้")}</button>
         )}
       </div>
 
       <div className="flex flex-col gap-2.5">
         {branch.children.length === 0 && (
-          <p className="text-xs text-gray-400">ยังไม่มีเงื่อนไขในกลุ่มนี้</p>
+          <p className="text-xs text-gray-400">{__uiText("ยังไม่มีเงื่อนไขในกลุ่มนี้")}</p>
         )}
 
         {branch.children.map((child, index) =>
@@ -128,15 +128,13 @@ export function ConditionGroup({
           onClick={addCondition}
           className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
         >
-          + เพิ่มเงื่อนไข
-        </button>
+          {__uiText("+ เพิ่มเงื่อนไข")}</button>
         <button
           type="button"
           onClick={addGroup}
           className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
         >
-          + เพิ่มกลุ่มย่อย
-        </button>
+          {__uiText("+ เพิ่มกลุ่มย่อย")}</button>
       </div>
     </div>
   );

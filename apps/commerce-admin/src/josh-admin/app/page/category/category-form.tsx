@@ -1,8 +1,11 @@
+// ui-metadata-migration: static labels and UI notices only
 import { compareCategoryOrder, getProductCategories } from '@josh/shared-api';
 import { Select } from '@josh/shared-ui-web';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type CategoryRow = {
   category_id_uuid: string;
   parent_id_uuid?: string | null;
@@ -23,14 +26,14 @@ export type CategoryRow = {
  * — ไม่ใช่ 1-4 แบบที่ฟอร์มเดิมเดาไว้
  */
 export const LEVEL_LABELS: Record<number, string> = {
-  0: 'Division — หมวดบนสุด (FRESHFOOD / DRYFOOD / NONFOOD)',
-  1: 'Category High Level — แถวไอคอนบนหน้าแรก',
-  2: 'Sub Category Level 2',
-  3: 'Sub Category Level 3 — ชั้นที่ผูกสินค้า',
+  get 0(){return __uiText("Division — หมวดบนสุด (FRESHFOOD / DRYFOOD / NONFOOD)");},
+  get 1(){return __uiText("Category High Level — แถวไอคอนบนหน้าแรก");},
+  get 2(){return __uiText("Sub Category Level 2");},
+  get 3(){return __uiText("Sub Category Level 3 — ชั้นที่ผูกสินค้า");},
 };
 
 export function levelLabel(level: number): string {
-  return `Level ${level} · ${LEVEL_LABELS[level] ?? 'ชั้นย่อย'}`;
+  return __uiText("Level {0} · {1}",{"0":level,"1":LEVEL_LABELS[level] ?? __uiText("ชั้นย่อย")});
 }
 
 /**
@@ -191,12 +194,15 @@ export function LeafCategorySelect({
   value: string;
   onChange: (categoryId: string) => void;
 }) {
+  __useUiLocale();
   return (
     <CategorySelect
       rows={leafCategories(rows)}
       value={value}
       onChange={onChange}
-      placeholder="— เลือกหมวดหมู่สินค้า —"
+      placeholder={__uiText("— เลือกหมวดหมู่สินค้า —")}
     />
   );
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { approveProducts, getAdminProducts, rejectErpPending } from '@josh/shared-api';
 import { Button, Input, Select, Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useState } from 'react';
@@ -16,6 +17,8 @@ import { catalogSellingPrice } from './catalog-price';
 import { PRODUCT_STATUS_OPTIONS, normalizeProductStatus, productStatusBadge } from './product-status.helpers';
 import { resolveMediaUrl } from './product-media.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const LIMIT = 10;
 
 type ProductStatusFilter = 'active' | 'inactive' | 'draft' | 'all';
@@ -54,6 +57,7 @@ function ProductThumb({ media }: { media?: { source?: string; media_type?: strin
 }
 
 const AllProduct = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [sortKey, setSortKey] = useState('product_inventory_id');
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC');
@@ -101,7 +105,7 @@ const AllProduct = () => {
       refetch();
     },
     onError: () => {
-      setApproveError('อนุมัติสินค้าไม่สำเร็จ');
+      setApproveError(__uiMessage("อนุมัติสินค้าไม่สำเร็จ"));
     },
   });
 
@@ -119,7 +123,7 @@ const AllProduct = () => {
       refetch();
     },
     onError: () => {
-      setApproveError('ปฏิเสธการอัปเดตจาก ERP ไม่สำเร็จ');
+      setApproveError(__uiMessage("ปฏิเสธการอัปเดตจาก ERP ไม่สำเร็จ"));
     },
   });
 
@@ -188,37 +192,37 @@ const AllProduct = () => {
   const columns: TableColumn<any>[] = [
     {
       key: 'media',
-      label: 'รูป',
+      label: __uiText("รูป"),
       render: (value: any) => <ProductThumb media={value} />,
     },
     {
       key: 'product_name',
-      label: 'ชื่อสินค้า',
+      label: __uiText("ชื่อสินค้า"),
       render: (value: any) => {
         return (
           <span className="font-semibold text-gray-800 truncate max-w-[200px] block">
-            {value ?? 'ไม่มีชื่อสินค้า'}
+            {value ?? __uiText("ไม่มีชื่อสินค้า")}
           </span>
         );
       },
     },
     {
       key: 'category_name_th',
-      label: 'หมวดหมู่',
+      label: __uiText("หมวดหมู่"),
       render: (_value: any, row: any) => {
         const categoryName = row.category_name_th ?? row.category_name_en ?? null;
         return (
           <span
             className={`font-medium ${!categoryName ? 'text-gray-400 italic' : 'text-gray-700'}`}
           >
-            {categoryName ?? 'ไม่มีหมวดหมู่'}
+            {categoryName ?? __uiText("ไม่มีหมวดหมู่")}
           </span>
         );
       },
     },
     {
       key: 'product_inventory_quantity',
-      label: 'จำนวนสต็อก',
+      label: __uiText("จำนวนสต็อก"),
       render: (value: any) => {
         const totalStock = Number(value) || 0;
 
@@ -226,14 +230,13 @@ const AllProduct = () => {
           <span
             className={`font-semibold ${totalStock === 0 ? 'text-red-500' : 'text-gray-700'}`}
           >
-            {totalStock.toLocaleString()} ชิ้น
-          </span>
+            {totalStock.toLocaleString()} {__uiText(" ชิ้น")}</span>
         );
       },
     },
     {
       key: 'selling_unit_price',
-      label: 'ราคาขายเริ่มต้น',
+      label: __uiText("ราคาขายเริ่มต้น"),
       sortable: true,
       render: (value: any, row: any) => {
         const pending = row.erp_pending_payload;
@@ -246,11 +249,11 @@ const AllProduct = () => {
         return (
           <div className="flex flex-col gap-0.5">
             <span className="font-bold text-gray-900">
-              {Number(catalogPrice) > 0 ? formatBaht(catalogPrice) : '⏳ รอระบุราคา'}
+              {Number(catalogPrice) > 0 ? formatBaht(catalogPrice) : __uiText("⏳ รอระบุราคา")}
             </span>
             {hasPendingPrice && (
               <span className="text-xs font-medium text-amber-700">
-                ERP →{' '}
+                {__uiText("ERP →")}{' '}
                 {pendingSell != null
                   ? formatBaht(pendingSell)
                   : formatBaht(pendingOrder)}
@@ -263,7 +266,7 @@ const AllProduct = () => {
     },
     {
       key: 'product_status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: any, row: any) => {
         const badge = productStatusBadge(normalizeProductStatus(value));
         const pending = hasErpPending(row);
@@ -277,8 +280,7 @@ const AllProduct = () => {
             </span>
             {pending && (
               <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full border border-amber-200 bg-amber-50 text-amber-800 w-fit">
-                รออนุมัติ ERP
-              </span>
+                {__uiText("รออนุมัติ ERP")}</span>
             )}
           </div>
         );
@@ -286,7 +288,7 @@ const AllProduct = () => {
     },
     {
       key: 'actions',
-      label: 'เครื่องมือ',
+      label: __uiText("เครื่องมือ"),
       render: (_, row) => {
         const productId = row.product_inventory_id;
         const isDraft = normalizeProductStatus(row.product_status) === 'draft';
@@ -298,7 +300,7 @@ const AllProduct = () => {
             <button
               onClick={() => productId && navigate(ADMIN_ROUTES.productDetail(productId))}
               className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-              title="ดูรายละเอียด"
+              title={__uiText("ดูรายละเอียด")}
             >
               <AiOutlineEye size={18} />
             </button>
@@ -306,7 +308,7 @@ const AllProduct = () => {
             <button
               onClick={() => productId && navigate(ADMIN_ROUTES.productEdit(productId))}
               className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-              title="แก้ไขรายละเอียด"
+              title={__uiText("แก้ไขรายละเอียด")}
             >
               <AiOutlineEdit size={18} />
             </button>
@@ -318,7 +320,7 @@ const AllProduct = () => {
                 }
                 disabled={actionPending}
                 className="p-1.5 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-30"
-                title={pending ? 'อนุมัติการอัปเดตจาก ERP' : 'อนุมัติสินค้า'}
+                title={pending ? __uiText("อนุมัติการอัปเดตจาก ERP") : __uiText("อนุมัติสินค้า")}
               >
                 <AiOutlineCheckCircle size={18} />
               </button>
@@ -328,12 +330,12 @@ const AllProduct = () => {
               <button
                 onClick={() => {
                   if (!productId) return;
-                  if (!window.confirm('ปฏิเสธการอัปเดตจาก ERP สำหรับสินค้านี้?')) return;
+                  if (!window.confirm(__uiText("ปฏิเสธการอัปเดตจาก ERP สำหรับสินค้านี้?"))) return;
                   rejectMutation.mutate({ ids: [productId] });
                 }}
                 disabled={actionPending}
                 className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-30"
-                title="ปฏิเสธการอัปเดตจาก ERP"
+                title={__uiText("ปฏิเสธการอัปเดตจาก ERP")}
               >
                 <AiOutlineCloseCircle size={18} />
               </button>
@@ -347,15 +349,15 @@ const AllProduct = () => {
   return (
     <div className="flex flex-col gap-4 p-4">
       <AdminListHeader
-        title="Product List"
-        subtitle="รายการสินค้าทั้งหมด"
-        createLabel="เพิ่มสินค้า"
+        title={__uiText("Product List")}
+        subtitle={__uiText("รายการสินค้าทั้งหมด")}
+        createLabel={__uiText("เพิ่มสินค้า")}
         createPath={ADMIN_ROUTES.productCreate}
       />
       <div className="flex flex-wrap items-end gap-4">
         <Input
-          label="ค้นหาสินค้า"
-          placeholder="ค้นหาด้วยชื่อสินค้า"
+          label={__uiText("ค้นหาสินค้า")}
+          placeholder={__uiText("ค้นหาด้วยชื่อสินค้า")}
           onChange={(e) => {
             setFilter(e.target.value);
             setSelectAllMatching(false);
@@ -366,7 +368,7 @@ const AllProduct = () => {
           <AiOutlineFilter size={24} />
           <div className="w-48">
             <Select
-              label="สถานะสินค้า"
+              label={__uiText("สถานะสินค้า")}
               data={PRODUCT_STATUS_OPTIONS}
               value={status}
               onChange={(e) => handleStatusChange(e.target.value)}
@@ -382,7 +384,7 @@ const AllProduct = () => {
       )}
       {approveError && (
         <div className="rounded-lg bg-rose-50 px-4 py-2 text-sm text-rose-700">
-          {approveError}
+          {(typeof (approveError) === 'string' ? __uiText(approveError) : approveError)}
         </div>
       )}
 
@@ -391,22 +393,22 @@ const AllProduct = () => {
           {selectAllMatching ? (
             <>
               <Button
-                text={`อนุมัติทั้งหมด (${totalCount})`}
+                text={__uiText("อนุมัติทั้งหมด ({0})", {"0": totalCount})}
                 icon={<AiOutlineCheckCircle size={18} />}
                 disabled={actionPending}
                 onClick={() => {
-                  if (!window.confirm(`ยืนยันอนุมัติสินค้าทั้งหมด ${totalCount} รายการ?`)) return;
+                  if (!window.confirm(__uiText("ยืนยันอนุมัติสินค้าทั้งหมด {0} รายการ?", {"0": totalCount}))) return;
                   approveMutation.mutate({ all: true });
                 }}
               />
               <Button
-                text="ปฏิเสธ pending ทั้งหมด"
+                text={__uiText("ปฏิเสธ pending ทั้งหมด")}
                 icon={<AiOutlineCloseCircle size={18} />}
                 disabled={actionPending}
                 onClick={() => {
                   if (
                     !window.confirm(
-                      'ปฏิเสธการอัปเดตจาก ERP ที่ค้างทั้งหมด (สถานะสินค้าไม่เปลี่ยน)?',
+                      __uiText("ปฏิเสธการอัปเดตจาก ERP ที่ค้างทั้งหมด (สถานะสินค้าไม่เปลี่ยน)?"),
                     )
                   ) {
                     return;
@@ -418,19 +420,19 @@ const AllProduct = () => {
           ) : (
             <>
               <Button
-                text={`อนุมัติที่เลือก (${selectedIds.length})`}
+                text={__uiText("อนุมัติที่เลือก ({0})", {"0": selectedIds.length})}
                 icon={<AiOutlineCheckCircle size={18} />}
                 disabled={actionPending}
                 onClick={() => approveMutation.mutate({ ids: selectedIds })}
               />
               <Button
-                text="ปฏิเสธ pending ที่เลือก"
+                text={__uiText("ปฏิเสธ pending ที่เลือก")}
                 icon={<AiOutlineCloseCircle size={18} />}
                 disabled={actionPending}
                 onClick={() => {
                   if (
                     !window.confirm(
-                      `ปฏิเสธการอัปเดตจาก ERP สำหรับ ${selectedIds.length} รายการ?`,
+                      __uiText("ปฏิเสธการอัปเดตจาก ERP สำหรับ {0} รายการ?", {"0": selectedIds.length}),
                     )
                   ) {
                     return;
@@ -443,14 +445,13 @@ const AllProduct = () => {
 
           {showSelectAllMatchingNotice && (
             <span className="text-sm text-gray-600">
-              เลือกแล้ว {selectedIds.length} รายการในหน้านี้ —{' '}
+              {__uiText("เลือกแล้ว ")}{selectedIds.length} {__uiText(" รายการในหน้านี้ —")}{' '}
               <button
                 type="button"
                 className="font-semibold text-primary hover:underline"
                 onClick={() => setSelectAllMatching(true)}
               >
-                เลือกทั้งหมด {totalCount} รายการ
-              </button>
+                {__uiText("เลือกทั้งหมด ")}{totalCount} {__uiText(" รายการ")}</button>
             </span>
           )}
         </div>
@@ -458,14 +459,13 @@ const AllProduct = () => {
 
       {isError && (
         <div className="flex items-center justify-between rounded-lg bg-rose-50 px-4 py-2 text-sm text-rose-700">
-          <span>โหลดข้อมูลไม่สำเร็จ</span>
+          <span>{__uiText("โหลดข้อมูลไม่สำเร็จ")}</span>
           <button onClick={() => refetch()} className="font-semibold underline">
-            ลองใหม่
-          </button>
+            {__uiText("ลองใหม่")}</button>
         </div>
       )}
       {isLoading && (
-        <div className="px-4 py-2 text-sm text-gray-500">กำลังโหลด…</div>
+        <div className="px-4 py-2 text-sm text-gray-500">{__uiText("กำลังโหลด…")}</div>
       )}
       <Table
         columns={columns}
@@ -487,3 +487,5 @@ const AllProduct = () => {
 };
 
 export default AllProduct;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

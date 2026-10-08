@@ -1,0 +1,66 @@
+Design EXACTLY ONE polished, easy-to-use Commerce Platform screen. Route identifier admin-939f71ddd6b8; URL /marketing/growth/plans/:id; app admin; category การตลาด; component GrowthPlanPage; view type detail; title Research.
+
+# Commerce Platform — task-based UI
+
+Design for Thai commerce operations teams. The product has seven work areas:
+สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล,
+ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน. A separate developer portal manages API keys and webhooks.
+
+## Visual language
+
+- Light canvas `#f6f8fc`, white cards, restrained borders `#e1e7f0`.
+- Primary blue `#365cf5`; ink `#17243b`; secondary text `#52627a`.
+- Success `#157347`, warning `#b08900`, error `#c2333f`; always pair color with text.
+- Noto Sans Thai for Thai and Latin; body 14px, labels 13px, page titles 28px.
+- Cards have 12px corners; controls 8px. Use 16/24/32px spacing.
+- A 256px sidebar, compact contextual header, and a readable content width near 1240px.
+- SVG icons and local fonts in the application. No decorative stock photos or gradients.
+- Phone layouts stack cards and collapse navigation. Scroll wide tables inside their panel.
+
+## Usability
+
+- Lead with the task and one primary action. Show records before creation forms.
+- Organize each work area's links into short task sections, with useful descriptions.
+- Creation and editing use named dialogs, clear labels, inline errors, and Cancel/Save actions.
+- Keep keyboard focus inside dialogs, support Escape, and return focus to the trigger.
+- Record links open their own detail URLs; preserve existing routes and role restrictions.
+- Show loading, empty, filtered-empty and failed states separately.
+- Counts and operational status in the application must come from its API. Prototype samples
+  must be labeled `ข้อมูลตัวอย่าง`; never copy sample figures into application code.
+- List APIs for platform products/customers support pagination only. A frontend search must
+  explicitly say it searches the current page. Do not imply a complete catalog search.
+- Every action in the application must work. Do not add export/import, bulk changes, charts,
+  advanced filters or copy-secret actions without an existing supported API.
+
+## Business fields and workflows
+
+- Product list: SKU, name, status. Create/edit: SKU, name, description. Product detail also
+  shows fulfillment mode, lead time, update date and inventory by warehouse when available.
+- Customer list: name/code, email, phone, status. Detail shows contact data and actual orders.
+- Orders: code, status, total, creation date. Create with customer/product selectors,
+  editable quantity/unit price, add/remove lines and a calculated subtotal.
+- Stock movements: receive, count, damage/return/correction, transfer. Choose an owned
+  warehouse, enter SKU/quantity/note, show a clear explanation of the selected movement.
+- Marketing: planning, campaigns/promotions, content/communication, tracking results.
+- Reports: select a business/system report and its existing filters; show unavailable data
+  honestly, with a retry action where supported.
+- Connections: connections, inbound data, sync jobs, outgoing deliveries and failed records.
+- Team settings: staff list, create account, role management and existing password/status actions.
+- Portal: active key/webhook onboarding, key creation with the existing one-time secret,
+  subscriptions, webhook test results, and recent delivery status filters.
+
+## Implementation boundary
+
+Stitch screens are visual references. React implements the supported interactions using
+`@cp/ui`; preserve API payloads, confirmation behavior and server permissions. Complex
+migrated management pages retain their domain-specific workflows while adopting the common
+visual system. Never replace a working business screen with static generated HTML.
+
+
+Design this specific existing page, including its details or create/edit form when that is its route. Use its UI copy to infer supported fields, actions, tables and statuses. Keep domain controls and avoid inventing business operations. Lists lead with records and real filters. Forms group required fields before optional/advanced settings with clear section headings and sticky Cancel/Save. Details lead with facts, then related records and existing actions. Admin uses the seven-area sidebar; Portal uses its own navigation; login/register are centered forms. Use 256px sidebar, 1240px main width, Noto Sans Thai, #365cf5 primary, #f6f8fc canvas, white cards with 12px corners, 40px inputs and buttons, 14px body. Avoid decorative charts and stock photography.
+
+BILINGUAL: Thai default, visible ไทย / English selector with working UI translations. Mark example records as ข้อมูลตัวอย่าง / Sample data. Preserve record names, identifiers, URLs, API enums and code. Translate labels, help, actions and errors naturally.
+
+Exact UI copy catalogue (include all in export): ["Research","อ่านอย่างเดียว","เวลา","ไม่มี","กำลังสร้างร่าง…","กำลังบันทึก…","ระบุ UUID ของกลุ่ม คั่นด้วย comma","A","B","แผนทั้งหมด","รายละเอียดแผน","แผนและปฏิทิน","สร้างแผน Growth","ร่างใหม่","ร่างข้อเสนอและข้อความ ตรวจหลักฐาน แล้วอนุมัติ revision ก่อนสร้าง workflow ที่หยุดไว้","เปิดร่าง workflow","ดูผล","โหลดเวอร์ชันล่าสุด","แผนนี้อ่านได้ การแก้เนื้อหาและอนุมัติเป็นหน้าที่เจ้าของแผนหรือผู้ดูแล","มีเนื้อหาที่แก้แล้วยังไม่บันทึก บันทึกก่อนใช้ AI ส่งตรวจ อนุมัติ หรือสร้างร่าง workflow","แผนนี้ยังไม่พร้อมเปิดส่งอัตโนมัติ","การบันทึก อนุมัติ และสร้างร่างไม่ส่งข้อความ ระบบยังไม่บังคับสต็อก กำไร และงบ ณ เวลาส่ง จึงต้องหยุด workflow นี้ไว้","สถานะการตรวจ","เจ้าของงาน","ผู้อนุมัติ","revision ที่อนุมัติ","แก้ไขล่าสุด","ส่งตรวจ","อนุมัติ revision","สร้างร่าง workflow ที่หยุดไว้","ยังไม่เชื่อม workflow บันทึกและตรวจแผนได้ เมื่อต่อระบบแล้วจึงสร้างร่าง","แก้กราฟใน workflow ได้ การแก้กราฟจะยกเลิกการอนุมัติเดิม ต้องตรวจแผนใหม่ก่อนทำต่อ และยังเปิดส่งแผนนี้ไม่ได้","ตรวจ workflow ที่อาจสร้างแล้วก่อนทำต่อ","ระบบไม่สร้างซ้ำอัตโนมัติ ให้ผู้ดูแลตรวจรายการ workflow แล้วเชื่อมร่างที่มี marker ของแผนนี้และสถานะ draft / paused","ตรวจรายการ workflow","Workflow UUID ที่ตรวจพบ","ตรวจและเชื่อมร่าง","แผนและข้อความ","ข้อความสองเวอร์ชันเป็นร่าง เลือกเวอร์ชันที่ทีมจะตรวจและใช้","บันทึกร่าง","ชื่อแผน","เช่น ติดตามลูกค้าที่เลยรอบซื้อ","ประเภทแผน","เป้าหมายและข้อเสนอที่ต้องตรวจ","ระบุสิ่งที่ต้องการให้ลูกค้าทำ พร้อมข้อเสนอที่ยืนยันแล้ว","เจ้าของแผน (อีเมล)","วันที่วางแผนทำงาน","กำหนดการของทีม ยังไม่ตั้งเวลาส่งข้อความ","งบสูงสุดของแผน (บาท)","อัตรา contribution ขั้นต่ำ (%)","เกณฑ์ของแผน ยังไม่บังคับตรวจ ณ เวลาส่ง","กลุ่มเป้าหมาย สินค้า และการทดลอง","Segment IDs","UUID เท่านั้น คั่นด้วย comma · ตรวจจากหน้า Segments","ระบุกลุ่มที่ยืนยันแล้วก่อนส่งตรวจ","Exclude segment IDs","UUID เท่านั้น คั่นด้วย comma","SKU ที่ใช้","คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง","ใช้ notification template เดิม (ไม่บังคับ)","เว้นว่างเพื่อสร้าง template จากข้อความที่เลือก หากระบุ key เนื้อหาต้องตรงกับเวอร์ชันที่อนุมัติ","กลุ่มควบคุม (%)","เว้นช่วงติดต่อ (วัน)","ช่วงนับ conversion (วัน)","ตรวจ Segments","ตรวจ template ข้อความ","เลือกเวอร์ชัน","สำหรับตรวจ","อ้างอิง ID จากหลักฐานด้านล่าง คั่นด้วย comma","แผนนี้เชื่อม Research topic","หลักฐานจะตรวจจากรายงานนี้เมื่อบันทึก","ผู้ช่วย AI ร่างข้อความ","ยังไม่เชื่อม AI เขียนข้อความและบันทึกแผนด้วยตัวเองได้","บันทึกร่างก่อน เพื่อให้ AI ใช้แผนและหลักฐานเวอร์ชันเดียวกับทีม","คำสั่งสำหรับ AI","เช่น ร่างสองข้อความที่ชัดเจน โดยใช้ข้อเสนอและหลักฐานที่ยืนยันแล้ว","กำลังร่าง…","ให้ AI ร่าง 2 เวอร์ชัน","เหตุผล:","อ้างอิง:","หลักฐานที่ใช้:","นำมาใส่ในร่างเพื่อแก้และบันทึก","ขั้นตอนของร่าง workflow","1. Trigger","2. กลุ่มเป้าหมาย","3. ทดลองและความถี่","4. ข้อความที่เลือก","หลักฐานของแผน","งานที่ทีมต้องรับต่อ","เพิ่มงาน","ยังไม่มีงาน ตรวจกลุ่มเป้าหมาย สินค้า ข้อเสนอ หรือมอบหมายฝ่ายขายก่อนเปิดใช้งาน","เสร็จแล้ว","ลบงาน","บันทึกงานของทีม","ประวัติ revision และการตรวจ","ผู้ทำรายการ","การเปลี่ยนแปลง","Revision","ค้นใน URL / message","เงื่อนไขใช้โค้ด","ชื่อบริษัท, เลขจดทะเบียน หรือ ERP customer code","ดูแหล่งที่มา ↗","เท็จ (false)","ประวัติส่ง ERP (สำเนาจาก josh)","ไม่มีชื่อ","ยังไม่มีรายการ","ราคากล่อง / หน่วยสั่ง (฿)","ลบไฟล์ที่ไม่สำเร็จออก","วงเงินที่ใช้ไปแล้ว","สร้างเสร็จแล้วกลับมาเพิ่มเข้า Campaign ที่นี่","หรือ (OR)","อายุสินค้าสูงสุด","กำหนดเสร็จ {0}","งาน {0}","เจ้าของงาน {0}","สร้างแผน","หัวข้อความ {0}"]
+
+Exported HTML MUST include an invisible <script id="commerce-ui-translations" type="application/json"> object keyed by EVERY exact source string above. Values must be {"th":"Thai UI translation","en":"English UI translation"}. Preserve placeholders such as {0}, {1}, {name} exactly. Do not display the dictionary. Render only this route's UI; extra messages belong in translation data, not as extra unrelated controls. This export requirement has already worked in the existing project screens. Generate one complete screen.

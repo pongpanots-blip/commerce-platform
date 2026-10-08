@@ -1,0 +1,135 @@
+[
+  {
+    "app": "admin",
+    "path": "/workspaces/marketing",
+    "routeId": "admin-43c9330c39cf",
+    "source": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+    "component": "Workspace",
+    "category": "การตลาด",
+    "referenceType": "shared-template",
+    "reason": "The same Workspace component, task cards, localized search and sectioned navigation. Marketing routes and permissions come from the existing navigation configuration.",
+    "stitchReferences": [
+      {
+        "routeId": "admin-139f2bce2533",
+        "path": "/workspaces/orders",
+        "name": "projects/11459856437863302160/screens/e00c5ee93850423197bc472eca8c370f",
+        "projectId": "11459856437863302160",
+        "id": "e00c5ee93850423197bc472eca8c370f"
+      }
+    ],
+    "freshGenerationComplete": false,
+    "implementation": "Existing page uses the shared redesigned controls, headers, localization and task navigation. Validate through full-ui-routes.mjs."
+  },
+  {
+    "app": "admin",
+    "path": "/josh/coupons",
+    "routeId": "admin-064cb3e0c611",
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+    "component": "JoshBackoffice",
+    "category": "การตลาด",
+    "referenceType": "shared-template",
+    "reason": "The same JoshBackoffice record-grid component. Coupon columns, filters and operations remain supplied by its existing collection schema.",
+    "stitchReferences": [
+      {
+        "routeId": "admin-3c882360f70c",
+        "path": "/josh/credit_notes",
+        "name": "projects/11459856437863302160/screens/12f5857f773b45fc9b415ef55e709e47",
+        "projectId": "11459856437863302160",
+        "id": "12f5857f773b45fc9b415ef55e709e47"
+      },
+      {
+        "routeId": "admin-2a32a4faa755",
+        "path": "/j/coupons",
+        "name": "projects/6122197874596130141/screens/7100424de252467893dc6d7ce700ecc9",
+        "projectId": "6122197874596130141",
+        "id": "7100424de252467893dc6d7ce700ecc9"
+      }
+    ],
+    "freshGenerationComplete": false,
+    "implementation": "Existing page uses the shared redesigned controls, headers, localization and task navigation. Validate through full-ui-routes.mjs."
+  },
+  {
+    "app": "admin",
+    "path": "/josh/campaigns",
+    "routeId": "admin-4ecb11661f0f",
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+    "component": "JoshBackoffice",
+    "category": "การตลาด",
+    "referenceType": "shared-template",
+    "reason": "The same JoshBackoffice record-grid component. Campaign fields and operations remain supplied by its existing collection schema.",
+    "stitchReferences": [
+      {
+        "routeId": "admin-3c882360f70c",
+        "path": "/josh/credit_notes",
+        "name": "projects/11459856437863302160/screens/12f5857f773b45fc9b415ef55e709e47",
+        "projectId": "11459856437863302160",
+        "id": "12f5857f773b45fc9b415ef55e709e47"
+      },
+      {
+        "routeId": "admin-43a852fef571",
+        "path": "/j/promotions/campaigns",
+        "name": "projects/6122197874596130141/screens/44a821ebd3f44f73870f34a76424687d",
+        "projectId": "6122197874596130141",
+        "id": "44a821ebd3f44f73870f34a76424687d"
+      }
+    ],
+    "freshGenerationComplete": false,
+    "implementation": "Existing page uses the shared redesigned controls, headers, localization and task navigation. Validate through full-ui-routes.mjs."
+  },
+  {
+    "app": "admin",
+    "path": "/josh/segments",
+    "routeId": "admin-0497f6d6ef68",
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+    "component": "JoshBackoffice",
+    "category": "การตลาด",
+    "referenceType": "shared-template",
+    "reason": "The same JoshBackoffice record-grid component. Segment fields and operations remain supplied by its existing collection schema.",
+    "stitchReferences": [
+      {
+        "routeId": "admin-3c882360f70c",
+        "path": "/josh/credit_notes",
+        "name": "projects/11459856437863302160/screens/12f5857f773b45fc9b415ef55e709e47",
+        "projectId": "11459856437863302160",
+        "id": "12f5857f773b45fc9b415ef55e709e47"
+      },
+      {
+        "routeId": "admin-1ddd0d9427e8",
+        "path": "/j/segments",
+        "name": "projects/6122197874596130141/screens/efac2dac25264299b1c55678548ca9f7",
+        "projectId": "6122197874596130141",
+        "id": "efac2dac25264299b1c55678548ca9f7"
+      }
+    ],
+    "freshGenerationComplete": false,
+    "implementation": "Existing page uses the shared redesigned controls, headers, localization and task navigation. Validate through full-ui-routes.mjs."
+  },
+  {
+    "app": "admin",
+    "path": "/j/cs/notification-stats",
+    "routeId": "admin-c70a88be231e",
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryStats.tsx",
+    "component": "NotificationDeliveryStats",
+    "category": "การตลาด",
+    "referenceType": "composed-patterns",
+    "reason": "Compose the existing Stitch metric-card and filtered notification-log patterns. Keep date/channel/type filters, summary/log tabs, source metrics and read-only tables. Failed reads show a retryable error without invented zero totals.",
+    "stitchReferences": [
+      {
+        "routeId": "admin-3f162fd972f7",
+        "path": "/j/cs/product-notify-funnel",
+        "name": "projects/6122197874596130141/screens/49c3b1dab23f4ccf957ba542cd9f76d3",
+        "projectId": "6122197874596130141",
+        "id": "49c3b1dab23f4ccf957ba542cd9f76d3"
+      },
+      {
+        "routeId": "admin-3f7cba33fd61",
+        "path": "/j/cs/notification-log",
+        "name": "projects/6122197874596130141/screens/33fbc8fa402c4b268f28872d48ea2c21",
+        "projectId": "6122197874596130141",
+        "id": "33fbc8fa402c4b268f28872d48ea2c21"
+      }
+    ],
+    "freshGenerationComplete": false,
+    "implementation": "Existing page uses the shared redesigned controls, headers, localization and task navigation. Validate through full-ui-routes.mjs."
+  }
+]

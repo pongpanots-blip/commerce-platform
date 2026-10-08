@@ -1,4 +1,7 @@
 // @ts-nocheck — copied unchanged from josh web-admin, which has the same type errors in this file (josh type debt, not a commerce change).
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import { getUserDashboard, type AdminOrderUiStatus } from '@josh/shared-api';
 import { Table, TableColumn, Text } from '@josh/shared-ui-web';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -19,6 +22,8 @@ import BranchPricingPanel from './BranchPricingPanel';
 import CsUserTools from '../CS/CsUserTools';
 import UserJourneyTimeline from './UserJourneyTimeline';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type DashboardData = {
   user: {
     id: string;
@@ -68,12 +73,12 @@ type DashboardData = {
 };
 
 const ORDER_STATUS_LABELS: Record<AdminOrderUiStatus, string> = {
-  pending: 'รอชำระเงิน',
-  paid: 'ชำระแล้ว',
-  preparing: 'กำลังเตรียม',
-  shipped: 'กำลังจัดส่ง',
-  complete: 'เสร็จสิ้น',
-  cancelled: 'ยกเลิก / คืนเงิน',
+  get pending(){return __uiText("รอชำระเงิน");},
+  get paid(){return __uiText("ชำระแล้ว");},
+  get preparing(){return __uiText("กำลังเตรียม");},
+  get shipped(){return __uiText("กำลังจัดส่ง");},
+  get complete(){return __uiText("เสร็จสิ้น");},
+  get cancelled(){return __uiText("ยกเลิก / คืนเงิน");},
 };
 
 const ORDER_STATUS_STYLES: Record<AdminOrderUiStatus, string> = {
@@ -93,6 +98,7 @@ function formatCurrency(value: number) {
 }
 
 const UserDetail = () => {
+  __useUiLocale();
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
@@ -113,10 +119,10 @@ const UserDetail = () => {
         if (response?.status === 200 && response.data?.status === true) {
           setDashboard(response.data.data);
         } else {
-          setError('ไม่พบข้อมูลผู้ใช้');
+          setError(__uiMessage("ไม่พบข้อมูลผู้ใช้"));
         }
       } catch (err: any) {
-        setError(err?.response?.data?.message ?? 'โหลดข้อมูลไม่สำเร็จ');
+        setError(err?.response?.data?.message ?? __uiMessage("โหลดข้อมูลไม่สำเร็จ"));
       } finally {
         setLoading(false);
       }
@@ -135,35 +141,35 @@ const UserDetail = () => {
   }, [dashboard?.monthly_spend]);
 
   const orderColumns: TableColumn<DashboardData['recent_orders'][0]>[] = [
-    { key: 'order_id', label: 'เลขที่ออเดอร์' },
+    { key: 'order_id', label: __uiText("เลขที่ออเดอร์") },
     {
       key: 'date',
-      label: 'วันที่สั่ง',
+      label: __uiText("วันที่สั่ง"),
       render: (value) =>
         value
-          ? new Date(String(value)).toLocaleDateString('th-TH', {
+          ? new Date(String(value)).toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
               day: 'numeric',
               month: 'short',
               year: 'numeric',
             })
           : '-',
     },
-    { key: 'branch', label: 'สาขา' },
+    { key: 'branch', label: __uiText("สาขา") },
     {
       key: 'item_count',
-      label: 'รายการ',
+      label: __uiText("รายการ"),
       render: (value) => `${value} ชิ้น`,
     },
     {
       key: 'total_price',
-      label: 'ยอดรวม',
+      label: __uiText("ยอดรวม"),
       render: (value) => (
         <span className="font-semibold text-gray-800">{formatCurrency(Number(value))}</span>
       ),
     },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: DashboardData['recent_orders'][0]['status']) => (
         <span
           className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${ORDER_STATUS_STYLES[value]}`}
@@ -181,46 +187,44 @@ const UserDetail = () => {
           onClick={() => navigate(ADMIN_ROUTES.orderDetail(row.orders_id))}
           className="text-xs font-semibold text-primary hover:underline"
         >
-          ดูออเดอร์
-        </button>
+          {__uiText("ดูออเดอร์")}</button>
       ),
     },
   ];
 
   const topProductColumns: TableColumn<DashboardData['top_products'][0]>[] = [
-    { key: 'sku', label: 'SKU' },
-    { key: 'product_name', label: 'สินค้า' },
+    { key: 'sku', label: __uiText("SKU") },
+    { key: 'product_name', label: __uiText("สินค้า") },
     {
       key: 'total_quantity',
-      label: 'จำนวนที่สั่ง',
+      label: __uiText("จำนวนที่สั่ง"),
       render: (value) => (
         <span className="font-semibold text-primary">{Number(value).toLocaleString()}</span>
       ),
     },
     {
       key: 'total_revenue',
-      label: 'มูลค่ารวม',
+      label: __uiText("มูลค่ารวม"),
       render: (value) => formatCurrency(Number(value)),
     },
   ];
 
   if (loading) {
     return (
-      <div className="p-8 text-sm text-gray-500">กำลังโหลดข้อมูลลูกค้า...</div>
+      <div className="p-8 text-sm text-gray-500">{__uiText("กำลังโหลดข้อมูลลูกค้า...")}</div>
     );
   }
 
   if (error || !dashboard) {
     return (
       <div className="grid gap-4 p-8">
-        <p className="text-sm text-red-600">{error || 'ไม่พบข้อมูล'}</p>
+        <p className="text-sm text-red-600">{error || __uiText("ไม่พบข้อมูล")}</p>
         <button
           type="button"
           onClick={() => navigate(ADMIN_ROUTES.users)}
           className="w-fit rounded-lg bg-gray-800 px-4 py-2 text-sm text-white"
         >
-          กลับรายชื่อผู้ใช้
-        </button>
+          {__uiText("กลับรายชื่อผู้ใช้")}</button>
       </div>
     );
   }
@@ -239,38 +243,36 @@ const UserDetail = () => {
           onClick={() => navigate(ADMIN_ROUTES.users)}
           className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
-          ← กลับรายชื่อผู้ใช้
-        </button>
+          {__uiText("← กลับรายชื่อผู้ใช้")}</button>
         <a
           href={`https://ecommerecesupport.zendesk.com/agent/search/1?type=user&q=${encodeURIComponent(user.email)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
         >
-          เปิดใน Zendesk
-        </a>
+          {__uiText("เปิดใน Zendesk")}</a>
       </AdminListHeader>
 
       <div className="flex gap-2 border-b border-gray-100">
         <TabButton
           active={activeTab === 'overview'}
           onClick={() => setActiveTab('overview')}
-          label="ภาพรวม"
+          label={__uiText("ภาพรวม")}
         />
         <TabButton
           active={activeTab === 'pricing'}
           onClick={() => setActiveTab('pricing')}
-          label="ราคาพิเศษ"
+          label={__uiText("ราคาพิเศษ")}
         />
         <TabButton
           active={activeTab === 'cs'}
           onClick={() => setActiveTab('cs')}
-          label="เครื่องมือ CS"
+          label={__uiText("เครื่องมือ CS")}
         />
         <TabButton
           active={activeTab === 'journey'}
           onClick={() => setActiveTab('journey')}
-          label="Journey"
+          label={__uiText("Journey")}
         />
       </div>
 
@@ -297,8 +299,7 @@ const UserDetail = () => {
       ) : activeTab === 'pricing' ? (
         <section className="overflow-hidden rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
           <h2 className="mb-4 text-sm font-bold text-gray-800">
-            ราคาสัญญาตามสาขา
-          </h2>
+            {__uiText("ราคาสัญญาตามสาขา")}</h2>
           <BranchPricingPanel
             branches={user.branches ?? []}
             companyEditHref={
@@ -311,9 +312,9 @@ const UserDetail = () => {
       ) : (
         <>
       <div className="grid gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm md:grid-cols-2 xl:grid-cols-4">
-        <InfoCard label="Company" value={user.company?.name ?? '-'} />
+        <InfoCard label={__uiText("Company")} value={user.company?.name ?? '-'} />
         <InfoCard
-          label="เบอร์โทร"
+          label={__uiText("เบอร์โทร")}
           value={
             <RevealPiiButton
               subjectType="user"
@@ -323,27 +324,26 @@ const UserDetail = () => {
             />
           }
         />
-        <InfoCard label="Cuisine / Type" value={user.custype ?? '-'} />
-        <InfoCard label="สาขา" value={`${user.branch_count} สาขา`} />
+        <InfoCard label={__uiText("Cuisine / Type")} value={user.custype ?? '-'} />
+        <InfoCard label={__uiText("สาขา")} value={`${user.branch_count} สาขา`} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="ออเดอร์ทั้งหมด" value={summary.total_orders.toLocaleString()} />
-        <StatCard label="ยอดสั่งซื้อรวม" value={formatCurrency(summary.total_spend)} accent />
-        <StatCard label="เฉลี่ยต่อออเดอร์" value={formatCurrency(summary.avg_order_value)} />
-        <StatCard label="จำนวนสินค้าที่สั่ง" value={summary.total_items.toLocaleString()} />
+        <StatCard label={__uiText("ออเดอร์ทั้งหมด")} value={summary.total_orders.toLocaleString()} />
+        <StatCard label={__uiText("ยอดสั่งซื้อรวม")} value={formatCurrency(summary.total_spend)} accent />
+        <StatCard label={__uiText("เฉลี่ยต่อออเดอร์")} value={formatCurrency(summary.avg_order_value)} />
+        <StatCard label={__uiText("จำนวนสินค้าที่สั่ง")} value={summary.total_items.toLocaleString()} />
       </div>
 
       {topProduct && (
         <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
           <Text variant="bodySm" muted>
-            สินค้าที่สั่งบ่อยที่สุด
-          </Text>
+            {__uiText("สินค้าที่สั่งบ่อยที่สุด")}</Text>
           <div className="mt-1 text-lg font-bold text-gray-900">
             {topProduct.product_name}
           </div>
           <div className="mt-1 text-sm text-gray-600">
-            SKU {topProduct.sku} · สั่งแล้ว {topProduct.total_quantity.toLocaleString()} ชิ้น ·{' '}
+            {__uiText("SKU ")}{topProduct.sku} {__uiText(" · สั่งแล้ว ")}{topProduct.total_quantity.toLocaleString()} {__uiText(" ชิ้น ·")}{' '}
             {formatCurrency(topProduct.total_revenue)}
           </div>
         </div>
@@ -352,19 +352,19 @@ const UserDetail = () => {
       <div className="grid gap-4 xl:grid-cols-2">
         <section className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
           <div className="border-b border-gray-100 px-4 py-3">
-            <h2 className="text-sm font-bold text-gray-800">สินค้าที่สั่งบ่อย (Top 10)</h2>
+            <h2 className="text-sm font-bold text-gray-800">{__uiText("สินค้าที่สั่งบ่อย (Top 10)")}</h2>
           </div>
           {top_products.length === 0 ? (
-            <p className="p-4 text-sm text-gray-500">ยังไม่มีประวัติการสั่งซื้อ</p>
+            <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มีประวัติการสั่งซื้อ")}</p>
           ) : (
             <Table columns={topProductColumns} data={top_products} idKey="product_inventory_id" />
           )}
         </section>
 
         <section className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-          <h2 className="mb-4 text-sm font-bold text-gray-800">ยอดสั่งซื้อรายเดือน</h2>
+          <h2 className="mb-4 text-sm font-bold text-gray-800">{__uiText("ยอดสั่งซื้อรายเดือน")}</h2>
           {chartData.length === 0 ? (
-            <p className="text-sm text-gray-500">ยังไม่มีข้อมูลกราฟ</p>
+            <p className="text-sm text-gray-500">{__uiText("ยังไม่มีข้อมูลกราฟ")}</p>
           ) : (
             <div className="h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -387,10 +387,10 @@ const UserDetail = () => {
 
       <section className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
         <div className="border-b border-gray-100 px-4 py-3">
-          <h2 className="text-sm font-bold text-gray-800">ออเดอร์ล่าสุด</h2>
+          <h2 className="text-sm font-bold text-gray-800">{__uiText("ออเดอร์ล่าสุด")}</h2>
         </div>
         {recent_orders.length === 0 ? (
-          <p className="p-4 text-sm text-gray-500">ยังไม่มีออเดอร์</p>
+          <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มีออเดอร์")}</p>
         ) : (
           <Table columns={orderColumns} data={recent_orders} idKey="orders_id" />
         )}
@@ -398,7 +398,7 @@ const UserDetail = () => {
 
       {user.branches.length > 0 && (
         <section className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-          <h2 className="mb-3 text-sm font-bold text-gray-800">สาขาที่เชื่อมโยง</h2>
+          <h2 className="mb-3 text-sm font-bold text-gray-800">{__uiText("สาขาที่เชื่อมโยง")}</h2>
           <div className="grid gap-3 md:grid-cols-2">
             {user.branches.map((branch) => (
               <div
@@ -407,7 +407,7 @@ const UserDetail = () => {
               >
                 <div className="font-medium text-gray-800">{branch.name}</div>
                 <div className="mt-1 text-xs text-gray-500">
-                  {branch.delivery_address || 'ไม่มีที่อยู่จัดส่ง'}
+                  {branch.delivery_address || __uiText("ไม่มีที่อยู่จัดส่ง")}
                 </div>
               </div>
             ))}

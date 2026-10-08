@@ -1,0 +1,66 @@
+Design EXACTLY ONE polished, easy-to-use Commerce Platform screen. Route identifier admin-20ccc5a7d581; URL /j/marketing/competitor-prices; app admin; category การตลาด; component CompetitorPricesPage; view type screen; title เทียบราคาคู่แข่ง.
+
+# Commerce Platform — task-based UI
+
+Design for Thai commerce operations teams. The product has seven work areas:
+สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล,
+ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน. A separate developer portal manages API keys and webhooks.
+
+## Visual language
+
+- Light canvas `#f6f8fc`, white cards, restrained borders `#e1e7f0`.
+- Primary blue `#365cf5`; ink `#17243b`; secondary text `#52627a`.
+- Success `#157347`, warning `#b08900`, error `#c2333f`; always pair color with text.
+- Noto Sans Thai for Thai and Latin; body 14px, labels 13px, page titles 28px.
+- Cards have 12px corners; controls 8px. Use 16/24/32px spacing.
+- A 256px sidebar, compact contextual header, and a readable content width near 1240px.
+- SVG icons and local fonts in the application. No decorative stock photos or gradients.
+- Phone layouts stack cards and collapse navigation. Scroll wide tables inside their panel.
+
+## Usability
+
+- Lead with the task and one primary action. Show records before creation forms.
+- Organize each work area's links into short task sections, with useful descriptions.
+- Creation and editing use named dialogs, clear labels, inline errors, and Cancel/Save actions.
+- Keep keyboard focus inside dialogs, support Escape, and return focus to the trigger.
+- Record links open their own detail URLs; preserve existing routes and role restrictions.
+- Show loading, empty, filtered-empty and failed states separately.
+- Counts and operational status in the application must come from its API. Prototype samples
+  must be labeled `ข้อมูลตัวอย่าง`; never copy sample figures into application code.
+- List APIs for platform products/customers support pagination only. A frontend search must
+  explicitly say it searches the current page. Do not imply a complete catalog search.
+- Every action in the application must work. Do not add export/import, bulk changes, charts,
+  advanced filters or copy-secret actions without an existing supported API.
+
+## Business fields and workflows
+
+- Product list: SKU, name, status. Create/edit: SKU, name, description. Product detail also
+  shows fulfillment mode, lead time, update date and inventory by warehouse when available.
+- Customer list: name/code, email, phone, status. Detail shows contact data and actual orders.
+- Orders: code, status, total, creation date. Create with customer/product selectors,
+  editable quantity/unit price, add/remove lines and a calculated subtotal.
+- Stock movements: receive, count, damage/return/correction, transfer. Choose an owned
+  warehouse, enter SKU/quantity/note, show a clear explanation of the selected movement.
+- Marketing: planning, campaigns/promotions, content/communication, tracking results.
+- Reports: select a business/system report and its existing filters; show unavailable data
+  honestly, with a retry action where supported.
+- Connections: connections, inbound data, sync jobs, outgoing deliveries and failed records.
+- Team settings: staff list, create account, role management and existing password/status actions.
+- Portal: active key/webhook onboarding, key creation with the existing one-time secret,
+  subscriptions, webhook test results, and recent delivery status filters.
+
+## Implementation boundary
+
+Stitch screens are visual references. React implements the supported interactions using
+`@cp/ui`; preserve API payloads, confirmation behavior and server permissions. Complex
+migrated management pages retain their domain-specific workflows while adopting the common
+visual system. Never replace a working business screen with static generated HTML.
+
+
+Design this specific existing page, including its details or create/edit form when that is its route. Use its UI copy to infer supported fields, actions, tables and statuses. Keep domain controls and avoid inventing business operations. Lists lead with records and real filters. Forms group required fields before optional/advanced settings with clear section headings and sticky Cancel/Save. Details lead with facts, then related records and existing actions. Admin uses the seven-area sidebar; Portal uses its own navigation; login/register are centered forms. Use 256px sidebar, 1240px main width, Noto Sans Thai, #365cf5 primary, #f6f8fc canvas, white cards with 12px corners, 40px inputs and buttons, 14px body. Avoid decorative charts and stock photography.
+
+BILINGUAL: Thai default, visible ไทย / English selector with working UI translations. Mark example records as ข้อมูลตัวอย่าง / Sample data. Preserve record names, identifiers, URLs, API enums and code. Translate labels, help, actions and errors naturally.
+
+Exact UI copy catalogue (include all in export): ["เทียบราคาคู่แข่ง","ยกเลิก","ค้นหา","SKU","ลบ","ค้นหา SKU หรือชื่อสินค้า","ก่อนหน้า","หน้า","ถัดไป","หน่วย","ปิด","ยืนยัน","เลือกแล้ว","กำลังโหลด…","เพิ่มเว็บคู่แข่ง","เราแพงกว่า","เราถูกกว่า","รอยืนยัน","จับคู่แล้วทั้งหมด","เว็บที่จับคู่กับ SKU นี้แล้ว (","ยังไม่มี — เลือกสินค้าจากเว็บด้านล่างได้เลย","เว็บที่เทียบกับ SKU นี้","(ราคาสมาชิก)","✓ สินค้าเดียวกัน","ไม่ใช่ — ลบ","เพิ่มเติม","“✓ สินค้าเดียวกัน” = ยืนยันว่าเป็นสินค้าเดียวกันและราคาบนเว็บรวม VAT แล้วใช้ราคาที่เก็บล่าสุดเทียบทันที","ตัวเลือกเพิ่มเติม","เงื่อนไขราคา:","· น้ำหนักเรา","กก. / คู่แข่ง","กก.","แก้น้ำหนัก / ลิงก์","ตรวจคู่สินค้าแบบละเอียด","บันทึกราคาเอง","ดึงราคาตอนนี้","ตรวจคู่สินค้า","ตรวจชนิด / ส่วนตัด เกรด แบรนด์ ประเทศ และแช่เย็นหรือแช่แข็งจากหน้าสินค้าก่อนยืนยัน","เหตุผลและสเปกที่ตรงกัน","ตรวจสเปกจากแหล่งที่มาแล้ว และยืนยันน้ำหนักต่อหน่วยขายของเรา","ยืนยันล่าสุด","ยืนยันคู่สินค้า","บันทึกราคา","ราคาเต็มแพ็ก","กก. (บาท รวม VAT)","เวลาที่พบราคา","หาสินค้าเดียวกันจากเว็บอื่น","เพิ่มเว็บให้ SKU นี้","สินค้าชื่อใกล้เคียงจากทุกเว็บที่เก็บไว้ — กด “✓ ตัวนี้” เพื่อจับคู่และยืนยันในครั้งเดียว","กำลังหาสินค้าที่ชื่อใกล้เคียงในแต่ละเว็บ…","ไม่พบสินค้าชื่อใกล้เคียงในเว็บที่เก็บไว้","มีคู่แล้ว","ไม่ทราบน้ำหนัก","· ชื่อคล้าย","กรอกน้ำหนักเอง","✓ ตัวนี้","ไม่เจอ — กรอกลิงก์จากเว็บอื่นเอง","เก็บราคาจากเว็บคู่แข่ง → จับคู่กับ SKU ของเรา → ดูว่าเราแพงหรือถูกกว่าแต่ละเว็บ (ราคาต่อกิโล รวม VAT)","ขั้นตอน","เพิ่มหรือแก้ไขคู่สินค้า","แก้ไขคู่สินค้า","เพิ่มคู่สินค้า","การเปลี่ยน SKU ลิงก์ น้ำหนัก หรือเงื่อนไขราคา จะล้างราคาเดิมและต้องยืนยันคู่ใหม่","SKU ที่น่าจะตรงกัน","SKU ของเราที่น่าจะตรงกับ “","กำลังหา SKU ที่ชื่อใกล้เคียง…","ไม่พบ SKU ที่ชื่อใกล้เคียง กรอก SKU เองด้านล่าง","ไม่ระบุแบรนด์","SKU นี้เทียบอยู่แล้วกับ","— บันทึกแล้วจะเพิ่มเป็นอีกเว็บ","ชื่อคล้าย","ใช้ SKU นี้","ระบบเสนอจากชื่อและน้ำหนักเท่านั้น ตรวจแบรนด์ แพ็ก และสเปกก่อนบันทึก","SKU ของเรา","ตรวจ SKU","น้ำหนักต่อหน่วยขายของเรา (กก.)","SKU ที่ขายต่อ KG: ระบุจำนวนกิโลที่ต้องการเทียบ","ไม่ระบุประเทศ","ไม่ระบุการเก็บรักษา","ไม่ระบุแพ็ก","· ราคาฐาน","ไม่ระบุหน่วย","ชื่อสินค้าคู่แข่งตรงตามหน้าเว็บ","SKU คู่แข่ง (ถ้ามี)","ลิงก์หน้าสินค้า","น้ำหนักสุทธิต่อแพ็กคู่แข่ง (กก.)","เงื่อนไขราคา / สาขา / โปรโมชั่น","เช่น ราคาปกติ สาขา… ไม่มีคูปองสมาชิก ไม่รวมค่าส่ง","ตรวจแล้วว่าราคาคู่แข่งรวม VAT หรือสินค้ายกเว้น VAT","มีสิทธิ์หรือได้รับอนุญาตให้ดึงข้อมูลอัตโนมัติจากแหล่งนี้","ดึงราคาอัตโนมัติรายชั่วโมง หลังยืนยันคู่สินค้าและตั้งค่าระบบดึงราคา","บันทึกคู่สินค้า","เว็บคู่แข่ง","← กลับไปหน้าเว็บคู่แข่ง","จับคู่ SKU","ไปดูผลเทียบราคา →","เทียบราคาราย SKU","โหลดล่าสุด","Export Excel","ค้นหา SKU / ชื่อสินค้า","ทุกเว็บ","หมวดสินค้า","ทุกหมวด","สินค้าของเรา","ราคาเรา/กก.","ถูกสุดในตลาด","น้ำหนักต่อหน่วยไม่คงที่ ราคาจริงคิดตามน้ำหนักที่ส่ง","Approx","เท่ากัน","ถูกสุดจาก","ขนาด","เราถูกสุด","ยังเทียบไม่ได้","จับคู่","ดู / เพิ่มเว็บ","ไม่พบ SKU ที่ตรงตัวกรอง","ราคาที่เก่ากว่ารอบเก็บของเว็บนั้น (เก็บทุกวัน = 48 ชม.) หรือดึงครั้งล่าสุดไม่สำเร็จ จะพักการเทียบจนกว่าจะอัปเดตสำเร็จ · ใช้ราคาฐานแค็ตตาล็อก ไม่มีราคาสัญญารายลูกค้า","กำหนดรูปแบบส่วนลดและจำนวนครั้งที่ใช้ได้","ข้อมูลบริษัทด้านบน · ผู้ใช้และที่อยู่จัดส่งแยกตามสาขาด้านล่าง","ค่าปัจจุบัน = \"{0}\" → {1}","จำนวนชิ้นในแพ็ก","ชุดที่","ดาวน์โหลด template","ตัวอย่างจากชุดนี้:","น้ำหนักที่ไม่ระบุ ใส่ได้ทีหลังตอนตรวจคู่ (ขั้นที่ 2)","ประเภทปุ่ม (Type)","ผู้เยี่ยมชมที่ยังไม่ได้เข้าสู่ระบบ","มูลค่ารวมน้อยกว่า (บาท)","ไม่สั่งซื้อเกิน X วัน","ยังไม่มีหัวข้อในภาษาไทย","ระบบรองรับเฉพาะไฟล์ jpg, jpeg, png, gif, webp — ตรวจสอบชนิดไฟล์แล้วลองใหม่","รูปภาพ (EN)","ลูกค้าแต่ละคนได้รหัสไม่ซ้ำกัน เช่น SUMMER-7F3K","วิธีชำระเงินของลูกค้า","สรุปด้วย AI","หน้า · ไม่สำเร็จ","โหลดหรือบันทึกคำขอสินค้าตัวอย่างไม่สำเร็จ","ยืนยันแล้ว","ไม่พบ notify template","This lot contains very large images or a very large image count and may use significant memory.","ส่วนลดแบบเปอร์เซ็นต์ต้องไม่เกิน 100%","ทำรายการไม่สำเร็จ กรุณาลองใหม่"]
+
+Exported HTML MUST include an invisible <script id="commerce-ui-translations" type="application/json"> object keyed by EVERY exact source string above. Values must be {"th":"Thai UI translation","en":"English UI translation"}. Preserve placeholders such as {0}, {1}, {name} exactly. Do not display the dictionary. Render only this route's UI; extra messages belong in translation data, not as extra unrelated controls. This export requirement has already worked in the existing project screens. Generate one complete screen.

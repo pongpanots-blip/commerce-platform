@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import {
   deleteCouponRewardRule,
   formatBangkokRange,
@@ -72,6 +75,8 @@ import {
   stashCouponFormDraft,
 } from './coupon-form-draft.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type EntitlementRow = {
   id: string;
   user_id: string;
@@ -96,6 +101,7 @@ function ActionButton({
   disabled?: boolean;
   variant?: 'primary' | 'secondary' | 'ghost';
 }) {
+  __useUiLocale();
   const styles =
     variant === 'primary'
       ? 'bg-gray-900 text-white hover:bg-gray-800'
@@ -116,6 +122,7 @@ function ActionButton({
 }
 
 const CouponDetail = () => {
+  __useUiLocale();
   const { id = '' } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -241,7 +248,7 @@ const CouponDetail = () => {
       } else {
         // Already showing a coupon from an earlier load — don't blow the page away over a
         // reload hiccup, just flag it.
-        setPageError(`โหลดข้อมูลคูปองใหม่ไม่สำเร็จ: ${extractApiError(error)}`);
+        setPageError(__uiMessage("โหลดข้อมูลคูปองใหม่ไม่สำเร็จ: {0}",{"0":extractApiError(error)}));
       }
       return;
     }
@@ -463,7 +470,7 @@ const CouponDetail = () => {
   };
 
   const handleUnlinkChainRule = async (ruleId: string) => {
-    if (!window.confirm('ยกเลิกการเชื่อมคูปองต่อเนื่องนี้?')) return;
+    if (!window.confirm(__uiText("ยกเลิกการเชื่อมคูปองต่อเนื่องนี้?"))) return;
     setBusy(true);
     setPageError('');
     try {
@@ -592,7 +599,7 @@ const CouponDetail = () => {
       try {
         let recipientImportSummary: string | null = null;
         const steps: SaveStep[] = [
-          { label: 'ข้อมูลคูปอง', run: () => updateCoupon(id, payload) },
+          { label: __uiText("ข้อมูลคูปอง"), run: () => updateCoupon(id, payload) },
         ];
 
         if (pendingImageFile) {
@@ -663,16 +670,16 @@ const CouponDetail = () => {
   };
 
   if (loading && !coupon) {
-    return <div className="p-6">กำลังโหลด…</div>;
+    return <div className="p-6">{__uiText("กำลังโหลด…")}</div>;
   }
 
   if (!coupon) {
     if (notFound) {
-      return <div className="p-6">ไม่พบคูปอง</div>;
+      return <div className="p-6">{__uiText("ไม่พบคูปอง")}</div>;
     }
     return (
       <div className="p-6 space-y-3">
-        <p className="text-red-600">{loadError || 'โหลดคูปองไม่สำเร็จ'}</p>
+        <p className="text-red-600">{loadError || __uiText("โหลดคูปองไม่สำเร็จ")}</p>
         <ActionButton
           variant="secondary"
           onClick={() => {
@@ -680,8 +687,7 @@ const CouponDetail = () => {
             void loadEntitlements();
           }}
         >
-          ลองอีกครั้ง
-        </ActionButton>
+          {__uiText("ลองอีกครั้ง")}</ActionButton>
       </div>
     );
   }
@@ -721,7 +727,7 @@ const CouponDetail = () => {
   const entitlementColumns: TableColumn<EntitlementRow>[] = [
     {
       key: 'user',
-      label: 'ผู้ใช้',
+      label: __uiText("ผู้ใช้"),
       render: (_value, row) => (
         <div>
           <div className="font-medium text-gray-900">
@@ -735,14 +741,14 @@ const CouponDetail = () => {
     },
     {
       key: 'personal_code',
-      label: 'โค้ด',
+      label: __uiText("โค้ด"),
       render: (value) => (
         <span className="font-mono text-xs">{value ?? coupon.coupon_code}</span>
       ),
     },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value) => (
         <span
           className={`rounded-full px-2 py-0.5 text-xs ${
@@ -755,33 +761,32 @@ const CouponDetail = () => {
     },
     {
       key: 'notified_at',
-      label: 'แจ้งแล้ว',
+      label: __uiText("แจ้งแล้ว"),
       render: (value) => (
         <span className="text-xs text-gray-600">
-          {value ? new Date(value).toLocaleString('th-TH') : 'ยังไม่แจ้ง'}
+          {value ? new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) : __uiText("ยังไม่แจ้ง")}
         </span>
       ),
     },
     {
       key: 'actions',
-      label: 'จัดการ',
+      label: __uiText("จัดการ"),
       render: (_value, row) => (
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             disabled={busy}
-            title="ส่งแจ้งเตือนในแอปให้คนนี้"
-            aria-label="แจ้ง"
+            title={__uiText("ส่งแจ้งเตือนในแอปให้คนนี้")}
+            aria-label={__uiText("แจ้ง")}
             onClick={() => void handleNotifyOne(row.id)}
             className="rounded-lg px-2 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-primary transition-colors disabled:opacity-50"
           >
-            แจ้ง
-          </button>
+            {__uiText("แจ้ง")}</button>
           <button
             type="button"
             disabled={busy}
-            title={row.status === 'active' ? 'ปิดสิทธิ์นี้' : 'เปิดสิทธิ์นี้'}
-            aria-label={row.status === 'active' ? 'ปิด' : 'เปิด'}
+            title={row.status === 'active' ? __uiText("ปิดสิทธิ์นี้") : __uiText("เปิดสิทธิ์นี้")}
+            aria-label={row.status === 'active' ? __uiText("ปิด") : __uiText("เปิด")}
             onClick={() =>
               void handleToggleEntitlementStatus(
                 row.id,
@@ -790,7 +795,7 @@ const CouponDetail = () => {
             }
             className="rounded-lg px-2 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-primary transition-colors disabled:opacity-50"
           >
-            {row.status === 'active' ? 'ปิด' : 'เปิด'}
+            {row.status === 'active' ? __uiText("ปิด") : __uiText("เปิด")}
           </button>
         </div>
       ),
@@ -833,7 +838,7 @@ const CouponDetail = () => {
     >
       <CouponConfirmDialog
         open={saveConfirmOpen}
-        title="บันทึกการแก้ไขคูปองนี้?"
+        title={__uiText("บันทึกการแก้ไขคูปองนี้?")}
         body={
           <>
             <p>
@@ -842,8 +847,7 @@ const CouponDetail = () => {
             </p>
             {willDisableOnSave && (
               <p className="mt-2 font-medium text-alert">
-                คูปองนี้จะถูกปิดใช้งานทันทีหลังบันทึก ลูกค้าจะใช้ไม่ได้จนกว่าจะเปิดอีกครั้ง
-              </p>
+                {__uiText("คูปองนี้จะถูกปิดใช้งานทันทีหลังบันทึก ลูกค้าจะใช้ไม่ได้จนกว่าจะเปิดอีกครั้ง")}</p>
             )}
           </>
         }
@@ -860,7 +864,7 @@ const CouponDetail = () => {
       />
       <CouponConfirmDialog
         open={backConfirmOpen}
-        title="ออกจากหน้านี้?"
+        title={__uiText("ออกจากหน้านี้?")}
         body="การแก้ไขที่ยังไม่บันทึกจะหายไป"
         confirmLabel="ออกจากหน้านี้"
         tone="danger"
@@ -873,11 +877,9 @@ const CouponDetail = () => {
       {redemptionLoadFailed && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           <span>
-            โหลดเงื่อนไขใช้โค้ดไม่สำเร็จ — บันทึกตอนนี้จะเขียนทับเงื่อนไขเดิมด้วยค่าว่าง กดโหลดใหม่ก่อนบันทึก
-          </span>
+            {__uiText("โหลดเงื่อนไขใช้โค้ดไม่สำเร็จ — บันทึกตอนนี้จะเขียนทับเงื่อนไขเดิมด้วยค่าว่าง กดโหลดใหม่ก่อนบันทึก")}</span>
           <ActionButton variant="secondary" disabled={busy} onClick={() => void loadCoupon()}>
-            โหลดใหม่
-          </ActionButton>
+            {__uiText("โหลดใหม่")}</ActionButton>
         </div>
       )}
 
@@ -888,23 +890,22 @@ const CouponDetail = () => {
       ) : null}
 
       {incomingRules.length > 0 && (
-        <Section title="รูปแบบคูปอง" description="คูปองต่อเนื่อง (Chain)">
+        <Section title={__uiText("รูปแบบคูปอง")} description={__uiText("คูปองต่อเนื่อง (Chain)")}>
           <ul className="space-y-3 text-sm">
             {incomingRules.map((rule) => (
               <li key={rule.id} className="space-y-3 rounded-lg border border-gray-100 p-3">
                 <p className="font-medium text-gray-900 flex flex-wrap items-center gap-2">
                   <span>
-                    ต้องใช้{' '}
+                    {__uiText("ต้องใช้")}{' '}
                     <Link
                       to={ADMIN_ROUTES.couponDetail(rule.source_coupon_id)}
                       className="text-blue-600 hover:underline"
                     >
                       {rule.source_coupon
                         ? `${rule.source_coupon.coupon_code} — ${rule.source_coupon.title}`
-                        : 'คูปองต้นทาง'}
+                        : __uiText("คูปองต้นทาง")}
                     </Link>{' '}
-                    ก่อน
-                  </span>
+                    {__uiText("ก่อน")}</span>
                   {rule.source_coupon && <CouponStatusPill coupon={rule.source_coupon} />}
                 </p>
                 <CouponRewardRuleFields
@@ -919,8 +920,7 @@ const CouponDetail = () => {
                   disabled={busy}
                   onClick={() => void handleUnlinkChainRule(rule.id)}
                 >
-                  ยกเลิกการเชื่อม Chain
-                </ActionButton>
+                  {__uiText("ยกเลิกการเชื่อม Chain")}</ActionButton>
               </li>
             ))}
           </ul>
@@ -959,58 +959,52 @@ const CouponDetail = () => {
                 onClick={stashDraft}
                 className="text-xs text-blue-600 hover:underline"
               >
-                แก้ไข segment ขั้นสูง
-              </Link>
+                {__uiText("แก้ไข segment ขั้นสูง")}</Link>
             )}
             {audience.mode === 'segment' && (
               <p className="text-xs text-gray-500">
-                หลังบันทึก ระบบจะ<strong>สร้างรายชื่ออัตโนมัติ</strong>จากกลุ่มเป้าหมาย
-                {segmentMemberCount != null ? ` (ประมาณ ${segmentMemberCount} คน)` : ''}
+                {__uiText("หลังบันทึก ระบบจะ")}<strong>{__uiText("สร้างรายชื่ออัตโนมัติ")}</strong>{__uiText("จากกลุ่มเป้าหมาย")}{segmentMemberCount != null ? __uiText(" (ประมาณ {0} คน)", {"0": segmentMemberCount}) : ''}
               </p>
             )}
 
             {!(audience.mode === 'all' && entitlements.length === 0) && (
               <div className="space-y-3 border-t border-gray-100 pt-4">
                 <h3 className="text-sm font-medium text-gray-800">
-                  รายชื่อผู้มีสิทธิ์ ({entitlements.length})
+                  {__uiText("รายชื่อผู้มีสิทธิ์ (")}{entitlements.length})
                 </h3>
 
                 <div className="flex flex-wrap items-center gap-2">
                   {audience.mode === 'segment' && (
-                    <span title="ดึงสมาชิกใหม่ของ segment เข้ามาเพิ่มในรายชื่อ">
+                    <span title={__uiText("ดึงสมาชิกใหม่ของ segment เข้ามาเพิ่มในรายชื่อ")}>
                       <Button
                         variant="secondary"
                         onClick={() => void handleGenerateFromSegment()}
                         disabled={busy || !audienceSegmentId}
                       >
-                        สร้างรายชื่อจากกลุ่ม
-                        {segmentMemberCount != null ? ` (${segmentMemberCount} คน)` : ''}
+                        {__uiText("สร้างรายชื่อจากกลุ่ม")}{segmentMemberCount != null ? __uiText(" ({0} คน)", {"0": segmentMemberCount}) : ''}
                       </Button>
                     </span>
                   )}
-                  <span title="ส่งแจ้งเตือนในแอปให้ทุกคนที่ยังไม่เคยได้รับ">
+                  <span title={__uiText("ส่งแจ้งเตือนในแอปให้ทุกคนที่ยังไม่เคยได้รับ")}>
                     <Button
                       variant="primary"
                       onClick={handleNotifyAll}
                       disabled={busy || pendingNotifyCount === 0}
                     >
                       {pendingNotifyCount === 0
-                        ? 'แจ้งเตือนครบแล้ว'
-                        : `แจ้งเตือนทั้งหมด (${pendingNotifyCount})`}
+                        ? __uiText("แจ้งเตือนครบแล้ว")
+                        : __uiText("แจ้งเตือนทั้งหมด ({0})", {"0": pendingNotifyCount})}
                     </Button>
                   </span>
                 </div>
                 <p className="text-xs text-gray-500">
-                  สร้างรายชื่อจากกลุ่ม = ดึงสมาชิกใหม่ของ segment เข้ามาเพิ่ม · แจ้งเตือนทั้งหมด =
-                  ส่งแจ้งเตือนในแอปให้คนที่ยังไม่ได้รับ
-                </p>
+                  {__uiText("สร้างรายชื่อจากกลุ่ม = ดึงสมาชิกใหม่ของ segment เข้ามาเพิ่ม · แจ้งเตือนทั้งหมด = ส่งแจ้งเตือนในแอปให้คนที่ยังไม่ได้รับ")}</p>
 
                 {audienceSegmentId &&
                   entitlements.length === 0 &&
                   audience.mode === 'segment' && (
                     <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                      มีกลุ่มเป้าหมายแล้วแต่ยังไม่มีรายชื่อ — ระบบจะสร้างให้อัตโนมัติ
-                      {segmentMemberCount != null ? ` (ประมาณ ${segmentMemberCount} คน)` : ''}
+                      {__uiText("มีกลุ่มเป้าหมายแล้วแต่ยังไม่มีรายชื่อ — ระบบจะสร้างให้อัตโนมัติ")}{segmentMemberCount != null ? __uiText(" (ประมาณ {0} คน)", {"0": segmentMemberCount}) : ''}
                       {' · '}
                       <button
                         type="button"
@@ -1018,20 +1012,19 @@ const CouponDetail = () => {
                         disabled={busy}
                         onClick={() => void handleGenerateFromSegment()}
                       >
-                        สร้างรายชื่อตอนนี้
-                      </button>
+                        {__uiText("สร้างรายชื่อตอนนี้")}</button>
                     </div>
                   )}
 
                 {entitlements.length === 0 ? (
                   <div className="rounded-xl border border-gray-200 bg-white p-6 text-center text-sm text-gray-400">
                     {isChainTarget
-                      ? 'ยังไม่มีผู้ได้รับ — ระบบจะมอบให้อัตโนมัติเมื่อลูกค้าใช้คูปองต้นทางสำเร็จ'
+                      ? __uiText("ยังไม่มีผู้ได้รับ — ระบบจะมอบให้อัตโนมัติเมื่อลูกค้าใช้คูปองต้นทางสำเร็จ")
                       : audience.mode === 'manual'
-                        ? 'ยังไม่มีรายชื่อ — เพิ่มรายชื่อด้านบน แล้วกดบันทึก'
+                        ? __uiText("ยังไม่มีรายชื่อ — เพิ่มรายชื่อด้านบน แล้วกดบันทึก")
                         : audienceSegmentId
-                          ? 'กำลังสร้างรายชื่อจากกลุ่มเป้าหมาย… หรือกดปุ่มด้านบน'
-                          : 'ยังไม่มีรายชื่อ — เลือกโหมดกลุ่มเป้าหมายด้านบนก่อน'}
+                          ? __uiText("กำลังสร้างรายชื่อจากกลุ่มเป้าหมาย… หรือกดปุ่มด้านบน")
+                          : __uiText("ยังไม่มีรายชื่อ — เลือกโหมดกลุ่มเป้าหมายด้านบนก่อน")}
                   </div>
                 ) : (
                   <Table
@@ -1065,13 +1058,12 @@ const CouponDetail = () => {
 
       {rewardRules.length > 0 && (
         <Section
-          title="คูปองต่อเนื่อง (Chain)"
-          description='เพิ่มคูปองต่อเนื่องใหม่ได้ที่หน้าเพิ่ม Coupon → รูปแบบ "คูปองต่อเนื่อง (Chain)"'
+          title={__uiText("คูปองต่อเนื่อง (Chain)")}
+          description={__uiText("เพิ่มคูปองต่อเนื่องใหม่ได้ที่หน้าเพิ่ม Coupon → รูปแบบ \"คูปองต่อเนื่อง (Chain)\"")}
         >
           <div className="space-y-2">
             <h3 className="text-sm font-medium text-gray-800">
-              เมื่อใช้คูปองนี้สำเร็จ ลูกค้าจะได้รับ
-            </h3>
+              {__uiText("เมื่อใช้คูปองนี้สำเร็จ ลูกค้าจะได้รับ")}</h3>
             <ul className="space-y-2 text-sm">
               {rewardRules.map((rule) => (
                 <li key={rule.id} className="rounded-lg border border-gray-100 p-3">
@@ -1083,7 +1075,7 @@ const CouponDetail = () => {
                       >
                         {rule.reward_coupon
                           ? `${rule.reward_coupon.coupon_code} — ${rule.reward_coupon.title}`
-                          : 'คูปองรางวัล'}
+                          : __uiText("คูปองรางวัล")}
                       </Link>{' '}
                       · {formatRewardRuleSummary(rule)}
                     </span>
@@ -1093,20 +1085,18 @@ const CouponDetail = () => {
               ))}
             </ul>
             <p className="text-xs text-gray-500">
-              แก้ไขเงื่อนไขการได้รับ (เวลามอบ/หน่วงใช้ได้/จำนวนครั้งสูงสุด)
-              ได้ที่หน้ารายละเอียดของคูปองรางวัลแต่ละใบ
-            </p>
+              {__uiText("แก้ไขเงื่อนไขการได้รับ (เวลามอบ/หน่วงใช้ได้/จำนวนครั้งสูงสุด) ได้ที่หน้ารายละเอียดของคูปองรางวัลแต่ละใบ")}</p>
           </div>
         </Section>
       )}
 
       {report && (
-        <Section title="รายงาน">
+        <Section title={__uiText("รายงาน")}>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            <Stat label="สิทธิ์ทั้งหมด" value={report.totalEntitlements} />
-            <Stat label="ใช้แล้ว" value={report.usageCount} />
-            <Stat label="ส่วนลดที่ใช้" value={report.totalDiscountApplied} />
-            <Stat label="แจ้งแล้ว" value={report.notifiedCount} />
+            <Stat label={__uiText("สิทธิ์ทั้งหมด")} value={report.totalEntitlements} />
+            <Stat label={__uiText("ใช้แล้ว")} value={report.usageCount} />
+            <Stat label={__uiText("ส่วนลดที่ใช้")} value={report.totalDiscountApplied} />
+            <Stat label={__uiText("แจ้งแล้ว")} value={report.notifiedCount} />
           </div>
         </Section>
       )}
@@ -1118,6 +1108,7 @@ const CouponDetail = () => {
 };
 
 function Stat({ label, value }: { label: string; value: number }) {
+  __useUiLocale();
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4">
       <div className="text-xs text-gray-500">{label}</div>
@@ -1132,8 +1123,11 @@ function Stat({ label, value }: { label: string; value: number }) {
  * visible under the new id (a Save would PATCH the old values onto the new coupon), and
  * `hasCouponRef`/`notFound`/`loadError` would carry over from the previous coupon too. */
 function CouponDetailPage() {
+  __useUiLocale();
   const { id = '' } = useParams();
   return <CouponDetail key={id} />;
 }
 
 export default CouponDetailPage;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

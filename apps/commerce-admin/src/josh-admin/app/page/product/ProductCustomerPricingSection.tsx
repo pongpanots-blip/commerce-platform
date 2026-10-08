@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   getProductCustomerPrices,
   type BranchSpecialPriceListItem,
@@ -5,10 +6,12 @@ import {
 import { Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS_LABELS: Record<BranchSpecialPriceListItem['status'], string> = {
-  active: 'ใช้งาน',
-  scheduled: 'รอเริ่ม',
-  expired: 'หมดอายุ',
+  get active(){return __uiText("ใช้งาน");},
+  get scheduled(){return __uiText("รอเริ่ม");},
+  get expired(){return __uiText("หมดอายุ");},
 };
 
 const STATUS_STYLES: Record<BranchSpecialPriceListItem['status'], string> = {
@@ -22,6 +25,7 @@ type Props = {
 };
 
 export function ProductCustomerPricingSection({ productId }: Props) {
+  __useUiLocale();
   const [rows, setRows] = useState<BranchSpecialPriceListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [forbidden, setForbidden] = useState(false);
@@ -48,22 +52,22 @@ export function ProductCustomerPricingSection({ productId }: Props) {
   }, [productId]);
 
   const columns: TableColumn<BranchSpecialPriceListItem>[] = [
-    { key: 'branch_name', label: 'สาขา' },
-    { key: 'company_name', label: 'ลูกค้า' },
+    { key: 'branch_name', label: __uiText("สาขา") },
+    { key: 'company_name', label: __uiText("ลูกค้า") },
     {
       key: 'price',
-      label: 'ราคาที่กำหนด',
+      label: __uiText("ราคาที่กำหนด"),
       render: (value) => `฿${Number(value).toLocaleString()}`,
     },
     {
       key: 'start_date',
-      label: 'ช่วงเวลา',
+      label: __uiText("ช่วงเวลา"),
       render: (_, row) =>
         `${row.start_date} – ${row.end_date ?? 'ไม่กำหนด'}`,
     },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: BranchSpecialPriceListItem['status']) => (
         <span
           className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[value]}`}
@@ -76,15 +80,15 @@ export function ProductCustomerPricingSection({ productId }: Props) {
 
   return (
     <section>
-      <h2 className="text-sm font-semibold text-gray-700 mb-3">ราคาตามลูกค้า</h2>
+      <h2 className="text-sm font-semibold text-gray-700 mb-3">{__uiText("ราคาตามลูกค้า")}</h2>
       {loading ? (
-        <p className="text-sm text-gray-400">กำลังโหลด...</p>
+        <p className="text-sm text-gray-400">{__uiText("กำลังโหลด...")}</p>
       ) : forbidden ? (
-        <p className="text-sm text-gray-400">เฉพาะผู้ดูแลระบบ</p>
+        <p className="text-sm text-gray-400">{__uiText("เฉพาะผู้ดูแลระบบ")}</p>
       ) : failed ? (
-        <p className="text-sm text-gray-400">โหลดราคาตามลูกค้าไม่สำเร็จ</p>
+        <p className="text-sm text-gray-400">{__uiText("โหลดราคาตามลูกค้าไม่สำเร็จ")}</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-gray-400">ยังไม่มีราคาพิเศษตามลูกค้าสำหรับ SKU นี้</p>
+        <p className="text-sm text-gray-400">{__uiText("ยังไม่มีราคาพิเศษตามลูกค้าสำหรับ SKU นี้")}</p>
       ) : (
         <Table columns={columns} data={rows} idKey="id" />
       )}

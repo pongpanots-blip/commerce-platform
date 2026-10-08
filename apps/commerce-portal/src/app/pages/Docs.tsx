@@ -1,6 +1,9 @@
-import { CodeBlock, Icon, Page, PageHeader, Panel, PanelHead, TBody, TD, TH, THead, TR, Table } from '@cp/ui';
+import { CodeBlock, Icon, Page, PageHeader, Panel, PanelHead, TBody, TD, TH, THead, TR, Table, UiSentence } from '@cp/ui';
 import { api } from '../../lib/api';
+import { Link } from 'react-router-dom';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const ENDPOINTS: { method: string; path: string; description: string }[] = [
   { method: 'POST', path: '/v1/storefront/customers', description: 'Create/update customer (upsert by email or phone)' },
   { method: 'GET', path: '/v1/storefront/catalog/products', description: 'Product list (supports search, page, pageSize)' },
@@ -12,19 +15,21 @@ const ENDPOINTS: { method: string; path: string; description: string }[] = [
 ];
 
 export function Docs() {
+  __useUiLocale();
   const docsUrl = `${api.base}/docs`;
+  const catalogUrl = new URL(`${api.base}/v1/storefront/catalog/products`, window.location.origin).href;
 
   return (
     <Page>
       <PageHeader
-        title="API Documentation"
-        subtitle="Storefront endpoints for building against the Commerce Platform."
+        title={__uiText("API Documentation")}
+        subtitle={__uiText("Storefront endpoints for building against the Commerce Platform.")}
       />
 
       {/* Interactive Swagger */}
       <Panel className="mb-6">
         <PanelHead
-          title="Interactive API Explorer"
+          title={__uiText("Interactive API Explorer")}
           actions={
             <a
               href={docsUrl}
@@ -32,28 +37,31 @@ export function Docs() {
               rel="noreferrer"
               className="text-primary text-xs font-semibold hover:underline flex items-center gap-1"
             >
-              Open Swagger <Icon name="open_in_new" size={14} />
+              {__uiText("Open Swagger ")}<Icon name="open_in_new" size={14} />
             </a>
           }
         />
         <div className="p-6 space-y-3">
           <p className="text-xs text-on-surface-variant">
-            Try live requests at <a href={docsUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline font-mono">{docsUrl}</a>
+            {__uiText("Try live requests at ")}<a href={docsUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline font-mono">{docsUrl}</a>
           </p>
           <p className="text-xs text-on-surface-variant">
-            Before sending requests, add your API key from the <a href="/keys" className="text-primary hover:underline">API Keys</a> page to the <code className="font-mono bg-surface-container-low px-1.5 py-0.5 rounded text-[11px]">X-Api-Key</code> header.
+            <UiSentence source="Before sending requests, add your API key from {0} to the {1} header." values={{
+              '0': <Link to="/keys" className="text-primary hover:underline">{__uiText('API Keys')}</Link>,
+              '1': <code className="font-mono bg-surface-container-low px-1.5 py-0.5 rounded text-[11px]">X-Api-Key</code>,
+            }} />
           </p>
         </div>
       </Panel>
 
       {/* API Endpoints Reference */}
       <Panel>
-        <PanelHead title="Storefront Endpoints" />
+        <PanelHead title={__uiText("Storefront Endpoints")} />
         <Table>
           <THead>
-              <TH>Method</TH>
-              <TH>Path</TH>
-              <TH>Description</TH>
+              <TH>{__uiText("Method")}</TH>
+              <TH>{__uiText("Path")}</TH>
+              <TH>{__uiText("Description")}</TH>
             </THead>
           <TBody>
             {ENDPOINTS.map((e) => (
@@ -67,7 +75,7 @@ export function Docs() {
                   <code className="font-mono text-xs text-primary">{e.path}</code>
                 </TD>
                 <TD>
-                  <span className="text-xs text-on-surface-variant">{e.description}</span>
+                  <span className="text-xs text-on-surface-variant">{__uiText(e.description)}</span>
                 </TD>
               </TR>
             ))}
@@ -78,16 +86,15 @@ export function Docs() {
       {/* Authentication guide */}
       <div className="mt-6 space-y-6">
         <Panel>
-          <PanelHead title="Authentication" />
+          <PanelHead title={__uiText("Authentication")} />
           <div className="p-6 space-y-4">
             <div>
-              <h3 className="font-headline font-semibold text-sm text-on-surface mb-2">X-Api-Key Header</h3>
+              <h3 className="font-headline font-semibold text-sm text-on-surface mb-2">{__uiText("X-Api-Key Header")}</h3>
               <p className="text-xs text-on-surface-variant mb-3">
-                Include your API key in the X-Api-Key header of every request:
-              </p>
+                {__uiText("Include your API key in the X-Api-Key header of every request:")}</p>
               <CodeBlock
-                title="cURL example"
-                value='curl -X GET "https://api.commerceplatform.io/v1/storefront/orders" \\\n  -H "X-Api-Key: cp_live_YOUR_KEY_HERE"'
+                title={__uiText("cURL example")}
+                value={`curl -H "X-Api-Key: YOUR_API_KEY" "${catalogUrl}"`}
                 maxHeight={180}
               />
             </div>

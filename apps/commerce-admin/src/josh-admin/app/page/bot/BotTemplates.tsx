@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { BotResponseTemplate, deleteBotTemplate, getBotTemplates } from '@josh/shared-api';
 import { Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
@@ -5,7 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import AdminListHeader from '../../components/AdminListHeader';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const BotTemplates = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [templates, setTemplates] = useState<BotResponseTemplate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,55 +32,53 @@ const BotTemplates = () => {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('ยืนยันการลบ Template นี้?')) return;
+    if (!confirm(__uiText("ยืนยันการลบ Template นี้?"))) return;
     await deleteBotTemplate(id);
     loadData();
   };
 
   const columns: TableColumn<BotResponseTemplate>[] = [
-    { key: 'name', label: 'ชื่อ' },
-    { key: 'type', label: 'Type' },
+    { key: 'name', label: __uiText("ชื่อ") },
+    { key: 'type', label: __uiText("Type") },
     {
       key: 'active',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: boolean) =>
         value ? (
-          <span className="text-green-600 text-xs font-semibold">Active</span>
+          <span className="text-green-600 text-xs font-semibold">{__uiText("Active")}</span>
         ) : (
-          <span className="text-gray-400 text-xs">Inactive</span>
+          <span className="text-gray-400 text-xs">{__uiText("Inactive")}</span>
         ),
     },
     {
       key: 'actions',
-      label: 'จัดการ',
+      label: __uiText("จัดการ"),
       render: (_, row) => (
         <div className="flex gap-3">
           <button
             onClick={() => navigate(ADMIN_ROUTES.botTemplateEdit(row.id))}
             className="text-xs text-primary hover:underline"
           >
-            แก้ไข
-          </button>
+            {__uiText("แก้ไข")}</button>
           <button
             onClick={() => handleDelete(row.id)}
             className="text-xs text-red-500 hover:underline"
           >
-            ลบ
-          </button>
+            {__uiText("ลบ")}</button>
         </div>
       ),
     },
   ];
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">กำลังโหลด...</div>;
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <div className="flex flex-col gap-5 p-4">
       <AdminListHeader
-        title="Bot Templates"
-        createLabel="เพิ่ม Template"
+        title={__uiText("Bot Templates")}
+        createLabel={__uiText("เพิ่ม Template")}
         createPath={ADMIN_ROUTES.botTemplateCreate}
       />
       <Table columns={columns} data={templates} idKey="id" />

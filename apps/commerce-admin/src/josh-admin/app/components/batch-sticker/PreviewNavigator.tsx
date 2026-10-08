@@ -1,3 +1,5 @@
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function PreviewNavigator({
   index,
   total,
@@ -7,6 +9,7 @@ export function PreviewNavigator({
   total: number;
   onChange: (index: number) => void;
 }) {
+  __useUiLocale();
   if (total === 0) return null;
 
   return (
@@ -16,7 +19,7 @@ export function PreviewNavigator({
         className="rounded-md border border-gray-200 px-2 py-1 text-gray-600 hover:bg-gray-50 disabled:opacity-40"
         disabled={index === 0}
         onClick={() => onChange(index - 1)}
-        aria-label="Previous image"
+        aria-label={__uiText("Previous image")}
       >
         ←
       </button>
@@ -28,7 +31,7 @@ export function PreviewNavigator({
         className="rounded-md border border-gray-200 px-2 py-1 text-gray-600 hover:bg-gray-50 disabled:opacity-40"
         disabled={index >= total - 1}
         onClick={() => onChange(index + 1)}
-        aria-label="Next image"
+        aria-label={__uiText("Next image")}
       >
         →
       </button>

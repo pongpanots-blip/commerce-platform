@@ -1,0 +1,194 @@
+[
+  {
+    "file": "apps/commerce-admin/src/app/pages/Dashboard.tsx",
+    "dates": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/ErpSimulator.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshApiLogs.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshProductDetail.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/MarketingResearch.tsx",
+    "dates": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/MarketingWorkflows.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/ProductPrices.tsx",
+    "dates": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/SupplierOrderPeriods.tsx",
+    "dates": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/growth/Workspace.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingFlowCanvas.tsx",
+    "dates": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEditor.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEnrollments.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowScheduledRuns.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/CS/Billing.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryLogTab.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationLog.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/CS/ProductNotifyFunnel.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditBacksAdmin.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditNotesAdmin.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/admin-access/AdminAccessQueue.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/PromotionProductSetPicker.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/kyc/KycDocumentModal.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/kyc/KycQueue.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingNotifyTemplates.tsx",
+    "dates": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
+    "dates": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+    "dates": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapedCatalogPage.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/orders/PaymentTransactions.tsx",
+    "dates": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/product/EditProduct.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetList.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/EditSegment.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentList.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/user/UserDetail.tsx",
+    "dates": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/user/UserJourneyTimeline.tsx",
+    "dates": 1
+  }
+]

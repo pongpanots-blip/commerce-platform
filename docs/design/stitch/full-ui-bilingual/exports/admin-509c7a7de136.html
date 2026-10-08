@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ส่ง order ผ่าน commerce (ทดลอง) - Thai Ops Cockpit</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Thai & Modern Latin Typefaces -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with custom configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#d3e3ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "error": "#ba1a1a",
+            "tertiary-container": "#bc4600",
+            "surface-container-lowest": "#ffffff",
+            "tertiary": "#943500",
+            "primary-container": "#365cf5",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-error-container": "#93000a",
+            "inverse-surface": "#243048",
+            "inverse-on-surface": "#ecf0ff",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-secondary": "#ffffff",
+            "surface-dim": "#cddaf9",
+            "on-tertiary-container": "#ffebe4",
+            "on-primary-fixed": "#001257",
+            "background": "#f9f9ff",
+            "surface": "#f9f9ff",
+            "secondary": "#4f5f77",
+            "on-primary": "#ffffff",
+            "outline": "#747687",
+            "on-background": "#0e1b32",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-container": "#e8eeff",
+            "on-secondary-fixed": "#0b1c31",
+            "on-surface-variant": "#444655",
+            "surface-container-high": "#e0e8ff",
+            "surface-variant": "#d7e2ff",
+            "surface-bright": "#f9f9ff",
+            "outline-variant": "#c4c5d8",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-tertiary-fixed": "#360f00",
+            "secondary-container": "#d0e1fd",
+            "on-primary-container": "#ededff",
+            "surface-container-highest": "#d7e2ff",
+            "primary-fixed": "#dde1ff",
+            "on-surface": "#0e1b32",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-tertiary": "#ffffff",
+            "primary-fixed-dim": "#b9c3ff",
+            "primary": "#0a3fdc",
+            "on-secondary-container": "#54647c",
+            "inverse-primary": "#b9c3ff",
+            "surface-container-low": "#f1f3ff",
+            "surface-tint": "#214ce7",
+            "on-secondary-fixed-variant": "#38485e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-2xl": "2.5rem",
+            "margin": "2rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-mobile": "1rem",
+            "margin-mobile": "1rem",
+            "gutter": "1.5rem",
+            "space-xl": "2rem"
+          },
+          "fontFamily": {
+            "body-md": ["'Noto Sans Thai', Inter, sans-serif"],
+            "code-sm": ["'JetBrains Mono', monospace"],
+            "body-sm": ["'Noto Sans Thai', Inter, sans-serif"],
+            "body-lg": ["'Noto Sans Thai', Inter, sans-serif"],
+            "label-md": ["'Inter', 'Noto Sans Thai', sans-serif"],
+            "headline-lg-mobile": ["'Noto Sans Thai', Inter, sans-serif"],
+            "headline-sm": ["'Noto Sans Thai', Inter, sans-serif"],
+            "headline-lg": ["'Noto Sans Thai', Inter, sans-serif"],
+            "label-sm": ["'Inter', 'Noto Sans Thai', sans-serif"],
+            "headline-md": ["'Noto Sans Thai', Inter, sans-serif"]
+          },
+          "fontSize": {
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 19px;
+      line-height: 1;
+    }
+    .mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Hairline borders custom refinement */
+    .hairline-border {
+      border: 1px solid #e1e7f0;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-surface font-body-md text-on-surface antialiased overflow-x-hidden">
+<!-- ================= TOP APP BAR ================= -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-6">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-1.5 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-surface-container-lowest flex items-center justify-center font-bold text-headline-sm">
+          TP
+        </div>
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight">Thai Ops Cockpit</span>
+</div>
+<span class="text-outline-variant select-none hidden sm:inline">|</span>
+<!-- Breadcrumb -->
+<nav class="hidden sm:flex items-center gap-2 text-body-sm font-body-sm">
+<span class="text-secondary">ระบบเชื่อมต่อ</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-medium">ส่ง order ผ่าน commerce (ทดลอง)</span>
+</nav>
+<!-- Sample Data Pill Tag -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container text-primary font-medium border border-secondary-fixed">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span data-i18n="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</span>
+</div>
+<!-- Trailing Actions Cluster -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher Interactive Button -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border hairline-border text-label-md font-label-md text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-95" id="lang-switch-btn">
+<span class="material-symbols-outlined text-secondary" data-icon="language">language</span>
+<span class="font-medium" id="current-lang-text">ไทย / EN</span>
+</button>
+<!-- Notifications -->
+<button aria-label="Notifications" class="relative p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<!-- Help Documentation -->
+<button aria-label="Help" class="p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<!-- Profile Avatar -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center font-bold text-on-primary-fixed text-label-md">
+          JD
+        </div>
+<div class="hidden lg:flex flex-col text-left">
+<span class="text-label-md font-label-md leading-none font-semibold text-on-surface">Josh (Ops Admin)</span>
+<span class="text-label-sm font-label-sm text-secondary">Jagota ERP Lead</span>
+</div>
+</div>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<!-- ================= PERSISTENT 256px SIDEBAR ================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-3 hidden md:flex">
+<div class="flex flex-col gap-1">
+<!-- Sidebar Brand Anchor -->
+<div class="flex items-center gap-3 px-3 py-4 mb-2 border-b border-outline-variant">
+<div class="w-7 h-7 rounded-lg bg-primary-container text-surface-container-lowest flex items-center justify-center font-bold">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight">Thai Ops Cockpit</div>
+<div class="text-label-sm font-label-sm text-secondary">ศูนย์บริหารจัดการร้านค้า</div>
+</div>
+</div>
+<!-- 7 Primary Navigation Domains -->
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-normal text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-normal text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-normal text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-normal text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-normal text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE ITEM) -->
+<div class="flex flex-col gap-0.5">
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-container text-primary font-medium border-l-[3px] border-primary text-label-md" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="sync_alt">sync_alt</span>
+<span>ระบบเชื่อมต่อ</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+</a>
+<!-- Sub-items under ระบบเชื่อมต่อ -->
+<div class="pl-7 pr-1 py-1 flex flex-col gap-1">
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-secondary-fixed text-primary font-semibold text-body-sm" href="#">
+<span class="truncate">Jagota Shadow (ทดลอง)</span>
+<span class="px-1.5 py-0.2 bg-primary-container text-surface-container-lowest text-[10px] rounded font-mono font-bold">ACTIVE</span>
+</a>
+<a class="flex items-center px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm transition-colors duration-150" href="#">
+<span class="truncate">API log ของ josh</span>
+</a>
+<a class="flex items-center px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm transition-colors duration-150" href="#">
+<span class="truncate">ERP log ของ josh</span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm transition-colors duration-150" href="#">
+<span class="truncate">Webhook Dead Letter</span>
+<span class="px-1.5 py-0.2 bg-surface-container-highest text-secondary text-[10px] rounded font-mono">0</span>
+</a>
+</div>
+</div>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-normal text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</div>
+<!-- Sidebar Footer Operational Info -->
+<div class="p-3 bg-surface-container-low rounded-xl hairline-border flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-secondary font-medium">Jagota ERP Gateway</span>
+<span class="inline-flex items-center gap-1 text-[#157347] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> v2.4.9
+          </span>
+</div>
+<p class="text-[11px] text-secondary leading-tight">
+          โหมด Shadow กำลังเปรียบเทียบคำขอคู่ขนานโดยไม่ยิงคำสั่งซื้อซ้ำซ้อน
+        </p>
+</div>
+</aside>
+<!-- ================= MAIN STAGE ================= -->
+<main class="flex-1 md:ml-64 p-4 md:p-8 max-w-[1280px] w-full mx-auto space-y-6">
+<!-- 1. PAGE HEADER -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
+<div class="space-y-1.5">
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-[#17243b] tracking-tight">
+              ส่ง order ผ่าน commerce · ทดลองคู่กัน
+            </h1>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-[#fef9e7] text-[#b08900] border border-[#f5ebc0] font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]" data-icon="science">science</span>
+<span>ทดลองคู่ขนาน (Shadow Run)</span>
+</span>
+</div>
+<p class="text-body-md font-body-md text-secondary leading-relaxed max-w-3xl">
+            josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · ไม่ส่งอะไรไป ERP
+          </p>
+</div>
+<!-- Action Buttons at Top -->
+<div class="flex items-center gap-2.5 shrink-0">
+<button class="h-10 px-4 rounded-lg bg-surface-container-lowest hairline-border text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-label-md text-label-md flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm" id="btn-refresh">
+<span class="material-symbols-outlined text-secondary" data-icon="refresh">refresh</span>
+<span data-i18n="Refresh">Refresh</span>
+</button>
+<button class="h-10 px-5 rounded-lg bg-primary-container text-surface-container-lowest hover:bg-[#2947d1] transition-colors duration-150 font-label-md text-label-md flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm font-medium" id="btn-run-check">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+<span data-i18n="ตรวจตอนนี้">ตรวจตอนนี้</span>
+</button>
+</div>
+</div>
+<!-- 2. OVERVIEW & STATUS METRICS (Bento Cards Row) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-5">
+<!-- Card 1: ผลการเทียบ (Shadow Verification) -->
+<div class="bg-surface-container-lowest rounded-xl hairline-border p-5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="checklist_rtl">checklist_rtl</span>
+<h3 class="text-label-md font-label-md font-semibold text-[#17243b]">ผลการเทียบ (Shadow Verification)</h3>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2 py-0.5 rounded">
+<span data-i18n="ช่วงที่ตรวจ">ช่วงที่ตรวจ</span>: 7 วันล่าสุด
+              </span>
+</div>
+<div class="mt-4 flex items-baseline gap-3">
+<span class="text-3xl font-bold mono-num text-[#157347]">142</span>
+<span class="text-body-sm font-body-sm text-[#157347] font-semibold bg-[#e8f5ed] px-2 py-0.5 rounded-full">
+                97.2% ตรงกันทุกช่อง
+              </span>
+</div>
+<div class="mt-4 grid grid-cols-2 gap-2 text-body-sm">
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/50">
+<div class="text-secondary text-label-sm">ไม่ตรง (Payload Diff)</div>
+<div class="mono-num font-semibold text-[#c2333f] text-base mt-0.5">3 รายการ</div>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/50">
+<div class="text-secondary text-label-sm">commerce สร้างไม่ได้</div>
+<div class="mono-num font-semibold text-[#b08900] text-base mt-0.5">1 รายการ</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant flex items-center justify-between text-label-sm text-secondary">
+<span>ทั้งหมด 146 คำขอเปรียบเทียบ</span>
+<span class="text-[#157347] flex items-center gap-1 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span> พร้อมเปลี่ยนถ่าย
+            </span>
+</div>
+</div>
+<!-- Card 2: ช่องที่ต่างบ่อย -->
+<div class="bg-surface-container-lowest rounded-xl hairline-border p-5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#b08900]" data-icon="difference">difference</span>
+<h3 class="text-label-md font-label-md font-semibold text-[#17243b]" data-i18n="ช่องที่ต่างบ่อย:">ช่องที่ต่างบ่อย:</h3>
+</div>
+<span class="px-2 py-0.5 text-label-sm rounded bg-[#fdf2f2] text-[#c2333f] font-mono font-medium">3 Diff Events</span>
+</div>
+<div class="mt-3.5 space-y-2.5">
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/40 flex items-center justify-between">
+<div class="space-y-0.5">
+<div class="font-mono text-label-sm text-[#0e1b32] font-semibold">delivery_date_format</div>
+<div class="text-label-sm text-secondary">รูปแบบวันที่ส่งสินค้าต่างระบบ (ISO vs Thai BE)</div>
+</div>
+<span class="mono-num font-bold px-2 py-0.5 rounded bg-[#fef9e7] text-[#b08900] text-label-sm">2 ครั้ง</span>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/40 flex items-center justify-between">
+<div class="space-y-0.5">
+<div class="font-mono text-label-sm text-[#0e1b32] font-semibold">line_items.vat_exempt_flag</div>
+<div class="text-label-sm text-secondary">การระบุสัญลักษณ์การยกเว้นภาษีมูลค่าเพิ่ม</div>
+</div>
+<span class="mono-num font-bold px-2 py-0.5 rounded bg-[#fef9e7] text-[#b08900] text-label-sm">1 ครั้ง</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant text-label-sm text-secondary flex items-center justify-between">
+<span>ผลกระทบ: ปานกลาง (Auto-cast ได้)</span>
+<a class="text-primary hover:underline font-medium" href="#">ดู mapping config →</a>
+</div>
+</div>
+<!-- Card 3: สถิติส่งจริงผ่าน commerce (ถ้าเปิดใช้งาน) -->
+<div class="bg-surface-container-lowest rounded-xl hairline-border p-5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="cloud_done">cloud_done</span>
+<h3 class="text-label-md font-label-md font-semibold text-[#17243b]">สถิติส่งจริงผ่าน commerce</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm bg-surface-container-high text-secondary font-medium">
+                โหมดอ่านคู่ขนาน
+              </span>
+</div>
+<div class="mt-4 flex items-center gap-6">
+<div>
+<div class="text-label-sm text-secondary" data-i18n="ส่งสำเร็จ (7 วัน)">ส่งสำเร็จ (7 วัน)</div>
+<div class="mono-num text-2xl font-bold text-on-surface mt-1">0 <span class="text-sm font-normal text-secondary" data-i18n="ครั้ง">ครั้ง</span></div>
+</div>
+<div class="border-l border-outline-variant pl-6">
+<div class="text-label-sm text-secondary" data-i18n="ล้มเหลว">ล้มเหลว</div>
+<div class="mono-num text-2xl font-bold text-on-surface mt-1">0 <span class="text-sm font-normal text-secondary" data-i18n="ครั้ง">ครั้ง</span></div>
+</div>
+</div>
+<div class="mt-4 p-3 rounded-lg bg-surface-container-low border border-outline-variant/60 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[#157347] text-[18px] shrink-0 mt-0.5" data-icon="shield">shield</span>
+<p class="text-label-sm text-secondary leading-snug">
+                ยังไม่มี order ที่ส่งผ่าน commerce (สถานะ: ทดลองเปรียบเทียบเท่านั้น) ปลอดภัยต่อระบบ ERP บัญชีจริง 100%
+              </p>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant flex items-center justify-between text-label-sm text-secondary">
+<span>ส่งมากกว่า 1 ครั้ง: 0</span>
+<span class="font-mono">เวลาเฉลี่ย: -- ms</span>
+</div>
+</div>
+</section>
+<!-- 3. SECTION TABS & FILTER BAR -->
+<section class="bg-surface-container-lowest rounded-xl hairline-border shadow-sm p-4 space-y-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-outline-variant pb-3">
+<!-- Navigation Tabs within page -->
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container text-primary font-semibold text-label-md flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+<span>รายการตรวจคู่กัน (Shadow Run / Diff Log)</span>
+<span class="px-2 py-0.2 rounded-full bg-primary-container text-surface-container-lowest mono-num text-xs">146</span>
+</button>
+<button class="px-4 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low font-medium text-label-md transition-colors duration-150 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>ประวัติส่ง ERP (สำเนาจาก josh)</span>
+</button>
+</div>
+<div class="flex items-center gap-2 text-label-sm text-secondary">
+<span class="w-2 h-2 rounded-full bg-[#157347] animate-pulse"></span>
+<span>Shadow Worker: กำลังตรวจจับอัตโนมัติ</span>
+</div>
+</div>
+<!-- Filter Controls Row -->
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1">
+<!-- Search Input -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[18px]" data-icon="search">search</span>
+<input class="w-full h-10 pl-9 pr-14 rounded-lg hairline-border bg-surface-container-lowest text-on-surface placeholder:text-secondary/60 text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all" id="filter-search" placeholder="ค้นหาในหน้านี้เท่านั้น: Shipment / order หรือ DOC no." type="text"/>
+<span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] mono-num text-secondary bg-surface-container px-1.5 py-0.5 rounded">⌘K</span>
+</div>
+<!-- Status Dropdown & Day Pills -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- สถานะ Filter -->
+<div class="flex items-center gap-2">
+<label class="text-label-sm text-secondary font-medium">สถานะ:</label>
+<select class="h-10 px-3 py-1.5 rounded-lg hairline-border bg-surface-container-lowest text-on-surface text-label-md focus:border-primary-container outline-none cursor-pointer" id="filter-status">
+<option value="all">ทั้งหมด (146)</option>
+<option value="match">ตรง (142)</option>
+<option value="diff">ไม่ตรง (3)</option>
+<option value="failed">commerce สร้างไม่ได้ (1)</option>
+</select>
+</div>
+<!-- Date Range Selector -->
+<div class="flex items-center hairline-border rounded-lg p-0.5 bg-surface-container-low text-label-sm">
+<button class="px-3 py-1.5 rounded-md text-secondary hover:text-on-surface font-medium transition-colors">1 วัน</button>
+<button class="px-3 py-1.5 rounded-md text-secondary hover:text-on-surface font-medium transition-colors">3 วัน</button>
+<button class="px-3 py-1.5 rounded-md bg-surface-container-lowest text-primary font-semibold shadow-xs">ตรวจ (7 วัน)</button>
+</div>
+<!-- Trigger Search -->
+<button class="h-10 px-4 rounded-lg bg-primary-container text-surface-container-lowest font-medium text-label-md hover:bg-[#2947d1] transition-colors flex items-center gap-1.5 cursor-pointer active:scale-95">
+<span class="material-symbols-outlined text-[17px]" data-icon="search">search</span>
+<span data-i18n="ค้นหา">ค้นหา</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 4. DIFF / COMPARISON TABLE -->
+<section class="bg-surface-container-lowest rounded-xl hairline-border shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-body-sm">
+<thead>
+<tr class="h-11 bg-surface-container-low text-secondary text-label-sm border-b border-outline-variant select-none">
+<th class="px-5 py-2 font-semibold">Shipment / order</th>
+<th class="px-5 py-2 font-semibold">josh ส่งเมื่อ</th>
+<th class="px-5 py-2 font-semibold">ผล josh</th>
+<th class="px-5 py-2 font-semibold">เทียบ</th>
+<th class="px-5 py-2 font-semibold">ช่องที่ต่าง</th>
+<th class="px-5 py-2 font-semibold text-right">การกระทำ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- ROW 1: ตรง -->
+<tr class="hover:bg-surface-container-low/60 transition-colors duration-150 h-13 group">
+<td class="px-5 py-3">
+<div class="font-mono font-semibold text-on-surface">ORD-2024-99120</div>
+<div class="font-mono text-label-sm text-secondary">SHP-8821 · DOC-89104</div>
+</td>
+<td class="px-5 py-3 text-secondary">
+<div class="mono-num text-on-surface">14:32 น.</div>
+<div class="text-[11px] text-secondary">วันนี้ (12 มี.ค.)</div>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+<span>สำเร็จ (200 OK)</span>
+</span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-label-sm font-semibold bg-[#e8f5ed] text-[#157347] border border-[#c4e3d0]">
+<span class="material-symbols-outlined text-[15px]" data-icon="done_all">done_all</span>
+<span data-i18n="ตรง">ตรง</span>
+</span>
+</td>
+<td class="px-5 py-3 text-secondary">
+<span class="text-label-sm text-secondary/70">ไม่มีช่องต่าง (100% Match)</span>
+</td>
+<td class="px-5 py-3 text-right">
+<button class="h-8 px-3 rounded hairline-border bg-surface-container-lowest text-secondary hover:text-primary hover:border-primary text-label-sm font-medium transition-colors cursor-pointer active:scale-95 inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]" data-icon="visibility">visibility</span>
+<span data-i18n="ดู">ดู</span>
+</button>
+</td>
+</tr>
+<!-- ROW 2: ไม่ตรง (EXPANDABLE DIFF PREVIEW) -->
+<tr class="hover:bg-[#fefbee] transition-colors duration-150 bg-[#fffdf5] border-l-4 border-l-[#c2333f]">
+<td class="px-5 py-3">
+<div class="font-mono font-semibold text-on-surface">ORD-2024-99118</div>
+<div class="font-mono text-label-sm text-secondary">SHP-8819 · DOC-89098</div>
+</td>
+<td class="px-5 py-3 text-secondary">
+<div class="mono-num text-on-surface">14:15 น.</div>
+<div class="text-[11px] text-secondary">วันนี้ (12 มี.ค.)</div>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+<span>สำเร็จ (200 OK)</span>
+</span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-label-sm font-semibold bg-[#fdf2f2] text-[#c2333f] border border-[#f8d7da]">
+<span class="material-symbols-outlined text-[15px]" data-icon="warning">warning</span>
+<span data-i18n="ไม่ตรง">ไม่ตรง</span>
+</span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-mono text-xs bg-[#fef9e7] text-[#b08900] border border-[#faeebf]">
+<span>1 ช่อง (tax_id_type)</span>
+</span>
+</td>
+<td class="px-5 py-3 text-right">
+<button class="h-8 px-3 rounded bg-primary-container text-surface-container-lowest hover:bg-[#2947d1] text-label-sm font-medium transition-colors cursor-pointer active:scale-95 inline-flex items-center gap-1 shadow-xs" id="toggle-diff-btn">
+<span class="material-symbols-outlined text-[15px]" data-icon="compare">compare</span>
+<span>ดู diff</span>
+</button>
+</td>
+</tr>
+<!-- EXPANDED DIFF PANEL (INLINE REVEAL) -->
+<tr class="bg-surface-container-low border-b border-outline-variant" id="diff-detail-row">
+<td class="p-4 md:p-6" colspan="6">
+<div class="bg-surface-container-lowest rounded-xl hairline-border p-4 shadow-sm space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#c2333f]" data-icon="rule">rule</span>
+<span class="font-semibold text-label-md text-on-surface">การวิเคราะห์ความต่าง Payload: ORD-2024-99118 (SHP-8819)</span>
+</div>
+<span class="text-label-sm text-secondary font-mono">Timestamp: 2024-03-12T14:15:22.418+07:00</span>
+</div>
+<!-- 3-Column Inspection Box -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Column 1: josh ส่งไป Jagota -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-semibold text-secondary" data-i18n="josh ส่งไป Jagota">josh ส่งไป Jagota</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container text-primary font-bold">LEGACY RAW</span>
+</div>
+<div class="font-mono text-code-sm bg-surface-container-lowest p-2.5 rounded border border-outline-variant space-y-1 overflow-x-auto text-secondary">
+<div class="text-[#17243b]">{</div>
+<div class="pl-4">"customer_code": "JG-9941",</div>
+<div class="pl-4">"delivery_date": "2024-03-13",</div>
+<div class="pl-4 bg-[#fff3cd] text-[#997404] font-semibold py-0.5 px-1 rounded">
+                            "tax_id_type": "01",  <span class="text-[10px] text-secondary font-normal">← ส่งจริง</span>
+</div>
+<div class="pl-4">"total_amount": 4580.00</div>
+<div class="text-[#17243b]">}</div>
+</div>
+</div>
+<!-- Column 2: commerce จะส่ง -->
+<div class="p-3.5 rounded-lg bg-[#fff8f5] border border-[#ffd5c4] space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-semibold text-[#bc4600]" data-i18n="commerce จะส่ง">commerce จะส่ง</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#ffdbcd] text-[#7e2c00] font-bold">SHADOW PAYLOAD</span>
+</div>
+<div class="font-mono text-code-sm bg-surface-container-lowest p-2.5 rounded border border-[#ffd5c4] space-y-1 overflow-x-auto text-secondary">
+<div class="text-[#17243b]">{</div>
+<div class="pl-4">"customer_code": "JG-9941",</div>
+<div class="pl-4">"delivery_date": "2024-03-13",</div>
+<div class="pl-4 bg-[#fdf2f2] text-[#c2333f] font-semibold py-0.5 px-1 rounded">
+                            "tax_id_type": "001", <span class="text-[10px] text-secondary font-normal">← มี padding เกิน</span>
+</div>
+<div class="pl-4">"total_amount": 4580.00</div>
+<div class="text-[#17243b]">}</div>
+</div>
+</div>
+<!-- Column 3: Jagota ตอบ -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-semibold text-secondary" data-i18n="Jagota ตอบ">Jagota ตอบ</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#e8f5ed] text-[#157347] font-bold">200 SUCCESS</span>
+</div>
+<div class="font-mono text-code-sm bg-surface-container-lowest p-2.5 rounded border border-outline-variant space-y-1 overflow-x-auto text-secondary">
+<div class="text-[#17243b]">{</div>
+<div class="pl-4">"status": "ACCEPTED",</div>
+<div class="pl-4">"erp_doc_no": "DOC-89098",</div>
+<div class="pl-4">"sync_queue_id": 901842,</div>
+<div class="pl-4">"message": "Order created successfully"</div>
+<div class="text-[#17243b]">}</div>
+</div>
+</div>
+</div>
+<!-- Recommended Remediation Box -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container text-body-sm text-on-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="auto_fix_high">auto_fix_high</span>
+<span>
+<strong>วิธีแก้ไขที่แนะนำ:</strong> อัปเดต Transformer Script ฟิลด์ <code class="mono-num font-semibold text-primary">tax_id_type</code> ให้ตัด Zero-padding ออกให้เหลือ 2 หลักตามสเปค Jagota
+                        </span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest hairline-border text-label-sm font-medium hover:bg-surface-container-low transition-colors" data-i18n="ตรวจซ้ำ">
+                          ตรวจซ้ำ
+                        </button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-surface-container-lowest text-label-sm font-medium hover:bg-primary-container transition-colors">
+                          นำเข้าสู่ Schema
+                        </button>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- ROW 3: ตรง -->
+<tr class="hover:bg-surface-container-low/60 transition-colors duration-150 h-13">
+<td class="px-5 py-3">
+<div class="font-mono font-semibold text-on-surface">ORD-2024-99105</div>
+<div class="font-mono text-label-sm text-secondary">SHP-8802 · DOC-89077</div>
+</td>
+<td class="px-5 py-3 text-secondary">
+<div class="mono-num text-on-surface">13:40 น.</div>
+<div class="text-[11px] text-secondary">วันนี้ (12 มี.ค.)</div>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+<span>สำเร็จ (200 OK)</span>
+</span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-label-sm font-semibold bg-[#e8f5ed] text-[#157347] border border-[#c4e3d0]">
+<span class="material-symbols-outlined text-[15px]" data-icon="done_all">done_all</span>
+<span data-i18n="ตรง">ตรง</span>
+</span>
+</td>
+<td class="px-5 py-3 text-secondary">
+<span class="text-label-sm text-secondary/70">ไม่มีช่องต่าง (100% Match)</span>
+</td>
+<td class="px-5 py-3 text-right">
+<button class="h-8 px-3 rounded hairline-border bg-surface-container-lowest text-secondary hover:text-primary hover:border-primary text-label-sm font-medium transition-colors cursor-pointer active:scale-95 inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]" data-icon="visibility">visibility</span>
+<span data-i18n="ดู">ดู</span>
+</button>
+</td>
+</tr>
+<!-- ROW 4: commerce สร้างไม่ได้ -->
+<tr class="hover:bg-surface-container-low/60 transition-colors duration-150 h-13 border-l-4 border-l-[#b08900]">
+<td class="px-5 py-3">
+<div class="font-mono font-semibold text-on-surface">ORD-2024-99092</div>
+<div class="font-mono text-label-sm text-secondary">SHP-8790 · DOC-89051</div>
+</td>
+<td class="px-5 py-3 text-secondary">
+<div class="mono-num text-on-surface">12:10 น.</div>
+<div class="text-[11px] text-secondary">วันนี้ (12 มี.ค.)</div>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+<span>สำเร็จ (200 OK)</span>
+</span>
+</td>
+<td class="px-5 py-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-label-sm font-semibold bg-[#fef9e7] text-[#b08900] border border-[#f5ebc0]">
+<span class="material-symbols-outlined text-[15px]" data-icon="error">error</span>
+<span data-i18n="commerce สร้างไม่ได้">commerce สร้างไม่ได้</span>
+</span>
+</td>
+<td class="px-5 py-3">
+<div class="text-label-sm text-[#ba1a1a] font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="info">info</span>
+<span>ข้อผิดพลาด: "Missing customer tax branch code"</span>
+</div>
+</td>
+<td class="px-5 py-3 text-right">
+<button class="h-8 px-3 rounded bg-surface-container-lowest hairline-border text-secondary hover:text-on-surface text-label-sm font-medium transition-colors cursor-pointer active:scale-95 inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]" data-icon="replay">replay</span>
+<span data-i18n="ตรวจซ้ำ">ตรวจซ้ำ</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Controls -->
+<div class="px-5 py-3 bg-surface-container-low border-t border-outline-variant flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-label-sm text-secondary">
+<div class="flex items-center gap-2">
+<span>แสดง 1-4 จากทั้งหมด 146 รายการ</span>
+<span class="text-outline-variant">|</span>
+<label>แสดงแถวต่อหน้า:</label>
+<select class="h-8 px-2 rounded hairline-border bg-surface-container-lowest text-on-surface text-label-sm">
+<option>25</option>
+<option>50</option>
+<option>100</option>
+</select>
+</div>
+<div class="flex items-center gap-1.5 self-end sm:self-auto">
+<button class="h-8 px-3 rounded hairline-border bg-surface-container-lowest text-secondary hover:text-on-surface disabled:opacity-40 disabled:cursor-not-allowed font-medium" data-i18n="ก่อนหน้า" disabled="">
+              ก่อนหน้า
+            </button>
+<span class="px-3 py-1 font-mono text-on-surface font-semibold bg-surface-container-lowest rounded hairline-border">
+              หน้า 1 จาก 14
+            </span>
+<button class="h-8 px-3 rounded hairline-border bg-surface-container-lowest text-secondary hover:text-on-surface hover:bg-surface-container transition-colors font-medium cursor-pointer" data-i18n="ถัดไป">
+              ถัดไป
+            </button>
+</div>
+</div>
+</section>
+<!-- 5. SECONDARY SECTION: ประวัติส่ง ERP (สำเนาจาก josh) -->
+<section class="bg-surface-container-lowest rounded-xl hairline-border shadow-sm p-6 space-y-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-outline-variant">
+<div>
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]" data-i18n="ประวัติส่ง ERP (สำเนาจาก josh)">
+              ประวัติส่ง ERP (สำเนาจาก josh)
+            </h2>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">
+              ดึงข้อมูลสำเนาการส่งจริงจากระบบ josh service เพื่อเป็น reference baseline ในการตรวจ Shadow Match
+            </p>
+</div>
+<button class="h-9 px-4 rounded-lg bg-surface-container-lowest hairline-border text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md flex items-center gap-2 cursor-pointer active:scale-95 shrink-0" id="btn-fetch-josh">
+<span class="material-symbols-outlined text-primary" data-icon="cloud_download">cloud_download</span>
+<span data-i18n="ดึงจาก josh ตอนนี้" id="btn-fetch-label">ดึงจาก josh ตอนนี้</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-1">
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60">
+<div class="text-label-sm text-secondary">การเชื่อมต่อ Service</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2.5 h-2.5 rounded-full bg-[#157347]"></span>
+<span class="font-semibold text-on-surface">josh-prod-gateway.jagota.internal</span>
+</div>
+<div class="text-[11px] text-secondary mt-1">Latency: 42ms · SSL Valid</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60">
+<div class="text-label-sm text-secondary">ซิงค์ล่าสุด (Last Sync)</div>
+<div class="font-mono font-semibold text-on-surface mt-1">14:32:05 น. (เมื่อ 8 นาทีที่แล้ว)</div>
+<div class="text-[11px] text-[#157347] mt-1">✓ ดึงสมบูรณ์ 200 รายการ</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60">
+<div class="text-label-sm text-secondary">คิวรอส่งในระบบ (Pending Queue)</div>
+<div class="font-mono font-bold text-on-surface text-xl mt-1">0 <span class="text-xs font-normal text-secondary">รายการค้าง</span></div>
+<div class="text-[11px] text-secondary mt-1">สถานะ: เคลียร์หมดทุกคิว</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60">
+<div class="text-label-sm text-secondary">ความเชื่อมั่น Schema Match</div>
+<div class="font-mono font-bold text-[#157347] text-xl mt-1">99.3%</div>
+<div class="text-[11px] text-secondary mt-1">เป้าหมายพร้อม Cutover: ≥ 99.0%</div>
+</div>
+</div>
+<!-- Technical Informational Banner -->
+<div class="flex items-start gap-3 p-3.5 rounded-lg bg-[#eef2ff] border border-[#cddaf9] text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5" data-icon="info">info</span>
+<div class="space-y-1">
+<div class="font-semibold text-primary">คำแนะนำสำหรับการเตรียม Switch Traffic ไปยัง Commerce Engine</div>
+<div class="text-secondary text-body-sm leading-relaxed">
+              เมื่อผลการเทียบไม่พบช่องต่างต่อเนื่องกัน 7 วัน และอัตราความถูกต้องเกิน 99.5% ทีม DevOps สามารถเปิด Feature Flag <code class="mono-num px-1 py-0.5 bg-surface-container-lowest rounded text-primary font-semibold">ENABLE_JAGOTA_COMMERCE_DISPATCH</code> สำหรับร้านค้านำร่องได้ทันที โดยไม่ต้องแก้ไขโค้ดฝั่งลูกค้า
+            </div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- ================= INVISIBLE TECHNICAL TRANSLATION DICTIONARY ================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Refresh": { "th": "Refresh", "en": "Refresh" },
+    "สถานะ": { "th": "สถานะ", "en": "Status" },
+    "เวลา": { "th": "เวลา", "en": "Time" },
+    "ค้นหา": { "th": "ค้นหา", "en": "Search" },
+    "วัน": { "th": "วัน", "en": "Day" },
+    "ทั้งหมด": { "th": "ทั้งหมด", "en": "All" },
+    "ส่งแล้ว": { "th": "ส่งแล้ว", "en": "Sent" },
+    "ก่อนหน้า": { "th": "ก่อนหน้า", "en": "Previous" },
+    "หน้า": { "th": "หน้า", "en": "Page" },
+    "ถัดไป": { "th": "ถัดไป", "en": "Next" },
+    "ส่ง order ผ่าน commerce · ทดลองคู่กัน": { "th": "ส่ง order ผ่าน commerce · ทดลองคู่กัน", "en": "Send Order via Commerce · Shadow Run" },
+    "josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · ไม่ส่งอะไรไป ERP": {
+      "th": "josh ยังส่ง order ไป Jagota เหมือนเดิม · commerce สร้าง request ของ order เดียวกันแล้วเทียบกับที่ josh ส่งจริงทีละช่อง · ไม่ส่งอะไรไป ERP",
+      "en": "Josh continues sending orders to Jagota as usual · Commerce creates parallel requests for the same order and diffs field-by-field · Nothing is sent to ERP"
+    },
+    "กำลังตรวจ…": { "th": "กำลังตรวจ…", "en": "Checking…" },
+    "ตรวจตอนนี้": { "th": "ตรวจตอนนี้", "en": "Check Now" },
+    "ตรวจ (": { "th": "ตรวจ (", "en": "Check (" },
+    "วัน)": { "th": "วัน)", "en": "days)" },
+    "ตรง": { "th": "ตรง", "en": "Match" },
+    "ไม่ตรง": { "th": "ไม่ตรง", "en": "Mismatch" },
+    "commerce สร้างไม่ได้": { "th": "commerce สร้างไม่ได้", "en": "Commerce cannot generate" },
+    "ช่วงที่ตรวจ": { "th": "ช่วงที่ตรวจ", "en": "Inspection period" },
+    "ช่องที่ต่างบ่อย:": { "th": "ช่องที่ต่างบ่อย:", "en": "Frequently mismatched fields:" },
+    "ไม่ตรง / สร้างไม่ได้": { "th": "ไม่ตรง / สร้างไม่ได้", "en": "Mismatch / Cannot generate" },
+    "ไม่มีรายการที่ไม่ตรง": { "th": "ไม่มีรายการที่ไม่ตรง", "en": "No mismatched items" },
+    "ยังไม่มีรายการ": { "th": "ยังไม่มีรายการ", "en": "No items yet" },
+    "Shipment / order": { "th": "Shipment / order", "en": "Shipment / Order" },
+    "josh ส่งเมื่อ": { "th": "josh ส่งเมื่อ", "en": "Josh sent at" },
+    "ผล josh": { "th": "ผล josh", "en": "Josh result" },
+    "เทียบ": { "th": "เทียบ", "en": "Diff comparison" },
+    "ช่องที่ต่าง": { "th": "ช่องที่ต่าง", "en": "Diff fields" },
+    "ซ่อน": { "th": "ซ่อน", "en": "Hide" },
+    "ดู": { "th": "ดู", "en": "View" },
+    "ตรวจซ้ำ": { "th": "ตรวจซ้ำ", "en": "Re-check" },
+    "ช่อง": { "th": "ช่อง", "en": "Field" },
+    "josh ส่ง": { "th": "josh ส่ง", "en": "Josh sent" },
+    "commerce จะส่ง": { "th": "commerce จะส่ง", "en": "Commerce would send" },
+    "josh ส่งไป Jagota": { "th": "josh ส่งไป Jagota", "en": "Josh sent to Jagota" },
+    "ส่งจริงผ่าน commerce": { "th": "ส่งจริงผ่าน commerce", "en": "Actual dispatch via Commerce" },
+    "ส่งสำเร็จ (7 วัน)": { "th": "ส่งสำเร็จ (7 วัน)", "en": "Fulfilled (7 days)" },
+    "ล้มเหลว": { "th": "ล้มเหลว", "en": "Failed" },
+    "ส่งมากกว่า 1 ครั้ง": { "th": "ส่งมากกว่า 1 ครั้ง", "en": "Dispatched > 1 time" },
+    "เวลาเฉลี่ย": { "th": "เวลาเฉลี่ย", "en": "Average duration" },
+    "สำเร็จ": { "th": "สำเร็จ", "en": "Fulfilled" },
+    "กำลังส่ง": { "th": "กำลังส่ง", "en": "Sending" },
+    "ยังไม่มี order ที่ส่งผ่าน commerce": { "th": "ยังไม่มี order ที่ส่งผ่าน commerce", "en": "No orders dispatched via commerce yet" },
+    "ครั้ง": { "th": "ครั้ง", "en": "times" },
+    "DOC": { "th": "DOC", "en": "DOC" },
+    "ล่าสุด": { "th": "ล่าสุด", "en": "Latest" },
+    "ข้อผิดพลาด": { "th": "ข้อผิดพลาด", "en": "Error" },
+    "ส่งไป Jagota": { "th": "ส่งไป Jagota", "en": "Send to Jagota" },
+    "Jagota ตอบ": { "th": "Jagota ตอบ", "en": "Jagota response" },
+    "ประวัติส่ง ERP (สำเนาจาก josh)": { "th": "ประวัติส่ง ERP (สำเนาจาก josh)", "en": "ERP Dispatch History (Replica from Josh)" },
+    "กำลังดึง…": { "th": "กำลังดึง…", "en": "Fetching…" },
+    "ดึงจาก josh ตอนนี้": { "th": "ดึงจาก josh ตอนนี้", "en": "Fetch from Josh now" },
+    "รอส่ง": { "th": "รอส่ง", "en": "Pending dispatch" },
+    "ค้นหาเลข order หรือเลขเอกสาร ERP": { "th": "ค้นหาเลข order หรือเลขเอกสาร ERP", "en": "Search order number or ERP document number" },
+    "เลข order / DOC no.": { "th": "เลข order / DOC no.", "en": "Order no. / DOC no." },
+    "ไม่พบรายการ": { "th": "ไม่พบรายการ", "en": "No records found" },
+    "ยังไม่ได้ดึงประวัติจาก josh": { "th": "ยังไม่ได้ดึงประวัติจาก josh", "en": "History has not yet been fetched from Josh" },
+    "Order": { "th": "Order", "en": "Order" },
+    "ชำระ": { "th": "ชำระ", "en": "Paid" },
+    "ส่งเมื่อ": { "th": "ส่งเมื่อ", "en": "Dispatched at" },
+    "shipment": { "th": "shipment", "en": "Shipment" },
+    "เก็บราคาจากเว็บคู่แข่ง → จับคู่กับ SKU ของเรา → ดูว่าเราแพงหรือถูกกว่าแต่ละเว็บ (ราคาต่อกิโล รวม VAT)": {
+      "th": "เก็บราคาจากเว็บคู่แข่ง → จับคู่กับ SKU ของเรา → ดูว่าเราแพงหรือถูกกว่าแต่ละเว็บ (ราคาต่อกิโล รวม VAT)",
+      "en": "Collect competitor prices → Match with our SKUs → Compare price differences per kg (VAT inc.)"
+    },
+    "ค้นหา{0}": { "th": "ค้นหา{0}", "en": "Search {0}" },
+    "จริง (true)": { "th": "จริง (true)", "en": "True (true)" },
+    "ชื่อรอบ": { "th": "ชื่อรอบ", "en": "Batch Name" },
+    "ตรวจ Segments": { "th": "ตรวจ Segments", "en": "Check Segments" },
+    "แทนที่รูปสำเร็จ": { "th": "แทนที่รูปสำเร็จ", "en": "Image replaced successfully" },
+    "ปิด popup": { "th": "ปิด popup", "en": "Close popup" },
+    "เพิ่มเว็บคู่แข่งเว็บแรก": { "th": "เพิ่มเว็บคู่แข่งเว็บแรก", "en": "Add first competitor site" },
+    "ไม่มีรูป": { "th": "ไม่มีรูป", "en": "No image" },
+    "ยังไม่มีสินค้า — ค้นหา นำเข้า CSV หรือเลือกหมวดหมู่": {
+      "th": "ยังไม่มีสินค้า — ค้นหา นำเข้า CSV หรือเลือกหมวดหมู่",
+      "en": "No products yet — search, import CSV, or select category"
+    },
+    "ราคาเต็มแพ็ก": { "th": "ราคาเต็มแพ็ก", "en": "Full pack price" },
+    "ลบลิงก์ \"{0}\" ?": { "th": "ลบลิงก์ \"{0}\" ?", "en": "Remove link \"{0}\"?" },
+    "วันที่ส่งได้ (MONDAY,FRIDAY … ว่าง = ทุกวัน)": { "th": "วันที่ส่งได้ (MONDAY,FRIDAY … ว่าง = ทุกวัน)", "en": "Available delivery days (MONDAY, FRIDAY… blank = daily)" },
+    "ส่วนผสม": { "th": "ส่วนผสม", "en": "Ingredients" },
+    "หลังยิง": { "th": "หลังยิง", "en": "Post-dispatch" },
+    "รายงาน research": { "th": "รายงาน research", "en": "Research report" },
+    "ดึงใหม่ {0} รายการ · อัปเดต {1} รายการล่าสุด": { "th": "ดึงใหม่ {0} รายการ · อัปเดต {1} รายการล่าสุด", "en": "Fetched {0} new items · Updated {1} latest items" },
+    "จาก {0} รายการ": { "th": "จาก {0} รายการ", "en": "From {0} items" },
+    "ล่าสุด {0}": { "th": "ล่าสุด {0}", "en": "Latest {0}" },
+    "ข้อมูลตัวอย่าง": { "th": "ข้อมูลตัวอย่าง", "en": "Sample Data" }
+  }
+  </script>
+<!-- ================= CLIENT INTERACTION LOGIC ================= -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Interactive Language Toggle
+      let currentLang = 'th';
+      const translationsScript = document.getElementById('commerce-ui-translations');
+      const translations = JSON.parse(translationsScript.textContent || '{}');
+      const langBtn = document.getElementById('lang-switch-btn');
+      const langText = document.getElementById('current-lang-text');
+
+      langBtn.addEventListener('click', () => {
+        currentLang = currentLang === 'th' ? 'en' : 'th';
+        langText.textContent = currentLang === 'th' ? 'ไทย / EN' : 'EN / ไทย';
+
+        // Translate all marked elements
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (translations[key] && translations[key][currentLang]) {
+            el.textContent = translations[key][currentLang];
+          }
+        });
+      });
+
+      // 2. Expand/Collapse Diff Detail Row
+      const toggleDiffBtn = document.getElementById('toggle-diff-btn');
+      const diffDetailRow = document.getElementById('diff-detail-row');
+      let isDiffVisible = true;
+
+      toggleDiffBtn.addEventListener('click', () => {
+        isDiffVisible = !isDiffVisible;
+        if (isDiffVisible) {
+          diffDetailRow.classList.remove('hidden');
+          toggleDiffBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[15px]">compare</span>
+            <span>${currentLang === 'th' ? 'ซ่อน diff' : 'Hide diff'}</span>
+          `;
+        } else {
+          diffDetailRow.classList.add('hidden');
+          toggleDiffBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[15px]">compare</span>
+            <span>${currentLang === 'th' ? 'ดู diff' : 'View diff'}</span>
+          `;
+        }
+      });
+
+      // 3. Trigger Mock Run Check
+      const runCheckBtn = document.getElementById('btn-run-check');
+      runCheckBtn.addEventListener('click', () => {
+        const originalContent = runCheckBtn.innerHTML;
+        runCheckBtn.innerHTML = `
+          <span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+          <span>${currentLang === 'th' ? 'กำลังตรวจ…' : 'Checking…'}</span>
+        `;
+        runCheckBtn.disabled = true;
+
+        setTimeout(() => {
+          runCheckBtn.innerHTML = originalContent;
+          runCheckBtn.disabled = false;
+        }, 1200);
+      });
+
+      // 4. Trigger Fetch from Josh
+      const fetchJoshBtn = document.getElementById('btn-fetch-josh');
+      const fetchJoshLabel = document.getElementById('btn-fetch-label');
+      fetchJoshBtn.addEventListener('click', () => {
+        fetchJoshLabel.textContent = currentLang === 'th' ? 'กำลังดึง…' : 'Fetching…';
+        fetchJoshBtn.disabled = true;
+        fetchJoshBtn.classList.add('opacity-70');
+
+        setTimeout(() => {
+          fetchJoshLabel.textContent = currentLang === 'th' ? 'ดึงจาก josh ตอนนี้' : 'Fetch from Josh now';
+          fetchJoshBtn.disabled = false;
+          fetchJoshBtn.classList.remove('opacity-70');
+        }, 1000);
+      });
+
+      // 5. Refresh Button Micro-interaction
+      const refreshBtn = document.getElementById('btn-refresh');
+      refreshBtn.addEventListener('click', () => {
+        const icon = refreshBtn.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.classList.add('animate-spin');
+          setTimeout(() => icon.classList.remove('animate-spin'), 700);
+        }
+      });
+    });
+  </script>
+</body></html>

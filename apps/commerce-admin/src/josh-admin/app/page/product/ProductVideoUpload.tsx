@@ -8,6 +8,8 @@ import { MdOutlineDelete } from 'react-icons/md';
 import AdminInsertLayout from '../../components/AdminInsertLayout';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type ProductRow = {
   product_inventory_id: string;
   product_inventory_sku: string;
@@ -15,6 +17,7 @@ type ProductRow = {
 };
 
 const ProductVideoUpload = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
@@ -61,11 +64,11 @@ const ProductVideoUpload = () => {
 
   const handleSubmit = async () => {
     if (!videoFile) {
-      alert('กรุณาอัปโหลดวิดีโอ');
+      alert(__uiText("กรุณาอัปโหลดวิดีโอ"));
       return;
     }
     if (selectedSkus.length === 0) {
-      alert('กรุณาเลือก SKU อย่างน้อย 1 รายการ');
+      alert(__uiText("กรุณาเลือก SKU อย่างน้อย 1 รายการ"));
       return;
     }
 
@@ -86,9 +89,9 @@ const ProductVideoUpload = () => {
         navigate(ADMIN_ROUTES.products);
         return;
       }
-      alert(result?.message ?? 'อัปโหลดไม่สำเร็จ');
+      alert(result?.message ?? __uiText("อัปโหลดไม่สำเร็จ"));
     } catch {
-      alert('เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ');
+      alert(__uiText("เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ"));
     } finally {
       setSaving(false);
     }
@@ -96,14 +99,14 @@ const ProductVideoUpload = () => {
 
   return (
     <AdminInsertLayout
-      title="อัปโหลดวิดีโอสินค้า"
-      subtitle="เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)"
+      title={__uiText("อัปโหลดวิดีโอสินค้า")}
+      subtitle={__uiText("เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)")}
       backPath={ADMIN_ROUTES.products}
       saving={saving}
       onSave={handleSubmit}
     >
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700">1. เลือกวิดีโอ</h3>
+        <h3 className="text-sm font-semibold text-gray-700">{__uiText("1. เลือกวิดีโอ")}</h3>
         {videoFile ? (
           <div className="border rounded-xl p-3 bg-gray-50">
             <div className="flex items-center justify-between mb-2">
@@ -113,8 +116,7 @@ const ProductVideoUpload = () => {
                 onClick={() => setVideoFile(null)}
                 className="text-xs text-red-500 hover:underline"
               >
-                ลบ
-              </button>
+                {__uiText("ลบ")}</button>
             </div>
             <video
               src={URL.createObjectURL(videoFile)}
@@ -126,7 +128,7 @@ const ProductVideoUpload = () => {
           <DragDropUpload
             onFileSelect={(file) => {
               if (!file.type.startsWith('video/')) {
-                alert('กรุณาเลือกไฟล์วิดีโอเท่านั้น');
+                alert(__uiText("กรุณาเลือกไฟล์วิดีโอเท่านั้น"));
                 return;
               }
               setVideoFile(file);
@@ -138,15 +140,15 @@ const ProductVideoUpload = () => {
       </div>
 
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700">2. เลือก SKU เป้าหมาย</h3>
+        <h3 className="text-sm font-semibold text-gray-700">{__uiText("2. เลือก SKU เป้าหมาย")}</h3>
         <div className="flex items-end gap-2">
           <Input
-            label="เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง"
+            label={__uiText("เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง")}
             value={manualSku}
             onChange={(e) => setManualSku(e.target.value)}
-            placeholder="พิมพ์ SKU แล้วกดเพิ่ม"
+            placeholder={__uiText("พิมพ์ SKU แล้วกดเพิ่ม")}
           />
-          <Button text="เพิ่ม SKU" onClick={addManualSku} />
+          <Button text={__uiText("เพิ่ม SKU")} onClick={addManualSku} />
         </div>
 
         {selectedSkus.length > 0 && (
@@ -167,15 +169,14 @@ const ProductVideoUpload = () => {
 
         <div>
           <label htmlFor={searchInputId} className="mb-1 block text-sm text-gray-600">
-            ค้นหาสินค้า
-          </label>
+            {__uiText("ค้นหาสินค้า")}</label>
           <div className="relative">
             <AiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <Input
               id={searchInputId}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="ค้นหาสินค้าด้วยชื่อหรือ SKU..."
+              placeholder={__uiText("ค้นหาสินค้าด้วยชื่อหรือ SKU...")}
               className="pl-9"
             />
           </div>
@@ -183,7 +184,7 @@ const ProductVideoUpload = () => {
 
         <div className="border rounded-xl divide-y max-h-72 overflow-y-auto">
           {searchResults.length === 0 ? (
-            <p className="p-4 text-sm text-gray-400">ไม่พบสินค้า</p>
+            <p className="p-4 text-sm text-gray-400">{__uiText("ไม่พบสินค้า")}</p>
           ) : (
             searchResults.map((product) => {
               const sku = product.product_inventory_sku;
@@ -200,7 +201,7 @@ const ProductVideoUpload = () => {
                   />
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      {product.product_name ?? 'ไม่มีชื่อ'}
+                      {product.product_name ?? __uiText("ไม่มีชื่อ")}
                     </p>
                     <p className="text-xs text-gray-500">{sku}</p>
                   </div>

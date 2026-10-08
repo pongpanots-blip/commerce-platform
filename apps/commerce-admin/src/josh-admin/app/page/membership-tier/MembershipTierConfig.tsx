@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   createTier,
   deleteTier,
@@ -23,6 +24,8 @@ import AdminListHeader from '../../components/AdminListHeader';
  * marginal benefit.
  */
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const EMPTY_CREATE: CreateMembershipTierPayload = {
   name: '',
   slug: '',
@@ -50,6 +53,7 @@ function TierColorInput({
   value: string;
   onChange: (next: string) => void;
 }) {
+  __useUiLocale();
   return (
     <div className="flex items-center gap-2">
       <input
@@ -57,11 +61,11 @@ function TierColorInput({
         value={/^#[0-9a-fA-F]{6}$/.test(value) ? value : '#999999'}
         onChange={(e) => onChange(e.target.value)}
         className="h-8 w-8 shrink-0 cursor-pointer rounded border border-gray-200 bg-white p-0.5"
-        aria-label="เลือกสี"
+        aria-label={__uiText("เลือกสี")}
       />
       <input
         type="text"
-        aria-label="รหัสสี (Hex)"
+        aria-label={__uiText("รหัสสี (Hex)")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="#999999"
@@ -79,11 +83,12 @@ function DistributionBar({
   /** `distribution` rows only carry `{id,name,slug}` — look color up from the loaded tier list. */
   tierColors: Record<string, string>;
 }) {
+  __useUiLocale();
   const total = distribution.reduce((sum, row) => sum + row.count, 0);
 
   if (distribution.length === 0) {
     return (
-      <p className="text-sm text-gray-400">ยังไม่มีข้อมูลการกระจายลูกค้าตาม tier</p>
+      <p className="text-sm text-gray-400">{__uiText("ยังไม่มีข้อมูลการกระจายลูกค้าตาม tier")}</p>
     );
   }
 
@@ -111,12 +116,13 @@ function DistributionBar({
           </div>
         );
       })}
-      <p className="text-xs text-gray-400">รวมทั้งหมด {total.toLocaleString()} ลูกค้า</p>
+      <p className="text-xs text-gray-400">{__uiText("รวมทั้งหมด ")}{total.toLocaleString()} {__uiText(" ลูกค้า")}</p>
     </div>
   );
 }
 
 export function MembershipTierConfig() {
+  __useUiLocale();
   const [tiers, setTiers] = useState<MembershipTier[]>([]);
   const [drafts, setDrafts] = useState<Record<string, MembershipTier>>({});
   const [distribution, setDistribution] = useState<MembershipTierDistributionEntry[]>([]);
@@ -194,7 +200,7 @@ export function MembershipTierConfig() {
   };
 
   const handleDelete = async (tier: MembershipTier) => {
-    if (!confirm(`ยืนยันการลบ tier "${tier.name}"? ลูกค้าที่อยู่ใน tier นี้จะกลายเป็นไม่มี tier`)) {
+    if (!confirm(__uiText("ยืนยันการลบ tier \"{0}\"? ลูกค้าที่อยู่ใน tier นี้จะกลายเป็นไม่มี tier", {"0": tier.name}))) {
       return;
     }
     setSavingId(tier.id);
@@ -239,7 +245,7 @@ export function MembershipTierConfig() {
 
   const handleCreate = async () => {
     if (!createDraft.name.trim() || !createDraft.slug.trim()) {
-      setError('กรุณากรอกชื่อ และ slug');
+      setError(__uiMessage("กรุณากรอกชื่อ และ slug"));
       return;
     }
     setCreating(true);
@@ -267,11 +273,11 @@ export function MembershipTierConfig() {
   return (
     <div className="flex flex-col gap-5 p-4">
       <AdminListHeader
-        title="Membership Tiers"
-        subtitle="กำหนดระดับสมาชิกตามยอดใช้จ่ายสะสม (lifetime spend) — ใช้จัดกลุ่มลูกค้าและสิทธิประโยชน์"
+        title={__uiText("Membership Tiers")}
+        subtitle={__uiText("กำหนดระดับสมาชิกตามยอดใช้จ่ายสะสม (lifetime spend) — ใช้จัดกลุ่มลูกค้าและสิทธิประโยชน์")}
       >
         <Button
-          text={showCreate ? 'ปิดฟอร์ม' : 'เพิ่ม Tier'}
+          text={showCreate ? __uiText("ปิดฟอร์ม") : __uiText("เพิ่ม Tier")}
           onClick={() => setShowCreate((prev) => !prev)}
         />
       </AdminListHeader>
@@ -283,12 +289,12 @@ export function MembershipTierConfig() {
       ) : null}
       {error ? (
         <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
-          {error}
+          {(typeof error === 'string' ? __uiText(error) : error)}
         </p>
       ) : null}
 
       <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-gray-800">การกระจายลูกค้าตาม Tier</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-800">{__uiText("การกระจายลูกค้าตาม Tier")}</h2>
         <DistributionBar
           distribution={distribution}
           tierColors={Object.fromEntries(tiers.map((tier) => [tier.id, tier.color]))}
@@ -297,16 +303,16 @@ export function MembershipTierConfig() {
 
       {showCreate ? (
         <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <p className="mb-3 font-semibold text-gray-900">เพิ่ม Tier ใหม่</p>
+          <p className="mb-3 font-semibold text-gray-900">{__uiText("เพิ่ม Tier ใหม่")}</p>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <Input
-              label="ชื่อ Tier *"
+              label={__uiText("ชื่อ Tier *")}
               value={createDraft.name}
               onChange={(e) => setCreateDraft((prev) => ({ ...prev, name: e.target.value }))}
-              placeholder="เช่น Gold"
+              placeholder={__uiText("เช่น Gold")}
             />
             <Input
-              label="Slug *"
+              label={__uiText("Slug *")}
               value={createDraft.slug}
               onChange={(e) =>
                 setCreateDraft((prev) => ({
@@ -314,10 +320,10 @@ export function MembershipTierConfig() {
                   slug: e.target.value.toLowerCase().replace(/\s+/g, '-'),
                 }))
               }
-              placeholder="เช่น gold"
+              placeholder={__uiText("เช่น gold")}
             />
             <div>
-              <span className="mb-1 block text-xs text-gray-500">สี</span>
+              <span className="mb-1 block text-xs text-gray-500">{__uiText("สี")}</span>
               <TierColorInput
                 value={createDraft.color ?? '#999999'}
                 onChange={(color) => setCreateDraft((prev) => ({ ...prev, color }))}
@@ -325,7 +331,7 @@ export function MembershipTierConfig() {
             </div>
             <div>
               <Input
-                label="ยอดใช้จ่ายสะสมขั้นต่ำ (บาท)"
+                label={__uiText("ยอดใช้จ่ายสะสมขั้นต่ำ (บาท)")}
                 value={String(createDraft.min_lifetime_spend ?? 0)}
                 onChange={(e) =>
                   setCreateDraft((prev) => ({
@@ -343,11 +349,10 @@ export function MembershipTierConfig() {
                   setCreateDraft((prev) => ({ ...prev, is_active: e.target.checked }))
                 }
               />
-              เปิดใช้งาน Tier นี้ (Active)
-            </label>
+              {__uiText("เปิดใช้งาน Tier นี้ (Active)")}</label>
             <div className="md:col-span-2">
               <Button
-                text={creating ? 'กำลังสร้าง...' : 'สร้าง Tier'}
+                text={creating ? __uiText("กำลังสร้าง...") : __uiText("สร้าง Tier")}
                 onClick={() => void handleCreate()}
               />
             </div>
@@ -356,28 +361,27 @@ export function MembershipTierConfig() {
       ) : null}
 
       {loading ? (
-        <div className="text-sm text-gray-400">กำลังโหลด...</div>
+        <div className="text-sm text-gray-400">{__uiText("กำลังโหลด...")}</div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
               <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
                 <tr>
-                  <th className="w-16 p-4">ลำดับ</th>
-                  <th className="p-4">ชื่อ</th>
-                  <th className="p-4">Slug</th>
-                  <th className="p-4">สี</th>
-                  <th className="p-4">ยอดใช้จ่ายขั้นต่ำ</th>
-                  <th className="p-4">สถานะ</th>
-                  <th className="p-4">จัดการ</th>
+                  <th className="w-16 p-4">{__uiText("ลำดับ")}</th>
+                  <th className="p-4">{__uiText("ชื่อ")}</th>
+                  <th className="p-4">{__uiText("Slug")}</th>
+                  <th className="p-4">{__uiText("สี")}</th>
+                  <th className="p-4">{__uiText("ยอดใช้จ่ายขั้นต่ำ")}</th>
+                  <th className="p-4">{__uiText("สถานะ")}</th>
+                  <th className="p-4">{__uiText("จัดการ")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                 {tiers.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="p-8 text-center text-gray-400">
-                      ยังไม่มี Tier — กด &quot;เพิ่ม Tier&quot; เพื่อสร้าง
-                    </td>
+                      {__uiText("ยังไม่มี Tier — กด &quot;เพิ่ม Tier&quot; เพื่อสร้าง")}</td>
                   </tr>
                 ) : (
                   tiers.map((tier, index) => {
@@ -392,7 +396,7 @@ export function MembershipTierConfig() {
                               onClick={() => void handleMove(index, -1)}
                               disabled={index === 0 || reordering}
                               className="rounded border border-gray-200 px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-100 disabled:opacity-30"
-                              aria-label="เลื่อนขึ้น"
+                              aria-label={__uiText("เลื่อนขึ้น")}
                             >
                               ↑
                             </button>
@@ -401,7 +405,7 @@ export function MembershipTierConfig() {
                               onClick={() => void handleMove(index, 1)}
                               disabled={index === tiers.length - 1 || reordering}
                               className="rounded border border-gray-200 px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-100 disabled:opacity-30"
-                              aria-label="เลื่อนลง"
+                              aria-label={__uiText("เลื่อนลง")}
                             >
                               ↓
                             </button>
@@ -410,7 +414,7 @@ export function MembershipTierConfig() {
                         <td className="p-4">
                           <input
                             type="text"
-                            aria-label={`ชื่อ Tier: ${tier.name}`}
+                            aria-label={__uiText("ชื่อ Tier: {0}", {"0": tier.name})}
                             value={draft.name}
                             onChange={(e) => updateDraft(tier.id, { name: e.target.value })}
                             className="w-36 rounded-lg border border-gray-200 px-2 py-1 text-sm focus:border-primary focus:outline-none"
@@ -419,7 +423,7 @@ export function MembershipTierConfig() {
                         <td className="p-4">
                           <input
                             type="text"
-                            aria-label={`Slug ของ ${tier.name}`}
+                            aria-label={__uiText("Slug ของ {0}", {"0": tier.name})}
                             value={draft.slug}
                             onChange={(e) =>
                               updateDraft(tier.id, {
@@ -438,7 +442,7 @@ export function MembershipTierConfig() {
                         <td className="p-4">
                           <input
                             type="number"
-                            aria-label={`ยอดใช้จ่ายสะสมขั้นต่ำของ ${tier.name} (บาท)`}
+                            aria-label={__uiText("ยอดใช้จ่ายสะสมขั้นต่ำของ {0} (บาท)", {"0": tier.name})}
                             min={0}
                             value={draft.min_lifetime_spend}
                             onChange={(e) =>
@@ -458,7 +462,7 @@ export function MembershipTierConfig() {
                                 updateDraft(tier.id, { is_active: e.target.checked })
                               }
                             />
-                            {draft.is_active ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}
+                            {draft.is_active ? __uiText("เปิดใช้งาน") : __uiText("ปิดใช้งาน")}
                           </label>
                         </td>
                         <td className="p-4">
@@ -469,7 +473,7 @@ export function MembershipTierConfig() {
                               disabled={!dirty || savingId === tier.id}
                               className="text-xs font-medium text-blue-600 hover:underline disabled:cursor-not-allowed disabled:text-gray-300 disabled:no-underline"
                             >
-                              {savingId === tier.id ? 'กำลังบันทึก...' : 'บันทึก'}
+                              {savingId === tier.id ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
                             </button>
                             <button
                               type="button"
@@ -477,8 +481,7 @@ export function MembershipTierConfig() {
                               disabled={savingId === tier.id}
                               className="text-xs text-red-500 hover:underline disabled:opacity-40"
                             >
-                              ลบ
-                            </button>
+                              {__uiText("ลบ")}</button>
                           </div>
                         </td>
                       </tr>

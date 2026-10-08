@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Admin - Jagota Payment Testing</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config Injection -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#e8eeff",
+            "surface-bright": "#f9f9ff",
+            "on-surface-variant": "#444655",
+            "surface-container-low": "#f1f3ff",
+            "surface": "#f9f9ff",
+            "on-primary-fixed": "#001257",
+            "on-primary-container": "#ededff",
+            "surface-dim": "#cddaf9",
+            "error": "#ba1a1a",
+            "primary": "#0a3fdc",
+            "on-tertiary": "#ffffff",
+            "on-error": "#ffffff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "inverse-on-surface": "#ecf0ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "tertiary-container": "#bc4600",
+            "secondary-fixed": "#d3e3ff",
+            "primary-container": "#365cf5",
+            "on-error-container": "#93000a",
+            "on-surface": "#0e1b32",
+            "surface-tint": "#214ce7",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-background": "#0e1b32",
+            "inverse-primary": "#b9c3ff",
+            "tertiary-fixed": "#ffdbcd",
+            "secondary": "#4f5f77",
+            "on-secondary": "#ffffff",
+            "primary-fixed": "#dde1ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "secondary-container": "#d0e1fd",
+            "on-tertiary-fixed": "#360f00",
+            "on-primary-fixed-variant": "#0034c0",
+            "outline-variant": "#c4c5d8",
+            "on-tertiary-container": "#ffebe4",
+            "on-secondary-container": "#54647c",
+            "on-primary": "#ffffff",
+            "inverse-surface": "#243048",
+            "tertiary": "#943500",
+            "surface-container-highest": "#d7e2ff",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed": "#0b1c31",
+            "error-container": "#ffdad6",
+            "tertiary-fixed-dim": "#ffb597",
+            "surface-container-high": "#e0e8ff",
+            "surface-variant": "#d7e2ff",
+            "outline": "#747687",
+            "background": "#f9f9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-md": "0.75rem",
+            "gutter": "1rem",
+            "space-2xl": "2rem",
+            "space-lg": "1rem",
+            "margin": "1.5rem",
+            "gutter-compact": "0.75rem",
+            "space-xs": "0.25rem",
+            "space-xl": "1.5rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Noto Sans"],
+            "headline-lg": ["Noto Sans"],
+            "body-sm": ["Noto Sans"],
+            "headline-xl": ["Noto Sans"],
+            "headline-md": ["Noto Sans"],
+            "body-md": ["Noto Sans"],
+            "body-lg": ["Noto Sans"],
+            "numeric-data": ["Noto Sans"],
+            "label-lg": ["Noto Sans"],
+            "table-cell": ["Noto Sans"],
+            "headline-sm": ["Noto Sans"],
+            "label-md": ["Noto Sans"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+            "headline-lg": ["22px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-xl": ["28px", { "lineHeight": "38px", "fontWeight": "700" }],
+            "headline-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "numeric-data": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "table-cell": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+          }
+        }
+      }
+    };
+  </script>
+<!-- Translation Dictionary Payload -->
+<script id="commerce-ui-translations" type="application/json">
+    {
+      "th": {
+        "page_title": "Jagota Payment Testing",
+        "route_path": "/j/jagota/payment-testing",
+        "category": "ออเดอร์และการเงิน",
+        "controller_title": "เทส Payment (POST /payment_test)",
+        "input_label": "REF_TOKEN",
+        "input_placeholder": "เช่น 1234567890",
+        "input_helper": "หรือกรอก REF_TOKEN เอง",
+        "btn_execute": "เทส Payment",
+        "btn_loading_post": "กำลังยิง...",
+        "btn_loading_wait": "กำลังโหลด...",
+        "msg_success": "สำเร็จ — REF_TOKEN นี้ถูกตั้งเป็น paid แล้ว",
+        "msg_error": "Error: ไม่สำเร็จ — ตรวจว่า REF_TOKEN ถูกต้อง และ backend ชี้ไป staging",
+        "staging_notice": "เรียก payment_test ของ Jagota เพื่อบังคับให้ REF_TOKEN นั้นเป็น paid — ใช้ได้บน staging เท่านั้น ถ้า backend ชี้ไป production จะได้ success: false เสมอ",
+        "next_steps_title": "ขั้นตอนถัดไป (ไม่บังคับ)",
+        "table_title": "รายการ QR ที่ยังไม่จ่าย (ล่าสุด 20 รายการ)",
+        "col_order_id": "Order ID",
+        "col_ref_token": "REF_TOKEN",
+        "col_amount": "ยอด",
+        "col_created": "สร้างเมื่อ",
+        "col_action": "จัดการ",
+        "empty_state": "ไม่มีรายการที่ยังไม่จ่าย",
+        "simulate_btn": "จำลองชำระเงิน"
+      },
+      "en": {
+        "page_title": "Jagota Payment Testing",
+        "route_path": "/j/jagota/payment-testing",
+        "category": "Orders & Finance",
+        "controller_title": "Test Payment (POST /payment_test)",
+        "input_label": "REF_TOKEN",
+        "input_placeholder": "e.g. 1234567890",
+        "input_helper": "Or enter REF_TOKEN manually",
+        "btn_execute": "Test Payment",
+        "btn_loading_post": "Sending...",
+        "btn_loading_wait": "Loading...",
+        "msg_success": "Success — This REF_TOKEN is marked as paid",
+        "msg_error": "Error: Failed — Verify that REF_TOKEN is valid and backend points to staging",
+        "staging_notice": "Calls Jagota payment_test to mark REF_TOKEN as paid — Only available on staging. If pointed to production, success will always be false",
+        "next_steps_title": "Next Steps (Optional)",
+        "table_title": "Unpaid QR Transactions (Latest 20 Records)",
+        "col_order_id": "Order ID",
+        "col_ref_token": "REF_TOKEN",
+        "col_amount": "Amount",
+        "col_created": "Created At",
+        "col_action": "Action",
+        "empty_state": "No unpaid transactions",
+        "simulate_btn": "Simulate Pay"
+      }
+    }
+  </script>
+</head>
+<body class="h-full font-body-md text-on-surface antialiased bg-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- ========================================================= -->
+<!-- SHARED COMPONENT: SideNavBar (Fixed Left, w-64)          -->
+<!-- ========================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline">
+<div class="w-64 h-full flex flex-col justify-between py-4 px-3">
+<!-- Top Brand Section -->
+<div class="space-y-4">
+<!-- Logo / Brand Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
+</div>
+<div class="leading-tight">
+<h1 class="text-headline-sm font-headline-sm text-primary dark:text-inverse-primary tracking-tight">Commerce Admin</h1>
+<p class="text-label-sm font-label-sm text-secondary truncate">ศูนย์จัดการระบบพาณิชย์</p>
+</div>
+</div>
+<!-- Dev Staging Badge -->
+<div class="mx-1 px-3 py-1.5 rounded-lg bg-surface-container flex items-center justify-between border border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-label-sm font-label-sm text-on-surface font-semibold tracking-wide">STAGING SIMULATOR</span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-lowest px-1.5 py-0.5 rounded">v2.4</span>
+</div>
+<!-- Primary Navigation Links (7 Discrete Items) -->
+<!-- Tab 2: "ออเดอร์และการเงิน" is ACTIVE -->
+<nav class="space-y-1">
+<!-- Item 1: สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface rounded-lg hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- Item 2: ออเดอร์และการเงิน (ACTIVE) -->
+<a class="flex items-center justify-between px-3 py-2 bg-surface-container-high dark:bg-primary-container text-primary dark:text-on-primary-container font-semibold rounded-lg transition-colors duration-150 ease-in-out text-label-md font-label-md shadow-xs" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-primary dark:text-on-primary-container" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span>ออเดอร์และการเงิน</span>
+</div>
+<span class="w-1.5 h-4 bg-primary dark:bg-on-primary-container rounded-full"></span>
+</a>
+<!-- Item 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface rounded-lg hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</a>
+<!-- Item 4: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface rounded-lg hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- Item 5: รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface rounded-lg hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">monitoring</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- Item 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface rounded-lg hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- Item 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface rounded-lg hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-150 ease-in-out text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Action & Navs -->
+<div class="space-y-3 pt-4 border-t border-outline-variant/60">
+<!-- Developer Portal CTA -->
+<a class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container text-primary font-label-md text-label-md transition-colors duration-150" href="#devportal">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Developer Portal</span>
+</div>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<!-- Secondary Footers -->
+<div class="space-y-0.5">
+<a class="flex items-center gap-3 px-3 py-1.5 text-secondary hover:text-on-surface rounded-lg hover:bg-surface-container transition-colors duration-150 text-label-sm font-label-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span>ศูนย์ช่วยเหลือ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-error hover:bg-error-container/30 rounded-lg transition-colors duration-150 text-label-sm font-label-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</div>
+</div>
+</aside>
+<!-- ========================================================= -->
+<!-- SHARED COMPONENT: TopNavBar (Fixed Top, left-64)         -->
+<!-- ========================================================= -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline">
+<div class="flex justify-between items-center h-14 px-6 w-full">
+<!-- Left: Breadcrumb / Omnisearch -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-label-md font-label-md">
+<span class="text-secondary">Commerce Operations</span>
+<span class="text-outline-variant">/</span>
+<a class="text-secondary hover:text-primary transition-colors" href="#">ออเดอร์ทั้งหมด</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold bg-surface-container-low px-2 py-0.5 rounded text-label-sm font-label-sm">
+            ORD-20250328-001
+          </span>
+</div>
+<!-- Quick Route Badge -->
+<div class="hidden xl:flex items-center gap-1.5 px-2.5 py-1 bg-surface-container rounded border border-outline-variant/40 font-mono text-[11px] text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>POST /payment_test</span>
+</div>
+</div>
+<!-- Right Trailing Cluster -->
+<div class="flex items-center gap-4">
+<!-- Language Switcher: TH | EN -->
+<div class="bg-surface-container-low p-0.5 rounded-full border border-outline-variant/50 flex items-center">
+<button class="px-2.5 py-0.5 text-label-sm font-label-sm rounded-full bg-surface-container-lowest text-primary font-semibold shadow-xs transition-all" id="lang-th-btn" onclick="toggleLanguage('th')">
+            TH
+          </button>
+<button class="px-2.5 py-0.5 text-label-sm font-label-sm rounded-full text-secondary hover:text-on-surface font-medium transition-all" id="lang-en-btn" onclick="toggleLanguage('en')">
+            EN
+          </button>
+</div>
+<!-- Notification & Help Icons -->
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors relative" title="การแจ้งเตือน">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error border-2 border-surface-container-lowest"></span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" title="คู่มือการใช้งาน API">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+</div>
+<div class="h-5 w-px bg-outline-variant/50"></div>
+<!-- Operator Profile Info -->
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center text-label-sm font-semibold tracking-wider">
+            OP
+          </div>
+<div class="hidden sm:block text-left leading-tight">
+<div class="text-label-md font-label-md text-on-surface font-semibold">สมชาย บริการค้า</div>
+<div class="text-[10px] text-secondary font-mono">admin-204f4b4aa5bb</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================= -->
+<!-- MAIN WORKSPACE CANVAS (internal scrolling offset left-64) -->
+<!-- ========================================================= -->
+<main class="ml-64 pt-14 min-h-screen bg-[#f6f8fc]">
+<div class="max-w-[1520px] mx-auto p-6 space-y-6">
+<!-- Breadcrumb & Top Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-outline-variant/50">
+<div>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-secondary">
+<span class="material-symbols-outlined text-[16px] text-primary">terminal</span>
+<span>QA &amp; Automated Verification</span>
+<span class="text-outline-variant">•</span>
+<span class="font-mono text-primary font-medium">/j/jagota/payment-testing</span>
+</div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface mt-1" id="ui-page-title">
+            Jagota Payment Testing
+          </h2>
+</div>
+<!-- Staging Indicator & Environment Tag -->
+<div class="flex items-center gap-3">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant shadow-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+<span class="text-label-sm font-label-sm text-on-surface">TARGET: <strong class="text-primary font-mono font-semibold">api-staging.jagota.local</strong></span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-label-sm font-label-sm text-secondary hover:text-on-surface bg-surface-container-lowest border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors" onclick="resetLedger()">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+<span>รีเฟรชข้อมูล</span>
+</button>
+</div>
+</div>
+<!-- CRITICAL SECURITY & STAGING WARNING BANNER -->
+<div class="rounded-xl p-4 bg-amber-50 border border-amber-200/80 text-amber-950 flex items-start gap-3 shadow-xs">
+<div class="p-1.5 rounded-lg bg-amber-100 text-amber-800 shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">security_update_warning</span>
+</div>
+<div class="flex-1 space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-amber-900 font-semibold">คำเตือนด้านความปลอดภัยสภาพแวดล้อมจำลอง (Staging Simulator Only)</span>
+<span class="px-2 py-0.2 rounded-full text-[10px] font-bold tracking-wider bg-amber-200 text-amber-900 uppercase">Sandbox Mode</span>
+</div>
+<p class="text-body-md font-body-md text-amber-900/90 leading-relaxed" id="ui-staging-notice">
+            เรียก payment_test ของ Jagota เพื่อบังคับให้ REF_TOKEN นั้นเป็น paid — ใช้ได้บน staging เท่านั้น ถ้า backend ชี้ไป production จะได้ success: false เสมอ
+          </p>
+</div>
+</div>
+<!-- DUAL-PANEL BENTO ARCHITECTURE -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- ========================================================= -->
+<!-- LEFT PANEL: Test Execution Controller (Col span 5)        -->
+<!-- ========================================================= -->
+<section class="lg:col-span-5 space-y-6">
+<!-- Controller Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm space-y-5">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">play_circle</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface" id="ui-controller-title">
+                  เทส Payment (POST /payment_test)
+                </h3>
+</div>
+<span class="px-2 py-0.5 text-label-sm font-mono bg-surface-container text-primary rounded font-semibold">REST API</span>
+</div>
+<!-- Execution Form -->
+<form class="space-y-4" id="payment-test-form" onsubmit="event.preventDefault(); triggerPaymentTest();">
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<label class="text-label-md font-label-md text-on-surface font-semibold" for="ref-token-input" id="ui-input-label">
+                    REF_TOKEN
+                  </label>
+<span class="text-label-sm font-label-sm text-secondary" id="ui-input-helper">
+                    หรือกรอก REF_TOKEN เอง
+                  </span>
+</div>
+<div class="relative">
+<input class="w-full h-10 px-3.5 pl-10 text-body-md font-mono bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline transition-all" id="ref-token-input" placeholder="เช่น 1234567890" required="" type="text" value="REF-20250328-9842"/>
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</div>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-secondary hover:text-on-surface" onclick="clearTokenInput()" title="ล้างค่า" type="button">
+<span class="material-symbols-outlined text-[16px]">backspace</span>
+</button>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">info</span>
+<span>ระบบจะยิง Payload: <code class="font-mono text-primary text-[11px]">{ "ref_token": string, "force_paid": true }</code></span>
+</p>
+</div>
+<!-- Action Trigger Button with Loading States -->
+<div class="pt-1">
+<button class="w-full h-10 px-4 rounded-lg bg-primary hover:bg-[#284cd4] active:bg-[#1e3eb8] text-on-primary font-label-md text-label-md font-semibold transition-all duration-150 flex items-center justify-center gap-2 shadow-sm" id="submit-test-btn" type="submit">
+<span class="material-symbols-outlined text-[18px]" id="btn-icon">send</span>
+<span id="btn-text">เทส Payment</span>
+</button>
+</div>
+</form>
+<!-- Dynamic Response State Banners -->
+<div class="space-y-3 pt-2" id="status-container">
+<!-- Ready State Prompt -->
+<div class="p-3.5 rounded-lg border border-outline-variant bg-surface-container-low text-secondary text-body-md font-body-md flex items-center gap-3" id="state-ready">
+<span class="material-symbols-outlined text-secondary text-[20px]">radio_button_checked</span>
+<span>พร้อมส่งคำขอทดสอบไปยัง Jagota Gateway Mock Server</span>
+</div>
+<!-- Success Alert Banner (Hidden by default or toggled) -->
+<div class="hidden p-4 rounded-lg border border-emerald-300 bg-[#e8f5ee] text-emerald-950 space-y-2 animate-fadeIn" id="state-success">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-emerald-700 text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="flex-1">
+<div class="font-headline-sm text-headline-sm text-emerald-900 font-semibold" id="ui-msg-success">
+                      สำเร็จ — REF_TOKEN นี้ถูกตั้งเป็น paid แล้ว
+                    </div>
+<div class="text-body-sm font-body-sm text-emerald-800/90 mt-1 font-mono">
+                      HTTP 200 OK | Status: SETTLED_SUCCESS | Code: 00
+                    </div>
+</div>
+</div>
+<!-- Transaction Mini Receipt -->
+<div class="mt-2 pt-2 border-t border-emerald-200/80 grid grid-cols-2 gap-2 text-label-sm font-label-sm text-emerald-900">
+<div>Ref Token: <span class="font-mono font-bold" id="res-token-display">REF-20250328-9842</span></div>
+<div class="text-right">Timestamp: <span class="font-mono">14:32:08.411</span></div>
+</div>
+</div>
+<!-- Failed Alert Banner (Available for verification) -->
+<div class="hidden p-4 rounded-lg border border-rose-300 bg-[#faecee] text-rose-950 space-y-2 animate-fadeIn" id="state-error">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-rose-700 text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">error</span>
+<div class="flex-1">
+<div class="font-headline-sm text-headline-sm text-rose-900 font-semibold" id="ui-msg-error">
+                      Error: ไม่สำเร็จ — ตรวจว่า REF_TOKEN ถูกต้อง และ backend ชี้ไป staging
+                    </div>
+<div class="text-body-sm font-body-sm text-rose-800/90 mt-1 font-mono">
+                      HTTP 422 Unprocessable | Cause: TOKEN_NOT_FOUND_OR_PROD_ENV
+                    </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Payload Preview Modal / Snippet -->
+<div class="bg-surface-container rounded-lg p-3 text-[12px] font-mono border border-outline-variant/60">
+<div class="flex items-center justify-between text-secondary mb-1">
+<span>cURL Example Request</span>
+<button class="hover:text-primary flex items-center gap-1 text-[11px]" onclick="copyCurlSnippet()">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span id="copy-text">คัดลอก</span>
+</button>
+</div>
+<pre class="text-on-surface overflow-x-auto whitespace-pre leading-relaxed">curl -X POST https://api-staging.jagota.local/payment_test \
+  -H "Authorization: Bearer test_sec_77af01" \
+  -H "Content-Type: application/json" \
+  -d '{"ref_token": "REF-20250328-9842"}'</pre>
+</div>
+</div>
+<!-- Collapsible: ขั้นตอนถัดไป (ไม่บังคับ) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<button class="w-full p-4 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors" onclick="toggleCollapsible()" type="button">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-lg bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">account_tree</span>
+</div>
+<div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface" id="ui-next-steps-title">
+                    ขั้นตอนถัดไป (ไม่บังคับ)
+                  </h4>
+<p class="text-label-sm font-label-sm text-secondary">แนวทางตรวจสอบ ERP reconciliation &amp; Webhook Delivery</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary transition-transform duration-200" id="collapse-chevron">expand_more</span>
+</button>
+<!-- Collapsible Body Content -->
+<div class="px-5 pb-5 pt-1 space-y-3.5 border-t border-outline-variant/40" id="collapsible-content">
+<div class="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-outline-variant">
+<!-- Step 1 -->
+<div class="relative">
+<span class="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-primary text-on-primary text-[10px] flex items-center justify-center font-bold">1</span>
+<div class="text-label-md font-label-md font-semibold text-on-surface">ตรวจสอบ Webhook Inbound Event</div>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">
+                    เช็คที่ Dashboard &gt; Webhook Logs ว่าได้รับ event <code class="font-mono text-primary text-[11px]">charge.complete</code> จากเกตเวย์แล้วหรือไม่
+                  </p>
+</div>
+<!-- Step 2 -->
+<div class="relative">
+<span class="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-surface-container text-secondary text-[10px] flex items-center justify-center font-bold">2</span>
+<div class="text-label-md font-label-md font-semibold text-on-surface">ทดสอบ ERP Auto-Reconciliation</div>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">
+                    เปิดระบบ SAP B1 / Dynamics 365 Staging เพื่อดูว่าใบกำกับภาษี (Tax Invoice) และสถานะบัญชีลูกหนี้ถูกเคลียร์อัตโนมัติ
+                  </p>
+</div>
+<!-- Step 3 -->
+<div class="relative">
+<span class="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-surface-container text-secondary text-[10px] flex items-center justify-center font-bold">3</span>
+<div class="text-label-md font-label-md font-semibold text-on-surface">การแจ้งเตือนลูกค้าผ่าน LINE OA / SMS</div>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">
+                    ตรวจสอบว่าลูกค้าได้รับลิงก์สลิปยืนยันการรับชำระเงินเรียบร้อยตามคอนฟิกของร้านค้า
+                  </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================= -->
+<!-- RIGHT PANEL: Unpaid QR Transactions Ledger (Col span 7)   -->
+<!-- ========================================================= -->
+<section class="lg:col-span-7 space-y-4">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<!-- Ledger Card Header -->
+<div class="p-4 sm:p-5 border-b border-outline-variant flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-surface-container-lowest">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">qr_code_scanner</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface" id="ui-table-title">
+                    รายการ QR ที่ยังไม่จ่าย (ล่าสุด 20 รายการ)
+                  </h3>
+</div>
+<p class="text-label-sm font-label-sm text-secondary mt-0.5">คลิกที่ปุ่มจำลองเพื่อทดสอบ trigger ทันที</p>
+</div>
+<!-- Quick Table Actions -->
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container text-primary font-semibold" id="badge-record-count">
+                  5 รายการรอชำระ
+                </span>
+<button class="text-label-sm font-label-sm text-secondary hover:text-primary px-2 py-1 rounded hover:bg-surface-container-low transition-colors" onclick="toggleEmptyState()" title="สลับมุมมองทดสอบ">
+                  จำลองสถานะว่าง
+                </button>
+</div>
+</div>
+<!-- Ledger Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="transactions-table">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-secondary text-label-md font-label-md tracking-wider">
+<th class="py-3 px-4 font-semibold" id="th-order-id" scope="col">Order ID</th>
+<th class="py-3 px-4 font-semibold" id="th-ref-token" scope="col">REF_TOKEN</th>
+<th class="py-3 px-4 font-semibold text-right" id="th-amount" scope="col">ยอด</th>
+<th class="py-3 px-4 font-semibold" id="th-created" scope="col">สร้างเมื่อ</th>
+<th class="py-3 px-4 font-semibold text-center" id="th-action" scope="col">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60 font-table-cell text-table-cell text-on-surface" id="ledger-rows-body">
+<!-- Row 1 -->
+<tr class="hover:bg-[#f9fafc] transition-colors duration-150 group" id="row-1">
+<td class="py-3 px-4">
+<div class="font-semibold font-mono text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">receipt_long</span>
+                        ORD-20250328-001
+                      </div>
+<div class="text-[11px] text-secondary">บจก. ยูเนี่ยนไทย ฟู้ดส์</div>
+</td>
+<td class="py-3 px-4 font-mono text-on-surface">
+<span class="bg-surface-container-low px-2 py-1 rounded text-[12px] border border-outline-variant/50">
+                        REF-20250328-9842
+                      </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">
+                      ฿142,500.00
+                    </td>
+<td class="py-3 px-4 text-secondary text-body-sm font-body-sm whitespace-nowrap">
+<div>28 มี.ค. 2025</div>
+<div class="text-[11px] font-mono text-outline">14:15 น. (17 นาทีที่แล้ว)</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-surface-container hover:bg-primary hover:text-on-primary text-primary text-label-sm font-label-sm transition-all shadow-xs" onclick="autoSelectAndTest('REF-20250328-9842', 'row-1')" type="button">
+<span class="material-symbols-outlined text-[14px]">flash_on</span>
+<span class="action-btn-label">จำลองชำระเงิน</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#f9fafc] transition-colors duration-150 group" id="row-2">
+<td class="py-3 px-4">
+<div class="font-semibold font-mono text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">receipt_long</span>
+                        ORD-20250328-004
+                      </div>
+<div class="text-[11px] text-secondary">ร้านอาหาร ริมนที คิทเช่น</div>
+</td>
+<td class="py-3 px-4 font-mono text-on-surface">
+<span class="bg-surface-container-low px-2 py-1 rounded text-[12px] border border-outline-variant/50">
+                        REF-20250328-6110
+                      </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">
+                      ฿38,720.00
+                    </td>
+<td class="py-3 px-4 text-secondary text-body-sm font-body-sm whitespace-nowrap">
+<div>28 มี.ค. 2025</div>
+<div class="text-[11px] font-mono text-outline">13:58 น. (34 นาทีที่แล้ว)</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-surface-container hover:bg-primary hover:text-on-primary text-primary text-label-sm font-label-sm transition-all shadow-xs" onclick="autoSelectAndTest('REF-20250328-6110', 'row-2')" type="button">
+<span class="material-symbols-outlined text-[14px]">flash_on</span>
+<span class="action-btn-label">จำลองชำระเงิน</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#f9fafc] transition-colors duration-150 group" id="row-3">
+<td class="py-3 px-4">
+<div class="font-semibold font-mono text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">receipt_long</span>
+                        ORD-20250328-009
+                      </div>
+<div class="text-[11px] text-secondary">สยามโกรเซอรี่ เอ็กซ์เพรส</div>
+</td>
+<td class="py-3 px-4 font-mono text-on-surface">
+<span class="bg-surface-container-low px-2 py-1 rounded text-[12px] border border-outline-variant/50">
+                        REF-20250328-7741
+                      </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">
+                      ฿8,900.00
+                    </td>
+<td class="py-3 px-4 text-secondary text-body-sm font-body-sm whitespace-nowrap">
+<div>28 มี.ค. 2025</div>
+<div class="text-[11px] font-mono text-outline">13:20 น. (1 ชม. ที่แล้ว)</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-surface-container hover:bg-primary hover:text-on-primary text-primary text-label-sm font-label-sm transition-all shadow-xs" onclick="autoSelectAndTest('REF-20250328-7741', 'row-3')" type="button">
+<span class="material-symbols-outlined text-[14px]">flash_on</span>
+<span class="action-btn-label">จำลองชำระเงิน</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-[#f9fafc] transition-colors duration-150 group" id="row-4">
+<td class="py-3 px-4">
+<div class="font-semibold font-mono text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">receipt_long</span>
+                        ORD-20250328-012
+                      </div>
+<div class="text-[11px] text-secondary">บจก. แปซิฟิก เคเทอริ่ง กรุ๊ป</div>
+</td>
+<td class="py-3 px-4 font-mono text-on-surface">
+<span class="bg-surface-container-low px-2 py-1 rounded text-[12px] border border-outline-variant/50">
+                        REF-20250328-4402
+                      </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">
+                      ฿295,000.00
+                    </td>
+<td class="py-3 px-4 text-secondary text-body-sm font-body-sm whitespace-nowrap">
+<div>28 มี.ค. 2025</div>
+<div class="text-[11px] font-mono text-outline">12:45 น. (1.5 ชม. ที่แล้ว)</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-surface-container hover:bg-primary hover:text-on-primary text-primary text-label-sm font-label-sm transition-all shadow-xs" onclick="autoSelectAndTest('REF-20250328-4402', 'row-4')" type="button">
+<span class="material-symbols-outlined text-[14px]">flash_on</span>
+<span class="action-btn-label">จำลองชำระเงิน</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-[#f9fafc] transition-colors duration-150 group" id="row-5">
+<td class="py-3 px-4">
+<div class="font-semibold font-mono text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">receipt_long</span>
+                        ORD-20250328-018
+                      </div>
+<div class="text-[11px] text-secondary">โรงแรมแกรนด์ริเวอร์ปาร์ค</div>
+</td>
+<td class="py-3 px-4 font-mono text-on-surface">
+<span class="bg-surface-container-low px-2 py-1 rounded text-[12px] border border-outline-variant/50">
+                        REF-20250328-8901
+                      </span>
+</td>
+<td class="py-3 px-4 text-right font-numeric-data font-semibold">
+                      ฿64,150.00
+                    </td>
+<td class="py-3 px-4 text-secondary text-body-sm font-body-sm whitespace-nowrap">
+<div>28 มี.ค. 2025</div>
+<div class="text-[11px] font-mono text-outline">11:10 น. (3 ชม. ที่แล้ว)</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-surface-container hover:bg-primary hover:text-on-primary text-primary text-label-sm font-label-sm transition-all shadow-xs" onclick="autoSelectAndTest('REF-20250328-8901', 'row-5')" type="button">
+<span class="material-symbols-outlined text-[14px]">flash_on</span>
+<span class="action-btn-label">จำลองชำระเงิน</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Empty State View (Controlled toggleable) -->
+<div class="hidden py-14 px-4 text-center space-y-3" id="table-empty-state">
+<div class="w-14 h-14 rounded-full bg-surface-container mx-auto flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[28px]">check_circle_outline</span>
+</div>
+<div class="space-y-1">
+<h5 class="text-headline-sm font-headline-sm text-on-surface" id="ui-empty-state-title">
+                    ไม่มีรายการที่ยังไม่จ่าย
+                  </h5>
+<p class="text-body-md font-body-md text-secondary max-w-sm mx-auto">
+                    ทุกธุรกรรม QR Code ถูกปรับสถานะเป็น Paid ครบถ้วนแล้วในรอบการทดสอบนี้
+                  </p>
+</div>
+<button class="mt-2 text-label-sm font-label-sm text-primary hover:underline" onclick="toggleEmptyState()">
+                  โหลดรายการตัวอย่างอีกครั้ง
+                </button>
+</div>
+</div>
+<!-- Table Footer Pagination / Summary -->
+<div class="p-3.5 bg-surface-container-low border-t border-outline-variant flex items-center justify-between text-label-sm font-label-sm text-secondary">
+<div class="flex items-center gap-2">
+<span>แสดง <strong class="text-on-surface" id="showing-count">5</strong> จากทั้งหมด 20 รายการ</span>
+<span class="text-outline-variant">|</span>
+<span class="text-[11px]">Polling ทุก 15 วินาที</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-[11px] text-on-surface">Auto-Sync Active</span>
+</div>
+</div>
+</div>
+<!-- Gateway Staging Health & Info Box -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 flex items-center justify-between text-label-sm font-label-sm shadow-xs">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">dns</span>
+</div>
+<div>
+<div class="text-on-surface font-semibold">Mock Service Gateway: Jagota-Sandbox-02</div>
+<div class="text-secondary font-mono text-[11px]">Latency: 42ms | Uptime: 99.98% | Region: th-central-1</div>
+</div>
+</div>
+<a class="text-primary hover:underline flex items-center gap-1" href="#gateway-config">
+<span>ตั้งค่าตัวแปร</span>
+<span class="material-symbols-outlined text-[14px]">tune</span>
+</a>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- ========================================================= -->
+<!-- CLIENT INTERACTION SCRIPT & SIMULATOR LOGIC              -->
+<!-- ========================================================= -->
+<script>
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function toggleLanguage(lang) {
+      currentLang = lang;
+      const dict = translations[lang];
+
+      // Update Top Nav Switcher Styling
+      const thBtn = document.getElementById('lang-th-btn');
+      const enBtn = document.getElementById('lang-en-btn');
+
+      if (lang === 'th') {
+        thBtn.className = 'px-2.5 py-0.5 text-label-sm font-label-sm rounded-full bg-surface-container-lowest text-primary font-semibold shadow-xs transition-all';
+        enBtn.className = 'px-2.5 py-0.5 text-label-sm font-label-sm rounded-full text-secondary hover:text-on-surface font-medium transition-all';
+      } else {
+        enBtn.className = 'px-2.5 py-0.5 text-label-sm font-label-sm rounded-full bg-surface-container-lowest text-primary font-semibold shadow-xs transition-all';
+        thBtn.className = 'px-2.5 py-0.5 text-label-sm font-label-sm rounded-full text-secondary hover:text-on-surface font-medium transition-all';
+      }
+
+      // Update Dynamic DOM Elements
+      document.getElementById('ui-page-title').textContent = dict.page_title;
+      document.getElementById('ui-staging-notice').textContent = dict.staging_notice;
+      document.getElementById('ui-controller-title').textContent = dict.controller_title;
+      document.getElementById('ui-input-label').textContent = dict.input_label;
+      document.getElementById('ui-input-helper').textContent = dict.input_helper;
+      document.getElementById('ref-token-input').placeholder = dict.input_placeholder;
+      document.getElementById('btn-text').textContent = dict.btn_execute;
+      document.getElementById('ui-msg-success').textContent = dict.msg_success;
+      document.getElementById('ui-msg-error').textContent = dict.msg_error;
+      document.getElementById('ui-next-steps-title').textContent = dict.next_steps_title;
+      document.getElementById('ui-table-title').textContent = dict.table_title;
+      document.getElementById('th-order-id').textContent = dict.col_order_id;
+      document.getElementById('th-ref-token').textContent = dict.col_ref_token;
+      document.getElementById('th-amount').textContent = dict.col_amount;
+      document.getElementById('th-created').textContent = dict.col_created;
+      document.getElementById('th-action').textContent = dict.col_action;
+      document.getElementById('ui-empty-state-title').textContent = dict.empty_state;
+
+      // Update Table Row Buttons
+      document.querySelectorAll('.action-btn-label').forEach(el => {
+        el.textContent = dict.simulate_btn;
+      });
+    }
+
+    // Payment Trigger Simulator with Realistic Progress
+    function triggerPaymentTest(customToken) {
+      const tokenInput = document.getElementById('ref-token-input');
+      const token = customToken || tokenInput.value.trim();
+      if (!token) return;
+
+      const submitBtn = document.getElementById('submit-test-btn');
+      const btnText = document.getElementById('btn-text');
+      const btnIcon = document.getElementById('btn-icon');
+      const stateReady = document.getElementById('state-ready');
+      const stateSuccess = document.getElementById('state-success');
+      const stateError = document.getElementById('state-error');
+      const dict = translations[currentLang];
+
+      // Disable button & Show "กำลังยิง..."
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+      btnText.textContent = dict.btn_loading_post;
+      btnIcon.textContent = 'hourglass_top';
+      btnIcon.classList.add('animate-spin');
+
+      stateReady.classList.add('hidden');
+      stateSuccess.classList.add('hidden');
+      stateError.classList.add('hidden');
+
+      // Phase 1 -> Phase 2 "กำลังโหลด..."
+      setTimeout(() => {
+        btnText.textContent = dict.btn_loading_wait;
+        btnIcon.textContent = 'sync';
+      }, 400);
+
+      // Phase 3 Finish execution
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+        btnText.textContent = dict.btn_execute;
+        btnIcon.textContent = 'send';
+        btnIcon.classList.remove('animate-spin');
+
+        // Check for error simulation string or regular success
+        if (token.toLowerCase().includes('error') || token.toLowerCase().includes('fail') || token === '000000') {
+          stateError.classList.remove('hidden');
+        } else {
+          document.getElementById('res-token-display').textContent = token;
+          stateSuccess.classList.remove('hidden');
+
+          // Highlight corresponding row if present
+          removeOrHighlightLedgerRow(token);
+        }
+      }, 950);
+    }
+
+    // Auto-select row from ledger and trigger test
+    function autoSelectAndTest(token, rowId) {
+      const input = document.getElementById('ref-token-input');
+      input.value = token;
+
+      // Visual feedback on the row
+      const row = document.getElementById(rowId);
+      if (row) {
+        row.classList.add('bg-primary-fixed/20');
+        setTimeout(() => row.classList.remove('bg-primary-fixed/20'), 1200);
+      }
+
+      triggerPaymentTest(token);
+    }
+
+    // Remove row from table upon payment confirmation
+    function removeOrHighlightLedgerRow(token) {
+      const rows = document.querySelectorAll('#ledger-rows-body tr');
+      rows.forEach(row => {
+        if (row.innerText.includes(token)) {
+          row.classList.add('bg-emerald-50', 'transition-all');
+          setTimeout(() => {
+            row.style.opacity = '0';
+            setTimeout(() => {
+              row.remove();
+              updateCounter();
+            }, 300);
+          }, 600);
+        }
+      });
+    }
+
+    function updateCounter() {
+      const rows = document.querySelectorAll('#ledger-rows-body tr');
+      const count = rows.length;
+      document.getElementById('showing-count').textContent = count;
+      document.getElementById('badge-record-count').textContent = `${count} รายการรอชำระ`;
+
+      if (count === 0) {
+        document.getElementById('transactions-table').classList.add('hidden');
+        document.getElementById('table-empty-state').classList.remove('hidden');
+      }
+    }
+
+    // Toggle Collapsible Steps
+    function toggleCollapsible() {
+      const content = document.getElementById('collapsible-content');
+      const chevron = document.getElementById('collapse-chevron');
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        chevron.style.transform = 'rotate(0deg)';
+      } else {
+        content.classList.add('hidden');
+        chevron.style.transform = 'rotate(-90deg)';
+      }
+    }
+
+    // Toggle Empty State for Simulator demonstration
+    let isEmpty = false;
+    function toggleEmptyState() {
+      const table = document.getElementById('transactions-table');
+      const emptyState = document.getElementById('table-empty-state');
+      isEmpty = !isEmpty;
+
+      if (isEmpty) {
+        table.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        document.getElementById('badge-record-count').textContent = '0 รายการ';
+        document.getElementById('showing-count').textContent = '0';
+      } else {
+        table.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        resetLedger();
+      }
+    }
+
+    function resetLedger() {
+      location.reload();
+    }
+
+    function clearTokenInput() {
+      const input = document.getElementById('ref-token-input');
+      input.value = '';
+      input.focus();
+    }
+
+    function copyCurlSnippet() {
+      const copyText = document.getElementById('copy-text');
+      copyText.textContent = 'คัดลอกแล้ว!';
+      copyText.classList.add('text-emerald-600', 'font-semibold');
+      setTimeout(() => {
+        copyText.textContent = 'คัดลอก';
+        copyText.classList.remove('text-emerald-600', 'font-semibold');
+      }, 2000);
+    }
+  </script>
+</body></html>

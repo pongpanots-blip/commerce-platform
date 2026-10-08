@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2872",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2M2NDNkY2NjNmViZDQ0NTFiY2Y1NWQwNGYxODY2ZWE4EgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/df487349461745ff99bdb2f0d9f0387a"
+            },
+            "id": "870cb26e40ec4bdfaa5a0ce28db1c828",
+            "name": "projects/9809859018179965476/screens/870cb26e40ec4bdfaa5a0ce28db1c828",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1X6yre5ORJF2IYjQnmvQhKbFZrtNMChbG90qz358Bzylm27eNHMPMA2R9ZN4FuHdijzMWwpC5e18_i-8nF7gn843AH6i67CmBkfOIz2F6HNh9cJa5DsRUm5-wwlhmvEH9LLeH1qRku1Tpu00ucLUp6T0Jlze7MBB2QfZFwkjrqm6Q76GCP8JWweguBadM0JXIUQUwVQRqa8GmoqEtTdytMJq2hAgD46Wet7LB6TcAm85evXpRKTMKofnu4",
+              "name": "projects/9809859018179965476/files/9b8cb3f9b8ab4192b98d1203ddf29be2"
+            },
+            "theme": {},
+            "title": "รอบสั่งซื้อ supplier (SupplierOrderPeriods - /order-periods)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **\"รอบสั่งซื้อ supplier (SupplierOrderPeriods)\"** (`/order-periods` — Route: `admin-21f3d01212f6`) เสร็จสมบูรณ์ตามข้อกำหนดระบบ Commerce Platform อย่างครบถ้วน:\n\n### จุดเด่นและการนำไปใช้งาน\n1. **โครงสร้างและรูปแบบดีไซน์ตรงตามข้อกำหนด:**\n   - ผืนผ้าใบ `#f6f8fc`, การ์ดสีขาวขอบมน 12px, ขอบเขตเส้นแบ่ง `#e1e7f0`\n   - เมนูนำทางด้านซ้าย 256px แบ่งพื้นที่ปฏิบัติการ 7 กลุ่มครบถ้วน พร้อมไฮไลต์หมวด **สินค้าและสต็อก > รอบสั่งซื้อ supplier**\n   - ส่วนหัวแบบ Contextual แสดง Breadcrumbs, รหัส Route, ป้าย `ข้อมูลตัวอย่าง` (Sample Data) และปุ่มสลับภาษา `ไทย / English` ที่ใช้งานได้จริง\n   - ฟอนต์ Noto Sans Thai ขนาดถูกต้องสำหรับทั้งภาษาไทยและละติน ควบคุมความกว้างเนื้อหาหลัก ~1240px\n\n2. **ฟิลด์ข้อมูลและเวิร์กโฟลว์ธุรกิจ (Order Periods Protocol):**\n   - **หัวตารางและข้อมูลครบถ้วน:** รหัส supplier (`SUP-901`, `SUP-402`, `SUP-811`, `SUP-105`), ชื่อ supplier, รอบการจัดส่ง, วันส่ง, เวลาปิดรับคำสั่งซื้อ (Cut-off Time), สถานะ (เปิดรับสั่งซื้อ / ปิดอยู่) และเวลาที่ ERP ส่งล่าสุด\n   - **การแจ้งเตือนสถานะ Master (Josh Handover Banner):** แสดงสถานะแฟล็ก `COMMERCE_OWNS_ORDERING: false` พร้อมปุ่ม \"แก้ Workflow\"\n   - **การส่งข้อมูลและซิงค์ (Josh Resync):** รองรับปุ่มหลัก \"ส่งให้ josh อีกครั้ง\" ทั้งแบบภาพรวม (Modal พร้อมระบบป้องกัน) และแบบรายรายการที่แสดง Toast แจ้งเตือนตรงตามข้อกำหนด\n   - **ฟังก์ชันค้นหาและกรองข้อมูล:** ค้นหาชื่อสินค้า/SKU/Supplier, กรองตาม Supplier และสถานะ พร้อมคำชี้แจงขอบเขตการค้นหาเฉพาะหน้านี้ตามข้อกำหนด Pagination API\n\n3. **Invisible Export Dictionary (`commerce-ui-translations`):**\n   - บรรจุแท็ก `<script id=\"commerce-ui-translations\" type=\"application/json\">` ที่ประกอบด้วย UI copy catalogue ทั้งหมดครบทุกประโยค พร้อมการแมป `th` และ `en` และคง placeholder `{0}`, `{1}` ไว้อย่างถูกต้องครบถ้วน"
+    },
+    {
+      "suggestion": "ดูพฤติกรรมเมื่อสลับภาษาเป็น English"
+    },
+    {
+      "suggestion": "ทดสอบเปิดหน้าต่าง 'แก้ Workflow' เพื่อสลับ Master Flag"
+    },
+    {
+      "suggestion": "เพิ่มตัวอย่างกรณีไม่มีรอบสั่งซื้อ (Empty State)"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "1044989749653400291"
+}

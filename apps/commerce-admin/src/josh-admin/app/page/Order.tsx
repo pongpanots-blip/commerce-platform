@@ -1,3 +1,6 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
 import { getOrderAnalytics, getOrders, type AdminOrderUiStatus, type OrderAnalytics } from '@josh/shared-api';
 import { Button, CardAdmin, DateRangeInput, Select, Table, TableColumn, Text } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -5,15 +8,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AiOutlineEdit, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_SIZE = 20;
 
 const ORDER_STATUS_LABELS: Record<AdminOrderUiStatus, string> = {
-  pending: 'รอชำระเงิน',
-  paid: 'ชำระแล้ว',
-  preparing: 'กำลังเตรียม',
-  shipped: 'กำลังจัดส่ง',
-  complete: 'เสร็จสิ้น',
-  cancelled: 'ยกเลิก / คืนเงิน',
+  get pending(){return __uiText("รอชำระเงิน");},
+  get paid(){return __uiText("ชำระแล้ว");},
+  get preparing(){return __uiText("กำลังเตรียม");},
+  get shipped(){return __uiText("กำลังจัดส่ง");},
+  get complete(){return __uiText("เสร็จสิ้น");},
+  get cancelled(){return __uiText("ยกเลิก / คืนเงิน");},
 };
 
 interface OrderData {
@@ -28,6 +33,7 @@ interface OrderData {
 }
 
 const Order = () => {
+  __useUiLocale();
   const navigate = useNavigate();
   const [analytics, setAnalytics] = useState<OrderAnalytics | null>(null);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -42,13 +48,13 @@ const Order = () => {
   const [loading, setLoading] = useState(false);
 
   const orderStatusOptions = [
-    { value: 'all', label: 'คำสั่งซื้อทั้งหมด' },
-    { value: 'pending', label: 'รอชำระเงิน' },
-    { value: 'paid', label: 'ชำระแล้ว' },
-    { value: 'preparing', label: 'กำลังเตรียม' },
-    { value: 'shipped', label: 'กำลังจัดส่ง' },
-    { value: 'complete', label: 'เสร็จสิ้น' },
-    { value: 'cancelled', label: 'ยกเลิก / คืนเงิน' },
+    { value: 'all', label: __uiText("คำสั่งซื้อทั้งหมด") },
+    { value: 'pending', label: __uiText("รอชำระเงิน") },
+    { value: 'paid', label: __uiText("ชำระแล้ว") },
+    { value: 'preparing', label: __uiText("กำลังเตรียม") },
+    { value: 'shipped', label: __uiText("กำลังจัดส่ง") },
+    { value: 'complete', label: __uiText("เสร็จสิ้น") },
+    { value: 'cancelled', label: __uiText("ยกเลิก / คืนเงิน") },
   ];
 
   const loadOrders = useCallback(async () => {
@@ -108,20 +114,20 @@ const Order = () => {
   };
 
   const columns: TableColumn<OrderData>[] = [
-    { key: 'order_id', label: 'เลขที่ออเดอร์', sortable: true },
-    { key: 'customer_name', label: 'ชื่อลูกค้า' },
+    { key: 'order_id', label: __uiText("เลขที่ออเดอร์"), sortable: true },
+    { key: 'customer_name', label: __uiText("ชื่อลูกค้า") },
     {
       key: 'total_price',
-      label: 'ยอดรวม',
+      label: __uiText("ยอดรวม"),
       sortable: true,
       render: (value) => (
-        <span className="font-medium">฿{Number(value).toLocaleString()}</span>
+        <span className="font-medium">{__uiText("฿")}{Number(value).toLocaleString()}</span>
       ),
     },
-    { key: 'branch', label: 'สาขาที่จัดส่ง', sortable: true },
+    { key: 'branch', label: __uiText("สาขาที่จัดส่ง"), sortable: true },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: OrderData['status']) => {
         const badgeStyles: Record<AdminOrderUiStatus, string> = {
           pending: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -144,14 +150,14 @@ const Order = () => {
     },
     {
       key: 'date',
-      label: 'วันที่สั่งซื้อ',
+      label: __uiText("วันที่สั่งซื้อ"),
       sortable: true,
       render: (value) => {
         if (!value) return <span className="text-gray-400">-</span>;
         const dateObj = new Date(value);
         return (
           <span className="text-gray-600 font-mono">
-            {dateObj.toLocaleDateString('th-TH', {
+            {dateObj.toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
               day: 'numeric',
               month: 'short',
               year: 'numeric',
@@ -160,23 +166,23 @@ const Order = () => {
         );
       },
     },
-    { key: 'delivery_slot', label: 'รอบเวลาจัดส่ง' },
+    { key: 'delivery_slot', label: __uiText("รอบเวลาจัดส่ง") },
     {
       key: 'actions',
-      label: 'เครื่องมือ',
+      label: __uiText("เครื่องมือ"),
       render: (_, row) => (
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate(ADMIN_ROUTES.orderDetail(row.orders_id))}
             className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-            title="ดูรายละเอียด"
+            title={__uiText("ดูรายละเอียด")}
           >
             <AiOutlineEye size={18} />
           </button>
           <button
             onClick={() => navigate(ADMIN_ROUTES.orderDetail(row.orders_id))}
             className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-            title="แก้ไขสถานะ"
+            title={__uiText("แก้ไขสถานะ")}
           >
             <AiOutlineEdit size={18} />
           </button>
@@ -194,48 +200,48 @@ const Order = () => {
     })}`;
 
   const cardData = [
-    { name: 'ออเดอร์ทั้งหมด', value: String(analytics?.total_orders ?? 0) },
+    { name: __uiText("ออเดอร์ทั้งหมด"), value: String(analytics?.total_orders ?? 0) },
     {
-      name: 'รอชำระเงิน',
+      name: __uiText("รอชำระเงิน"),
       value: String(analytics?.pending_payment ?? 0),
       textColor: 'text-amber-600',
     },
     {
-      name: 'ชำระแล้ว',
+      name: __uiText("ชำระแล้ว"),
       value: String(analytics?.paid ?? 0),
       textColor: 'text-emerald-600',
     },
     {
-      name: 'กำลังเตรียม',
+      name: __uiText("กำลังเตรียม"),
       value: String(analytics?.preparing ?? 0),
       textColor: 'text-lime-600',
     },
     {
-      name: 'กำลังจัดส่ง',
+      name: __uiText("กำลังจัดส่ง"),
       value: String(analytics?.shipped ?? 0),
       textColor: 'text-primary',
     },
     {
-      name: 'เสร็จสิ้น',
+      name: __uiText("เสร็จสิ้น"),
       value: String(analytics?.completed ?? 0),
       textColor: 'text-sky-600',
     },
     {
-      name: 'ยกเลิก / คืนเงิน',
+      name: __uiText("ยกเลิก / คืนเงิน"),
       value: String(analytics?.cancelled ?? 0),
       textColor: 'text-gray-500',
     },
     {
-      name: 'ออเดอร์วันนี้',
+      name: __uiText("ออเดอร์วันนี้"),
       value: String(analytics?.orders_today ?? 0),
     },
     {
-      name: 'ยอดขายวันนี้',
+      name: __uiText("ยอดขายวันนี้"),
       value: analytics ? formatMoney(analytics.revenue_today) : '-',
       textColor: 'text-green-500',
     },
     {
-      name: 'ยอดขายรวม (ชำระแล้ว)',
+      name: __uiText("ยอดขายรวม (ชำระแล้ว)"),
       value: analytics ? formatMoney(analytics.total_revenue) : '-',
       textColor: 'text-primary',
     },
@@ -245,10 +251,10 @@ const Order = () => {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between gap-4">
         <div className="flex flex-col">
-          <Text bold={true} text="All Orders" size="2xl" />
-          <Text text="Manage and monitor all customer orders" size="sm" />
+          <Text bold={true} text={__uiText("All Orders")} size="2xl" />
+          <Text text={__uiText("Manage and monitor all customer orders")} size="sm" />
           <Text
-            text="Click the edit icon on an order to change its status"
+            text={__uiText("Click the edit icon on an order to change its status")}
             size="sm"
           />
         </div>
@@ -257,14 +263,12 @@ const Order = () => {
             to={ADMIN_ROUTES.orderImport}
             className="inline-flex h-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
-            Order Import
-          </Link>
+            {__uiText("Order Import")}</Link>
           <Link
             to={ADMIN_ROUTES.paymentTransactions}
             className="inline-flex h-fit items-center rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
           >
-            Payment Transactions
-          </Link>
+            {__uiText("Payment Transactions")}</Link>
         </div>
       </div>
 
@@ -273,7 +277,7 @@ const Order = () => {
           <CardAdmin
             key={card.name}
             name={card.name}
-            value={card.value}
+            value={analytics ? card.value : '—'}
             textColor={card.textColor}
           />
         ))}
@@ -284,7 +288,7 @@ const Order = () => {
           <AiOutlineFilter size={24} />
           <div className="w-64">
             <Select
-              label="สถานะออเดอร์"
+              label={__uiText("สถานะออเดอร์")}
               data={orderStatusOptions}
               value={statusFilter}
               onChange={(e) => {
@@ -294,7 +298,7 @@ const Order = () => {
             />
           </div>
           <DateRangeInput
-            label="ช่วงวันที่สั่งซื้อ"
+            label={__uiText("ช่วงวันที่สั่งซื้อ")}
             startDate={startDate}
             endDate={endDate}
             onStartDateChange={(value) => {
@@ -308,12 +312,12 @@ const Order = () => {
           />
         </div>
         <div>
-          <Button text="export CSV" />
+          <Button text={__uiText("export CSV")} />
         </div>
       </div>
       <div>
         {loading ? (
-          <div className="py-8 text-center text-gray-500 text-sm">กำลังโหลด...</div>
+          <div className="py-8 text-center text-gray-500 text-sm">{__uiText("กำลังโหลด...")}</div>
         ) : (
           <Table
             columns={columns}

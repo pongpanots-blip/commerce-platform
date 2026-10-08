@@ -12,13 +12,13 @@ module.exports = {
     extend: {
       fontFamily: { sans: ['"Noto Sans Thai"', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
       colors: {
-        primary: { DEFAULT: '#0A4BC5', dark: '#002E88', light: '#548FFF', soft: '#F0F5FF', border: '#DEEAFF' },
+        primary: { DEFAULT: '#365cf5', dark: '#2648d8', light: '#6b86ff', soft: '#eef2ff', border: '#dce3ef' },
         alert: { DEFAULT: '#BF0013', dark: '#7B0008', soft: '#FFF2F0', light: '#FF5E54' },
         ink: { DEFAULT: '#041A3D', secondary: '#354764', muted: '#808C9F', disabled: '#B1B9C5' },
         surface: { disabled: '#FBFBFB' },
         line: '#D5F2F2',
       },
-      boxShadow: { 'level-1': '0 2px 40px 8px rgba(9,70,73,0.08)' },
+      boxShadow: { 'level-1': '0 1px 3px rgba(20,30,60,0.06)' },
     },
   },
   plugins: [],

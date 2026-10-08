@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ทดสอบการเชื่อมต่อ ERP | Thai Ops Cockpit</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#f9f9ff",
+            "surface-container-low": "#f1f3ff",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-variant": "#d7e2ff",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-primary-container": "#ededff",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed": "#360f00",
+            "on-secondary": "#ffffff",
+            "inverse-surface": "#243048",
+            "inverse-primary": "#b9c3ff",
+            "tertiary-fixed": "#ffdbcd",
+            "secondary-container": "#d0e1fd",
+            "outline-variant": "#c4c5d8",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-container": "#ffebe4",
+            "surface-container": "#e8eeff",
+            "surface-dim": "#cddaf9",
+            "surface-container-high": "#e0e8ff",
+            "primary-container": "#365cf5",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-surface-variant": "#444655",
+            "surface-bright": "#f9f9ff",
+            "error-container": "#ffdad6",
+            "surface": "#f9f9ff",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#d7e2ff",
+            "on-secondary-container": "#54647c",
+            "on-primary-fixed": "#001257",
+            "on-error": "#ffffff",
+            "on-background": "#0e1b32",
+            "primary-fixed-dim": "#b9c3ff",
+            "secondary-fixed": "#d3e3ff",
+            "outline": "#747687",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "tertiary-container": "#bc4600",
+            "primary-fixed": "#dde1ff",
+            "on-surface": "#0e1b32",
+            "secondary": "#4f5f77",
+            "tertiary": "#943500",
+            "on-primary": "#ffffff",
+            "on-error-container": "#93000a",
+            "surface-tint": "#214ce7",
+            "inverse-on-surface": "#ecf0ff",
+            "primary": "#0a3fdc",
+            "on-secondary-fixed": "#0b1c31"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            gutter: "1.5rem",
+            "margin-mobile": "1rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xs": "0.25rem",
+            margin: "2rem",
+            "space-2xl": "2.5rem",
+            "gutter-mobile": "1rem",
+            "space-xl": "2rem"
+          },
+          fontFamily: {
+            "headline-sm": ["Noto Sans Thai", "Noto Sans", "Inter", "sans-serif"],
+            "headline-lg-mobile": ["Noto Sans Thai", "Noto Sans", "Inter", "sans-serif"],
+            "headline-lg": ["Noto Sans Thai", "Noto Sans", "Inter", "sans-serif"],
+            "label-sm": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "code-sm": ["JetBrains Mono", "monospace"],
+            "body-sm": ["Noto Sans Thai", "Noto Sans", "Inter", "sans-serif"],
+            "body-lg": ["Noto Sans Thai", "Noto Sans", "Inter", "sans-serif"],
+            "label-md": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "headline-md": ["Noto Sans Thai", "Noto Sans", "Inter", "sans-serif"],
+            "body-md": ["Noto Sans Thai", "Noto Sans", "Inter", "sans-serif"]
+          },
+          fontSize: {
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "headline-lg-mobile": ["22px", { lineHeight: "30px", fontWeight: "700" }],
+            "headline-lg": ["28px", { lineHeight: "36px", fontWeight: "700" }],
+            "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }],
+            "code-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+            "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "body-lg": ["15px", { lineHeight: "22px", fontWeight: "400" }],
+            "label-md": ["13px", { lineHeight: "16px", fontWeight: "500" }],
+            "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      color: #17243b;
+      background-color: #f6f8fc;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .code-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Thin custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="h-full flex overflow-hidden">
+<!-- ==================== SIDEBAR COMPONENT (256px) ==================== -->
+<aside class="w-64 h-screen fixed top-0 left-0 bg-surface-container-lowest border-r border-outline-variant z-40 flex flex-col justify-between shadow-none select-none">
+<div class="flex flex-col h-full">
+<!-- Cockpit Brand Header -->
+<div class="h-16 flex items-center px-5 border-b border-outline-variant gap-3 bg-surface-container-lowest">
+<div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-bold shadow-sm">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+</div>
+<div class="overflow-hidden">
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface truncate leading-tight">Thai Ops Cockpit</h1>
+<p class="text-[11px] text-secondary truncate">ศูนย์บริหารจัดการร้านค้า</p>
+</div>
+</div>
+<!-- Navigation Links (7 items) -->
+<nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-label-md font-label-md" href="#inventory">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="truncate">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-label-md font-label-md" href="#orders">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="truncate">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-label-md font-label-md" href="#customers">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span class="truncate">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-label-md font-label-md" href="#marketing">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+<span class="truncate">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-label-md font-label-md" href="#analytics">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="truncate">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE ITEM) -->
+<div class="space-y-1">
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-container text-primary font-medium border-l-[3px] border-primary transition-colors cursor-pointer text-label-md font-label-md" href="#integrations">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">sync_alt</span>
+<span class="truncate font-semibold">ระบบเชื่อมต่อ</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-primary rotate-180">expand_more</span>
+</a>
+<!-- Sub-items under ระบบเชื่อมต่อ -->
+<div class="pl-7 pr-1 py-1 space-y-1">
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-[12px] text-secondary hover:text-on-surface hover:bg-slate-100 transition-colors" href="#api-log">
+<span class="truncate">API log ของ josh</span>
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-[12px] text-secondary hover:text-on-surface hover:bg-slate-100 transition-colors" href="#erp-log">
+<span class="truncate">ERP log ของ josh</span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-[12px] text-secondary hover:text-on-surface hover:bg-slate-100 transition-colors" href="#webhook-dead">
+<span class="truncate">Webhook Dead Letter</span>
+<span class="px-1.5 py-0.2 text-[10px] bg-rose-100 text-rose-700 rounded-full font-mono font-medium">0</span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-[12px] font-semibold text-primary bg-blue-50/70 border border-blue-100" href="/erp/simulator">
+<span class="truncate flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                ERP simulator
+              </span>
+<span class="text-[10px] px-1 bg-primary text-white rounded">Active</span>
+</a>
+</div>
+</div>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-label-md font-label-md" href="#settings">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="truncate">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+<!-- Sidebar Footer Status -->
+<div class="p-3 border-t border-outline-variant bg-slate-50/70 text-xs">
+<div class="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-100"></span>
+<span class="text-slate-700 font-medium text-[11px]">ERP Bridge Status</span>
+</div>
+<span class="font-mono text-[11px] text-slate-500">v2.4.1</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- ==================== MAIN CONTENT WRAPPER ==================== -->
+<div class="pl-64 flex-1 flex flex-col h-screen overflow-hidden bg-[#f6f8fc]">
+<!-- ==================== TOP NAVIGATION BAR ==================== -->
+<header class="h-16 w-full sticky top-0 z-30 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-6 shadow-sm">
+<!-- Breadcrumb / Route context -->
+<div class="flex items-center gap-2 text-sm text-secondary">
+<span class="flex items-center gap-1.5 font-medium text-slate-600">
+<span class="material-symbols-outlined text-[18px]">sync_alt</span>
+          ระบบเชื่อมต่อ
+        </span>
+<span class="text-slate-400">/</span>
+<span class="text-slate-800 font-semibold flex items-center gap-2">
+          ERP simulator
+          <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-100 text-slate-600 border border-slate-200">admin-e8bb0f1207ce</span>
+</span>
+</div>
+<!-- Action Utilities cluster -->
+<div class="flex items-center gap-3">
+<!-- Sample data badge -->
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+<span class="material-symbols-outlined text-[14px]">science</span>
+          ข้อมูลตัวอย่าง
+        </span>
+<!-- Language Switcher -->
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 transition-colors" id="langToggleBtn">
+<span class="material-symbols-outlined text-[16px] text-slate-500">translate</span>
+<span>ไทย / EN</span>
+</button>
+<div class="h-4 w-[1px] bg-slate-200"></div>
+<!-- Icons -->
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors" title="Help &amp; Docs">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<!-- User Profile Avatar -->
+<div class="flex items-center gap-2.5 pl-2">
+<img alt="รูปโปรไฟล์ผู้ดูแลระบบ" class="w-8 h-8 rounded-full border border-slate-300 object-cover" data-alt="Professional Thai operations administrator portrait in corporate headshot style with soft studio lighting and crisp natural skin tones against a clean neutral studio backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtaR5T9pfQh-pqWe-kLmnWOphy8781_ZqShLeoTUwX2NbfzYvNxUITabr9dh4YxypwdddpZDUuBB9C6jSpc1-mnl0EYXodpye5gi8DgIVmNLqGUmCQqsjJZVcO82XhezBsYR_wewkrkDo-s9fk69TPqoCiqFV4uvQ4upDrnfUEhKgMODwhC-Nirs9wDatwJGgEUIkNIRLQEwyf07u7iy5UWG5vf0XFwxw6Rw1g441jrPDb7r9ARQR9-WhR6d99U9-ETy7JGTfBFqM"/>
+<div class="hidden xl:block text-left">
+<p class="text-[12px] font-semibold text-slate-900 leading-tight">สมศักดิ์ สุขใจ</p>
+<p class="text-[10px] text-slate-500">Fulfillment Admin</p>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== SCROLLABLE STAGE (Max ~1240px) ==================== -->
+<main class="flex-1 overflow-y-auto p-6 md:p-8">
+<div class="max-w-[1240px] mx-auto space-y-6">
+<!-- Top Title & Operational Stage Overview -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
+<div>
+<div class="flex items-center gap-2.5">
+<h2 class="text-headline-lg font-headline-lg text-slate-900 tracking-tight">ทดสอบการเชื่อมต่อ ERP</h2>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Simulator Sandbox</span>
+</div>
+<p class="text-sm text-slate-500 mt-1">เครื่องมือจำลองการทดสอบรับ-ส่งข้อมูลสองทิศทาง (Bi-directional Test Harness) ระหว่าง ERP, Commerce Core และ Josh Bridge</p>
+</div>
+<div class="flex items-center gap-2 self-start sm:self-auto">
+<span class="text-xs text-slate-500 flex items-center gap-1 font-mono">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Webhook Endpoint: /api/v1/erp/inbound
+            </span>
+</div>
+</div>
+<!-- Warning Alert Banner -->
+<div class="rounded-xl border border-amber-200 bg-amber-50/80 p-4 flex items-start gap-3 shadow-xs">
+<span class="material-symbols-outlined text-amber-600 text-[22px] shrink-0 mt-0.5">warning</span>
+<div class="flex-1 text-sm text-amber-900">
+<p class="font-medium">ยังไม่ได้ตั้ง ERP_WEBHOOK_KEY — dev รับทุก request; production จะตอบ 401</p>
+<p class="text-xs text-amber-700 mt-0.5">โปรดระบุคีย์ในการตั้งค่าคอนฟิกก่อนปรับใช้กับ Production Store หรือเชื่อมต่อ Live SAP / Microsoft Dynamics</p>
+</div>
+<button class="text-xs font-medium text-amber-800 underline hover:text-amber-950 shrink-0">ตั้งค่าตอนนี้</button>
+</div>
+<!-- ==================== MODE SWITCHER TABS ==================== -->
+<div class="bg-white rounded-xl border border-slate-200 p-1.5 shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+<!-- Mode 1 Tab -->
+<button class="flex flex-col text-left p-3.5 rounded-lg border-2 border-[#365cf5] bg-blue-50/40 transition-all cursor-pointer" id="tabMode1Btn" onclick="switchMode(1)">
+<div class="flex items-center justify-between w-full">
+<span class="text-sm font-bold text-[#17243b] flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-[#365cf5] text-white flex items-center justify-center text-xs">1</span>
+                  ERP → commerce → josh
+                </span>
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-100 text-blue-800">Inbound Push</span>
+</div>
+<p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                ERP ส่งสต็อก ราคา สินค้า ลูกค้า สถานะ order/invoice เข้ามา · commerce ส่งต่อให้ josh
+              </p>
+</button>
+<!-- Mode 2 Tab -->
+<button class="flex flex-col text-left p-3.5 rounded-lg border-2 border-transparent hover:bg-slate-50 transition-all cursor-pointer opacity-75" id="tabMode2Btn" onclick="switchMode(2)">
+<div class="flex items-center justify-between w-full">
+<span class="text-sm font-bold text-[#17243b] flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-slate-200 text-slate-700 flex items-center justify-center text-xs">2</span>
+                  josh → commerce → ERP
+                </span>
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700">Outbound Order</span>
+</div>
+<p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                josh สั่งซื้อผ่าน commerce · จ่ายเงินแล้ว commerce ส่ง order ไป ERP
+              </p>
+</button>
+</div>
+</div>
+<!-- ======================================================== -->
+<!-- ==================== MODE 1 VIEW ======================= -->
+<!-- ======================================================== -->
+<div class="space-y-6" id="mode1Container">
+<!-- Action Templates Pill Bar -->
+<div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-500 text-[18px]">bookmark</span>
+<span class="text-xs font-semibold text-slate-700 uppercase tracking-wider">เลือกเทมเพลตคำขอจำลอง (Action Templates)</span>
+</div>
+<span class="text-[11px] text-slate-400">คลิกเพื่อโหลด JSON ตัวอย่างลงในตัวแก้ไข</span>
+</div>
+<!-- Templates Pill Badges -->
+<div class="flex flex-wrap gap-1.5" id="templatePills">
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition" onclick="loadTemplate('qty_change')">Qty change</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('price_change')">Price change</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('moq_change')">MOQ change</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('product_upsert')">Product upsert</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('product_bulk')">Product bulk upsert</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('product_image')">Product image</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('customer_upsert')">Customer upsert</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('company_upsert')">Company upsert</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('order_status')">Order status</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('invoice_status')">Invoice status</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('quotation_push')">Quotation push</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('quotation_status')">Quotation status</button>
+<button class="template-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition" onclick="loadTemplate('supplier_period')">Supplier order period</button>
+</div>
+</div>
+<!-- Payload Editor & Immediate Response 2-Column Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left: JSON Payload Editor (7 cols) -->
+<div class="lg:col-span-7 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+<div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/60 rounded-t-xl">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-100 text-emerald-800">POST</span>
+<span class="text-xs font-mono text-slate-600">/api/v1/erp/events/inbound</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition" onclick="resetTemplate()">
+                    รีเซ็ตเป็น template
+                  </button>
+</div>
+</div>
+<!-- JSON Error Warning (conditional) -->
+<div class="hidden px-4 py-2 bg-rose-50 border-b border-rose-200 text-xs text-rose-700 flex items-center gap-2" id="jsonErrorBanner">
+<span class="material-symbols-outlined text-[16px] text-rose-600">error</span>
+<span>payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง</span>
+</div>
+<!-- Editor Textarea Area -->
+<div class="p-4 flex-1">
+<label class="block text-xs font-semibold text-slate-600 mb-1.5">Request Payload (JSON)</label>
+<div class="relative">
+<textarea class="w-full rounded-lg border border-slate-200 bg-slate-900 text-emerald-400 font-mono text-xs p-3.5 leading-relaxed focus:border-blue-500 focus:ring-1 focus:ring-blue-500" id="payloadEditor" rows="13" spellcheck="false">{
+  "event": "inventory.quantity.updated",
+  "source": "ERP_SAP_ECC6",
+  "timestamp": "2025-05-18T10:42:01.320+07:00",
+  "store_id": "STORE_TH_CENTRAL_01",
+  "data": {
+    "sku": "SKU-THAI-RICE-5KG",
+    "warehouse_code": "WH-BANGNA-B03",
+    "available_quantity": 420,
+    "reserved_quantity": 35,
+    "safety_stock": 50,
+    "unit_of_measure": "BAG",
+    "batch_no": "LOT-2025-05A"
+  }
+}</textarea>
+</div>
+</div>
+<!-- Action Bar Footer -->
+<div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between rounded-b-xl">
+<div class="text-xs text-slate-500 flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>Validation: Syntax OK</span>
+</div>
+<button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#365cf5] hover:bg-[#2947d1] text-white text-sm font-medium transition shadow-xs cursor-pointer" id="sendErpBtn" onclick="sendErpPayload()">
+<span class="material-symbols-outlined text-[18px] hidden animate-spin" id="erpBtnSpinner">progress_activity</span>
+<span id="erpBtnText">Send as ERP →</span>
+</button>
+</div>
+</div>
+<!-- Right: Response Inspection Card (5 cols) -->
+<div class="lg:col-span-5 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+<div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/60 rounded-t-xl">
+<span class="text-xs font-semibold text-slate-700">Response</span>
+<div class="flex items-center gap-2" id="responseMetaHeader">
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">200 OK</span>
+<span class="text-[11px] font-mono text-slate-500">48ms</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col space-y-4">
+<!-- Response Stat Summary -->
+<div class="grid grid-cols-3 gap-2">
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-center">
+<p class="text-[11px] text-slate-500">Status</p>
+<p class="text-xs font-bold text-emerald-700 mt-0.5">สำเร็จ</p>
+</div>
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-center">
+<p class="text-[11px] text-slate-500">Latency</p>
+<p class="text-xs font-bold text-slate-800 font-mono mt-0.5">48ms</p>
+</div>
+<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-center">
+<p class="text-[11px] text-slate-500">Processed By</p>
+<p class="text-xs font-bold text-slate-800 font-mono mt-0.5">worker-04</p>
+</div>
+</div>
+<!-- Raw Response Preview Box -->
+<div class="flex-1 flex flex-col">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-xs font-semibold text-slate-600">Response Body</span>
+<button class="text-[11px] text-blue-600 hover:underline">คัดลอก JSON</button>
+</div>
+<pre class="flex-1 p-3.5 bg-slate-900 text-slate-200 rounded-lg font-mono text-xs overflow-x-auto leading-relaxed border border-slate-300" id="responseJsonArea">{
+  "success": true,
+  "transaction_id": "tx_erp_994821a0",
+  "ingested_at": "2025-05-18T03:42:01.368Z",
+  "event": "inventory.quantity.updated",
+  "affected_records": 1,
+  "dispatch_queue": {
+    "queue_id": "q_josh_sync_fast",
+    "job_id": "job_881283",
+    "state": "ENQUEUED"
+  }
+}</pre>
+</div>
+</div>
+<!-- Footer with diagnostic link -->
+<div class="px-5 py-3 border-t border-slate-200 bg-slate-50 rounded-b-xl flex justify-between items-center text-xs text-slate-500">
+<span>Correlation ID: <span class="font-mono text-slate-700">corr_8a99bf2</span></span>
+<span class="text-emerald-600 flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  ACK Recv
+                </span>
+</div>
+</div>
+</div>
+<!-- Downstream Platform Forwarding Dispatch Table -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="px-5 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+<div>
+<h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+<span>ส่งต่อไป platform (Josh / Channels)</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono bg-blue-50 text-blue-700">3 events queued</span>
+</h3>
+<p class="text-xs text-slate-500 mt-0.5">การตรวจสอบสถานะ Broadcast ไปยัง Josh webhook consumer</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-slate-500">สถานะ:</span>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  ส่งสำเร็จทั้งหมด
+                </span>
+</div>
+</div>
+<!-- Table of downstream dispatches -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs border-collapse">
+<thead>
+<tr class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+<th class="py-3 px-4">Event</th>
+<th class="py-3 px-4">Target</th>
+<th class="py-3 px-4">Code</th>
+<th class="py-3 px-4 text-center">Attempts</th>
+<th class="py-3 px-4">Latency</th>
+<th class="py-3 px-4">เวลา</th>
+<th class="py-3 px-4 text-right">การกระทำ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50/80 transition-colors">
+<td class="py-3 px-4 font-mono font-medium text-slate-800">catalog.stock.synced</td>
+<td class="py-3 px-4 text-slate-600">josh-prod-apigateway/stock</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">200 OK</span>
+</td>
+<td class="py-3 px-4 text-center font-mono">1/3</td>
+<td class="py-3 px-4 font-mono text-slate-600">92ms</td>
+<td class="py-3 px-4 text-slate-500">10:42:02</td>
+<td class="py-3 px-4 text-right">
+<button class="text-blue-600 hover:text-blue-800 font-medium">ดู Payload</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/80 transition-colors">
+<td class="py-3 px-4 font-mono font-medium text-slate-800">pricing.matrix.updated</td>
+<td class="py-3 px-4 text-slate-600">josh-cache-invalidator</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">204 No Content</span>
+</td>
+<td class="py-3 px-4 text-center font-mono">1/3</td>
+<td class="py-3 px-4 font-mono text-slate-600">34ms</td>
+<td class="py-3 px-4 text-slate-500">10:42:02</td>
+<td class="py-3 px-4 text-right">
+<button class="text-blue-600 hover:text-blue-800 font-medium">ดู Payload</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+<td class="py-3 px-4 font-mono font-medium text-slate-500">analytics.audit.stream</td>
+<td class="py-3 px-4 text-slate-500">data-lake-inbound/kinesis</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded font-mono font-semibold bg-slate-100 text-slate-600 border border-slate-200">Pending</span>
+</td>
+<td class="py-3 px-4 text-center font-mono">0/3</td>
+<td class="py-3 px-4 font-mono text-slate-400">-</td>
+<td class="py-3 px-4 text-slate-400">กำลังส่ง...</td>
+<td class="py-3 px-4 text-right">
+<span class="text-slate-400">กำลังทำงาน</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Notice when no subscription found -->
+<div class="px-5 py-3 border-t border-slate-200 bg-slate-50 text-xs text-slate-500 flex items-center justify-between">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-slate-400">info</span>
+                หากมีแถวว่าง: "ยังไม่มี — route นี้อาจไม่มี subscription หรือกำลังส่ง"
+              </span>
+<span class="text-[11px] text-slate-400 font-mono">Queue Worker #12 Online</span>
+</div>
+</div>
+</div>
+<!-- ======================================================== -->
+<!-- ==================== MODE 2 VIEW ======================= -->
+<!-- ======================================================== -->
+<div class="hidden space-y-6" id="mode2Container">
+<!-- Main 2-Column Catalog & Checkout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- LEFT COL: Catalog at Josh (5 cols) -->
+<div class="lg:col-span-5 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+<div class="p-4 border-b border-slate-200">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">storefront</span>
+<div>
+<h3 class="text-sm font-bold text-slate-900">สินค้า (catalog ที่ josh เห็น)</h3>
+<p class="text-[11px] text-slate-500">แค็ตตาล็อก josh ที่ผ่านการแปลงข้อมูลพร้อมจำหน่าย</p>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[11px] bg-slate-100 text-slate-600 rounded font-medium">4 รายการ</span>
+</div>
+<!-- Search Input with Leading Icon -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-0" id="catalogSearch" placeholder="ค้นหาชื่อ / SKU" type="text"/>
+</div>
+</div>
+<!-- Product Item List -->
+<div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px]">
+<!-- Product 1 -->
+<div class="p-3.5 hover:bg-slate-50 transition flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<img alt="ข้าวหอมมะลิทุ่งกุลาร้องไห้" class="w-12 h-12 rounded-lg object-cover border border-slate-200" data-alt="Premium organic jasmine rice package from Thailand on clean neutral warehouse surface with sharp studio branding lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3IZdk-kZ2SJGLW_KB5n40m6zzacmuZkw33ibW-ge5hANAjUsK_oD4KDBP5T_vQj6JGVqo4e-6jo-wbLwyaEP3TdIKVGXrEyYl_tBulDj6eRYMe-4T7SXTDl2GYbK-5bePyl7gXMIsk6lrlXPdWLn9SUMZNR-egHnv6mPWx3Az6C7GVjEXYsGUh7V-njhkZ2Jyx5fJbWYqE6lMpvP8r5S4rTK8I3l-hswv0_lWGHAbBSRMV3XRqjrTu4vxnI1co5tv6f8XeGoLsyw"/>
+<div>
+<p class="text-xs font-bold text-slate-900">ข้าวหอมมะลิอินทรีย์ 5 กก.</p>
+<p class="text-[11px] text-slate-500 font-mono">SKU-THAI-RICE-5KG</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[11px] text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-medium">พร้อมขาย 420</span>
+<span class="text-xs font-semibold text-slate-900">฿245</span>
+</div>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white text-xs font-semibold border border-blue-200 transition shrink-0 cursor-pointer flex items-center gap-1" onclick="addToCart('SKU-THAI-RICE-5KG', 'ข้าวหอมมะลิอินทรีย์ 5 กก.', 245)">
+<span class="material-symbols-outlined text-[14px]">add</span>
+                    เพิ่ม
+                  </button>
+</div>
+<!-- Product 2 -->
+<div class="p-3.5 hover:bg-slate-50 transition flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<img alt="น้ำปลาแท้สูตรโบราณ" class="w-12 h-12 rounded-lg object-cover border border-slate-200" data-alt="Traditional artisan Thai fish sauce bottle with amber liquid reflection under clean commercial studio softbox lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGRYbfz6QxXpj4EOziNXHZkn8_31zakxKrl_mwpoES_xW3I2huDZo-olWCNI6lDUaVdkMjb6OloGpxgTgLsc4aUPXMl4KRi4WrH4OCL9eqwqcORHQBO2ikoWaPSr4ssKR9VrtZQX2OAI62r5dFglvlLW-_6KM9yssTWDxu3V-I9MqFaGhYImUtvjkz7n6e2dt7C7kbeXCMafLOKX66akDGZnQiJWXEExbbtnpQEKN3Q_VN09ZPAIDkk8-xy0A5hnj7bGxWl6qziDY"/>
+<div>
+<p class="text-xs font-bold text-slate-900">น้ำปลาแท้สูตรโบราณ 700ml</p>
+<p class="text-[11px] text-slate-500 font-mono">SKU-COND-SAUCE-700</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[11px] text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-medium">พร้อมขาย 185</span>
+<span class="text-xs font-semibold text-slate-900">฿68</span>
+</div>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white text-xs font-semibold border border-blue-200 transition shrink-0 cursor-pointer flex items-center gap-1" onclick="addToCart('SKU-COND-SAUCE-700', 'น้ำปลาแท้สูตรโบราณ 700ml', 68)">
+<span class="material-symbols-outlined text-[14px]">add</span>
+                    เพิ่ม
+                  </button>
+</div>
+<!-- Product 3 -->
+<div class="p-3.5 hover:bg-slate-50 transition flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<img alt="เมล็ดกาแฟดอยช้างคั่วเข้ม" class="w-12 h-12 rounded-lg object-cover border border-slate-200" data-alt="Fresh roasted dark Thai single origin coffee beans bag in minimalist matte pouch packaging on bright minimal counter." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzs1cD97wXoKm9bTZRtUexmFdq4WHa6LN2ZT99IuCN4Xk9R7TWUThzySuem92sNB7jS9VB3lbFrbpEkIACSWidzn_XZnL_vsPgX1oWmHvsyJJghGgVe0au_o9wE9t_NvyIcgelpuY-0cPSylRDd8XMsRiyL5ZU2xqGiswNMHZa-nPoXozUwTjNQZycTeYg6d9SZT5S0Lx-2sDDLMWF65C6S9wjhNGPNWC0oQekTgg0vaC-efGEOjb3YPzWHGWCQb7SIjxZln427ZU"/>
+<div>
+<p class="text-xs font-bold text-slate-900">เมล็ดกาแฟดอยช้าง Premium 250g</p>
+<p class="text-[11px] text-slate-500 font-mono">SKU-COF-DOI-250</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[11px] text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-medium">พร้อมขาย 94</span>
+<span class="text-xs font-semibold text-slate-900">฿320</span>
+</div>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white text-xs font-semibold border border-blue-200 transition shrink-0 cursor-pointer flex items-center gap-1" onclick="addToCart('SKU-COF-DOI-250', 'เมล็ดกาแฟดอยช้าง Premium 250g', 320)">
+<span class="material-symbols-outlined text-[14px]">add</span>
+                    เพิ่ม
+                  </button>
+</div>
+<!-- Product 4 -->
+<div class="p-3.5 hover:bg-slate-50 transition flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<img alt="มะพร้าวอบกรอบสูตรหวานน้อย" class="w-12 h-12 rounded-lg object-cover border border-slate-200" data-alt="Pack of crispy healthy Thai coconut chips in luxury foil container photographed in bright modern kitchen lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQrV5Bh6PmEbxNNrHTHy50b9C75Vq-ZrR6aHIq0M1UY4aIzAR-KYFMEi-kvDJzpE3zVzCLLHSRzEHkFgtMGl0kRGkj_penWzCO4szzzb3x4B-wRKcVXbn-ZdyIxH1iy0vnvHLvOGIdfnFX7avSZIaPtGP7EKxfikRqMdzorqgOU6mGzs6vND_sKTzrjr6WNdTvRGpEj6-uWDQXfVAdC_87m4Fif9u-i-HeiqGIGZllPEDM1EX5vvmHc05HCW7iG0otTS6mZDJv19g"/>
+<div>
+<p class="text-xs font-bold text-slate-900">มะพร้าวอบกรอบ 40g (แพ็ค 3)</p>
+<p class="text-[11px] text-slate-500 font-mono">SKU-SNK-COCO-3X</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[11px] text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded font-medium">พร้อมขาย 12 (ต่ำ)</span>
+<span class="text-xs font-semibold text-slate-900">฿115</span>
+</div>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white text-xs font-semibold border border-blue-200 transition shrink-0 cursor-pointer flex items-center gap-1" onclick="addToCart('SKU-SNK-COCO-3X', 'มะพร้าวอบกรอบ 40g (แพ็ค 3)', 115)">
+<span class="material-symbols-outlined text-[14px]">add</span>
+                    เพิ่ม
+                  </button>
+</div>
+</div>
+<!-- Footer with quick tip -->
+<div class="p-3 bg-slate-50 border-t border-slate-200 text-[11px] text-slate-500 rounded-b-xl flex justify-between items-center">
+<span>ราคาที่กำหนด รวมภาษีมูลค่าเพิ่ม 7% แล้ว</span>
+<span class="font-mono text-slate-600">Store: BKK-01</span>
+</div>
+</div>
+<!-- RIGHT COL: Order Placement Form (7 cols) -->
+<div class="lg:col-span-7 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+<div class="p-4 border-b border-slate-200 flex items-center justify-between">
+<div>
+<h3 class="text-sm font-bold text-slate-900">order ของ josh</h3>
+<p class="text-[11px] text-slate-500">จำลองตะกร้าสินค้า ข้อมูลลูกค้า และเงื่อนไขการส่งต่อ ERP</p>
+</div>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-purple-50 text-purple-700 border border-purple-200">Session #JOSH-ORD-771</span>
+</div>
+<div class="p-5 space-y-4 flex-1">
+<!-- Customer Details Form Fields -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อลูกค้า</label>
+<input class="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500" id="custName" type="text" value="คุณกานต์ดา ชัยเจริญ"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1">อีเมล</label>
+<input class="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500" id="custEmail" type="email" value="kanda.c@thaibizcorp.co.th"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1">เบอร์</label>
+<input class="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500" id="custPhone" type="text" value="081-998-3321"/>
+</div>
+</div>
+<!-- Cart Table -->
+<div class="border border-slate-200 rounded-lg overflow-hidden">
+<div class="bg-slate-50 px-3 py-2 border-b border-slate-200 text-xs font-semibold text-slate-600 flex justify-between">
+<span>สินค้าในตะกร้า</span>
+<span id="cartCountLabel">2 รายการ</span>
+</div>
+<div class="divide-y divide-slate-100 max-h-44 overflow-y-auto" id="cartItemsContainer">
+<!-- Default Cart Item 1 -->
+<div class="p-2.5 px-3 flex items-center justify-between text-xs hover:bg-slate-50">
+<div class="flex-1">
+<p class="font-semibold text-slate-800">ข้าวหอมมะลิอินทรีย์ 5 กก.</p>
+<p class="text-[11px] text-slate-500 font-mono">SKU: SKU-THAI-RICE-5KG</p>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-slate-500 text-xs font-mono">จำนวน: 2</span>
+<span class="font-bold text-slate-900 font-mono">฿490</span>
+<button class="text-rose-500 hover:text-rose-700 text-xs p-1" onclick="removeCartItem(this)" title="ลบ">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Default Cart Item 2 -->
+<div class="p-2.5 px-3 flex items-center justify-between text-xs hover:bg-slate-50">
+<div class="flex-1">
+<p class="font-semibold text-slate-800">เมล็ดกาแฟดอยช้าง Premium 250g</p>
+<p class="text-[11px] text-slate-500 font-mono">SKU: SKU-COF-DOI-250</p>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-slate-500 text-xs font-mono">จำนวน: 1</span>
+<span class="font-bold text-slate-900 font-mono">฿320</span>
+<button class="text-rose-500 hover:text-rose-700 text-xs p-1" onclick="removeCartItem(this)" title="ลบ">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty state / add hint -->
+<div class="hidden p-4 text-center text-xs text-slate-400" id="emptyCartHint">
+                    เพิ่มสินค้าจากรายการด้านซ้าย
+                  </div>
+<!-- Cart Total row -->
+<div class="bg-slate-50/70 p-2.5 px-3 border-t border-slate-200 flex justify-between items-center text-xs font-semibold text-slate-800">
+<span>ยอดรวมสุทธิ (Total)</span>
+<span class="text-sm font-bold text-blue-700 font-mono" id="cartTotalSum">฿810.00</span>
+</div>
+</div>
+<!-- Payment / Completion State Selectors -->
+<div class="bg-slate-50 rounded-lg p-3.5 border border-slate-200 space-y-2">
+<label class="block text-xs font-bold text-slate-700">หลังสั่งซื้อ josh แจ้งว่า:</label>
+<div class="space-y-1.5">
+<!-- Option 1 -->
+<label class="flex items-center gap-3 p-2 rounded-md bg-white border border-slate-200 hover:border-blue-400 cursor-pointer">
+<input checked="" class="text-blue-600 focus:ring-blue-500" name="paymentOption" type="radio" value="paid"/>
+<div class="text-xs">
+<span class="font-semibold text-emerald-800">จ่ายแล้ว → commerce ยืนยัน order → ส่งไป ERP</span>
+<p class="text-[11px] text-slate-500">ทำการตัดสต็อกจริง ส่ง Webhook สู่ SAP Sales Order ทันที</p>
+</div>
+</label>
+<!-- Option 2 -->
+<label class="flex items-center gap-3 p-2 rounded-md bg-white border border-slate-200 hover:border-blue-400 cursor-pointer">
+<input class="text-blue-600 focus:ring-blue-500" name="paymentOption" type="radio" value="failed"/>
+<div class="text-xs">
+<span class="font-semibold text-rose-800">จ่ายไม่สำเร็จ → ไม่ส่ง ERP</span>
+<p class="text-[11px] text-slate-500">ปลดปล่อยสต็อกที่จอง (Unreserve) และส่ง event แจ้งเตือนข้อผิดพลาด</p>
+</div>
+</label>
+<!-- Option 3 -->
+<label class="flex items-center gap-3 p-2 rounded-md bg-white border border-slate-200 hover:border-blue-400 cursor-pointer">
+<input class="text-blue-600 focus:ring-blue-500" name="paymentOption" type="radio" value="pending"/>
+<div class="text-xs">
+<span class="font-semibold text-amber-800">ยังไม่จ่าย (ค้างรอจ่าย)</span>
+<p class="text-[11px] text-slate-500">ตั้งสถานะ PENDING_PAYMENT จองสต็อก 60 นาที ยังไม่ push เข้า ERP</p>
+</div>
+</label>
+</div>
+</div>
+</div>
+<!-- Footer with primary trigger -->
+<div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center rounded-b-xl">
+<span class="text-xs text-slate-500">Destination: <span class="font-mono text-slate-700">/api/v2/orders/josh-inbound</span></span>
+<button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#365cf5] hover:bg-[#2947d1] text-white text-sm font-medium transition cursor-pointer" id="sendJoshBtn" onclick="sendJoshOrder()">
+<span class="material-symbols-outlined text-[18px] hidden animate-spin" id="joshBtnSpinner">progress_activity</span>
+<span id="joshBtnText">Send as josh →</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Execution Step Trace Log Table -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="p-4 border-b border-slate-200 flex items-center justify-between">
+<div>
+<h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600 text-[18px]">timeline</span>
+                  josh เรียก commerce — Execution Trace Log
+                </h3>
+<p class="text-xs text-slate-500">ลำดับการทำงานแบบ Real-time ของ transaction ล่าสุด</p>
+</div>
+<div class="flex items-center gap-3">
+<a class="text-xs text-blue-600 hover:underline font-semibold flex items-center gap-1" href="#save-report">
+<span class="material-symbols-outlined text-[14px]">save</span>
+                  เก็บรายงานนี้
+                </a>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs border-collapse">
+<thead>
+<tr class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+<th class="py-3 px-4">ขั้น</th>
+<th class="py-3 px-4">Call</th>
+<th class="py-3 px-4">ms</th>
+<th class="py-3 px-4">คำตอบ</th>
+<th class="py-3 px-4">สต็อกที่จอง</th>
+<th class="py-3 px-4">เหตุผล</th>
+<th class="py-3 px-4">event ของ order นี้</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100" id="traceLogBody">
+<tr class="hover:bg-slate-50 transition">
+<td class="py-3 px-4 font-mono font-bold text-blue-600">01</td>
+<td class="py-3 px-4 font-mono font-medium text-slate-800">POST /checkout/validate-cart</td>
+<td class="py-3 px-4 font-mono text-slate-600">32ms</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700">200 VALID</span>
+</td>
+<td class="py-3 px-4 text-slate-700">3 units (SKU-THAI-RICE-5KG, SKU-COF)</td>
+<td class="py-3 px-4 text-slate-500">สต็อกคงเหลือเพียงพอต่อคำสั่งซื้อ</td>
+<td class="py-3 px-4 font-mono text-[11px] text-slate-600">order.items.reserved</td>
+</tr>
+<tr class="hover:bg-slate-50 transition">
+<td class="py-3 px-4 font-mono font-bold text-blue-600">02</td>
+<td class="py-3 px-4 font-mono font-medium text-slate-800">POST /payment/promptpay/verify</td>
+<td class="py-3 px-4 font-mono text-slate-600">110ms</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700">PAID_OK</span>
+</td>
+<td class="py-3 px-4 text-slate-700">-</td>
+<td class="py-3 px-4 text-slate-500">SCB QR PromptPay Slip verified ฿810.00</td>
+<td class="py-3 px-4 font-mono text-[11px] text-slate-600">payment.transaction.captured</td>
+</tr>
+<tr class="hover:bg-slate-50 transition">
+<td class="py-3 px-4 font-mono font-bold text-blue-600">03</td>
+<td class="py-3 px-4 font-mono font-medium text-slate-800">POST /erp/sync/sales-order</td>
+<td class="py-3 px-4 font-mono text-slate-600">184ms</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700">201 CREATED</span>
+</td>
+<td class="py-3 px-4 text-emerald-700 font-medium">ตัดสต็อกจริงสำเร็จ</td>
+<td class="py-3 px-4 text-slate-500">SAP Sales Order Doc #SO-2025-9938 สร้างแล้ว</td>
+<td class="py-3 px-4 font-mono text-[11px] text-slate-600">erp.so.forwarded</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex justify-between items-center">
+<span>Overall trace duration: <span class="font-mono text-slate-700 font-semibold">326ms</span></span>
+<span class="text-emerald-700 font-medium">สถานะ: ประมวลผลเสร็จสิ้น ไม่มีข้อผิดพลาด</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- ==================== MANDATORY JSON TRANSLATION SCRIPT ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "ERP simulator": "ERP simulator",
+    "สถานะ": "สถานะ",
+    "เวลา": "เวลา",
+    "ค้นหา": "ค้นหา",
+    "เพิ่ม": "เพิ่ม",
+    "SKU": "SKU",
+    "สินค้า": "สินค้า",
+    "จำนวน": "จำนวน",
+    "ชื่อลูกค้า": "ชื่อลูกค้า",
+    "อีเมล": "อีเมล",
+    "Status": "Status",
+    "Error": "Error",
+    "Qty change": "Qty change",
+    "Price change": "Price change",
+    "MOQ change": "MOQ change",
+    "Product upsert": "Product upsert",
+    "Product bulk upsert": "Product bulk upsert",
+    "Product image": "Product image",
+    "Customer upsert": "Customer upsert",
+    "Company upsert": "Company upsert",
+    "Order status": "Order status",
+    "Invoice status": "Invoice status",
+    "Quotation push": "Quotation push",
+    "Quotation status": "Quotation status",
+    "Supplier order period": "Supplier order period",
+    "payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง": "payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง",
+    "ยังไม่ได้ตั้ง ERP_WEBHOOK_KEY — dev รับทุก request; production จะตอบ 401": "ยังไม่ได้ตั้ง ERP_WEBHOOK_KEY — dev รับทุก request; production จะตอบ 401",
+    "รีเซ็ตเป็น template": "รีเซ็ตเป็น template",
+    "กำลังยิง…": "กำลังยิง…",
+    "Send as ERP →": "Send as ERP →",
+    "Response": "Response",
+    "ส่งต่อไป platform (": "ส่งต่อไป platform (",
+    "ยังไม่มี — route นี้อาจไม่มี subscription หรือกำลังส่ง": "ยังไม่มี — route นี้อาจไม่มี subscription หรือกำลังส่ง",
+    "Event": "Event",
+    "Target": "Target",
+    "Code": "Code",
+    "Attempts": "Attempts",
+    "ERP → commerce → josh": "ERP → commerce → josh",
+    "ERP ส่งสต็อก ราคา สินค้า ลูกค้า สถานะ order/invoice เข้ามา · commerce ส่งต่อให้ josh": "ERP ส่งสต็อก ราคา สินค้า ลูกค้า สถานะ order/invoice เข้ามา · commerce ส่งต่อให้ josh",
+    "josh → commerce → ERP": "josh → commerce → ERP",
+    "josh สั่งซื้อผ่าน commerce · จ่ายเงินแล้ว commerce ส่ง order ไป ERP": "josh สั่งซื้อผ่าน commerce · จ่ายเงินแล้ว commerce ส่ง order ไป ERP",
+    "สินค้า (catalog ที่ josh เห็น)": "สินค้า (catalog ที่ josh เห็น)",
+    "ค้นหาชื่อ / SKU": "ค้นหาชื่อ / SKU",
+    "พร้อมขาย": "พร้อมขาย",
+    "order ของ josh": "order ของ josh",
+    "เบอร์": "เบอร์",
+    "สินค้าในตะกร้า": "สินค้าในตะกร้า",
+    "ราคา": "ราคา",
+    "ลบ": "ลบ",
+    "เพิ่มสินค้าจากรายการด้านซ้าย": "เพิ่มสินค้าจากรายการด้านซ้าย",
+    "หลังสั่งซื้อ josh แจ้งว่า": "หลังสั่งซื้อ josh แจ้งว่า",
+    "จ่ายแล้ว → commerce ยืนยัน order → ส่งไป ERP": "จ่ายแล้ว → commerce ยืนยัน order → ส่งไป ERP",
+    "จ่ายไม่สำเร็จ → ไม่ส่ง ERP": "จ่ายไม่สำเร็จ → ไม่ส่ง ERP",
+    "ยังไม่จ่าย (ค้างรอจ่าย)": "ยังไม่จ่าย (ค้างรอจ่าย)",
+    "กำลังส่ง…": "กำลังส่ง…",
+    "Send as josh →": "Send as josh →",
+    "josh เรียก commerce": "josh เรียก commerce",
+    "ขั้น": "ขั้น",
+    "Call": "Call",
+    "ms": "ms",
+    "คำตอบ": "คำตอบ",
+    "สต็อกที่จอง": "สต็อกที่จอง",
+    "เหตุผล": "เหตุผล",
+    "event ของ order นี้": "event ของ order นี้",
+    "เก็บรายงานนี้": "เก็บรายงานนี้",
+    "ค้นหาคูปอง (รหัสหรือชื่อ)": "ค้นหาคูปอง (รหัสหรือชื่อ)",
+    "จริงจากระบบ": "จริงจากระบบ",
+    "ชื่อร้าน": "ชื่อร้าน",
+    "ตรวจ SKU": "ตรวจ SKU",
+    "แทนที่แล้ว": "แทนที่แล้ว",
+    "ปิดการเก็บข้อมูลเบื้องหลังทุกเว็บ?": "ปิดการเก็บข้อมูลเบื้องหลังทุกเว็บ?",
+    "เพิ่มเว็บให้ SKU นี้": "เพิ่มเว็บให้ SKU นี้",
+    "ไม่มีรูปเก่าที่ต้องลบ": "ไม่มีรูปเก่าที่ต้องลบ",
+    "ยังไม่มีหน้าโปร — ลูกค้ายังเปิดดูสินค้าของงานนี้ทั้งชุดในหน้าเดียวไม่ได้": "ยังไม่มีหน้าโปร — ลูกค้ายังเปิดดูสินค้าของงานนี้ทั้งชุดในหน้าเดียวไม่ได้",
+    "ราคาที่กำหนด": "ราคาที่กำหนด",
+    "ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน": "ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน",
+    "วันที่สมัครอยู่ในช่วง (Registered Between)": "วันที่สมัครอยู่ในช่วง (Registered Between)",
+    "ส่วนลด": "ส่วนลด",
+    "แค็ตตาล็อก josh": "แค็ตตาล็อก josh"
+  }
+  </script>
+<!-- ==================== INTERACTIVITY JAVASCRIPT ==================== -->
+<script>
+    // Templates Library
+    const templates = {
+      qty_change: {
+        "event": "inventory.quantity.updated",
+        "source": "ERP_SAP_ECC6",
+        "timestamp": new Date().toISOString(),
+        "store_id": "STORE_TH_CENTRAL_01",
+        "data": {
+          "sku": "SKU-THAI-RICE-5KG",
+          "warehouse_code": "WH-BANGNA-B03",
+          "available_quantity": 420,
+          "reserved_quantity": 35,
+          "safety_stock": 50,
+          "unit_of_measure": "BAG",
+          "batch_no": "LOT-2025-05A"
+        }
+      },
+      price_change: {
+        "event": "product.price.changed",
+        "source": "ERP_MICROSOFT_D365",
+        "timestamp": new Date().toISOString(),
+        "data": {
+          "sku": "SKU-COND-SAUCE-700",
+          "currency": "THB",
+          "regular_price": 75.00,
+          "special_price": 68.00,
+          "vat_inclusive": true,
+          "effective_date": "2025-05-18T00:00:00Z"
+        }
+      },
+      moq_change: {
+        "event": "b2b.moq.updated",
+        "source": "ERP_CUSTOM_GATEWAY",
+        "timestamp": new Date().toISOString(),
+        "data": {
+          "sku": "SKU-COF-DOI-250",
+          "minimum_order_qty": 6,
+          "order_step_increment": 3,
+          "customer_tier": "WHOLESALE_GOLD"
+        }
+      },
+      product_upsert: {
+        "event": "catalog.product.upsert",
+        "source": "ERP_ORACLE_NETSUITE",
+        "timestamp": new Date().toISOString(),
+        "data": {
+          "sku": "SKU-NEW-TEA-HERBAL",
+          "name_th": "ชาสมุนไพรตะไคร้ใบเตย ออร์แกนิค",
+          "name_en": "Organic Lemongrass Pandan Tea",
+          "barcode": "8859123456789",
+          "price": 149.00,
+          "category_id": "CAT-BEV-TEA",
+          "active": true
+        }
+      },
+      product_bulk: {
+        "event": "catalog.product.bulk_upsert",
+        "source": "ERP_SAP_ECC6",
+        "timestamp": new Date().toISOString(),
+        "items": [
+          { "sku": "SKU-SNK-COCO-3X", "qty": 12, "price": 115.00 },
+          { "sku": "SKU-THAI-RICE-5KG", "qty": 420, "price": 245.00 }
+        ]
+      },
+      product_image: {
+        "event": "catalog.asset.synced",
+        "sku": "SKU-THAI-RICE-5KG",
+        "media_url": "https://cdn.thaiops.cloud/products/rice-5kg-front.jpg",
+        "is_primary": true
+      },
+      customer_upsert: {
+        "event": "crm.customer.sync",
+        "customer_id": "CUST_TH_9921",
+        "tax_id": "0105558012345",
+        "branch_code": "00000",
+        "company_name": "บริษัท สยามพาณิชย์เทค จำกัด",
+        "credit_term_days": 30
+      },
+      company_upsert: {
+        "event": "crm.company.profile",
+        "entity_id": "COMP-B2B-440",
+        "authorized_buyer": "คุณกานต์ดา ชัยเจริญ",
+        "billing_address": "88 อาคารสยามสแควร์ แขวงปทุมวัน เขตปทุมวัน กทม. 10330"
+      },
+      order_status: {
+        "event": "fulfillment.order.status_changed",
+        "order_id": "ORD-2025-0518-912",
+        "erp_order_ref": "SAP-SO-992134",
+        "status": "DISPATCHED",
+        "carrier": "Kerry Express",
+        "tracking_no": "KEX994821872TH"
+      },
+      invoice_status: {
+        "event": "finance.invoice.posted",
+        "invoice_no": "INV-2025-00491",
+        "order_id": "ORD-2025-0518-912",
+        "amount_thb": 810.00,
+        "tax_amount": 53.00,
+        "status": "PAID"
+      },
+      quotation_push: {
+        "event": "sales.quotation.created",
+        "quotation_id": "QT-TH-9940",
+        "client_code": "CUST_TH_9921",
+        "valid_until": "2025-06-18",
+        "total_net": 15400.00
+      },
+      quotation_status: {
+        "event": "sales.quotation.state",
+        "quotation_id": "QT-TH-9940",
+        "state": "ACCEPTED_BY_CUSTOMER"
+      },
+      supplier_period: {
+        "event": "procurement.order_window.updated",
+        "supplier_code": "SUPP-RICE-NORTHEAST",
+        "cutoff_time": "16:00:00+07:00",
+        "lead_time_days": 2,
+        "is_active_season": true
+      }
+    };
+
+    let currentTemplateKey = 'qty_change';
+
+    // Switch between Mode 1 and Mode 2
+    function switchMode(modeNum) {
+      const btn1 = document.getElementById('tabMode1Btn');
+      const btn2 = document.getElementById('tabMode2Btn');
+      const container1 = document.getElementById('mode1Container');
+      const container2 = document.getElementById('mode2Container');
+
+      if (modeNum === 1) {
+        btn1.classList.remove('border-transparent', 'opacity-75');
+        btn1.classList.add('border-[#365cf5]', 'bg-blue-50/40');
+        btn2.classList.remove('border-[#365cf5]', 'bg-blue-50/40');
+        btn2.classList.add('border-transparent', 'opacity-75');
+        container1.classList.remove('hidden');
+        container2.classList.add('hidden');
+      } else {
+        btn2.classList.remove('border-transparent', 'opacity-75');
+        btn2.classList.add('border-[#365cf5]', 'bg-blue-50/40');
+        btn1.classList.remove('border-[#365cf5]', 'bg-blue-50/40');
+        btn1.classList.add('border-transparent', 'opacity-75');
+        container2.classList.remove('hidden');
+        container1.classList.add('hidden');
+      }
+    }
+
+    // Load Template into Payload Editor
+    function loadTemplate(key) {
+      currentTemplateKey = key;
+      const editor = document.getElementById('payloadEditor');
+      editor.value = JSON.stringify(templates[key] || templates.qty_change, null, 2);
+      validateJsonSyntax();
+
+      // Update Pill visual states
+      const pills = document.querySelectorAll('.template-pill');
+      pills.forEach(pill => {
+        pill.classList.remove('bg-blue-50', 'text-blue-700', 'border-blue-200');
+        pill.classList.add('bg-slate-100', 'text-slate-700');
+      });
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.remove('bg-slate-100', 'text-slate-700');
+        event.currentTarget.classList.add('bg-blue-50', 'text-blue-700', 'border', 'border-blue-200');
+      }
+    }
+
+    // Reset current template
+    function resetTemplate() {
+      loadTemplate(currentTemplateKey);
+    }
+
+    // Validate JSON in Editor
+    function validateJsonSyntax() {
+      const editor = document.getElementById('payloadEditor');
+      const errorBanner = document.getElementById('jsonErrorBanner');
+      try {
+        JSON.parse(editor.value);
+        errorBanner.classList.add('hidden');
+        return true;
+      } catch (e) {
+        errorBanner.classList.remove('hidden');
+        return false;
+      }
+    }
+
+    document.getElementById('payloadEditor').addEventListener('input', validateJsonSyntax);
+
+    // Send ERP Payload Simulator Action
+    function sendErpPayload() {
+      if (!validateJsonSyntax()) {
+        alert("payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง");
+        return;
+      }
+
+      const btn = document.getElementById('sendErpBtn');
+      const text = document.getElementById('erpBtnText');
+      const spinner = document.getElementById('erpBtnSpinner');
+      const responseArea = document.getElementById('responseJsonArea');
+
+      // State: Loading
+      text.innerText = "กำลังยิง…";
+      spinner.classList.remove('hidden');
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+      setTimeout(() => {
+        text.innerText = "Send as ERP →";
+        spinner.classList.add('hidden');
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+        const parsed = JSON.parse(document.getElementById('payloadEditor').value);
+        const resp = {
+          success: true,
+          transaction_id: "tx_erp_" + Math.random().toString(36).substring(2, 10),
+          ingested_at: new Date().toISOString(),
+          event: parsed.event || "unknown.event",
+          affected_records: 1,
+          dispatch_queue: {
+            queue_id: "q_josh_sync_fast",
+            job_id: "job_" + Math.floor(100000 + Math.random() * 900000),
+            state: "ENQUEUED"
+          }
+        };
+        responseArea.innerText = JSON.stringify(resp, null, 2);
+      }, 700);
+    }
+
+    // Mode 2 Cart Functions
+    function addToCart(sku, name, price) {
+      const container = document.getElementById('cartItemsContainer');
+      const hint = document.getElementById('emptyCartHint');
+      hint.classList.add('hidden');
+
+      const newItem = document.createElement('div');
+      newItem.className = "p-2.5 px-3 flex items-center justify-between text-xs hover:bg-slate-50 transition";
+      newItem.innerHTML = `
+        <div class="flex-1">
+          <p class="font-semibold text-slate-800">${name}</p>
+          <p class="text-[11px] text-slate-500 font-mono">SKU: ${sku}</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-slate-500 text-xs font-mono">จำนวน: 1</span>
+          <span class="font-bold text-slate-900 font-mono">฿${price}</span>
+          <button onclick="removeCartItem(this)" class="text-rose-500 hover:text-rose-700 text-xs p-1" title="ลบ">
+            <span class="material-symbols-outlined text-[16px]">delete</span>
+          </button>
+        </div>
+      `;
+      container.appendChild(newItem);
+      recalcCart();
+    }
+
+    function removeCartItem(btn) {
+      const itemRow = btn.closest('.flex.items-center.justify-between');
+      itemRow.remove();
+      recalcCart();
+    }
+
+    function recalcCart() {
+      const container = document.getElementById('cartItemsContainer');
+      const rows = container.querySelectorAll('.font-semibold.text-slate-800');
+      const hint = document.getElementById('emptyCartHint');
+      const countLabel = document.getElementById('cartCountLabel');
+
+      countLabel.innerText = `${rows.length} รายการ`;
+      if (rows.length === 0) {
+        hint.classList.remove('hidden');
+      } else {
+        hint.classList.add('hidden');
+      }
+    }
+
+    // Send Josh Order Simulator Action
+    function sendJoshOrder() {
+      const btn = document.getElementById('sendJoshBtn');
+      const text = document.getElementById('joshBtnText');
+      const spinner = document.getElementById('joshBtnSpinner');
+      const option = document.querySelector('input[name="paymentOption"]:checked').value;
+      const traceBody = document.getElementById('traceLogBody');
+
+      text.innerText = "กำลังส่ง…";
+      spinner.classList.remove('hidden');
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+      setTimeout(() => {
+        text.innerText = "Send as josh →";
+        spinner.classList.add('hidden');
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+        const now = new Date();
+        const timeStr = now.toTimeString().split(' ')[0];
+
+        if (option === 'paid') {
+          traceBody.innerHTML = `
+            <tr class="hover:bg-slate-50 transition bg-emerald-50/20">
+              <td class="py-3 px-4 font-mono font-bold text-blue-600">01</td>
+              <td class="py-3 px-4 font-mono font-medium text-slate-800">POST /checkout/validate-cart</td>
+              <td class="py-3 px-4 font-mono text-slate-600">28ms</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700">200 VALID</span></td>
+              <td class="py-3 px-4 text-slate-700">Reserved OK</td>
+              <td class="py-3 px-4 text-slate-500">สต็อกคงเหลือเพียงพอต่อคำสั่งซื้อ</td>
+              <td class="py-3 px-4 font-mono text-[11px] text-slate-600">order.items.reserved</td>
+            </tr>
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3 px-4 font-mono font-bold text-blue-600">02</td>
+              <td class="py-3 px-4 font-mono font-medium text-slate-800">POST /payment/promptpay/verify</td>
+              <td class="py-3 px-4 font-mono text-slate-600">95ms</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700">PAID_OK</span></td>
+              <td class="py-3 px-4 text-slate-700">-</td>
+              <td class="py-3 px-4 text-slate-500">จ่ายแล้ว → commerce ยืนยัน order → ส่งไป ERP</td>
+              <td class="py-3 px-4 font-mono text-[11px] text-slate-600">payment.transaction.captured</td>
+            </tr>
+            <tr class="hover:bg-slate-50 transition bg-blue-50/20">
+              <td class="py-3 px-4 font-mono font-bold text-blue-600">03</td>
+              <td class="py-3 px-4 font-mono font-medium text-slate-800">POST /erp/sync/sales-order</td>
+              <td class="py-3 px-4 font-mono text-slate-600">142ms</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700">201 CREATED</span></td>
+              <td class="py-3 px-4 text-emerald-700 font-medium">ตัดสต็อกจริงสำเร็จ</td>
+              <td class="py-3 px-4 text-slate-500">SAP Sales Order Created Doc #SO-2025-${Math.floor(1000+Math.random()*9000)}</td>
+              <td class="py-3 px-4 font-mono text-[11px] text-slate-600">erp.so.forwarded</td>
+            </tr>
+          `;
+        } else if (option === 'failed') {
+          traceBody.innerHTML = `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3 px-4 font-mono font-bold text-blue-600">01</td>
+              <td class="py-3 px-4 font-mono font-medium text-slate-800">POST /checkout/validate-cart</td>
+              <td class="py-3 px-4 font-mono text-slate-600">30ms</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-semibold bg-emerald-50 text-emerald-700">200 VALID</span></td>
+              <td class="py-3 px-4 text-slate-700">Reserved temporarily</td>
+              <td class="py-3 px-4 text-slate-500">จองชั่วคราวเพื่อรอการชำระเงิน</td>
+              <td class="py-3 px-4 font-mono text-[11px] text-slate-600">order.items.reserved</td>
+            </tr>
+            <tr class="hover:bg-slate-50 transition bg-rose-50/30">
+              <td class="py-3 px-4 font-mono font-bold text-rose-600">02</td>
+              <td class="py-3 px-4 font-mono font-medium text-rose-900">POST /payment/promptpay/verify</td>
+              <td class="py-3 px-4 font-mono text-rose-700">45ms</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-semibold bg-rose-100 text-rose-800">PAYMENT_EXPIRED</span></td>
+              <td class="py-3 px-4 text-rose-700 font-medium">ปลดสต็อก (Rollback)</td>
+              <td class="py-3 px-4 text-rose-700">จ่ายไม่สำเร็จ → ไม่ส่ง ERP</td>
+              <td class="py-3 px-4 font-mono text-[11px] text-rose-800">order.payment.failed</td>
+            </tr>
+          `;
+        } else {
+          traceBody.innerHTML = `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3 px-4 font-mono font-bold text-blue-600">01</td>
+              <td class="py-3 px-4 font-mono font-medium text-slate-800">POST /checkout/place-order</td>
+              <td class="py-3 px-4 font-mono text-slate-600">35ms</td>
+              <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-semibold bg-amber-50 text-amber-800">PENDING</span></td>
+              <td class="py-3 px-4 text-amber-700 font-medium">จองค้างไว้ 60 นาที</td>
+              <td class="py-3 px-4 text-slate-500">ยังไม่จ่าย (ค้างรอจ่าย) — รอลูกค้าโอนเงิน</td>
+              <td class="py-3 px-4 font-mono text-[11px] text-slate-600">order.state.pending_payment</td>
+            </tr>
+          `;
+        }
+      }, 600);
+    }
+
+    // Catalog search filter
+    document.getElementById('catalogSearch').addEventListener('input', function(e) {
+      const term = e.target.value.toLowerCase();
+      const items = document.querySelectorAll('.divide-y.divide-slate-100 > div');
+      items.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        item.style.display = text.includes(term) ? 'flex' : 'none';
+      });
+    });
+
+    // Language switch toast
+    document.getElementById('langToggleBtn').addEventListener('click', function() {
+      const isThai = this.innerText.includes('ไทย');
+      this.innerHTML = `
+        <span class="material-symbols-outlined text-[16px] text-slate-500">translate</span>
+        <span>${isThai ? 'EN / ไทย' : 'ไทย / EN'}</span>
+      `;
+    });
+  </script>
+</body></html>

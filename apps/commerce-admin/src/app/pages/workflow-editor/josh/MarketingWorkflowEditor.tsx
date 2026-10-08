@@ -1,4 +1,8 @@
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
+// ui-metadata-migration: static labels and UI notices only
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { LoadError } from '../../../../josh-admin/app/components/LoadError';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   activateMarketingWorkflow,
@@ -46,12 +50,14 @@ import {
 import { TriggerRuleBuilder } from './TriggerRuleBuilder';
 import { defaultTriggerConfigFor } from './trigger-rule.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type CouponOption = { id: string; coupon_code: string; title: string };
 
 const STATUS_LABEL: Record<MarketingWorkflow['status'], string> = {
-  draft: 'ร่าง (Draft)',
-  active: 'ใช้งานอยู่ (Active)',
-  paused: 'หยุดชั่วคราว (Paused)',
+  get draft(){return __uiText("ร่าง (Draft)");},
+  get active(){return __uiText("ใช้งานอยู่ (Active)");},
+  get paused(){return __uiText("หยุดชั่วคราว (Paused)");},
 };
 
 const STATUS_STYLE: Record<MarketingWorkflow['status'], string> = {
@@ -80,11 +86,12 @@ function SettingChip({
   htmlFor?: string;
   children: React.ReactNode;
 }) {
+  __useUiLocale();
   return (
     <div className={CHIP_CLASS} title={title}>
       <label htmlFor={htmlFor} className="font-medium text-gray-400">{label}</label>
       {children}
-      {suffix ? <span>{suffix}</span> : null}
+      {suffix ? <span>{__uiText(suffix)}</span> : null}
     </div>
   );
 }
@@ -100,6 +107,7 @@ function HeaderButton({
   disabled?: boolean;
   variant?: 'primary' | 'secondary' | 'ghost';
 }) {
+  __useUiLocale();
   const styles =
     variant === 'primary'
       ? 'bg-gray-900 text-white hover:bg-gray-800'
@@ -124,13 +132,13 @@ const INPUT_CLASS =
 const FIELD_LABEL = 'mb-1 block text-xs font-medium text-gray-500';
 
 const SCHEDULE_DOW_OPTIONS: Array<{ value: number; label: string }> = [
-  { value: 0, label: 'อา' },
-  { value: 1, label: 'จ' },
-  { value: 2, label: 'อ' },
-  { value: 3, label: 'พ' },
-  { value: 4, label: 'พฤ' },
-  { value: 5, label: 'ศ' },
-  { value: 6, label: 'ส' },
+  { value: 0, get label(){return __uiText("อา");} },
+  { value: 1, get label(){return __uiText("จ");} },
+  { value: 2, get label(){return __uiText("อ");} },
+  { value: 3, get label(){return __uiText("พ");} },
+  { value: 4, get label(){return __uiText("พฤ");} },
+  { value: 5, get label(){return __uiText("ศ");} },
+  { value: 6, get label(){return __uiText("ส");} },
 ];
 
 function defaultSchedule(): MarketingWorkflowSchedule {
@@ -160,11 +168,12 @@ function ScheduleEditor({
   schedule: MarketingWorkflowSchedule;
   onChange: (schedule: MarketingWorkflowSchedule) => void;
 }) {
+  __useUiLocale();
   if (!schedule) {
     return (
       <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-        <span>ตลอดเวลา (ไม่จำกัดช่วงเวลา) — ทุก trigger จะทำงานได้ตลอด 24 ชม.</span>
-        <HeaderButton onClick={() => onChange(defaultSchedule())}>ตั้งช่วงเวลาเฉพาะ</HeaderButton>
+        <span>{__uiText("ตลอดเวลา (ไม่จำกัดช่วงเวลา) — ทุก trigger จะทำงานได้ตลอด 24 ชม.")}</span>
+        <HeaderButton onClick={() => onChange(defaultSchedule())}>{__uiText("ตั้งช่วงเวลาเฉพาะ")}</HeaderButton>
       </div>
     );
   }
@@ -184,18 +193,18 @@ function ScheduleEditor({
     <div className="space-y-2.5 text-xs">
       <div className="flex flex-wrap items-end gap-3">
         <div className="flex items-center gap-1.5">
-          <label htmlFor={timezoneSelectId} className="font-medium text-gray-500">เขตเวลา (Timezone)</label>
+          <label htmlFor={timezoneSelectId} className="font-medium text-gray-500">{__uiText("เขตเวลา (Timezone)")}</label>
           <Select
             id={timezoneSelectId}
             value={schedule.timezone}
             onChange={(event) => onChange({ ...schedule, timezone: event.target.value })}
           >
-            <option value="Asia/Bangkok">Asia/Bangkok</option>
-            <option value="UTC">UTC</option>
+            <option value="Asia/Bangkok">{__uiText("Asia/Bangkok")}</option>
+            <option value="UTC">{__uiText("UTC")}</option>
           </Select>
         </div>
         <div className="flex items-center gap-1.5">
-          <label htmlFor={startTimeInputId} className="font-medium text-gray-500">เวลา</label>
+          <label htmlFor={startTimeInputId} className="font-medium text-gray-500">{__uiText("เวลา")}</label>
           <input
             id={startTimeInputId}
             type="time"
@@ -204,7 +213,7 @@ function ScheduleEditor({
             onChange={(event) => onChange({ ...schedule, startTime: event.target.value })}
           />
           <span className="text-gray-400">–</span>
-          <label htmlFor={endTimeInputId} className="font-medium text-gray-500">ถึง</label>
+          <label htmlFor={endTimeInputId} className="font-medium text-gray-500">{__uiText("ถึง")}</label>
           <input
             id={endTimeInputId}
             type="time"
@@ -213,11 +222,11 @@ function ScheduleEditor({
             onChange={(event) => onChange({ ...schedule, endTime: event.target.value })}
           />
         </div>
-        <HeaderButton onClick={() => onChange(null)}>ตลอดเวลา</HeaderButton>
+        <HeaderButton onClick={() => onChange(null)}>{__uiText("ตลอดเวลา")}</HeaderButton>
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="font-medium text-gray-500">วัน</span>
+        <span className="font-medium text-gray-500">{__uiText("วัน")}</span>
         {SCHEDULE_DOW_OPTIONS.map((opt) => (
           <label
             key={opt.value}
@@ -236,12 +245,12 @@ function ScheduleEditor({
             {opt.label}
           </label>
         ))}
-        {days.length === 0 && <span className="text-gray-400">(ว่าง = ทุกวัน)</span>}
+        {days.length === 0 && <span className="text-gray-400">{__uiText("(ว่าง = ทุกวัน)")}</span>}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-1.5">
-          <label htmlFor={activeFromInputId} className="font-medium text-gray-500">เริ่มแคมเปญ</label>
+          <label htmlFor={activeFromInputId} className="font-medium text-gray-500">{__uiText("เริ่มแคมเปญ")}</label>
           <input
             id={activeFromInputId}
             type="date"
@@ -253,7 +262,7 @@ function ScheduleEditor({
           />
         </div>
         <div className="flex items-center gap-1.5">
-          <label htmlFor={activeToInputId} className="font-medium text-gray-500">สิ้นสุดแคมเปญ</label>
+          <label htmlFor={activeToInputId} className="font-medium text-gray-500">{__uiText("สิ้นสุดแคมเปญ")}</label>
           <input
             id={activeToInputId}
             type="date"
@@ -270,7 +279,7 @@ function ScheduleEditor({
 }
 
 function formatLift(lift: number | null): string {
-  if (lift === null || Number.isNaN(lift)) return 'ยังไม่มีข้อมูลเพียงพอ';
+  if (lift === null || Number.isNaN(lift)) return __uiText("ยังไม่มีข้อมูลเพียงพอ");
   const sign = lift > 0 ? '+' : '';
   return `${sign}${lift.toFixed(1)}%`;
 }
@@ -286,19 +295,20 @@ function StatTile({
   converted: number;
   rate: number;
 }) {
+  __useUiLocale();
   return (
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
       <p className="text-[11px] font-semibold text-gray-500">{label}</p>
       <p className="mt-1 text-xl font-semibold text-gray-800">{rate.toFixed(1)}%</p>
       <p className="mt-0.5 text-[11px] text-gray-400">
-        {converted.toLocaleString()} / {enrolled.toLocaleString()} conversion
-      </p>
+        {converted.toLocaleString()} / {enrolled.toLocaleString()} {__uiText(" conversion")}</p>
     </div>
   );
 }
 
 /** Sent-vs-holdout conversion comparison for the workflow's control-arm A/B test. */
 function ConversionStatsPanel({ workflowId }: { workflowId: string }) {
+  __useUiLocale();
   const [stats, setStats] = useState<MarketingConversionStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -308,7 +318,7 @@ function ConversionStatsPanel({ workflowId }: { workflowId: string }) {
     setError(null);
     getMarketingWorkflowConversionStats(workflowId)
       .then(setStats)
-      .catch((err: any) => setError(err?.response?.data?.message || 'โหลดสถิติไม่สำเร็จ'))
+      .catch((err: any) => setError(err?.response?.data?.message || __uiMessage("โหลดสถิติไม่สำเร็จ")))
       .finally(() => setLoading(false));
   }, [workflowId]);
 
@@ -320,33 +330,31 @@ function ConversionStatsPanel({ workflowId }: { workflowId: string }) {
     <div className="rounded-lg border border-gray-200 bg-white p-3 space-y-2">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-semibold text-gray-700">
-          Conversion Stats — Sent vs Holdout
-        </p>
+          {__uiText("Conversion Stats — Sent vs Holdout")}</p>
         <HeaderButton onClick={load} disabled={loading}>
-          {loading ? 'กำลังโหลด...' : 'รีเฟรช'}
+          {loading ? __uiText("กำลังโหลด...") : __uiText("รีเฟรช")}
         </HeaderButton>
       </div>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
       {stats && (
         <>
           <div className="grid grid-cols-2 gap-2">
             <StatTile
-              label="Sent (ได้รับข้อความ)"
+              label={__uiText("Sent (ได้รับข้อความ)")}
               enrolled={stats.sent.enrolled}
               converted={stats.sent.converted}
               rate={stats.sent.rate}
             />
             <StatTile
-              label={`Holdout (${stats.holdoutPercent}% ควบคุม)`}
+              label={__uiText("Holdout ({0}% ควบคุม)", {"0": stats.holdoutPercent})}
               enrolled={stats.holdout.enrolled}
               converted={stats.holdout.converted}
               rate={stats.holdout.rate}
             />
           </div>
           <p className="text-[11px] text-gray-500">
-            Lift: <span className="font-semibold text-gray-700">{formatLift(stats.lift)}</span>{' '}
-            · หน้าต่างวัดผล {stats.conversionWindowDays} วันหลัง enroll
-          </p>
+            {__uiText("Lift: ")}<span className="font-semibold text-gray-700">{formatLift(stats.lift)}</span>{' '}
+            {__uiText("· หน้าต่างวัดผล ")}{stats.conversionWindowDays} {__uiText(" วันหลัง enroll")}</p>
         </>
       )}
     </div>
@@ -358,13 +366,14 @@ function formatAnalyticsRate(rate: number | null): string {
 }
 
 function HourBars({ label, values }: { label: string; values: number[] }) {
+  __useUiLocale();
   const max = Math.max(1, ...values);
 
   return (
     <div>
       <div className="mb-1 flex items-center justify-between">
         <p className="text-xs font-semibold text-gray-700">{label}</p>
-        <span className="text-[10px] text-gray-400">เวลาไทย (Bangkok)</span>
+        <span className="text-[10px] text-gray-400">{__uiText("เวลาไทย (Bangkok)")}</span>
       </div>
       <div className="flex h-16 items-end gap-0.5" aria-label={label}>
         {values.map((value, hour) => (
@@ -391,6 +400,7 @@ function HourBars({ label, values }: { label: string; values: number[] }) {
 }
 
 function AnalyticsPanel({ workflowId }: { workflowId: string }) {
+  __useUiLocale();
   const [days, setDays] = useState(30);
   const [analytics, setAnalytics] = useState<MarketingWorkflowAnalytics | null>(null);
   const [loading, setLoading] = useState(false);
@@ -408,7 +418,7 @@ function AnalyticsPanel({ workflowId }: { workflowId: string }) {
       to: to.toISOString(),
     })
       .then(setAnalytics)
-      .catch((err: any) => setError(err?.response?.data?.message || 'โหลด Analytics ไม่สำเร็จ'))
+      .catch((err: any) => setError(err?.response?.data?.message || __uiMessage("โหลด Analytics ไม่สำเร็จ")))
       .finally(() => setLoading(false));
   }, [days, workflowId]);
 
@@ -418,12 +428,12 @@ function AnalyticsPanel({ workflowId }: { workflowId: string }) {
 
   const funnelItems = analytics
     ? [
-        { label: 'Enroll', value: analytics.funnel.enrolled },
-        { label: 'Notify sent', value: analytics.funnel.notifySent },
-        { label: 'Offer shown', value: analytics.funnel.offerShown },
-        { label: 'Coupon granted', value: analytics.funnel.couponGranted },
-        { label: 'Coupon redeemed', value: analytics.funnel.couponRedeemed },
-        { label: 'Order converted', value: analytics.funnel.orderConverted },
+        { get label() { return __uiText("Enroll"); }, value: analytics.funnel.enrolled },
+        { get label() { return __uiText("Notify sent"); }, value: analytics.funnel.notifySent },
+        { get label() { return __uiText("Offer shown"); }, value: analytics.funnel.offerShown },
+        { get label() { return __uiText("Coupon granted"); }, value: analytics.funnel.couponGranted },
+        { get label() { return __uiText("Coupon redeemed"); }, value: analytics.funnel.couponRedeemed },
+        { get label() { return __uiText("Order converted"); }, value: analytics.funnel.orderConverted },
       ]
     : [];
   const isEmpty = funnelItems.every(({ value }) => value === 0);
@@ -431,7 +441,7 @@ function AnalyticsPanel({ workflowId }: { workflowId: string }) {
   return (
     <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs font-semibold text-gray-700">Analytics</p>
+        <p className="text-xs font-semibold text-gray-700">{__uiText("Analytics")}</p>
         <div className="flex items-center gap-1">
           {[7, 30, 90].map((range) => (
             <button
@@ -444,22 +454,20 @@ function AnalyticsPanel({ workflowId }: { workflowId: string }) {
                   : 'border-gray-200 text-gray-500 hover:bg-gray-50'
               }`}
             >
-              {range} วัน
-            </button>
+              {range} {__uiText(" วัน")}</button>
           ))}
           <HeaderButton onClick={load} disabled={loading}>
-            {loading ? 'กำลังโหลด...' : 'รีเฟรช'}
+            {loading ? __uiText("กำลังโหลด...") : __uiText("รีเฟรช")}
           </HeaderButton>
         </div>
       </div>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
       {analytics && (
         <>
           {isEmpty ? (
             <p className="text-xs text-gray-400">
-              ยังไม่มี event ในช่วงเวลานี้ — ระบบเริ่มเก็บหลัง deploy เท่านั้น
-            </p>
+              {__uiText("ยังไม่มี event ในช่วงเวลานี้ — ระบบเริ่มเก็บหลัง deploy เท่านั้น")}</p>
           ) : (
             <>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -473,23 +481,22 @@ function AnalyticsPanel({ workflowId }: { workflowId: string }) {
                 ))}
               </div>
               <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-gray-500">
-                <span>Enroll → Notify: {formatAnalyticsRate(analytics.rates.enrollToNotify)}</span>
-                <span>Enroll → Offer: {formatAnalyticsRate(analytics.rates.enrollToOffer)}</span>
-                <span>Grant → Redeem: {formatAnalyticsRate(analytics.rates.grantToRedeem)}</span>
-                <span>Enroll → Order: {formatAnalyticsRate(analytics.rates.enrollToOrder)}</span>
+                <span>{__uiText("Enroll → Notify: ")}{formatAnalyticsRate(analytics.rates.enrollToNotify)}</span>
+                <span>{__uiText("Enroll → Offer: ")}{formatAnalyticsRate(analytics.rates.enrollToOffer)}</span>
+                <span>{__uiText("Grant → Redeem: ")}{formatAnalyticsRate(analytics.rates.grantToRedeem)}</span>
+                <span>{__uiText("Enroll → Order: ")}{formatAnalyticsRate(analytics.rates.enrollToOrder)}</span>
               </div>
               {(analytics.funnel.holdoutEnrolled > 0 || analytics.funnel.holdoutConverted > 0) && (
                 <p className="text-[11px] text-gray-400">
-                  Holdout: {analytics.funnel.holdoutEnrolled.toLocaleString()} enrolled ·{' '}
-                  {analytics.funnel.holdoutConverted.toLocaleString()} converted
-                </p>
+                  {__uiText("Holdout: ")}{analytics.funnel.holdoutEnrolled.toLocaleString()} {__uiText(" enrolled ·")}{' '}
+                  {analytics.funnel.holdoutConverted.toLocaleString()} {__uiText(" converted")}</p>
               )}
             </>
           )}
           {!isEmpty && (
             <div className="grid gap-3 border-t border-gray-100 pt-3 sm:grid-cols-2">
-              <HourBars label="Coupon granted by hour" values={analytics.byHour.granted} />
-              <HourBars label="Coupon redeemed by hour" values={analytics.byHour.redeemed} />
+              <HourBars label={__uiText("Coupon granted by hour")} values={analytics.byHour.granted} />
+              <HourBars label={__uiText("Coupon redeemed by hour")} values={analytics.byHour.redeemed} />
             </div>
           )}
         </>
@@ -499,7 +506,7 @@ function AnalyticsPanel({ workflowId }: { workflowId: string }) {
 }
 
 function formatRevisionDate(iso: string): string {
-  return new Date(iso).toLocaleString('th-TH', {
+  return new Date(iso).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
     dateStyle: 'medium',
     timeStyle: 'short',
   });
@@ -513,6 +520,7 @@ function RevisionHistoryPanel({
   workflowId: string;
   onRestored: () => void;
 }) {
+  __useUiLocale();
   const [revisions, setRevisions] = useState<MarketingWorkflowRevision[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -523,7 +531,7 @@ function RevisionHistoryPanel({
     setError(null);
     getMarketingWorkflowRevisions(workflowId)
       .then((rows) => setRevisions(rows.slice(0, 20)))
-      .catch((err: any) => setError(err?.response?.data?.message || 'โหลดประวัติไม่สำเร็จ'))
+      .catch((err: any) => setError(err?.response?.data?.message || __uiMessage("โหลดประวัติไม่สำเร็จ")))
       .finally(() => setLoading(false));
   }, [workflowId]);
 
@@ -532,7 +540,7 @@ function RevisionHistoryPanel({
   }, [load]);
 
   const handleRestore = async (revisionId: string) => {
-    if (!window.confirm('ย้อนกลับไปใช้เวอร์ชันนี้? การแก้ไขปัจจุบันที่ยังไม่ได้บันทึกจะหายไป')) {
+    if (!window.confirm(__uiText("ย้อนกลับไปใช้เวอร์ชันนี้? การแก้ไขปัจจุบันที่ยังไม่ได้บันทึกจะหายไป"))) {
       return;
     }
     setRestoringId(revisionId);
@@ -542,7 +550,7 @@ function RevisionHistoryPanel({
       onRestored();
       load();
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'ย้อนกลับไม่สำเร็จ');
+      setError(err?.response?.data?.message || __uiMessage("ย้อนกลับไม่สำเร็จ"));
     } finally {
       setRestoringId(null);
     }
@@ -551,14 +559,14 @@ function RevisionHistoryPanel({
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-3 space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold text-gray-700">ประวัติการแก้ไข (20 รายการล่าสุด)</p>
+        <p className="text-xs font-semibold text-gray-700">{__uiText("ประวัติการแก้ไข (20 รายการล่าสุด)")}</p>
         <HeaderButton onClick={load} disabled={loading}>
-          {loading ? 'กำลังโหลด...' : 'รีเฟรช'}
+          {loading ? __uiText("กำลังโหลด...") : __uiText("รีเฟรช")}
         </HeaderButton>
       </div>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
       {revisions.length === 0 && !loading ? (
-        <p className="text-xs text-gray-400">ยังไม่มีประวัติการแก้ไข</p>
+        <p className="text-xs text-gray-400">{__uiText("ยังไม่มีประวัติการแก้ไข")}</p>
       ) : (
         <ul className="divide-y divide-gray-100">
           {revisions.map((rev) => (
@@ -571,7 +579,7 @@ function RevisionHistoryPanel({
                 onClick={() => handleRestore(rev.id)}
                 disabled={restoringId === rev.id}
               >
-                {restoringId === rev.id ? 'กำลังย้อนกลับ...' : 'ย้อนกลับ'}
+                {restoringId === rev.id ? __uiText("กำลังย้อนกลับ...") : __uiText("ย้อนกลับ")}
               </HeaderButton>
             </li>
           ))}
@@ -596,6 +604,7 @@ function buildDefaultPositions(
 
 /** Create-mode screen for `/marketing/workflows/new` — creates a draft then redirects to the editor. */
 function CreateWorkflowScreen() {
+  __useUiLocale();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [triggerType, setTriggerType] = useState<MarketingTriggerType>('cart_idle');
@@ -613,7 +622,7 @@ function CreateWorkflowScreen() {
 
   const handleCreate = async () => {
     if (!name.trim()) {
-      setError('กรุณาระบุชื่อ workflow');
+      setError(__uiMessage("กรุณาระบุชื่อ workflow"));
       return;
     }
     setCreating(true);
@@ -652,7 +661,7 @@ function CreateWorkflowScreen() {
       const created: MarketingWorkflow = response.data.data;
       navigate(ADMIN_ROUTES.marketingWorkflowEdit(created.id), { replace: true });
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'สร้าง workflow ไม่สำเร็จ');
+      setError(err?.response?.data?.message || __uiMessage("สร้าง workflow ไม่สำเร็จ"));
     } finally {
       setCreating(false);
     }
@@ -661,27 +670,24 @@ function CreateWorkflowScreen() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-5 p-6">
       <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-        &larr; กลับไปหน้ารายการ Workflow
-      </Link>
+        {__uiText("&larr; กลับไปหน้ารายการ Workflow")}</Link>
       <div>
-        <h1 className="text-xl font-bold text-gray-800">สร้าง Marketing Workflow ใหม่</h1>
+        <h1 className="text-xl font-bold text-gray-800">{__uiText("สร้าง Marketing Workflow ใหม่")}</h1>
         <p className="mt-1 text-xs text-gray-500">
-          ตั้งชื่อ แล้วสร้างเงื่อนไขเริ่มต้นเอง (เลือกประเภท + ปรับค่า) — Audience ไม่บังคับ
-          (ทุกคนที่เข้าเงื่อนไข trigger ได้) · ขั้นตอน action แก้ต่อใน canvas ได้หลังสร้าง
-        </p>
+          {__uiText("ตั้งชื่อ แล้วสร้างเงื่อนไขเริ่มต้นเอง (เลือกประเภท + ปรับค่า) — Audience ไม่บังคับ (ทุกคนที่เข้าเงื่อนไข trigger ได้) · ขั้นตอน action แก้ต่อใน canvas ได้หลังสร้าง")}</p>
       </div>
 
       <section className="space-y-2">
-        <h2 className="text-[10px] font-semibold tracking-wide text-gray-400">1 · ชื่อ Workflow</h2>
+        <h2 className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("1 · ชื่อ Workflow")}</h2>
         <div>
-          <label htmlFor={nameInputId} className={FIELD_LABEL}>ชื่อ</label>
+          <label htmlFor={nameInputId} className={FIELD_LABEL}>{__uiText("ชื่อ")}</label>
           <input
             id={nameInputId}
             type="text"
             autoFocus
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="เช่น ตะกร้าค้าง 30 นาที + แจกคูปอง"
+            placeholder={__uiText("เช่น ตะกร้าค้าง 30 นาที + แจกคูปอง")}
             className={INPUT_CLASS}
           />
         </div>
@@ -698,17 +704,21 @@ function CreateWorkflowScreen() {
         />
       </section>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
       <HeaderButton variant="primary" onClick={handleCreate} disabled={creating}>
-        {creating ? 'กำลังสร้าง...' : 'สร้าง Workflow'}
+        {creating ? __uiText("กำลังสร้าง...") : __uiText("สร้าง Workflow")}
       </HeaderButton>
     </div>
   );
 }
 
 function EditWorkflowScreen({ id }: { id: string }) {
+  __useUiLocale();
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<unknown>(null);
+  const [loadedId, setLoadedId] = useState<string | null>(null);
+  const loadVersion = useRef(0);
 
   const [status, setStatus] = useState<MarketingWorkflow['status']>('draft');
   const [name, setName] = useState('');
@@ -753,10 +763,14 @@ function EditWorkflowScreen({ id }: { id: string }) {
   const loadWorkflow = useCallback(
     (opts: { showLoading?: boolean } = {}) => {
       const { showLoading = true } = opts;
-      if (showLoading) setLoading(true);
+      const version = ++loadVersion.current;
+      if (showLoading) { setLoading(true); setLoadError(null); }
       return getMarketingWorkflow(id)
         .then((response) => {
+          if (version !== loadVersion.current) return;
           const wf: MarketingWorkflow = response.data.data;
+          if (!wf) throw new Error(__uiMessage('โหลด workflow ไม่สำเร็จ'));
+          setLoadedId(id);
           const nextSteps = wf.steps ?? [];
           const savedPositions = (wf.graph_ui as Record<string, MarketingCanvasPosition>) ?? {};
 
@@ -776,24 +790,20 @@ function EditWorkflowScreen({ id }: { id: string }) {
           setSelectedNodeId(TRIGGER_NODE_ID);
         })
         .catch((error) => {
-          console.error('load marketing workflow error:', error.message);
-          setErrorMsg('โหลด workflow ไม่สำเร็จ');
+          if (version !== loadVersion.current) return;
+          setLoadError(error);
+          setErrorMsg(__uiMessage('โหลด workflow ไม่สำเร็จ'));
         })
         .finally(() => {
-          if (showLoading) setLoading(false);
+          if (showLoading && version === loadVersion.current) setLoading(false);
         });
     },
     [id],
   );
 
   useEffect(() => {
-    let cancelled = false;
-    loadWorkflow().then(() => {
-      if (cancelled) return;
-    });
-    return () => {
-      cancelled = true;
-    };
+    void loadWorkflow();
+    return () => { loadVersion.current++; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -1177,15 +1187,21 @@ function EditWorkflowScreen({ id }: { id: string }) {
     }
   };
 
-  if (loading) {
-    return <div className="p-6 text-sm text-gray-500">กำลังโหลด...</div>;
+  if (loadedId !== id && loadError) {
+    return <div className="space-y-4 p-4">
+      <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-sm text-primary hover:underline">{__uiText('&larr; กลับไปหน้ารายการ Workflow')}</Link>
+      <LoadError title={__uiText('Marketing Workflow')} error={loadError} onRetry={() => void loadWorkflow()} />
+    </div>;
+  }
+
+  if (loading || loadedId !== id) {
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <div className="flex flex-col gap-4 p-4">
       <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-        &larr; กลับไปหน้ารายการ Workflow
-      </Link>
+        {__uiText("&larr; กลับไปหน้ารายการ Workflow")}</Link>
 
       {/* Two rows on purpose: cramming identity + 6 settings + 7 buttons onto
           one line squeezed the buttons into a vertical stack and wrapped every
@@ -1195,8 +1211,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
           <div className="flex min-w-0 items-end gap-2">
             <div className="min-w-0">
               <label htmlFor={nameInputId} className="mb-0.5 block text-[10px] font-medium text-gray-400">
-                ชื่อ Workflow
-              </label>
+                {__uiText("ชื่อ Workflow")}</label>
               <input
                 id={nameInputId}
                 type="text"
@@ -1214,31 +1229,30 @@ function EditWorkflowScreen({ id }: { id: string }) {
 
           <div className="flex flex-wrap items-center gap-2 lg:justify-end">
             <HeaderButton onClick={() => setSelectedNodeId(TRIGGER_NODE_ID)}>
-              แก้เงื่อนไขเริ่มต้น
-            </HeaderButton>
+              {__uiText("แก้เงื่อนไขเริ่มต้น")}</HeaderButton>
             <HeaderButton onClick={handlePreview} disabled={previewLoading}>
-              {previewLoading ? 'กำลังพรีวิว...' : 'Preview'}
+              {previewLoading ? __uiText("กำลังพรีวิว...") : __uiText("Preview")}
             </HeaderButton>
             {/* commerce: no Test here — it can send a real message; test in josh admin. */}
-            <HeaderButton onClick={() => setStatsOpen((prev) => !prev)}>สถิติ</HeaderButton>
-            <HeaderButton onClick={() => setAnalyticsOpen((prev) => !prev)}>Analytics</HeaderButton>
-            <HeaderButton onClick={() => setHistoryOpen((prev) => !prev)}>ประวัติ</HeaderButton>
+            <HeaderButton onClick={() => setStatsOpen((prev) => !prev)}>{__uiText("สถิติ")}</HeaderButton>
+            <HeaderButton onClick={() => setAnalyticsOpen((prev) => !prev)}>{__uiText("Analytics")}</HeaderButton>
+            <HeaderButton onClick={() => setHistoryOpen((prev) => !prev)}>{__uiText("ประวัติ")}</HeaderButton>
             <span className="mx-1 hidden h-5 w-px bg-gray-200 sm:block" aria-hidden />
             {status === 'active' ? (
-              <HeaderButton onClick={handlePause}>Pause</HeaderButton>
+              <HeaderButton onClick={handlePause}>{__uiText("Pause")}</HeaderButton>
             ) : (
               <HeaderButton onClick={handleActivate} disabled={activating}>
-                {activating ? 'กำลังเปิดใช้งาน...' : 'Activate'}
+                {activating ? __uiText("กำลังเปิดใช้งาน...") : __uiText("Activate")}
               </HeaderButton>
             )}
             <HeaderButton variant="primary" onClick={handleSaveClick} disabled={saving}>
-              {saving ? 'กำลังบันทึก...' : 'Save'}
+              {saving ? __uiText("กำลังบันทึก...") : __uiText("Save")}
             </HeaderButton>
           </div>
         </div>
 
         <div className="flex flex-wrap items-end gap-2">
-          <SettingChip label="พักหลังส่ง (Cooldown)" suffix="วัน" htmlFor={cooldownInputId}>
+          <SettingChip label={__uiText("พักหลังส่ง (Cooldown)")} suffix="วัน" htmlFor={cooldownInputId}>
             <input
               id={cooldownInputId}
               type="number"
@@ -1250,9 +1264,9 @@ function EditWorkflowScreen({ id }: { id: string }) {
           </SettingChip>
 
           <SettingChip
-            label="กลุ่มควบคุม (Holdout)"
+            label={__uiText("กลุ่มควบคุม (Holdout)")}
             suffix="%"
-            title="เก็บ % ของผู้ใช้ไว้เป็นกลุ่มควบคุม (ไม่ส่งข้อความ) เพื่อเปรียบเทียบผล"
+            title={__uiText("เก็บ % ของผู้ใช้ไว้เป็นกลุ่มควบคุม (ไม่ส่งข้อความ) เพื่อเปรียบเทียบผล")}
             htmlFor={holdoutInputId}
           >
             <input
@@ -1269,9 +1283,9 @@ function EditWorkflowScreen({ id }: { id: string }) {
           </SettingChip>
 
           <SettingChip
-            label="หน้าต่างวัดผล"
+            label={__uiText("หน้าต่างวัดผล")}
             suffix="วัน"
-            title="จำนวนวันหลัง enroll ที่ยังนับว่าออเดอร์นั้นมาจาก workflow นี้"
+            title={__uiText("จำนวนวันหลัง enroll ที่ยังนับว่าออเดอร์นั้นมาจาก workflow นี้")}
             htmlFor={conversionWindowInputId}
           >
             <input
@@ -1287,8 +1301,8 @@ function EditWorkflowScreen({ id }: { id: string }) {
           </SettingChip>
 
           <SettingChip
-            label="ออกเมื่อสำเร็จ"
-            title="ดึงผู้ใช้ออกจาก workflow ทันทีที่ทำเป้าหมายสำเร็จ — ตรวจทุกครั้งที่ resume และก่อนส่งทุกข้อความ (ไม่ใช่เช็คจุดเดียวแบบ gate)"
+            label={__uiText("ออกเมื่อสำเร็จ")}
+            title={__uiText("ดึงผู้ใช้ออกจาก workflow ทันทีที่ทำเป้าหมายสำเร็จ — ตรวจทุกครั้งที่ resume และก่อนส่งทุกข้อความ (ไม่ใช่เช็คจุดเดียวแบบ gate)")}
             htmlFor={exitOnGoalSelectId}
           >
             <Select
@@ -1303,9 +1317,9 @@ function EditWorkflowScreen({ id }: { id: string }) {
               }
               className="max-w-[10rem] truncate"
             >
-              <option value="">ไม่ตั้ง (วิ่งจนจบ)</option>
-              <option value="order_placed">สั่งซื้อสำเร็จ</option>
-              <option value="cart_converted">ตะกร้าถูกปิด</option>
+              <option value="">{__uiText("ไม่ตั้ง (วิ่งจนจบ)")}</option>
+              <option value="order_placed">{__uiText("สั่งซื้อสำเร็จ")}</option>
+              <option value="cart_converted">{__uiText("ตะกร้าถูกปิด")}</option>
             </Select>
           </SettingChip>
 
@@ -1315,7 +1329,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
             title={describeMarketingSchedule(schedule)}
             className={`${CHIP_CLASS} max-w-xs hover:border-gray-300 hover:bg-gray-50`}
           >
-            <span className="shrink-0 font-medium text-gray-400">Schedule</span>
+            <span className="shrink-0 font-medium text-gray-400">{__uiText("Schedule")}</span>
             <span className="truncate text-gray-800">{describeMarketingSchedule(schedule)}</span>
           </button>
 
@@ -1323,10 +1337,9 @@ function EditWorkflowScreen({ id }: { id: string }) {
             to={ADMIN_ROUTES.marketingWorkflowEnrollments(id)}
             className={`${CHIP_CLASS} hover:border-gray-300 hover:bg-gray-50`}
           >
-            <span className="text-gray-800">ดู Enrollments</span>
+            <span className="text-gray-800">{__uiText("ดู Enrollments")}</span>
             <span aria-hidden className="text-gray-400">
-              &rarr;
-            </span>
+              {__uiText("&rarr;")}</span>
           </Link>
 
           {triggerType === 'scheduled' && (
@@ -1334,10 +1347,9 @@ function EditWorkflowScreen({ id }: { id: string }) {
               to={ADMIN_ROUTES.marketingWorkflowScheduledRuns(id)}
               className={`${CHIP_CLASS} hover:border-gray-300 hover:bg-gray-50`}
             >
-              <span className="text-gray-800">Fire log</span>
+              <span className="text-gray-800">{__uiText("Fire log")}</span>
               <span aria-hidden className="text-gray-400">
-                &rarr;
-              </span>
+                {__uiText("&rarr;")}</span>
             </Link>
           )}
         </div>
@@ -1359,15 +1371,14 @@ function EditWorkflowScreen({ id }: { id: string }) {
 
       {errorMsg && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
-          {errorMsg}
+          {__uiText(errorMsg)}
         </div>
       )}
 
       {previewResult && (
         <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700">
-          กลุ่มเป้าหมายที่เข้าเงื่อนไขตอนนี้: <strong>{previewResult.count.toLocaleString()}</strong> คน
-          {previewResult.sampleUserIds.length > 0 && (
-            <span className="text-blue-500"> (ตัวอย่าง user_id: {previewResult.sampleUserIds.slice(0, 5).join(', ')}
+          {__uiText("กลุ่มเป้าหมายที่เข้าเงื่อนไขตอนนี้: ")}<strong>{previewResult.count.toLocaleString()}</strong> {__uiText(" คน")}{previewResult.sampleUserIds.length > 0 && (
+            <span className="text-blue-500"> {__uiText(" (ตัวอย่าง user_id: ")}{previewResult.sampleUserIds.slice(0, 5).join(', ')}
               {previewResult.sampleUserIds.length > 5 ? ', ...' : ''})</span>
           )}
         </div>
@@ -1376,27 +1387,22 @@ function EditWorkflowScreen({ id }: { id: string }) {
       {testOpen && (
         <div className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
           <div className="text-xs text-gray-600 space-y-1">
-            <p className="font-medium text-gray-700">วิธีทดสอบ (Test)</p>
+            <p className="font-medium text-gray-700">{__uiText("วิธีทดสอบ (Test)")}</p>
             <ol className="list-decimal pl-4 space-y-0.5 text-gray-500">
               <li>
-                ต้องมี Action อย่างน้อย 1 ขั้น — กดรันแล้วจะ Save ให้ก่อน
-              </li>
+                {__uiText("ต้องมี Action อย่างน้อย 1 ขั้น — กดรันแล้วจะ Save ให้ก่อน")}</li>
               {deviceScopedTrigger ? (
                 <li>
-                  Trigger{' '}
-                  <strong>{triggerType === 'first_visit' ? 'เข้าเว็บครั้งแรก' : 'กำหนดเอง (Custom)'}</strong>:
-                  ใส่ Device ID (หรือปล่อยว่างให้ระบบสร้าง)
-                  แล้วปิด Dry run เพื่อสร้าง offer จริง — ต้อง <strong>Activate</strong> ก่อนถึงจะขึ้น popup บน shop
-                  จาก traffic จริง{triggerType === 'custom' ? ' (custom: ทุกคนที่เข้าเว็บระหว่าง Active)' : ''}
+                  {__uiText("Trigger")}{' '}
+                  <strong>{triggerType === 'first_visit' ? __uiText("เข้าเว็บครั้งแรก") : __uiText("กำหนดเอง (Custom)")}</strong>{__uiText(": ใส่ Device ID (หรือปล่อยว่างให้ระบบสร้าง) แล้วปิด Dry run เพื่อสร้าง offer จริง — ต้อง ")}<strong>{__uiText("Activate")}</strong> {__uiText(" ก่อนถึงจะขึ้น popup บน shop จาก traffic จริง")}{triggerType === 'custom' ? __uiText(" (custom: ทุกคนที่เข้าเว็บระหว่าง Active)") : ''}
                 </li>
               ) : (
-                <li>ใส่ <code className="rounded bg-white px-1">user_id</code> จริงจากระบบ</li>
+                <li>{__uiText("ใส่ ")}<code className="rounded bg-white px-1">{__uiText("user_id")}</code> {__uiText(" จริงจากระบบ")}</li>
               )}
               <li>
-                เปิด <strong>Dry run</strong> = ดูแผน action อย่างเดียว ไม่ยิงคูปอง/popup
-              </li>
+                {__uiText("เปิด ")}<strong>{__uiText("Dry run")}</strong> {__uiText(" = ดูแผน action อย่างเดียว ไม่ยิงคูปอง/popup")}</li>
               <li>
-                ปิด Dry run = รันจริงบน enrollment แบบ <code className="rounded bg-white px-1">test:</code>
+                {__uiText("ปิด Dry run = รันจริงบน enrollment แบบ ")}<code className="rounded bg-white px-1">{__uiText("test:")}</code>
               </li>
             </ol>
           </div>
@@ -1404,12 +1410,11 @@ function EditWorkflowScreen({ id }: { id: string }) {
             {!deviceScopedTrigger && (
               <div>
                 <label htmlFor={testUserIdInputId} className="mb-1 block text-[10px] text-gray-400">
-                  รหัสผู้ใช้ที่จะทดสอบ (User ID)
-                </label>
+                  {__uiText("รหัสผู้ใช้ที่จะทดสอบ (User ID)")}</label>
                 <input
                   id={testUserIdInputId}
                   type="text"
-                  placeholder="User ID ที่จะทดสอบ"
+                  placeholder={__uiText("User ID ที่จะทดสอบ")}
                   value={testUserId}
                   onChange={(event) => setTestUserId(event.target.value)}
                   className="w-64 rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:border-primary focus:outline-none"
@@ -1419,15 +1424,15 @@ function EditWorkflowScreen({ id }: { id: string }) {
             {(deviceScopedTrigger || triggerType === 'first_login') && (
               <div>
                 <label htmlFor={testSecondaryInputId} className="mb-1 block text-[10px] text-gray-400">
-                  {deviceScopedTrigger ? 'รหัสอุปกรณ์ (individual_id)' : 'รหัสผู้ใช้ที่จะทดสอบ (User ID)'}
+                  {deviceScopedTrigger ? __uiText("รหัสอุปกรณ์ (individual_id)") : __uiText("รหัสผู้ใช้ที่จะทดสอบ (User ID)")}
                 </label>
                 <input
                   id={testSecondaryInputId}
                   type="text"
                   placeholder={
                     deviceScopedTrigger
-                      ? 'Device ID (individual_id) — ว่าง = สร้างให้อัตโนมัติ'
-                      : 'User ID ที่จะทดสอบ'
+                      ? __uiText("Device ID (individual_id) — ว่าง = สร้างให้อัตโนมัติ")
+                      : __uiText("User ID ที่จะทดสอบ")
                   }
                   value={deviceScopedTrigger ? testIndividualId : testUserId}
                   onChange={(event) =>
@@ -1442,12 +1447,11 @@ function EditWorkflowScreen({ id }: { id: string }) {
             {deviceScopedTrigger && (
               <div>
                 <label htmlFor={testOptionalUserIdInputId} className="mb-1 block text-[10px] text-gray-400">
-                  รหัสผู้ใช้ (User ID) — ไม่บังคับ
-                </label>
+                  {__uiText("รหัสผู้ใช้ (User ID) — ไม่บังคับ")}</label>
                 <input
                   id={testOptionalUserIdInputId}
                   type="text"
-                  placeholder="User ID (optional ถ้าอยากทดสอบแบบมี login)"
+                  placeholder={__uiText("User ID (optional ถ้าอยากทดสอบแบบมี login)")}
                   value={testUserId}
                   onChange={(event) => setTestUserId(event.target.value)}
                   className="w-64 rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:border-primary focus:outline-none"
@@ -1460,8 +1464,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
                 checked={testDryRun}
                 onChange={(event) => setTestDryRun(event.target.checked)}
               />
-              Dry run (ไม่ยิงจริง)
-            </label>
+              {__uiText("Dry run (ไม่ยิงจริง)")}</label>
             <HeaderButton
               onClick={handleRunTest}
               disabled={
@@ -1473,12 +1476,12 @@ function EditWorkflowScreen({ id }: { id: string }) {
               }
             >
               {testLoading
-                ? 'กำลังทดสอบ...'
+                ? __uiText("กำลังทดสอบ...")
                 : triggerType === 'first_visit'
-                  ? 'จำลองเข้าเว็บครั้งแรก'
+                  ? __uiText("จำลองเข้าเว็บครั้งแรก")
                   : triggerType === 'custom'
-                    ? 'จำลองลูกค้าเข้าเว็บช่วงเงื่อนไข'
-                    : 'รันทดสอบ'}
+                    ? __uiText("จำลองลูกค้าเข้าเว็บช่วงเงื่อนไข")
+                    : __uiText("รันทดสอบ")}
             </HeaderButton>
           </div>
           {testResult && (
@@ -1495,16 +1498,14 @@ function EditWorkflowScreen({ id }: { id: string }) {
             Array.isArray(testResult.offerIds) &&
             testResult.offerIds.length === 0 && (
               <p className="text-[11px] text-amber-700">
-                ยังไม่มี show_offer ในผลรัน — เพิ่ม Action &quot;แสดง Offer&quot; เลือกคูปอง แล้วทดสอบอีกครั้ง
-                (ปิด Dry run)
-              </p>
+                {__uiText("ยังไม่มี show_offer ในผลรัน — เพิ่ม Action &quot;แสดง Offer&quot; เลือกคูปอง แล้วทดสอบอีกครั้ง (ปิด Dry run)")}</p>
             )}
           {!testDryRun &&
             testResult &&
             'individualId' in testResult &&
             testResult.individualId && (
               <p className="text-[11px] text-blue-600">
-                Device <code>{testResult.individualId}</code> — เปิด shop (guest) หรือเรียก{' '}
+                {__uiText("Device ")}<code>{testResult.individualId}</code> {__uiText(" — เปิด shop (guest) หรือเรียก")}{' '}
                 <code>/api/marketing-offers/active?individual_id=…</code>
               </p>
             )}
@@ -1514,9 +1515,8 @@ function EditWorkflowScreen({ id }: { id: string }) {
             testResult.userId &&
             !testResult.individualId && (
               <p className="text-[11px] text-blue-600">
-                Offer ผูกกับ user <code>{testResult.userId}</code> — ต้อง{' '}
-                <strong>login เป็น user นี้บน shop</strong> ถึงจะเห็น popup (เปิด guest จะไม่ขึ้น)
-              </p>
+                {__uiText("Offer ผูกกับ user ")}<code>{testResult.userId}</code> {__uiText(" — ต้อง")}{' '}
+                <strong>{__uiText("login เป็น user นี้บน shop")}</strong> {__uiText(" ถึงจะเห็น popup (เปิด guest จะไม่ขึ้น)")}</p>
             )}
         </div>
       )}
@@ -1526,23 +1526,18 @@ function EditWorkflowScreen({ id }: { id: string }) {
           <div className="text-xs text-gray-500">
             {selectedCondition ? (
               <>
-                เลือก <span className="font-semibold text-orange-600">If / Else</span> อยู่ —
-                ปุ่มด้านล่างจะต่อเข้าเส้น <span className="font-semibold text-emerald-600">Yes</span> /{' '}
-                <span className="font-semibold text-red-600">No</span> อัตโนมัติ
-              </>
+                {__uiText("เลือก ")}<span className="font-semibold text-orange-600">{__uiText("If / Else")}</span> {__uiText(" อยู่ — ปุ่มด้านล่างจะต่อเข้าเส้น ")}<span className="font-semibold text-emerald-600">{__uiText("Yes")}</span> /{' '}
+                <span className="font-semibold text-red-600">{__uiText("No")}</span> {__uiText(" อัตโนมัติ")}</>
             ) : selection?.kind === 'trigger' ? (
               <>
-                กำลังสร้าง/แก้ <span className="font-semibold text-amber-700">เงื่อนไขเริ่ม Workflow</span>{' '}
-                ในแผงขวา — เพิ่มขั้นตอนถัดไปด้วยปุ่มด้านล่าง
-              </>
+                {__uiText("กำลังสร้าง/แก้ ")}<span className="font-semibold text-amber-700">{__uiText("เงื่อนไขเริ่ม Workflow")}</span>{' '}
+                {__uiText("ในแผงขวา — เพิ่มขั้นตอนถัดไปด้วยปุ่มด้านล่าง")}</>
             ) : selection?.kind === 'step' ? (
               <>
-                เลือก{' '}
-                <span className="font-semibold text-gray-700">{selection.step.type}</span> —
-                ปุ่มด้านล่างเพิ่มต่อท้าย flow (หรือเลือก If/Else เพื่อแยกกิ่ง)
-              </>
+                {__uiText("เลือก")}{' '}
+                <span className="font-semibold text-gray-700">{selection.step.type}</span> {__uiText(" — ปุ่มด้านล่างเพิ่มต่อท้าย flow (หรือเลือก If/Else เพื่อแยกกิ่ง)")}</>
             ) : (
-              <>คลิกการ์ดในแผนภาพเพื่อแก้รายละเอียด · ใช้ปุ่มด้านล่างเพิ่มขั้นตอน</>
+              <>{__uiText("คลิกการ์ดในแผนภาพเพื่อแก้รายละเอียด · ใช้ปุ่มด้านล่างเพิ่มขั้นตอน")}</>
             )}
           </div>
           {conditionCount > 0 && (
@@ -1553,12 +1548,12 @@ function EditWorkflowScreen({ id }: { id: string }) {
                   : 'text-gray-400'
               }`}
             >
-              If/Else {conditionCount}/{MAX_MARKETING_CONDITION_STEPS}
+              {__uiText("If/Else ")}{conditionCount}/{MAX_MARKETING_CONDITION_STEPS}
             </span>
           )}
           {waitCount > 0 && (
             <span className="text-[11px] text-gray-400">
-              Wait {waitCount}/{MAX_MARKETING_WAIT_STEPS}
+              {__uiText("Wait ")}{waitCount}/{MAX_MARKETING_WAIT_STEPS}
             </span>
           )}
         </div>
@@ -1583,21 +1578,19 @@ function EditWorkflowScreen({ id }: { id: string }) {
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[11px] font-semibold text-gray-700">{label}</span>
                     <span className="text-[10px] text-gray-400">
-                      {wired ? 'มีเส้นทางแล้ว · แทรกด้านหน้า' : 'ยังว่าง'}
+                      {wired ? __uiText("มีเส้นทางแล้ว · แทรกด้านหน้า") : __uiText("ยังว่าง")}
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     <HeaderButton onClick={() => handleAddGrantCoupon(target)}>
-                      + คูปอง
-                    </HeaderButton>
-                    <HeaderButton onClick={() => handleAddShowOffer(target)}>+ Offer</HeaderButton>
-                    <HeaderButton onClick={() => handleAddNotify(target)}>+ แจ้งเตือน</HeaderButton>
+                      {__uiText("+ คูปอง")}</HeaderButton>
+                    <HeaderButton onClick={() => handleAddShowOffer(target)}>{__uiText("+ Offer")}</HeaderButton>
+                    <HeaderButton onClick={() => handleAddNotify(target)}>{__uiText("+ แจ้งเตือน")}</HeaderButton>
                     <HeaderButton
                       onClick={() => handleAddCondition(target)}
                       disabled={!canAddCondition}
                     >
-                      + If/Else
-                    </HeaderButton>
+                      {__uiText("+ If/Else")}</HeaderButton>
                   </div>
                 </div>
               );
@@ -1606,47 +1599,42 @@ function EditWorkflowScreen({ id }: { id: string }) {
         ) : (
           <div className="flex flex-wrap items-center gap-2 text-xs">
             {!hasAudience && (
-              <HeaderButton onClick={handleAddAudience}>+ Audience</HeaderButton>
+              <HeaderButton onClick={handleAddAudience}>{__uiText("+ Audience")}</HeaderButton>
             )}
             <HeaderButton onClick={handleAddWait} disabled={!canAddWait}>
-              + Wait
-            </HeaderButton>
+              {__uiText("+ Wait")}</HeaderButton>
             {!hasGate && (
-              <HeaderButton onClick={handleAddGate}>+ Gate</HeaderButton>
+              <HeaderButton onClick={handleAddGate}>{__uiText("+ Gate")}</HeaderButton>
             )}
-            <HeaderButton onClick={() => handleAddGrantCoupon()}>+ แจกคูปอง</HeaderButton>
-            <HeaderButton onClick={() => handleAddShowOffer()}>+ แสดง Offer</HeaderButton>
-            <HeaderButton onClick={() => handleAddNotify()}>+ แจ้งเตือน</HeaderButton>
+            <HeaderButton onClick={() => handleAddGrantCoupon()}>{__uiText("+ แจกคูปอง")}</HeaderButton>
+            <HeaderButton onClick={() => handleAddShowOffer()}>{__uiText("+ แสดง Offer")}</HeaderButton>
+            <HeaderButton onClick={() => handleAddNotify()}>{__uiText("+ แจ้งเตือน")}</HeaderButton>
             <HeaderButton
               onClick={() => handleAddCondition()}
               disabled={!canAddCondition}
             >
-              + If / Else
-            </HeaderButton>
+              {__uiText("+ If / Else")}</HeaderButton>
             {hasGate && (
               <span className="text-[11px] text-gray-400">
-                Gate มีแล้ว (สูงสุด 1)
-              </span>
+                {__uiText("Gate มีแล้ว (สูงสุด 1)")}</span>
             )}
           </div>
         )}
 
         {selectedCondition && (
           <div className="flex flex-wrap items-center gap-2 border-t border-gray-100 pt-2">
-            <span className="text-[11px] text-gray-400">เพิ่มใน flow หลัก (ไม่ผูกกิ่ง):</span>
+            <span className="text-[11px] text-gray-400">{__uiText("เพิ่มใน flow หลัก (ไม่ผูกกิ่ง):")}</span>
             {!hasAudience && (
-              <HeaderButton onClick={handleAddAudience}>+ Audience</HeaderButton>
+              <HeaderButton onClick={handleAddAudience}>{__uiText("+ Audience")}</HeaderButton>
             )}
             <HeaderButton onClick={handleAddWait} disabled={!canAddWait}>
-              + Wait
-            </HeaderButton>
-            {!hasGate && <HeaderButton onClick={handleAddGate}>+ Gate</HeaderButton>}
-            <HeaderButton onClick={() => handleAddGrantCoupon()}>+ คูปอง</HeaderButton>
-            <HeaderButton onClick={() => handleAddShowOffer()}>+ Offer</HeaderButton>
-            <HeaderButton onClick={() => handleAddNotify()}>+ แจ้งเตือน</HeaderButton>
+              {__uiText("+ Wait")}</HeaderButton>
+            {!hasGate && <HeaderButton onClick={handleAddGate}>{__uiText("+ Gate")}</HeaderButton>}
+            <HeaderButton onClick={() => handleAddGrantCoupon()}>{__uiText("+ คูปอง")}</HeaderButton>
+            <HeaderButton onClick={() => handleAddShowOffer()}>{__uiText("+ Offer")}</HeaderButton>
+            <HeaderButton onClick={() => handleAddNotify()}>{__uiText("+ แจ้งเตือน")}</HeaderButton>
             <HeaderButton onClick={() => handleAddCondition()} disabled={!canAddCondition}>
-              + If / Else
-            </HeaderButton>
+              {__uiText("+ If / Else")}</HeaderButton>
           </div>
         )}
       </div>
@@ -1696,7 +1684,10 @@ function EditWorkflowScreen({ id }: { id: string }) {
  * `/marketing/workflows/:id` renders the full Agently-style canvas editor.
  */
 export default function MarketingWorkflowEditor() {
+  __useUiLocale();
   const { id } = useParams<{ id: string }>();
   if (!id) return <CreateWorkflowScreen />;
   return <EditWorkflowScreen id={id} />;
 }
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

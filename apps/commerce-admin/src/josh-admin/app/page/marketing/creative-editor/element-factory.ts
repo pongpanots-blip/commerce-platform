@@ -1,4 +1,6 @@
 // @ts-nocheck — copied unchanged from josh web-admin, which has the same type errors in this file (josh type debt, not a commerce change).
+// ui-static-options-migration: display metadata; identifiers remain unchanged
+import { uiText } from '@cp/ui';
 import {
   POPUP_GRID_COLS,
   normalizePopupGridItem,
@@ -143,16 +145,16 @@ export function newCreativeElement(type: CreativeElement['type']): CreativeEleme
 }
 
 export const ELEMENT_TYPES: Array<{ type: CreativeElement['type']; label: string }> = [
-  { type: 'text', label: 'ข้อความ' },
-  { type: 'image', label: 'รูปภาพ' },
-  { type: 'button', label: 'ปุ่ม' },
-  { type: 'coupon', label: 'คูปอง' },
-  { type: 'spacer', label: 'ระยะห่าง' },
-  { type: 'divider', label: 'เส้นคั่น' },
-  { type: 'video', label: 'วิดีโอ' },
-  { type: 'html', label: 'HTML' },
-  { type: 'countdown', label: 'นับถอยหลัง' },
-  { type: 'carousel', label: 'สไลด์รูป' },
+  { type: 'text', get label(){return uiText("ข้อความ");} },
+  { type: 'image', get label(){return uiText("รูปภาพ");} },
+  { type: 'button', get label(){return uiText("ปุ่ม");} },
+  { type: 'coupon', get label(){return uiText("คูปอง");} },
+  { type: 'spacer', get label(){return uiText("ระยะห่าง");} },
+  { type: 'divider', get label(){return uiText("เส้นคั่น");} },
+  { type: 'video', get label(){return uiText("วิดีโอ");} },
+  { type: 'html', get label(){return uiText("HTML");} },
+  { type: 'countdown', get label(){return uiText("นับถอยหลัง");} },
+  { type: 'carousel', get label(){return uiText("สไลด์รูป");} },
 ];
 
 /**
@@ -169,9 +171,9 @@ export const ELEMENT_TYPES: Array<{ type: CreativeElement['type']; label: string
  * them silently.
  */
 export const PAGE_ELEMENT_TYPES: Array<{ type: CreativeElement['type']; label: string }> = [
-  { type: 'rich_text', label: 'ข้อความ (Rich)' },
-  { type: 'product_grid', label: 'กริดสินค้า' },
-  { type: 'accordion', label: 'คำถามพบบ่อย' },
+  { type: 'rich_text', get label(){return uiText("ข้อความ (Rich)");} },
+  { type: 'product_grid', get label(){return uiText("กริดสินค้า");} },
+  { type: 'accordion', get label(){return uiText("คำถามพบบ่อย");} },
   ...ELEMENT_TYPES,
 ];
 

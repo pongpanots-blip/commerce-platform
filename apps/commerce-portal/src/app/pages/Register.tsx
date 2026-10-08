@@ -1,9 +1,12 @@
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, ErrorText, Field, Icon, Input } from '@cp/ui';
+import { Button, ErrorText, Field, Icon, Input, LanguageSelector } from '@cp/ui';
 import { auth } from '../../lib/api';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function Register() {
+  __useUiLocale();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,6 +29,7 @@ export function Register() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <LanguageSelector className="absolute right-4 top-4" />
       <div className="w-full max-w-md">
         {/* Brand section */}
         <div className="text-center mb-6">
@@ -34,12 +38,12 @@ export function Register() {
               <Icon name="polyline" size={24} />
             </div>
             <div className="text-left">
-              <div className="font-headline text-lg font-semibold text-on-surface">Commerce Platform</div>
-              <div className="text-xs text-on-surface-variant">Developer portal</div>
+              <div className="font-headline text-lg font-semibold text-on-surface">{__uiText("Commerce Platform")}</div>
+              <div className="text-xs text-on-surface-variant">{__uiText("Developer portal")}</div>
             </div>
           </div>
-          <h1 className="font-headline text-2xl font-semibold text-on-surface">Create account</h1>
-          <p className="text-sm text-on-surface-variant mt-1">Get API keys and subscribe to webhooks</p>
+          <h1 className="font-headline text-2xl font-semibold text-on-surface">{__uiText("Create account")}</h1>
+          <p className="text-sm text-on-surface-variant mt-1">{__uiText("Get API keys and subscribe to webhooks")}</p>
         </div>
 
         {/* Form card */}
@@ -47,18 +51,18 @@ export function Register() {
           onSubmit={submit}
           className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-6 space-y-4"
         >
-          <Field label="Email" hint="Your account email">
+          <Field label={__uiText("Email")} hint={__uiText("Your account email")}>
             <Input
               type="email"
               required
               value={email}
               autoComplete="username"
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="dev@example.com"
+              placeholder={__uiText("dev@example.com")}
             />
           </Field>
 
-          <Field label="Password" hint="At least 8 characters">
+          <Field label={__uiText("Password")} hint={__uiText("At least 8 characters")}>
             <Input
               type="password"
               required
@@ -78,14 +82,14 @@ export function Register() {
             disabled={submitting}
             type="submit"
           >
-            {submitting ? 'Creating account…' : 'Register'}
+            {submitting ? __uiText("Creating account…") : __uiText("Register")}
           </Button>
         </form>
 
         {/* Sign in link */}
         <div className="text-center mt-4">
           <span className="text-sm text-on-surface-variant">
-            Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Sign in</Link>
+            {__uiText("Already have an account? ")}<Link to="/login" className="text-primary font-semibold hover:underline">{__uiText("Sign in")}</Link>
           </span>
         </div>
       </div>

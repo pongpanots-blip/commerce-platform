@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>งานซิงก์ข้อมูล (Sync jobs) - Thai Ops Cockpit</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-bright": "#f9f9ff",
+            "tertiary-container": "#bc4600",
+            "inverse-on-surface": "#ecf0ff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "primary-fixed": "#dde1ff",
+            "on-surface-variant": "#444655",
+            "tertiary-fixed-dim": "#ffb597",
+            "surface-container-high": "#e0e8ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-surface": "#0e1b32",
+            "on-primary-container": "#ededff",
+            "on-tertiary-container": "#ffebe4",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-error-container": "#93000a",
+            "on-background": "#0e1b32",
+            "error-container": "#ffdad6",
+            "secondary-fixed": "#d3e3ff",
+            "on-primary": "#ffffff",
+            "secondary-container": "#d0e1fd",
+            "on-error": "#ffffff",
+            "surface-container": "#e8eeff",
+            "outline-variant": "#c4c5d8",
+            "on-secondary-fixed": "#0b1c31",
+            "surface-variant": "#d7e2ff",
+            "primary-container": "#365cf5",
+            "outline": "#747687",
+            "background": "#f9f9ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "inverse-surface": "#243048",
+            "on-primary-fixed": "#001257",
+            "surface-container-lowest": "#ffffff",
+            "primary": "#0a3fdc",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#d7e2ff",
+            "on-tertiary-fixed": "#360f00",
+            "tertiary": "#943500",
+            "surface-tint": "#214ce7",
+            "surface": "#f9f9ff",
+            "surface-dim": "#cddaf9",
+            "inverse-primary": "#b9c3ff",
+            "secondary": "#4f5f77",
+            "on-secondary": "#ffffff",
+            "surface-container-low": "#f1f3ff",
+            "on-secondary-container": "#54647c",
+            "tertiary-fixed": "#ffdbcd",
+            "error": "#ba1a1a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-sm": "0.5rem",
+            "margin": "2rem",
+            "gutter": "1.5rem",
+            "gutter-mobile": "1rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "margin-mobile": "1rem",
+            "space-xl": "2rem",
+            "space-2xl": "2.5rem",
+            "space-xs": "0.25rem"
+          },
+          fontFamily: {
+            "headline-md": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "body-lg": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "body-sm": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "body-md": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "headline-sm": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "label-sm": ["\"Inter, Noto Sans Thai, sans-serif\""],
+            "headline-lg-mobile": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "headline-lg": ["\"Noto Sans Thai, Noto Sans, Inter, sans-serif\""],
+            "label-md": ["\"Inter, Noto Sans Thai, sans-serif\""],
+            "code-sm": ["\"JetBrains Mono, monospace\""]
+          },
+          fontSize: {
+            "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+            "body-lg": ["15px", { lineHeight: "22px", fontWeight: "400" }],
+            "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }],
+            "headline-lg-mobile": ["22px", { lineHeight: "30px", fontWeight: "700" }],
+            "headline-lg": ["28px", { lineHeight: "36px", fontWeight: "700" }],
+            "label-md": ["13px", { lineHeight: "16px", fontWeight: "500" }],
+            "code-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-[#17243b] font-body-md text-body-md antialiased min-h-screen flex flex-col">
+<!-- ==================== SIDE NAVIGATION BAR (SHARED COMPONENT) ==================== -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-none">
+<div class="w-64 h-full flex flex-col justify-between p-3">
+<!-- Top Section / Branding -->
+<div>
+<div class="flex items-center gap-3 px-3 py-3 mb-3 border-b border-[#e1e7f0]">
+<div class="w-9 h-9 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-headline-sm shadow-sm">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface leading-tight">Thai Ops Cockpit</span>
+<span class="text-body-sm font-body-sm text-[#52627a]">ศูนย์บริหารจัดการร้านค้า</span>
+</div>
+</div>
+<!-- Navigation Tabs (7 Standard Items) -->
+<nav class="space-y-1">
+<!-- 1: สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- 5: รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6: ระบบเชื่อมต่อ (ACTIVE TAB) -->
+<div class="relative">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container dark:bg-surface-container-high text-primary dark:text-inverse-primary font-medium border-l-[3px] border-primary dark:border-inverse-primary cursor-pointer active:scale-[0.99] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="sync_alt">sync_alt</span>
+<span class="text-label-md font-label-md flex-1">ระบบเชื่อมต่อ</span>
+<span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+</a>
+<!-- Sub-navigation under ระบบเชื่อมต่อ -->
+<div class="mt-1 ml-4 pl-3 border-l border-[#e1e7f0] space-y-1">
+<a class="block py-1.5 px-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f5f9] rounded transition-colors" href="#">การเชื่อมต่อ</a>
+<a class="block py-1.5 px-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f5f9] rounded transition-colors" href="#">บันทึกข้อมูลขาเข้า</a>
+<a class="block py-1.5 px-2 text-xs font-semibold text-[#0a3fdc] bg-[#eef2ff] rounded border-l-2 border-[#0a3fdc]" href="#">งานซิงก์ข้อมูล (ACTIVE)</a>
+<a class="block py-1.5 px-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f5f9] rounded transition-colors" href="#">การส่งเหตุการณ์ขาออก</a>
+<a class="block py-1.5 px-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] hover:bg-[#f1f5f9] rounded transition-colors" href="#">รายการส่งไม่สำเร็จ</a>
+</div>
+</div>
+<!-- 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-inverse-on-surface font-normal hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Profile / Meta Block -->
+<div class="pt-3 border-t border-[#e1e7f0] px-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-[#e8eeff] text-[#0a3fdc] flex items-center justify-center font-bold text-xs ring-1 ring-[#c4c5d8]">
+            OP
+          </div>
+<div class="flex flex-col truncate">
+<span class="text-xs font-semibold text-[#17243b] truncate">ทีมปฏิบัติการ B2C</span>
+<span class="text-[11px] text-[#52627a] truncate">store-th-east-01</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- ==================== MAIN WORKSPACE ==================== -->
+<div class="pl-64 flex flex-col flex-1 min-h-screen">
+<!-- Top Contextual Bar (Shared TopNavBar Variant) -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-8">
+<!-- Breadcrumbs & Status Tag -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-sm text-[#52627a]">
+<span class="hover:text-primary transition-colors cursor-pointer">ระบบเชื่อมต่อ</span>
+<span class="text-xs text-outline">/</span>
+<span class="font-medium text-[#17243b]">งานซิงก์ข้อมูล</span>
+<span class="font-code-sm text-[11px] px-2 py-0.5 rounded bg-[#f1f3ff] text-[#0a3fdc] border border-[#d7e2ff]">admin-89ff8b5a90ba</span>
+</div>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fef9e7] text-[#b08900] border border-[#fef3c7]">
+          ข้อมูลตัวอย่าง
+        </span>
+</div>
+<!-- Trailing Action Cluster -->
+<div class="flex items-center gap-3">
+<!-- Bilingual switcher -->
+<div class="inline-flex items-center bg-[#f1f5f9] p-0.5 rounded-lg border border-[#e1e7f0] text-xs font-medium">
+<button class="px-2.5 py-1 rounded bg-white text-[#0a3fdc] font-semibold shadow-xs transition-all" type="button">ไทย</button>
+<button class="px-2.5 py-1 rounded text-[#52627a] hover:text-[#17243b] transition-all" type="button">EN</button>
+</div>
+<div class="h-4 w-px bg-[#e1e7f0]"></div>
+<!-- Notification Button -->
+<button class="relative p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-95" title="Notifications" type="button">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ba1a1a]"></span>
+</button>
+<!-- Help Button -->
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-95" title="Help &amp; Docs" type="button">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<!-- Profile Avatar -->
+<div class="flex items-center gap-2 pl-2">
+<div class="w-8 h-8 rounded-full bg-[#365cf5] text-white flex items-center justify-center font-bold text-xs ring-2 ring-white">
+            JS
+          </div>
+<span class="text-xs font-medium text-[#17243b] hidden lg:inline">Josh Admin</span>
+</div>
+</div>
+</header>
+<!-- Operational Canvas Area -->
+<main class="flex-1 p-8 max-w-[1280px] w-full mx-auto space-y-6">
+<!-- ==================== PAGE HEADER & STAT CARDS ==================== -->
+<div class="space-y-6">
+<!-- Title and Primary Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-[#17243b]">งานซิงก์ข้อมูล</h1>
+<span class="text-xs font-semibold px-2 py-0.5 rounded bg-[#eef2ff] text-[#365cf5] border border-[#d3e3ff]">Sync jobs</span>
+</div>
+<p class="text-body-sm font-body-sm text-[#52627a] mt-1">
+              Run a connector sync operation and track its result. (รันคำสั่งซิงก์ข้อมูลระหว่างระบบและติดตามผลลัพธ์การทำงาน)
+            </p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Refresh Button -->
+<button class="h-10 px-4 rounded-lg bg-white border border-[#e1e7f0] hover:bg-[#f8fafc] text-[#17243b] text-sm font-medium flex items-center gap-2 transition-all shadow-xs active:scale-98" type="button">
+<span class="material-symbols-outlined text-[18px] text-[#52627a]" data-icon="refresh">refresh</span>
+<span>Refresh</span>
+</button>
+<!-- Trigger a sync Dialog Trigger -->
+<button class="h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-[#2947d1] text-white text-sm font-medium flex items-center gap-2 transition-all shadow-xs active:scale-98" onclick="document.getElementById('trigger-sync-section').scrollIntoView({behavior: 'smooth'})" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="play_arrow">play_arrow</span>
+<span>Trigger a sync</span>
+</button>
+</div>
+</div>
+<!-- 4 Summary KPI Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: In Progress -->
+<div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-xs flex items-center justify-between">
+<div>
+<div class="text-xs font-medium text-[#52627a]">งานที่กำลังทำงาน (Active)</div>
+<div class="text-2xl font-bold text-[#17243b] mt-1">2 <span class="text-xs font-normal text-[#52627a]">รายการ</span></div>
+<div class="text-xs text-[#0a3fdc] mt-1 flex items-center gap-1">
+<span class="inline-block w-2 h-2 rounded-full bg-[#365cf5] animate-ping"></span>
+<span>SAP, Lazada กำลังรัน</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-[#e8eeff] text-[#365cf5] flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+</div>
+</div>
+<!-- Card 2: Success Rate -->
+<div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-xs flex items-center justify-between">
+<div>
+<div class="text-xs font-medium text-[#52627a]">ซิงก์สำเร็จ 24 ชม. (Success)</div>
+<div class="text-2xl font-bold text-[#157347] mt-1">98.4%</div>
+<div class="text-xs text-[#52627a] mt-1">142 จาก 144 งานปกติ</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-[#e8f5ed] text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<!-- Card 3: Failed / Needs Attention -->
+<div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-xs flex items-center justify-between">
+<div>
+<div class="text-xs font-medium text-[#52627a]">เกิดข้อผิดพลาดล่าสุด (Failed)</div>
+<div class="text-2xl font-bold text-[#ba1a1a] mt-1">1 <span class="text-xs font-normal text-[#52627a]">รายการ</span></div>
+<div class="text-xs text-[#ba1a1a] mt-1">Flash Express Auth Timeout</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-[#fdf2f2] text-[#ba1a1a] flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="error_outline">error_outline</span>
+</div>
+</div>
+<!-- Card 4: Avg Duration -->
+<div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-xs flex items-center justify-between">
+<div>
+<div class="text-xs font-medium text-[#52627a]">เวลาเฉลี่ยต่อรอบ (Avg Duration)</div>
+<div class="text-2xl font-bold text-[#17243b] mt-1">1.4 <span class="text-xs font-normal text-[#52627a]">นาที</span></div>
+<div class="text-xs text-[#52627a] mt-1">ความหน่วงเน็ตเวิร์ก 84ms</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-[#f1f5f9] text-[#52627a] flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ==================== TRIGGER A SYNC FORM CARD ==================== -->
+<section class="bg-white rounded-xl border border-[#e1e7f0] p-6 shadow-xs" id="trigger-sync-section">
+<div class="flex items-start justify-between pb-4 border-b border-[#e1e7f0] mb-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#e8eeff] text-[#365cf5] flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]">Trigger a sync (สั่งรันงานซิงก์ข้อมูล)</h2>
+<p class="text-body-sm font-body-sm text-[#52627a]">
+                สั่งเริ่มการทำงานของ Connector เพื่อดึงหรือส่งต่อข้อมูลแค็ตตาล็อก สต็อก หรือสถานะคำสั่งซื้อแบบทันที
+              </p>
+</div>
+</div>
+<span class="text-xs font-code-sm text-[#52627a] bg-[#f8fafc] px-2.5 py-1 rounded border border-[#e1e7f0]">
+            POST /api/v2/connectors/sync
+          </span>
+</div>
+<form class="space-y-4" onsubmit="event.preventDefault(); alert('ส่งคำขอเริ่มงานซิงก์เรียบร้อยแล้ว');">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+<!-- Field 1: Integration -->
+<div>
+<label class="block text-label-md font-label-md text-[#17243b] mb-1.5">
+                Integration (ระบบเชื่อมต่อ) <span class="text-[#ba1a1a]">*</span>
+</label>
+<select class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] bg-white text-sm text-[#17243b] focus:outline-none focus:border-[#365cf5] transition-all">
+<option value="">Select…</option>
+<option selected="" value="sap">SAP ERP (Products &amp; Inventory)</option>
+<option value="shopee">Shopee Central Store (Orders)</option>
+<option value="lazada">Lazada Marketplace (Products)</option>
+<option value="flash">Flash Express (Shipment Tracking)</option>
+</select>
+<span class="text-[11px] text-[#52627a] mt-1 block">เลือกระบบต้นทางหรือปลายทางที่ติดตั้งแล้ว</span>
+</div>
+<!-- Field 2: Operation -->
+<div>
+<label class="block text-label-md font-label-md text-[#17243b] mb-1.5">
+                Operation (ประเภทการทำงาน) <span class="text-[#ba1a1a]">*</span>
+</label>
+<select class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] bg-white text-sm text-[#17243b] focus:outline-none focus:border-[#365cf5] transition-all">
+<option value="">Select…</option>
+<option selected="" value="full-inv">Full Inventory Sync (ซิงก์สต็อกแบบเต็มรอบ)</option>
+<option value="delta-order">Delta Order Pull (ดึงคำสั่งซื้อล่าสุด)</option>
+<option value="catalog-push">Product Catalog Push (อัปเดตข้อมูลสินค้า)</option>
+<option value="price-reconcile">Price &amp; Stock Reconcile (ตรวจสอบราคาและสต็อก)</option>
+</select>
+<span class="text-[11px] text-[#52627a] mt-1 block">ประเภทงานประมวลผลของคอนเน็กเตอร์</span>
+</div>
+<!-- Field 3: Sync Mode / Scope -->
+<div>
+<label class="block text-label-md font-label-md text-[#17243b] mb-1.5">
+                Sync mode / Parameters (พารามิเตอร์เพิ่มเติม)
+              </label>
+<input class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] bg-white text-sm text-[#17243b] focus:outline-none focus:border-[#365cf5] transition-all" placeholder="เช่น --warehouse=WH-BKK-01 --limit=500" type="text" value="--warehouse=WH-BKK-01"/>
+<span class="text-[11px] text-[#52627a] mt-1 block">ระบุค่า Flag คลังสินค้า หรือจำกัดชุดข้อมูล</span>
+</div>
+</div>
+<!-- Actions Bar -->
+<div class="pt-3 flex items-center justify-between">
+<div class="flex items-center gap-2 text-xs text-[#52627a]">
+<span class="material-symbols-outlined text-[16px] text-[#b08900]" data-icon="info">info</span>
+<span>ระบบจะรันงานนี้เป็น Asynchronous Background Task โดยสามารถดูสถานะได้ที่ตารางด้านล่าง</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 rounded-lg bg-white border border-[#e1e7f0] hover:bg-[#f1f5f9] text-[#52627a] text-sm font-medium transition-all" type="reset">
+                ล้างฟอร์ม
+              </button>
+<button class="h-10 px-6 rounded-lg bg-[#365cf5] hover:bg-[#2947d1] text-white text-sm font-medium flex items-center gap-2 transition-all shadow-xs" type="submit">
+<span class="material-symbols-outlined text-[18px]" data-icon="play_circle">play_circle</span>
+<span>Run sync</span>
+</button>
+</div>
+</div>
+</form>
+</section>
+<!-- ==================== JOB HISTORY DATA TABLE ==================== -->
+<section class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs overflow-hidden">
+<!-- Table Control Toolbar -->
+<div class="p-5 border-b border-[#e1e7f0] flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-headline-sm font-headline-sm text-[#17243b]">Job history (ประวัติงานซิงก์)</h2>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#fef9e7] text-[#b08900] border border-[#fef3c7]">
+                ข้อมูลตัวอย่าง
+              </span>
+</div>
+<p class="text-body-sm font-body-sm text-[#52627a] mt-0.5">
+              รายการบันทึกผลการทำงานของ Connector ทุกช่องทางในรอบ 30 วันที่ผ่านมา
+            </p>
+</div>
+<!-- Filter & Search Controls -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Inline Search -->
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[#8c9bb0] text-[18px]" data-icon="search">search</span>
+<input class="w-full h-10 pl-9 pr-3 text-xs bg-white rounded-lg border border-[#e1e7f0] focus:border-[#365cf5] focus:outline-none placeholder-[#8c9bb0] transition-colors" placeholder="ค้นหาในหน้านี้เท่านั้น (รหัสงาน, ระบบปลายทาง)" type="text"/>
+</div>
+<!-- Filter Status -->
+<select class="h-10 px-3 text-xs rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] focus:outline-none focus:border-[#365cf5]">
+<option value="all">สถานะ: ทั้งหมด (Status)</option>
+<option value="success">สำเร็จ (Success)</option>
+<option value="running">กำลังทำงาน (Running)</option>
+<option value="failed">ล้มเหลว (Failed)</option>
+</select>
+<!-- Filter Integration -->
+<select class="h-10 px-3 text-xs rounded-lg border border-[#e1e7f0] bg-white text-[#17243b] focus:outline-none focus:border-[#365cf5]">
+<option value="all">Integration: ทั้งหมด</option>
+<option value="sap">SAP ERP</option>
+<option value="shopee">Shopee Central Store</option>
+<option value="lazada">Lazada Marketplace</option>
+<option value="flash">Flash Express</option>
+</select>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg border border-[#e1e7f0] text-[#52627a] hover:bg-[#f1f5f9] transition-colors" title="Export CSV" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+</button>
+</div>
+</div>
+<!-- Enterprise Table Content -->
+<div class="overflow-x-auto custom-scroll">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-11 bg-[#f8fafc] border-b border-[#e1e7f0] text-xs font-semibold text-[#52627a] uppercase tracking-wider">
+<th class="py-2.5 px-4 font-label-md">รหัสงาน (Job ID)</th>
+<th class="py-2.5 px-4 font-label-md">Integration (ระบบเชื่อมต่อ)</th>
+<th class="py-2.5 px-4 font-label-md">Operation (การทำงาน)</th>
+<th class="py-2.5 px-4 font-label-md">Status (สถานะ)</th>
+<th class="py-2.5 px-4 font-label-md">Started (เริ่มเมื่อ)</th>
+<th class="py-2.5 px-4 font-label-md">ระยะเวลา</th>
+<th class="py-2.5 px-4 font-label-md">Result (ผลลัพธ์)</th>
+<th class="py-2.5 px-4 font-label-md text-right">การกระทำ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-sm">
+<!-- ROW 1: Running -->
+<tr class="hover:bg-[#f8fafc] transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-code-sm text-xs font-semibold text-[#0a3fdc]">#SYNC-8902</div>
+<div class="text-[11px] text-[#52627a]">Triggered by Admin</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-[#e8eeff] text-[#365cf5] flex items-center justify-center text-xs font-bold">SP</span>
+<span class="font-medium text-[#17243b]">Shopee Central Store</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded text-xs bg-[#f1f5f9] font-medium text-[#17243b]">Delta Order Pull</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8eeff] text-[#0a3fdc]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0a3fdc] animate-pulse"></span>
+                    กำลังทำงาน (Running)
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-xs text-[#52627a]">
+<div>วันนี้ 14:32:10</div>
+<div class="text-[11px] text-outline">2 นาทีที่แล้ว</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-sm text-xs text-[#52627a]">1m 45s...</span>
+</td>
+<td class="py-3.5 px-4 text-xs">
+<div class="text-[#17243b] font-medium">Processing 84 orders</div>
+<div class="text-[11px] text-[#52627a]">Batch 2/4 in stream</div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="text-xs font-medium text-[#365cf5] hover:underline px-2 py-1" type="button">View logs</button>
+</td>
+</tr>
+<!-- ROW 2: Success -->
+<tr class="hover:bg-[#f8fafc] transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-code-sm text-xs font-semibold text-[#17243b]">#SYNC-8901</div>
+<div class="text-[11px] text-[#52627a]">Scheduled Cron</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-[#fef9e7] text-[#b08900] flex items-center justify-center text-xs font-bold">SAP</span>
+<span class="font-medium text-[#17243b]">SAP ERP</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded text-xs bg-[#f1f5f9] font-medium text-[#17243b]">Full Inventory Sync</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    สำเร็จ (Success)
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-xs text-[#52627a]">
+<div>วันนี้ 14:00:00</div>
+<div class="text-[11px] text-outline">34 นาทีที่แล้ว</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-sm text-xs text-[#52627a]">3m 12s</span>
+</td>
+<td class="py-3.5 px-4 text-xs">
+<div class="text-[#157347] font-medium">Synced 1,280 SKUs</div>
+<div class="text-[11px] text-[#52627a]">0 errors, stock updated</div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="text-xs font-medium text-[#365cf5] hover:underline" type="button">View logs</button>
+<button class="text-xs font-medium text-[#52627a] hover:text-[#17243b]" type="button">Retry</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3: Failed -->
+<tr class="hover:bg-[#f8fafc] transition-colors bg-red-50/20">
+<td class="py-3.5 px-4">
+<div class="font-code-sm text-xs font-semibold text-[#ba1a1a]">#SYNC-8900</div>
+<div class="text-[11px] text-[#52627a]">Triggered by Hook</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-[#fdf2f2] text-[#ba1a1a] flex items-center justify-center text-xs font-bold">FL</span>
+<span class="font-medium text-[#17243b]">Flash Express</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded text-xs bg-[#f1f5f9] font-medium text-[#17243b]">Shipment Tracking</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#fdf2f2] text-[#ba1a1a]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#ba1a1a]"></span>
+                    ล้มเหลว (Failed)
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-xs text-[#52627a]">
+<div>วันนี้ 13:15:22</div>
+<div class="text-[11px] text-outline">1 ชม. ที่แล้ว</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-sm text-xs text-[#ba1a1a]">45s (Timeout)</span>
+</td>
+<td class="py-3.5 px-4 text-xs">
+<div class="text-[#ba1a1a] font-medium">Gateway 504 Timeout</div>
+<div class="text-[11px] text-[#52627a]">Partner API not responding</div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="text-xs font-medium text-[#365cf5] hover:underline" type="button">View logs</button>
+<button class="text-xs font-medium text-[#ba1a1a] font-semibold hover:underline" type="button">Retry</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4: Success -->
+<tr class="hover:bg-[#f8fafc] transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-code-sm text-xs font-semibold text-[#17243b]">#SYNC-8899</div>
+<div class="text-[11px] text-[#52627a]">Scheduled Cron</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-[#e8eeff] text-[#365cf5] flex items-center justify-center text-xs font-bold">LZ</span>
+<span class="font-medium text-[#17243b]">Lazada Marketplace</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded text-xs bg-[#f1f5f9] font-medium text-[#17243b]">Product Catalog Push</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f5ed] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                    สำเร็จ (Success)
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-xs text-[#52627a]">
+<div>เมื่อวาน 23:30:00</div>
+<div class="text-[11px] text-outline">15 ชม. ที่แล้ว</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-sm text-xs text-[#52627a]">4m 02s</span>
+</td>
+<td class="py-3.5 px-4 text-xs">
+<div class="text-[#157347] font-medium">Synced 312 products</div>
+<div class="text-[11px] text-[#52627a]">Attribute validation passed</div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="text-xs font-medium text-[#365cf5] hover:underline" type="button">View logs</button>
+<button class="text-xs font-medium text-[#52627a] hover:text-[#17243b]" type="button">Retry</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination Notice -->
+<div class="p-4 bg-[#f8fafc] border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+<div class="flex items-center gap-2">
+<span>แสดง 4 จากทั้งหมด 144 รายการ</span>
+<span class="inline-block w-1 h-1 rounded-full bg-[#cbd5e1]"></span>
+<span class="text-[#17243b] font-medium">แสดงผลลัพธ์ในหน้านี้ (ข้อมูลตัวอย่าง)</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-white text-[#52627a] disabled:opacity-50" disabled="">ก่อนหน้า</button>
+<button class="px-2.5 py-1 rounded bg-[#365cf5] text-white font-medium">1</button>
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-white text-[#52627a] hover:bg-[#f1f5f9]">2</button>
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-white text-[#52627a] hover:bg-[#f1f5f9]">3</button>
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] bg-white text-[#52627a] hover:bg-[#f1f5f9]">ถัดไป</button>
+</div>
+</div>
+<!-- Secondary Demonstrative Container: Empty State Preview Tab -->
+<div class="border-t border-[#e1e7f0] bg-[#fafbfc] p-6">
+<div class="max-w-md mx-auto text-center py-4">
+<div class="w-12 h-12 rounded-full bg-[#f1f3ff] text-[#0a3fdc] flex items-center justify-center mx-auto mb-3">
+<span class="material-symbols-outlined" data-icon="inbox">inbox</span>
+</div>
+<h4 class="text-sm font-semibold text-[#17243b]">No sync jobs yet.</h4>
+<p class="text-xs text-[#52627a] mt-1">
+              (ตัวอย่างการแสดงผลกรณีไม่มีงานซิงก์ข้อมูลตามตัวกรองที่เลือก หรือยังไม่มีการกดรันคำสั่ง)
+            </p>
+<div class="mt-3">
+<button class="text-xs text-[#365cf5] font-semibold hover:underline" type="button">
+                รีเซ็ตตัวกรองทั้งหมด
+              </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Contextual System Status Strip -->
+<footer class="h-10 border-t border-[#e1e7f0] bg-white px-8 flex items-center justify-between text-xs text-[#52627a]">
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+<span>Integration Engine: Online (Latency 42ms)</span>
+</span>
+<span class="text-outline">|</span>
+<span>Node: th-bangkok-c1-worker-04</span>
+</div>
+<div>
+<span>Thai Commerce Cockpit v3.4.1 (Enterprise Edition)</span>
+</div>
+</footer>
+</div>
+<!-- ==================== EXACT SCRIPT TRANSLATION REQUIREMENT ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Sync jobs": {
+      "th": "งานซิงก์ข้อมูล",
+      "en": "Sync jobs"
+    },
+    "Refresh": {
+      "th": "รีเฟรช",
+      "en": "Refresh"
+    },
+    "Status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "Started": {
+      "th": "เริ่มเมื่อ",
+      "en": "Started"
+    },
+    "Run a connector sync operation and track its result.": {
+      "th": "รันคำสั่งซิงก์ข้อมูลระหว่างระบบและติดตามผลลัพธ์การทำงาน",
+      "en": "Run a connector sync operation and track its result."
+    },
+    "Trigger a sync": {
+      "th": "เริ่มงานซิงก์ใหม่",
+      "en": "Trigger a sync"
+    },
+    "Run sync": {
+      "th": "รันคำสั่งซิงก์",
+      "en": "Run sync"
+    },
+    "Integration": {
+      "th": "ระบบเชื่อมต่อ",
+      "en": "Integration"
+    },
+    "Select…": {
+      "th": "เลือก…",
+      "en": "Select…"
+    },
+    "Operation": {
+      "th": "ประเภทการทำงาน",
+      "en": "Operation"
+    },
+    "Job history": {
+      "th": "ประวัติงานซิงก์",
+      "en": "Job history"
+    },
+    "No sync jobs yet.": {
+      "th": "ยังไม่มีงานซิงก์ข้อมูล",
+      "en": "No sync jobs yet."
+    },
+    "Result": {
+      "th": "ผลลัพธ์",
+      "en": "Result"
+    },
+    "เก็บซ้ำทุก (ชั่วโมง)": {
+      "th": "เก็บซ้ำทุก (ชั่วโมง)",
+      "en": "Recur every (hours)"
+    },
+    "ความกว้าง (%)": {
+      "th": "ความกว้าง (%)",
+      "en": "Width (%)"
+    },
+    "เจตนา (Intent)": {
+      "th": "เจตนา (Intent)",
+      "en": "Intent"
+    },
+    "ซ่อนกล่อง “โค้ดที่ใช้ได้” และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง": {
+      "th": "ซ่อนกล่อง “โค้ดที่ใช้ได้” และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง",
+      "en": "Hide 'Available Codes' box and copy button — best for auto-applied coupons where customers don't enter codes"
+    },
+    "แถม (จำนวน)": {
+      "th": "แถม (จำนวน)",
+      "en": "Bonus items (quantity)"
+    },
+    "ประเภทร้าน (Cuisine)": {
+      "th": "ประเภทร้าน (Cuisine)",
+      "en": "Store category (Cuisine)"
+    },
+    "ไฟล์ถูก": {
+      "th": "ไฟล์ถูก",
+      "en": "File valid"
+    },
+    "ยอดต่ำกว่า ฿1,000": {
+      "th": "ยอดต่ำกว่า ฿1,000",
+      "en": "Amount under ฿1,000"
+    },
+    "รออนุมัติ": {
+      "th": "รออนุมัติ",
+      "en": "Pending approval"
+    },
+    "ลบ Campaign": {
+      "th": "ลบ Campaign",
+      "en": "Delete Campaign"
+    },
+    "วิธีใช้: กด": {
+      "th": "วิธีใช้: กด",
+      "en": "How to use: Press"
+    },
+    "เส้นทางหน้าเว็บ (Path)": {
+      "th": "เส้นทางหน้าเว็บ (Path)",
+      "en": "Web path (Path)"
+    },
+    "อยู่ในช่วงเวลาที่กำหนด": {
+      "th": "อยู่ในช่วงเวลาที่กำหนด",
+      "en": "Within specified time window"
+    },
+    "Action: แสดง Offer": {
+      "th": "Action: แสดง Offer",
+      "en": "Action: Show Offer"
+    },
+    "อนุมัติสินค้าไม่สำเร็จ": {
+      "th": "อนุมัติสินค้าไม่สำเร็จ",
+      "en": "Product approval failed"
+    }
+  }
+  </script>
+</body></html>

@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Platform - รายงานออเดอร์ (JoshOrdersPage)</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Noto Sans & Noto Sans Thai -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-container": "#ededff",
+            "tertiary": "#943500",
+            "tertiary-fixed": "#ffdbcd",
+            "background": "#f9f9ff",
+            "tertiary-container": "#bc4600",
+            "secondary-fixed": "#d3e3ff",
+            "surface-container-low": "#f1f3ff",
+            "on-surface-variant": "#444655",
+            "primary": "#0a3fdc",
+            "surface-container-highest": "#d7e2ff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-secondary-container": "#54647c",
+            "primary-fixed": "#dde1ff",
+            "on-surface": "#0e1b32",
+            "on-tertiary-container": "#ffebe4",
+            "primary-fixed-dim": "#b9c3ff",
+            "tertiary-fixed-dim": "#ffb597",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-dim": "#cddaf9",
+            "surface-bright": "#f9f9ff",
+            "on-secondary": "#ffffff",
+            "surface-container-high": "#e0e8ff",
+            "surface-tint": "#214ce7",
+            "inverse-surface": "#243048",
+            "on-tertiary-fixed": "#360f00",
+            "outline-variant": "#c4c5d8",
+            "secondary-container": "#d0e1fd",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-primary": "#ffffff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-background": "#0e1b32",
+            "inverse-primary": "#b9c3ff",
+            "error": "#ba1a1a",
+            "secondary": "#4f5f77",
+            "on-error": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "surface-container": "#e8eeff",
+            "on-error-container": "#93000a",
+            "surface-container-lowest": "#ffffff",
+            "error-container": "#ffdad6",
+            "surface": "#f9f9ff",
+            "primary-container": "#365cf5",
+            "on-secondary-fixed-variant": "#38485e",
+            "surface-variant": "#d7e2ff",
+            "on-secondary-fixed": "#0b1c31",
+            "on-primary-fixed": "#001257",
+            "outline": "#747687"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "gutter": "1rem",
+            "margin": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "body-medium": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "table-header": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-muted": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-semibold": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "caption": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "section-title": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "page-title": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "card-title": ["Noto Sans Thai", "Noto Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "body-medium": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "500"
+              }
+            ],
+            "table-header": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "0.02em",
+                "fontWeight": "600"
+              }
+            ],
+            "label-muted": [
+              "13px",
+              {
+                "lineHeight": "18px",
+                "fontWeight": "400"
+              }
+            ],
+            "body-semibold": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "600"
+              }
+            ],
+            "body-default": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "400"
+              }
+            ],
+            "caption": [
+              "11px",
+              {
+                "lineHeight": "16px",
+                "fontWeight": "500"
+              }
+            ],
+            "label-default": [
+              "13px",
+              {
+                "lineHeight": "18px",
+                "fontWeight": "500"
+              }
+            ],
+            "section-title": [
+              "20px",
+              {
+                "lineHeight": "28px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "600"
+              }
+            ],
+            "page-title": [
+              "28px",
+              {
+                "lineHeight": "36px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "600"
+              }
+            ],
+            "card-title": [
+              "16px",
+              {
+                "lineHeight": "24px",
+                "fontWeight": "600"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #f6f8fc;
+      color: #0e1b32;
+      font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 20px;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Operational status classes */
+    .status-badge-success {
+      background-color: #e8f5ec;
+      color: #157347;
+    }
+    .status-badge-warning {
+      background-color: #fef9e7;
+      color: #b08900;
+    }
+    .status-badge-error {
+      background-color: #fdf2f2;
+      color: #c2333f;
+    }
+    .status-badge-neutral {
+      background-color: #f1f3ff;
+      color: #4f5f77;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#f6f8fc] text-on-surface">
+<!-- ==================== SIDEBAR COMPONENT (256px fixed) ==================== -->
+<aside class="fixed top-0 left-0 w-64 h-screen z-40 bg-surface-container-lowest border-r border-[#e1e7f0]">
+<div class="w-64 h-full flex flex-col justify-between p-4">
+<div>
+<!-- Brand Header & ERP Connected Status -->
+<div class="flex items-center gap-3 px-2 py-3 border-b border-[#e1e7f0] mb-4">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-bold text-card-title shadow-sm">
+            CP
+          </div>
+<div class="overflow-hidden">
+<h1 class="text-card-title font-card-title font-bold text-on-surface tracking-tight truncate leading-tight">Commerce Platform</h1>
+<p class="text-caption font-caption text-secondary flex items-center gap-1">
+<span class="inline-block w-2 h-2 rounded-full bg-[#157347]"></span>
+<span data-i18n="erp_status">Jagota ERP Connected</span>
+</p>
+</div>
+</div>
+<!-- Operational Tenant Selector -->
+<div class="mb-4 px-2">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low border border-[#e1e7f0]">
+<div class="truncate">
+<div class="text-caption font-caption text-secondary uppercase tracking-wider" data-i18n="tenant_label">B2B Food Wholesale</div>
+<div class="text-body-semibold font-body-semibold text-on-surface truncate">Jagota Thailand HQ</div>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="unfold_more">unfold_more</span>
+</div>
+</div>
+<!-- 7 Primary Work Areas Navigation -->
+<nav aria-label="Main Navigation" class="space-y-1">
+<!-- Item 1: สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-all duration-150 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span data-i18n="nav_inventory">สินค้าและสต็อก</span>
+</a>
+<!-- Item 2: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-all duration-150 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span data-i18n="nav_orders">ออเดอร์และการเงิน</span>
+</a>
+<!-- Item 3: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-all duration-150 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span data-i18n="nav_customers">ลูกค้าและบริการ</span>
+</a>
+<!-- Item 4: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-all duration-150 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span data-i18n="nav_marketing">การตลาด</span>
+</a>
+<!-- Item 5: รายงานและข้อมูล (ACTIVE TARGET) -->
+<a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-semibold border-l-4 border-primary transition-all duration-150 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span data-i18n="nav_reports">รายงานและข้อมูล</span>
+</a>
+<!-- Item 6: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-all duration-150 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+<span data-i18n="nav_integrations">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Item 7: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-all duration-150 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span data-i18n="nav_settings">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Help and System Diagnostic -->
+<div class="pt-3 border-t border-[#e1e7f0] space-y-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span data-i18n="footer_help">ช่วยเหลือและคู่มือ</span>
+</a>
+<div class="px-3 py-2 rounded-lg bg-[#f1f3ff] flex items-center justify-between text-caption font-caption text-secondary">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+            Sync Josh-ERP
+          </span>
+<span class="tabular-nums font-semibold text-primary">0.4s avg</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- ==================== TOP NAVIGATION BAR (Contextual 64px) ==================== -->
+<header class="fixed top-0 left-64 right-0 h-16 z-30 bg-surface-container-lowest border-b border-[#e1e7f0]">
+<div class="h-16 px-6 flex items-center justify-between w-full">
+<!-- Left side: Route context + In-nav quick search -->
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-3">
+<span class="text-section-title font-section-title font-bold text-primary" data-i18n="brand_name">Commerce Platform</span>
+<span class="text-[#c4c5d8]">|</span>
+<div class="flex items-center gap-4 text-body-medium font-body-medium">
+<a class="text-primary font-body-semibold" data-i18n="top_nav_orders" href="#">รายงานออเดอร์</a>
+<a class="text-secondary hover:text-on-surface transition-colors" data-i18n="top_nav_ledger" href="#">สมุดบัญชี</a>
+<a class="text-secondary hover:text-on-surface transition-colors" data-i18n="top_nav_analytics" href="#">วิเคราะห์การขาย</a>
+</div>
+</div>
+</div>
+<!-- Right side: Actions, Environment Pill, Language Switcher, Profile -->
+<div class="flex items-center gap-3">
+<!-- Environment Indicator -->
+<span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-md bg-[#e8f5ec] text-[#157347] text-caption font-caption font-semibold border border-[#d2edd8]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347] mr-1.5 animate-pulse"></span>
+          Production v2.4
+        </span>
+<!-- Sync Button -->
+<button class="w-9 h-9 rounded-lg border border-[#e1e7f0] flex items-center justify-center text-secondary hover:bg-surface-container-low hover:text-primary transition-all" id="btn-header-sync" title="Sync Jagota ERP">
+<span class="material-symbols-outlined text-[18px]" data-icon="sync">sync</span>
+</button>
+<!-- Notification Bell -->
+<button class="relative w-9 h-9 rounded-lg border border-[#e1e7f0] flex items-center justify-center text-secondary hover:bg-surface-container-low transition-all" title="Notifications">
+<span class="material-symbols-outlined text-[18px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#c2333f]"></span>
+</button>
+<!-- BILINGUAL TH / EN TOGGLE (Mandatory Interactive Segmented Control) -->
+<div aria-label="Language selector" class="h-8 bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg p-0.5 flex items-center gap-1 shadow-sm" role="group">
+<button class="px-2.5 h-7 rounded text-caption font-caption font-semibold transition-all duration-150 bg-white text-primary shadow-sm border border-[#e1e7f0]" id="lang-btn-th" onclick="setAppLanguage('th')">
+            ไทย
+          </button>
+<button class="px-2.5 h-7 rounded text-caption font-caption font-semibold transition-all duration-150 text-secondary hover:text-on-surface" id="lang-btn-en" onclick="setAppLanguage('en')">
+            EN
+          </button>
+</div>
+<!-- Vertical Divider -->
+<div class="h-6 w-[1px] bg-[#e1e7f0]"></div>
+<!-- User Profile Avatar & Meta -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-caption border border-[#cddaf9]">
+            FR
+          </div>
+<div class="hidden xl:block text-left leading-tight">
+<p class="text-label-default font-label-default font-semibold text-on-surface truncate">Verapong S.</p>
+<p class="text-caption font-caption text-secondary" data-i18n="role_label">Financial Reconciler</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== MAIN OPERATIONAL CANVAS ==================== -->
+<main class="ml-64 pt-16 min-h-screen p-6">
+<div class="max-w-[1240px] mx-auto space-y-5">
+<!-- 1. Breadcrumb Hierarchy -->
+<nav aria-label="Breadcrumb" class="flex items-center text-label-muted font-label-muted text-secondary gap-1.5 py-1">
+<a class="hover:text-primary transition-colors flex items-center gap-1" data-i18n="breadcrumb_home" href="#">หน้าหลัก</a>
+<span class="text-outline-variant">/</span>
+<a class="hover:text-primary transition-colors" data-i18n="breadcrumb_reports" href="#">รายงานและข้อมูล</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold flex items-center gap-1.5">
+<span data-i18n="breadcrumb_order_report">รายงานออเดอร์</span>
+<span class="text-caption font-caption text-secondary bg-[#e8eeff] text-primary px-1.5 py-0.5 rounded font-mono">JoshOrdersPage</span>
+</span>
+</nav>
+<!-- 2. Page Header & Key Actions Bar -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex flex-wrap items-center gap-2.5">
+<h1 class="text-page-title font-page-title text-on-surface tracking-tight" data-i18n="header_title">รายงานออเดอร์</h1>
+<!-- System metadata badges -->
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-caption bg-[#f1f3ff] text-secondary border border-[#e1e7f0]">
+<span class="material-symbols-outlined text-[14px]" data-icon="lock">lock</span>
+<span data-i18n="badge_readonly">อ่านอย่างเดียว · ข้อมูลจาก josh</span>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-caption bg-[#fef9e7] text-[#b08900] border border-[#fae8b2]">
+<span class="material-symbols-outlined text-[14px]" data-icon="data_object">data_object</span>
+<span data-i18n="badge_sample_data">ข้อมูลตัวอย่าง / Sample data</span>
+</span>
+</div>
+<p class="text-body-default font-body-default text-secondary mt-1 flex items-center gap-2" data-i18n="header_subtitle">
+              ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง
+            </p>
+</div>
+<!-- Actions Bar -->
+<div class="flex items-center gap-2.5 shrink-0">
+<button class="h-10 px-3.5 rounded-lg border border-[#e1e7f0] bg-white hover:bg-surface-container-low text-on-surface text-body-medium font-body-medium flex items-center gap-2 transition-all active:scale-[0.98]" id="btn-refresh" onclick="triggerRefreshAnimation()">
+<span class="material-symbols-outlined text-secondary transition-transform duration-500" data-icon="refresh" id="refresh-icon">refresh</span>
+<span data-i18n="btn_refresh">รีเฟรชข้อมูล</span>
+</button>
+<button class="h-10 px-4 rounded-lg border border-[#e1e7f0] bg-white hover:bg-surface-container-low text-on-surface text-body-medium font-body-medium flex items-center gap-2 transition-all" title="Export current filtered view to CSV">
+<span class="material-symbols-outlined text-secondary" data-icon="download">download</span>
+<span data-i18n="btn_export_csv">Export CSV</span>
+</button>
+<button class="h-10 px-4 rounded-lg bg-primary-container text-white font-body-semibold text-body-semibold hover:bg-[#2c4ed6] active:bg-[#2240b8] flex items-center gap-1.5 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="sync_alt">sync_alt</span>
+<span data-i18n="btn_sync_pending">รันเชื่อมต่อ Jagota</span>
+</button>
+</div>
+</div>
+<!-- Quick Telemetry Bar -->
+<div class="mt-4 pt-4 border-t border-[#eef2f7] grid grid-cols-2 sm:grid-cols-4 gap-4">
+<div class="px-3 py-2 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0]">
+<div class="text-caption font-caption text-secondary" data-i18n="stat_total_orders">ออเดอร์ทั้งหมดวันนี้</div>
+<div class="text-card-title font-card-title font-bold text-on-surface mt-0.5 tabular-nums">18 <span class="text-caption font-caption text-secondary font-normal" data-i18n="unit_orders">รายการ</span></div>
+</div>
+<div class="px-3 py-2 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0]">
+<div class="text-caption font-caption text-secondary" data-i18n="stat_paid_total">มูลค่ารวมที่ชำระแล้ว</div>
+<div class="text-card-title font-card-title font-bold text-[#157347] mt-0.5 tabular-nums">฿1,482,950.00</div>
+</div>
+<div class="px-3 py-2 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0]">
+<div class="text-caption font-caption text-secondary" data-i18n="stat_erp_synced">ส่งเข้า Jagota สำเร็จ</div>
+<div class="text-card-title font-card-title font-bold text-primary mt-0.5 tabular-nums">14 <span class="text-caption font-caption text-[#157347] font-semibold">(77.8%)</span></div>
+</div>
+<div class="px-3 py-2 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0]">
+<div class="text-caption font-caption text-secondary" data-i18n="stat_erp_pending">รอหรือติดปัญหาการส่ง</div>
+<div class="text-card-title font-card-title font-bold text-[#c2333f] mt-0.5 tabular-nums">4 <span class="text-caption font-caption text-[#b08900] font-semibold">ต้องการการตรวจสอบ</span></div>
+</div>
+</div>
+</div>
+<!-- 3. Filter & Search Panel -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between border-b border-[#eef2f7] pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="filter_alt">filter_alt</span>
+<h2 class="text-card-title font-card-title text-on-surface" data-i18n="filter_title">ตัวกรองและค้นหาขั้นสูง</h2>
+</div>
+<button class="text-label-default font-label-default text-primary hover:underline flex items-center gap-1" id="btn-clear-filters" onclick="resetFilters()">
+<span class="material-symbols-outlined text-[16px]" data-icon="restart_alt">restart_alt</span>
+<span data-i18n="btn_reset_filter">ล้างตัวกรอง</span>
+</button>
+</div>
+<!-- Filter Inputs Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<!-- Search input (Span 6) -->
+<div class="md:col-span-6 space-y-1">
+<label class="text-label-default font-label-default text-on-surface block font-medium" for="filter-search-input">
+<span data-i18n="search_label">ค้นหา</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[20px]" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg border border-[#e1e7f0] text-body-medium font-body-medium focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" data-i18n-placeholder="search_placeholder" id="filter-search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาเลข order / รหัสลูกค้า / PO / บริษัท…" type="text"/>
+</div>
+<p class="text-caption font-caption text-secondary" data-i18n="search_subtext">ค้นหาข้อมูลตามคำค้นในรายการของหน้านี้</p>
+</div>
+<!-- From Date (Span 3) -->
+<div class="md:col-span-3 space-y-1">
+<label class="text-label-default font-label-default text-on-surface block font-medium" for="filter-from-date">
+<span data-i18n="label_from_date">ตั้งแต่</span>
+</label>
+<div class="relative">
+<input class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] text-body-medium font-body-medium focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="filter-from-date" type="date" value="2024-11-01"/>
+</div>
+<p class="text-caption font-caption text-secondary" data-i18n="date_help_from">วันที่บันทึกระบบ josh</p>
+</div>
+<!-- To Date (Span 3) -->
+<div class="md:col-span-3 space-y-1">
+<label class="text-label-default font-label-default text-on-surface block font-medium" for="filter-to-date">
+<span data-i18n="label_to_date">ถึงก่อน</span>
+</label>
+<div class="relative">
+<input class="w-full h-10 px-3 rounded-lg border border-[#e1e7f0] text-body-medium font-body-medium focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="filter-to-date" type="date" value="2024-11-15"/>
+</div>
+<p class="text-caption font-caption text-secondary" data-i18n="date_help_to">สิ้นสุดเวลา 23:59 น.</p>
+</div>
+</div>
+<!-- Quick Status Pills for Jagota ERP Status -->
+<div class="pt-2">
+<label class="text-label-default font-label-default text-on-surface block font-medium mb-2" data-i18n="label_erp_status_filter">
+            สถานะการส่ง Jagota (ERP Quick Status)
+          </label>
+<div class="flex flex-wrap items-center gap-1.5" id="erp-status-pills">
+<button class="erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default font-semibold transition-all border border-primary bg-primary text-white" data-status="all" onclick="setStatusFilter('all')">
+<span data-i18n="pill_all">ทั้งหมด</span> (18)
+            </button>
+<button class="erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default transition-all border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f6f8fc]" data-status="not_sent" onclick="setStatusFilter('not_sent')">
+<span data-i18n="pill_not_sent">ยังไม่ส่ง</span> (2)
+            </button>
+<button class="erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default transition-all border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f6f8fc]" data-status="sent" onclick="setStatusFilter('sent')">
+<span data-i18n="pill_sent">ส่ง Jagota แล้ว</span> (14)
+            </button>
+<button class="erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default transition-all border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f6f8fc]" data-status="waiting" onclick="setStatusFilter('waiting')">
+<span data-i18n="pill_waiting">รอส่ง Jagota</span> (1)
+            </button>
+<button class="erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default transition-all border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f6f8fc]" data-status="failed" onclick="setStatusFilter('failed')">
+<span data-i18n="pill_failed">ส่ง Jagota ไม่สำเร็จ</span> (1)
+            </button>
+<button class="erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default transition-all border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f6f8fc]" data-status="paid_not_sent" onclick="setStatusFilter('paid_not_sent')">
+<span data-i18n="pill_paid_not_sent">จ่ายแล้วแต่ยังไม่ส่ง Jagota</span> (1)
+            </button>
+<button class="erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default transition-all border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f6f8fc]" data-status="anomaly" onclick="setStatusFilter('anomaly')">
+<span data-i18n="pill_anomaly">จ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ</span> (0)
+            </button>
+</div>
+</div>
+<!-- Summary Ribbon -->
+<div class="p-3 rounded-lg bg-[#f6f8fc] border border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center justify-between text-body-medium font-body-medium gap-2">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="info">info</span>
+<span><strong data-i18n="ribbon_current_filter">ตัวกรองปัจจุบัน:</strong> <span class="text-on-surface" id="current-filter-text">ทั้งหมด</span></span>
+</div>
+<div class="text-on-surface font-semibold tabular-nums">
+<span data-i18n="ribbon_found">พบ</span> <span id="filtered-count">18</span> <span data-i18n="ribbon_items">รายการ</span> · <span data-i18n="ribbon_paid_value">มูลค่าที่ชำระแล้ว</span> <span class="text-[#157347]">฿1,482,950.00</span>
+</div>
+</div>
+</section>
+<!-- 4. Orders Data Table (12px rounded container) -->
+<section class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="orders-table">
+<thead>
+<tr class="h-11 bg-[#f6f8fc] border-b border-[#e1e7f0] text-table-header font-table-header text-secondary uppercase tracking-wider text-xs">
+<th class="py-3 px-4" data-i18n="th_order_no">Order No.</th>
+<th class="py-3 px-4" data-i18n="th_date">วันที่</th>
+<th class="py-3 px-4" data-i18n="th_company">บริษัท / สาขา</th>
+<th class="py-3 px-4 text-right" data-i18n="th_total">ยอดรวม ฿</th>
+<th class="py-3 px-4" data-i18n="th_payment">การชำระเงิน</th>
+<th class="py-3 px-4" data-i18n="th_order_status">สถานะออเดอร์</th>
+<th class="py-3 px-4" data-i18n="th_jagota_status">Jagota (ERP)</th>
+<th class="py-3 px-4 text-center" data-i18n="th_action">การจัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#eef2f7] text-body-default font-body-default text-on-surface" id="orders-table-body">
+<!-- Row 1: Siam Food Services -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-order-status="sent">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+<div class="flex items-center gap-1.5">
+<span>ORD-2024-8841</span>
+<span class="material-symbols-outlined text-[15px] text-secondary cursor-pointer hover:text-primary" data-icon="content_copy" title="Copy Order ID">content_copy</span>
+</div>
+<span class="text-caption font-caption text-secondary">PO-JAG-99214</span>
+</td>
+<td class="py-3.5 px-4 tabular-nums text-secondary text-label-default">
+<div>14 พ.ย. 2024</div>
+<div class="text-caption font-caption">10:42 น.</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">Siam Food Services Co., Ltd.</div>
+<div class="text-caption font-caption text-secondary">สาขาบางนา (ERP: CUST-8802)</div>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold tabular-nums text-on-surface">
+                  ฿342,800.00
+                </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-success">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="pay_completed">ชำระแล้ว (โอนเงิน)</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-success">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="ord_completed">สำเร็จ</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-caption font-caption font-semibold bg-[#e8f5ec] text-[#157347] border border-[#c4e9cf]">
+<span class="material-symbols-outlined text-[14px]" data-icon="cloud_done">cloud_done</span>
+<span data-i18n="erp_sent">ส่ง Jagota แล้ว</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] text-secondary hover:text-primary hover:border-primary text-label-default font-label-default transition-all flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[15px]" data-icon="visibility">visibility</span>
+<span data-i18n="action_view">ดูข้อมูล</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Central Restaurants Group -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-order-status="sent">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+<div class="flex items-center gap-1.5">
+<span>ORD-2024-8840</span>
+<span class="material-symbols-outlined text-[15px] text-secondary cursor-pointer hover:text-primary" data-icon="content_copy" title="Copy Order ID">content_copy</span>
+</div>
+<span class="text-caption font-caption text-secondary">PO-CRG-44120</span>
+</td>
+<td class="py-3.5 px-4 tabular-nums text-secondary text-label-default">
+<div>14 พ.ย. 2024</div>
+<div class="text-caption font-caption">09:15 น.</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">Central Restaurants Group (CRG)</div>
+<div class="text-caption font-caption text-secondary">DC บางพูน (ERP: CUST-1049)</div>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold tabular-nums text-on-surface">
+                  ฿518,450.00
+                </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-neutral">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4f5f77]"></span>
+<span data-i18n="pay_credit">เครดิตเทอม 30 วัน</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-warning">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="ord_shipping">กำลังจัดส่ง</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-caption font-caption font-semibold bg-[#e8f5ec] text-[#157347] border border-[#c4e9cf]">
+<span class="material-symbols-outlined text-[14px]" data-icon="cloud_done">cloud_done</span>
+<span data-i18n="erp_sent">ส่ง Jagota แล้ว</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] text-secondary hover:text-primary hover:border-primary text-label-default font-label-default transition-all flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[15px]" data-icon="visibility">visibility</span>
+<span data-i18n="action_view">ดูข้อมูล</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Dusit Thani Bangkok -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-order-status="waiting">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+<div class="flex items-center gap-1.5">
+<span>ORD-2024-8839</span>
+<span class="material-symbols-outlined text-[15px] text-secondary cursor-pointer hover:text-primary" data-icon="content_copy" title="Copy Order ID">content_copy</span>
+</div>
+<span class="text-caption font-caption text-secondary">PO-DTB-00812</span>
+</td>
+<td class="py-3.5 px-4 tabular-nums text-secondary text-label-default">
+<div>13 พ.ย. 2024</div>
+<div class="text-caption font-caption">18:30 น.</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">Dusit Thani Bangkok Hotel</div>
+<div class="text-caption font-caption text-secondary">Kitchen Store (ERP: CUST-3091)</div>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold tabular-nums text-on-surface">
+                  ฿112,600.00
+                </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-success">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="pay_completed">ชำระแล้ว (บัตรเครดิต)</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-warning">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="ord_processing">รอดำเนินการ</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-caption font-caption font-semibold bg-[#fef9e7] text-[#b08900] border border-[#fae8b2]">
+<span class="material-symbols-outlined text-[14px] animate-spin" data-icon="hourglass_top">hourglass_top</span>
+<span data-i18n="erp_waiting">รอส่ง Jagota</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] text-secondary hover:text-primary hover:border-primary text-label-default font-label-default transition-all flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[15px]" data-icon="visibility">visibility</span>
+<span data-i18n="action_view">ดูข้อมูล</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Minor Food Group (FAILED ERP SCENARIO) -->
+<tr class="hover:bg-[#f9fafc] transition-colors bg-[#fffbfb]" data-order-status="failed">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+<div class="flex items-center gap-1.5">
+<span>ORD-2024-8838</span>
+<span class="material-symbols-outlined text-[15px] text-secondary cursor-pointer hover:text-primary" data-icon="content_copy" title="Copy Order ID">content_copy</span>
+</div>
+<span class="text-caption font-caption text-secondary">PO-MFG-77199</span>
+</td>
+<td class="py-3.5 px-4 tabular-nums text-secondary text-label-default">
+<div>13 พ.ย. 2024</div>
+<div class="text-caption font-caption">16:10 น.</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">The Minor Food Group PCL</div>
+<div class="text-caption font-caption text-[#c2333f] font-medium">ERP Code Mismatch (CUST-9999)</div>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold tabular-nums text-on-surface">
+                  ฿189,200.00
+                </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-success">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="pay_completed">ชำระแล้ว</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-warning">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="ord_processing">รอดำเนินการ</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-caption font-caption font-semibold bg-[#fdf2f2] text-[#c2333f] border border-[#fad4d4]">
+<span class="material-symbols-outlined text-[14px]" data-icon="error">error</span>
+<span data-i18n="erp_failed">ส่ง Jagota ไม่สำเร็จ</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 rounded bg-[#365cf5] text-white text-caption font-caption font-semibold hover:bg-primary transition-all" data-i18n="action_retry" title="Retry Jagota Sync">
+                      ส่งซ้ำ
+                    </button>
+<button class="px-2 py-1 rounded border border-[#e1e7f0] text-secondary hover:text-primary text-caption font-caption transition-all" data-i18n="action_view" title="View details">
+                      ดูข้อมูล
+                    </button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Gourmet One Food Service -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-order-status="not_sent">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+<div class="flex items-center gap-1.5">
+<span>ORD-2024-8837</span>
+<span class="material-symbols-outlined text-[15px] text-secondary cursor-pointer hover:text-primary" data-icon="content_copy" title="Copy Order ID">content_copy</span>
+</div>
+<span class="text-caption font-caption text-secondary">PO-GMT-10223</span>
+</td>
+<td class="py-3.5 px-4 tabular-nums text-secondary text-label-default">
+<div>13 พ.ย. 2024</div>
+<div class="text-caption font-caption">14:55 น.</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">Gourmet One Food Service</div>
+<div class="text-caption font-caption text-secondary">คลังพระราม 9 (ERP: CUST-4451)</div>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold tabular-nums text-on-surface">
+                  ฿78,900.00
+                </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-warning">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span data-i18n="pay_waiting">รอชำระเงิน</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-neutral">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4f5f77]"></span>
+<span data-i18n="ord_pending">รอดำเนินการ</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-caption font-caption font-semibold bg-[#f1f3ff] text-secondary border border-[#e1e7f0]">
+<span class="material-symbols-outlined text-[14px]" data-icon="pending">pending</span>
+<span data-i18n="erp_not_sent">ยังไม่ส่ง</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] text-secondary hover:text-primary hover:border-primary text-label-default font-label-default transition-all flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[15px]" data-icon="visibility">visibility</span>
+<span data-i18n="action_view">ดูข้อมูล</span>
+</button>
+</td>
+</tr>
+<!-- Row 6: Thai Beverage Logistics -->
+<tr class="hover:bg-[#f9fafc] transition-colors" data-order-status="sent">
+<td class="py-3.5 px-4 font-mono font-semibold text-primary">
+<div class="flex items-center gap-1.5">
+<span>ORD-2024-8836</span>
+<span class="material-symbols-outlined text-[15px] text-secondary cursor-pointer hover:text-primary" data-icon="content_copy" title="Copy Order ID">content_copy</span>
+</div>
+<span class="text-caption font-caption text-secondary">PO-TBL-65001</span>
+</td>
+<td class="py-3.5 px-4 tabular-nums text-secondary text-label-default">
+<div>12 พ.ย. 2024</div>
+<div class="text-caption font-caption">11:20 น.</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="font-semibold text-on-surface">Thai Beverage Logistics</div>
+<div class="text-caption font-caption text-secondary">Hub รังสิต (ERP: CUST-2299)</div>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold tabular-nums text-on-surface">
+                  ฿241,000.00
+                </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-success">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="pay_completed">ชำระแล้ว (โอนเงิน)</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-caption font-caption status-badge-success">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="ord_completed">สำเร็จ</span>
+</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-caption font-caption font-semibold bg-[#e8f5ec] text-[#157347] border border-[#c4e9cf]">
+<span class="material-symbols-outlined text-[14px]" data-icon="cloud_done">cloud_done</span>
+<span data-i18n="erp_sent">ส่ง Jagota แล้ว</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<button class="px-2.5 py-1 rounded border border-[#e1e7f0] text-secondary hover:text-primary hover:border-primary text-label-default font-label-default transition-all flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[15px]" data-icon="visibility">visibility</span>
+<span data-i18n="action_view">ดูข้อมูล</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- 5. Pagination Footer -->
+<div class="h-14 px-5 bg-white border-t border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-label-default font-label-default text-secondary">
+<div class="flex items-center gap-4">
+<div>
+<span data-i18n="pagi_summary">พบ 18 รายการ (หน้า 1 จาก 2)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-caption font-caption text-secondary" data-i18n="pagi_per_page">แสดง:</span>
+<select class="h-8 px-2 py-0 rounded border border-[#e1e7f0] text-body-medium font-body-medium bg-white focus:border-primary outline-none">
+<option selected="" value="10">10</option>
+<option value="25">25</option>
+<option value="50">50</option>
+</select>
+</div>
+</div>
+<!-- Pagination Controls -->
+<div class="flex items-center gap-1">
+<button class="h-8 px-2.5 rounded border border-[#e1e7f0] bg-white text-secondary hover:bg-surface-container-low transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="h-8 w-8 rounded border border-primary bg-primary text-white font-semibold text-caption">1</button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white text-secondary hover:bg-surface-container-low text-caption transition-colors">2</button>
+<button class="h-8 px-2.5 rounded border border-[#e1e7f0] bg-white text-secondary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Technical Route & Operational Traceability Footnote -->
+<footer class="pt-2 pb-8 flex flex-col sm:flex-row items-center justify-between text-caption font-caption text-secondary border-t border-[#e1e7f0] gap-2">
+<div class="flex items-center gap-2">
+<span>Route: <code class="font-mono text-on-surface bg-white px-1.5 py-0.5 rounded border border-[#e1e7f0]">/reports/orders</code></span>
+<span>·</span>
+<span>Identifier: <code class="font-mono text-on-surface bg-white px-1.5 py-0.5 rounded border border-[#e1e7f0]">admin-b968af0bbb3b</code></span>
+</div>
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+            Jagota OData Gateway v4.1
+          </span>
+<span>·</span>
+<span>Security Level: Tier 1 Financial</span>
+</div>
+</footer>
+</div>
+</main>
+<!-- ==================== TRANSLATION DICTIONARY (CRITICAL REQUIREMENT) ==================== -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "erp_status": {
+      "th": "Jagota ERP Connected",
+      "en": "Jagota ERP Connected"
+    },
+    "tenant_label": {
+      "th": "ค้าส่งอาหารและวัตถุดิบ B2B",
+      "en": "B2B Food Wholesale"
+    },
+    "nav_inventory": {
+      "th": "สินค้าและสต็อก",
+      "en": "Products & Stock"
+    },
+    "nav_orders": {
+      "th": "ออเดอร์และการเงิน",
+      "en": "Orders & Finance"
+    },
+    "nav_customers": {
+      "th": "ลูกค้าและบริการ",
+      "en": "Customers & Service"
+    },
+    "nav_marketing": {
+      "th": "การตลาด",
+      "en": "Marketing"
+    },
+    "nav_reports": {
+      "th": "รายงานและข้อมูล",
+      "en": "Reports & Data"
+    },
+    "nav_integrations": {
+      "th": "ระบบเชื่อมต่อ",
+      "en": "Integrations & APIs"
+    },
+    "nav_settings": {
+      "th": "ตั้งค่าและทีมงาน",
+      "en": "Settings & Team"
+    },
+    "footer_help": {
+      "th": "ช่วยเหลือและคู่มือ",
+      "en": "Help & Documentation"
+    },
+    "brand_name": {
+      "th": "Commerce Platform",
+      "en": "Commerce Platform"
+    },
+    "top_nav_orders": {
+      "th": "รายงานออเดอร์",
+      "en": "Orders Report"
+    },
+    "top_nav_ledger": {
+      "th": "สมุดบัญชี",
+      "en": "General Ledger"
+    },
+    "top_nav_analytics": {
+      "th": "วิเคราะห์การขาย",
+      "en": "Sales Analytics"
+    },
+    "role_label": {
+      "th": "เจ้าหน้าที่ตรวจสอบกระทบยอด",
+      "en": "Financial Reconciler"
+    },
+    "breadcrumb_home": {
+      "th": "หน้าหลัก",
+      "en": "Home"
+    },
+    "breadcrumb_reports": {
+      "th": "รายงานและข้อมูล",
+      "en": "Reports & Data"
+    },
+    "breadcrumb_order_report": {
+      "th": "รายงานออเดอร์",
+      "en": "Orders Report"
+    },
+    "header_title": {
+      "th": "รายงานออเดอร์",
+      "en": "Orders Report"
+    },
+    "badge_readonly": {
+      "th": "อ่านอย่างเดียว · ข้อมูลจาก josh",
+      "en": "Read-only · Synced from josh"
+    },
+    "badge_sample_data": {
+      "th": "ข้อมูลตัวอย่าง / Sample data",
+      "en": "Sample Data Sandbox"
+    },
+    "header_subtitle": {
+      "th": "ออเดอร์หน้าร้าน · ส่งถึง Jagota (ERP) แล้วหรือยัง",
+      "en": "Storefront orders · Synced to Jagota ERP status overview"
+    },
+    "btn_refresh": {
+      "th": "รีเฟรชข้อมูล",
+      "en": "Refresh Data"
+    },
+    "btn_export_csv": {
+      "th": "Export CSV",
+      "en": "Export CSV"
+    },
+    "btn_sync_pending": {
+      "th": "รันเชื่อมต่อ Jagota",
+      "en": "Run Jagota Sync"
+    },
+    "stat_total_orders": {
+      "th": "ออเดอร์ทั้งหมดวันนี้",
+      "en": "Total Today Orders"
+    },
+    "unit_orders": {
+      "th": "รายการ",
+      "en": "items"
+    },
+    "stat_paid_total": {
+      "th": "มูลค่ารวมที่ชำระแล้ว",
+      "en": "Total Settled Amount"
+    },
+    "stat_erp_synced": {
+      "th": "ส่งเข้า Jagota สำเร็จ",
+      "en": "Synced to Jagota"
+    },
+    "stat_erp_pending": {
+      "th": "รอหรือติดปัญหาการส่ง",
+      "en": "Pending or Sync Issues"
+    },
+    "filter_title": {
+      "th": "ตัวกรองและค้นหาขั้นสูง",
+      "en": "Advanced Filter & Search"
+    },
+    "btn_reset_filter": {
+      "th": "ล้างตัวกรอง",
+      "en": "Reset Filters"
+    },
+    "search_label": {
+      "th": "ค้นหา",
+      "en": "Search"
+    },
+    "search_placeholder": {
+      "th": "ค้นหาเลข order / รหัสลูกค้า / PO / บริษัท…",
+      "en": "Search order no / customer code / PO / company..."
+    },
+    "search_subtext": {
+      "th": "ค้นหาข้อมูลตามคำค้นในรายการของหน้านี้",
+      "en": "Searches matching values in the current page list"
+    },
+    "label_from_date": {
+      "th": "ตั้งแต่",
+      "en": "From Date"
+    },
+    "date_help_from": {
+      "th": "วันที่บันทึกระบบ josh",
+      "en": "Josh transaction timestamp"
+    },
+    "label_to_date": {
+      "th": "ถึงก่อน",
+      "en": "To Date"
+    },
+    "date_help_to": {
+      "th": "สิ้นสุดเวลา 23:59 น.",
+      "en": "Ends at 23:59 hrs"
+    },
+    "label_erp_status_filter": {
+      "th": "สถานะการส่ง Jagota (ERP Quick Status)",
+      "en": "Jagota ERP Quick Status"
+    },
+    "pill_all": {
+      "th": "ทั้งหมด",
+      "en": "All"
+    },
+    "pill_not_sent": {
+      "th": "ยังไม่ส่ง",
+      "en": "Not sent"
+    },
+    "pill_sent": {
+      "th": "ส่ง Jagota แล้ว",
+      "en": "Sent to Jagota"
+    },
+    "pill_waiting": {
+      "th": "รอส่ง Jagota",
+      "en": "Waiting to send"
+    },
+    "pill_failed": {
+      "th": "ส่ง Jagota ไม่สำเร็จ",
+      "en": "Failed to send"
+    },
+    "pill_paid_not_sent": {
+      "th": "จ่ายแล้วแต่ยังไม่ส่ง Jagota",
+      "en": "Paid but not sent"
+    },
+    "pill_anomaly": {
+      "th": "จ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ",
+      "en": "Paid/Sent anomaly"
+    },
+    "ribbon_current_filter": {
+      "th": "ตัวกรองปัจจุบัน:",
+      "en": "Current filter:"
+    },
+    "ribbon_found": {
+      "th": "พบ",
+      "en": "Found"
+    },
+    "ribbon_items": {
+      "th": "รายการ",
+      "en": "orders"
+    },
+    "ribbon_paid_value": {
+      "th": "มูลค่าที่ชำระแล้ว",
+      "en": "Settled Total"
+    },
+    "th_order_no": {
+      "th": "Order No.",
+      "en": "Order No."
+    },
+    "th_date": {
+      "th": "วันที่",
+      "en": "Date/Time"
+    },
+    "th_company": {
+      "th": "บริษัท / สาขา",
+      "en": "Company / Branch"
+    },
+    "th_total": {
+      "th": "ยอดรวม ฿",
+      "en": "Total Amount (THB)"
+    },
+    "th_payment": {
+      "th": "การชำระเงิน",
+      "en": "Payment Status"
+    },
+    "th_order_status": {
+      "th": "สถานะออเดอร์",
+      "en": "Order Status"
+    },
+    "th_jagota_status": {
+      "th": "Jagota (ERP)",
+      "en": "Jagota (ERP)"
+    },
+    "th_action": {
+      "th": "การจัดการ",
+      "en": "Actions"
+    },
+    "pay_completed": {
+      "th": "ชำระแล้ว",
+      "en": "Paid"
+    },
+    "pay_credit": {
+      "th": "เครดิตเทอม 30 วัน",
+      "en": "Credit Term 30D"
+    },
+    "pay_waiting": {
+      "th": "รอชำระเงิน",
+      "en": "Pending Payment"
+    },
+    "ord_completed": {
+      "th": "สำเร็จ",
+      "en": "Completed"
+    },
+    "ord_shipping": {
+      "th": "กำลังจัดส่ง",
+      "en": "In Transit"
+    },
+    "ord_processing": {
+      "th": "รอดำเนินการ",
+      "en": "Processing"
+    },
+    "ord_pending": {
+      "th": "รอดำเนินการ",
+      "en": "Pending"
+    },
+    "erp_sent": {
+      "th": "ส่ง Jagota แล้ว",
+      "en": "Sent to Jagota"
+    },
+    "erp_waiting": {
+      "th": "รอส่ง Jagota",
+      "en": "Waiting to send"
+    },
+    "erp_failed": {
+      "th": "ส่ง Jagota ไม่สำเร็จ",
+      "en": "Failed to send"
+    },
+    "erp_not_sent": {
+      "th": "ยังไม่ส่ง",
+      "en": "Not sent"
+    },
+    "action_view": {
+      "th": "ดูข้อมูล",
+      "en": "View"
+    },
+    "action_retry": {
+      "th": "ส่งซ้ำ",
+      "en": "Retry"
+    },
+    "pagi_summary": {
+      "th": "พบ 18 รายการ (หน้า 1 จาก 2)",
+      "en": "Showing 18 orders (Page 1 of 2)"
+    },
+    "pagi_per_page": {
+      "th": "แสดง:",
+      "en": "Rows per page:"
+    }
+  }
+  </script>
+<!-- ==================== CLIENT INTERACTION CONTROLLER ==================== -->
+<script>
+    let currentLanguage = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setAppLanguage(lang) {
+      currentLanguage = lang;
+
+      // Update toggle buttons styling
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 h-7 rounded text-caption font-caption font-semibold transition-all duration-150 bg-white text-primary shadow-sm border border-[#e1e7f0]";
+        btnEn.className = "px-2.5 h-7 rounded text-caption font-caption font-semibold transition-all duration-150 text-secondary hover:text-on-surface";
+      } else {
+        btnEn.className = "px-2.5 h-7 rounded text-caption font-caption font-semibold transition-all duration-150 bg-white text-primary shadow-sm border border-[#e1e7f0]";
+        btnTh.className = "px-2.5 h-7 rounded text-caption font-caption font-semibold transition-all duration-150 text-secondary hover:text-on-surface";
+      }
+
+      // Update text elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[key] && translationsData[key][lang]) {
+          el.textContent = translationsData[key][lang];
+        }
+      });
+
+      // Update placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translationsData[key] && translationsData[key][lang]) {
+          el.setAttribute('placeholder', translationsData[key][lang]);
+        }
+      });
+    }
+
+    // Refresh button microinteraction
+    function triggerRefreshAnimation() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('rotate-180');
+      setTimeout(() => {
+        icon.classList.remove('rotate-180');
+      }, 500);
+    }
+
+    // Quick filter handling for Jagota ERP status
+    function setStatusFilter(statusKey) {
+      // Toggle button active visual states
+      document.querySelectorAll('.erp-pill').forEach(btn => {
+        if (btn.getAttribute('data-status') === statusKey) {
+          btn.className = "erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default font-semibold transition-all border border-primary bg-primary text-white";
+        } else {
+          btn.className = "erp-pill px-3 py-1.5 rounded-lg text-label-default font-label-default transition-all border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f6f8fc]";
+        }
+      });
+
+      // Filter rows
+      const rows = document.querySelectorAll('#orders-table-body tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-order-status');
+        if (statusKey === 'all' || rowStatus === statusKey) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update ribbon text
+      const ribbonText = document.getElementById('current-filter-text');
+      const countEl = document.getElementById('filtered-count');
+
+      const filterLabels = {
+        'all': currentLanguage === 'th' ? 'ทั้งหมด' : 'All',
+        'not_sent': currentLanguage === 'th' ? 'ยังไม่ส่ง' : 'Not sent',
+        'sent': currentLanguage === 'th' ? 'ส่ง Jagota แล้ว' : 'Sent to Jagota',
+        'waiting': currentLanguage === 'th' ? 'รอส่ง Jagota' : 'Waiting to send',
+        'failed': currentLanguage === 'th' ? 'ส่ง Jagota ไม่สำเร็จ' : 'Failed to send',
+        'paid_not_sent': currentLanguage === 'th' ? 'จ่ายแล้วแต่ยังไม่ส่ง Jagota' : 'Paid but not sent',
+        'anomaly': currentLanguage === 'th' ? 'จ่ายแล้ว/ส่งแล้ว แต่ไม่มีการจ่ายสำเร็จ' : 'Anomaly'
+      };
+
+      ribbonText.textContent = filterLabels[statusKey] || statusKey;
+      countEl.textContent = statusKey === 'all' ? 18 : visibleCount;
+    }
+
+    // Search filter input
+    function handleSearch(query) {
+      const q = query.toLowerCase().trim();
+      const rows = document.querySelectorAll('#orders-table-body tr');
+      let matches = 0;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        if (text.includes(q)) {
+          row.style.display = '';
+          matches++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('filtered-count').textContent = matches;
+    }
+
+    // Reset filters
+    function resetFilters() {
+      document.getElementById('filter-search-input').value = '';
+      setStatusFilter('all');
+    }
+  </script>
+</body></html>

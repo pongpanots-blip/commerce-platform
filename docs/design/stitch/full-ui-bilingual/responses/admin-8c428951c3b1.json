@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2576",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2UyODVmY2FmOTBlMjQ1YmY4YzY5OWM2MDdmM2EwYTFjEgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/d7be8409a2a04c589ee3234360aa73ef"
+            },
+            "id": "6748158c75b84675a5688d2ae1131a2d",
+            "name": "projects/9809859018179965476/screens/6748158c75b84675a5688d2ae1131a2d",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WzRuxYsxchYgBspgyobEzJIkx1ebQWLiJ7qDALuskVVNttY0rvKALrm-BNJhOuM_k33JASdkyRPo6ayFdI5gRah-Pl7c5_8mbWVn-aCNpYVCKUFiCcCxb7enZTyMSJTN44bbtFBL47HcOTOvQ4W1wRBQkvN06gG3HKJaKbykQWu6YGWz1jBu7XhxqvHMYCsC2HH-80T24audNmh3M-J72Mr2zONUKHkHJqTW6aI-u_enbGmqQD2cEteRk",
+              "name": "projects/9809859018179965476/files/2481db59546b463da26eab5d16113b16"
+            },
+            "theme": {},
+            "title": "สต็อกแยกตามคลัง (Inventory per warehouse)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ UI สำหรับ **สต็อกแยกตามคลัง (Inventory per warehouse)** เรียบร้อยแล้วตามมาตรฐาน Commerce Platform:\n\n### รายละเอียดการออกแบบและการทำงาน\n1. **โครงสร้างและ Design Tokens**:\n   - หน้าจอเดสก์ท็อปขนาดสมดุล คอนเทนต์หลักความกว้าง ~1240px พื้นหลัง `#f6f8fc` ขอบเขตการ์ดสีขาวมุมมน 12px และเส้นขอบ `#e1e7f0`\n   - เมนูซ้ายมือ (Sidebar 256px) ครอบคลุม 7 โซนงานหลักของทีมปฏิบัติการไทย โดยไฮไลต์โซน `สินค้าและสต็อก` และเมนู `สต็อกแยกตามคลัง`\n   - แสดงตัวระบุ Route `admin-8c428951c3b1`, URL `/erp/inventory-warehouse` และป้ายกำกับ `ข้อมูลตัวอย่าง` ชัดเจน\n\n2. **ระบบค้นหาและข้อมูลตาราง**:\n   - ระบบตัวกรองเลือกตามคลัง (ทุกคลัง, WH-BKK01, WH-CM02, ERP-CENTRAL, ERP-EAST)\n   - ช่องค้นหา SKU หรือชื่อสินค้า ระบุชัดเจนว่าค้นหาเฉพาะหน้านี้ตามข้อกำหนด Pagination API\n   - แยกแหล่งข้อมูลอย่างโปร่งใสระหว่าง `✓ commerce` (คลังภายใน ปรับยอดได้) และ `ERP` (ซิงก์จาก ERP หลัก)\n   - แสดงยอดคงเหลือ ยอดจอง และยอดพร้อมขาย พร้อมสถานะว่างเปล่า (Empty state) เมื่อไม่พบข้อมูล\n\n3. **โมดอลและการทำงาน (Interactive Dialogs)**:\n   - ปุ่ม **รายละเอียด** เปิดดูข้อมูลเชิงลึกของแต่ละรายการในคลัง\n   - ปุ่ม **ปรับยอด (Adjust Stock)** เปิดแบบฟอร์มตรวจสอบและปรับยอดสำหรับคลัง commerce พร้อมรองรับปุ่ม `Escape` ในการปิด\n   - ปุ่ม **Refresh** มี feedback การโหลด\n\n4. **รองรับ 2 ภาษาและ Exact UI Copy Catalogue**:\n   - สวิตช์สลับภาษา `ไทย / English` ที่ใช้งานได้จริง\n   - บรรจุ script `<script id=\"commerce-ui-translations\" type=\"application/json\">` ครบถ้วนทุกคีย์ตามแค็ตตาล็อกที่กำหนดแบบไม่แสดงผลกวนสายตาในหน้าเว็บ"
+    },
+    {
+      "suggestion": "ดูการทำงานของหน้าจอในภาษาอังกฤษ (English mode)"
+    },
+    {
+      "suggestion": "ทดสอบเปิดโมดอลปรับยอดสต็อก (Adjust stock modal)"
+    },
+    {
+      "suggestion": "เพิ่มรายละเอียดประวัติการซิงก์ของ ERP"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "10763336823766731619"
+}

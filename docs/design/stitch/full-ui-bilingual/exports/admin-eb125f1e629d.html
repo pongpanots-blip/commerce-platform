@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AdminAccessQueue | Commerce Operations</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#243048",
+            "surface-container": "#e8eeff",
+            "secondary-container": "#d0e1fd",
+            "tertiary-container": "#bc4600",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-surface": "#0e1b32",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-tertiary-container": "#ffebe4",
+            "on-secondary-fixed": "#0b1c31",
+            "on-error-container": "#93000a",
+            "on-background": "#0e1b32",
+            "outline": "#747687",
+            "surface-tint": "#214ce7",
+            "surface-dim": "#cddaf9",
+            "on-tertiary-fixed": "#360f00",
+            "on-surface-variant": "#444655",
+            "on-primary-fixed-variant": "#0034c0",
+            "primary": "#0a3fdc",
+            "surface-variant": "#d7e2ff",
+            "tertiary": "#943500",
+            "surface-bright": "#f9f9ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-secondary": "#ffffff",
+            "background": "#f9f9ff",
+            "primary-fixed": "#dde1ff",
+            "surface-container-high": "#e0e8ff",
+            "on-primary-container": "#ededff",
+            "inverse-primary": "#b9c3ff",
+            "primary-container": "#365cf5",
+            "on-primary": "#ffffff",
+            "inverse-on-surface": "#ecf0ff",
+            "secondary-fixed": "#d3e3ff",
+            "on-secondary-container": "#54647c",
+            "surface-container-highest": "#d7e2ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f1f3ff",
+            "outline-variant": "#c4c5d8",
+            "surface": "#f9f9ff",
+            "tertiary-fixed": "#ffdbcd",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-primary-fixed": "#001257",
+            "error-container": "#ffdad6",
+            "error": "#ba1a1a",
+            "secondary": "#4f5f77",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-error": "#ffffff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          spacing: {
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "margin-desktop": "2rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem"
+          },
+          fontFamily: {
+            "subheading": ["Noto Sans"],
+            "headline-page-mobile": ["Noto Sans"],
+            "body-default": ["Noto Sans"],
+            "display": ["Noto Sans"],
+            "body-medium": ["Noto Sans"],
+            "code-table": ["Noto Sans"],
+            "headline-page": ["Noto Sans"],
+            "label-caption": ["Noto Sans"],
+            "label-default": ["Noto Sans"],
+            "headline-card": ["Noto Sans"]
+          },
+          fontSize: {
+            "subheading": ["16px", { lineHeight: "24px", fontWeight: "500" }],
+            "headline-page-mobile": ["22px", { lineHeight: "30px", fontWeight: "600" }],
+            "body-default": ["14px", { lineHeight: "22px", fontWeight: "400" }],
+            "display": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+            "body-medium": ["14px", { lineHeight: "22px", fontWeight: "500" }],
+            "code-table": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "headline-page": ["28px", { lineHeight: "36px", fontWeight: "600" }],
+            "label-caption": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            "label-default": ["13px", { lineHeight: "18px", fontWeight: "500" }],
+            "headline-card": ["18px", { lineHeight: "26px", fontWeight: "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface font-body-default min-h-screen flex antialiased selection:bg-primary selection:text-white">
+<!-- Side Navigation Bar (Anchored from Shared Component JSON) -->
+<aside class="fixed top-0 left-0 h-full w-64 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm dark:shadow-none flex flex-col justify-between p-4 select-none">
+<div class="flex flex-col gap-5">
+<!-- App Header / Logo -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white shadow-md shadow-primary/20">
+<span class="material-symbols-outlined text-[24px]">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-card font-headline-card font-bold text-on-surface dark:text-inverse-on-surface tracking-tight">Commerce Admin</span>
+<span class="text-label-caption font-label-caption text-secondary">ศูนย์จัดการระบบ</span>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-primary text-white font-label-default text-label-default shadow-sm hover:bg-[#2a4ad8] transition-all duration-150">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-1">
+<!-- Item 0: สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-secondary">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- Item 1: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-secondary">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- Item 2: ลูกค้าและบริการ (ACTIVE MATCH) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container dark:bg-surface-container-highest text-primary dark:text-inverse-primary font-body-medium border-l-[3px] border-primary dark:border-inverse-primary transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">support_agent</span>
+<span class="font-medium">ลูกค้าและบริการ</span>
+<span class="ml-auto w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</a>
+<!-- Item 3: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-secondary">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- Item 4: รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-secondary">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- Item 5: ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-secondary">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- Item 6: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container font-body-default transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-secondary">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="flex flex-col gap-1 pt-4 border-t border-outline-variant/50">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-body-default transition-colors" href="#">
+<span class="material-symbols-outlined text-secondary">help_center</span>
+<span>คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#c2333f] hover:bg-error-container/40 text-body-default transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- Main View Stage -->
+<div class="ml-64 w-[calc(100%-16rem)] min-h-screen flex flex-col">
+<!-- Top Navigation Bar (Shared Component JSON Blueprint) -->
+<header class="sticky top-0 right-0 z-30 h-16 bg-surface-container-lowest border-b border-outline-variant/60 px-8 flex items-center justify-between shadow-sm">
+<!-- Left: In-page Search with context badge -->
+<div class="flex items-center gap-4 w-96">
+<div class="relative w-full">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="w-full h-9 pl-9 pr-24 rounded-lg border border-outline-variant/80 bg-white text-on-surface text-body-default placeholder:text-secondary focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm" id="global-search-input" placeholder="ค้นหาในหน้านี้..." type="text"/>
+<div class="absolute inset-y-0 right-1.5 flex items-center">
+<span class="px-2 py-0.5 text-[11px] rounded bg-surface-container text-primary font-medium border border-outline-variant/40">Ctrl + K</span>
+</div>
+</div>
+</div>
+<!-- Right Utility Actions -->
+<div class="flex items-center gap-4">
+<!-- Sample Data Indicator Badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#fef9e7] text-[#b08900] text-label-caption font-label-caption border border-[#b08900]/20 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+<span>ข้อมูลตัวอย่าง</span>
+</span>
+<!-- Bilingual Switcher [TH | EN] -->
+<div class="inline-flex p-0.5 rounded-lg bg-surface-container-low border border-outline-variant/60" id="lang-switcher">
+<button class="px-2.5 py-1 text-label-caption font-medium rounded-[6px] bg-white text-primary shadow-xs transition-all lang-toggle-btn" data-lang="th" type="button">
+            ไทย
+          </button>
+<button class="px-2.5 py-1 text-label-caption font-medium rounded-[6px] text-secondary hover:text-on-surface transition-all lang-toggle-btn" data-lang="en" type="button">
+            EN
+          </button>
+</div>
+<!-- Notifications -->
+<button class="relative p-2 rounded-lg text-secondary hover:bg-surface-container transition-colors" title="การแจ้งเตือน">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
+</button>
+<!-- Help Icon -->
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container transition-colors" title="ช่วยเหลือ">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant/60"></div>
+<!-- User Admin Profile Badge -->
+<div class="flex items-center gap-3 pl-1 cursor-pointer group">
+<div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary text-sm">
+            จน
+          </div>
+<div class="flex flex-col text-left leading-tight">
+<span class="text-label-default font-medium text-on-surface group-hover:text-primary transition-colors">จินดา นวลอนันต์</span>
+<span class="text-[11px] text-secondary">หัวหน้าทีมบริการลูกค้า CS</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Workspace (Max 1240px container) -->
+<main class="flex-1 p-8">
+<div class="max-w-[1240px] mx-auto flex flex-col gap-6">
+<!-- Breadcrumb & Top Metadata -->
+<div class="flex items-center justify-between">
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-label-default text-secondary">
+<a class="hover:text-primary transition-colors" href="#">หน้าหลัก</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" data-i18n="ลูกค้าและบริการ" href="#">ลูกค้าและบริการ</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-medium" data-i18n="คำขอ Admin">คำขอ Admin</span>
+</nav>
+<div class="flex items-center gap-3">
+<button class="h-9 px-3.5 inline-flex items-center gap-2 rounded-lg border border-outline-variant/80 bg-white text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors text-label-default" onclick="handleReloadTable()">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>รีเฟรชข้อมูล</span>
+</button>
+<span class="text-[12px] text-secondary font-mono">อัปเดต: วันนี้ 11:45</span>
+</div>
+</div>
+<!-- Title & Subtitle Row -->
+<div class="flex flex-wrap items-center justify-between gap-4 pb-2">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<h1 class="text-headline-page font-headline-page text-on-surface tracking-tight" data-i18n="คำขอ Admin">คำขอ Admin</h1>
+<span class="px-2 py-0.5 rounded font-mono text-xs bg-surface-container text-primary font-medium border border-outline-variant/50">/j/admin-access</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347] border border-[#157347]/20">
+<span class="material-symbols-outlined text-[14px]">security</span>
+<span>platform_admin เท่านั้น</span>
+</span>
+</div>
+<p class="text-body-default text-secondary" data-i18n="ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ">
+              ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ
+            </p>
+</div>
+</div>
+<!-- Security / Permission Notice Banner -->
+<div class="flex items-start gap-3 p-4 rounded-xl bg-surface-container border border-primary/20 shadow-xs">
+<div class="p-1 rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<div class="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-2">
+<div>
+<h4 class="text-label-default font-medium text-on-surface" data-i18n="เฉพาะ platform_admin เท่านั้นที่เข้าถึงหน้านี้ได้">
+                เฉพาะ platform_admin เท่านั้นที่เข้าถึงหน้านี้ได้
+              </h4>
+<p class="text-label-caption text-secondary">
+                คำขอที่ได้รับอนุมัติจะมีผลต่อการเข้าถึงข้อมูลลูกค้า สต็อกสินค้า และบันทึกคำสั่งซื้อทันที โปรดตรวจสอบฝ่ายและสังกัดก่อนยืนยัน
+              </p>
+</div>
+<span class="text-label-caption font-mono text-primary font-semibold px-2 py-1 rounded bg-white border border-primary/20 shrink-0">
+              AUDIT LOG ACTIVE
+            </span>
+</div>
+</div>
+<!-- Metric KPI Bento Grid (4 Cards) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1: Pending -->
+<div class="p-5 bg-white rounded-xl border border-[#e1e7f0] shadow-sm hover:border-primary/40 transition-all flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-medium">คำขอที่รอตรวจสอบ (Pending)</span>
+<div class="w-8 h-8 rounded-lg bg-[#fef9e7] text-[#b08900] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">hourglass_empty</span>
+</div>
+</div>
+<div class="mt-4 flex items-baseline justify-between">
+<span class="text-display font-display text-on-surface tracking-tight" id="kpi-pending-count">4</span>
+<span class="text-label-caption text-[#b08900] bg-[#fef9e7] px-2 py-0.5 rounded-full font-medium">รอการดำเนินการ</span>
+</div>
+<div class="mt-2 text-label-caption text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">update</span>
+<span>เฉลี่ยรอพิจารณา 2 ชม.</span>
+</div>
+</div>
+<!-- KPI 2: Approved This Month -->
+<div class="p-5 bg-white rounded-xl border border-[#e1e7f0] shadow-sm hover:border-primary/40 transition-all flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-medium">อนุมัติแล้วเดือนนี้ (Approved)</span>
+<div class="w-8 h-8 rounded-lg bg-[#eaf5ef] text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">how_to_reg</span>
+</div>
+</div>
+<div class="mt-4 flex items-baseline justify-between">
+<span class="text-display font-display text-on-surface tracking-tight">18</span>
+<span class="text-label-caption text-[#157347] bg-[#eaf5ef] px-2 py-0.5 rounded-full font-medium">+6 สัปดาห์นี้</span>
+</div>
+<div class="mt-2 text-label-caption text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-[#157347]">trending_up</span>
+<span>100% ปฏิบัติตามนโยบาย</span>
+</div>
+</div>
+<!-- KPI 3: Rejected -->
+<div class="p-5 bg-white rounded-xl border border-[#e1e7f0] shadow-sm hover:border-primary/40 transition-all flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-medium">ปฏิเสธ (Rejected)</span>
+<div class="w-8 h-8 rounded-lg bg-[#faeaeb] text-[#c2333f] flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">person_off</span>
+</div>
+</div>
+<div class="mt-4 flex items-baseline justify-between">
+<span class="text-display font-display text-on-surface tracking-tight">2</span>
+<span class="text-label-caption text-[#c2333f] bg-[#faeaeb] px-2 py-0.5 rounded-full font-medium">ส่งข้อมูลไม่ครบ</span>
+</div>
+<div class="mt-2 text-label-caption text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-[#c2333f]">info</span>
+<span>ระบุเหตุผลครบถ้วนแล้ว</span>
+</div>
+</div>
+<!-- KPI 4: Top Requested Role -->
+<div class="p-5 bg-white rounded-xl border border-[#e1e7f0] shadow-sm hover:border-primary/40 transition-all flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-medium">สิทธิ์ที่ขอมากที่สุด</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+</div>
+</div>
+<div class="mt-4">
+<span class="text-headline-card font-headline-card text-on-surface truncate block" title="CS Agent (Tier 1)">CS Agent (Tier 1)</span>
+<span class="text-label-caption text-secondary mt-0.5 block">60% ของคำขอในรอบ 30 วัน</span>
+</div>
+<div class="mt-2 text-label-caption text-primary flex items-center gap-1 font-medium">
+<span>ฝ่ายบริการลูกค้าหลัก</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Table Container Card -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden flex flex-col">
+<!-- Filter & Controls Toolbar -->
+<div class="p-4 border-b border-[#e1e7f0] bg-white flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<!-- Status Tabs -->
+<div class="flex items-center gap-1 bg-[#f6f8fc] p-1 rounded-lg border border-[#e1e7f0] text-label-default">
+<button class="px-3.5 py-1.5 rounded-md font-medium text-primary bg-white shadow-xs tab-btn border border-outline-variant/30 flex items-center gap-1.5" data-filter="pending">
+<span>รออนุมัติ</span>
+<span class="px-1.5 py-0.2 rounded-full text-[11px] bg-primary text-white font-mono" id="pending-badge">4</span>
+</button>
+<button class="px-3.5 py-1.5 rounded-md font-medium text-secondary hover:text-on-surface tab-btn" data-filter="approved">
+<span>อนุมัติแล้ว</span>
+</button>
+<button class="px-3.5 py-1.5 rounded-md font-medium text-secondary hover:text-on-surface tab-btn" data-filter="rejected">
+<span>ปฏิเสธแล้ว</span>
+</button>
+<button class="px-3.5 py-1.5 rounded-md font-medium text-secondary hover:text-on-surface tab-btn" data-filter="all">
+<span>ทั้งหมด</span>
+</button>
+</div>
+<!-- Search and Dropdown Controls -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Search Table -->
+<div class="relative min-w-[280px]">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#e1e7f0] bg-white text-body-default placeholder:text-secondary focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm" id="table-search" oninput="filterTableRows(this.value)" placeholder="ค้นหาชื่อ, อีเมล หรือเบอร์โทรในหน้านี้..." type="text"/>
+</div>
+<!-- Role Selector -->
+<div class="relative">
+<select class="h-10 pl-3 pr-8 rounded-lg border border-[#e1e7f0] bg-white text-label-default text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer" id="role-select" onchange="filterByRole(this.value)">
+<option value="">สิทธิ์ (Role): ทั้งหมด</option>
+<option value="CS Agent (Tier 1)">CS Agent (Tier 1)</option>
+<option value="Operations Admin">Operations Admin</option>
+<option value="Finance &amp; Billing">Finance &amp; Billing</option>
+<option value="Super Admin (Read-only)">Super Admin (Read-only)</option>
+</select>
+<span class="material-symbols-outlined text-[18px] text-secondary absolute right-2.5 top-2.5 pointer-events-none">expand_more</span>
+</div>
+<!-- Filter Reset / Clear -->
+<button class="h-10 w-10 flex items-center justify-center rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:text-primary hover:bg-[#f6f8fc] transition-colors" onclick="resetFilters()" title="ล้างตัวกรอง">
+<span class="material-symbols-outlined text-[20px]">filter_alt_off</span>
+</button>
+</div>
+</div>
+<!-- Main Table View -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse" id="requests-table">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-[#e1e7f0] h-11 text-secondary text-label-default font-medium">
+<th class="w-12 px-4 py-2 text-center">#</th>
+<th class="px-4 py-2" data-i18n="วันที่ส่งคำขอ">วันที่ส่งคำขอ</th>
+<th class="px-4 py-2" data-i18n="ชื่อ">ชื่อ</th>
+<th class="px-4 py-2" data-i18n="อีเมล">อีเมล</th>
+<th class="px-4 py-2" data-i18n="เบอร์โทร">เบอร์โทร</th>
+<th class="px-4 py-2" data-i18n="สิทธิ์ (Role)">สิทธิ์ (Role)</th>
+<th class="px-4 py-2">หมายเหตุ / หน่วยงาน</th>
+<th class="px-4 py-2 text-right pr-6" data-i18n="จัดการ">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-body-default text-on-surface" id="table-body">
+<!-- Row 1 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group" data-id="REQ-101" data-role="CS Agent (Tier 1)">
+<td class="px-4 py-3.5 text-center text-secondary font-mono text-xs">1</td>
+<td class="px-4 py-3.5 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+<span class="font-mono text-[13px]">14 ก.พ. 2568 11:20</span>
+</div>
+</td>
+<td class="px-4 py-3.5 font-medium text-on-surface">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
+                        วร
+                      </div>
+<span class="row-name">นายวรพงษ์ เกียรติศิริกุล</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-secondary">
+<div class="flex items-center gap-1.5 font-mono text-[13px]">
+<span class="material-symbols-outlined text-[14px]">mail</span>
+<span class="row-email">worapong.k@siamtrading.co.th</span>
+</div>
+</td>
+<td class="px-4 py-3.5 font-mono text-secondary text-[13px]">
+<span class="row-phone">089-765-4321</span>
+</td>
+<td class="px-4 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container text-primary border border-primary/20 row-role">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                      CS Agent (Tier 1)
+                    </span>
+</td>
+<td class="px-4 py-3.5 text-secondary max-w-[200px] truncate" title="ฝ่ายบริการลูกค้า B2B">
+<span class="inline-flex items-center gap-1 text-[13px]">
+<span class="material-symbols-outlined text-[14px] text-secondary">corporate_fare</span>
+                      ฝ่ายบริการลูกค้า B2B
+                    </span>
+</td>
+<td class="px-4 py-3.5 text-right whitespace-nowrap pr-6">
+<div class="inline-flex items-center gap-2">
+<button class="h-8 px-3 rounded-lg bg-[#157347] hover:bg-[#115d39] text-white text-label-default font-medium transition-colors shadow-xs flex items-center gap-1" data-i18n="อนุมัติ" onclick="openApprovalModal('นายวรพงษ์ เกียรติศิริกุล', 'CS Agent (Tier 1)', 'REQ-101')">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>อนุมัติ</span>
+</button>
+<button class="h-8 px-3 rounded-lg border border-[#c2333f]/40 text-[#c2333f] hover:bg-[#faeaeb] text-label-default font-medium transition-colors flex items-center gap-1" data-i18n="ปฏิเสธ" onclick="handleReject('นายวรพงษ์ เกียรติศิริกุล', 'REQ-101')">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span>ปฏิเสธ</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group" data-id="REQ-102" data-role="Operations Admin">
+<td class="px-4 py-3.5 text-center text-secondary font-mono text-xs">2</td>
+<td class="px-4 py-3.5 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+<span class="font-mono text-[13px]">14 ก.พ. 2568 09:45</span>
+</div>
+</td>
+<td class="px-4 py-3.5 font-medium text-on-surface">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-secondary-container text-on-secondary-container font-bold text-xs flex items-center justify-center">
+                        ชล
+                      </div>
+<span class="row-name">น.ส.ชลธิชา บุญช่วย</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-secondary">
+<div class="flex items-center gap-1.5 font-mono text-[13px]">
+<span class="material-symbols-outlined text-[14px]">mail</span>
+<span class="row-email">chonthicha.b@company.co.th</span>
+</div>
+</td>
+<td class="px-4 py-3.5 font-mono text-secondary text-[13px]">
+<span class="row-phone">081-445-9988</span>
+</td>
+<td class="px-4 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f1f3ff] text-[#243048] border border-outline-variant/60 row-role">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      Operations Admin
+                    </span>
+</td>
+<td class="px-4 py-3.5 text-secondary max-w-[200px] truncate" title="คลังสินค้าบางนา">
+<span class="inline-flex items-center gap-1 text-[13px]">
+<span class="material-symbols-outlined text-[14px] text-secondary">warehouse</span>
+                      คลังสินค้าบางนา
+                    </span>
+</td>
+<td class="px-4 py-3.5 text-right whitespace-nowrap pr-6">
+<div class="inline-flex items-center gap-2">
+<button class="h-8 px-3 rounded-lg bg-[#157347] hover:bg-[#115d39] text-white text-label-default font-medium transition-colors shadow-xs flex items-center gap-1" data-i18n="อนุมัติ" onclick="openApprovalModal('น.ส.ชลธิชา บุญช่วย', 'Operations Admin', 'REQ-102')">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>อนุมัติ</span>
+</button>
+<button class="h-8 px-3 rounded-lg border border-[#c2333f]/40 text-[#c2333f] hover:bg-[#faeaeb] text-label-default font-medium transition-colors flex items-center gap-1" data-i18n="ปฏิเสธ" onclick="handleReject('น.ส.ชลธิชา บุญช่วย', 'REQ-102')">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span>ปฏิเสธ</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group" data-id="REQ-103" data-role="Finance &amp; Billing">
+<td class="px-4 py-3.5 text-center text-secondary font-mono text-xs">3</td>
+<td class="px-4 py-3.5 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+<span class="font-mono text-[13px]">13 ก.พ. 2568 16:30</span>
+</div>
+</td>
+<td class="px-4 py-3.5 font-medium text-on-surface">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-[#fef9e7] text-[#b08900] font-bold text-xs flex items-center justify-center">
+                        กิต
+                      </div>
+<span class="row-name">นายกิตติศักดิ์ เจริญพร</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-secondary">
+<div class="flex items-center gap-1.5 font-mono text-[13px]">
+<span class="material-symbols-outlined text-[14px]">mail</span>
+<span class="row-email">kittisak.c@subtawee.co.th</span>
+</div>
+</td>
+<td class="px-4 py-3.5 font-mono text-secondary text-[13px]">
+<span class="row-phone">086-778-4321</span>
+</td>
+<td class="px-4 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347] border border-[#157347]/30 row-role">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      Finance &amp; Billing
+                    </span>
+</td>
+<td class="px-4 py-3.5 text-secondary max-w-[200px] truncate" title="ฝ่ายการเงินและใบกำกับภาษี">
+<span class="inline-flex items-center gap-1 text-[13px]">
+<span class="material-symbols-outlined text-[14px] text-secondary">payments</span>
+                      ฝ่ายการเงินและใบกำกับภาษี
+                    </span>
+</td>
+<td class="px-4 py-3.5 text-right whitespace-nowrap pr-6">
+<div class="inline-flex items-center gap-2">
+<button class="h-8 px-3 rounded-lg bg-[#157347] hover:bg-[#115d39] text-white text-label-default font-medium transition-colors shadow-xs flex items-center gap-1" data-i18n="อนุมัติ" onclick="openApprovalModal('นายกิตติศักดิ์ เจริญพร', 'Finance &amp; Billing', 'REQ-103')">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>อนุมัติ</span>
+</button>
+<button class="h-8 px-3 rounded-lg border border-[#c2333f]/40 text-[#c2333f] hover:bg-[#faeaeb] text-label-default font-medium transition-colors flex items-center gap-1" data-i18n="ปฏิเสธ" onclick="handleReject('นายกิตติศักดิ์ เจริญพร', 'REQ-103')">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span>ปฏิเสธ</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-[#f8fafc] transition-colors group" data-id="REQ-104" data-role="Super Admin (Read-only)">
+<td class="px-4 py-3.5 text-center text-secondary font-mono text-xs">4</td>
+<td class="px-4 py-3.5 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+<span class="font-mono text-[13px]">13 ก.พ. 2568 14:15</span>
+</div>
+</td>
+<td class="px-4 py-3.5 font-medium text-on-surface">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-surface-container-high text-primary font-bold text-xs flex items-center justify-center">
+                        ณัฐ
+                      </div>
+<span class="row-name">นายณัฐวุฒิ สิทธิโชค</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-secondary">
+<div class="flex items-center gap-1.5 font-mono text-[13px]">
+<span class="material-symbols-outlined text-[14px]">mail</span>
+<span class="row-email">natthawut.s@pnw.co.th</span>
+</div>
+</td>
+<td class="px-4 py-3.5 font-mono text-secondary text-[13px]">
+<span class="row-phone">082-314-5500</span>
+</td>
+<td class="px-4 py-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fef9e7] text-[#b08900] border border-[#b08900]/30 row-role">
+<span class="w-1.5 h-1.5 rounded-full bg-[#b08900]"></span>
+                      Super Admin (Read-only)
+                    </span>
+</td>
+<td class="px-4 py-3.5 text-secondary max-w-[200px] truncate" title="ทีมตรวจสอบระบบ">
+<span class="inline-flex items-center gap-1 text-[13px]">
+<span class="material-symbols-outlined text-[14px] text-secondary">policy</span>
+                      ทีมตรวจสอบระบบ
+                    </span>
+</td>
+<td class="px-4 py-3.5 text-right whitespace-nowrap pr-6">
+<div class="inline-flex items-center gap-2">
+<button class="h-8 px-3 rounded-lg bg-[#157347] hover:bg-[#115d39] text-white text-label-default font-medium transition-colors shadow-xs flex items-center gap-1" data-i18n="อนุมัติ" onclick="openApprovalModal('นายณัฐวุฒิ สิทธิโชค', 'Super Admin (Read-only)', 'REQ-104')">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>อนุมัติ</span>
+</button>
+<button class="h-8 px-3 rounded-lg border border-[#c2333f]/40 text-[#c2333f] hover:bg-[#faeaeb] text-label-default font-medium transition-colors flex items-center gap-1" data-i18n="ปฏิเสธ" onclick="handleReject('นายณัฐวุฒิ สิทธิโชค', 'REQ-104')">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span>ปฏิเสธ</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Empty State (Hidden by default) -->
+<div class="hidden py-16 flex-col items-center justify-center text-center" id="table-empty">
+<div class="w-14 h-14 rounded-full bg-surface-container text-secondary flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-[28px]">search_off</span>
+</div>
+<h3 class="text-subheading font-subheading text-on-surface" data-i18n="ไม่มีคำขอ Admin ที่รออนุมัติ">ไม่มีคำขอ Admin ที่รออนุมัติ</h3>
+<p class="text-secondary text-body-default mt-1">ไม่พบรายการที่ตรงกับคำค้นหาหรือตัวกรองที่เลือก</p>
+<button class="mt-4 px-4 py-2 rounded-lg bg-primary text-white text-label-default" onclick="resetFilters()">ล้างการค้นหา</button>
+</div>
+</div>
+<!-- Table Pagination & Footer Status -->
+<div class="px-6 py-4 border-t border-[#e1e7f0] bg-white flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="text-label-caption text-secondary flex items-center gap-2">
+<span>แสดงผล</span>
+<span class="font-medium text-on-surface" id="visible-count">4</span>
+<span>จากทั้งหมด</span>
+<span class="font-medium text-on-surface">4</span>
+<span>คำขอ (หน้า 1 จาก 1)</span>
+</div>
+<!-- Page Controller -->
+<div class="flex items-center gap-1">
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white text-secondary flex items-center justify-center hover:bg-[#f6f8fc] disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="h-8 w-8 rounded bg-primary text-white font-medium text-xs flex items-center justify-center shadow-xs">1</button>
+<button class="h-8 w-8 rounded border border-[#e1e7f0] bg-white text-secondary flex items-center justify-center hover:bg-[#f6f8fc] disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Developer Route Meta Footer Badge -->
+<footer class="mt-4 pt-4 border-t border-outline-variant/40 flex flex-wrap items-center justify-between text-xs text-secondary font-mono">
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+              route: admin-eb125f1e629d
+            </span>
+<span class="text-outline-variant">|</span>
+<span>URL: /j/admin-access</span>
+<span class="text-outline-variant">|</span>
+<span>Component: AdminAccessQueue</span>
+</div>
+<div>
+<span>Commerce Engine v4.2.0 • Security Enforcement Layer</span>
+</div>
+</footer>
+</div>
+</main>
+</div>
+<!-- Confirmation Approval Modal -->
+<div class="fixed inset-0 z-50 bg-[#17243b]/40 backdrop-blur-[2px] hidden items-center justify-center p-4" id="approval-modal">
+<div class="bg-white rounded-xl border border-[#e1e7f0] shadow-2xl max-w-md w-full overflow-hidden transform transition-all animate-in fade-in duration-150">
+<div class="p-5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface">
+<div class="w-8 h-8 rounded-lg bg-[#eaf5ef] text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<h3 class="text-headline-card font-headline-card">ยืนยันการอนุมัติสิทธิ์</h3>
+</div>
+<button class="text-secondary hover:text-on-surface" onclick="closeApprovalModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<p class="text-body-default text-on-surface" id="modal-confirm-text">
+          ยืนยันอนุมัติ <span class="font-bold text-primary" id="modal-user-name">-</span> ด้วย role <span class="font-bold text-[#157347]" id="modal-role-name">-</span>?
+        </p>
+<div class="p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0] text-xs text-secondary space-y-1">
+<div class="flex justify-between">
+<span>ระบบที่จะเปิดสิทธิ์:</span>
+<span class="text-on-surface font-medium">Web Admin Portal</span>
+</div>
+<div class="flex justify-between">
+<span>ผู้ดำเนินการอนุมัติ:</span>
+<span class="text-on-surface font-medium">จินดา นวลอนันต์ (platform_admin)</span>
+</div>
+<div class="flex justify-between">
+<span>การแจ้งเตือน:</span>
+<span class="text-[#157347]">ส่งอีเมลแจ้งผู้ขอรับสิทธิ์ทันที</span>
+</div>
+</div>
+</div>
+<div class="p-4 bg-[#f8fafc] border-t border-[#e1e7f0] flex items-center justify-end gap-2">
+<button class="h-10 px-4 rounded-lg border border-[#e1e7f0] bg-white text-secondary hover:bg-[#f6f8fc] text-label-default font-medium transition-colors" onclick="closeApprovalModal()">
+          ยกเลิก
+        </button>
+<button class="h-10 px-5 rounded-lg bg-[#157347] hover:bg-[#115d39] text-white text-label-default font-medium transition-colors flex items-center gap-1.5 shadow-sm" onclick="confirmApprovalAction()">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>ยืนยันและเปิดสิทธิ์</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Toast Notification Container -->
+<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none" id="toast-container"></div>
+<!-- Required Invisible Translation Dictionary Catalogue -->
+<script id="commerce-ui-translations" type="application/json">
+  {"อนุมัติ":{"th":"อนุมัติ","en":"Approve"},"อีเมล":{"th":"อีเมล","en":"Email"},"เบอร์โทร":{"th":"เบอร์โทร","en":"Phone Number"},"ชื่อ":{"th":"ชื่อ","en":"Name"},"จัดการ":{"th":"จัดการ","en":"Manage"},"ปฏิเสธ":{"th":"ปฏิเสธ","en":"Reject"},"วันที่ส่งคำขอ":{"th":"วันที่ส่งคำขอ","en":"Requested Date"},"สิทธิ์ (Role)":{"th":"สิทธิ์ (Role)","en":"Role"},"คำขอ Admin":{"th":"คำขอ Admin","en":"Admin access requests"},"เฉพาะ platform_admin เท่านั้นที่เข้าถึงหน้านี้ได้":{"th":"เฉพาะ platform_admin เท่านั้นที่เข้าถึงหน้านี้ได้","en":"Only platform_admin can access this page"},"คุณไม่มีสิทธิ์เข้าถึงหน้าคำขอ Admin":{"th":"คุณไม่มีสิทธิ์เข้าถึงหน้าคำขอ Admin","en":"You do not have permission to access Admin access requests"},"ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ":{"th":"ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ","en":"Review pending web-admin access requests"},"กำลังโหลดคำขอ Admin...":{"th":"กำลังโหลดคำขอ Admin...","en":"Loading Admin access requests..."},"ไม่มีคำขอ Admin ที่รออนุมัติ":{"th":"ไม่มีคำขอ Admin ที่รออนุมัติ","en":"No pending Admin access requests"},"ข้อความบนปุ่ม":{"th":"ข้อความบนปุ่ม","en":"Button text"},"ความกว้างในช่อง (":{"th":"ความกว้างในช่อง (","en":"Field width ("},"จัดการ Promotion Product Set":{"th":"จัดการ Promotion Product Set","en":"Manage Promotion Product Set"},"ชิดขวา":{"th":"ชิดขวา","en":"Align right"},"ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ":{"th":"ใช้ค่าเริ่มต้นสำหรับรูปนี้? รูปที่อัปโหลดไว้จะถูกลบ","en":"Use default for this image? Uploaded image will be removed"},"ตั้งค่าล็อกอิน":{"th":"ตั้งค่าล็อกอิน","en":"Login settings"},"ทุก segment ถูกใช้ใน variant แล้ว (หรือยังไม่มี segment ในระบบ)":{"th":"ทุก segment ถูกใช้ใน variant แล้ว (หรือยังไม่มี segment ในระบบ)","en":"All segments used in variants (or no segments exist)"},"บาท":{"th":"บาท","en":"THB"},"ไปลิงก์ (เช่น หน้าตะกร้า/สินค้า)":{"th":"ไปลิงก์ (เช่น หน้าตะกร้า/สินค้า)","en":"Go to link (e.g. cart/product page)"},"ไฟล์ใหญ่เกินกำหนดทั้งหมด":{"th":"ไฟล์ใหญ่เกินกำหนดทั้งหมด","en":"All files exceed size limit"},"ไม่พบข้อมูลออเดอร์":{"th":"ไม่พบข้อมูลออเดอร์","en":"Order data not found"},"ยังไม่มี Preset ที่บันทึกไว้":{"th":"ยังไม่มี Preset ที่บันทึกไว้","en":"No saved presets"},"รอเก็บคืนนี้ 00:00–06:00":{"th":"รอเก็บคืนนี้ 00:00–06:00","en":"Pending sweep tonight 00:00–06:00"},"รีเฟรช preview":{"th":"รีเฟรช preview","en":"Refresh preview"},"ลากเพื่อปรับความกว้างคอลัมน์":{"th":"ลากเพื่อปรับความกว้างคอลัมน์","en":"Drag to resize column width"},"เลือกไฟล์ใหม่":{"th":"เลือกไฟล์ใหม่","en":"Select new file"},"สร้าง Segment ใหม่ (Visual Builder)":{"th":"สร้าง Segment ใหม่ (Visual Builder)","en":"Create new segment (Visual Builder)"},"แสดงเฉพาะ Campaign ที่ยังไม่มีหน้าโปร":{"th":"แสดงเฉพาะ Campaign ที่ยังไม่มีหน้าโปร","en":"Show only campaigns without promo landing page"},"โหลดเงื่อนไขใช้โค้ดไม่สำเร็จ — บันทึกตอนนี้จะเขียนทับเงื่อนไขเดิมด้วยค่าว่าง กดโหลดใหม่ก่อนบันทึก":{"th":"โหลดเงื่อนไขใช้โค้ดไม่สำเร็จ — บันทึกตอนนี้จะเขียนทับเงื่อนไขเดิมด้วยค่าว่าง กดโหลดใหม่ก่อนบันทึก","en":"Failed to load promo code rules — saving now will overwrite with empty rules. Please reload before saving."},"ร่าง (Draft)":{"th":"ร่าง (Draft)","en":"Draft"},"ช่องทาง: {0} Template: {1}":{"th":"ช่องทาง: {0} Template: {1}","en":"Channel: {0} Template: {1}"},"ยังไม่ได้ตั้งเงื่อนไขในกลุ่มนี้":{"th":"ยังไม่ได้ตั้งเงื่อนไขในกลุ่มนี้","en":"No conditions set in this group"},"เพิ่มอย่างน้อย 1 ขั้น":{"th":"เพิ่มอย่างน้อย 1 ขั้น","en":"Add at least 1 step"},"ยืนยันอนุมัติ {0} ด้วย role {1}?":{"th":"ยืนยันอนุมัติ {0} ด้วย role {1}?","en":"Confirm approval for {0} with role {1}?"},"เกิดข้อผิดพลาดในการโหลดคำขอ กรุณาลองใหม่อีกครั้ง":{"th":"เกิดข้อผิดพลาดในการโหลดคำขอ กรุณาลองใหม่อีกครั้ง","en":"Error loading requests. Please try again."}}
+  </script>
+<!-- Interactive Logic -->
+<script>
+    let currentLang = 'th';
+    const translationElement = document.getElementById('commerce-ui-translations');
+    let translations = {};
+    try {
+      translations = JSON.parse(translationElement.textContent || '{}');
+    } catch(e) {
+      console.error("Translation parse error", e);
+    }
+
+    let activeTargetId = null;
+
+    // Bilingual Switcher Logic
+    const langButtons = document.querySelectorAll('.lang-toggle-btn');
+    langButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const selectedLang = btn.getAttribute('data-lang');
+        if (selectedLang === currentLang) return;
+
+        currentLang = selectedLang;
+        langButtons.forEach(b => {
+          if (b.getAttribute('data-lang') === currentLang) {
+            b.className = "px-2.5 py-1 text-label-caption font-medium rounded-[6px] bg-white text-primary shadow-xs transition-all lang-toggle-btn";
+          } else {
+            b.className = "px-2.5 py-1 text-label-caption font-medium rounded-[6px] text-secondary hover:text-on-surface transition-all lang-toggle-btn";
+          }
+        });
+
+        applyTranslations();
+      });
+    });
+
+    function applyTranslations() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][currentLang]) {
+          // If element has icon children, preserve icons
+          const icon = el.querySelector('.material-symbols-outlined');
+          const span = el.querySelector('span:not(.material-symbols-outlined)');
+          if (icon && span) {
+            span.textContent = translations[key][currentLang];
+          } else if (!icon) {
+            el.textContent = translations[key][currentLang];
+          }
+        }
+      });
+    }
+
+    // Modal Handling
+    const modal = document.getElementById('approval-modal');
+    const modalUserName = document.getElementById('modal-user-name');
+    const modalRoleName = document.getElementById('modal-role-name');
+    const modalConfirmText = document.getElementById('modal-confirm-text');
+
+    function openApprovalModal(name, role, id) {
+      activeTargetId = id;
+      modalUserName.textContent = name;
+      modalRoleName.textContent = role;
+
+      const template = currentLang === 'en'
+        ? (translations["ยืนยันอนุมัติ {0} ด้วย role {1}?"]?.en || "Confirm approval for {0} with role {1}?")
+        : (translations["ยืนยันอนุมัติ {0} ด้วย role {1}?"]?.th || "ยืนยันอนุมัติ {0} ด้วย role {1}?");
+
+      modalConfirmText.innerHTML = template
+        .replace('{0}', `<span class="font-bold text-primary">${name}</span>`)
+        .replace('{1}', `<span class="font-bold text-[#157347]">${role}</span>`);
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeApprovalModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      activeTargetId = null;
+    }
+
+    function confirmApprovalAction() {
+      if (!activeTargetId) return;
+      const targetRow = document.querySelector(`tr[data-id="${activeTargetId}"]`);
+      if (targetRow) {
+        targetRow.style.transition = 'all 0.3s ease';
+        targetRow.style.opacity = '0.3';
+        targetRow.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+          targetRow.remove();
+          updateCounts();
+          showToast(`อนุมัติสิทธิ์เรียบร้อยแล้ว`, 'success');
+        }, 300);
+      }
+      closeApprovalModal();
+    }
+
+    function handleReject(name, id) {
+      if (confirm(`ต้องการปฏิเสธคำขอของ ${name} หรือไม่?`)) {
+        const targetRow = document.querySelector(`tr[data-id="${id}"]`);
+        if (targetRow) {
+          targetRow.style.transition = 'all 0.3s ease';
+          targetRow.style.opacity = '0.3';
+          setTimeout(() => {
+            targetRow.remove();
+            updateCounts();
+            showToast(`ปฏิเสธคำขอของ ${name} แล้ว`, 'error');
+          }, 300);
+        }
+      }
+    }
+
+    function updateCounts() {
+      const remainingRows = document.querySelectorAll('#table-body tr').length;
+      document.getElementById('kpi-pending-count').textContent = remainingRows;
+      document.getElementById('pending-badge').textContent = remainingRows;
+      document.getElementById('visible-count').textContent = remainingRows;
+
+      const emptyState = document.getElementById('table-empty');
+      if (remainingRows === 0) {
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+    }
+
+    function filterTableRows(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#table-body tr');
+      let visible = 0;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        if (text.includes(q)) {
+          row.style.display = '';
+          visible++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('visible-count').textContent = visible;
+      const emptyState = document.getElementById('table-empty');
+      if (visible === 0) {
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+    }
+
+    function filterByRole(role) {
+      const rows = document.querySelectorAll('#table-body tr');
+      let visible = 0;
+      rows.forEach(row => {
+        const rowRole = row.getAttribute('data-role');
+        if (!role || rowRole === role) {
+          row.style.display = '';
+          visible++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      document.getElementById('visible-count').textContent = visible;
+    }
+
+    function resetFilters() {
+      document.getElementById('table-search').value = '';
+      document.getElementById('role-select').value = '';
+      const rows = document.querySelectorAll('#table-body tr');
+      rows.forEach(row => row.style.display = '');
+      document.getElementById('visible-count').textContent = rows.length;
+      document.getElementById('table-empty').classList.add('hidden');
+      document.getElementById('table-empty').classList.remove('flex');
+    }
+
+    function handleReloadTable() {
+      showToast('กำลังโหลดคำขอ Admin...', 'info');
+      setTimeout(() => {
+        showToast('ข้อมูลคำขอ Admin เป็นปัจจุบันแล้ว', 'success');
+      }, 500);
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+
+      let borderClass = 'border-[#365cf5]';
+      let icon = 'info';
+      if (type === 'success') {
+        borderClass = 'border-[#157347]';
+        icon = 'check_circle';
+      } else if (type === 'error') {
+        borderClass = 'border-[#c2333f]';
+        icon = 'cancel';
+      }
+
+      toast.className = `p-3.5 px-4 bg-white rounded-xl border ${borderClass} shadow-lg text-sm text-on-surface flex items-center gap-2.5 transform transition-all duration-300 translate-y-4 opacity-0 pointer-events-auto`;
+      toast.innerHTML = `
+        <span class="material-symbols-outlined text-[18px] ${type === 'success' ? 'text-[#157347]' : type === 'error' ? 'text-[#c2333f]' : 'text-primary'}">${icon}</span>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-4');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+  </script>
+</body></html>

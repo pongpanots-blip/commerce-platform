@@ -5,6 +5,8 @@ import { FlowCanvas } from './FlowCanvas'
 import { StepForm } from './StepForm'
 import styles from './BotFlowEditor.module.css'
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface BotFlowEditorProps {
   workflow: BotWorkflowEntity
   onWorkflowChange: (workflow: BotWorkflowEntity) => void
@@ -14,6 +16,7 @@ export const BotFlowEditor: React.FC<BotFlowEditorProps> = ({
   workflow,
   onWorkflowChange,
 }) => {
+  __useUiLocale();
   const [selectedStepId, setSelectedStepId] = useState<string | undefined>(
     workflow.steps?.[0]?.id
   )
@@ -35,7 +38,7 @@ export const BotFlowEditor: React.FC<BotFlowEditorProps> = ({
 
   const handleDeleteStep = (stepId: string) => {
     if ((workflow.steps?.length || 0) <= 1) {
-      alert('Cannot delete the last step')
+      alert(__uiText("Cannot delete the last step"))
       return
     }
     const updated = {
@@ -87,7 +90,7 @@ export const BotFlowEditor: React.FC<BotFlowEditorProps> = ({
             onCancel={() => {}}
           />
         ) : (
-          <div className={styles.empty}>Select a step to edit</div>
+          <div className={styles.empty}>{__uiText("Select a step to edit")}</div>
         )}
       </div>
     </div>

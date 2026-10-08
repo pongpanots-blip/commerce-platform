@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2048",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Y2NWUwMTgxYzJkMzQxZTc5NzRhNDkwZjIwZDkxY2NjEgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM5ODA5ODU5MDE4MTc5OTY1NDc2&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/9809859018179965476/files/ef662bea31634e908a47221a1621ffbb"
+            },
+            "id": "40863a1d54e74993a4acf0db31aa3657",
+            "name": "projects/9809859018179965476/screens/40863a1d54e74993a4acf0db31aa3657",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UxyRQdCTQT5of26jowxHQ_FnPufQ5CfQ6gMnLy5FbC50lSMDNHnnnJocoYrzyZaEti4fmL4W0ks95RX-Agtflj9V03sIVWAzmY3iN1DOa8qFLBGVkEtTUx0BHJ3A5mim96Qyr3CHiOv7OZPOre-z42nttSCOUSAqkbPTrZPdiQTyGHvvswJFmqBEycF5CBwiv-BbBE89uLXf3p-67v3tuJFojApEa100bzWnL4FmsJec4tjWXcZejqfg",
+              "name": "projects/9809859018179965476/files/d9194b3f68154eedaa660b0659965629"
+            },
+            "theme": {},
+            "title": "ราคาลูกค้า / ราคาสัญญา (StaffPrices)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ออกแบบหน้าจอ **ราคาลูกค้า / ราคาสัญญา (StaffPrices)** สำหรับ Commerce Platform (Route: `/prices/staff`, ID: `admin-2d759ace97bf`) เรียบร้อยแล้ว\n\n### สรุปการออกแบบและฟังก์ชันสำคัญ:\n1. **โครงสร้างและ Design Tokens ตามข้อกำหนด:**\n   - แถบเมนูด้านซ้าย 256px แสดงครบ 7 กลุ่มงาน (สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน) พร้อมไฮไลต์เมนูย่อยของหน้าปัจจุบัน และลิงก์ Developer Portal ที่ด้านล่าง\n   - พื้นหลังแคนวาส `#f6f8fc`, การ์ดสีขาวมุมโค้ง 12px, เส้นขอบ `#e1e7f0`, สีหลัก Blue `#365cf5`, ตัวอักษรสีหมึก `#17243b` และรอง `#52627a`\n   - ระบบสถานะคู่สีและข้อความชัดเจน: สำเร็จ (`josh ใช้แล้ว`), รอดำเนินการ (`กำลังส่ง`), และข้อผิดพลาด (`ส่งไม่สำเร็จ` พร้อมปุ่ม `ส่งซ้ำ`)\n\n2. **เวิร์กโฟลว์เฉพาะของระบบ (Commerce & Josh Integration):**\n   - คำอธิบายสถาปัตยกรรมระบบ: commerce เป็นที่เก็บหลัก ทุกการแก้ไขจะส่งให้ josh บันทึกและล้าง cache ราคาให้อัตโนมัติ พร้อมปุ่ม **\"ดึงจาก josh\"** สำหรับดึงราคาที่ josh สร้างเอง (ERP/CS)\n   - แถบเครื่องมือค้นหา: ชี้แจงชัดเจนว่าเป็นการค้นหาเฉพาะในหน้านี้ตามขอบเขต API, มีตัวกรองสถานะ และปุ่มล้างตัวกรอง\n   - ตารางรายการสัญญาและราคาพร้อมแถบเลื่อนแนวนอน และ Pagination (`ก่อนหน้า`, `หน้า`, `ถัดไป`)\n   - Modal Dialog สำหรับ `เพิ่ม` และ `แก้ไขราคา` รองรับคีย์บอร์ด (Escape เพื่อปิด และคืนโฟกัส)\n\n3. **ระบบ 2 ภาษา (Bilingual Thai / English):**\n   - มีตัวเลือกสลับภาษา `ไทย / English` บนส่วนหัวของหน้าจอ พร้อมแปล UI ทั้งหมดในหน้านี้แบบเรียลไทม์\n   - บรรจุ Invisible JSON Object `<script id=\"commerce-ui-translations\" type=\"application/json\">` ครบทุกคีย์ตามข้อกำหนดของ Catalogue เพื่อรองรับการนำไปใช้งานในระบบต่อทันที\n   - กำกับป้าย `ข้อมูลตัวอย่าง` / `Sample data` ชัดเจนในทุกจุดที่แสดงข้อมูลตัวเลขและรายการจำลองตามข้อกำหนด"
+    },
+    {
+      "suggestion": "ดูการทำงานของ Modal แก้ไขราคาและเพิ่มสัญญาใหม่"
+    },
+    {
+      "suggestion": "ทดสอบปุ่มสลับภาษา ไทย / English"
+    },
+    {
+      "suggestion": "ปรับแต่งสถานะจำลอง (Empty state หรือ Error state เพิ่มเติม)"
+    }
+  ],
+  "projectId": "9809859018179965476",
+  "sessionId": "6129655915317852836"
+}

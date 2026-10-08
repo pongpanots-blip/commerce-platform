@@ -1,33 +1,36 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useMemo, useState } from 'react';
 import { Input, Select } from '@josh/shared-ui-web';
 import type { BotTemplateCTA, BotTemplateField, BotTemplateSchema } from '@josh/shared-api';
 import CardTemplatePreview from './CardTemplatePreview';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const TYPE_OPTIONS = [
-  { value: 'card', label: 'card' },
-  { value: 'card_list', label: 'card_list' },
-  { value: 'text', label: 'text' },
-  { value: 'rich_text', label: 'rich_text' },
+  { value: 'card', get label(){return __uiText("card");} },
+  { value: 'card_list', get label(){return __uiText("card_list");} },
+  { value: 'text', get label(){return __uiText("text");} },
+  { value: 'rich_text', get label(){return __uiText("rich_text");} },
 ];
 
 const FORMAT_OPTIONS = [
-  { value: 'text', label: 'text' },
-  { value: 'image', label: 'image' },
-  { value: 'price', label: 'price' },
-  { value: 'badge', label: 'badge' },
-  { value: 'date', label: 'date' },
-  { value: 'list', label: 'list' },
+  { value: 'text', get label(){return __uiText("text");} },
+  { value: 'image', get label(){return __uiText("image");} },
+  { value: 'price', get label(){return __uiText("price");} },
+  { value: 'badge', get label(){return __uiText("badge");} },
+  { value: 'date', get label(){return __uiText("date");} },
+  { value: 'list', get label(){return __uiText("list");} },
 ];
 
 const IMAGE_SIZE_OPTIONS = [
-  { value: 'sm', label: 'เล็ก (S)' },
-  { value: 'md', label: 'กลาง (M)' },
-  { value: 'lg', label: 'ใหญ่ (L)' },
+  { value: 'sm', get label(){return __uiText("เล็ก (S)");} },
+  { value: 'md', get label(){return __uiText("กลาง (M)");} },
+  { value: 'lg', get label(){return __uiText("ใหญ่ (L)");} },
 ];
 
 const CTA_TYPE_OPTIONS = [
-  { value: 'navigate', label: 'navigate (ลิงก์)' },
-  { value: 'action', label: 'action' },
+  { value: 'navigate', get label(){return __uiText("navigate (ลิงก์)");} },
+  { value: 'action', get label(){return __uiText("action");} },
 ];
 
 export interface BotTemplateFormValue {
@@ -62,6 +65,7 @@ function emptyCta(): BotTemplateCTA {
 }
 
 const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Props) => {
+  __useUiLocale();
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const schema = useMemo(
@@ -152,16 +156,16 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
       <div className="flex flex-col gap-4">
         <div>
           <Input
-            label="ชื่อ Template"
+            label={__uiText("ชื่อ Template")}
             value={value.name}
             onChange={(e) => onChange({ ...value, name: e.target.value })}
-            placeholder="เช่น product_card"
+            placeholder={__uiText("เช่น product_card")}
           />
         </div>
 
         <div>
           <Select
-            label="ประเภท Template (Type)"
+            label={__uiText("ประเภท Template (Type)")}
             data={TYPE_OPTIONS}
             value={value.type}
             onChange={(e) =>
@@ -177,18 +181,17 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
           <>
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">Fields</label>
+                <label className="text-sm font-medium text-gray-700">{__uiText("Fields")}</label>
                 <button
                   type="button"
                   onClick={addField}
                   className="rounded-md bg-gray-900 px-2.5 py-1 text-xs font-medium text-white hover:bg-gray-800"
                 >
-                  + เพิ่ม field
-                </button>
+                  {__uiText("+ เพิ่ม field")}</button>
               </div>
               <div className="flex flex-col gap-3">
                 {fields.length === 0 && (
-                  <p className="text-xs text-gray-400">ยังไม่มี field — กดเพิ่ม field</p>
+                  <p className="text-xs text-gray-400">{__uiText("ยังไม่มี field — กดเพิ่ม field")}</p>
                 )}
                 {fields.map((field, index) => (
                   <div
@@ -197,7 +200,7 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-medium text-gray-500">
-                        Field {index + 1}
+                        {__uiText("Field ")}{index + 1}
                       </span>
                       <div className="flex gap-1">
                         <button
@@ -221,32 +224,31 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                           className="rounded border border-red-200 bg-white px-1.5 py-0.5 text-xs text-red-600"
                           onClick={() => removeField(index)}
                         >
-                          ลบ
-                        </button>
+                          {__uiText("ลบ")}</button>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <Input
-                          label="ชื่อฟิลด์ที่แสดง (Label)"
+                          label={__uiText("ชื่อฟิลด์ที่แสดง (Label)")}
                           value={field.label}
                           onChange={(e) => updateField(index, { label: e.target.value })}
-                          placeholder="ชื่อสินค้า"
+                          placeholder={__uiText("ชื่อสินค้า")}
                         />
                       </div>
                       <div>
                         <Input
-                          label="คีย์ข้อมูล (Key)"
+                          label={__uiText("คีย์ข้อมูล (Key)")}
                           value={field.key}
                           onChange={(e) => updateField(index, { key: e.target.value })}
-                          placeholder="productName"
+                          placeholder={__uiText("productName")}
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <Select
-                          label="รูปแบบการแสดงผล (Format)"
+                          label={__uiText("รูปแบบการแสดงผล (Format)")}
                           data={FORMAT_OPTIONS}
                           value={field.format ?? 'text'}
                           onChange={(e) =>
@@ -265,14 +267,13 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                               updateField(index, { visible: e.target.checked })
                             }
                           />
-                          แสดงผล
-                        </label>
+                          {__uiText("แสดงผล")}</label>
                       </div>
                     </div>
                     {field.format === 'image' && (
                       <div>
                         <Select
-                          label="ขนาดรูป"
+                          label={__uiText("ขนาดรูป")}
                           data={IMAGE_SIZE_OPTIONS}
                           value={(field.formatOptions?.size as string) ?? 'md'}
                           onChange={(e) =>
@@ -289,7 +290,7 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                     {field.key && (
                       <div>
                         <Input
-                          label={`ค่าตัวอย่าง (${field.key})`}
+                          label={__uiText("ค่าตัวอย่าง ({0})", {"0": field.key})}
                           value={
                             exampleItem[field.key] !== undefined &&
                             exampleItem[field.key] !== null
@@ -302,7 +303,7 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                               ? 'https://…'
                               : field.format === 'price'
                                 ? '199'
-                                : 'ตัวอย่าง'
+                                : __uiText("ตัวอย่าง")
                           }
                         />
                       </div>
@@ -315,7 +316,7 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
             {value.type === 'card_list' && (
               <div>
                 <Input
-                  label="จำนวนรายการสูงสุด (maxItems)"
+                  label={__uiText("จำนวนรายการสูงสุด (maxItems)")}
                   className="max-w-[120px]"
                   type="number"
                   min={1}
@@ -327,21 +328,20 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                       maxItems: n && !Number.isNaN(n) ? n : undefined,
                     });
                   }}
-                  placeholder="ไม่จำกัด"
+                  placeholder={__uiText("ไม่จำกัด")}
                 />
               </div>
             )}
 
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">CTA ปุ่ม</label>
+                <label className="text-sm font-medium text-gray-700">{__uiText("CTA ปุ่ม")}</label>
                 <button
                   type="button"
                   onClick={addCta}
                   className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
                 >
-                  + เพิ่มปุ่ม
-                </button>
+                  {__uiText("+ เพิ่มปุ่ม")}</button>
               </div>
               <div className="flex flex-col gap-3">
                 {ctas.map((cta, index) => (
@@ -350,23 +350,22 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                     className="rounded-lg border border-gray-200 bg-white p-3 space-y-2"
                   >
                     <div className="flex justify-between">
-                      <span className="text-xs text-gray-500">CTA {index + 1}</span>
+                      <span className="text-xs text-gray-500">{__uiText("CTA ")}{index + 1}</span>
                       <button
                         type="button"
                         className="text-xs text-red-600"
                         onClick={() => removeCta(index)}
                       >
-                        ลบ
-                      </button>
+                        {__uiText("ลบ")}</button>
                     </div>
                     <Input
-                      label="ข้อความบนปุ่ม (Label)"
+                      label={__uiText("ข้อความบนปุ่ม (Label)")}
                       value={cta.label}
                       onChange={(e) => updateCta(index, { label: e.target.value })}
-                      placeholder="ดูสินค้า"
+                      placeholder={__uiText("ดูสินค้า")}
                     />
                     <Select
-                      label="ประเภทปุ่ม (Type)"
+                      label={__uiText("ประเภทปุ่ม (Type)")}
                       data={CTA_TYPE_OPTIONS}
                       value={cta.type}
                       onChange={(e) =>
@@ -377,17 +376,17 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                     />
                     {cta.type === 'navigate' ? (
                       <Input
-                        label="ลิงก์ปลายทาง (URL)"
+                        label={__uiText("ลิงก์ปลายทาง (URL)")}
                         value={cta.url ?? ''}
                         onChange={(e) => updateCta(index, { url: e.target.value })}
                         placeholder="/product/$productId"
                       />
                     ) : (
                       <Input
-                        label="ชื่อ Action"
+                        label={__uiText("ชื่อ Action")}
                         value={cta.action ?? ''}
                         onChange={(e) => updateCta(index, { action: e.target.value })}
-                        placeholder="add_to_cart"
+                        placeholder={__uiText("add_to_cart")}
                       />
                     )}
                   </div>
@@ -400,14 +399,13 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
         {!isCardType && (
           <div>
             <label htmlFor="template-example-text" className="text-sm text-gray-600">
-              ข้อความตัวอย่าง
-            </label>
+              {__uiText("ข้อความตัวอย่าง")}</label>
             <textarea
               id="template-example-text"
               className="mt-1 w-full min-h-[80px] rounded-lg border border-gray-200 p-2 text-sm"
               value={String(example.text ?? '')}
               onChange={(e) => patchExample({ ...example, text: e.target.value })}
-              placeholder="ข้อความที่บอทจะส่ง…"
+              placeholder={__uiText("ข้อความที่บอทจะส่ง…")}
             />
           </div>
         )}
@@ -418,8 +416,7 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
             checked={value.active}
             onChange={(e) => onChange({ ...value, active: e.target.checked })}
           />
-          เปิดใช้งาน (Active)
-        </label>
+          {__uiText("เปิดใช้งาน (Active)")}</label>
 
         <div className="border-t border-gray-100 pt-3">
           <button
@@ -427,14 +424,12 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
             className="text-xs font-medium text-gray-500 hover:text-gray-800"
             onClick={() => setAdvancedOpen((o) => !o)}
           >
-            {advancedOpen ? '▾' : '▸'} Advanced JSON
-          </button>
+            {advancedOpen ? '▾' : '▸'} {__uiText(" Advanced JSON")}</button>
           {advancedOpen && (
             <div className="mt-3 space-y-3">
               <div>
                 <label htmlFor="template-schema-json" className="text-sm text-gray-600">
-                  โครงสร้างข้อมูล (Schema JSON)
-                </label>
+                  {__uiText("โครงสร้างข้อมูล (Schema JSON)")}</label>
                 <textarea
                   id="template-schema-json"
                   className="mt-1 w-full min-h-[120px] rounded-lg border border-gray-200 p-2 font-mono text-sm"
@@ -442,13 +437,12 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                   onChange={(e) => onChange({ ...value, schemaText: e.target.value })}
                 />
                 {schemaError && (
-                  <p className="mt-1 text-xs text-red-500">{schemaError}</p>
+                  <p className="mt-1 text-xs text-red-500">{(typeof (schemaError) === 'string' ? __uiText(schemaError) : schemaError)}</p>
                 )}
               </div>
               <div>
                 <label htmlFor="template-example-json" className="text-sm text-gray-600">
-                  ข้อมูลตัวอย่าง (Example JSON)
-                </label>
+                  {__uiText("ข้อมูลตัวอย่าง (Example JSON)")}</label>
                 <textarea
                   id="template-example-json"
                   className="mt-1 w-full min-h-[120px] rounded-lg border border-gray-200 p-2 font-mono text-sm"
@@ -456,15 +450,15 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
                   onChange={(e) => onChange({ ...value, exampleText: e.target.value })}
                 />
                 {exampleError && (
-                  <p className="mt-1 text-xs text-red-500">{exampleError}</p>
+                  <p className="mt-1 text-xs text-red-500">{(typeof (exampleError) === 'string' ? __uiText(exampleError) : exampleError)}</p>
                 )}
               </div>
             </div>
           )}
           {!advancedOpen && (schemaError || exampleError) && (
             <div className="mt-2">
-              {schemaError && <p className="text-xs text-red-500">{schemaError}</p>}
-              {exampleError && <p className="text-xs text-red-500">{exampleError}</p>}
+              {schemaError && <p className="text-xs text-red-500">{(typeof (schemaError) === 'string' ? __uiText(schemaError) : schemaError)}</p>}
+              {exampleError && <p className="text-xs text-red-500">{(typeof (exampleError) === 'string' ? __uiText(exampleError) : exampleError)}</p>}
             </div>
           )}
         </div>
@@ -478,3 +472,5 @@ const BotTemplateBuilder = ({ value, onChange, schemaError, exampleError }: Prop
 };
 
 export default BotTemplateBuilder;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

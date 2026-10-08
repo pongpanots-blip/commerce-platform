@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#f6f8fc]" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Operations Admin - Bot Workflows</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#f6f8fc",
+            "on-tertiary": "#ffffff",
+            "secondary": "#52627a",
+            "surface-tint": "#214ce7",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-tertiary-fixed": "#360f00",
+            "on-error": "#ffffff",
+            "error": "#c2333f",
+            "on-secondary-fixed": "#0b1c31",
+            "on-primary-fixed-variant": "#0034c0",
+            "primary-container": "#365cf5",
+            "secondary-container": "#d0e1fd",
+            "outline": "#747687",
+            "tertiary": "#943500",
+            "on-primary-container": "#ededff",
+            "tertiary-container": "#bc4600",
+            "on-surface-variant": "#444655",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#17243b",
+            "on-secondary-fixed-variant": "#38485e",
+            "inverse-primary": "#b9c3ff",
+            "on-secondary-container": "#54647c",
+            "surface-container-low": "#f1f3ff",
+            "primary-fixed-dim": "#b9c3ff",
+            "tertiary-fixed": "#ffdbcd",
+            "outline-variant": "#e1e7f0",
+            "inverse-surface": "#243048",
+            "primary-fixed": "#dde1ff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-secondary": "#ffffff",
+            "surface-container-high": "#e0e8ff",
+            "on-primary": "#ffffff",
+            "primary": "#365cf5",
+            "on-primary-fixed": "#001257",
+            "on-tertiary-container": "#ffebe4",
+            "surface-dim": "#cddaf9",
+            "tertiary-fixed-dim": "#ffb597",
+            "surface-bright": "#f9f9ff",
+            "on-surface": "#17243b",
+            "secondary-fixed": "#d3e3ff",
+            "error-container": "#ffdad6",
+            "surface": "#f9f9ff",
+            "on-error-container": "#93000a",
+            "surface-variant": "#d7e2ff",
+            "inverse-on-surface": "#ecf0ff",
+            "surface-container-highest": "#d7e2ff",
+            "surface-container": "#e8eeff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          spacing: {
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-lg": "1.5rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "margin-desktop": "2rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem"
+          },
+          fontFamily: {
+            "headline-page": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-page-mobile": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "headline-card": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "code-table": ["JetBrains Mono", "Noto Sans", "monospace"],
+            "label-caption": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "subheading": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "label-default": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "display": ["Noto Sans Thai", "Noto Sans", "sans-serif"],
+            "body-medium": ["Noto Sans Thai", "Noto Sans", "sans-serif"]
+          },
+          fontSize: {
+            "headline-page": ["28px", { lineHeight: "36px", fontWeight: "600" }],
+            "headline-page-mobile": ["22px", { lineHeight: "30px", fontWeight: "600" }],
+            "headline-card": ["18px", { lineHeight: "26px", fontWeight: "600" }],
+            "code-table": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "label-caption": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            "body-default": ["14px", { lineHeight: "22px", fontWeight: "400" }],
+            "subheading": ["16px", { lineHeight: "24px", fontWeight: "500" }],
+            "label-default": ["13px", { lineHeight: "18px", fontWeight: "500" }],
+            "display": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+            "body-medium": ["14px", { lineHeight: "22px", fontWeight: "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f3ff;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full font-body-default text-on-surface antialiased bg-[#f6f8fc]">
+<!-- EXACT Script Tag containing UI Translations -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "th": {
+      "สถานะ": "สถานะ",
+      "แก้ไข": "แก้ไข",
+      "ลบ": "ลบ",
+      "ชื่อ": "ชื่อ",
+      "จัดการ": "จัดการ",
+      "กำลังโหลด...": "กำลังโหลด...",
+      "Trigger": "Trigger",
+      "Message": "Message",
+      "Bot Workflows": "Bot Workflows",
+      "Active": "Active",
+      "Inactive": "Inactive",
+      "ยืนยันการลบ Workflow นี้?": "ยืนยันการลบ Workflow นี้?",
+      "Trigger Pattern": "Trigger Pattern",
+      "Action": "Action",
+      "Steps": "Steps",
+      "เพิ่ม Workflow": "เพิ่ม Workflow",
+      "กรองตาม Trigger": "กรองตาม Trigger",
+      "All Triggers": "All Triggers",
+      "Chat Open": "Chat Open",
+      "ขนาดแพ็กนี้": "ขนาดแพ็กนี้",
+      "ค่าหนึ่งบรรทัดต่อหนึ่งค่า": "ค่าหนึ่งบรรทัดต่อหนึ่งค่า",
+      "ชำระเมื่อ": "ชำระเมื่อ",
+      "ดูออเดอร์ทั้งหมด": "ดูออเดอร์ทั้งหมด",
+      "นาที:วินาที": "นาที:วินาที",
+      "เปิดเมนู": "เปิดเมนู",
+      "มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด": "มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด",
+      "ยังไม่มี conversion สำหรับตัวกรองนี้": "ยังไม่มี conversion สำหรับตัวกรองนี้",
+      "ราคาตามจำนวน (Quantity Tier)": "ราคาตามจำนวน (Quantity Tier)",
+      "ล้างรายการ": "ล้างรายการ",
+      "สถานะการลงทะเบียน": "สถานะการลงทะเบียน",
+      "หน้าค้นหาหรือหน้าหมวดสินค้า เช่น makro.pro/c/search?q=* หรือหน้าหมวดเนื้อหมูของ Lotus's": "หน้าค้นหาหรือหน้าหมวดสินค้า เช่น makro.pro/c/search?q=* หรือหน้าหมวดเนื้อหมูของ Lotus's",
+      "ส่งไม่สำเร็จ {0} · กำลังส่ง {1}": "ส่งไม่สำเร็จ {0} · กำลังส่ง {1}",
+      "ยิ่งซื้อยิ่งถูก {0} ขั้น": "ยิ่งซื้อยิ่งถูก {0} ขั้น",
+      "กรุณาระบุวันเริ่มและวันสิ้นสุด หรือเลือก Campaign": "กรุณาระบุวันเริ่มและวันสิ้นสุด หรือเลือก Campaign"
+    },
+    "en": {
+      "สถานะ": "Status",
+      "แก้ไข": "Edit",
+      "ลบ": "Delete",
+      "ชื่อ": "Name",
+      "จัดการ": "Actions",
+      "กำลังโหลด...": "Loading...",
+      "Trigger": "Trigger",
+      "Message": "Message",
+      "Bot Workflows": "Bot Workflows",
+      "Active": "Active",
+      "Inactive": "Inactive",
+      "ยืนยันการลบ Workflow นี้?": "Are you sure you want to delete this Workflow?",
+      "Trigger Pattern": "Trigger Pattern",
+      "Action": "Action",
+      "Steps": "Steps",
+      "เพิ่ม Workflow": "New Workflow",
+      "กรองตาม Trigger": "Filter by Trigger",
+      "All Triggers": "All Triggers",
+      "Chat Open": "Chat Open",
+      "ขนาดแพ็กนี้": "This Pack Size",
+      "ค่าหนึ่งบรรทัดต่อหนึ่งค่า": "One value per line",
+      "ชำระเมื่อ": "Paid on",
+      "ดูออเดอร์ทั้งหมด": "View All Orders",
+      "นาที:วินาที": "mm:ss",
+      "เปิดเมนู": "Open Menu",
+      "มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด": "Total order amount below threshold",
+      "ยังไม่มี conversion สำหรับตัวกรองนี้": "No conversions found for this filter",
+      "ราคาตามจำนวน (Quantity Tier)": "Tiered Volume Pricing (Quantity Tier)",
+      "ล้างรายการ": "Reset Filters",
+      "สถานะการลงทะเบียน": "Registration Status",
+      "หน้าค้นหาหรือหน้าหมวดสินค้า เช่น makro.pro/c/search?q=* หรือหน้าหมวดเนื้อหมูของ Lotus's": "Search or category page e.g. makro.pro/c/search?q=* or Lotus's pork category",
+      "ส่งไม่สำเร็จ {0} · กำลังส่ง {1}": "Failed {0} · Sending {1}",
+      "ยิ่งซื้อยิ่งถูก {0} ขั้น": "Bulk discount {0} steps",
+      "กรุณาระบุวันเริ่มและวันสิ้นสุด หรือเลือก Campaign": "Please specify start/end date or select Campaign"
+    }
+  }
+  </script>
+<!-- Left Sidebar (256px fixed as per Shared Components JSON and Spec) -->
+<aside class="fixed top-0 left-0 h-full w-64 z-40 bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col justify-between">
+<!-- Top & Navigation Links -->
+<div class="flex flex-col h-full overflow-hidden">
+<!-- Brand & Header -->
+<div class="p-4 border-b border-outline-variant flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-primary-container text-white flex items-center justify-center font-bold text-base shadow-sm">
+<span class="material-symbols-outlined text-xl">inventory_2</span>
+</div>
+<div class="leading-tight">
+<div class="font-headline-card text-label-default font-bold text-on-surface">Commerce Admin</div>
+<div class="text-label-caption text-secondary">ศูนย์จัดการระบบ</div>
+</div>
+</div>
+<!-- Action Button inside Sidebar -->
+<div class="p-3">
+<button class="w-full flex items-center justify-center gap-2 bg-primary-container text-white py-2 px-3 rounded-lg text-label-default font-medium hover:bg-[#2a4ad8] transition-colors shadow-sm">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>สร้างรายการใหม่</span>
+</button>
+</div>
+<!-- Main Navigation Workspaces -->
+<nav class="flex-1 overflow-y-auto px-3 py-1 custom-scrollbar space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-lg">inventory_2</span>
+<span>สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-lg">receipt_long</span>
+<span>ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ (Active Group with expanded tree) -->
+<div class="pt-0.5 pb-1">
+<div class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container text-primary font-body-medium border-l-[3px] border-primary">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-lg">support_agent</span>
+<span>ลูกค้าและบริการ</span>
+</div>
+<span class="material-symbols-outlined text-base">expand_less</span>
+</div>
+<!-- Sub-items tree -->
+<div class="ml-4 pl-3 mt-1 space-y-0.5 border-l border-outline-variant text-[13px]">
+<a class="block px-2.5 py-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+              ลูกค้าแพลตฟอร์ม
+            </a>
+<a class="block px-2.5 py-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+              จัดการผู้ใช้ (All Users)
+            </a>
+<a class="block px-2.5 py-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+              KYC — ยืนยันตัวตน
+            </a>
+<a class="block px-2.5 py-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+              แชตกับลูกค้า (Live chat)
+            </a>
+<a class="block px-2.5 py-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+              บอท &amp; Intent Rules
+            </a>
+<!-- Active Sub-item: Bot Workflows -->
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded bg-surface-container-low text-primary font-medium" href="javascript:void(0)">
+<span data-i18n="Bot Workflows">Bot Workflows</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="block px-2.5 py-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+              งานบริการลูกค้า (CS Desk)
+            </a>
+<a class="block px-2.5 py-1.5 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+              ข้อร้องเรียนและบริการ
+            </a>
+</div>
+</div>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-lg">campaign</span>
+<span>การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-lg">analytics</span>
+<span>รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-lg">hub</span>
+<span>ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span>ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+<!-- Sidebar Footer -->
+<div class="p-3 border-t border-outline-variant bg-surface-container-lowest text-xs space-y-1">
+<div class="px-2 py-1 text-slate-400 font-mono text-[11px] truncate flex items-center justify-between">
+<span>route: admin-2ab370f1829f</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+<a class="flex items-center gap-2 px-2 py-1.5 text-secondary hover:text-on-surface rounded hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-base">code</span>
+<span>Developer Portal</span>
+</a>
+<a class="flex items-center gap-2 px-2 py-1.5 text-secondary hover:text-on-surface rounded hover:bg-surface-container-low transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-base">help_center</span>
+<span>คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-2 px-2 py-1.5 text-error hover:bg-red-50 rounded transition-colors" href="javascript:void(0)">
+<span class="material-symbols-outlined text-base">logout</span>
+<span>ออกจากระบบ</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Bar (sticky right canvas offset) -->
+<header class="sticky top-0 right-0 w-[calc(100%-16rem)] ml-auto z-30 h-16 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex items-center justify-between px-6">
+<!-- Breadcrumb & Local Search -->
+<div class="flex items-center gap-4">
+<div class="flex items-center text-label-default text-secondary gap-1.5">
+<span class="hover:text-on-surface cursor-pointer">ลูกค้าและบริการ</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="font-medium text-on-surface" data-i18n="Bot Workflows">Bot Workflows</span>
+</div>
+<!-- Divider -->
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<!-- Quick page search -->
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-base">search</span>
+<input class="w-full h-9 pl-9 pr-3 rounded-lg border border-outline-variant bg-surface-container-low text-xs text-on-surface placeholder:text-secondary/60 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" id="globalQuickSearch" placeholder="ค้นหาในหน้านี้... (ค้นหาเฉพาะหน้าปัจจุบัน)" type="text"/>
+</div>
+<!-- Badge "ข้อมูลตัวอย่าง" -->
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+        ข้อมูลตัวอย่าง
+      </span>
+</div>
+<!-- Header Trailing Utilities -->
+<div class="flex items-center gap-3">
+<!-- Language Switcher Segmented Control -->
+<div class="flex items-center bg-surface-container-low p-0.5 rounded-lg border border-outline-variant text-xs font-medium">
+<button class="px-2.5 py-1 rounded bg-white text-primary shadow-sm font-semibold transition-all" id="lang-btn-th" onclick="setLanguage('th')">
+          ไทย
+        </button>
+<span class="text-outline-variant mx-0.5">|</span>
+<button class="px-2.5 py-1 rounded text-secondary hover:text-on-surface transition-all" id="lang-btn-en" onclick="setLanguage('en')">
+          English
+        </button>
+</div>
+<!-- Notification Bell -->
+<button class="relative p-2 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary"></span>
+</button>
+<!-- Help Outline -->
+<button class="p-2 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined text-xl">help_outline</span>
+</button>
+<div class="h-5 w-[1px] bg-outline-variant mx-1"></div>
+<!-- User Profile -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs ring-2 ring-white">
+          จน
+        </div>
+<div class="leading-tight text-left">
+<div class="text-xs font-semibold text-on-surface">จินดา นวลอนันต์</div>
+<div class="text-[11px] text-secondary">หัวหน้าทีมบริการลูกค้า CS</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas (max-w-[1240px] within viewport offset) -->
+<main class="w-[calc(100%-16rem)] ml-auto min-h-[calc(100vh-4rem)] p-6 md:p-8">
+<div class="max-w-[1240px] mx-auto space-y-6">
+<!-- Page Header Banner -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+<div class="space-y-1">
+<div class="flex items-center gap-3">
+<h1 class="text-headline-page font-headline-page text-on-surface" data-i18n="Bot Workflows">Bot Workflows</h1>
+<span class="font-mono text-xs px-2.5 py-0.5 rounded bg-surface-container text-primary font-medium">/j/bot/workflows</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+<span>Engine Online</span>
+</span>
+</div>
+<p class="text-body-default text-secondary">
+            ตั้งค่าและจัดการลำดับการทำงานอัตโนมัติ (Automated Bot Workflows) สำหรับตอบสนองลูกค้าในช่องทางแชตตามเงื่อนไขและขั้นตอนที่กำหนด
+          </p>
+</div>
+<!-- Action CTA Buttons -->
+<div class="flex items-center gap-2.5">
+<button class="h-10 px-4 rounded-lg bg-white border border-outline-variant text-on-surface hover:bg-[#f6f8fc] text-label-default font-medium flex items-center gap-2 shadow-sm transition-colors" onclick="refreshData()">
+<span class="material-symbols-outlined text-lg" id="refresh-icon">refresh</span>
+<span>รีเฟรชข้อมูล</span>
+</button>
+<button class="h-10 px-4 rounded-lg bg-[#365cf5] hover:bg-[#2a4ad8] text-white text-label-default font-medium flex items-center gap-2 shadow-sm transition-colors" onclick="openNewModal()">
+<span class="material-symbols-outlined text-lg">add</span>
+<span data-i18n="เพิ่ม Workflow">เพิ่ม Workflow</span>
+</button>
+</div>
+</div>
+<!-- Summary KPI Metric Cards (Bento 4 Grid) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Metric 1: Total -->
+<div class="bg-white rounded-xl border border-outline-variant p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-xs font-medium">ทั้งหมด (Total Workflows)</span>
+<span class="material-symbols-outlined text-primary text-xl">account_tree</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface">8</span>
+<span class="text-xs text-secondary font-normal">รายการที่ตั้งค่า</span>
+</div>
+<div class="mt-2 text-[11px] text-secondary flex items-center gap-1">
+<span class="text-emerald-600 font-medium">100%</span>
+<span>ครอบคลุมทุกช่องทาง Live Chat</span>
+</div>
+</div>
+<!-- Metric 2: Active -->
+<div class="bg-white rounded-xl border border-outline-variant p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-xs font-medium">Active (เปิดใช้งาน)</span>
+<span class="material-symbols-outlined text-emerald-600 text-xl">check_circle</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-2xl font-bold text-emerald-700">6</span>
+<span class="text-xs text-secondary font-normal">พร้อมประมวลผลทันที</span>
+</div>
+<div class="mt-2 text-[11px] text-secondary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>ทำงานเฉลี่ย 1.2 วินาที/ข้อความ</span>
+</div>
+</div>
+<!-- Metric 3: Inactive -->
+<div class="bg-white rounded-xl border border-outline-variant p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-xs font-medium">Inactive (ปิดใช้งาน)</span>
+<span class="material-symbols-outlined text-slate-400 text-xl">pause_circle</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface">2</span>
+<span class="text-xs text-secondary font-normal">รายการฉบับร่าง/พักไว้</span>
+</div>
+<div class="mt-2 text-[11px] text-secondary">
+<span>รอปรับปรุงข้อความเงื่อนไข</span>
+</div>
+</div>
+<!-- Metric 4: Popular Trigger -->
+<div class="bg-white rounded-xl border border-outline-variant p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-xs font-medium">Trigger ยอดนิยม</span>
+<span class="material-symbols-outlined text-amber-500 text-xl">bolt</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-xl font-bold text-on-surface truncate" data-i18n="Chat Open">Chat Open</span>
+</div>
+<div class="mt-2 text-[11px] text-secondary flex items-center gap-1">
+<span class="text-primary font-medium">38%</span>
+<span>ของปริมาณทราฟฟิกแชตทั้งหมด</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search Bar Card -->
+<div class="bg-white rounded-xl border border-outline-variant p-4 shadow-sm space-y-3">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+<!-- Search input for current page -->
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-lg">search</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg border border-outline-variant bg-white text-xs text-on-surface placeholder:text-secondary/70 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" id="filterWorkflowInput" oninput="applyFilters()" placeholder="ค้นหาชื่อ Workflow, Trigger หรือ Action ในหน้านี้..." type="text"/>
+</div>
+<!-- Trigger filter dropdown -->
+<div class="w-full lg:w-56">
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-8 rounded-lg border border-outline-variant bg-white text-xs text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none appearance-none" id="filterTriggerSelect" onchange="applyFilters()">
+<option data-i18n="กรองตาม Trigger" value="">กรองตาม Trigger</option>
+<option data-i18n="All Triggers" value="ALL">All Triggers</option>
+<option data-i18n="Chat Open" value="Chat Open">Chat Open</option>
+<option value="Intent Rule">Intent Rule</option>
+<option value="Keyword Regex">Keyword Regex</option>
+<option value="Trigger Condition">Trigger Condition</option>
+<option value="Fallback / Agent Handoff">Fallback / Agent Handoff</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-secondary pointer-events-none text-lg">arrow_drop_down</span>
+</div>
+</div>
+<!-- Status Pill Segmented Control -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-lg border border-outline-variant text-xs">
+<button class="px-3 py-1.5 rounded-md font-medium bg-white text-primary shadow-sm transition-all" id="tab-status-all" onclick="setStatusFilter('ALL')">
+              ทั้งหมด (8)
+            </button>
+<button class="px-3 py-1.5 rounded-md font-medium text-secondary hover:text-on-surface transition-all" id="tab-status-active" onclick="setStatusFilter('Active')">
+<span data-i18n="Active">Active</span> (6)
+            </button>
+<button class="px-3 py-1.5 rounded-md font-medium text-secondary hover:text-on-surface transition-all" id="tab-status-inactive" onclick="setStatusFilter('Inactive')">
+<span data-i18n="Inactive">Inactive</span> (2)
+            </button>
+</div>
+<!-- Reset Filter Button -->
+<button class="h-10 px-3.5 rounded-lg border border-outline-variant hover:bg-slate-50 text-secondary hover:text-on-surface text-xs font-medium flex items-center justify-center gap-1.5 transition-colors" onclick="resetFilters()">
+<span class="material-symbols-outlined text-base">restart_alt</span>
+<span data-i18n="ล้างรายการ">ล้างรายการ</span>
+</button>
+</div>
+<!-- Filter Sub-status row note -->
+<div class="flex items-center justify-between text-[11px] text-secondary border-t border-slate-100 pt-2 px-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-slate-400">info</span>
+<span>การค้นหาและตัวกรองมีผลเฉพาะรายการในหน้านี้ เพื่อความรวดเร็วในการจัดการลำดับขั้นตอน</span>
+</div>
+<span class="font-medium text-on-surface" id="filteredCountText">แสดง 6 จากทั้งหมด 8 รายการ</span>
+</div>
+</div>
+<!-- Workflows Data Table Card -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="workflowsTable">
+<thead>
+<tr class="bg-[#f6f8fc] border-b border-outline-variant text-[13px] font-semibold text-secondary h-11">
+<th class="px-4 py-2 w-12 text-center">#</th>
+<th class="px-4 py-2 min-w-[240px]" data-i18n="ชื่อ">ชื่อ (Workflow Name &amp; Description)</th>
+<th class="px-4 py-2 min-w-[130px]" data-i18n="Trigger">Trigger</th>
+<th class="px-4 py-2 min-w-[260px]" data-i18n="Trigger Pattern">Trigger Pattern</th>
+<th class="px-3 py-2 w-20 text-center" data-i18n="Steps">Steps</th>
+<th class="px-4 py-2 min-w-[200px]" data-i18n="Action">Action</th>
+<th class="px-4 py-2 w-28 text-center" data-i18n="สถานะ">สถานะ</th>
+<th class="px-4 py-2 w-28 text-center" data-i18n="จัดการ">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-[13px]" id="workflowTbody">
+<!-- Item 1 -->
+<tr class="hover:bg-slate-50/80 transition-colors h-14 workflow-row" data-id="1" data-status="Active" data-trigger="Chat Open">
+<td class="px-4 py-2 text-center text-slate-400 font-mono text-xs">1</td>
+<td class="px-4 py-2">
+<div class="font-medium text-on-surface">ต้อนรับลูกค้าใหม่ &amp; แนะนำโปรโมชั่น</div>
+<div class="text-[11px] text-secondary">ทักทายอัตโนมัติ ส่งเมนูช่วยเหลือ พร้อมโค้ดต้อนรับ</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200" data-i18n="Chat Open">
+                    Chat Open
+                  </span>
+</td>
+<td class="px-4 py-2 text-secondary font-mono text-[12px]">
+                  เมื่อลูกค้าเปิดหน้าต่างแชตครั้งแรกใน 24 ชม.
+                </td>
+<td class="px-3 py-2 text-center">
+<span class="inline-block px-2 py-0.5 rounded bg-surface-container text-primary font-mono text-xs font-semibold">3 Steps</span>
+</td>
+<td class="px-4 py-2">
+<div class="text-on-surface font-medium">Send Greeting &amp; Rich Menu</div>
+<div class="text-[11px] text-secondary">Card Template + 3 Carousel items</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="Active">Active</span>
+</span>
+</td>
+<td class="px-4 py-2 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-primary hover:bg-blue-50 rounded text-xs font-medium transition-colors" data-i18n="แก้ไข" onclick="editWorkflow(1, 'ต้อนรับลูกค้าใหม่ &amp; แนะนำโปรโมชั่น')">แก้ไข</button>
+<span class="text-slate-300">|</span>
+<button class="px-2 py-1 text-error hover:bg-red-50 rounded text-xs font-medium transition-colors" data-i18n="ลบ" onclick="promptDeleteWorkflow(1, 'ต้อนรับลูกค้าใหม่ &amp; แนะนำโปรโมชั่น')">ลบ</button>
+</div>
+</td>
+</tr>
+<!-- Item 2 -->
+<tr class="hover:bg-slate-50/80 transition-colors h-14 workflow-row" data-id="2" data-status="Active" data-trigger="Intent Rule">
+<td class="px-4 py-2 text-center text-slate-400 font-mono text-xs">2</td>
+<td class="px-4 py-2">
+<div class="font-medium text-on-surface">เช็กสถานะพัสดุด่วน (Tracking Lookup)</div>
+<div class="text-[11px] text-secondary">ค้นหาหมายเลขพัสดุและเลขออเดอร์อัตโนมัติ</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-purple-50 text-purple-700 border border-purple-200">
+                    Intent Rule
+                  </span>
+</td>
+<td class="px-4 py-2 text-secondary font-mono text-[12px]">
+                  check_order_status / คำสั่งซื้อ
+                </td>
+<td class="px-3 py-2 text-center">
+<span class="inline-block px-2 py-0.5 rounded bg-surface-container text-primary font-mono text-xs font-semibold">2 Steps</span>
+</td>
+<td class="px-4 py-2">
+<div class="text-on-surface font-medium">API Lookup &amp; Ship Status Card</div>
+<div class="text-[11px] text-secondary">Fetch EMS/Kerry Flash Tracking API</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="Active">Active</span>
+</span>
+</td>
+<td class="px-4 py-2 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-primary hover:bg-blue-50 rounded text-xs font-medium transition-colors" data-i18n="แก้ไข" onclick="editWorkflow(2, 'เช็กสถานะพัสดุด่วน (Tracking Lookup)')">แก้ไข</button>
+<span class="text-slate-300">|</span>
+<button class="px-2 py-1 text-error hover:bg-red-50 rounded text-xs font-medium transition-colors" data-i18n="ลบ" onclick="promptDeleteWorkflow(2, 'เช็กสถานะพัสดุด่วน (Tracking Lookup)')">ลบ</button>
+</div>
+</td>
+</tr>
+<!-- Item 3 -->
+<tr class="hover:bg-slate-50/80 transition-colors h-14 workflow-row" data-id="3" data-status="Active" data-trigger="Keyword Regex">
+<td class="px-4 py-2 text-center text-slate-400 font-mono text-xs">3</td>
+<td class="px-4 py-2">
+<div class="font-medium text-on-surface">ขอใบกำกับภาษี e-Tax อัตโนมัติ</div>
+<div class="text-[11px] text-secondary">ระบบนำส่งแบบฟอร์มกรอกเลขผู้เสียภาษี 13 หลัก</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    Keyword Regex
+                  </span>
+</td>
+<td class="px-4 py-2 text-secondary font-mono text-[12px]">
+                  ใบกำกับภาษี|e-tax|หัก ณ ที่จ่าย
+                </td>
+<td class="px-3 py-2 text-center">
+<span class="inline-block px-2 py-0.5 rounded bg-surface-container text-primary font-mono text-xs font-semibold">4 Steps</span>
+</td>
+<td class="px-4 py-2">
+<div class="text-on-surface font-medium">Send e-Tax Portal Form</div>
+<div class="text-[11px] text-secondary">Webview Link + Auth SMS OTP</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="Active">Active</span>
+</span>
+</td>
+<td class="px-4 py-2 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-primary hover:bg-blue-50 rounded text-xs font-medium transition-colors" data-i18n="แก้ไข" onclick="editWorkflow(3, 'ขอใบกำกับภาษี e-Tax อัตโนมัติ')">แก้ไข</button>
+<span class="text-slate-300">|</span>
+<button class="px-2 py-1 text-error hover:bg-red-50 rounded text-xs font-medium transition-colors" data-i18n="ลบ" onclick="promptDeleteWorkflow(3, 'ขอใบกำกับภาษี e-Tax อัตโนมัติ')">ลบ</button>
+</div>
+</td>
+</tr>
+<!-- Item 4 -->
+<tr class="hover:bg-slate-50/80 transition-colors h-14 workflow-row" data-id="4" data-status="Active" data-trigger="Trigger Condition">
+<td class="px-4 py-2 text-center text-slate-400 font-mono text-xs">4</td>
+<td class="px-4 py-2">
+<div class="font-medium text-on-surface">แจ้งเตือนออเดอร์ค้างชำระ &amp; บัตรส่วนลด</div>
+<div class="text-[11px] text-secondary">ส่งข้อความเตือนเมื่อออเดอร์ยังไม่โอนเงิน</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                    Trigger Condition
+                  </span>
+</td>
+<td class="px-4 py-2 text-secondary font-mono text-[12px]">
+<span data-i18n="มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด">มูลค่าออเดอร์รวมน้อยกว่าที่กำหนด</span> (Pending &gt; 3h)
+                </td>
+<td class="px-3 py-2 text-center">
+<span class="inline-block px-2 py-0.5 rounded bg-surface-container text-primary font-mono text-xs font-semibold">3 Steps</span>
+</td>
+<td class="px-4 py-2">
+<div class="text-on-surface font-medium">Send Reminder &amp; Voucher</div>
+<div class="text-[11px] text-secondary">PromptPay QR Code + 50 THB Discount</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="Active">Active</span>
+</span>
+</td>
+<td class="px-4 py-2 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-primary hover:bg-blue-50 rounded text-xs font-medium transition-colors" data-i18n="แก้ไข" onclick="editWorkflow(4, 'แจ้งเตือนออเดอร์ค้างชำระ &amp; บัตรส่วนลด')">แก้ไข</button>
+<span class="text-slate-300">|</span>
+<button class="px-2 py-1 text-error hover:bg-red-50 rounded text-xs font-medium transition-colors" data-i18n="ลบ" onclick="promptDeleteWorkflow(4, 'แจ้งเตือนออเดอร์ค้างชำระ &amp; บัตรส่วนลด')">ลบ</button>
+</div>
+</td>
+</tr>
+<!-- Item 5 -->
+<tr class="hover:bg-slate-50/80 transition-colors h-14 workflow-row" data-id="5" data-status="Active" data-trigger="Fallback / Agent Handoff">
+<td class="px-4 py-2 text-center text-slate-400 font-mono text-xs">5</td>
+<td class="px-4 py-2">
+<div class="font-medium text-on-surface">ส่งต่อเจ้าหน้าที่ CS เมื่อสอบถามเรื่องซับซ้อน</div>
+<div class="text-[11px] text-secondary">โอนสายเข้าคิวเจ้าหน้าที่พร้อมแนบสรุปบทสนทนา</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-rose-50 text-rose-700 border border-rose-200">
+                    Fallback / Agent Handoff
+                  </span>
+</td>
+<td class="px-4 py-2 text-secondary font-mono text-[12px]">
+                  เมื่อบอทไม่มั่นใจ (&lt;70%) หรือขอพบคน
+                </td>
+<td class="px-3 py-2 text-center">
+<span class="inline-block px-2 py-0.5 rounded bg-surface-container text-primary font-mono text-xs font-semibold">2 Steps</span>
+</td>
+<td class="px-4 py-2">
+<div class="text-on-surface font-medium">Route to CS Desk Queue</div>
+<div class="text-[11px] text-secondary">Assign Agent Priority High</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#eaf5ef] text-[#157347]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="Active">Active</span>
+</span>
+</td>
+<td class="px-4 py-2 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-primary hover:bg-blue-50 rounded text-xs font-medium transition-colors" data-i18n="แก้ไข" onclick="editWorkflow(5, 'ส่งต่อเจ้าหน้าที่ CS เมื่อสอบถามเรื่องซับซ้อน')">แก้ไข</button>
+<span class="text-slate-300">|</span>
+<button class="px-2 py-1 text-error hover:bg-red-50 rounded text-xs font-medium transition-colors" data-i18n="ลบ" onclick="promptDeleteWorkflow(5, 'ส่งต่อเจ้าหน้าที่ CS เมื่อสอบถามเรื่องซับซ้อน')">ลบ</button>
+</div>
+</td>
+</tr>
+<!-- Item 6 -->
+<tr class="hover:bg-slate-50/80 transition-colors h-14 workflow-row" data-id="6" data-status="Inactive" data-trigger="Keyword Regex">
+<td class="px-4 py-2 text-center text-slate-400 font-mono text-xs">6</td>
+<td class="px-4 py-2">
+<div class="font-medium text-on-surface">แนะนำสินค้าราคาส่งตามปริมาณ (Wholesale Tier)</div>
+<div class="text-[11px] text-secondary">ตารางราคาขายส่งขั้นบันไดและเอกสารแคตตาล็อก</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                    Keyword Regex
+                  </span>
+</td>
+<td class="px-4 py-2 text-secondary font-mono text-[12px]">
+<span data-i18n="ราคาตามจำนวน (Quantity Tier)">ราคาตามจำนวน (Quantity Tier)</span> / <span data-i18n="ขนาดแพ็กนี้">ขนาดแพ็กนี้</span>
+</td>
+<td class="px-3 py-2 text-center">
+<span class="inline-block px-2 py-0.5 rounded bg-surface-container text-primary font-mono text-xs font-semibold">3 Steps</span>
+</td>
+<td class="px-4 py-2">
+<div class="text-on-surface font-medium">Send Tiered Price Sheet</div>
+<div class="text-[11px] text-secondary">PDF Download &amp; Wholesale Specialist</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e1e7f0] text-[#52627a]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#52627a]"></span>
+<span data-i18n="Inactive">Inactive</span>
+</span>
+</td>
+<td class="px-4 py-2 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="px-2 py-1 text-primary hover:bg-blue-50 rounded text-xs font-medium transition-colors" data-i18n="แก้ไข" onclick="editWorkflow(6, 'แนะนำสินค้าราคาส่งตามปริมาณ (Wholesale Tier)')">แก้ไข</button>
+<span class="text-slate-300">|</span>
+<button class="px-2 py-1 text-error hover:bg-red-50 rounded text-xs font-medium transition-colors" data-i18n="ลบ" onclick="promptDeleteWorkflow(6, 'แนะนำสินค้าราคาส่งตามปริมาณ (Wholesale Tier)')">ลบ</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination -->
+<div class="p-4 border-t border-outline-variant bg-[#f6f8fc] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-secondary">
+<div class="flex items-center gap-2">
+<span>แสดง 6 จากทั้งหมด 8 รายการ (การค้นหาและตัวกรองมีผลเฉพาะหน้าปัจจุบัน)</span>
+</div>
+<!-- Pagination Controls -->
+<div class="flex items-center gap-1 self-end sm:self-auto">
+<button class="px-2.5 py-1.5 rounded border border-outline-variant bg-white text-slate-400 cursor-not-allowed flex items-center" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+<span class="ml-0.5">ก่อนหน้า</span>
+</button>
+<button class="px-3 py-1.5 rounded border border-primary bg-primary text-white font-medium">
+              1
+            </button>
+<button class="px-3 py-1.5 rounded border border-outline-variant bg-white hover:bg-slate-50 text-on-surface font-medium">
+              2
+            </button>
+<button class="px-2.5 py-1.5 rounded border border-outline-variant bg-white hover:bg-slate-50 text-on-surface flex items-center">
+<span class="mr-0.5">ถัดไป</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Guideline & Context Operational Note Card -->
+<div class="bg-blue-50/60 border border-blue-200/80 rounded-xl p-4 flex items-start gap-3 text-xs text-slate-700">
+<span class="material-symbols-outlined text-primary text-xl mt-0.5">lightbulb</span>
+<div class="space-y-1">
+<div class="font-semibold text-primary">คำแนะนำการทำงานของ Workflow Engine (Engine Rules &amp; Fallbacks):</div>
+<p class="leading-relaxed text-secondary">
+            ระบบจะจับคู่เงื่อนไขตามลำดับความสำคัญ (Priority Order) จากบนลงล่าง หากข้อความเข้าเงื่อนไข Keyword Regex ก่อน จะหยุดตรวจจับ Intent Rules และเมื่อลูกค้าส่งข้อความที่บอทประมวลผลไม่ได้เกิน 2 ครั้ง ระบบจะส่งเข้าขั้นตอน Agent Handoff โดยอัตโนมัติเพื่อป้องกันลูกค้ารอนาน
+          </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Delete Confirmation Modal (Native Accessible Tailwind Overlay) -->
+<div class="fixed inset-0 z-50 hidden bg-[rgba(23,36,59,0.4)] backdrop-blur-xs flex items-center justify-center p-4" id="deleteModal">
+<div class="bg-white rounded-xl border border-outline-variant shadow-2xl max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-center gap-3 text-error">
+<div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">warning</span>
+</div>
+<div>
+<h3 class="text-subheading font-subheading font-bold text-on-surface" data-i18n="ยืนยันการลบ Workflow นี้?">ยืนยันการลบ Workflow นี้?</h3>
+<p class="text-label-caption text-secondary">การดำเนินการนี้จะมีผลทันทีต่อระบบ Live Chat Bot</p>
+</div>
+</div>
+<p class="text-body-default text-secondary" id="deleteTargetDesc">
+        คุณต้องการลบ Workflow "<span class="font-medium text-on-surface" id="targetWorkflowName"></span>" หรือไม่? เมื่อลบแล้วการสนทนาในเงื่อนไขนี้จะถูกส่งไปยัง Fallback ปกติ
+      </p>
+<div class="flex items-center justify-end gap-2.5 pt-2">
+<button class="h-10 px-4 rounded-lg border border-outline-variant bg-white hover:bg-slate-50 text-secondary hover:text-on-surface text-label-default font-medium transition-colors" onclick="closeDeleteModal()">
+          ยกเลิก
+        </button>
+<button class="h-10 px-4 rounded-lg bg-error hover:bg-[#ab2c36] text-white text-label-default font-medium flex items-center gap-1.5 shadow-sm transition-colors" onclick="confirmDelete()">
+<span class="material-symbols-outlined text-base">delete</span>
+<span data-i18n="ลบ">ลบ</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Toast Notification Feedback -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white text-xs px-4 py-3 rounded-lg shadow-xl flex items-center gap-2" id="toastNotification">
+<span class="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
+<span id="toastMessage">อัปเดตข้อมูลเรียบร้อยแล้ว</span>
+</div>
+<!-- Interactive Logic & Bilingual Switcher Script -->
+<script>
+    // State management
+    let currentLanguage = 'th';
+    let currentStatusFilter = 'ALL';
+    let activeDeleteRowId = null;
+
+    // Load translations map from the specified JSON script tag
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+
+      // Update toggle buttons UI
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded bg-white text-primary shadow-sm font-semibold transition-all";
+        enBtn.className = "px-2.5 py-1 rounded text-secondary hover:text-on-surface transition-all";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded bg-white text-primary shadow-sm font-semibold transition-all";
+        thBtn.className = "px-2.5 py-1 rounded text-secondary hover:text-on-surface transition-all";
+      }
+
+      // Translate all DOM elements marked with data-i18n
+      const translatableElements = document.querySelectorAll('[data-i18n]');
+      translatableElements.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[lang] && translationsData[lang][key]) {
+          el.textContent = translationsData[lang][key];
+        }
+      });
+
+      showToast(lang === 'th' ? "เปลี่ยนภาษาเป็น: ภาษาไทย" : "Language switched to: English");
+    }
+
+    // Filter logic
+    function setStatusFilter(status) {
+      currentStatusFilter = status;
+
+      // Update tab styles
+      const tabs = {
+        'ALL': document.getElementById('tab-status-all'),
+        'Active': document.getElementById('tab-status-active'),
+        'Inactive': document.getElementById('tab-status-inactive')
+      };
+
+      Object.keys(tabs).forEach(key => {
+        if (key === status) {
+          tabs[key].className = "px-3 py-1.5 rounded-md font-medium bg-white text-primary shadow-sm transition-all";
+        } else {
+          tabs[key].className = "px-3 py-1.5 rounded-md font-medium text-secondary hover:text-on-surface transition-all";
+        }
+      });
+
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const searchKeyword = (document.getElementById('filterWorkflowInput').value || '').toLowerCase().trim();
+      const triggerFilter = document.getElementById('filterTriggerSelect').value;
+      const rows = document.querySelectorAll('.workflow-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        const rowTrigger = row.getAttribute('data-trigger');
+        const rowText = row.innerText.toLowerCase();
+
+        const matchesStatus = (currentStatusFilter === 'ALL' || rowStatus === currentStatusFilter);
+        const matchesTrigger = (!triggerFilter || triggerFilter === 'ALL' || rowTrigger === triggerFilter);
+        const matchesSearch = (!searchKeyword || rowText.includes(searchKeyword));
+
+        if (matchesStatus && matchesTrigger && matchesSearch) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update count indicator
+      const countEl = document.getElementById('filteredCountText');
+      if (countEl) {
+        countEl.textContent = `แสดง ${visibleCount} จากทั้งหมด 8 รายการ`;
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('filterWorkflowInput').value = '';
+      document.getElementById('filterTriggerSelect').value = '';
+      setStatusFilter('ALL');
+      showToast("รีเซ็ตตัวกรองแล้ว");
+    }
+
+    // Delete modal controls
+    function promptDeleteWorkflow(id, name) {
+      activeDeleteRowId = id;
+      const targetSpan = document.getElementById('targetWorkflowName');
+      if (targetSpan) targetSpan.textContent = name;
+
+      const modal = document.getElementById('deleteModal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      const modal = document.getElementById('deleteModal');
+      modal.classList.add('hidden');
+      activeDeleteRowId = null;
+    }
+
+    function confirmDelete() {
+      if (activeDeleteRowId) {
+        const rowToRemove = document.querySelector(`.workflow-row[data-id="${activeDeleteRowId}"]`);
+        if (rowToRemove) {
+          rowToRemove.remove();
+          showToast("ลบ Workflow เรียบร้อยแล้ว");
+          applyFilters();
+        }
+      }
+      closeDeleteModal();
+    }
+
+    function editWorkflow(id, name) {
+      showToast(`เปิดหน้าต่างแก้ไข: ${name}`);
+    }
+
+    function openNewModal() {
+      showToast("กำลังเปิดแบบฟอร์ม: เพิ่ม Workflow ใหม่");
+    }
+
+    function refreshData() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast("รีเฟรชข้อมูลล่าสุดสำเร็จ (อัปเดต 1 วินาทีที่ผ่านมา)");
+      }, 600);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const msgEl = document.getElementById('toastMessage');
+      if (!toast || !msgEl) return;
+
+      msgEl.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2600);
+    }
+
+    // Connect global topbar search to workflow input
+    document.getElementById('globalQuickSearch').addEventListener('input', function(e) {
+      const val = e.target.value;
+      const filterInput = document.getElementById('filterWorkflowInput');
+      if (filterInput) {
+        filterInput.value = val;
+        applyFilters();
+      }
+    });
+  </script>
+</body></html>

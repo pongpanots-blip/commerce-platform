@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   getOrderPaymentQr,
   getProducts,
@@ -20,6 +21,8 @@ import {
   parseCsPlaceOrderCsv,
 } from './cs-place-order-csv.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type BranchOption = {
   id: string;
   name: string;
@@ -75,27 +78,28 @@ const PAYMENT_OPTIONS: Array<{
 }> = [
   {
     value: 'customer_credit',
-    label: 'เครดิตลูกค้า',
-    hint: 'ยืนยันออเดอร์ทันที (ไม่ต้องชำระเพิ่ม)',
+    get label(){return __uiText("เครดิตลูกค้า");},
+    get hint(){return __uiText("ยืนยันออเดอร์ทันที (ไม่ต้องชำระเพิ่ม)");},
   },
   {
     value: 'qr',
-    label: 'QR PromptPay',
-    hint: 'สร้างออเดอร์รอชำระ — ส่ง QR ให้ลูกค้า',
+    get label(){return __uiText("QR PromptPay");},
+    get hint(){return __uiText("สร้างออเดอร์รอชำระ — ส่ง QR ให้ลูกค้า");},
   },
   {
     value: 'cod',
-    label: 'เก็บเงินปลายทาง',
-    hint: 'สร้างออเดอร์รอชำระเมื่อจัดส่ง',
+    get label(){return __uiText("เก็บเงินปลายทาง");},
+    get hint(){return __uiText("สร้างออเดอร์รอชำระเมื่อจัดส่ง");},
   },
   {
     value: 'credit',
-    label: 'เครดิตบริษัท',
-    hint: 'ใช้วงเงินเครดิตบริษัท',
+    get label(){return __uiText("เครดิตบริษัท");},
+    get hint(){return __uiText("ใช้วงเงินเครดิตบริษัท");},
   },
 ];
 
 export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
+  __useUiLocale();
   const [branchId, setBranchId] = useState(branches[0]?.id ?? '');
   const [lines, setLines] = useState<CartLine[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -193,7 +197,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           setQuoteLines([]);
           setQuoteTotals(null);
           setQuoteError(
-            error?.response?.data?.message ?? 'ไม่สามารถคำนวณราคาได้',
+            error?.response?.data?.message ?? __uiMessage("ไม่สามารถคำนวณราคาได้"),
           );
         } finally {
           setQuoting(false);
@@ -414,8 +418,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
   if (branches.length === 0) {
     return (
       <p className="text-sm text-amber-700">
-        ผู้ใช้ไม่มีสาขา — เพิ่มสาขาก่อนสั่งซื้อแทนลูกค้า
-      </p>
+        {__uiText("ผู้ใช้ไม่มีสาขา — เพิ่มสาขาก่อนสั่งซื้อแทนลูกค้า")}</p>
     );
   }
 
@@ -423,7 +426,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
     <div className="space-y-4">
       <div className="grid gap-3 md:grid-cols-2">
         <Select
-          label="สาขา"
+          label={__uiText("สาขา")}
           value={branchId}
           onChange={(event) => {
             setBranchId(event.target.value);
@@ -439,7 +442,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
         </Select>
         {selectedBranch?.delivery_address && (
           <div className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-600">
-            <span className="font-medium text-gray-700">ที่อยู่จัดส่ง: </span>
+            <span className="font-medium text-gray-700">{__uiText("ที่อยู่จัดส่ง: ")}</span>
             {selectedBranch.delivery_address}
           </div>
         )}
@@ -447,11 +450,11 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
 
       <div className="space-y-2 rounded-lg border border-gray-100 p-3">
         <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
-          <div className="text-sm font-medium text-gray-800">ค้นหา SKU / สินค้า</div>
+          <div className="text-sm font-medium text-gray-800">{__uiText("ค้นหา SKU / สินค้า")}</div>
           <div className="flex flex-wrap items-center gap-2">
             <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/20">
               <MdInsertDriveFile size={16} />
-              <span>{csvImporting ? 'กำลังนำเข้า...' : 'นำเข้า CSV'}</span>
+              <span>{csvImporting ? __uiText("กำลังนำเข้า...") : __uiText("นำเข้า CSV")}</span>
               <input
                 type="file"
                 accept=".csv"
@@ -465,23 +468,21 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
               download="cs-place-order-template.csv"
               className="text-xs text-primary underline"
             >
-              ดาวน์โหลด template
-            </a>
+              {__uiText("ดาวน์โหลด template")}</a>
           </div>
         </div>
         <label htmlFor="cs-place-order-search" className="mb-1 block text-sm text-gray-600">
-          ค้นหาสินค้า
-        </label>
+          {__uiText("ค้นหาสินค้า")}</label>
         <div className="relative">
           <AiOutlineSearch className="pointer-events-none absolute left-3 top-2.5 text-gray-400" />
           <Input
             id="cs-place-order-search"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="พิมพ์ SKU หรือชื่อสินค้า..."
+            placeholder={__uiText("พิมพ์ SKU หรือชื่อสินค้า...")}
           />
         </div>
-        {searching && <p className="text-xs text-gray-400">กำลังค้นหา...</p>}
+        {searching && <p className="text-xs text-gray-400">{__uiText("กำลังค้นหา...")}</p>}
         {!searching && searchResult.length > 0 && (
           <div className="max-h-44 space-y-1 overflow-y-auto rounded-lg border border-gray-100 p-2">
             {searchResult.map((row) => (
@@ -507,7 +508,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
         )}
         {csvMissingSkus.length > 0 && (
           <p className="text-xs text-amber-700">
-            SKU ไม่พบ: {csvMissingSkus.join(', ')}
+            {__uiText("SKU ไม่พบ: ")}{csvMissingSkus.join(', ')}
           </p>
         )}
       </div>
@@ -517,11 +518,11 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           <table className="min-w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs text-gray-500">
               <tr>
-                <th className="px-3 py-2">SKU</th>
-                <th className="px-3 py-2">สินค้า</th>
-                <th className="px-3 py-2">ราคา/หน่วย</th>
-                <th className="px-3 py-2">จำนวน</th>
-                <th className="px-3 py-2">รวม</th>
+                <th className="px-3 py-2">{__uiText("SKU")}</th>
+                <th className="px-3 py-2">{__uiText("สินค้า")}</th>
+                <th className="px-3 py-2">{__uiText("ราคา/หน่วย")}</th>
+                <th className="px-3 py-2">{__uiText("จำนวน")}</th>
+                <th className="px-3 py-2">{__uiText("รวม")}</th>
                 <th className="px-3 py-2" />
               </tr>
             </thead>
@@ -545,7 +546,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
                       <input
                         type="number"
                         min={1}
-                        aria-label={`จำนวน ${line.name}`}
+                        aria-label={__uiText("จำนวน {0}", {"0": line.name})}
                         className="w-20 rounded border border-gray-200 px-2 py-1 text-sm"
                         value={line.quantity}
                         onChange={(event) =>
@@ -569,8 +570,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
                         className="text-xs text-red-500"
                         onClick={() => removeLine(line.product_inventory_id)}
                       >
-                        ลบ
-                      </button>
+                        {__uiText("ลบ")}</button>
                     </td>
                   </tr>
                 );
@@ -580,37 +580,37 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
         </div>
       )}
 
-      {quoteError && <p className="text-sm text-red-600">{quoteError}</p>}
+      {quoteError && <p className="text-sm text-red-600">{(typeof (quoteError) === 'string' ? __uiText(quoteError) : quoteError)}</p>}
 
       {quoteTotals && (
         <div className="rounded-lg border border-emerald-100 bg-emerald-50/60 p-3 text-sm">
           <div className="flex justify-between text-gray-600">
-            <span>ยอดสินค้า (รวม VAT)</span>
+            <span>{__uiText("ยอดสินค้า (รวม VAT)")}</span>
             <span>{formatCurrency(quoteTotals.subtotal_inc_vat)}</span>
           </div>
           <div className="flex justify-between text-gray-600">
-            <span>ค่าจัดส่ง</span>
+            <span>{__uiText("ค่าจัดส่ง")}</span>
             <span>{formatCurrency(quoteTotals.delivery_fee)}</span>
           </div>
           <div className="mt-2 flex justify-between border-t border-emerald-100 pt-2 font-semibold text-gray-900">
-            <span>ยอดรวมทั้งหมด</span>
+            <span>{__uiText("ยอดรวมทั้งหมด")}</span>
             <span>{formatCurrency(quoteTotals.total_inc_vat)}</span>
           </div>
           {quoting && (
-            <p className="mt-1 text-xs text-gray-500">กำลังคำนวณราคา...</p>
+            <p className="mt-1 text-xs text-gray-500">{__uiText("กำลังคำนวณราคา...")}</p>
           )}
         </div>
       )}
 
       <div className="grid gap-3 rounded-lg border border-gray-100 p-3 md:grid-cols-2">
         <Input
-          label="คูปอง (ไม่บังคับ)"
+          label={__uiText("คูปอง (ไม่บังคับ)")}
           value={couponCode}
           onChange={(e) => setCouponCode(e.target.value)}
-          placeholder="รหัสคูปอง"
+          placeholder={__uiText("รหัสคูปอง")}
         />
         <Input
-          label="วันจัดส่ง (ไม่บังคับ)"
+          label={__uiText("วันจัดส่ง (ไม่บังคับ)")}
           type="date"
           value={deliveryDate}
           onChange={(e) => setDeliveryDate(e.target.value)}
@@ -619,8 +619,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
 
       <div className="space-y-2 rounded-lg border border-gray-100 p-3">
         <div className="text-sm font-medium text-gray-800">
-          วิธีชำระเงินของลูกค้า
-        </div>
+          {__uiText("วิธีชำระเงินของลูกค้า")}</div>
         <div className="grid gap-2 md:grid-cols-2">
           {PAYMENT_OPTIONS.map((option) => (
             <label
@@ -644,8 +643,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           ))}
         </div>
         <p className="text-xs text-gray-400">
-          Payment Link สำหรับส่งให้ลูกค้าจะเพิ่มในขั้นตอนถัดไป
-        </p>
+          {__uiText("Payment Link สำหรับส่งให้ลูกค้าจะเพิ่มในขั้นตอนถัดไป")}</p>
       </div>
 
       <button
@@ -654,12 +652,12 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
         className="rounded bg-primary px-4 py-2 text-sm text-white disabled:opacity-50"
         onClick={() => void placeOrder()}
       >
-        {placing ? 'กำลังสร้างออเดอร์...' : 'สร้างออเดอร์แทนลูกค้า'}
+        {placing ? __uiText("กำลังสร้างออเดอร์...") : __uiText("สร้างออเดอร์แทนลูกค้า")}
       </button>
 
       {createdOrder && (
         <div className="space-y-3 rounded-lg border border-blue-100 bg-blue-50/50 p-4">
-          <p className="text-sm font-semibold text-gray-900">ออเดอร์ที่สร้างแล้ว</p>
+          <p className="text-sm font-semibold text-gray-900">{__uiText("ออเดอร์ที่สร้างแล้ว")}</p>
           <ul className="space-y-1 text-sm">
             {createdOrder.orderIds.map((orderId, index) => (
               <li key={orderId}>
@@ -674,8 +672,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           </ul>
           {createdOrder.paymentPending && createdOrder.paymentMethod !== 'qr' && (
             <p className="text-xs text-amber-700">
-              ออเดอร์รอชำระเงิน — ส่งลิงก์/QR ให้ลูกค้าเมื่อพร้อม
-            </p>
+              {__uiText("ออเดอร์รอชำระเงิน — ส่งลิงก์/QR ให้ลูกค้าเมื่อพร้อม")}</p>
           )}
           {createdOrder.paymentMethod === 'qr' && (
             <div className="space-y-2">
@@ -685,13 +682,13 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
                 className="rounded border border-gray-200 bg-white px-3 py-1.5 text-xs"
                 onClick={() => void loadQrForOrder(createdOrder.orderIds[0])}
               >
-                {qrLoading ? 'กำลังสร้าง QR...' : 'สร้าง QR ชำระเงิน'}
+                {qrLoading ? __uiText("กำลังสร้าง QR...") : __uiText("สร้าง QR ชำระเงิน")}
               </button>
               {qrUrl && (
                 <div className="flex flex-col items-start gap-2">
                   <img
                     src={qrUrl}
-                    alt="Payment QR"
+                    alt={__uiText("Payment QR")}
                     className="h-40 w-40 rounded border bg-white"
                   />
                   <a
@@ -700,8 +697,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
                     rel="noreferrer"
                     className="text-xs text-primary underline"
                   >
-                    เปิดลิงก์ QR
-                  </a>
+                    {__uiText("เปิดลิงก์ QR")}</a>
                 </div>
               )}
             </div>
@@ -713,3 +709,5 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
 }
 
 export default CsPlaceOrderPanel;
+
+// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data

@@ -1,0 +1,49 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "deviceType": "DESKTOP",
+            "generatedBy": "create_datastore_entry",
+            "height": "2048",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzNlOTg1OTBjYWExNDQ4ZDE4ODI0OTU1MWQxYTU0NDM0EgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM2MjY4MjgxMDI3NDI2NzEzNTMz&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/6268281027426713533/files/10bff6fac1d94b22bba012b9013d984d"
+            },
+            "id": "42816ce9d8e34818b88d81c38933c499",
+            "name": "projects/6268281027426713533/screens/42816ce9d8e34818b88d81c38933c499",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1VFtJh3eut87G1pB0tHiDlmaC-Cyb6XR4sgbNl7sD9e6X-6A36IEh17Tfjt7PfmXl4Niyj8O-S0eeSRxdDbtB5cirIQezYyU854IBXMtFJzPXN7xBJI3XVbOHtvi9H1RvFka-v2JBQv6YgxXouyoTJpqxZi6k0xKS5GdyHzMsOC3YcqwZnsK6HXDIIhnLugMOloN-kNUtrEinf_h1nO1vGo5J6gVq5zdEHHUIVFKylQwf5-Fl2V-EPoJA",
+              "name": "projects/6268281027426713533/files/2b89d569a1a94308adfe7cd6b12334a4"
+            },
+            "theme": {},
+            "title": "เปลี่ยนรหัสผ่าน - Commerce Platform (/account/password)",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "I have designed the polished, production-grade **Change Password (`/account/password`)** screen for the **Commerce Platform** admin app.\n\n### Design & Architecture Highlights:\n1. **Design Tokens & System Fidelity**:\n   - **Colors**: Canvas background (`#f6f8fc`), clean white cards with `#e1e7f0` borders, primary blue action button (`#365cf5`), deep ink text (`#17243b`), and paired status indicators (success `#157347`, warning `#b08900`, error `#c2333f`).\n   - **Typography**: Noto Sans Thai throughout (14px body, 13px labels, 28px page heading) with monospace numbers/identifiers.\n   - **Dimensions**: Precise 256px sidebar housing all 7 core work areas with **ตั้งค่าและทีมงาน** highlighted, readable ~1240px content container, 40px inputs & buttons, and 12px card corner radii.\n\n2. **Task-First Form Architecture**:\n   - **Policy Warning Banner**: Clear alert banner (`ตั้งรหัสผ่านใหม่ก่อนใช้งาน`) explaining the 90-day expiration policy before accessing customer data.\n   - **Interactive Password Form**:\n     - Current password, new password, and confirmation password with toggleable visibility eyes.\n     - Dynamic 4-point requirement checklist (`ความยาว 8 ตัวอักษร`, `รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม`, `ตัวพิมพ์และตัวเลขผสม`, `อักขระพิเศษอย่างน้อย 1 ตัว`) with real-time level progress.\n     - Inline mismatch and reuse validation triggers (`รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน` and simulation shortcuts).\n     - Sticky Cancel / Save actions with standard button heights.\n   - **User Summary & Corporate Policy**: Current account metadata (`ภานุชญา สุวรรณรัตน์`, STF-001, Admin role, 98 days since last update) and enterprise session termination rules.\n\n3. **Bilingual Support & UI Copy Export**:\n   - Live interactive **ไทย / English** toggle in the contextual header.\n   - All sample figures marked clearly with the `ข้อมูลตัวอย่าง` badge.\n   - Invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` fully populated with every exact string from the required UI copy catalogue."
+    },
+    {
+      "suggestion": "ดูตัวอย่างการแจ้งเตือนเมื่อเปลี่ยนรหัสผ่านสำเร็จ (Success Toast / Modal)"
+    },
+    {
+      "suggestion": "เพิ่มแท็บการตั้งค่า 2-Step Verification (2FA / Authenticator App)"
+    },
+    {
+      "suggestion": "สลับไปออกแบบหน้าจัดการบัญชีทีมงาน (/settings/staff) หรือบทบาทและสิทธิ์"
+    }
+  ],
+  "projectId": "6268281027426713533",
+  "sessionId": "11878159211687260806"
+}

@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ราคาสินค้า (ProductPrices - /product-prices)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Sans Thai & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .badge-sample {
+      background-color: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fef08a;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- TOP HEADER / NAV -->
+  <header class="bg-white border-b border-[#e1e7f0] sticky top-0 z-30 h-16 flex items-center px-6 justify-between">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-base shadow-sm">
+          C
+        </div>
+        <div>
+          <span class="font-bold text-[#17243b] text-base leading-tight block">Commerce</span>
+          <span class="text-xs text-[#52627a] block leading-none">Operations Hub</span>
+        </div>
+      </div>
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-[#365cf5] border border-blue-100">
+        admin
+      </span>
+      <div class="h-4 w-px bg-[#e1e7f0]"></div>
+      <!-- Breadcrumbs -->
+      <nav class="flex items-center space-x-2 text-xs text-[#52627a]">
+        <span data-i18n="nav.category">สินค้าและสต็อก</span>
+        <span>/</span>
+        <span class="text-[#17243b] font-medium" data-i18n="ราคาสินค้า">ราคาสินค้า</span>
+        <span class="text-[11px] font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">admin-19676f1d8819</span>
+      </nav>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <!-- Prototype Sample Badge -->
+      <span class="badge-sample inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke-width="2"/>
+          <path d="M12 16v-4M12 8h.01" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span data-i18n="badge.sample">ข้อมูลตัวอย่าง</span>
+      </span>
+
+      <!-- Language Selector -->
+      <div class="flex items-center bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg p-0.5 text-xs font-medium">
+        <button id="lang-th-btn" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-[#365cf5] shadow-xs font-semibold transition-all">
+          ไทย
+        </button>
+        <button id="lang-en-btn" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">
+          English
+        </button>
+      </div>
+
+      <div class="h-4 w-px bg-[#e1e7f0]"></div>
+
+      <!-- Current User Profile -->
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-xs font-bold text-[#365cf5]">
+          OP
+        </div>
+        <div class="text-left text-xs leading-tight hidden sm:block">
+          <div class="font-semibold text-[#17243b]" data-i18n="user.team">ทีมปฏิบัติการ</div>
+          <div class="text-[11px] text-[#52627a]">Commerce Ops</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN BODY LAYOUT (256px sidebar + content area) -->
+  <div class="flex flex-1">
+
+    <!-- SIDEBAR (256px) -->
+    <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col justify-between shrink-0 select-none">
+      <div class="py-4">
+        <!-- 7 Core Thai Work Areas -->
+        <nav class="space-y-1 px-3">
+          <!-- 1. สินค้าและสต็อก (Active Section) -->
+          <div>
+            <div class="flex items-center justify-between px-3 py-2 text-sm font-semibold text-[#365cf5] bg-blue-50/70 rounded-lg cursor-pointer">
+              <div class="flex items-center space-x-2.5">
+                <svg class="w-4 h-4 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                <span data-i18n="nav.category">สินค้าและสต็อก</span>
+              </div>
+              <svg class="w-4 h-4 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+
+            <!-- Sublinks -->
+            <div class="mt-1 pl-6 pr-2 space-y-0.5 border-l-2 border-blue-500 ml-4">
+              <a href="/products" class="block px-2.5 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded transition">
+                <span data-i18n="Product List">Product List</span> (แคตตาล็อก)
+              </a>
+              <!-- CURRENT ACTIVE ROUTE -->
+              <a href="/product-prices" class="block px-2.5 py-1.5 text-xs font-semibold text-[#365cf5] bg-blue-50 rounded transition">
+                <span data-i18n="ราคาสินค้า">ราคาสินค้า</span>
+              </a>
+              <a href="/stock-moves" class="block px-2.5 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded transition">
+                ความเคลื่อนไหวสต็อก
+              </a>
+              <a href="/prices/staff" class="block px-2.5 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded transition">
+                ราคาลูกค้า / ราคาสัญญา
+              </a>
+              <a href="/inventory/warehouse" class="block px-2.5 py-1.5 text-xs text-[#52627a] hover:text-[#17243b] rounded transition">
+                สต็อกแยกตามคลัง
+              </a>
+            </div>
+          </div>
+
+          <!-- 2. ออเดอร์และการเงิน -->
+          <a href="#" class="flex items-center space-x-2.5 px-3 py-2 text-sm text-[#52627a] hover:text-[#17243b] hover:bg-gray-50 rounded-lg">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span data-i18n="nav.orders">ออเดอร์และการเงิน</span>
+          </a>
+
+          <!-- 3. ลูกค้าและบริการ -->
+          <a href="#" class="flex items-center space-x-2.5 px-3 py-2 text-sm text-[#52627a] hover:text-[#17243b] hover:bg-gray-50 rounded-lg">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <span data-i18n="nav.customers">ลูกค้าและบริการ</span>
+          </a>
+
+          <!-- 4. การตลาด -->
+          <a href="#" class="flex items-center space-x-2.5 px-3 py-2 text-sm text-[#52627a] hover:text-[#17243b] hover:bg-gray-50 rounded-lg">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+            </svg>
+            <span data-i18n="nav.marketing">การตลาด</span>
+          </a>
+
+          <!-- 5. รายงานและข้อมูล -->
+          <a href="#" class="flex items-center space-x-2.5 px-3 py-2 text-sm text-[#52627a] hover:text-[#17243b] hover:bg-gray-50 rounded-lg">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <span data-i18n="nav.reports">รายงานและข้อมูล</span>
+          </a>
+
+          <!-- 6. ระบบเชื่อมต่อ -->
+          <a href="#" class="flex items-center space-x-2.5 px-3 py-2 text-sm text-[#52627a] hover:text-[#17243b] hover:bg-gray-50 rounded-lg">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            <span data-i18n="nav.connections">ระบบเชื่อมต่อ</span>
+          </a>
+
+          <!-- 7. ตั้งค่าและทีมงาน -->
+          <a href="#" class="flex items-center space-x-2.5 px-3 py-2 text-sm text-[#52627a] hover:text-[#17243b] hover:bg-gray-50 rounded-lg">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span data-i18n="Settings">Settings</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Developer Portal Link Footer -->
+      <div class="p-3 border-t border-[#e1e7f0] bg-gray-50/50">
+        <a href="/portal" class="flex items-center justify-between px-3 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] rounded-lg border border-transparent hover:border-[#e1e7f0] transition">
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+            </svg>
+            <span>Developer Portal</span>
+          </span>
+          <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+        <div class="px-3 pt-2 text-[11px] text-[#52627a] flex items-center justify-between">
+          <span>Route: <code class="font-mono text-gray-600">/product-prices</code></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT WRAPPER (around 1240px max width) -->
+    <main class="flex-1 p-6 md:p-8 flex justify-center overflow-y-auto">
+      <div class="w-full max-w-[1240px] space-y-6">
+
+        <!-- PAGE TITLE & HEADER BAR -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-tight" data-i18n="ราคาสินค้า">ราคาสินค้า</h1>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5 animate-pulse"></span>
+                <span>รออนุมัติ 3 รายการ</span>
+              </span>
+            </div>
+            <p class="text-sm text-[#52627a] mt-1.5" data-i18n="ราคาขาย (ต่อหน่วยขาย) ราคาสั่ง (ต่อหน่วยสั่ง) และ MOQ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · ทุกการเปลี่ยนส่งให้ร้าน (josh)">
+              ราคาขาย (ต่อหน่วยขาย) ราคาสั่ง (ต่อหน่วยสั่ง) และ MOQ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · ทุกการเปลี่ยนส่งให้ร้าน (josh)
+            </p>
+          </div>
+
+          <!-- PRIMARY / AUXILIARY ACTIONS -->
+          <div class="flex items-center gap-3 shrink-0">
+            <button type="button" onclick="refreshTable()" class="px-3.5 py-2 text-sm font-medium text-[#17243b] bg-white border border-[#e1e7f0] rounded-lg hover:bg-gray-50 flex items-center gap-2 shadow-xs transition">
+              <svg class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              <span>รีเฟรช</span>
+            </button>
+            <button type="button" onclick="openManualSkuModal()" class="px-4 py-2 text-sm font-medium text-white bg-[#365cf5] hover:bg-blue-700 rounded-lg flex items-center gap-2 shadow-sm transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              <span data-i18n="เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง">เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- OPERATIONAL STATUS BANNER (COMMERCE_OWNS_PRICES & SYNC STATUS) -->
+        <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex items-start justify-between gap-4">
+          <div class="flex items-start gap-3">
+            <div class="p-1.5 bg-blue-100 rounded-lg text-[#365cf5] shrink-0 mt-0.5">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="text-xs text-[#17243b] space-y-1">
+              <div class="font-semibold text-sm text-[#17243b] flex items-center gap-2">
+                <span data-i18n="ยังไม่ได้สลับ — ราคายังแก้และอนุมัติที่ josh (COMMERCE_OWNS_PRICES)">ยังไม่ได้สลับ — ราคายังแก้และอนุมัติที่ josh (COMMERCE_OWNS_PRICES)</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-white text-blue-700 border border-blue-200">
+                  FLAG: false
+                </span>
+              </div>
+              <p class="text-[#52627a] leading-relaxed">
+                <span data-i18n="การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง">การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง</span> · <span data-i18n="ยังไม่มีราคา — import จาก josh ก่อนสลับ">ยังไม่มีราคา — import จาก josh ก่อนสลับ</span>
+              </p>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+              ERP Sync ปกติ
+            </span>
+          </div>
+        </div>
+
+        <!-- FILTER & IN-PAGE SEARCH CARD -->
+        <div class="bg-white border border-[#e1e7f0] rounded-xl p-4 shadow-2xs">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+
+            <!-- In-page SKU search with required API limitation disclosure -->
+            <div class="md:col-span-5">
+              <label class="block text-xs font-medium text-[#52627a] mb-1">
+                <span data-i18n="ค้นหา">ค้นหา</span> <span data-i18n="SKU">SKU</span> หรือชื่อสินค้า
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="sku-search-input"
+                  placeholder="ค้นหา SKU หรือชื่อสินค้า (ค้นเฉพาะหน้านี้)..."
+                  class="w-full pl-9 pr-4 py-2 text-sm bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#365cf5] focus:border-transparent text-[#17243b] placeholder:text-gray-400"
+                  oninput="handleSearch(this.value)"
+                >
+              </div>
+            </div>
+
+            <!-- Approval Status Filter -->
+            <div class="md:col-span-3">
+              <label class="block text-xs font-medium text-[#52627a] mb-1">
+                สถานะการอนุมัติราคา
+              </label>
+              <select id="status-filter" onchange="filterStatus(this.value)" class="w-full px-3 py-2 text-sm bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#365cf5] text-[#17243b]">
+                <option value="all">ทั้งหมด (5 รายการ)</option>
+                <option value="pending" selected>รออนุมัติ (3)</option>
+                <option value="approved">อนุมัติแล้ว (2)</option>
+              </select>
+            </div>
+
+            <!-- Source Filter -->
+            <div class="md:col-span-2">
+              <label class="block text-xs font-medium text-[#52627a] mb-1" data-i18n="ที่มา">
+                ที่มา
+              </label>
+              <select class="w-full px-3 py-2 text-sm bg-white border border-[#e1e7f0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#365cf5] text-[#17243b]">
+                <option value="all">ทุกแหล่งข้อมูล</option>
+                <option value="erp">ERP (SAP)</option>
+                <option value="josh">josh</option>
+                <option value="manual">Manual</option>
+              </select>
+            </div>
+
+            <!-- Clear / Filter action -->
+            <div class="md:col-span-2 flex items-end justify-end pt-5">
+              <button type="button" onclick="resetFilters()" class="w-full px-3 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] bg-gray-50 hover:bg-gray-100 border border-[#e1e7f0] rounded-lg transition text-center">
+                ล้างเงื่อนไข
+              </button>
+            </div>
+          </div>
+
+          <!-- Pagination API disclosure note -->
+          <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-[#52627a]">
+            <span class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+              <span>การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API</span>
+            </span>
+            <span>แสดง <strong class="text-[#17243b] font-semibold" id="displayed-count">5</strong> จาก <strong class="text-[#17243b] font-semibold">5</strong> รายการ (<span data-i18n="badge.sample">ข้อมูลตัวอย่าง</span>)</span>
+          </div>
+        </div>
+
+        <!-- MAIN DATA TABLE CARD -->
+        <div class="bg-white border border-[#e1e7f0] rounded-xl shadow-2xs overflow-hidden">
+
+          <div class="px-5 py-3.5 border-b border-[#e1e7f0] flex items-center justify-between bg-gray-50/50">
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-semibold text-[#17243b]">ตารางราคาสินค้าและสถานะการอนุมัติ</h2>
+              <span class="text-xs text-[#52627a]">· workflow ตรวจสอบราคา ERP → MER → josh</span>
+            </div>
+            <div class="text-xs text-[#52627a] flex items-center gap-2">
+              <span data-i18n="อัปเดตล่าสุด">อัปเดตล่าสุด</span>: <span class="font-mono text-gray-700">10 นาทีที่แล้ว</span>
+            </div>
+          </div>
+
+          <!-- Table Container (Horizontal scroll on narrow displays) -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-gray-50/80 border-b border-[#e1e7f0] text-[#52627a] font-medium">
+                  <th class="py-3 px-4 w-48" data-i18n="SKU">SKU</th>
+                  <th class="py-3 px-4 min-w-[180px]">ชื่อสินค้า</th>
+                  <th class="py-3 px-4 w-36" data-i18n="ราคาปัจจุบัน">ราคาปัจจุบัน</th>
+                  <th class="py-3 px-4 w-44 bg-blue-50/40 border-l border-blue-100 font-semibold text-[#17243b]">
+                    <div class="flex items-center gap-1">
+                      <span data-i18n="ราคาขาย">ราคาขาย</span> (ใหม่)
+                      <span class="text-[10px] text-[#365cf5] font-normal">ERP</span>
+                    </div>
+                  </th>
+                  <th class="py-3 px-4 w-32 bg-blue-50/40">
+                    <span data-i18n="ราคาสั่ง">ราคาสั่ง</span>
+                  </th>
+                  <th class="py-3 px-4 w-24 bg-blue-50/40">
+                    <span data-i18n="MOQ">MOQ</span>
+                  </th>
+                  <th class="py-3 px-4 w-32" data-i18n="ที่มา">ที่มา</th>
+                  <th class="py-3 px-4 w-36" data-i18n="ERP เปลี่ยนเมื่อ">ERP เปลี่ยนเมื่อ</th>
+                  <th class="py-3 px-4 w-44 text-right">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="price-table-body" class="divide-y divide-[#e1e7f0] text-[#17243b]">
+
+                <!-- ROW 1 (Pending Approval) -->
+                <tr class="hover:bg-blue-50/30 transition group" data-status="pending" data-sku="SKU-TH-8890">
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#365cf5]">
+                    <a href="/products/prod_01h89x" class="hover:underline flex items-center gap-1.5">
+                      <span>SKU-TH-8890</span>
+                      <svg class="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                      </svg>
+                    </a>
+                    <span class="text-[11px] text-[#52627a] font-sans block">หน่วย: ถุง 5 กก.</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-medium">
+                    <div class="text-sm text-[#17243b]">ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง</div>
+                    <div class="text-[11px] text-[#52627a]">อาหารและเครื่องดื่ม &gt; ข้าวสาร</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono text-[#52627a]">
+                    <div class="text-sm line-through text-gray-400">฿195.00</div>
+                    <div class="text-[11px]">สั่ง ฿160 · MOQ 5</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30 border-l border-blue-100">
+                    <div class="text-sm font-bold text-[#17243b] flex items-center gap-1.5">
+                      <span>฿210.00</span>
+                      <span class="text-[10px] text-amber-700 font-semibold bg-amber-100 px-1 py-0.2 rounded">+7.7%</span>
+                    </div>
+                    <span class="text-[11px] text-amber-800 font-medium">รออนุมัติ</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30">
+                    <span class="font-medium">฿175.00</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30">
+                    <span class="font-medium">10</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700">
+                      ERP (SAP)
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a] font-mono text-[11px]">
+                    2024-03-29 09:15
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button type="button" onclick="openApprovalModal('SKU-TH-8890', 'ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง', '210.00', '175.00', '10')" class="px-2.5 py-1 text-xs font-semibold text-white bg-[#365cf5] hover:bg-blue-700 rounded shadow-2xs transition" data-i18n="อนุมัติ">
+                        อนุมัติ
+                      </button>
+                      <button type="button" onclick="openRejectModal('SKU-TH-8890')" class="px-2.5 py-1 text-xs font-medium text-[#c2333f] hover:bg-red-50 border border-red-200 rounded transition" data-i18n="ไม่อนุมัติ">
+                        ไม่อนุมัติ
+                      </button>
+                      <button type="button" onclick="openEditPriceModal('SKU-TH-8890', '210.00', '175.00', '10')" class="px-2 py-1 text-xs text-[#52627a] hover:text-[#17243b] hover:bg-gray-100 rounded transition" title="แก้ไขก่อนอนุมัติ" data-i18n="แก้">
+                        แก้
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ROW 2 (Pending Approval) -->
+                <tr class="hover:bg-blue-50/30 transition group" data-status="pending" data-sku="SKU-CH-4412">
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#365cf5]">
+                    <a href="/products/prod_02m44a" class="hover:underline flex items-center gap-1.5">
+                      <span>SKU-CH-4412</span>
+                      <svg class="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                      </svg>
+                    </a>
+                    <span class="text-[11px] text-[#52627a] font-sans block">หน่วย: ลัง (12 ขวด)</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-medium">
+                    <div class="text-sm text-[#17243b]">น้ำมันพืชบรรจุลัง (12 ขวด)</div>
+                    <div class="text-[11px] text-[#52627a]">วัตถุดิบและน้ำมันประกอบอาหาร</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono text-[#52627a]">
+                    <div class="text-sm line-through text-gray-400">฿520.00</div>
+                    <div class="text-[11px]">สั่ง ฿460 · MOQ 2</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30 border-l border-blue-100">
+                    <div class="text-sm font-bold text-[#17243b] flex items-center gap-1.5">
+                      <span>฿490.00</span>
+                      <span class="text-[10px] text-emerald-700 font-semibold bg-emerald-100 px-1 py-0.2 rounded">-5.7%</span>
+                    </div>
+                    <span class="text-[11px] text-amber-800 font-medium">รออนุมัติ</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30">
+                    <span class="font-medium">฿430.00</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30">
+                    <span class="font-medium">4</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700">
+                      ERP (SAP)
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a] font-mono text-[11px]">
+                    2024-03-29 08:30
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button type="button" onclick="openApprovalModal('SKU-CH-4412', 'น้ำมันพืชบรรจุลัง (12 ขวด)', '490.00', '430.00', '4')" class="px-2.5 py-1 text-xs font-semibold text-white bg-[#365cf5] hover:bg-blue-700 rounded shadow-2xs transition" data-i18n="อนุมัติ">
+                        อนุมัติ
+                      </button>
+                      <button type="button" onclick="openRejectModal('SKU-CH-4412')" class="px-2.5 py-1 text-xs font-medium text-[#c2333f] hover:bg-red-50 border border-red-200 rounded transition" data-i18n="ไม่อนุมัติ">
+                        ไม่อนุมัติ
+                      </button>
+                      <button type="button" onclick="openEditPriceModal('SKU-CH-4412', '490.00', '430.00', '4')" class="px-2 py-1 text-xs text-[#52627a] hover:text-[#17243b] hover:bg-gray-100 rounded transition" title="แก้ไขก่อนอนุมัติ" data-i18n="แก้">
+                        แก้
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ROW 3 (Pending Approval) -->
+                <tr class="hover:bg-blue-50/30 transition group" data-status="pending" data-sku="SKU-MK-1102">
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#365cf5]">
+                    <a href="/products/prod_03mk77" class="hover:underline flex items-center gap-1.5">
+                      <span>SKU-MK-1102</span>
+                      <svg class="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                      </svg>
+                    </a>
+                    <span class="text-[11px] text-[#52627a] font-sans block" data-i18n="ชิ้น / ตัว / ฟอง">ชิ้น / ตัว / ฟอง</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-medium">
+                    <div class="text-sm text-[#17243b]">นมยูเอชที รสจืด 250มล. (ลัง 36)</div>
+                    <div class="text-[11px] text-[#52627a]">เครื่องดื่มและนมพร้อมดื่ม</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono text-[#52627a]">
+                    <div class="text-sm line-through text-gray-400">฿350.00</div>
+                    <div class="text-[11px]">สั่ง ฿310 · MOQ 1</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30 border-l border-blue-100">
+                    <div class="text-sm font-bold text-[#17243b] flex items-center gap-1.5">
+                      <span>฿365.00</span>
+                      <span class="text-[10px] text-amber-700 font-semibold bg-amber-100 px-1 py-0.2 rounded">+4.2%</span>
+                    </div>
+                    <span class="text-[11px] text-amber-800 font-medium">รออนุมัติ</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30">
+                    <span class="font-medium">฿325.00</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-blue-50/30">
+                    <span class="font-medium">2</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700">
+                      ERP (SAP)
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a] font-mono text-[11px]">
+                    2024-03-29 07:45
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button type="button" onclick="openApprovalModal('SKU-MK-1102', 'นมยูเอชที รสจืด 250มล. (ลัง 36)', '365.00', '325.00', '2')" class="px-2.5 py-1 text-xs font-semibold text-white bg-[#365cf5] hover:bg-blue-700 rounded shadow-2xs transition" data-i18n="อนุมัติ">
+                        อนุมัติ
+                      </button>
+                      <button type="button" onclick="openRejectModal('SKU-MK-1102')" class="px-2.5 py-1 text-xs font-medium text-[#c2333f] hover:bg-red-50 border border-red-200 rounded transition" data-i18n="ไม่อนุมัติ">
+                        ไม่อนุมัติ
+                      </button>
+                      <button type="button" onclick="openEditPriceModal('SKU-MK-1102', '365.00', '325.00', '2')" class="px-2 py-1 text-xs text-[#52627a] hover:text-[#17243b] hover:bg-gray-100 rounded transition" title="แก้ไขก่อนอนุมัติ" data-i18n="แก้">
+                        แก้
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ROW 4 (Already Approved / Active in josh) -->
+                <tr class="hover:bg-gray-50 transition" data-status="approved" data-sku="SKU-FD-7741">
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#52627a]">
+                    <a href="/products/prod_04fd88" class="hover:underline">SKU-FD-7741</a>
+                    <span class="text-[11px] text-[#52627a] font-sans block">หน่วย: กก.</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-medium">
+                    <div class="text-sm text-[#17243b]">เนยชีสนำเข้าเกรดพรีเมียม 1กก.</div>
+                    <div class="text-[11px] text-[#52627a]">ผลิตภัณฑ์แช่เย็นและชีส</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono">
+                    <div class="text-sm font-semibold text-[#17243b]">฿280.00</div>
+                    <div class="text-[11px] text-[#52627a]">สั่ง ฿230 · MOQ 1</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-gray-50/50 border-l border-gray-100">
+                    <div class="text-sm font-semibold text-[#17243b]">฿280.00</div>
+                    <span class="inline-flex items-center text-[10px] text-emerald-700 font-medium">
+                      <svg class="w-3 h-3 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                      อนุมัติแล้ว
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-gray-50/50">
+                    <span>฿230.00</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-gray-50/50">
+                    <span>1</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700">
+                      josh ซิงค์แล้ว
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a] font-mono text-[11px]">
+                    2024-03-27 14:20
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button type="button" onclick="openEditPriceModal('SKU-FD-7741', '280.00', '230.00', '1')" class="px-2.5 py-1 text-xs text-[#52627a] hover:text-[#17243b] hover:bg-gray-100 border border-gray-200 rounded transition" data-i18n="แก้">
+                      แก้
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- ROW 5 (Already Approved / Active in josh) -->
+                <tr class="hover:bg-gray-50 transition" data-status="approved" data-sku="SKU-1">
+                  <td class="py-3.5 px-4 font-mono font-medium text-[#52627a]">
+                    <a href="/products/prod_05jg01" class="hover:underline">SKU-1</a>
+                    <span class="text-[11px] text-[#52627a] font-sans block">หน่วย: ถุง 1 กก.</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-medium">
+                    <div class="text-sm text-[#17243b]">ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)</div>
+                    <div class="text-[11px] text-[#52627a]">เครื่องดื่มและกาแฟ &gt; กาแฟคั่วสด</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono">
+                    <div class="text-sm font-semibold text-[#17243b]">฿450.00</div>
+                    <div class="text-[11px] text-[#52627a]">สั่ง ฿380 · MOQ 3</div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-gray-50/50 border-l border-gray-100">
+                    <div class="text-sm font-semibold text-[#17243b]">฿450.00</div>
+                    <span class="inline-flex items-center text-[10px] text-emerald-700 font-medium">
+                      <svg class="w-3 h-3 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                      อนุมัติแล้ว
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-gray-50/50">
+                    <span>฿380.00</span>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono bg-gray-50/50">
+                    <span>3</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700">
+                      josh ซิงค์แล้ว
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a] font-mono text-[11px]">
+                    2024-03-25 11:00
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button type="button" onclick="openEditPriceModal('SKU-1', '450.00', '380.00', '3')" class="px-2.5 py-1 text-xs text-[#52627a] hover:text-[#17243b] hover:bg-gray-100 border border-gray-200 rounded transition" data-i18n="แก้">
+                      แก้
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY / FILTERED EMPTY STATES -->
+          <div id="empty-state" class="hidden p-12 text-center">
+            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto text-gray-400 mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-[#17243b]" data-i18n="ไม่พบ SKU">ไม่พบ SKU</h3>
+            <p class="text-xs text-[#52627a] mt-1" data-i18n="ไม่มีราคาที่รออนุมัติ">ไม่มีราคาที่รออนุมัติ</p>
+            <button type="button" onclick="resetFilters()" class="mt-4 px-3 py-1.5 text-xs text-[#365cf5] font-medium border border-[#365cf5] rounded-lg hover:bg-blue-50 transition">
+              ล้างการค้นหา
+            </button>
+          </div>
+
+          <!-- TABLE FOOTER & PAGINATION -->
+          <div class="px-5 py-3 border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+            <div>
+              <span>หน้า <strong class="text-[#17243b]">1</strong> จาก <strong class="text-[#17243b]">1</strong> (แสดง 5 รายการ, จำนวนหน้าสูงสุด: 1)</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <button disabled class="px-3 py-1.5 rounded border border-[#e1e7f0] bg-gray-100 text-gray-400 cursor-not-allowed">
+                ก่อนหน้า
+              </button>
+              <button class="px-3 py-1.5 rounded border border-[#365cf5] bg-[#365cf5] text-white font-medium">
+                1
+              </button>
+              <button disabled class="px-3 py-1.5 rounded border border-[#e1e7f0] bg-gray-100 text-gray-400 cursor-not-allowed">
+                ถัดไป
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKFLOW EXPLANATION CARD (GUIDANCE & PROTOCOL) -->
+        <div class="bg-white border border-[#e1e7f0] rounded-xl p-5 shadow-2xs space-y-3">
+          <div class="flex items-center gap-2 text-sm font-semibold text-[#17243b]">
+            <svg class="w-4 h-4 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>แนวทางปฏิบัติงานและการจัดการราคาสินค้า (Pricing Operations Protocol)</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-[#52627a] pt-1">
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="font-semibold text-[#17243b] mb-1">1. การรับข้อมูลราคาจาก ERP</div>
+              <p class="leading-relaxed">เมื่อฝ่าย Merchandiser หรือ Procurement อัปเดตราคาใน SAP ข้อมูลจะถูกดึงเข้าคิวรออนุมัติโดยอัตโนมัติ พร้อมแสดงผลต่างราคาและเงื่อนไข MOQ</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="font-semibold text-[#17243b] mb-1">2. การตรวจสอบและอนุมัติ (MER)</div>
+              <p class="leading-relaxed">เจ้าหน้าที่ MER ตรวจสอบความถูกต้องของราคาขายต่อหน่วยและราคาสั่ง หากพบความผิดปกติสามารถกดปุ่ม "แก้" เพื่อปรับปรุงก่อนส่งมอบ</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="font-semibold text-[#17243b] mb-1">3. การซิงค์ไปยังร้านค้า (josh)</div>
+              <p class="leading-relaxed">ทันทีที่กดอนุมัติ ระบบจะล้าง cache ราคาและส่ง payload ไปยัง storefront service (josh) ทันที มีผลต่อการคำนวณราคาทุกช่องทางจำหน่าย</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: APPROVE CONFIRMATION -->
+  <div id="modal-approval" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full border border-[#e1e7f0] p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <h3 class="text-base font-bold text-[#17243b] flex items-center gap-2">
+          <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span data-i18n="อนุมัติ">อนุมัติ</span>การเปลี่ยนแปลงราคา
+        </h3>
+        <button onclick="closeModal('modal-approval')" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs text-[#52627a]">
+        <p>ยืนยันการอนุมัติราคาใหม่สำหรับสินค้า:</p>
+        <div class="p-3 bg-blue-50/60 rounded-lg border border-blue-100 space-y-1">
+          <div class="font-semibold text-sm text-[#17243b]" id="approve-modal-sku">SKU-TH-8890</div>
+          <div class="text-xs text-[#52627a]" id="approve-modal-name">ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง</div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 p-2.5 bg-gray-50 rounded-lg text-center">
+          <div>
+            <div class="text-[10px] text-gray-500" data-i18n="ราคาขาย">ราคาขาย</div>
+            <div class="text-sm font-bold text-[#17243b]" id="approve-modal-retail">฿210.00</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-gray-500" data-i18n="ราคาสั่ง">ราคาสั่ง</div>
+            <div class="text-sm font-bold text-[#17243b]" id="approve-modal-order">฿175.00</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-gray-500" data-i18n="MOQ">MOQ</div>
+            <div class="text-sm font-bold text-[#17243b]" id="approve-modal-moq">10</div>
+          </div>
+        </div>
+        <p class="text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-100">
+          ⚠️ เมื่อกดยืนยัน ราคานี้จะถูกส่งให้ระบบ storefront (josh) ทันที และมีผลต่อราคาสินค้าหน้าร้าน
+        </p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+        <button type="button" onclick="closeModal('modal-approval')" class="px-4 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] border border-[#e1e7f0] rounded-lg" data-i18n="ยกเลิก">
+          ยกเลิก
+        </button>
+        <button type="button" onclick="confirmApproval()" class="px-4 py-2 text-xs font-semibold text-white bg-[#365cf5] hover:bg-blue-700 rounded-lg shadow-sm" data-i18n="บันทึก">
+          บันทึกและส่งให้ร้าน
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT PRICE FORM (Before approval / manual adjustment) -->
+  <div id="modal-edit-price" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full border border-[#e1e7f0] p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <h3 class="text-base font-bold text-[#17243b] flex items-center gap-2">
+          <svg class="w-5 h-5 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          <span data-i18n="แก้">แก้</span><span data-i18n="ราคาสินค้า">ราคาสินค้า</span>
+        </h3>
+        <button onclick="closeModal('modal-edit-price')" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-medium text-[#52627a] mb-1" data-i18n="SKU">SKU</label>
+          <input type="text" id="edit-sku-field" readonly class="w-full px-3 py-2 bg-gray-50 border border-[#e1e7f0] rounded-lg font-mono text-[#17243b]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-[#52627a] mb-1">
+              <span data-i18n="ราคาขาย">ราคาขาย</span> (ต่อหน่วยขาย) *
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">฿</span>
+              <input type="number" step="0.01" id="edit-retail-field" class="w-full pl-7 pr-3 py-2 bg-white border border-[#e1e7f0] rounded-lg font-mono text-[#17243b] focus:ring-2 focus:ring-[#365cf5]">
+            </div>
+          </div>
+          <div>
+            <label class="block font-medium text-[#52627a] mb-1">
+              <span data-i18n="ราคาสั่ง">ราคาสั่ง</span> (ต่อหน่วยสั่ง) *
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">฿</span>
+              <input type="number" step="0.01" id="edit-order-field" class="w-full pl-7 pr-3 py-2 bg-white border border-[#e1e7f0] rounded-lg font-mono text-[#17243b] focus:ring-2 focus:ring-[#365cf5]">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-[#52627a] mb-1">
+            <span data-i18n="MOQ">MOQ</span> (ขั้นต่ำในการสั่ง)
+          </label>
+          <input type="number" id="edit-moq-field" class="w-full px-3 py-2 bg-white border border-[#e1e7f0] rounded-lg font-mono text-[#17243b] focus:ring-2 focus:ring-[#365cf5]">
+        </div>
+
+        <div>
+          <label class="block font-medium text-[#52627a] mb-1">เหตุผลในการแก้ไข</label>
+          <input type="text" placeholder="เช่น ปรับให้ตรงกับสัญญาจัดซื้อ, ปรับราคาโปรโมชัน" class="w-full px-3 py-2 bg-white border border-[#e1e7f0] rounded-lg text-[#17243b] focus:ring-2 focus:ring-[#365cf5]">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+        <button type="button" onclick="closeModal('modal-edit-price')" class="px-4 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] border border-[#e1e7f0] rounded-lg" data-i18n="ยกเลิก">
+          ยกเลิก
+        </button>
+        <button type="button" onclick="saveEditedPrice()" class="px-4 py-2 text-xs font-semibold text-white bg-[#365cf5] hover:bg-blue-700 rounded-lg shadow-sm" data-i18n="บันทึก">
+          บันทึก
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD MANUAL SKU (เพิ่มรหัสสินค้าด้วยตนเอง) -->
+  <div id="modal-manual-sku" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full border border-[#e1e7f0] p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <h3 class="text-base font-bold text-[#17243b] flex items-center gap-2">
+          <svg class="w-5 h-5 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          <span data-i18n="เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง">เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง</span>
+        </h3>
+        <button onclick="closeModal('modal-manual-sku')" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-medium text-[#52627a] mb-1">เลือกรหัสสินค้า (SKU) จากแคตตาล็อก *</label>
+          <select class="w-full px-3 py-2 bg-white border border-[#e1e7f0] rounded-lg text-[#17243b] focus:ring-2 focus:ring-[#365cf5]">
+            <option value="">-- เลือกรหัสสินค้า --</option>
+            <option value="SKU-TH-8890">SKU-TH-8890 — ข้าวหอมมะลิตัดพิเศษ 5กก.</option>
+            <option value="SKU-CH-4412">SKU-CH-4412 — น้ำมันพืชบรรจุลัง (12 ขวด)</option>
+            <option value="SKU-MK-1102">SKU-MK-1102 — นมยูเอชที รสจืด 250มล.</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-[#52627a] mb-1">
+              <span data-i18n="ราคาขาย">ราคาขาย</span> (Retail Price) *
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">฿</span>
+              <input type="number" step="0.01" placeholder="0.00" class="w-full pl-7 pr-3 py-2 bg-white border border-[#e1e7f0] rounded-lg font-mono text-[#17243b] focus:ring-2 focus:ring-[#365cf5]">
+            </div>
+          </div>
+          <div>
+            <label class="block font-medium text-[#52627a] mb-1">
+              <span data-i18n="ราคาสั่ง">ราคาสั่ง</span> (Order/Supply Price) *
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">฿</span>
+              <input type="number" step="0.01" placeholder="0.00" class="w-full pl-7 pr-3 py-2 bg-white border border-[#e1e7f0] rounded-lg font-mono text-[#17243b] focus:ring-2 focus:ring-[#365cf5]">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-[#52627a] mb-1" data-i18n="MOQ">MOQ</label>
+            <input type="number" placeholder="1" class="w-full px-3 py-2 bg-white border border-[#e1e7f0] rounded-lg font-mono text-[#17243b] focus:ring-2 focus:ring-[#365cf5]">
+          </div>
+          <div>
+            <label class="block font-medium text-[#52627a] mb-1">ส่งให้ร้าน (josh) ทันที</label>
+            <div class="pt-2">
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked class="rounded border-gray-300 text-[#365cf5] focus:ring-[#365cf5]">
+                <span class="ml-2 text-xs text-gray-700">เปิดซิงค์อัตโนมัติ</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+        <button type="button" onclick="closeModal('modal-manual-sku')" class="px-4 py-2 text-xs font-medium text-[#52627a] hover:text-[#17243b] border border-[#e1e7f0] rounded-lg" data-i18n="ยกเลิก">
+          ยกเลิก
+        </button>
+        <button type="button" onclick="closeModal('modal-manual-sku')" class="px-4 py-2 text-xs font-semibold text-white bg-[#365cf5] hover:bg-blue-700 rounded-lg shadow-sm" data-i18n="บันทึก">
+          บันทึก
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-[#17243b] text-white px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 text-xs transform transition duration-300 translate-y-12 opacity-0 pointer-events-none">
+    <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    </svg>
+    <span id="toast-message">ดำเนินการสำเร็จ</span>
+  </div>
+
+  <!-- EXACT CATALOGUE TRANSLATIONS JSON EMBED (Invisible, Required by Spec) -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "ราคาสินค้า": {
+      "th": "ราคาสินค้า",
+      "en": "Product Prices"
+    },
+    "ยกเลิก": {
+      "th": "ยกเลิก",
+      "en": "Cancel"
+    },
+    "ค้นหา": {
+      "th": "ค้นหา",
+      "en": "Search"
+    },
+    "SKU": {
+      "th": "SKU",
+      "en": "SKU"
+    },
+    "อนุมัติ": {
+      "th": "อนุมัติ",
+      "en": "Approve"
+    },
+    "ไม่อนุมัติ": {
+      "th": "ไม่อนุมัติ",
+      "en": "Reject"
+    },
+    "ที่มา": {
+      "th": "ที่มา",
+      "en": "Source"
+    },
+    "แก้": {
+      "th": "แก้",
+      "en": "Edit"
+    },
+    "ราคาขาย": {
+      "th": "ราคาขาย",
+      "en": "Retail Price"
+    },
+    "ราคาขาย (ต่อหน่วยขาย) ราคาสั่ง (ต่อหน่วยสั่ง) และ MOQ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · ทุกการเปลี่ยนส่งให้ร้าน (josh)": {
+      "th": "ราคาขาย (ต่อหน่วยขาย) ราคาสั่ง (ต่อหน่วยสั่ง) และ MOQ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · ทุกการเปลี่ยนส่งให้ร้าน (josh)",
+      "en": "Retail price (per sales unit), order price (per order unit), and MOQ · Changed in ERP, pending MER approval here · All updates forwarded to store (josh)"
+    },
+    "ยังไม่ได้สลับ — ราคายังแก้และอนุมัติที่ josh (COMMERCE_OWNS_PRICES)": {
+      "th": "ยังไม่ได้สลับ — ราคายังแก้และอนุมัติที่ josh (COMMERCE_OWNS_PRICES)",
+      "en": "Not yet switched — prices are still edited and approved in josh (COMMERCE_OWNS_PRICES)"
+    },
+    "ราคาสั่ง": {
+      "th": "ราคาสั่ง",
+      "en": "Order Price"
+    },
+    "MOQ": {
+      "th": "MOQ",
+      "en": "MOQ"
+    },
+    "ERP เปลี่ยนเมื่อ": {
+      "th": "ERP เปลี่ยนเมื่อ",
+      "en": "ERP Changed At"
+    },
+    "ไม่มีราคาที่รออนุมัติ": {
+      "th": "ไม่มีราคาที่รออนุมัติ",
+      "en": "No prices pending approval"
+    },
+    "ราคาปัจจุบัน": {
+      "th": "ราคาปัจจุบัน",
+      "en": "Current Price"
+    },
+    "บันทึก": {
+      "th": "บันทึก",
+      "en": "Save"
+    },
+    "แก้ล่าสุด": {
+      "th": "แก้ล่าสุด",
+      "en": "Last Modified"
+    },
+    "ไม่พบ SKU": {
+      "th": "ไม่พบ SKU",
+      "en": "SKU Not Found"
+    },
+    "ยังไม่มีราคา — import จาก josh ก่อนสลับ": {
+      "th": "ยังไม่มีราคา — import จาก josh ก่อนสลับ",
+      "en": "No prices yet — import from josh before switching"
+    },
+    "· workflow": {
+      "th": "· workflow",
+      "en": "· workflow"
+    },
+    "+ สร้าง segment ใหม่": {
+      "th": "+ สร้าง segment ใหม่",
+      "en": "+ Create New Segment"
+    },
+    "Brand:": {
+      "th": "Brand:",
+      "en": "Brand:"
+    },
+    "Different URL for web": {
+      "th": "Different URL for web",
+      "en": "Different URL for web"
+    },
+    "Images": {
+      "th": "Images",
+      "en": "Images"
+    },
+    "new": {
+      "th": "new",
+      "en": "new"
+    },
+    "Product List": {
+      "th": "Product List",
+      "en": "Product List"
+    },
+    "Settings": {
+      "th": "Settings",
+      "en": "Settings"
+    },
+    "User ID": {
+      "th": "User ID",
+      "en": "User ID"
+    },
+    "การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง": {
+      "th": "การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง",
+      "en": "Data delivery to platform on time, zero backlogged queues"
+    },
+    "แก้ไขหน้าโปรโมชัน": {
+      "th": "แก้ไขหน้าโปรโมชัน",
+      "en": "Edit Promotions Page"
+    },
+    "ค้นหาในหมวด": {
+      "th": "ค้นหาในหมวด",
+      "en": "Search in Category"
+    },
+    "เงินสด / COD": {
+      "th": "เงินสด / COD",
+      "en": "Cash / COD"
+    },
+    "ชิ้น / ตัว / ฟอง": {
+      "th": "ชิ้น / ตัว / ฟอง",
+      "en": "Pieces / Units / Eggs"
+    },
+    "โซเชียล": {
+      "th": "โซเชียล",
+      "en": "Social"
+    },
+    "ตัวเลือกเพิ่มเติม": {
+      "th": "ตัวเลือกเพิ่มเติม",
+      "en": "Additional Options"
+    },
+    "บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว": {
+      "th": "บริษัท สาขา วงเงิน และ KYC · ข้อมูลส่วนบุคคลถูกปิดบังแบบเดียวกับ josh · ดูอย่างเดียว",
+      "en": "Company, branch, credit limit, and KYC · PII masked identically to josh · View only"
+    },
+    "เปลี่ยน": {
+      "th": "เปลี่ยน",
+      "en": "Change"
+    },
+    "เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง": {
+      "th": "เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง",
+      "en": "Add SKU Manually"
+    },
+    "ไม่มี quotation": {
+      "th": "ไม่มี quotation",
+      "en": "No quotation"
+    },
+    "ยังไม่มีข้อมูลเขตตามเงื่อนไขนี้": {
+      "th": "ยังไม่มีข้อมูลเขตตามเงื่อนไขนี้",
+      "en": "No territory data matching this criteria"
+    },
+    "รอชำระเงิน": {
+      "th": "รอชำระเงิน",
+      "en": "Pending Payment"
+    },
+    "รายละเอียด (อังกฤษ)": {
+      "th": "รายละเอียด (อังกฤษ)",
+      "en": "Details (English)"
+    },
+    "ลิงก์เดียว — มือถือเด้งเข้าแอป/สโตร์ ส่วน desktop เปิดหน้าเว็บ เอาไปยิง ads ได้เลย": {
+      "th": "ลิงก์เดียว — มือถือเด้งเข้าแอป/สโตร์ ส่วน desktop เปิดหน้าเว็บ เอาไปยิง ads ได้เลย",
+      "en": "Single smart link — mobile opens app/store, desktop opens web page, ready for ad campaigns"
+    },
+    "วางไฟล์เพิ่มได้ (เหลืออีก": {
+      "th": "วางไฟล์เพิ่มได้ (เหลืออีก",
+      "en": "Can drop more files (remaining "
+    },
+    "ส่วนลดของคูปองนี้กำหนดในส่วน \"ประเภทและส่วนลด\" ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ": {
+      "th": "ส่วนลดของคูปองนี้กำหนดในส่วน \"ประเภทและส่วนลด\" ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ",
+      "en": "Discount for this coupon is configured in \"Type & Discount\" below like standard coupons — the section above defines only automatic trigger conditions"
+    },
+    "หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate": {
+      "th": "หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate",
+      "en": "Categories allowed to shift across shipments in Unlock Free Shipping — select parent for entire tree or pick specific subcategories"
+    },
+    "อัปเดตล่าสุด": {
+      "th": "อัปเดตล่าสุด",
+      "en": "Last Updated"
+    }
+  }
+  </script>
+
+  <!-- INTERACTIVITY JAVASCRIPT -->
+  <script>
+    let currentLang = 'th';
+    const translationScript = document.getElementById('commerce-ui-translations');
+    const translations = JSON.parse(translationScript.textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      const thBtn = document.getElementById('lang-th-btn');
+      const enBtn = document.getElementById('lang-en-btn');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#365cf5] shadow-xs font-semibold transition-all";
+        enBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#365cf5] shadow-xs font-semibold transition-all";
+        thBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+      }
+
+      // Update elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        } else if (key === 'badge.sample') {
+          el.textContent = lang === 'th' ? 'ข้อมูลตัวอย่าง' : 'Sample data';
+        } else if (key === 'user.team') {
+          el.textContent = lang === 'th' ? 'ทีมปฏิบัติการ' : 'Operations Team';
+        } else if (key === 'nav.category') {
+          el.textContent = lang === 'th' ? 'สินค้าและสต็อก' : 'Products & Stock';
+        } else if (key === 'nav.orders') {
+          el.textContent = lang === 'th' ? 'ออเดอร์และการเงิน' : 'Orders & Finance';
+        } else if (key === 'nav.customers') {
+          el.textContent = lang === 'th' ? 'ลูกค้าและบริการ' : 'Customers & Services';
+        } else if (key === 'nav.marketing') {
+          el.textContent = lang === 'th' ? 'การตลาด' : 'Marketing';
+        } else if (key === 'nav.reports') {
+          el.textContent = lang === 'th' ? 'รายงานและข้อมูล' : 'Reports & Data';
+        } else if (key === 'nav.connections') {
+          el.textContent = lang === 'th' ? 'ระบบเชื่อมต่อ' : 'Connections & Sync';
+        }
+      });
+    }
+
+    // Modal helpers
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // Approval flow
+    function openApprovalModal(sku, name, retail, order, moq) {
+      document.getElementById('approve-modal-sku').textContent = sku;
+      document.getElementById('approve-modal-name').textContent = name;
+      document.getElementById('approve-modal-retail').textContent = '฿' + retail;
+      document.getElementById('approve-modal-order').textContent = '฿' + order;
+      document.getElementById('approve-modal-moq').textContent = moq;
+      openModal('modal-approval');
+    }
+
+    function confirmApproval() {
+      const sku = document.getElementById('approve-modal-sku').textContent;
+      closeModal('modal-approval');
+      showToast(`อนุมัติราคา SKU ${sku} และส่งให้ร้าน (josh) เรียบร้อยแล้ว`);
+
+      // Update UI row
+      const row = document.querySelector(`tr[data-sku="${sku}"]`);
+      if (row) {
+        row.setAttribute('data-status', 'approved');
+        const statusBadge = row.querySelector('.text-amber-800');
+        if (statusBadge) {
+          statusBadge.className = 'text-[11px] text-emerald-700 font-medium';
+          statusBadge.textContent = 'อนุมัติแล้ว';
+        }
+      }
+    }
+
+    // Edit modal flow
+    function openEditPriceModal(sku, retail, order, moq) {
+      document.getElementById('edit-sku-field').value = sku;
+      document.getElementById('edit-retail-field').value = retail;
+      document.getElementById('edit-order-field').value = order;
+      document.getElementById('edit-moq-field').value = moq;
+      openModal('modal-edit-price');
+    }
+
+    function saveEditedPrice() {
+      const sku = document.getElementById('edit-sku-field').value;
+      const retail = document.getElementById('edit-retail-field').value;
+      closeModal('modal-edit-price');
+      showToast(`บันทึกราคาใหม่สำหรับ ${sku} (฿${retail}) เรียบร้อยแล้ว`);
+    }
+
+    function openRejectModal(sku) {
+      if (confirm(`คุณต้องการปฏิเสธราคาใหม่ของ ${sku} หรือไม่? ระบบจะคืนค่าเดิมใน josh`)) {
+        showToast(`ไม่อนุมัติการเปลี่ยนราคาสำหรับ ${sku}`);
+      }
+    }
+
+    function openManualSkuModal() {
+      openModal('modal-manual-sku');
+    }
+
+    // In-page search (explicitly scoped to current page per guidelines)
+    function handleSearch(term) {
+      term = term.toLowerCase().trim();
+      const rows = document.querySelectorAll('#price-table-body tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(term)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('displayed-count').textContent = visibleCount;
+      const emptyState = document.getElementById('empty-state');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    function filterStatus(val) {
+      const rows = document.querySelectorAll('#price-table-body tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const status = row.getAttribute('data-status');
+        if (val === 'all' || status === val) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      document.getElementById('displayed-count').textContent = visibleCount;
+      const emptyState = document.getElementById('empty-state');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('sku-search-input').value = '';
+      document.getElementById('status-filter').value = 'all';
+      handleSearch('');
+      filterStatus('all');
+    }
+
+    function refreshTable() {
+      showToast('รีเฟรชข้อมูลราคาสินค้าจาก ERP และ josh แล้ว');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.textContent = msg;
+      toast.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

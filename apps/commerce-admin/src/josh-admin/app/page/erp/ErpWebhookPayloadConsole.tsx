@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   simulateErpWebhook,
   type ErpTestingPassthroughEndpoint,
@@ -13,6 +14,8 @@ import { useState } from 'react';
  * through the real DTO validation + service handler.
  */
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type EndpointSpec = {
   key: ErpTestingPassthroughEndpoint;
   group: string;
@@ -257,6 +260,7 @@ const ENDPOINTS: EndpointSpec[] = [
 const GROUPS = [...new Set(ENDPOINTS.map((e) => e.group))];
 
 export default function ErpWebhookPayloadConsole() {
+  __useUiLocale();
   const [selectedKey, setSelectedKey] = useState<ErpTestingPassthroughEndpoint>(
     ENDPOINTS[0].key,
   );
@@ -296,7 +300,7 @@ export default function ErpWebhookPayloadConsole() {
     try {
       payload = JSON.parse(payloadText);
     } catch {
-      setError('payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง');
+      setError(__uiMessage("payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง"));
       return;
     }
     setSending(true);
@@ -362,7 +366,7 @@ export default function ErpWebhookPayloadConsole() {
 
           {error && (
             <div className="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
-              {error}
+              {(typeof error === 'string' ? __uiText(error) : error)}
             </div>
           )}
 
@@ -372,10 +376,9 @@ export default function ErpWebhookPayloadConsole() {
               onClick={resetPayload}
               className="text-xs text-gray-500 underline hover:text-gray-700"
             >
-              รีเซ็ตเป็น template
-            </button>
+              {__uiText("รีเซ็ตเป็น template")}</button>
             <Button
-              text={sending ? 'กำลังยิง...' : 'Send mock webhook →'}
+              text={sending ? __uiText("กำลังยิง...") : __uiText("Send mock webhook →")}
               onClick={send}
               disabled={sending}
             />
@@ -385,15 +388,13 @@ export default function ErpWebhookPayloadConsole() {
         {result && (
           <div className="rounded-lg border bg-white p-4">
             <h3 className="mb-2 text-sm font-semibold text-gray-700">
-              Response — {result.endpoint}
+              {__uiText("Response — ")}{result.endpoint}
             </h3>
             <pre className="overflow-x-auto rounded-md bg-gray-900 p-3 font-mono text-xs leading-5 text-green-300">
               {JSON.stringify(result.response, null, 2)}
             </pre>
             <p className="mt-2 text-xs text-gray-400">
-              ดู log ของ request นี้เพิ่มได้ที่หน้า ERP Inbound Logs (ผ่าน service ตัวจริง แต่ไม่ผ่าน
-              HTTP interceptor ของ /api/erp/* — row จะไม่ขึ้นใน log viewer)
-            </p>
+              {__uiText("ดู log ของ request นี้เพิ่มได้ที่หน้า ERP Inbound Logs (ผ่าน service ตัวจริง แต่ไม่ผ่าน HTTP interceptor ของ /api/erp/* — row จะไม่ขึ้นใน log viewer)")}</p>
           </div>
         )}
       </div>

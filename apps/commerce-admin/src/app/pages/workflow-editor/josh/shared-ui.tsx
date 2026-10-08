@@ -1,3 +1,5 @@
+// ui-metadata-migration: static labels and UI notices only
+import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import React, { ReactNode } from 'react';
 
 /**
@@ -14,6 +16,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export function Select({ data, placeholder, className = '', label, hint, error, id, children, ...props }: SelectProps) {
+  __useUiLocale();
   const gen = React.useId();
   const selectId = id ?? gen;
   return (
@@ -25,7 +28,7 @@ export function Select({ data, placeholder, className = '', label, hint, error, 
         {placeholder != null && <option value="" disabled hidden={props.value !== ''}>{placeholder}</option>}
         {children ?? data?.map((o) => <option key={String(o.value)} value={o.value} disabled={o.disabled}>{o.label}</option>)}
       </select>
-      {error ? <p className="mt-1 text-xs text-alert">{error}</p> : hint ? <p className="mt-1 text-xs text-ink-muted">{hint}</p> : null}
+      {error ? <p className="mt-1 text-xs text-alert">{(typeof error === 'string' ? __uiText(error) : error)}</p> : hint ? <p className="mt-1 text-xs text-ink-muted">{hint}</p> : null}
     </div>
   );
 }

@@ -1,0 +1,6734 @@
+{
+  "เปิดใช้งาน (Active)": {
+    "th": "เปิดใช้งาน (Active)",
+    "en": "Enabled (Active)"
+  },
+  "คัดลอกแล้ว": {
+    "th": "คัดลอกแล้ว",
+    "en": "Copied"
+  },
+  "แบรนด์": {
+    "th": "แบรนด์",
+    "en": "Brands"
+  },
+  "ยอดขาย": {
+    "th": "ยอดขาย",
+    "en": "Sales"
+  },
+  "เทียบราคาคู่แข่ง": {
+    "th": "เทียบราคาคู่แข่ง",
+    "en": "Compare competitor prices"
+  },
+  "เพิ่มสินค้า": {
+    "th": "เพิ่มสินค้า",
+    "en": "Add product"
+  },
+  "สินค้า (josh)": {
+    "th": "สินค้า (josh)",
+    "en": "Products (Josh)"
+  },
+  "คิวข้อมูลสินค้าจาก ERP": {
+    "th": "คิวข้อมูลสินค้าจาก ERP",
+    "en": "ERP product queue"
+  },
+  "API log ของ josh": {
+    "th": "API log ของ josh",
+    "en": "Josh API log"
+  },
+  "ตั้งค่าเก็บข้อมูลเว็บ": {
+    "th": "ตั้งค่าเก็บข้อมูลเว็บ",
+    "en": "Web scraping settings"
+  },
+  "ใบแจ้งหนี้": {
+    "th": "ใบแจ้งหนี้",
+    "en": "Invoices"
+  },
+  "ใบสมัครเครดิต": {
+    "th": "ใบสมัครเครดิต",
+    "en": "Credit applications"
+  },
+  "แผนและปฏิทิน Growth": {
+    "th": "แผนและปฏิทิน Growth",
+    "en": "Growth plans and calendar"
+  },
+  "แชตและผู้ช่วย": {
+    "th": "แชตและผู้ช่วย",
+    "en": "Chat and assistants"
+  },
+  "แคมเปญและโปรโมชัน": {
+    "th": "แคมเปญและโปรโมชัน",
+    "en": "Campaigns and promotions"
+  },
+  "เอกสารภายใน": {
+    "th": "เอกสารภายใน",
+    "en": "Internal documents"
+  },
+  "เพิ่มสินค้าและดูแลข้อมูลแคตตาล็อก": {
+    "th": "เพิ่มสินค้าและดูแลข้อมูลแคตตาล็อก",
+    "en": "Add products and maintain the catalogue"
+  },
+  "เนื้อหาและการสื่อสาร": {
+    "th": "เนื้อหาและการสื่อสาร",
+    "en": "Content and communication"
+  },
+  "เตรียมเอกสารและติดตามรอบจัดส่ง": {
+    "th": "เตรียมเอกสารและติดตามรอบจัดส่ง",
+    "en": "Prepare documents and track delivery schedules"
+  },
+  "เตรียมข้อความ อีเมล ลิงก์ และงานสื่อสาร": {
+    "th": "เตรียมข้อความ อีเมล ลิงก์ และงานสื่อสาร",
+    "en": "Prepare messages, emails, links and communications"
+  },
+  "เจาะข้อมูลสินค้า ลูกค้า และราคาที่ใช้ขาย": {
+    "th": "เจาะข้อมูลสินค้า ลูกค้า และราคาที่ใช้ขาย",
+    "en": "Explore products, customers and selling prices"
+  },
+  "อีเมลต้อนรับลีด": {
+    "th": "อีเมลต้อนรับลีด",
+    "en": "Lead welcome email"
+  },
+  "ส่ง order ผ่าน commerce (ทดลอง)": {
+    "th": "ส่ง order ผ่าน commerce (ทดลอง)",
+    "en": "Send orders through Commerce (experimental)"
+  },
+  "สินค้า ลูกค้า และราคา": {
+    "th": "สินค้า ลูกค้า และราคา",
+    "en": "Products, customers and prices"
+  },
+  "สินค้า (จัดการ)": {
+    "th": "สินค้า (จัดการ)",
+    "en": "Manage products"
+  },
+  "สต็อกและการสั่งซื้อ": {
+    "th": "สต็อกและการสั่งซื้อ",
+    "en": "Inventory and purchasing"
+  },
+  "วางแผนแคมเปญ โปรโมชัน และสื่อสารกับลูกค้า": {
+    "th": "วางแผนแคมเปญ โปรโมชัน และสื่อสารกับลูกค้า",
+    "en": "Plan campaigns, promotions and customer communication"
+  },
+  "รายการชำระเงิน (จัดการ)": {
+    "th": "รายการชำระเงิน (จัดการ)",
+    "en": "Manage payments"
+  },
+  "รายการชำระเงิน": {
+    "th": "รายการชำระเงิน",
+    "en": "Payments"
+  },
+  "ราคาและข้อเสนอ": {
+    "th": "ราคาและข้อเสนอ",
+    "en": "Prices and offers"
+  },
+  "ราคาลูกค้า / ราคาสัญญา (commerce)": {
+    "th": "ราคาลูกค้า / ราคาสัญญา (commerce)",
+    "en": "Customer and contract prices (Commerce)"
+  },
+  "ราคา: commerce คิดคู่กัน (ทดลอง)": {
+    "th": "ราคา: commerce คิดคู่กัน (ทดลอง)",
+    "en": "Compare Commerce prices (experimental)"
+  },
+  "ระดับสมาชิก": {
+    "th": "ระดับสมาชิก",
+    "en": "Membership tiers"
+  },
+  "รอบสั่งซื้อ supplier": {
+    "th": "รอบสั่งซื้อ supplier",
+    "en": "Supplier ordering schedules"
+  },
+  "ยอดขายและคำสั่งซื้อ": {
+    "th": "ยอดขายและคำสั่งซื้อ",
+    "en": "Sales and orders"
+  },
+  "ผู้ใช้ทั้งหมด": {
+    "th": "ผู้ใช้ทั้งหมด",
+    "en": "All users"
+  },
+  "บัญชีและเอกสาร": {
+    "th": "บัญชีและเอกสาร",
+    "en": "Accounts and documents"
+  },
+  "บัญชีลูกค้าและบริษัท": {
+    "th": "บัญชีลูกค้าและบริษัท",
+    "en": "Customer and company accounts"
+  },
+  "บัญชี staff": {
+    "th": "บัญชี staff",
+    "en": "Staff accounts"
+  },
+  "บริการและติดตามลูกค้า": {
+    "th": "บริการและติดตามลูกค้า",
+    "en": "Customer service and follow-up"
+  },
+  "นำเข้า order": {
+    "th": "นำเข้า order",
+    "en": "Import orders"
+  },
+  "ถาม Marketing Analyst": {
+    "th": "ถาม Marketing Analyst",
+    "en": "Ask the Marketing Analyst"
+  },
+  "ติดตามยอดชำระ ใบแจ้งหนี้ และเครดิตลูกค้า": {
+    "th": "ติดตามยอดชำระ ใบแจ้งหนี้ และเครดิตลูกค้า",
+    "en": "Track payments, invoices and customer credit"
+  },
+  "ติดตามยอดขายและกลุ่มลูกค้าเป้าหมาย": {
+    "th": "ติดตามยอดขายและกลุ่มลูกค้าเป้าหมาย",
+    "en": "Track sales and target customer groups"
+  },
+  "ติดตามผลและตั้งค่า": {
+    "th": "ติดตามผลและตั้งค่า",
+    "en": "Monitor results and settings"
+  },
+  "ติดตามคิวงานและเหตุการณ์ขาออก": {
+    "th": "ติดตามคิวงานและเหตุการณ์ขาออก",
+    "en": "Monitor job queues and outgoing events"
+  },
+  "ติดตามการเชื่อมต่อ คิวงาน และปัญหาการส่งข้อมูล": {
+    "th": "ติดตามการเชื่อมต่อ คิวงาน และปัญหาการส่งข้อมูล",
+    "en": "Monitor connections, job queues and delivery issues"
+  },
+  "ตารางรอบส่ง": {
+    "th": "ตารางรอบส่ง",
+    "en": "Delivery schedules"
+  },
+  "ตั้งค่าระบบต้นทางและปลายทางที่ใช้งาน": {
+    "th": "ตั้งค่าระบบต้นทางและปลายทางที่ใช้งาน",
+    "en": "Configure source and destination systems"
+  },
+  "ตั้งค่าการตลาด": {
+    "th": "ตั้งค่าการตลาด",
+    "en": "Marketing settings"
+  },
+  "ตอบลูกค้าและจัดการข้อความอัตโนมัติ": {
+    "th": "ตอบลูกค้าและจัดการข้อความอัตโนมัติ",
+    "en": "Reply to customers and manage automated messages"
+  },
+  "ตรวจสอบและอนุมัติ": {
+    "th": "ตรวจสอบและอนุมัติ",
+    "en": "Review and approve"
+  },
+  "ตรวจรายการไม่สำเร็จและทดสอบการเชื่อมต่อ": {
+    "th": "ตรวจรายการไม่สำเร็จและทดสอบการเชื่อมต่อ",
+    "en": "Review failed records and test connections"
+  },
+  "ตรวจยอดสินค้า รับเข้า และโอนระหว่างคลัง": {
+    "th": "ตรวจยอดสินค้า รับเข้า และโอนระหว่างคลัง",
+    "en": "Check stock, receive goods and transfer between warehouses"
+  },
+  "ตรวจผลการส่งข้อความ คิวงาน และค่าการตลาด": {
+    "th": "ตรวจผลการส่งข้อความ คิวงาน และค่าการตลาด",
+    "en": "Check message delivery, job queues and marketing settings"
+  },
+  "ตรวจปัญหาและทดสอบ": {
+    "th": "ตรวจปัญหาและทดสอบ",
+    "en": "Troubleshoot and test"
+  },
+  "ตรวจตัวตนและคำขอสิทธิ์เข้าใช้งาน": {
+    "th": "ตรวจตัวตนและคำขอสิทธิ์เข้าใช้งาน",
+    "en": "Review identity checks and access requests"
+  },
+  "ตรวจข้อเสนอ": {
+    "th": "ตรวจข้อเสนอ",
+    "en": "Review offers"
+  },
+  "ดูแลรายการคืนสินค้าและเอกสารคืนเครดิต": {
+    "th": "ดูแลรายการคืนสินค้าและเอกสารคืนเครดิต",
+    "en": "Manage returns and credit documents"
+  },
+  "ดูแลบัญชีลูกค้า ติดต่อ และติดตามงานบริการ": {
+    "th": "ดูแลบัญชีลูกค้า ติดต่อ และติดตามงานบริการ",
+    "en": "Manage customer accounts, contacts and service follow-up"
+  },
+  "ดูเหตุการณ์และบันทึกข้อมูลที่รับเข้าระบบ": {
+    "th": "ดูเหตุการณ์และบันทึกข้อมูลที่รับเข้าระบบ",
+    "en": "View incoming events and logs"
+  },
+  "ดูภาพรวมยอดขาย สินค้า ลูกค้า และผลการทำงาน": {
+    "th": "ดูภาพรวมยอดขาย สินค้า ลูกค้า และผลการทำงาน",
+    "en": "View sales, products, customers and operational results"
+  },
+  "ดูคำสั่งซื้อ การจัดส่ง และรายการชำระเงิน": {
+    "th": "ดูคำสั่งซื้อ การจัดส่ง และรายการชำระเงิน",
+    "en": "View orders, shipments and payments"
+  },
+  "ดูคำขอสินค้า งานบริการ และการติดตามลูกค้าเก่า": {
+    "th": "ดูคำขอสินค้า งานบริการ และการติดตามลูกค้าเก่า",
+    "en": "View product requests, service tasks and customer follow-up"
+  },
+  "ซิงก์และส่งข้อมูล": {
+    "th": "ซิงก์และส่งข้อมูล",
+    "en": "Sync and send data"
+  },
+  "ซัพพลายเออร์ แบรนด์ และสื่อ": {
+    "th": "ซัพพลายเออร์ แบรนด์ และสื่อ",
+    "en": "Suppliers, brands and media"
+  },
+  "ชำระเงินและเครดิต": {
+    "th": "ชำระเงินและเครดิต",
+    "en": "Payments and credit"
+  },
+  "จัดส่งสินค้า": {
+    "th": "จัดส่งสินค้า",
+    "en": "Ship goods"
+  },
+  "จัดการแหล่งสินค้าและรูปหรือวิดีโอประกอบ": {
+    "th": "จัดการแหล่งสินค้าและรูปหรือวิดีโอประกอบ",
+    "en": "Manage suppliers, product images and videos"
+  },
+  "จัดการสินค้า ราคา และความพร้อมขายในที่เดียว": {
+    "th": "จัดการสินค้า ราคา และความพร้อมขายในที่เดียว",
+    "en": "Manage products, prices and availability in one place"
+  },
+  "จัดการบัญชีทีมงานและบทบาทการทำงาน": {
+    "th": "จัดการบัญชีทีมงานและบทบาทการทำงาน",
+    "en": "Manage staff accounts and roles"
+  },
+  "จัดการบัญชีทีมงาน สิทธิ์ และการตั้งค่าบัญชี": {
+    "th": "จัดการบัญชีทีมงาน สิทธิ์ และการตั้งค่าบัญชี",
+    "en": "Manage staff accounts, permissions and account settings"
+  },
+  "จัดการการเชื่อมต่อ": {
+    "th": "จัดการการเชื่อมต่อ",
+    "en": "Manage connections"
+  },
+  "งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)": {
+    "th": "งาน CS (สั่งแทน / ตัวอย่าง / รวมบัญชี)",
+    "en": "Customer service (place orders, samples, merge accounts)"
+  },
+  "ค้นหาข้อมูลติดต่อและดูแลสมาชิก": {
+    "th": "ค้นหาข้อมูลติดต่อและดูแลสมาชิก",
+    "en": "Find contact details and manage members"
+  },
+  "คืนสินค้าและคืนเงิน": {
+    "th": "คืนสินค้าและคืนเงิน",
+    "en": "Returns and refunds"
+  },
+  "คำสั่งซื้อและการจอง": {
+    "th": "คำสั่งซื้อและการจอง",
+    "en": "Orders and reservations"
+  },
+  "คำขอเข้า admin": {
+    "th": "คำขอเข้า admin",
+    "en": "Admin access requests"
+  },
+  "คลังข้อมูลเว็บคู่แข่ง": {
+    "th": "คลังข้อมูลเว็บคู่แข่ง",
+    "en": "Competitor web catalogue"
+  },
+  "ข้อมูลขาเข้า": {
+    "th": "ข้อมูลขาเข้า",
+    "en": "Incoming data"
+  },
+  "ขอเครดิต": {
+    "th": "ขอเครดิต",
+    "en": "Apply for credit"
+  },
+  "กำหนดกลุ่มเป้าหมายและข้อเสนอ": {
+    "th": "กำหนดกลุ่มเป้าหมายและข้อเสนอ",
+    "en": "Set target audiences and offers"
+  },
+  "การเข้าชมและสุขภาพระบบ": {
+    "th": "การเข้าชมและสุขภาพระบบ",
+    "en": "Traffic and system health"
+  },
+  "กำลังสร้าง…": {
+    "th": "กำลังสร้าง…",
+    "en": "Creating…"
+  },
+  "สร้างลิงก์ไม่สำเร็จ ลองใหม่อีกครั้ง": {
+    "th": "สร้างลิงก์ไม่สำเร็จ ลองใหม่อีกครั้ง",
+    "en": "Could not create the link. Please try again."
+  },
+  "Template คำตอบ (Response Template)": {
+    "th": "Template คำตอบ (Response Template)",
+    "en": "Response template"
+  },
+  "ปิด": {
+    "th": "ปิด",
+    "en": "Close"
+  },
+  "ค้นหาเมนู": {
+    "th": "ค้นหาเมนู",
+    "en": "Search menus"
+  },
+  "ค้นหาหน้าและเมนู": {
+    "th": "ค้นหาหน้าและเมนู",
+    "en": "Search pages and menus"
+  },
+  "ทุกสถานะ": {
+    "th": "ทุกสถานะ",
+    "en": "All statuses"
+  },
+  "ค่า": {
+    "th": "ค่า",
+    "en": "Value"
+  },
+  "กำลังบันทึก...": {
+    "th": "กำลังบันทึก...",
+    "en": "Saving..."
+  },
+  "ไม่พบเมนู ลองใช้คำอื่น": {
+    "th": "ไม่พบเมนู ลองใช้คำอื่น",
+    "en": "No menus found. Try another search."
+  },
+  "ไม่พบเมนู ลองค้นหาด้วยคำอื่น": {
+    "th": "ไม่พบเมนู ลองค้นหาด้วยคำอื่น",
+    "en": "No menus found. Try another search."
+  },
+  "ไปยังหน้าที่ต้องการ": {
+    "th": "ไปยังหน้าที่ต้องการ",
+    "en": "Go to a page"
+  },
+  "แถวต่อหน้า:": {
+    "th": "แถวต่อหน้า:",
+    "en": "Rows per page:"
+  },
+  "เช่น สินค้า ออเดอร์ หรือคิวงาน": {
+    "th": "เช่น สินค้า ออเดอร์ หรือคิวงาน",
+    "en": "For example: products, orders or job queues"
+  },
+  "หน้าหลัก": {
+    "th": "หน้าหลัก",
+    "en": "Home"
+  },
+  "ลบตัวกรอง": {
+    "th": "ลบตัวกรอง",
+    "en": "Remove filter"
+  },
+  "ผลการค้นหาเมนู": {
+    "th": "ผลการค้นหาเมนู",
+    "en": "Menu search results"
+  },
+  "ปิดการค้นหา": {
+    "th": "ปิดการค้นหา",
+    "en": "Close search"
+  },
+  "ค้นหาเมนู…": {
+    "th": "ค้นหาเมนู…",
+    "en": "Search menus…"
+  },
+  "ค้นหาเมนูทั้งหมด": {
+    "th": "ค้นหาเมนูทั้งหมด",
+    "en": "Search all menus"
+  },
+  "ข้ามไปเนื้อหา": {
+    "th": "ข้ามไปเนื้อหา",
+    "en": "Skip to content"
+  },
+  "ชื่อ Workflow": {
+    "th": "ชื่อ Workflow",
+    "en": "Workflow name"
+  },
+  "ยืนยัน": {
+    "th": "ยืนยัน",
+    "en": "Confirm"
+  },
+  "ตัวอย่าง": {
+    "th": "ตัวอย่าง",
+    "en": "Example"
+  },
+  "ดูสินค้า": {
+    "th": "ดูสินค้า",
+    "en": "View product"
+  },
+  "Web URL (ปลายทาง)": {
+    "th": "Web URL (ปลายทาง)",
+    "en": "Destination URL"
+  },
+  "กำลังอัปโหลด...": {
+    "th": "กำลังอัปโหลด...",
+    "en": "Uploading..."
+  },
+  "อัปโหลดไม่สำเร็จ": {
+    "th": "อัปโหลดไม่สำเร็จ",
+    "en": "Upload failed"
+  },
+  "ไม่จำกัด": {
+    "th": "ไม่จำกัด",
+    "en": "Unlimited"
+  },
+  "ส่วนต่าง ๆ ในหน้านี้": {
+    "th": "ส่วนต่าง ๆ ในหน้านี้",
+    "en": "Sections on this page"
+  },
+  "เครื่องมือเชื่อมลูกค้ากับออเดอร์": {
+    "th": "เครื่องมือเชื่อมลูกค้ากับออเดอร์",
+    "en": "Link customers to orders"
+  },
+  "Relink CSV สำเร็จ — relinked: {0}": {
+    "th": "Relink CSV สำเร็จ — relinked: {0}",
+    "en": "CSV relinking complete — records relinked: {0}"
+  },
+  "Relink all สำเร็จ — relinked: {0}": {
+    "th": "Relink all สำเร็จ — relinked: {0}",
+    "en": "Relinking complete — records relinked: {0}"
+  },
+  "กลับ": {
+    "th": "กลับ",
+    "en": "Back"
+  },
+  "ข้อมูลใบลดหนี้": {
+    "th": "ข้อมูลใบลดหนี้",
+    "en": "Credit note records"
+  },
+  "จัดการใบลดหนี้": {
+    "th": "จัดการใบลดหนี้",
+    "en": "Manage credit notes"
+  },
+  "ข้อมูลคืนเครดิต": {
+    "th": "ข้อมูลคืนเครดิต",
+    "en": "Credit refund records"
+  },
+  "จัดการคืนเครดิต": {
+    "th": "จัดการคืนเครดิต",
+    "en": "Manage credit refunds"
+  },
+  "ข้อมูลการจัดส่ง": {
+    "th": "ข้อมูลการจัดส่ง",
+    "en": "Shipment records"
+  },
+  "ข้อมูลรายการชำระเงิน": {
+    "th": "ข้อมูลรายการชำระเงิน",
+    "en": "Payment records"
+  },
+  "ข้อมูลคูปอง": {
+    "th": "ข้อมูลคูปอง",
+    "en": "Coupon records"
+  },
+  "จัดการคูปอง": {
+    "th": "จัดการคูปอง",
+    "en": "Manage coupons"
+  },
+  "ข้อมูลแคมเปญ": {
+    "th": "ข้อมูลแคมเปญ",
+    "en": "Campaign records"
+  },
+  "จัดการแคมเปญ": {
+    "th": "จัดการแคมเปญ",
+    "en": "Manage campaigns"
+  },
+  "ข้อมูลกลุ่มลูกค้า": {
+    "th": "ข้อมูลกลุ่มลูกค้า",
+    "en": "Customer segment records"
+  },
+  "จัดการกลุ่มลูกค้า": {
+    "th": "จัดการกลุ่มลูกค้า",
+    "en": "Manage customer segments"
+  },
+  "พื้นที่ทำงานของทีม": {
+    "th": "พื้นที่ทำงานของทีม",
+    "en": "Team workspace"
+  },
+  "พื้นที่ทำงาน": {
+    "th": "พื้นที่ทำงาน",
+    "en": "Workspace"
+  },
+  "รายละเอียด": {
+    "th": "รายละเอียด",
+    "en": "Details"
+  },
+  "คู่มือ API": {
+    "th": "คู่มือ API",
+    "en": "API documentation"
+  },
+  "↑ ↓ เลือกเมนู · Enter เปิดหน้า · Esc ปิด": {
+    "th": "↑ ↓ เลือกเมนู · Enter เปิดหน้า · Esc ปิด",
+    "en": "↑ ↓ select · Enter open · Esc close"
+  },
+  "จัดการข้อมูลสินค้า": {
+    "th": "จัดการข้อมูลสินค้า",
+    "en": "Manage product information"
+  },
+  "ตรวจสอบราคาและสต็อก": {
+    "th": "ตรวจสอบราคาและสต็อก",
+    "en": "Check prices and stock"
+  },
+  "เตรียมสินค้าให้พร้อมขาย": {
+    "th": "เตรียมสินค้าให้พร้อมขาย",
+    "en": "Prepare products for sale"
+  },
+  "ตรวจสอบคำสั่งซื้อ": {
+    "th": "ตรวจสอบคำสั่งซื้อ",
+    "en": "Review orders"
+  },
+  "ติดตามการชำระเงิน": {
+    "th": "ติดตามการชำระเงิน",
+    "en": "Track payments"
+  },
+  "เตรียมและติดตามการจัดส่ง": {
+    "th": "เตรียมและติดตามการจัดส่ง",
+    "en": "Prepare and track shipments"
+  },
+  "ค้นหาลูกค้าหรือบริษัท": {
+    "th": "ค้นหาลูกค้าหรือบริษัท",
+    "en": "Find a customer or company"
+  },
+  "ดูประวัติและคำขอ": {
+    "th": "ดูประวัติและคำขอ",
+    "en": "View history and requests"
+  },
+  "ติดตามงานบริการ": {
+    "th": "ติดตามงานบริการ",
+    "en": "Follow up on service tasks"
+  },
+  "วิเคราะห์และวางแผน": {
+    "th": "วิเคราะห์และวางแผน",
+    "en": "Analyse and plan"
+  },
+  "เตรียมแคมเปญและเนื้อหา": {
+    "th": "เตรียมแคมเปญและเนื้อหา",
+    "en": "Prepare campaigns and content"
+  },
+  "ติดตามผลการสื่อสาร": {
+    "th": "ติดตามผลการสื่อสาร",
+    "en": "Track communication results"
+  },
+  "เลือกรายงาน": {
+    "th": "เลือกรายงาน",
+    "en": "Choose a report"
+  },
+  "กำหนดช่วงเวลาหรือเงื่อนไข": {
+    "th": "กำหนดช่วงเวลาหรือเงื่อนไข",
+    "en": "Set the date range or filters"
+  },
+  "ดูรายละเอียดเพื่อใช้ตัดสินใจ": {
+    "th": "ดูรายละเอียดเพื่อใช้ตัดสินใจ",
+    "en": "Review details to make decisions"
+  },
+  "ตรวจสอบการเชื่อมต่อ": {
+    "th": "ตรวจสอบการเชื่อมต่อ",
+    "en": "Check connections"
+  },
+  "ติดตามคิวและการส่งข้อมูล": {
+    "th": "ติดตามคิวและการส่งข้อมูล",
+    "en": "Monitor queues and deliveries"
+  },
+  "ตรวจสอบรายการที่ต้องแก้ไข": {
+    "th": "ตรวจสอบรายการที่ต้องแก้ไข",
+    "en": "Review items that need attention"
+  },
+  "จัดการบัญชีทีมงาน": {
+    "th": "จัดการบัญชีทีมงาน",
+    "en": "Manage staff accounts"
+  },
+  "ตรวจสอบบทบาทและสิทธิ์": {
+    "th": "ตรวจสอบบทบาทและสิทธิ์",
+    "en": "Review roles and permissions"
+  },
+  "ดูแลความปลอดภัยของบัญชี": {
+    "th": "ดูแลความปลอดภัยของบัญชี",
+    "en": "Maintain account security"
+  },
+  "จัดการสินค้า": {
+    "th": "จัดการสินค้า",
+    "en": "Manage products"
+  },
+  "อัปโหลดวิดีโอสินค้า": {
+    "th": "อัปโหลดวิดีโอสินค้า",
+    "en": "Upload product videos"
+  },
+  "อัปโหลดรูปสินค้าหลายรายการ": {
+    "th": "อัปโหลดรูปสินค้าหลายรายการ",
+    "en": "Upload product images in bulk"
+  },
+  "จัดการซัพพลายเออร์": {
+    "th": "จัดการซัพพลายเออร์",
+    "en": "Manage suppliers"
+  },
+  "ข้อมูลซัพพลายเออร์": {
+    "th": "ข้อมูลซัพพลายเออร์",
+    "en": "Supplier records"
+  },
+  "จัดการออเดอร์": {
+    "th": "จัดการออเดอร์",
+    "en": "Manage orders"
+  },
+  "จัดการการจัดส่ง": {
+    "th": "จัดการการจัดส่ง",
+    "en": "Manage shipments"
+  },
+  "จัดการการชำระเงิน": {
+    "th": "จัดการการชำระเงิน",
+    "en": "Manage payments"
+  },
+  "ใบแจ้งหนี้ค้างชำระ": {
+    "th": "ใบแจ้งหนี้ค้างชำระ",
+    "en": "Overdue invoices"
+  },
+  "นำเข้าออเดอร์": {
+    "th": "นำเข้าออเดอร์",
+    "en": "Import orders"
+  },
+  "พิมพ์สติกเกอร์": {
+    "th": "พิมพ์สติกเกอร์",
+    "en": "Print stickers"
+  },
+  "วางบิล": {
+    "th": "วางบิล",
+    "en": "Billing"
+  },
+  "จัดการผู้ใช้": {
+    "th": "จัดการผู้ใช้",
+    "en": "Manage users"
+  },
+  "จัดการบริษัท": {
+    "th": "จัดการบริษัท",
+    "en": "Manage companies"
+  },
+  "ลูกค้าแพลตฟอร์ม": {
+    "th": "ลูกค้าแพลตฟอร์ม",
+    "en": "Platform customers"
+  },
+  "ตรวจสอบตัวตนลูกค้า": {
+    "th": "ตรวจสอบตัวตนลูกค้า",
+    "en": "Verify customer identity"
+  },
+  "ข้อมูลคำขอ KYC": {
+    "th": "ข้อมูลคำขอ KYC",
+    "en": "KYC request records"
+  },
+  "งานบริการลูกค้า": {
+    "th": "งานบริการลูกค้า",
+    "en": "Customer service"
+  },
+  "แชตกับลูกค้า": {
+    "th": "แชตกับลูกค้า",
+    "en": "Customer chat"
+  },
+  "ติดตามลูกค้าเก่า": {
+    "th": "ติดตามลูกค้าเก่า",
+    "en": "Customer win-back"
+  },
+  "การจองสินค้า": {
+    "th": "การจองสินค้า",
+    "en": "Reservations"
+  },
+  "รายงานยอดขาย": {
+    "th": "รายงานยอดขาย",
+    "en": "Sales reports"
+  },
+  "รายงานสินค้า": {
+    "th": "รายงานสินค้า",
+    "en": "Product reports"
+  },
+  "รายงานออเดอร์": {
+    "th": "รายงานออเดอร์",
+    "en": "Order reports"
+  },
+  "รายงานราคาขาย": {
+    "th": "รายงานราคาขาย",
+    "en": "Selling price reports"
+  },
+  "การเข้าชม": {
+    "th": "การเข้าชม",
+    "en": "Traffic"
+  },
+  "สุขภาพระบบ": {
+    "th": "สุขภาพระบบ",
+    "en": "System health"
+  },
+  "กลุ่มลูกค้าเป้าหมาย": {
+    "th": "กลุ่มลูกค้าเป้าหมาย",
+    "en": "Target customer groups"
+  },
+  "วางแผนการเติบโต": {
+    "th": "วางแผนการเติบโต",
+    "en": "Plan growth"
+  },
+  "แผนและปฏิทิน": {
+    "th": "แผนและปฏิทิน",
+    "en": "Plans and calendar"
+  },
+  "ผู้ช่วยวิเคราะห์การตลาด": {
+    "th": "ผู้ช่วยวิเคราะห์การตลาด",
+    "en": "Marketing analysis assistant"
+  },
+  "งานวิจัยตลาด": {
+    "th": "งานวิจัยตลาด",
+    "en": "Market research"
+  },
+  "ค้นหาตลาดร้านอาหาร": {
+    "th": "ค้นหาตลาดร้านอาหาร",
+    "en": "Explore the restaurant market"
+  },
+  "เวิร์กโฟลว์การตลาด": {
+    "th": "เวิร์กโฟลว์การตลาด",
+    "en": "Marketing workflows"
+  },
+  "การเชื่อมต่อ": {
+    "th": "การเชื่อมต่อ",
+    "en": "Connections"
+  },
+  "เหตุการณ์ขาเข้า": {
+    "th": "เหตุการณ์ขาเข้า",
+    "en": "Incoming events"
+  },
+  "การส่งเหตุการณ์ขาออก": {
+    "th": "การส่งเหตุการณ์ขาออก",
+    "en": "Outgoing event delivery"
+  },
+  "งานซิงก์ข้อมูล": {
+    "th": "งานซิงก์ข้อมูล",
+    "en": "Sync jobs"
+  },
+  "บันทึกข้อมูลขาเข้า": {
+    "th": "บันทึกข้อมูลขาเข้า",
+    "en": "Incoming data log"
+  },
+  "รายการส่งไม่สำเร็จ": {
+    "th": "รายการส่งไม่สำเร็จ",
+    "en": "Failed deliveries"
+  },
+  "แพลตฟอร์มปลายทาง": {
+    "th": "แพลตฟอร์มปลายทาง",
+    "en": "Destination platforms"
+  },
+  "ทดสอบการเชื่อมต่อ ERP": {
+    "th": "ทดสอบการเชื่อมต่อ ERP",
+    "en": "Test ERP connections"
+  },
+  "การเชื่อมต่อ AI": {
+    "th": "การเชื่อมต่อ AI",
+    "en": "AI connections"
+  },
+  "บัญชีทีมงานร้านค้า": {
+    "th": "บัญชีทีมงานร้านค้า",
+    "en": "Store staff accounts"
+  },
+  "คำขอราคา": {
+    "th": "คำขอราคา",
+    "en": "Price requests"
+  },
+  "ข้อเสนอราคาที่ใช้งาน": {
+    "th": "ข้อเสนอราคาที่ใช้งาน",
+    "en": "Active price offers"
+  },
+  "ทดสอบเหตุการณ์ ERP ของร้านค้า": {
+    "th": "ทดสอบเหตุการณ์ ERP ของร้านค้า",
+    "en": "Test store ERP events"
+  },
+  "Template ข้อความ": {
+    "th": "Template ข้อความ",
+    "en": "Message templates"
+  },
+  "Shipments (จัดการ)": {
+    "th": "Shipments (จัดการ)",
+    "en": "Manage shipments"
+  },
+  "Orders (จัดการ)": {
+    "th": "Orders (จัดการ)",
+    "en": "Manage orders"
+  },
+  "Market Explorer (ร้านอาหาร)": {
+    "th": "Market Explorer (ร้านอาหาร)",
+    "en": "Restaurant market explorer"
+  },
+  "— จบ (End) —": {
+    "th": "— จบ (End) —",
+    "en": "— End —"
+  },
+  "{0} รายการต้องตรวจสอบ": {
+    "th": "{0} รายการต้องตรวจสอบ",
+    "en": "{0} items need attention"
+  },
+  "กำลังตรวจสอบระบบ": {
+    "th": "กำลังตรวจสอบระบบ",
+    "en": "Checking system status"
+  },
+  "ยังตรวจสอบระบบไม่ได้": {
+    "th": "ยังตรวจสอบระบบไม่ได้",
+    "en": "System status is unavailable"
+  },
+  "ระบบปกติ": {
+    "th": "ระบบปกติ",
+    "en": "Systems are healthy"
+  },
+  "การเชื่อมต่อทั้งหมด": {
+    "th": "การเชื่อมต่อทั้งหมด",
+    "en": "All connections"
+  },
+  "กำลังโหลดข้อมูล…": {
+    "th": "กำลังโหลดข้อมูล…",
+    "en": "Loading…"
+  },
+  "แก้ไขลูกค้า": {
+    "th": "แก้ไขลูกค้า",
+    "en": "Edit customer"
+  },
+  "ข้อมูลระบบที่เชื่อมต่อ": {
+    "th": "ข้อมูลระบบที่เชื่อมต่อ",
+    "en": "Connection details"
+  },
+  "ข้อมูลลูกค้า": {
+    "th": "ข้อมูลลูกค้า",
+    "en": "Customer details"
+  },
+  "จำนวน {0}": {
+    "th": "จำนวน {0}",
+    "en": "Quantity {0}"
+  },
+  "จำนวนออเดอร์": {
+    "th": "จำนวนออเดอร์",
+    "en": "Order count"
+  },
+  "ชื่อการเชื่อมต่อ": {
+    "th": "ชื่อการเชื่อมต่อ",
+    "en": "Connection name"
+  },
+  "ชื่อบริษัทหรือลูกค้า": {
+    "th": "ชื่อบริษัทหรือลูกค้า",
+    "en": "Company or customer name"
+  },
+  "ชื่อลูกค้า": {
+    "th": "ชื่อลูกค้า",
+    "en": "Customer name"
+  },
+  "ชื่อสินค้าที่ต้องการแสดง": {
+    "th": "ชื่อสินค้าที่ต้องการแสดง",
+    "en": "Product display name"
+  },
+  "ใช้รหัสประเภทที่ระบบรองรับ เช่น example": {
+    "th": "ใช้รหัสประเภทที่ระบบรองรับ เช่น example",
+    "en": "Use a supported connector type, such as example"
+  },
+  "ดูข้อมูลติดต่อและรายละเอียดของลูกค้าในแพลตฟอร์ม": {
+    "th": "ดูข้อมูลติดต่อและรายละเอียดของลูกค้าในแพลตฟอร์ม",
+    "en": "View customer contact details and information"
+  },
+  "ดูระบบที่เชื่อมต่อและคัดลอก URL สำหรับรับ Webhook": {
+    "th": "ดูระบบที่เชื่อมต่อและคัดลอก URL สำหรับรับ Webhook",
+    "en": "View connected systems and copy webhook receiver URLs"
+  },
+  "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้ SKU เพื่อระบุสินค้าแต่ละรายการ": {
+    "th": "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้ SKU เพื่อระบุสินค้าแต่ละรายการ",
+    "en": "View and manage products. Each product is identified by its SKU."
+  },
+  "ตั้งชื่อให้ทีมงานจำได้ และระบุประเภทตัวเชื่อมต่อที่ระบบรองรับ": {
+    "th": "ตั้งชื่อให้ทีมงานจำได้ และระบุประเภทตัวเชื่อมต่อที่ระบบรองรับ",
+    "en": "Choose a recognisable name and a supported connector type"
+  },
+  "บันทึก{0}": {
+    "th": "บันทึก{0}",
+    "en": "Save{0}"
+  },
+  "บันทึกการแก้ไขลูกค้า {0}?": {
+    "th": "บันทึกการแก้ไขลูกค้า {0}?",
+    "en": "Save changes to customer {0}?"
+  },
+  "บันทึกการแก้ไขลูกค้าเรียบร้อยแล้ว": {
+    "th": "บันทึกการแก้ไขลูกค้าเรียบร้อยแล้ว",
+    "en": "Customer changes saved"
+  },
+  "บันทึกการแก้ไขสินค้า {0}?": {
+    "th": "บันทึกการแก้ไขสินค้า {0}?",
+    "en": "Save changes to product {0}?"
+  },
+  "บันทึกแล้ว · {0} {1} → {2}": {
+    "th": "บันทึกแล้ว · {0} {1} → {2}",
+    "en": "Saved · {0} {1} → {2}"
+  },
+  "เบอร์โทร": {
+    "th": "เบอร์โทร",
+    "en": "Phone number"
+  },
+  "ประเภท": {
+    "th": "ประเภท",
+    "en": "Type"
+  },
+  "ประเภทตัวเชื่อมต่อ": {
+    "th": "ประเภทตัวเชื่อมต่อ",
+    "en": "Connector type"
+  },
+  "เปลี่ยน {0} เป็น {1}?": {
+    "th": "เปลี่ยน {0} เป็น {1}?",
+    "en": "Change {0} to {1}?"
+  },
+  "เปลี่ยนรหัสผ่านแล้ว · ครั้งหน้าใช้รหัสใหม่": {
+    "th": "เปลี่ยนรหัสผ่านแล้ว · ครั้งหน้าใช้รหัสใหม่",
+    "en": "Password changed. Use your new password next time."
+  },
+  "เพิ่มการเชื่อมต่อ": {
+    "th": "เพิ่มการเชื่อมต่อ",
+    "en": "Add connection"
+  },
+  "เพิ่มลูกค้า": {
+    "th": "เพิ่มลูกค้า",
+    "en": "Add customer"
+  },
+  "มูลค่าออเดอร์ที่แสดง": {
+    "th": "มูลค่าออเดอร์ที่แสดง",
+    "en": "Value of displayed orders"
+  },
+  "ยังไม่มีการเชื่อมต่อ เริ่มต้นด้วยปุ่ม “เพิ่มการเชื่อมต่อ”": {
+    "th": "ยังไม่มีการเชื่อมต่อ เริ่มต้นด้วยปุ่ม “เพิ่มการเชื่อมต่อ”",
+    "en": "No connections yet. Start with “Add connection”."
+  },
+  "ยังไม่มีออเดอร์ของลูกค้านี้": {
+    "th": "ยังไม่มีออเดอร์ของลูกค้านี้",
+    "en": "This customer has no orders yet"
+  },
+  "ยืนยันลายเซ็น": {
+    "th": "ยืนยันลายเซ็น",
+    "en": "Verify signature"
+  },
+  "รหัสผ่านของคุณ": {
+    "th": "รหัสผ่านของคุณ",
+    "en": "Your password"
+  },
+  "รหัสผ่านปัจจุบันไม่ถูกต้อง": {
+    "th": "รหัสผ่านปัจจุบันไม่ถูกต้อง",
+    "en": "Your current password is incorrect"
+  },
+  "รหัสผ่านใหม่": {
+    "th": "รหัสผ่านใหม่",
+    "en": "New password"
+  },
+  "รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน": {
+    "th": "รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน",
+    "en": "The new passwords do not match"
+  },
+  "รหัสผ่านใหม่อย่างน้อย {0} ตัวอักษร": {
+    "th": "รหัสผ่านใหม่อย่างน้อย {0} ตัวอักษร",
+    "en": "The new password must have at least {0} characters"
+  },
+  "รหัสผ่านใหม่อีกครั้ง": {
+    "th": "รหัสผ่านใหม่อีกครั้ง",
+    "en": "Confirm new password"
+  },
+  "รหัสสินค้า {0}": {
+    "th": "รหัสสินค้า {0}",
+    "en": "Product ID {0}"
+  },
+  "ราคาต่อหน่วย {0}": {
+    "th": "ราคาต่อหน่วย {0}",
+    "en": "Unit price {0}"
+  },
+  "รีเซ็ตรหัสผ่านของ {0}? รหัสเดิมใช้ไม่ได้ทันที": {
+    "th": "รีเซ็ตรหัสผ่านของ {0}? รหัสเดิมใช้ไม่ได้ทันที",
+    "en": "Reset the password for {0}? The old password will stop working immediately."
+  },
+  "ลบรายการสินค้า {0}": {
+    "th": "ลบรายการสินค้า {0}",
+    "en": "Remove product line {0}"
+  },
+  "สถานะในหน้านี้": {
+    "th": "สถานะในหน้านี้",
+    "en": "Status on this page"
+  },
+  "สิทธิ์ของ {0}": {
+    "th": "สิทธิ์ของ {0}",
+    "en": "Permissions for {0}"
+  },
+  "สินค้า {0}": {
+    "th": "สินค้า {0}",
+    "en": "Product {0}"
+  },
+  "แสดง {0} จาก {1} รายการในหน้านี้": {
+    "th": "แสดง {0} จาก {1} รายการในหน้านี้",
+    "en": "Showing {0} of {1} records on this page"
+  },
+  "อย่างน้อย {0} ตัวอักษร": {
+    "th": "อย่างน้อย {0} ตัวอักษร",
+    "en": "At least {0} characters"
+  },
+  "ออเดอร์ของลูกค้า": {
+    "th": "ออเดอร์ของลูกค้า",
+    "en": "Customer orders"
+  },
+  "โอน {0} แล้ว · {1} เหลือ {2} · {3} มี {4}": {
+    "th": "โอน {0} แล้ว · {1} เหลือ {2} · {3} มี {4}",
+    "en": "Transferred {0} · {1} has {2} remaining · {3} has {4}"
+  },
+  "admin — ทุกเมนู": {
+    "th": "admin — ทุกเมนู",
+    "en": "admin — all menus"
+  },
+  "marketing — รายงานและการตลาด": {
+    "th": "marketing — รายงานและการตลาด",
+    "en": "marketing — reports and marketing"
+  },
+  "MER — สินค้า ราคา หมวด แบรนด์ supplier": {
+    "th": "MER — สินค้า ราคา หมวด แบรนด์ supplier",
+    "en": "MER — products, prices, categories, brands and suppliers"
+  },
+  "CS — order shipment งาน CS credit note": {
+    "th": "CS — order shipment งาน CS credit note",
+    "en": "CS — orders, shipments, customer service and credit notes"
+  },
+  "บัตรประชาชน": {
+    "th": "บัตรประชาชน",
+    "en": "National ID card"
+  },
+  "เซลฟี่ถือบัตร": {
+    "th": "เซลฟี่ถือบัตร",
+    "en": "Selfie with ID card"
+  },
+  "หน้าร้าน": {
+    "th": "หน้าร้าน",
+    "en": "Storefront"
+  },
+  "ล่าสุด 50 ครั้ง": {
+    "th": "ล่าสุด 50 ครั้ง",
+    "en": "Latest 50 attempts"
+  },
+  "{0}/3 รูป": {
+    "th": "{0}/3 รูป",
+    "en": "{0}/3 images"
+  },
+  "{0} โจทย์": {
+    "th": "{0} โจทย์",
+    "en": "{0} briefs"
+  },
+  "ตรวจและเลือกใช้ก่อนบันทึก · AI ไม่เปลี่ยนแผนเอง": {
+    "th": "ตรวจและเลือกใช้ก่อนบันทึก · AI ไม่เปลี่ยนแผนเอง",
+    "en": "Review and select before saving. AI does not change your plan automatically."
+  },
+  "preview · ไม่ส่งข้อความ": {
+    "th": "preview · ไม่ส่งข้อความ",
+    "en": "Preview · no messages sent"
+  },
+  "{0} / {1} เสร็จแล้ว": {
+    "th": "{0} / {1} เสร็จแล้ว",
+    "en": "{0} / {1} completed"
+  },
+  "แสดง {0} จาก {1} แผนในเดือนนี้ · วันที่ตามเวลาไทย · ยังไม่มีการส่งข้อความ": {
+    "th": "แสดง {0} จาก {1} แผนในเดือนนี้ · วันที่ตามเวลาไทย · ยังไม่มีการส่งข้อความ",
+    "en": "Showing {0} of {1} plans this month · dates use Thailand time · no messages sent yet"
+  },
+  "แสดง {0} จาก {1} แผน · เรียงตามการแก้ไขล่าสุด": {
+    "th": "แสดง {0} จาก {1} แผน · เรียงตามการแก้ไขล่าสุด",
+    "en": "Showing {0} of {1} plans · most recently updated first"
+  },
+  "{0}": {
+    "th": "{0}",
+    "en": "{0}"
+  },
+  "&larr; กลับไปหน้ารายการ Workflow": {
+    "th": "&larr; กลับไปหน้ารายการ Workflow",
+    "en": "← Back to workflows"
+  },
+  "&larr; กลับไปหน้าแก้ไข Workflow": {
+    "th": "&larr; กลับไปหน้าแก้ไข Workflow",
+    "en": "← Back to workflow editor"
+  },
+  "+ ร้านจาก Market Explorer {0}": {
+    "th": "+ ร้านจาก Market Explorer {0}",
+    "en": "+ Restaurants from Market Explorer {0}"
+  },
+  "0 = สีพื้นล้วน, 50 ≈ ใต้ลายเซ็น Enjosh (ตาม mock)": {
+    "th": "0 = สีพื้นล้วน, 50 ≈ ใต้ลายเซ็น Enjosh (ตาม mock)",
+    "en": "0 = solid color; 50 ≈ below the Enjosh signature (reference mock)"
+  },
+  "0 = เด้งทันทีที่เข้าเว็บ · เช่น 1 = อยู่บนเว็บครบ 1 นาทีแล้วค่อยเด้ง (นับจากเข้าครั้งแรกในรอบ 6 ชม.)": {
+    "th": "0 = เด้งทันทีที่เข้าเว็บ · เช่น 1 = อยู่บนเว็บครบ 1 นาทีแล้วค่อยเด้ง (นับจากเข้าครั้งแรกในรอบ 6 ชม.)",
+    "en": "0 = show immediately; 1 = show after one minute on the site (measured from the first visit in a 6-hour period)"
+  },
+  "0 = ไม่กำหนด": {
+    "th": "0 = ไม่กำหนด",
+    "en": "0 = not specified"
+  },
+  "0% หรือ 7%": {
+    "th": "0% หรือ 7%",
+    "en": "0% or 7%"
+  },
+  "08:00–23:00 · เวลาไทย": {
+    "th": "08:00–23:00 · เวลาไทย",
+    "en": "08:00–23:00 · Thailand time"
+  },
+  "1 = ใช้งาน, 0 = ปิด": {
+    "th": "1 = ใช้งาน, 0 = ปิด",
+    "en": "1 = active, 0 = disabled"
+  },
+  "1 · ชื่อ Workflow": {
+    "th": "1 · ชื่อ Workflow",
+    "en": "1 · Workflow name"
+  },
+  "1 · เลือกประเภทเงื่อนไข": {
+    "th": "1 · เลือกประเภทเงื่อนไข",
+    "en": "1 · Choose a condition type"
+  },
+  "1 คอลัมน์": {
+    "th": "1 คอลัมน์",
+    "en": "1 column"
+  },
+  "1 คอลัมน์ (อยู่ช่องนี้เท่านั้น)": {
+    "th": "1 คอลัมน์ (อยู่ช่องนี้เท่านั้น)",
+    "en": "1 column (this cell only)"
+  },
+  "1 แถว = SKU ของเรา · 1 ช่อง = ตัวที่เหมือนในแต่ละเว็บ · ทุกการติ๊กบันทึกให้อัตโนมัติ ปิดหน้าแล้วกลับมาทำต่อได้": {
+    "th": "1 แถว = SKU ของเรา · 1 ช่อง = ตัวที่เหมือนในแต่ละเว็บ · ทุกการติ๊กบันทึกให้อัตโนมัติ ปิดหน้าแล้วกลับมาทำต่อได้",
+    "en": "Each row is our SKU; each cell is a matching product on another site. Selections save automatically, so you can return later."
+  },
+  "1. วางลิงก์หน้าที่มีสินค้าหลายตัว": {
+    "th": "1. วางลิงก์หน้าที่มีสินค้าหลายตัว",
+    "en": "1. Paste a page URL containing multiple products"
+  },
+  "1. เลือกวิดีโอ": {
+    "th": "1. เลือกวิดีโอ",
+    "en": "1. Select a video"
+  },
+  "1. ใส่ลิงก์เว็บ แล้วลองดึงข้อมูล 1 รอบ": {
+    "th": "1. ใส่ลิงก์เว็บ แล้วลองดึงข้อมูล 1 รอบ",
+    "en": "1. Enter a website URL and try fetching once"
+  },
+  "100 = แถมฟรี": {
+    "th": "100 = แถมฟรี",
+    "en": "100 = free gift"
+  },
+  "2 · ตั้งค่ารายละเอียด": {
+    "th": "2 · ตั้งค่ารายละเอียด",
+    "en": "2 · Configure details"
+  },
+  "2 คอลัมน์": {
+    "th": "2 คอลัมน์",
+    "en": "2 columns"
+  },
+  "2 คอลัมน์ (50/50)": {
+    "th": "2 คอลัมน์ (50/50)",
+    "en": "2 columns (50/50)"
+  },
+  "2. กลุ่มเป้าหมาย": {
+    "th": "2. กลุ่มเป้าหมาย",
+    "en": "2. Audience"
+  },
+  "2. ตรวจผลดึง ถ้าถูกต้องกดเริ่มเก็บ": {
+    "th": "2. ตรวจผลดึง ถ้าถูกต้องกดเริ่มเก็บ",
+    "en": "2. Check the fetched results, then start collecting"
+  },
+  "2. ระบบอ่านเจอแบบนี้ — ถูกไหม?": {
+    "th": "2. ระบบอ่านเจอแบบนี้ — ถูกไหม?",
+    "en": "2. Is this what the system should read?"
+  },
+  "2. เลือก SKU เป้าหมาย": {
+    "th": "2. เลือก SKU เป้าหมาย",
+    "en": "2. Select a target SKU"
+  },
+  "24 ชม.": {
+    "th": "24 ชม.",
+    "en": "24 hours"
+  },
+  "3 · ช่วงเวลาทำงาน (Schedule)": {
+    "th": "3 · ช่วงเวลาทำงาน (Schedule)",
+    "en": "3 · Schedule"
+  },
+  "3 คอลัมน์": {
+    "th": "3 คอลัมน์",
+    "en": "3 columns"
+  },
+  "3 คอลัมน์ (33/33/33)": {
+    "th": "3 คอลัมน์ (33/33/33)",
+    "en": "3 columns (33/33/33)"
+  },
+  "3 คอลัมน์ (คลุมเกือบทั้งแถว)": {
+    "th": "3 คอลัมน์ (คลุมเกือบทั้งแถว)",
+    "en": "3 columns (almost the full row)"
+  },
+  "3. ทดลองและความถี่": {
+    "th": "3. ทดลองและความถี่",
+    "en": "3. Test and frequency"
+  },
+  "3. เริ่มเก็บ": {
+    "th": "3. เริ่มเก็บ",
+    "en": "3. Start collecting"
+  },
+  "30 วันล่าสุด": {
+    "th": "30 วันล่าสุด",
+    "en": "Last 30 days"
+  },
+  "4 คอลัมน์": {
+    "th": "4 คอลัมน์",
+    "en": "4 columns"
+  },
+  "4. ข้อความที่เลือก": {
+    "th": "4. ข้อความที่เลือก",
+    "en": "4. Selected message"
+  },
+  "7 วันล่าสุด": {
+    "th": "7 วันล่าสุด",
+    "en": "Last 7 days"
+  },
+  "AI ทำอะไรไปบ้าง": {
+    "th": "AI ทำอะไรไปบ้าง",
+    "en": "AI activity"
+  },
+  "AI ที่เชื่อมต่อ (ทุกบัญชี)": {
+    "th": "AI ที่เชื่อมต่อ (ทุกบัญชี)",
+    "en": "Connected AI services (all accounts)"
+  },
+  "AI ที่เชื่อมต่อกับบัญชีของคุณ": {
+    "th": "AI ที่เชื่อมต่อกับบัญชีของคุณ",
+    "en": "AI services connected to your account"
+  },
+  "Approx · น้ำหนักเป็นช่วง": {
+    "th": "Approx · น้ำหนักเป็นช่วง",
+    "en": "Approx · Weight range"
+  },
+  "Assets อื่นๆ": {
+    "th": "Assets อื่นๆ",
+    "en": "Other assets"
+  },
+  "Attribute (ถ้ามี)": {
+    "th": "Attribute (ถ้ามี)",
+    "en": "Attribute (if any)"
+  },
+  "CTA ปุ่ม": {
+    "th": "CTA ปุ่ม",
+    "en": "Action button"
+  },
+  "Category High Level — แถวไอคอนบนหน้าแรก": {
+    "th": "Category High Level — แถวไอคอนบนหน้าแรก",
+    "en": "High-level categories — icon row on the home page"
+  },
+  "Compose · Audience · Schedule/Send — ส่งผ่าน OneSignal ของ Josh": {
+    "th": "Compose · Audience · Schedule/Send — ส่งผ่าน OneSignal ของ Josh",
+    "en": "Compose · Audience · Schedule/Send — delivered through Josh's OneSignal"
+  },
+  "Config ปัจจุบัน:": {
+    "th": "Config ปัจจุบัน:",
+    "en": "Current configuration:"
+  },
+  "Console นี้ปิดอยู่บน production เสมอ ยกเว้นตั้ง": {
+    "th": "Console นี้ปิดอยู่บน production เสมอ ยกเว้นตั้ง",
+    "en": "This console is disabled in production unless you configure"
+  },
+  "Contribution หลังต้นทุน": {
+    "th": "Contribution หลังต้นทุน",
+    "en": "Contribution after costs"
+  },
+  "Conversion (จาก step ก่อนหน้า)": {
+    "th": "Conversion (จาก step ก่อนหน้า)",
+    "en": "Conversion from the previous step"
+  },
+  "Credit Term แอป": {
+    "th": "Credit Term แอป",
+    "en": "App credit terms"
+  },
+  "Division — หมวดบนสุด (FRESHFOOD / DRYFOOD / NONFOOD)": {
+    "th": "Division — หมวดบนสุด (FRESHFOOD / DRYFOOD / NONFOOD)",
+    "en": "Division — top-level category (FRESHFOOD / DRYFOOD / NONFOOD)"
+  },
+  "ERP ส่งเข้ามาทั้งหมด": {
+    "th": "ERP ส่งเข้ามาทั้งหมด",
+    "en": "All incoming ERP records"
+  },
+  "ERP ส่งเข้ามาแล้ว fail": {
+    "th": "ERP ส่งเข้ามาแล้ว fail",
+    "en": "Failed incoming ERP records"
+  },
+  "KYC และวงเงิน": {
+    "th": "KYC และวงเงิน",
+    "en": "Identity verification and credit limit"
+  },
+  "KYC — ยืนยันตัวตน": {
+    "th": "KYC — ยืนยันตัวตน",
+    "en": "KYC — Identity verification"
+  },
+  "Log ดิบ": {
+    "th": "Log ดิบ",
+    "en": "Raw log"
+  },
+  "MCP ยังไม่เปิดบนเซิร์ฟเวอร์นี้ — ตั้ง MCP_PUBLIC_URL (ดู docs/mcp.md)": {
+    "th": "MCP ยังไม่เปิดบนเซิร์ฟเวอร์นี้ — ตั้ง MCP_PUBLIC_URL (ดู docs/mcp.md)",
+    "en": "MCP is not enabled on this server — configure MCP_PUBLIC_URL (see docs/mcp.md)"
+  },
+  "Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway": {
+    "th": "Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway",
+    "en": "Manual QA console for the K-Payment Gateway certification checklist"
+  },
+  "Note ของ {0}": {
+    "th": "Note ของ {0}",
+    "en": "Note for {0}"
+  },
+  "Offer ผูกกับ user": {
+    "th": "Offer ผูกกับ user",
+    "en": "Offer linked to a user"
+  },
+  "PNG พื้นใส แนะนำ 1200×643px": {
+    "th": "PNG พื้นใส แนะนำ 1200×643px",
+    "en": "Transparent PNG; recommended 1200×643px"
+  },
+  "PNG พื้นใส แนะนำ 480×277px": {
+    "th": "PNG พื้นใส แนะนำ 480×277px",
+    "en": "Transparent PNG; recommended 480×277px"
+  },
+  "PNG พื้นใส แนะนำ 500×163px": {
+    "th": "PNG พื้นใส แนะนำ 500×163px",
+    "en": "Transparent PNG; recommended 500×163px"
+  },
+  "PREVIEW (ตัวแปรถูกแทนด้วยค่าตัวอย่าง)": {
+    "th": "PREVIEW (ตัวแปรถูกแทนด้วยค่าตัวอย่าง)",
+    "en": "PREVIEW (variables replaced with sample values)"
+  },
+  "Packed / Closed for VAT ไม่มีในตัวเลือก — handleInvoiceStatus ไม่อ่าน flag พวกนี้": {
+    "th": "Packed / Closed for VAT ไม่มีในตัวเลือก — handleInvoiceStatus ไม่อ่าน flag พวกนี้",
+    "en": "Packed / Closed for VAT are unavailable — handleInvoiceStatus does not read those flags"
+  },
+  "Path เอง": {
+    "th": "Path เอง",
+    "en": "Custom path"
+  },
+  "Popup Template (สร้างจากหน้าลากวาง)": {
+    "th": "Popup Template (สร้างจากหน้าลากวาง)",
+    "en": "Popup template (created in the visual editor)"
+  },
+  "Private price ที่ใช้งานอยู่": {
+    "th": "Private price ที่ใช้งานอยู่",
+    "en": "Active private prices"
+  },
+  "Promotion Product Set ที่ไม่รวม": {
+    "th": "Promotion Product Set ที่ไม่รวม",
+    "en": "Excluded promotion product sets"
+  },
+  "Promotions → จัดการรายชื่อและแจ้งเตือนได้ที่หน้ารายละเอียดคูปอง": {
+    "th": "Promotions → จัดการรายชื่อและแจ้งเตือนได้ที่หน้ารายละเอียดคูปอง",
+    "en": "Promotions → Manage recipients and notifications on the coupon detail page"
+  },
+  "Quotation จาก ERP ({0})": {
+    "th": "Quotation จาก ERP ({0})",
+    "en": "ERP quotations ({0})"
+  },
+  "Reference (ไม่บังคับ)": {
+    "th": "Reference (ไม่บังคับ)",
+    "en": "Reference (optional)"
+  },
+  "Refresh แผนรอตรวจ": {
+    "th": "Refresh แผนรอตรวจ",
+    "en": "Refresh plans awaiting review"
+  },
+  "Relink all ไม่สำเร็จ": {
+    "th": "Relink all ไม่สำเร็จ",
+    "en": "Could not relink all orders"
+  },
+  "Relink ไม่สำเร็จ": {
+    "th": "Relink ไม่สำเร็จ",
+    "en": "Could not relink"
+  },
+  "SKU ของเรา": {
+    "th": "SKU ของเรา",
+    "en": "Our SKU"
+  },
+  "SKU ของเราตัวไหนตรงกับสินค้านี้?": {
+    "th": "SKU ของเราตัวไหนตรงกับสินค้านี้?",
+    "en": "Which of our SKUs matches this product?"
+  },
+  "SKU ของเราที่น่าจะตรงกับ “": {
+    "th": "SKU ของเราที่น่าจะตรงกับ “",
+    "en": "Our SKUs likely to match “"
+  },
+  "SKU ของโปรนี้ ({0} รายการ)": {
+    "th": "SKU ของโปรนี้ ({0} รายการ)",
+    "en": "Promotion SKUs ({0} items)"
+  },
+  "SKU คู่แข่ง (ถ้ามี)": {
+    "th": "SKU คู่แข่ง (ถ้ามี)",
+    "en": "Competitor SKU (if any)"
+  },
+  "SKU ที่ขายต่อ KG: ระบุจำนวนกิโลที่ต้องการเทียบ": {
+    "th": "SKU ที่ขายต่อ KG: ระบุจำนวนกิโลที่ต้องการเทียบ",
+    "en": "SKUs sold per KG: enter the weight to compare"
+  },
+  "SKU ที่น่าจะตรงกัน": {
+    "th": "SKU ที่น่าจะตรงกัน",
+    "en": "Likely matching SKUs"
+  },
+  "SKU ที่น่าจะตรงกับ {0}": {
+    "th": "SKU ที่น่าจะตรงกับ {0}",
+    "en": "SKUs likely to match {0}"
+  },
+  "SKU ที่สั่ง": {
+    "th": "SKU ที่สั่ง",
+    "en": "Ordered SKU"
+  },
+  "SKU ที่ใช้": {
+    "th": "SKU ที่ใช้",
+    "en": "SKU used"
+  },
+  "SKU นี้เทียบอยู่แล้วกับ": {
+    "th": "SKU นี้เทียบอยู่แล้วกับ",
+    "en": "This SKU is already compared with"
+  },
+  "SKU บน shipment นี้ — ตั้งจำนวนที่ ERP invoice จริง": {
+    "th": "SKU บน shipment นี้ — ตั้งจำนวนที่ ERP invoice จริง",
+    "en": "SKUs in this shipment — enter the quantity actually invoiced by ERP"
+  },
+  "SKU สินค้า": {
+    "th": "SKU สินค้า",
+    "en": "Product SKU"
+  },
+  "SKU หรือชื่อสินค้า": {
+    "th": "SKU หรือชื่อสินค้า",
+    "en": "SKU or product name"
+  },
+  "SKU ไม่พบ:": {
+    "th": "SKU ไม่พบ:",
+    "en": "SKU not found:"
+  },
+  "Sent (ได้รับข้อความ)": {
+    "th": "Sent (ได้รับข้อความ)",
+    "en": "Sent (message received)"
+  },
+  "Sessions รายวัน": {
+    "th": "Sessions รายวัน",
+    "en": "Daily sessions"
+  },
+  "Shipment ใน": {
+    "th": "Shipment ใน",
+    "en": "Shipment in"
+  },
+  "Shop / สาขา:": {
+    "th": "Shop / สาขา:",
+    "en": "Shop / Branch:"
+  },
+  "Side Panel (ขวา)": {
+    "th": "Side Panel (ขวา)",
+    "en": "Side panel (right)"
+  },
+  "Slug (URL ของหน้า)": {
+    "th": "Slug (URL ของหน้า)",
+    "en": "Slug (page URL)"
+  },
+  "Slug (ตัวระบุ URL)": {
+    "th": "Slug (ตัวระบุ URL)",
+    "en": "Slug (URL identifier)"
+  },
+  "Slug (ส่วนท้ายลิงก์) *": {
+    "th": "Slug (ส่วนท้ายลิงก์) *",
+    "en": "Slug (URL suffix) *"
+  },
+  "Slug ของ {0}": {
+    "th": "Slug ของ {0}",
+    "en": "Slug for {0}"
+  },
+  "Sub Category Level 3 — ชั้นที่ผูกสินค้า": {
+    "th": "Sub Category Level 3 — ชั้นที่ผูกสินค้า",
+    "en": "Subcategory level 3 — product assignment level"
+  },
+  "TRIGGER ที่บันทึกไว้ (PRESET)": {
+    "th": "TRIGGER ที่บันทึกไว้ (PRESET)",
+    "en": "Saved trigger presets"
+  },
+  "URL (ตอบกลับเป็น JSON)": {
+    "th": "URL (ตอบกลับเป็น JSON)",
+    "en": "URL (returns JSON)"
+  },
+  "URL รูปพื้นหลัง (ไม่บังคับ)": {
+    "th": "URL รูปพื้นหลัง (ไม่บังคับ)",
+    "en": "Background image URL (optional)"
+  },
+  "UUID ของ user": {
+    "th": "UUID ของ user",
+    "en": "User UUID"
+  },
+  "UUID เท่านั้น คั่นด้วย comma": {
+    "th": "UUID เท่านั้น คั่นด้วย comma",
+    "en": "UUIDs only, separated by commas"
+  },
+  "UUID เท่านั้น คั่นด้วย comma · ตรวจจากหน้า Segments": {
+    "th": "UUID เท่านั้น คั่นด้วย comma · ตรวจจากหน้า Segments",
+    "en": "UUIDs only, separated by commas · See the Segments page"
+  },
+  "User ID (optional ถ้าอยากทดสอบแบบมี login)": {
+    "th": "User ID (optional ถ้าอยากทดสอบแบบมี login)",
+    "en": "User ID (optional, for testing a signed-in user)"
+  },
+  "User ID ที่จะทดสอบ": {
+    "th": "User ID ที่จะทดสอบ",
+    "en": "User ID to test"
+  },
+  "VARIANT ตาม SEGMENT": {
+    "th": "VARIANT ตาม SEGMENT",
+    "en": "Variant by segment"
+  },
+  "View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform": {
+    "th": "View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform",
+    "en": "View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion by audience / platform"
+  },
+  "Webhook อื่น ๆ": {
+    "th": "Webhook อื่น ๆ",
+    "en": "Other webhooks"
+  },
+  "Win-back (แอปเซลล์)": {
+    "th": "Win-back (แอปเซลล์)",
+    "en": "Win-back (sales app)"
+  },
+  "Workflow UUID ที่ตรวจพบ": {
+    "th": "Workflow UUID ที่ตรวจพบ",
+    "en": "Detected workflow UUID"
+  },
+  "Workflow นี้ไม่ใช่ trigger แบบ scheduled — จะมีประวัติก็ต่อเมื่อเคยเป็น scheduled และถูกยิงมาก่อน": {
+    "th": "Workflow นี้ไม่ใช่ trigger แบบ scheduled — จะมีประวัติก็ต่อเมื่อเคยเป็น scheduled และถูกยิงมาก่อน",
+    "en": "This workflow does not use a scheduled trigger. History is available only if it was previously scheduled and executed."
+  },
+  "category id จากหน้า Categories": {
+    "th": "category id จากหน้า Categories",
+    "en": "Category ID from the Categories page"
+  },
+  "checksum ผิด": {
+    "th": "checksum ผิด",
+    "en": "Invalid checksum"
+  },
+  "commerce คิดไม่ได้": {
+    "th": "commerce คิดไม่ได้",
+    "en": "Commerce could not calculate"
+  },
+  "commerce จะส่ง": {
+    "th": "commerce จะส่ง",
+    "en": "Commerce will send"
+  },
+  "commerce สร้างไม่ได้": {
+    "th": "commerce สร้างไม่ได้",
+    "en": "Commerce could not create"
+  },
+  "dormant {0} · watch {1} · กลับมาแล้ว {2}": {
+    "th": "dormant {0} · watch {1} · กลับมาแล้ว {2}",
+    "en": "Dormant {0} · Watch {1} · Returned {2}"
+  },
+  "event ที่ส่งไม่สำเร็จ": {
+    "th": "event ที่ส่งไม่สำเร็จ",
+    "en": "Failed event deliveries"
+  },
+  "josh จะลองใหม่เอง": {
+    "th": "josh จะลองใหม่เอง",
+    "en": "Josh will retry automatically"
+  },
+  "livemode ไม่ตรง": {
+    "th": "livemode ไม่ตรง",
+    "en": "Livemode mismatch"
+  },
+  "llm (ยังไม่รองรับ)": {
+    "th": "llm (ยังไม่รองรับ)",
+    "en": "LLM (not yet supported)"
+  },
+  "max ต่อวัน แล้วรวม": {
+    "th": "max ต่อวัน แล้วรวม",
+    "en": "Daily maximum, then total"
+  },
+  "max ต่อวัน แล้วรวม — ไม่บวก cron ซ้ำ": {
+    "th": "max ต่อวัน แล้วรวม — ไม่บวก cron ซ้ำ",
+    "en": "Daily maximum, then total — without counting cron runs twice"
+  },
+  "navigate (ลิงก์)": {
+    "th": "navigate (ลิงก์)",
+    "en": "Navigate (link)"
+  },
+  "notify ซ้ำ (resend เดิม)": {
+    "th": "notify ซ้ำ (resend เดิม)",
+    "en": "Duplicate notification (resend the same message)"
+  },
+  "occurrence ต่อวัน": {
+    "th": "occurrence ต่อวัน",
+    "en": "Occurrences per day"
+  },
+  "order ของ josh": {
+    "th": "order ของ josh",
+    "en": "Josh order"
+  },
+  "payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง": {
+    "th": "payload ไม่ใช่ JSON ที่ถูกต้อง — แก้ก่อนยิง",
+    "en": "Payload is not valid JSON — fix it before sending"
+  },
+  "price หรือชื่อใหม่": {
+    "th": "price หรือชื่อใหม่",
+    "en": "New price or name"
+  },
+  "push แสดงหัวข้อ + ข้อความ + รูปใหญ่ · in-app เก็บรูปไว้ใน data · ตัวแปรจะถูกแทนด้วยข้อมูลลูกค้าจริงตอนส่ง": {
+    "th": "push แสดงหัวข้อ + ข้อความ + รูปใหญ่ · in-app เก็บรูปไว้ใน data · ตัวแปรจะถูกแทนด้วยข้อมูลลูกค้าจริงตอนส่ง",
+    "en": "Push shows a title, message and large image; in-app stores the image in data. Variables use real customer data when sent."
+  },
+  "read-only ในเวอร์ชันแรก": {
+    "th": "read-only ในเวอร์ชันแรก",
+    "en": "Read-only in the first version"
+  },
+  "replay ข้อมูล ERP": {
+    "th": "replay ข้อมูล ERP",
+    "en": "Replay ERP data"
+  },
+  "revision ที่อนุมัติ": {
+    "th": "revision ที่อนุมัติ",
+    "en": "Approved revision"
+  },
+  "shipment ไป cancelled, คืน stock": {
+    "th": "shipment ไป cancelled, คืน stock",
+    "en": "Set shipment to cancelled and release stock"
+  },
+  "shipment ไป preparing (จาก paid/payment_pending), จอง stock": {
+    "th": "shipment ไป preparing (จาก paid/payment_pending), จอง stock",
+    "en": "Set shipment to preparing (from paid/payment_pending) and reserve stock"
+  },
+  "sku_ลำดับ.นามสกุล": {
+    "th": "sku_ลำดับ.นามสกุล",
+    "en": "sku_sequence.extension"
+  },
+  "slug ต้องเป็น a-z, 0-9, - เท่านั้น": {
+    "th": "slug ต้องเป็น a-z, 0-9, - เท่านั้น",
+    "en": "Slug may contain only a-z, 0-9 and hyphens"
+  },
+  "tamper: ไม่มี (payload ถูกต้อง)": {
+    "th": "tamper: ไม่มี (payload ถูกต้อง)",
+    "en": "Tamper: none (valid payload)"
+  },
+  "user ที่อยู่ใน segment นี้เห็นเนื้อหาชุดนี้แทนค่าเริ่มต้น (variant แรกที่ตรงชนะ · guest เห็นค่าเริ่มต้นเสมอ)": {
+    "th": "user ที่อยู่ใน segment นี้เห็นเนื้อหาชุดนี้แทนค่าเริ่มต้น (variant แรกที่ตรงชนะ · guest เห็นค่าเริ่มต้นเสมอ)",
+    "en": "Users in this segment see this content instead of the default. The first matching variant wins; guests always see the default."
+  },
+  "uuid ของ user": {
+    "th": "uuid ของ user",
+    "en": "User UUID"
+  },
+  "v1 รองรับเงื่อนไขเดียว:": {
+    "th": "v1 รองรับเงื่อนไขเดียว:",
+    "en": "v1 supports one condition:"
+  },
+  "{0} / {1} บรรทัด": {
+    "th": "{0} / {1} บรรทัด",
+    "en": "{0} / {1} lines"
+  },
+  "{0} / {1} รายการ": {
+    "th": "{0} / {1} รายการ",
+    "en": "{0} / {1} items"
+  },
+  "{0} · {1} SKU · จอง {2}": {
+    "th": "{0} · {1} SKU · จอง {2}",
+    "en": "{0} · {1} SKUs · Reserved {2}"
+  },
+  "{0}/{1} · ติดต่อครั้งแรกเฉลี่ย {2} วัน": {
+    "th": "{0}/{1} · ติดต่อครั้งแรกเฉลี่ย {2} วัน",
+    "en": "{0}/{1} · Average first contact after {2} days"
+  },
+  "กก.": {
+    "th": "กก.",
+    "en": "kg"
+  },
+  "กก. (บาท รวม VAT)": {
+    "th": "กก. (บาท รวม VAT)",
+    "en": "kg (THB, including VAT)"
+  },
+  "กก. / คู่แข่ง": {
+    "th": "กก. / คู่แข่ง",
+    "en": "kg / Competitor"
+  },
+  "กฎจับคู่ intent ของ chatbot จาก pattern (regex)": {
+    "th": "กฎจับคู่ intent ของ chatbot จาก pattern (regex)",
+    "en": "Match chatbot intents using regex patterns"
+  },
+  "กด \"ดูรายชื่อ\" เพื่อแสดงตาราง": {
+    "th": "กด \"ดูรายชื่อ\" เพื่อแสดงตาราง",
+    "en": "Click \"View recipients\" to show the table"
+  },
+  "กดหมุดเพื่อดูรายละเอียด · เปลี่ยนหน้ารายชื่อหรือตัวกรองเพื่อดูร้านกลุ่มถัดไป": {
+    "th": "กดหมุดเพื่อดูรายละเอียด · เปลี่ยนหน้ารายชื่อหรือตัวกรองเพื่อดูร้านกลุ่มถัดไป",
+    "en": "Click a pin for details. Change the list page or filters to view the next group of restaurants."
+  },
+  "กดเปิด": {
+    "th": "กดเปิด",
+    "en": "Click to open"
+  },
+  "กรอก Order ID, เลือกรายการสินค้าอย่างน้อย 1 รายการ, และเหตุผล": {
+    "th": "กรอก Order ID, เลือกรายการสินค้าอย่างน้อย 1 รายการ, และเหตุผล",
+    "en": "Enter an Order ID, choose at least one product, and give a reason"
+  },
+  "กรอกข้อความแจ้งเตือนก่อน": {
+    "th": "กรอกข้อความแจ้งเตือนก่อน",
+    "en": "Enter a notification message first"
+  },
+  "กรอกข้อมูลที่มี * ให้ครบก่อนยิง": {
+    "th": "กรอกข้อมูลที่มี * ให้ครบก่อนยิง",
+    "en": "Complete all required (*) fields before sending"
+  },
+  "กรอกจำนวน ≥ 0": {
+    "th": "กรอกจำนวน ≥ 0",
+    "en": "Enter a quantity ≥ 0"
+  },
+  "กรอกชื่อ template ก่อน": {
+    "th": "กรอกชื่อ template ก่อน",
+    "en": "Enter a template name first"
+  },
+  "กรอกชื่อ template และหัวข้อก่อน": {
+    "th": "กรอกชื่อ template และหัวข้อก่อน",
+    "en": "Enter a template name and title first"
+  },
+  "กรอกชื่อคนขับก่อน": {
+    "th": "กรอกชื่อคนขับก่อน",
+    "en": "Enter a driver name first"
+  },
+  "กรอกน้ำหนักเอง": {
+    "th": "กรอกน้ำหนักเอง",
+    "en": "Enter weight manually"
+  },
+  "กรอกปลายทางแล้วกด \"สร้างลิงก์\"": {
+    "th": "กรอกปลายทางแล้วกด \"สร้างลิงก์\"",
+    "en": "Enter a destination, then click \"Create link\""
+  },
+  "กรองข้อมูล": {
+    "th": "กรองข้อมูล",
+    "en": "Filter data"
+  },
+  "กรองจากข้อมูลที่มีจริง": {
+    "th": "กรองจากข้อมูลที่มีจริง",
+    "en": "Filter using actual data"
+  },
+  "กรองตาม Segment": {
+    "th": "กรองตาม Segment",
+    "en": "Filter by segment"
+  },
+  "กรองตาม Trigger": {
+    "th": "กรองตาม Trigger",
+    "en": "Filter by trigger"
+  },
+  "กรองตาม role ของผู้ใช้ เช่น customer, staff": {
+    "th": "กรองตาม role ของผู้ใช้ เช่น customer, staff",
+    "en": "Filter by user role, such as customer or staff"
+  },
+  "กรองตามกลุ่มประเภทร้าน (รูปแบบเดิม)": {
+    "th": "กรองตามกลุ่มประเภทร้าน (รูปแบบเดิม)",
+    "en": "Filter by restaurant group (legacy format)"
+  },
+  "กรองตามประเภทร้านที่ขาย": {
+    "th": "กรองตามประเภทร้านที่ขาย",
+    "en": "Filter by restaurant type served"
+  },
+  "กรองตามประเภทลูกค้า (custype)": {
+    "th": "กรองตามประเภทลูกค้า (custype)",
+    "en": "Filter by customer type (custype)"
+  },
+  "กรองตามสถานะ": {
+    "th": "กรองตามสถานะ",
+    "en": "Filter by status"
+  },
+  "กรองรายการที่เลือก — ชื่อ/SKU": {
+    "th": "กรองรายการที่เลือก — ชื่อ/SKU",
+    "en": "Filter selected items — Name/SKU"
+  },
+  "กรองสถานะ...": {
+    "th": "กรองสถานะ...",
+    "en": "Filter status..."
+  },
+  "กรัม": {
+    "th": "กรัม",
+    "en": "g"
+  },
+  "กราฟ": {
+    "th": "กราฟ",
+    "en": "Chart"
+  },
+  "กริดสินค้า": {
+    "th": "กริดสินค้า",
+    "en": "Product grid"
+  },
+  "กรุณากรอก Pattern": {
+    "th": "กรุณากรอก Pattern",
+    "en": "Enter a pattern"
+  },
+  "กรุณากรอก SKU และชื่อสินค้าทั้ง 2 ภาษา": {
+    "th": "กรุณากรอก SKU และชื่อสินค้าทั้ง 2 ภาษา",
+    "en": "Enter the SKU and product names in both languages"
+  },
+  "กรุณากรอก slug": {
+    "th": "กรุณากรอก slug",
+    "en": "Enter a slug"
+  },
+  "กรุณากรอกข้อมูลที่จำเป็น (* SKU, ชื่อสินค้าทั้ง 2 ภาษา และราคาขาย) ให้ครบถ้วนครับ": {
+    "th": "กรุณากรอกข้อมูลที่จำเป็น (* SKU, ชื่อสินค้าทั้ง 2 ภาษา และราคาขาย) ให้ครบถ้วนครับ",
+    "en": "Complete the required fields: SKU, product names in both languages, and selling price"
+  },
+  "กรุณากรอกชื่อ": {
+    "th": "กรุณากรอกชื่อ",
+    "en": "Enter a name"
+  },
+  "กรุณากรอกชื่อ Segment": {
+    "th": "กรุณากรอกชื่อ Segment",
+    "en": "Enter a segment name"
+  },
+  "กรุณากรอกชื่อ Supplier": {
+    "th": "กรุณากรอกชื่อ Supplier",
+    "en": "Enter a supplier name"
+  },
+  "กรุณากรอกชื่อและ Trigger Pattern": {
+    "th": "กรุณากรอกชื่อและ Trigger Pattern",
+    "en": "Enter a name and trigger pattern"
+  },
+  "กรุณาตั้งค่าปุ่ม Dismiss จากภาษาไทยก่อน จึงจะแปลป้ายปุ่มได้": {
+    "th": "กรุณาตั้งค่าปุ่ม Dismiss จากภาษาไทยก่อน จึงจะแปลป้ายปุ่มได้",
+    "en": "Configure the Thai Dismiss button first before translating its label"
+  },
+  "กรุณาระบุ SKU และราคา": {
+    "th": "กรุณาระบุ SKU และราคา",
+    "en": "Enter the SKU and price"
+  },
+  "กรุณาระบุชื่อ Product Set": {
+    "th": "กรุณาระบุชื่อ Product Set",
+    "en": "Enter a product set name"
+  },
+  "กรุณาระบุชื่อ workflow": {
+    "th": "กรุณาระบุชื่อ workflow",
+    "en": "Enter a workflow name"
+  },
+  "กรุณาระบุราคาขาย": {
+    "th": "กรุณาระบุราคาขาย",
+    "en": "Enter a selling price"
+  },
+  "กรุณาอัปโหลดวิดีโอ": {
+    "th": "กรุณาอัปโหลดวิดีโอ",
+    "en": "Upload a video"
+  },
+  "กรุณาเพิ่มอย่างน้อย 1 เงื่อนไข": {
+    "th": "กรุณาเพิ่มอย่างน้อย 1 เงื่อนไข",
+    "en": "Add at least one condition"
+  },
+  "กรุณาเลือก SKU อย่างน้อย 1 รายการ": {
+    "th": "กรุณาเลือก SKU อย่างน้อย 1 รายการ",
+    "en": "Select at least one SKU"
+  },
+  "กรุณาเลือกไฟล์รูปภาพเท่านั้น": {
+    "th": "กรุณาเลือกไฟล์รูปภาพเท่านั้น",
+    "en": "Select an image file only"
+  },
+  "กรุณาเลือกไฟล์วิดีโอเท่านั้น": {
+    "th": "กรุณาเลือกไฟล์วิดีโอเท่านั้น",
+    "en": "Select a video file only"
+  },
+  "กลับรายการบริษัท": {
+    "th": "กลับรายการบริษัท",
+    "en": "Back to companies"
+  },
+  "กลับรายการออเดอร์": {
+    "th": "กลับรายการออเดอร์",
+    "en": "Back to orders"
+  },
+  "กลับรายชื่อผู้ใช้": {
+    "th": "กลับรายชื่อผู้ใช้",
+    "en": "Back to users"
+  },
+  "กลับไปที่ “ยังไม่ได้ตรวจ”": {
+    "th": "กลับไปที่ “ยังไม่ได้ตรวจ”",
+    "en": "Back to \"Not reviewed\""
+  },
+  "กลุ่ม": {
+    "th": "กลุ่ม",
+    "en": "Group"
+  },
+  "กลุ่ม watch": {
+    "th": "กลุ่ม watch",
+    "en": "Watch group"
+  },
+  "กลุ่มควบคุม": {
+    "th": "กลุ่มควบคุม",
+    "en": "Control group"
+  },
+  "กลุ่มควบคุม (Holdout)": {
+    "th": "กลุ่มควบคุม (Holdout)",
+    "en": "Control group (holdout)"
+  },
+  "กลุ่มลูกค้า": {
+    "th": "กลุ่มลูกค้า",
+    "en": "Customer segment"
+  },
+  "กลุ่มลูกค้า (Audience)": {
+    "th": "กลุ่มลูกค้า (Audience)",
+    "en": "Customer audience"
+  },
+  "กลุ่มลูกค้าของโปร": {
+    "th": "กลุ่มลูกค้าของโปร",
+    "en": "Promotion audience"
+  },
+  "กลุ่มลูกค้าที่ล็อกรายชื่อตอนสร้าง — ใช้กับ Coupon, Banner และกรองรายชื่อ Users": {
+    "th": "กลุ่มลูกค้าที่ล็อกรายชื่อตอนสร้าง — ใช้กับ Coupon, Banner และกรองรายชื่อ Users",
+    "en": "Customer segments lock their recipients when created. Use them for coupons, banners and filtering users."
+  },
+  "กลุ่มส่ง": {
+    "th": "กลุ่มส่ง",
+    "en": "Send group"
+  },
+  "กลุ่มเป้าหมาย": {
+    "th": "กลุ่มเป้าหมาย",
+    "en": "Audience"
+  },
+  "กลุ่มเป้าหมาย (Audience)": {
+    "th": "กลุ่มเป้าหมาย (Audience)",
+    "en": "Audience"
+  },
+  "กลุ่มเป้าหมาย สินค้า และการทดลอง": {
+    "th": "กลุ่มเป้าหมาย สินค้า และการทดลอง",
+    "en": "Audience, products and experiments"
+  },
+  "กลุ่มเป้าหมายที่เข้าเงื่อนไขตอนนี้:": {
+    "th": "กลุ่มเป้าหมายที่เข้าเงื่อนไขตอนนี้:",
+    "en": "Users currently matching the audience:"
+  },
+  "การกระจายลูกค้าตาม Tier": {
+    "th": "การกระจายลูกค้าตาม Tier",
+    "en": "Customer distribution by tier"
+  },
+  "การจัดวางข้อความ": {
+    "th": "การจัดวางข้อความ",
+    "en": "Text alignment"
+  },
+  "การทำงานเมื่อคลิก (Action)": {
+    "th": "การทำงานเมื่อคลิก (Action)",
+    "en": "Click action"
+  },
+  "การบันทึก อนุมัติ หรือสร้างร่าง workflow ไม่ส่งข้อความ การตรวจสต็อก กำไร และงบ ณ เวลาส่งยังไม่พร้อมสำหรับเปิดใช้แผนนี้": {
+    "th": "การบันทึก อนุมัติ หรือสร้างร่าง workflow ไม่ส่งข้อความ การตรวจสต็อก กำไร และงบ ณ เวลาส่งยังไม่พร้อมสำหรับเปิดใช้แผนนี้",
+    "en": "Saving, approving or creating a workflow draft does not send messages. Stock, profit and budget checks at send time are not ready to activate this plan."
+  },
+  "การบันทึก อนุมัติ และสร้างร่างไม่ส่งข้อความ ระบบยังไม่บังคับสต็อก กำไร และงบ ณ เวลาส่ง จึงต้องหยุด workflow นี้ไว้": {
+    "th": "การบันทึก อนุมัติ และสร้างร่างไม่ส่งข้อความ ระบบยังไม่บังคับสต็อก กำไร และงบ ณ เวลาส่ง จึงต้องหยุด workflow นี้ไว้",
+    "en": "Saving, approving and creating drafts do not send messages. Send-time stock, profit and budget limits are not enforced, so this workflow must remain paused."
+  },
+  "การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า ของลูกค้าแต่ละคนอีกชั้น": {
+    "th": "การปิดที่นี่เป็นสวิตช์ระดับระบบ — ปิดแล้วไม่มีลูกค้าคนไหนได้รับ ไม่ว่าเขาจะเปิดรับไว้หรือไม่ ส่วนช่องทางที่เปิดไว้ยังต้องผ่านการตั้งค่า ของลูกค้าแต่ละคนอีกชั้น",
+    "en": "This is a system-wide switch. Disabling it stops delivery to all customers, regardless of their preferences. Enabled channels also depend on each customer's settings."
+  },
+  "การอนุมัติ/ปฏิเสธคำขอนี้ทำในระบบ CS-CRM แยกต่างหาก หน้านี้ใช้สำหรับดูเอกสารเท่านั้น": {
+    "th": "การอนุมัติ/ปฏิเสธคำขอนี้ทำในระบบ CS-CRM แยกต่างหาก หน้านี้ใช้สำหรับดูเอกสารเท่านั้น",
+    "en": "Approve or reject this request in the separate CS-CRM system. This page is for viewing documents only."
+  },
+  "การเก็บข้อมูลเบื้องหลัง (ช่วงทดลอง):": {
+    "th": "การเก็บข้อมูลเบื้องหลัง (ช่วงทดลอง):",
+    "en": "Background collection (trial):"
+  },
+  "การเงิน": {
+    "th": "การเงิน",
+    "en": "Finance"
+  },
+  "การเปลี่ยน SKU ลิงก์ น้ำหนัก หรือเงื่อนไขราคา จะล้างราคาเดิมและต้องยืนยันคู่ใหม่": {
+    "th": "การเปลี่ยน SKU ลิงก์ น้ำหนัก หรือเงื่อนไขราคา จะล้างราคาเดิมและต้องยืนยันคู่ใหม่",
+    "en": "Changing the SKU, link, weight or pricing conditions clears the previous price and requires confirming the match again."
+  },
+  "การแสดงผลต่อจอ": {
+    "th": "การแสดงผลต่อจอ",
+    "en": "Display by screen size"
+  },
+  "กำลัง Export...": {
+    "th": "กำลัง Export...",
+    "en": "Exporting..."
+  },
+  "กำลังขอข้อมูล…": {
+    "th": "กำลังขอข้อมูล…",
+    "en": "Requesting data…"
+  },
+  "กำลังคำนวณ...": {
+    "th": "กำลังคำนวณ...",
+    "en": "Calculating..."
+  },
+  "กำลังคำนวณราคา...": {
+    "th": "กำลังคำนวณราคา...",
+    "en": "Calculating price..."
+  },
+  "กำลังค้นหา...": {
+    "th": "กำลังค้นหา...",
+    "en": "Searching..."
+  },
+  "กำลังค้นหาร้านอาหาร…": {
+    "th": "กำลังค้นหาร้านอาหาร…",
+    "en": "Finding restaurants…"
+  },
+  "กำลังค้น…": {
+    "th": "กำลังค้น…",
+    "en": "Searching…"
+  },
+  "กำลังจัดส่ง": {
+    "th": "กำลังจัดส่ง",
+    "en": "Shipping"
+  },
+  "กำลังดำเนินการ...": {
+    "th": "กำลังดำเนินการ...",
+    "en": "Processing..."
+  },
+  "กำลังดึงข้อมูล… (อาจใช้ถึง 2 นาที)": {
+    "th": "กำลังดึงข้อมูล… (อาจใช้ถึง 2 นาที)",
+    "en": "Fetching data… (may take up to 2 minutes)"
+  },
+  "กำลังดึง…": {
+    "th": "กำลังดึง…",
+    "en": "Fetching…"
+  },
+  "กำลังตรวจ": {
+    "th": "กำลังตรวจ",
+    "en": "Checking"
+  },
+  "กำลังตรวจสอบ...": {
+    "th": "กำลังตรวจสอบ...",
+    "en": "Checking..."
+  },
+  "กำลังตรวจสอบการเปลี่ยนแปลง...": {
+    "th": "กำลังตรวจสอบการเปลี่ยนแปลง...",
+    "en": "Checking changes..."
+  },
+  "กำลังตรวจ…": {
+    "th": "กำลังตรวจ…",
+    "en": "Checking…"
+  },
+  "กำลังพรีวิว...": {
+    "th": "กำลังพรีวิว...",
+    "en": "Loading preview..."
+  },
+  "กำลังยิง...": {
+    "th": "กำลังยิง...",
+    "en": "Sending..."
+  },
+  "กำลังยิง…": {
+    "th": "กำลังยิง…",
+    "en": "Sending…"
+  },
+  "กำลังย้อนกลับ...": {
+    "th": "กำลังย้อนกลับ...",
+    "en": "Reverting..."
+  },
+  "กำลังรีเซ็ต…": {
+    "th": "กำลังรีเซ็ต…",
+    "en": "Resetting…"
+  },
+  "กำลังรีเฟรช…": {
+    "th": "กำลังรีเฟรช…",
+    "en": "Refreshing…"
+  },
+  "กำลังร่าง…": {
+    "th": "กำลังร่าง…",
+    "en": "Drafting…"
+  },
+  "กำลังลบ...": {
+    "th": "กำลังลบ...",
+    "en": "Deleting..."
+  },
+  "กำลังล้าง…": {
+    "th": "กำลังล้าง…",
+    "en": "Clearing…"
+  },
+  "กำลังสร้าง QR...": {
+    "th": "กำลังสร้าง QR...",
+    "en": "Creating QR..."
+  },
+  "กำลังสร้าง...": {
+    "th": "กำลังสร้าง...",
+    "en": "Creating..."
+  },
+  "กำลังสร้าง/แก้": {
+    "th": "กำลังสร้าง/แก้",
+    "en": "Creating/editing"
+  },
+  "กำลังสร้างรายชื่อจากกลุ่มเป้าหมาย… หรือกดปุ่มด้านบน": {
+    "th": "กำลังสร้างรายชื่อจากกลุ่มเป้าหมาย… หรือกดปุ่มด้านบน",
+    "en": "Building the audience list… or use the button above"
+  },
+  "กำลังสร้างออเดอร์...": {
+    "th": "กำลังสร้างออเดอร์...",
+    "en": "Creating order..."
+  },
+  "กำลังสลับ...": {
+    "th": "กำลังสลับ...",
+    "en": "Switching..."
+  },
+  "กำลังส่ง...": {
+    "th": "กำลังส่ง...",
+    "en": "Sending..."
+  },
+  "กำลังส่งออก…": {
+    "th": "กำลังส่งออก…",
+    "en": "Exporting…"
+  },
+  "กำลังส่ง…": {
+    "th": "กำลังส่ง…",
+    "en": "Sending…"
+  },
+  "กำลังหา SKU ที่ชื่อใกล้เคียง…": {
+    "th": "กำลังหา SKU ที่ชื่อใกล้เคียง…",
+    "en": "Finding SKUs with similar names…"
+  },
+  "กำลังหาสินค้าที่ชื่อใกล้เคียงในแต่ละเว็บ…": {
+    "th": "กำลังหาสินค้าที่ชื่อใกล้เคียงในแต่ละเว็บ…",
+    "en": "Finding similarly named products on each website…"
+  },
+  "กำลังอัปโหลดชุดที่": {
+    "th": "กำลังอัปโหลดชุดที่",
+    "en": "Uploading batch"
+  },
+  "กำลังอัปโหลด…": {
+    "th": "กำลังอัปโหลด…",
+    "en": "Uploading…"
+  },
+  "กำลังอ่านข้อมูลพื้นที่…": {
+    "th": "กำลังอ่านข้อมูลพื้นที่…",
+    "en": "Loading area data…"
+  },
+  "กำลังอ่าน…": {
+    "th": "กำลังอ่าน…",
+    "en": "Reading…"
+  },
+  "กำลังเก็บเบื้องหลัง · ได้แล้ว": {
+    "th": "กำลังเก็บเบื้องหลัง · ได้แล้ว",
+    "en": "Collecting in the background · Collected"
+  },
+  "กำลังเช็ก…": {
+    "th": "กำลังเช็ก…",
+    "en": "Checking…"
+  },
+  "กำลังเช็ค...": {
+    "th": "กำลังเช็ค...",
+    "en": "Checking..."
+  },
+  "กำลังเปิดย้อนไปหน้าที่ค้าง · หน้า": {
+    "th": "กำลังเปิดย้อนไปหน้าที่ค้าง · หน้า",
+    "en": "Resuming the last page · Page"
+  },
+  "กำลังเปิดย้อนไปหน้าที่ค้าง · หน้า {0} จาก {1}": {
+    "th": "กำลังเปิดย้อนไปหน้าที่ค้าง · หน้า {0} จาก {1}",
+    "en": "Resuming the last page · Page {0} of {1}"
+  },
+  "กำลังเปิดเว็บและลองอ่าน 2 หน้า… อาจใช้ 30–60 วินาที": {
+    "th": "กำลังเปิดเว็บและลองอ่าน 2 หน้า… อาจใช้ 30–60 วินาที",
+    "en": "Opening the site and testing two pages… may take 30–60 seconds"
+  },
+  "กำลังเปิดใช้งาน...": {
+    "th": "กำลังเปิดใช้งาน...",
+    "en": "Activating..."
+  },
+  "กำลังเริ่ม…": {
+    "th": "กำลังเริ่ม…",
+    "en": "Starting…"
+  },
+  "กำลังแก้ variant: {0} — คนใน segment นี้เห็นแบบนี้": {
+    "th": "กำลังแก้ variant: {0} — คนใน segment นี้เห็นแบบนี้",
+    "en": "Editing variant: {0} — users in this segment see this version"
+  },
+  "กำลังแก้ค่าเริ่มต้น — ทุกคนที่ไม่เข้า variant ไหนเห็นแบบนี้": {
+    "th": "กำลังแก้ค่าเริ่มต้น — ทุกคนที่ไม่เข้า variant ไหนเห็นแบบนี้",
+    "en": "Editing the default — shown to users who do not match any variant"
+  },
+  "กำลังแก้เฉพาะ": {
+    "th": "กำลังแก้เฉพาะ",
+    "en": "Editing only"
+  },
+  "กำลังโหลด SKU และคู่ที่ระบบเสนอ…": {
+    "th": "กำลังโหลด SKU และคู่ที่ระบบเสนอ…",
+    "en": "Loading SKUs and suggested matches…"
+  },
+  "กำลังโหลด preview…": {
+    "th": "กำลังโหลด preview…",
+    "en": "Loading preview…"
+  },
+  "กำลังโหลด shipments...": {
+    "th": "กำลังโหลด shipments...",
+    "en": "Loading shipments..."
+  },
+  "กำลังโหลด template...": {
+    "th": "กำลังโหลด template...",
+    "en": "Loading template..."
+  },
+  "กำลังโหลด...": {
+    "th": "กำลังโหลด...",
+    "en": "Loading..."
+  },
+  "กำลังโหลดข้อมูลบริษัท...": {
+    "th": "กำลังโหลดข้อมูลบริษัท...",
+    "en": "Loading company data..."
+  },
+  "กำลังโหลดข้อมูลลูกค้า...": {
+    "th": "กำลังโหลดข้อมูลลูกค้า...",
+    "en": "Loading customer data..."
+  },
+  "กำลังโหลดคำขอ Admin...": {
+    "th": "กำลังโหลดคำขอ Admin...",
+    "en": "Loading admin requests..."
+  },
+  "กำลังโหลดคิว KYC...": {
+    "th": "กำลังโหลดคิว KYC...",
+    "en": "Loading KYC queue..."
+  },
+  "กำลังโหลดคูปองต้นฉบับ…": {
+    "th": "กำลังโหลดคูปองต้นฉบับ…",
+    "en": "Loading original coupon…"
+  },
+  "กำลังโหลดบริการและแหล่งข้อมูล…": {
+    "th": "กำลังโหลดบริการและแหล่งข้อมูล…",
+    "en": "Loading services and data sources…"
+  },
+  "กำลังโหลดรายการ...": {
+    "th": "กำลังโหลดรายการ...",
+    "en": "Loading list..."
+  },
+  "กำลังโหลดรายการ…": {
+    "th": "กำลังโหลดรายการ…",
+    "en": "Loading list…"
+  },
+  "กำลังโหลดรายชื่อ...": {
+    "th": "กำลังโหลดรายชื่อ...",
+    "en": "Loading recipients..."
+  },
+  "กำลังโหลดรายชื่อเดิม...": {
+    "th": "กำลังโหลดรายชื่อเดิม...",
+    "en": "Loading previous recipients..."
+  },
+  "กำลังโหลดเว็บที่ตั้งค่า…": {
+    "th": "กำลังโหลดเว็บที่ตั้งค่า…",
+    "en": "Loading configured websites…"
+  },
+  "กำลังโหลดเว็บ…": {
+    "th": "กำลังโหลดเว็บ…",
+    "en": "Loading websites…"
+  },
+  "กำลังใช้งาน": {
+    "th": "กำลังใช้งาน",
+    "en": "Active"
+  },
+  "กำลังไป": {
+    "th": "กำลังไป",
+    "en": "On the way"
+  },
+  "กำหนด trigger, action และ response template ของ chatbot workflow": {
+    "th": "กำหนด trigger, action และ response template ของ chatbot workflow",
+    "en": "Configure the chatbot workflow's trigger, action and response template"
+  },
+  "กำหนดกลุ่มลูกค้าตามประเภทร้านที่ขาย": {
+    "th": "กำหนดกลุ่มลูกค้าตามประเภทร้านที่ขาย",
+    "en": "Define the audience by restaurant type served"
+  },
+  "กำหนดกลุ่มลูกค้าโดย": {
+    "th": "กำหนดกลุ่มลูกค้าโดย",
+    "en": "Define the audience by"
+  },
+  "กำหนดกลุ่มลูกค้าโดย *": {
+    "th": "กำหนดกลุ่มลูกค้าโดย *",
+    "en": "Define the audience by *"
+  },
+  "กำหนดการของทีม ยังไม่ตั้งเวลาส่งข้อความ": {
+    "th": "กำหนดการของทีม ยังไม่ตั้งเวลาส่งข้อความ",
+    "en": "Team schedule; message delivery is not scheduled yet"
+  },
+  "กำหนดข้อความที่ลูกค้าจะเห็นเมื่อตะกร้ายังไม่มีสินค้าที่เข้าเงื่อนไข — ถ้าไม่ใช่ \"ทุกสินค้า\" ต้องเลือก Promotion Product Set ที่ร่วมรายการด้านล่างอย่างน้อย 1 ชุด": {
+    "th": "กำหนดข้อความที่ลูกค้าจะเห็นเมื่อตะกร้ายังไม่มีสินค้าที่เข้าเงื่อนไข — ถ้าไม่ใช่ \"ทุกสินค้า\" ต้องเลือก Promotion Product Set ที่ร่วมรายการด้านล่างอย่างน้อย 1 ชุด",
+    "en": "Set the message shown when the cart has no eligible products. Unless using \"All products\", select at least one eligible promotion product set below."
+  },
+  "กำหนดพนักงานขาย": {
+    "th": "กำหนดพนักงานขาย",
+    "en": "Assign a salesperson"
+  },
+  "ภาพรวม{0}": {
+    "th": "ภาพรวม{0}",
+    "en": "{0} overview"
+  },
+  "ภาพรวมสินค้าและสต็อก": {
+    "th": "ภาพรวมสินค้าและสต็อก",
+    "en": "Products & Stock overview"
+  },
+  "ภาพรวมออเดอร์และการเงิน": {
+    "th": "ภาพรวมออเดอร์และการเงิน",
+    "en": "Orders & Finance overview"
+  },
+  "ภาพรวมลูกค้าและบริการ": {
+    "th": "ภาพรวมลูกค้าและบริการ",
+    "en": "Customers & Service overview"
+  },
+  "ภาพรวมการตลาด": {
+    "th": "ภาพรวมการตลาด",
+    "en": "Marketing overview"
+  },
+  "ภาพรวมรายงานและข้อมูล": {
+    "th": "ภาพรวมรายงานและข้อมูล",
+    "en": "Reports & Analytics overview"
+  },
+  "ภาพรวมระบบเชื่อมต่อ": {
+    "th": "ภาพรวมระบบเชื่อมต่อ",
+    "en": "Integrations overview"
+  },
+  "ภาพรวมตั้งค่าและทีมงาน": {
+    "th": "ภาพรวมตั้งค่าและทีมงาน",
+    "en": "Settings & Team overview"
+  },
+  "0 นาที": {
+    "th": "0 นาที",
+    "en": "0 min"
+  },
+  "{0} ชม. {1} นาที": {
+    "th": "{0} ชม. {1} นาที",
+    "en": "{0} hr {1} min"
+  },
+  "{0} ชั่วโมง": {
+    "th": "{0} ชั่วโมง",
+    "en": "{0} hr"
+  },
+  "{0} นาที": {
+    "th": "{0} นาที",
+    "en": "{0} min"
+  },
+  "{0}-{1} น.": {
+    "th": "{0}-{1} น.",
+    "en": "{0}–{1}"
+  },
+  "ช่วงเวลาทำงาน: {0}": {
+    "th": "ช่วงเวลาทำงาน: {0}",
+    "en": "Schedule: {0}"
+  },
+  "ปิดบัญชี {0}?\n\nออกจากระบบทันทีทุกเครื่อง": {
+    "th": "ปิดบัญชี {0}?\n\nออกจากระบบทันทีทุกเครื่อง",
+    "en": "Deactivate account {0}?\n\nThis account will be signed out on all devices immediately."
+  },
+  "เปิดบัญชี {0}?": {
+    "th": "เปิดบัญชี {0}?",
+    "en": "Activate account {0}?"
+  },
+  "โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง": {
+    "th": "โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง",
+    "en": "Could not load data. Please try again."
+  },
+  "รายละเอียดข้อผิดพลาด": {
+    "th": "รายละเอียดข้อผิดพลาด",
+    "en": "Error details"
+  },
+  "แก้ไขเวิร์กโฟลว์บอต": {
+    "th": "แก้ไขเวิร์กโฟลว์บอต",
+    "en": "Edit bot workflow"
+  },
+  "ไม่พบเวิร์กโฟลว์บอตนี้": {
+    "th": "ไม่พบเวิร์กโฟลว์บอตนี้",
+    "en": "Bot workflow not found"
+  },
+  "ไม่พบกฎเจตนาบอตนี้": {
+    "th": "ไม่พบกฎเจตนาบอตนี้",
+    "en": "Bot intent rule not found"
+  },
+  "ต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป — ใส่ 0 หรือค่าติดลบไม่ได้": {
+    "th": "ต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป — ใส่ 0 หรือค่าติดลบไม่ได้",
+    "en": "Enter a whole number of 1 or more. Zero and negative values are not allowed."
+  },
+  "รหัสคูปองต้องไม่เกิน 8 ตัวอักษร": {
+    "th": "รหัสคูปองต้องไม่เกิน 8 ตัวอักษร",
+    "en": "Coupon codes may contain at most 8 characters."
+  },
+  "Campaigns": {
+    "th": "แคมเปญ",
+    "en": "Campaigns"
+  },
+  "Shipments": {
+    "th": "การจัดส่ง",
+    "en": "Shipments"
+  },
+  "Suppliers": {
+    "th": "ซัพพลายเออร์",
+    "en": "Suppliers"
+  },
+  "Segments": {
+    "th": "กลุ่มลูกค้า",
+    "en": "Segments"
+  },
+  "Coupons": {
+    "th": "คูปอง",
+    "en": "Coupons"
+  },
+  "Research": {
+    "th": "งานวิจัยตลาด",
+    "en": "Research"
+  },
+  "Billing": {
+    "th": "บัญชีและการชำระเงิน",
+    "en": "Billing"
+  },
+  "Traffic": {
+    "th": "การเข้าชม",
+    "en": "Traffic"
+  },
+  "Sync jobs": {
+    "th": "งานซิงก์ข้อมูล",
+    "en": "Sync jobs"
+  },
+  "Outgoing webhooks": {
+    "th": "เว็บฮุกขาออก",
+    "en": "Outgoing webhooks"
+  },
+  "Orders": {
+    "th": "ออเดอร์",
+    "en": "Orders"
+  },
+  "Order target group": {
+    "th": "กลุ่มเป้าหมายออเดอร์",
+    "en": "Order target group"
+  },
+  "Marketing workflows": {
+    "th": "เวิร์กโฟลว์การตลาด",
+    "en": "Marketing workflows"
+  },
+  "AI connectors (MCP)": {
+    "th": "การเชื่อมต่อ AI (MCP)",
+    "en": "AI connectors (MCP)"
+  },
+  "Overview": {
+    "th": "ภาพรวม",
+    "en": "Overview"
+  },
+  "Credit notes": {
+    "th": "ใบลดหนี้",
+    "en": "Credit notes"
+  },
+  "Credit backs": {
+    "th": "รายการคืนเครดิต",
+    "en": "Credit backs"
+  },
+  "Webhook events (in)": {
+    "th": "เหตุการณ์เว็บฮุกขาเข้า",
+    "en": "Webhook events (in)"
+  },
+  "Video upload": {
+    "th": "อัปโหลดวิดีโอ",
+    "en": "Video upload"
+  },
+  "Stock moves": {
+    "th": "รับเข้าและย้ายสต็อก",
+    "en": "Stock moves"
+  },
+  "Smart links": {
+    "th": "สมาร์ตลิงก์",
+    "en": "Smart links"
+  },
+  "Sample requests": {
+    "th": "คำขอสินค้าตัวอย่าง",
+    "en": "Sample requests"
+  },
+  "Returns & refunds": {
+    "th": "คืนสินค้าและคืนเงิน",
+    "en": "Returns & refunds"
+  },
+  "Push campaigns": {
+    "th": "แคมเปญแจ้งเตือน",
+    "en": "Push campaigns"
+  },
+  "Promotion product sets": {
+    "th": "ชุดสินค้าโปรโมชัน",
+    "en": "Promotion product sets"
+  },
+  "Promotion pages": {
+    "th": "หน้าโปรโมชัน",
+    "en": "Promotion pages"
+  },
+  "Promotion mechanics": {
+    "th": "รูปแบบโปรโมชัน",
+    "en": "Promotion mechanics"
+  },
+  "Price requests": {
+    "th": "คำขอราคา",
+    "en": "Price requests"
+  },
+  "Overdue invoices": {
+    "th": "ใบแจ้งหนี้ค้างชำระ",
+    "en": "Overdue invoices"
+  },
+  "Notification log": {
+    "th": "บันทึกการแจ้งเตือน",
+    "en": "Notification log"
+  },
+  "Notification delivery stats": {
+    "th": "สถิติการส่งแจ้งเตือน",
+    "en": "Notification delivery stats"
+  },
+  "Notification catalog": {
+    "th": "รายการการแจ้งเตือน",
+    "en": "Notification catalog"
+  },
+  "Marketing links": {
+    "th": "ลิงก์การตลาด",
+    "en": "Marketing links"
+  },
+  "Bulk image upload": {
+    "th": "อัปโหลดรูปหลายรายการ",
+    "en": "Bulk image upload"
+  },
+  "Bot · workflows": {
+    "th": "บอต · เวิร์กโฟลว์",
+    "en": "Bot · workflows"
+  },
+  "Bot · templates": {
+    "th": "บอต · เทมเพลต",
+    "en": "Bot · templates"
+  },
+  "Bot · intent rules": {
+    "th": "บอต · กฎตีความข้อความ",
+    "en": "Bot · intent rules"
+  },
+  "Admin access requests": {
+    "th": "คำขอเข้าใช้งานผู้ดูแล",
+    "en": "Admin access requests"
+  },
+  "Active offers": {
+    "th": "ข้อเสนอที่ใช้งานอยู่",
+    "en": "Active offers"
+  },
+  "Save": {
+    "th": "บันทึก",
+    "en": "Save"
+  },
+  "Copy": {
+    "th": "คัดลอก",
+    "en": "Copy"
+  },
+  "Copied": {
+    "th": "คัดลอกแล้ว",
+    "en": "Copied"
+  },
+  "Output": {
+    "th": "ผลลัพธ์",
+    "en": "Output"
+  },
+  "Cancel": {
+    "th": "ยกเลิก",
+    "en": "Cancel"
+  },
+  "Target URL": {
+    "th": "URL ปลายทาง",
+    "en": "Target URL"
+  },
+  "Name": {
+    "th": "ชื่อ",
+    "en": "Name"
+  },
+  "Created": {
+    "th": "วันที่สร้าง",
+    "en": "Created"
+  },
+  "Active": {
+    "th": "ใช้งานอยู่",
+    "en": "Active"
+  },
+  "Email": {
+    "th": "อีเมล",
+    "en": "Email"
+  },
+  "Password": {
+    "th": "รหัสผ่าน",
+    "en": "Password"
+  },
+  "Sign in": {
+    "th": "เข้าสู่ระบบ",
+    "en": "Sign in"
+  },
+  "Signing in…": {
+    "th": "กำลังเข้าสู่ระบบ…",
+    "en": "Signing in…"
+  },
+  "Developer portal": {
+    "th": "พอร์ทัลนักพัฒนา",
+    "en": "Developer portal"
+  },
+  "Admin console": {
+    "th": "ระบบจัดการ",
+    "en": "Admin console"
+  },
+  "Access your API keys and webhooks": {
+    "th": "จัดการ API key และเว็บฮุกของคุณ",
+    "en": "Access your API keys and webhooks"
+  },
+  "Your account email": {
+    "th": "อีเมลบัญชีของคุณ",
+    "en": "Your account email"
+  },
+  "Your password": {
+    "th": "รหัสผ่านของคุณ",
+    "en": "Your password"
+  },
+  "No account yet?": {
+    "th": "ยังไม่มีบัญชี?",
+    "en": "No account yet?"
+  },
+  "Create one": {
+    "th": "สร้างบัญชี",
+    "en": "Create one"
+  },
+  "Create New": {
+    "th": "เพิ่มรายการใหม่",
+    "en": "Create New"
+  },
+  "Documentation": {
+    "th": "คู่มือ",
+    "en": "Documentation"
+  },
+  "API keys": {
+    "th": "API key",
+    "en": "API keys"
+  },
+  "Webhooks": {
+    "th": "เว็บฮุก",
+    "en": "Webhooks"
+  },
+  "Close": {
+    "th": "ปิด",
+    "en": "Close"
+  },
+  "Details": {
+    "th": "รายละเอียด",
+    "en": "Details"
+  },
+  "Edit": {
+    "th": "แก้ไข",
+    "en": "Edit"
+  },
+  "Delete": {
+    "th": "ลบ",
+    "en": "Delete"
+  },
+  "Status": {
+    "th": "สถานะ",
+    "en": "Status"
+  },
+  "Search": {
+    "th": "ค้นหา",
+    "en": "Search"
+  },
+  "Refresh": {
+    "th": "รีเฟรช",
+    "en": "Refresh"
+  },
+  "Loading…": {
+    "th": "กำลังโหลด…",
+    "en": "Loading…"
+  },
+  "No data": {
+    "th": "ไม่มีข้อมูล",
+    "en": "No data"
+  },
+  "No Results Found": {
+    "th": "ไม่พบข้อมูล",
+    "en": "No Results Found"
+  },
+  "Enabled": {
+    "th": "เปิดใช้งาน",
+    "en": "Enabled"
+  },
+  "Disabled": {
+    "th": "ปิดใช้งาน",
+    "en": "Disabled"
+  },
+  "Actions": {
+    "th": "การทำงาน",
+    "en": "Actions"
+  },
+  "Created at": {
+    "th": "วันที่สร้าง",
+    "en": "Created at"
+  },
+  "Updated at": {
+    "th": "วันที่อัปเดต",
+    "en": "Updated at"
+  },
+  "Products": {
+    "th": "สินค้า",
+    "en": "Products"
+  },
+  "Customers": {
+    "th": "ลูกค้า",
+    "en": "Customers"
+  },
+  "Inventory": {
+    "th": "สต็อกสินค้า",
+    "en": "Inventory"
+  },
+  "Integrations": {
+    "th": "ระบบเชื่อมต่อ",
+    "en": "Integrations"
+  },
+  "Notifications": {
+    "th": "การแจ้งเตือน",
+    "en": "Notifications"
+  },
+  "Settings": {
+    "th": "ตั้งค่า",
+    "en": "Settings"
+  },
+  "All": {
+    "th": "ทั้งหมด",
+    "en": "All"
+  },
+  "Filter": {
+    "th": "ตัวกรอง",
+    "en": "Filter"
+  },
+  "Clear filters": {
+    "th": "ล้างตัวกรอง",
+    "en": "Clear filters"
+  },
+  "Language": {
+    "th": "ภาษา",
+    "en": "Language"
+  },
+  "ไทย / English": {
+    "th": "ไทย / English",
+    "en": "ไทย / English"
+  },
+  "Items": {
+    "th": "รายการ",
+    "en": "Items"
+  },
+  "Total": {
+    "th": "รวม",
+    "en": "Total"
+  },
+  "Quantity": {
+    "th": "จำนวน",
+    "en": "Quantity"
+  },
+  "Unit price": {
+    "th": "ราคาต่อหน่วย",
+    "en": "Unit price"
+  },
+  "Description": {
+    "th": "รายละเอียด",
+    "en": "Description"
+  },
+  "Back": {
+    "th": "กลับ",
+    "en": "Back"
+  },
+  "Next": {
+    "th": "ถัดไป",
+    "en": "Next"
+  },
+  "Previous": {
+    "th": "ก่อนหน้า",
+    "en": "Previous"
+  },
+  "Submit": {
+    "th": "ส่งข้อมูล",
+    "en": "Submit"
+  },
+  "Retry": {
+    "th": "ลองใหม่",
+    "en": "Retry"
+  },
+  "Open": {
+    "th": "เปิด",
+    "en": "Open"
+  },
+  "Manage": {
+    "th": "จัดการ",
+    "en": "Manage"
+  },
+  "Sign out": {
+    "th": "ออกจากระบบ",
+    "en": "Sign out"
+  },
+  "Error": {
+    "th": "ข้อผิดพลาด",
+    "en": "Error"
+  },
+  "Success": {
+    "th": "สำเร็จ",
+    "en": "Success"
+  },
+  "Optional": {
+    "th": "ไม่บังคับ",
+    "en": "Optional"
+  },
+  "Required": {
+    "th": "จำเป็น",
+    "en": "Required"
+  },
+  "View": {
+    "th": "ดู",
+    "en": "View"
+  },
+  "Updated": {
+    "th": "อัปเดตแล้ว",
+    "en": "Updated"
+  },
+  "Notes": {
+    "th": "หมายเหตุ",
+    "en": "Notes"
+  },
+  "Company": {
+    "th": "บริษัท",
+    "en": "Company"
+  },
+  "Address": {
+    "th": "ที่อยู่",
+    "en": "Address"
+  },
+  "Phone": {
+    "th": "เบอร์โทร",
+    "en": "Phone"
+  },
+  "Role": {
+    "th": "บทบาท",
+    "en": "Role"
+  },
+  "Permissions": {
+    "th": "สิทธิ์การใช้งาน",
+    "en": "Permissions"
+  },
+  "Enabled (Active)": {
+    "th": "เปิดใช้งาน (Active)",
+    "en": "Enabled (Active)"
+  },
+  "Commerce workspace": {
+    "th": "พื้นที่ทำงาน Commerce",
+    "en": "Commerce workspace"
+  },
+  "Commerce Platform": {
+    "th": "Commerce Platform",
+    "en": "Commerce Platform"
+  },
+  "API Keys": {
+    "th": "API key",
+    "en": "API Keys"
+  },
+  "Authentication": {
+    "th": "การยืนยันตัวตน",
+    "en": "Authentication"
+  },
+  "Before sending requests, add your API key from the": {
+    "th": "ก่อนส่งคำขอ ให้นำ API key จากหน้า",
+    "en": "Before sending requests, add your API key from the"
+  },
+  "Before sending requests, add your API key from {0} to the {1} header.": {
+    "th": "ก่อนส่งคำขอ ให้นำ API key จากหน้า {0} ใส่ในส่วนหัว {1}",
+    "en": "Before sending requests, add your API key from {0} to the {1} header."
+  },
+  "Copy this key now — you won't see it again.": {
+    "th": "คัดลอกคีย์นี้ไว้ตอนนี้ เพราะจะไม่แสดงอีก",
+    "en": "Copy this key now — you won't see it again."
+  },
+  "Create a new key": {
+    "th": "สร้างคีย์ใหม่",
+    "en": "Create a new key"
+  },
+  "Create API key": {
+    "th": "สร้าง API key",
+    "en": "Create API key"
+  },
+  "Create order + reserve stock in one request (requires Idempotency-Key)": {
+    "th": "สร้างออเดอร์และจองสต็อกในคำขอเดียว (ต้องระบุ Idempotency-Key)",
+    "en": "Create order + reserve stock in one request (requires Idempotency-Key)"
+  },
+  "Create webhook": {
+    "th": "สร้างเว็บฮุก",
+    "en": "Create webhook"
+  },
+  "Create/update customer (upsert by email or phone)": {
+    "th": "สร้างหรืออัปเดตลูกค้าตามอีเมลหรือเบอร์โทร",
+    "en": "Create/update customer (upsert by email or phone)"
+  },
+  "Created {0}": {
+    "th": "สร้างเมื่อ {0}",
+    "en": "Created {0}"
+  },
+  "Creating…": {
+    "th": "กำลังสร้าง…",
+    "en": "Creating…"
+  },
+  "cURL example": {
+    "th": "ตัวอย่าง cURL",
+    "en": "cURL example"
+  },
+  "Last used": {
+    "th": "ใช้งานล่าสุด",
+    "en": "Last used"
+  },
+  "Local dev": {
+    "th": "ระบบทดสอบภายใน",
+    "en": "Local dev"
+  },
+  "Method": {
+    "th": "เมธอด",
+    "en": "Method"
+  },
+  "New API key": {
+    "th": "API key ใหม่",
+    "en": "New API key"
+  },
+  "New API Key Created": {
+    "th": "สร้าง API key ใหม่แล้ว",
+    "en": "New API Key Created"
+  },
+  "No webhooks yet. Create one to get started.": {
+    "th": "ยังไม่มีเว็บฮุก สร้างรายการแรกเพื่อเริ่มใช้งาน",
+    "en": "No webhooks yet. Create one to get started."
+  },
+  "Open Swagger": {
+    "th": "เปิด Swagger",
+    "en": "Open Swagger"
+  },
+  "Order details + fulfillment status": {
+    "th": "รายละเอียดออเดอร์และสถานะการจัดส่ง",
+    "en": "Order details + fulfillment status"
+  },
+  "Order history for customer (requires customerId)": {
+    "th": "ประวัติออเดอร์ของลูกค้า (ต้องระบุ customerId)",
+    "en": "Order history for customer (requires customerId)"
+  },
+  "page to the": {
+    "th": "ไปใส่ใน",
+    "en": "page to the"
+  },
+  "Path": {
+    "th": "เส้นทาง",
+    "en": "Path"
+  },
+  "Product list (supports search, page, pageSize)": {
+    "th": "รายการสินค้า (รองรับ search, page และ pageSize)",
+    "en": "Product list (supports search, page, pageSize)"
+  },
+  "Production": {
+    "th": "ระบบใช้งานจริง",
+    "en": "Production"
+  },
+  "Report simulated payment result (paid/failed)": {
+    "th": "แจ้งผลการชำระเงินจำลอง (paid/failed)",
+    "en": "Report simulated payment result (paid/failed)"
+  },
+  "Revocation can take up to 30 seconds while validation caches expire.": {
+    "th": "การเพิกถอนอาจใช้เวลาสูงสุด 30 วินาทีระหว่างรอแคชตรวจสอบหมดอายุ",
+    "en": "Revocation can take up to 30 seconds while validation caches expire."
+  },
+  "Revoke": {
+    "th": "เพิกถอน",
+    "en": "Revoke"
+  },
+  "Scopes": {
+    "th": "ขอบเขตสิทธิ์",
+    "en": "Scopes"
+  },
+  "Secret (optional)": {
+    "th": "Secret (ไม่บังคับ)",
+    "en": "Secret (optional)"
+  },
+  "Select at least 1 event": {
+    "th": "เลือกอย่างน้อย 1 เหตุการณ์",
+    "en": "Select at least 1 event"
+  },
+  "Storefront Endpoints": {
+    "th": "API สำหรับหน้าร้าน",
+    "en": "Storefront Endpoints"
+  },
+  "Storefront endpoints for building against the Commerce Platform.": {
+    "th": "API สำหรับสร้างหน้าร้านที่เชื่อมกับ Commerce Platform",
+    "en": "Storefront endpoints for building against the Commerce Platform."
+  },
+  "Subscribe an endpoint to receive platform events as they happen.": {
+    "th": "ลงทะเบียน URL ปลายทางเพื่อรับเหตุการณ์จากแพลตฟอร์ม",
+    "en": "Subscribe an endpoint to receive platform events as they happen."
+  },
+  "Subscribe to events and receive HTTP notifications": {
+    "th": "สมัครรับเหตุการณ์และการแจ้งเตือนผ่าน HTTP",
+    "en": "Subscribe to events and receive HTTP notifications"
+  },
+  "Test": {
+    "th": "ทดสอบ",
+    "en": "Test"
+  },
+  "Try live requests at": {
+    "th": "ทดสอบคำขอจริงได้ที่",
+    "en": "Try live requests at"
+  },
+  "X-Api-Key": {
+    "th": "X-Api-Key",
+    "en": "X-Api-Key"
+  },
+  "X-Api-Key Header": {
+    "th": "ส่วนหัว X-Api-Key",
+    "en": "X-Api-Key Header"
+  },
+  "Your API Keys": {
+    "th": "API key ของคุณ",
+    "en": "Your API Keys"
+  },
+  "Your webhook receiver endpoint": {
+    "th": "URL ปลายทางรับเว็บฮุกของคุณ",
+    "en": "Your webhook receiver endpoint"
+  },
+  "Your Webhooks": {
+    "th": "เว็บฮุกของคุณ",
+    "en": "Your Webhooks"
+  },
+  "{0} event": {
+    "th": "{0} เหตุการณ์",
+    "en": "{0} event"
+  },
+  "{0} events": {
+    "th": "{0} เหตุการณ์",
+    "en": "{0} events"
+  },
+  "Amount": {
+    "th": "จำนวนเงิน",
+    "en": "Amount"
+  },
+  "breadcrumb": {
+    "th": "เส้นทางหน้า",
+    "en": "breadcrumb"
+  },
+  "C1": {
+    "th": "C1",
+    "en": "C1"
+  },
+  "Checkout": {
+    "th": "เช็กเอาต์",
+    "en": "Checkout"
+  },
+  "Checkout, payment and inventory holds for this order.": {
+    "th": "ข้อมูลเช็กเอาต์ การชำระเงิน และยอดจองสินค้าของออเดอร์นี้",
+    "en": "Checkout, payment and inventory holds for this order."
+  },
+  "Customer": {
+    "th": "ลูกค้า",
+    "en": "Customer"
+  },
+  "Line total": {
+    "th": "ยอดรวมรายการ",
+    "en": "Line total"
+  },
+  "Lines ({0})": {
+    "th": "รายการสินค้า ({0})",
+    "en": "Lines ({0})"
+  },
+  "Mark failed": {
+    "th": "ระบุว่าชำระไม่สำเร็จ",
+    "en": "Mark failed"
+  },
+  "Mark paid": {
+    "th": "ระบุว่าชำระแล้ว",
+    "en": "Mark paid"
+  },
+  "No lines": {
+    "th": "ไม่มีรายการสินค้า",
+    "en": "No lines"
+  },
+  "No payment yet": {
+    "th": "ยังไม่มีการชำระเงิน",
+    "en": "No payment yet"
+  },
+  "No reservations": {
+    "th": "ไม่มีรายการจองสินค้า",
+    "en": "No reservations"
+  },
+  "Order {0}…": {
+    "th": "ออเดอร์ {0}…",
+    "en": "Order {0}…"
+  },
+  "Order ID": {
+    "th": "รหัสออเดอร์",
+    "en": "Order ID"
+  },
+  "payload": {
+    "th": "payload",
+    "en": "payload"
+  },
+  "Product": {
+    "th": "สินค้า",
+    "en": "Product"
+  },
+  "Release holds": {
+    "th": "ปล่อยยอดจองสินค้า",
+    "en": "Release holds"
+  },
+  "Reservations ({0})": {
+    "th": "รายการจองสินค้า ({0})",
+    "en": "Reservations ({0})"
+  },
+  "Signing secret": {
+    "th": "Secret สำหรับตรวจลายเซ็น",
+    "en": "Signing secret"
+  },
+  "SKU-1": {
+    "th": "SKU-1",
+    "en": "SKU-1"
+  },
+  "Webhook slug": {
+    "th": "Slug ของเว็บฮุก",
+    "en": "Webhook slug"
+  },
+  "Webhook URL": {
+    "th": "URL ของเว็บฮุก",
+    "en": "Webhook URL"
+  },
+  "Inactive": {
+    "th": "ไม่ได้ใช้งาน",
+    "en": "Inactive"
+  },
+  "Pending": {
+    "th": "รอดำเนินการ",
+    "en": "Pending"
+  },
+  "Queued": {
+    "th": "อยู่ในคิว",
+    "en": "Queued"
+  },
+  "Running": {
+    "th": "กำลังทำงาน",
+    "en": "Running"
+  },
+  "Processing": {
+    "th": "กำลังดำเนินการ",
+    "en": "Processing"
+  },
+  "Succeeded": {
+    "th": "สำเร็จ",
+    "en": "Succeeded"
+  },
+  "Completed": {
+    "th": "เสร็จสมบูรณ์",
+    "en": "Completed"
+  },
+  "Failed": {
+    "th": "ไม่สำเร็จ",
+    "en": "Failed"
+  },
+  "Cancelled": {
+    "th": "ยกเลิกแล้ว",
+    "en": "Cancelled"
+  },
+  "Draft": {
+    "th": "ร่าง",
+    "en": "Draft"
+  },
+  "Paused": {
+    "th": "หยุดชั่วคราว",
+    "en": "Paused"
+  },
+  "Paid": {
+    "th": "ชำระแล้ว",
+    "en": "Paid"
+  },
+  "Unpaid": {
+    "th": "ยังไม่ชำระ",
+    "en": "Unpaid"
+  },
+  "Shipped": {
+    "th": "จัดส่งแล้ว",
+    "en": "Shipped"
+  },
+  "Delivered": {
+    "th": "ส่งถึงแล้ว",
+    "en": "Delivered"
+  },
+  "Approved": {
+    "th": "อนุมัติแล้ว",
+    "en": "Approved"
+  },
+  "Rejected": {
+    "th": "ปฏิเสธแล้ว",
+    "en": "Rejected"
+  },
+  "Revoked": {
+    "th": "เพิกถอนแล้ว",
+    "en": "Revoked"
+  },
+  "Expired": {
+    "th": "หมดอายุ",
+    "en": "Expired"
+  },
+  "Reserved": {
+    "th": "จองแล้ว",
+    "en": "Reserved"
+  },
+  "Released": {
+    "th": "ปล่อยยอดจองแล้ว",
+    "en": "Released"
+  },
+  "Confirmed": {
+    "th": "ยืนยันแล้ว",
+    "en": "Confirmed"
+  },
+  "{0} requests": {
+    "th": "{0} คำขอ",
+    "en": "{0} requests"
+  },
+  "{0} of {1} recent events": {
+    "th": "แสดง {0} จาก {1} เหตุการณ์ล่าสุด",
+    "en": "{0} of {1} recent events"
+  },
+  "&larr; Marketing Workflows": {
+    "th": "← เวิร์กโฟลว์การตลาด",
+    "en": "&larr; Marketing Workflows"
+  },
+  "&rarr;": {
+    "th": "&rarr;",
+    "en": "&rarr;"
+  },
+  "+{0} this week": {
+    "th": "+{0} ในสัปดาห์นี้",
+    "en": "+{0} this week"
+  },
+  "1. Audience": {
+    "th": "1. กลุ่มเป้าหมาย",
+    "en": "1. Audience"
+  },
+  "1. Test transactions": {
+    "th": "1. ทดสอบรายการชำระเงิน",
+    "en": "1. Test transactions"
+  },
+  "1. Trigger": {
+    "th": "1. เหตุการณ์เริ่มต้น",
+    "en": "1. Trigger"
+  },
+  "2. Message": {
+    "th": "2. ข้อความ",
+    "en": "2. Message"
+  },
+  "2. Simulate notify": {
+    "th": "2. จำลองการแจ้งเตือน",
+    "en": "2. Simulate notify"
+  },
+  "3. Certification checklist": {
+    "th": "3. รายการตรวจรับรอง",
+    "en": "3. Certification checklist"
+  },
+  "3. Delivery": {
+    "th": "3. การส่งข้อความ",
+    "en": "3. Delivery"
+  },
+  "30 Days": {
+    "th": "30 วัน",
+    "en": "30 Days"
+  },
+  "3PL delivery": {
+    "th": "การจัดส่งโดย 3PL",
+    "en": "3PL delivery"
+  },
+  "3PL status": {
+    "th": "สถานะ 3PL",
+    "en": "3PL status"
+  },
+  "7 Days": {
+    "th": "7 วัน",
+    "en": "7 Days"
+  },
+  "<": {
+    "th": "<",
+    "en": "<"
+  },
+  ">": {
+    "th": ">",
+    "en": ">"
+  },
+  "A": {
+    "th": "A",
+    "en": "A"
+  },
+  "A/B Test (variant B 50%)": {
+    "th": "ทดสอบ A/B (กลุ่ม B 50%)",
+    "en": "A/B Test (variant B 50%)"
+  },
+  "ACTION": {
+    "th": "การทำงาน",
+    "en": "ACTION"
+  },
+  "AI ·": {
+    "th": "AI ·",
+    "en": "AI ·"
+  },
+  "API Logs": {
+    "th": "บันทึก API",
+    "en": "API Logs"
+  },
+  "AUDIENCE": {
+    "th": "กลุ่มเป้าหมาย",
+    "en": "AUDIENCE"
+  },
+  "Across {0} warehouse{1}": {
+    "th": "รวม {0} คลัง{1}",
+    "en": "Across {0} warehouse{1}"
+  },
+  "Action": {
+    "th": "การทำงาน",
+    "en": "Action"
+  },
+  "Activate": {
+    "th": "เปิดใช้งาน",
+    "en": "Activate"
+  },
+  "Active Offers": {
+    "th": "ข้อเสนอที่ใช้งานอยู่",
+    "en": "Active Offers"
+  },
+  "Active Subscriptions": {
+    "th": "การสมัครรับข้อมูลที่ใช้งานอยู่",
+    "en": "Active Subscriptions"
+  },
+  "Add Sticker": {
+    "th": "เพิ่มสติกเกอร์",
+    "en": "Add Sticker"
+  },
+  "Add to Cart": {
+    "th": "เพิ่มลงตะกร้า",
+    "en": "Add to Cart"
+  },
+  "Admin Access Requests": {
+    "th": "คำขอสิทธิ์ผู้ดูแล",
+    "en": "Admin Access Requests"
+  },
+  "Advanced JSON": {
+    "th": "JSON ขั้นสูง",
+    "en": "Advanced JSON"
+  },
+  "All Orders": {
+    "th": "ออเดอร์ทั้งหมด",
+    "en": "All Orders"
+  },
+  "All Triggers": {
+    "th": "เหตุการณ์เริ่มต้นทั้งหมด",
+    "en": "All Triggers"
+  },
+  "All Users": {
+    "th": "ผู้ใช้ทั้งหมด",
+    "en": "All Users"
+  },
+  "All entity types": {
+    "th": "ประเภทข้อมูลทั้งหมด",
+    "en": "All entity types"
+  },
+  "Analyst": {
+    "th": "นักวิเคราะห์",
+    "en": "Analyst"
+  },
+  "Analytics": {
+    "th": "การวิเคราะห์",
+    "en": "Analytics"
+  },
+  "Apply": {
+    "th": "นำไปใช้",
+    "en": "Apply"
+  },
+  "Approx": {
+    "th": "โดยประมาณ",
+    "en": "Approx"
+  },
+  "Articles": {
+    "th": "บทความ",
+    "en": "Articles"
+  },
+  "Asia/Bangkok": {
+    "th": "Asia/Bangkok",
+    "en": "Asia/Bangkok"
+  },
+  "Autoplay (muted)": {
+    "th": "เล่นอัตโนมัติ (ปิดเสียง)",
+    "en": "Autoplay (muted)"
+  },
+  "B": {
+    "th": "B",
+    "en": "B"
+  },
+  "Back in stock": {
+    "th": "สินค้ากลับมามีสต็อก",
+    "en": "Back in stock"
+  },
+  "Backdate": {
+    "th": "ลงวันที่ย้อนหลัง",
+    "en": "Backdate"
+  },
+  "Banner": {
+    "th": "แบนเนอร์",
+    "en": "Banner"
+  },
+  "Banner Targeting": {
+    "th": "กลุ่มเป้าหมายแบนเนอร์",
+    "en": "Banner Targeting"
+  },
+  "Batch Sticker": {
+    "th": "สติกเกอร์หลายรายการ",
+    "en": "Batch Sticker"
+  },
+  "Begin Checkout": {
+    "th": "เริ่มชำระเงิน",
+    "en": "Begin Checkout"
+  },
+  "Bot Intent Rule": {
+    "th": "กฎเจตนาของบอต",
+    "en": "Bot Intent Rule"
+  },
+  "Bot Intent Rules": {
+    "th": "กฎเจตนาของบอต",
+    "en": "Bot Intent Rules"
+  },
+  "Bot Template": {
+    "th": "เทมเพลตบอต",
+    "en": "Bot Template"
+  },
+  "Bot Templates": {
+    "th": "เทมเพลตบอต",
+    "en": "Bot Templates"
+  },
+  "Bot Workflow": {
+    "th": "เวิร์กโฟลว์บอต",
+    "en": "Bot Workflow"
+  },
+  "Bot Workflows": {
+    "th": "เวิร์กโฟลว์บอต",
+    "en": "Bot Workflows"
+  },
+  "Bottom": {
+    "th": "ด้านล่าง",
+    "en": "Bottom"
+  },
+  "Brands": {
+    "th": "แบรนด์",
+    "en": "Brands"
+  },
+  "Bull Board ↗": {
+    "th": "Bull Board ↗",
+    "en": "Bull Board ↗"
+  },
+  "CB #": {
+    "th": "เลขที่คืนเครดิต",
+    "en": "CB #"
+  },
+  "CN #": {
+    "th": "เลขที่ใบลดหนี้",
+    "en": "CN #"
+  },
+  "COD": {
+    "th": "เก็บเงินปลายทาง",
+    "en": "COD"
+  },
+  "COUPON": {
+    "th": "คูปอง",
+    "en": "COUPON"
+  },
+  "CS Logs": {
+    "th": "บันทึกบริการลูกค้า",
+    "en": "CS Logs"
+  },
+  "CS note": {
+    "th": "หมายเหตุบริการลูกค้า",
+    "en": "CS note"
+  },
+  "CSS selector": {
+    "th": "CSS selector",
+    "en": "CSS selector"
+  },
+  "CTA": {
+    "th": "ปุ่มดำเนินการ",
+    "en": "CTA"
+  },
+  "CTR (all)": {
+    "th": "อัตราคลิกทั้งหมด",
+    "en": "CTR (all)"
+  },
+  "Call": {
+    "th": "โทร",
+    "en": "Call"
+  },
+  "Campaign": {
+    "th": "แคมเปญ",
+    "en": "Campaign"
+  },
+  "Campaign name": {
+    "th": "ชื่อแคมเปญ",
+    "en": "Campaign name"
+  },
+  "Cannot delete the last step": {
+    "th": "ไม่สามารถลบขั้นตอนสุดท้ายได้",
+    "en": "Cannot delete the last step"
+  },
+  "Carousel": {
+    "th": "ภาพเลื่อน",
+    "en": "Carousel"
+  },
+  "Catalog": {
+    "th": "แคตตาล็อก",
+    "en": "Catalog"
+  },
+  "Categories": {
+    "th": "หมวดหมู่",
+    "en": "Categories"
+  },
+  "Center": {
+    "th": "กึ่งกลาง",
+    "en": "Center"
+  },
+  "Channel": {
+    "th": "ช่องทาง",
+    "en": "Channel"
+  },
+  "Charge ID": {
+    "th": "รหัสรายการเรียกเก็บเงิน",
+    "en": "Charge ID"
+  },
+  "Chat Open": {
+    "th": "เปิดแชต",
+    "en": "Chat Open"
+  },
+  "Chatbot": {
+    "th": "แชตบอต",
+    "en": "Chatbot"
+  },
+  "Choose at least one event to subscribe to.": {
+    "th": "เลือกอย่างน้อยหนึ่งเหตุการณ์ที่ต้องการรับข้อมูล",
+    "en": "Choose at least one event to subscribe to."
+  },
+  "Click to filter; click again to clear": {
+    "th": "คลิกเพื่อกรอง และคลิกอีกครั้งเพื่อล้างตัวกรอง",
+    "en": "Click to filter; click again to clear"
+  },
+  "Click to play": {
+    "th": "คลิกเพื่อเล่น",
+    "en": "Click to play"
+  },
+  "Clicked": {
+    "th": "คลิกแล้ว",
+    "en": "Clicked"
+  },
+  "Clicks": {
+    "th": "จำนวนคลิก",
+    "en": "Clicks"
+  },
+  "Clicks over time": {
+    "th": "จำนวนคลิกตามเวลา",
+    "en": "Clicks over time"
+  },
+  "Code": {
+    "th": "รหัส",
+    "en": "Code"
+  },
+  "Collapse": {
+    "th": "ย่อ",
+    "en": "Collapse"
+  },
+  "Commerce": {
+    "th": "Commerce",
+    "en": "Commerce"
+  },
+  "Companies": {
+    "th": "บริษัท",
+    "en": "Companies"
+  },
+  "Company ID": {
+    "th": "รหัสบริษัท",
+    "en": "Company ID"
+  },
+  "Company Management": {
+    "th": "จัดการบริษัท",
+    "en": "Company Management"
+  },
+  "Company upsert": {
+    "th": "เพิ่มหรืออัปเดตบริษัท",
+    "en": "Company upsert"
+  },
+  "Company:": {
+    "th": "บริษัท:",
+    "en": "Company:"
+  },
+  "Config": {
+    "th": "การตั้งค่า",
+    "en": "Config"
+  },
+  "Configure a new webhook to receive platform events.": {
+    "th": "ตั้งค่าเว็บฮุกใหม่เพื่อรับเหตุการณ์จากแพลตฟอร์ม",
+    "en": "Configure a new webhook to receive platform events."
+  },
+  "Confirm processing": {
+    "th": "ยืนยันการประมวลผล",
+    "en": "Confirm processing"
+  },
+  "Contain": {
+    "th": "พอดีกรอบ",
+    "en": "Contain"
+  },
+  "Content": {
+    "th": "เนื้อหา",
+    "en": "Content"
+  },
+  "Conversion Rate": {
+    "th": "อัตราการซื้อ",
+    "en": "Conversion Rate"
+  },
+  "Conversion Stats — Sent vs Holdout": {
+    "th": "สถิติการซื้อ — กลุ่มที่ส่งเทียบกับกลุ่มควบคุม",
+    "en": "Conversion Stats — Sent vs Holdout"
+  },
+  "Conversions": {
+    "th": "จำนวนการซื้อ",
+    "en": "Conversions"
+  },
+  "Converted": {
+    "th": "ซื้อแล้ว",
+    "en": "Converted"
+  },
+  "Copy & Localization": {
+    "th": "ข้อความและคำแปล",
+    "en": "Copy & Localization"
+  },
+  "Copy JSON": {
+    "th": "คัดลอก JSON",
+    "en": "Copy JSON"
+  },
+  "Count": {
+    "th": "จำนวน",
+    "en": "Count"
+  },
+  "Coupon": {
+    "th": "คูปอง",
+    "en": "Coupon"
+  },
+  "Coupon granted": {
+    "th": "แจกคูปองแล้ว",
+    "en": "Coupon granted"
+  },
+  "Coupon granted by hour": {
+    "th": "คูปองที่แจกตามชั่วโมง",
+    "en": "Coupon granted by hour"
+  },
+  "Coupon preview": {
+    "th": "ตัวอย่างคูปอง",
+    "en": "Coupon preview"
+  },
+  "Coupon redeemed": {
+    "th": "ใช้คูปองแล้ว",
+    "en": "Coupon redeemed"
+  },
+  "Coupon redeemed by hour": {
+    "th": "คูปองที่ใช้ตามชั่วโมง",
+    "en": "Coupon redeemed by hour"
+  },
+  "Courier": {
+    "th": "ผู้ขนส่ง",
+    "en": "Courier"
+  },
+  "Cover": {
+    "th": "เต็มกรอบ",
+    "en": "Cover"
+  },
+  "Create": {
+    "th": "สร้าง",
+    "en": "Create"
+  },
+  "Create Notification": {
+    "th": "สร้างการแจ้งเตือน",
+    "en": "Create Notification"
+  },
+  "Create subscription": {
+    "th": "สร้างการสมัครรับข้อมูล",
+    "en": "Create subscription"
+  },
+  "Credit Available": {
+    "th": "เครดิตคงเหลือ",
+    "en": "Credit Available"
+  },
+  "Credit Back": {
+    "th": "คืนเครดิต",
+    "en": "Credit Back"
+  },
+  "Credit Backs": {
+    "th": "รายการคืนเครดิต",
+    "en": "Credit Backs"
+  },
+  "Credit Limit": {
+    "th": "วงเงินเครดิต",
+    "en": "Credit Limit"
+  },
+  "Credit Terms": {
+    "th": "เงื่อนไขเครดิต",
+    "en": "Credit Terms"
+  },
+  "Credit Used": {
+    "th": "เครดิตที่ใช้",
+    "en": "Credit Used"
+  },
+  "Cuisine": {
+    "th": "ประเภทอาหาร",
+    "en": "Cuisine"
+  },
+  "Cuisine (Shop by Cuisine)": {
+    "th": "ประเภทอาหาร (เลือกซื้อตามประเภทอาหาร)",
+    "en": "Cuisine (Shop by Cuisine)"
+  },
+  "Cuisine / Type": {
+    "th": "ประเภทอาหาร / ประเภท",
+    "en": "Cuisine / Type"
+  },
+  "Cuisine Names (TH/EN)": {
+    "th": "ชื่อประเภทอาหาร (ไทย/อังกฤษ)",
+    "en": "Cuisine Names (TH/EN)"
+  },
+  "Cust Code": {
+    "th": "รหัสลูกค้า",
+    "en": "Cust Code"
+  },
+  "GATE": {
+    "th": "เงื่อนไขผ่าน",
+    "en": "GATE"
+  },
+  "IF / ELSE": {
+    "th": "ถ้า / มิฉะนั้น",
+    "en": "IF / ELSE"
+  },
+  "KPG": {
+    "th": "KPG",
+    "en": "KPG"
+  },
+  "KYC Verification": {
+    "th": "การยืนยันตัวตน",
+    "en": "KYC Verification"
+  },
+  "KYC:": {
+    "th": "การยืนยันตัวตน:",
+    "en": "KYC:"
+  },
+  "LOT": {
+    "th": "รอบงาน",
+    "en": "LOT"
+  },
+  "Landing SEO": {
+    "th": "SEO หน้าปลายทาง",
+    "en": "Landing SEO"
+  },
+  "Launch URL / deep link": {
+    "th": "URL เปิดหน้า / ลิงก์เข้าแอป",
+    "en": "Launch URL / deep link"
+  },
+  "Layers": {
+    "th": "เลเยอร์",
+    "en": "Layers"
+  },
+  "Legal Documents": {
+    "th": "เอกสารทางกฎหมาย",
+    "en": "Legal Documents"
+  },
+  "Lift:": {
+    "th": "ผลเพิ่มขึ้น:",
+    "en": "Lift:"
+  },
+  "Link": {
+    "th": "ลิงก์",
+    "en": "Link"
+  },
+  "LinkedIn URL": {
+    "th": "URL ของ LinkedIn",
+    "en": "LinkedIn URL"
+  },
+  "Live Chat": {
+    "th": "แชตสด",
+    "en": "Live Chat"
+  },
+  "Live Preview": {
+    "th": "ตัวอย่างสด",
+    "en": "Live Preview"
+  },
+  "Loading...": {
+    "th": "กำลังโหลด...",
+    "en": "Loading..."
+  },
+  "Lock Aspect Ratio": {
+    "th": "ล็อกสัดส่วน",
+    "en": "Lock Aspect Ratio"
+  },
+  "Log entries": {
+    "th": "รายการบันทึก",
+    "en": "Log entries"
+  },
+  "Logged in": {
+    "th": "เข้าสู่ระบบแล้ว",
+    "en": "Logged in"
+  },
+  "Login sessions (annotation):": {
+    "th": "รอบการเข้าสู่ระบบ (หมายเหตุ):",
+    "en": "Login sessions (annotation):"
+  },
+  "Logo": {
+    "th": "โลโก้",
+    "en": "Logo"
+  },
+  "Lot Completed": {
+    "th": "รอบงานเสร็จแล้ว",
+    "en": "Lot Completed"
+  },
+  "MARKET EXPLORER": {
+    "th": "สำรวจตลาด",
+    "en": "MARKET EXPLORER"
+  },
+  "MB · jpg, jpeg, png, gif, webp": {
+    "th": "MB · jpg, jpeg, png, gif, webp",
+    "en": "MB · jpg, jpeg, png, gif, webp"
+  },
+  "MB)": {
+    "th": "MB)",
+    "en": "MB)"
+  },
+  "MCP URL": {
+    "th": "MCP URL",
+    "en": "MCP URL"
+  },
+  "MOQ change": {
+    "th": "การเปลี่ยนจำนวนสั่งขั้นต่ำ",
+    "en": "MOQ change"
+  },
+  "Manage and monitor all customer orders": {
+    "th": "จัดการและติดตามออเดอร์ลูกค้าทั้งหมด",
+    "en": "Manage and monitor all customer orders"
+  },
+  "Manage webhook subscriptions and platform integrations.": {
+    "th": "จัดการการสมัครรับเว็บฮุกและระบบเชื่อมต่อ",
+    "en": "Manage webhook subscriptions and platform integrations."
+  },
+  "Marketed By": {
+    "th": "ทำตลาดโดย",
+    "en": "Marketed By"
+  },
+  "Marketing": {
+    "th": "การตลาด",
+    "en": "Marketing"
+  },
+  "Marketing Links": {
+    "th": "ลิงก์การตลาด",
+    "en": "Marketing Links"
+  },
+  "Marketing Research": {
+    "th": "วิจัยการตลาด",
+    "en": "Marketing Research"
+  },
+  "Marketing Workflow": {
+    "th": "เวิร์กโฟลว์การตลาด",
+    "en": "Marketing Workflow"
+  },
+  "Marketing remind": {
+    "th": "แจ้งเตือนการตลาด",
+    "en": "Marketing remind"
+  },
+  "Marketing workflow fail": {
+    "th": "เวิร์กโฟลว์การตลาดล้มเหลว",
+    "en": "Marketing workflow fail"
+  },
+  "Membership Tiers": {
+    "th": "ระดับสมาชิก",
+    "en": "Membership Tiers"
+  },
+  "Message *": {
+    "th": "ข้อความ *",
+    "en": "Message *"
+  },
+  "Message B": {
+    "th": "ข้อความ B",
+    "en": "Message B"
+  },
+  "Message EN": {
+    "th": "ข้อความภาษาอังกฤษ",
+    "en": "Message EN"
+  },
+  "Mobile": {
+    "th": "มือถือ",
+    "en": "Mobile"
+  },
+  "Mobile deeplink": {
+    "th": "ลิงก์เข้าแอปมือถือ",
+    "en": "Mobile deeplink"
+  },
+  "Move layer down": {
+    "th": "ย้ายเลเยอร์ลง",
+    "en": "Move layer down"
+  },
+  "Move layer up": {
+    "th": "ย้ายเลเยอร์ขึ้น",
+    "en": "Move layer up"
+  },
+  "N/A": {
+    "th": "ไม่มีข้อมูล",
+    "en": "N/A"
+  },
+  "New Subscription": {
+    "th": "การสมัครรับข้อมูลใหม่",
+    "en": "New Subscription"
+  },
+  "Next image": {
+    "th": "ภาพถัดไป",
+    "en": "Next image"
+  },
+  "No deliveries yet — trigger an event (e.g. update a customer).": {
+    "th": "ยังไม่มีการส่ง — ลองสร้างเหตุการณ์ เช่น อัปเดตลูกค้า",
+    "en": "No deliveries yet — trigger an event (e.g. update a customer)."
+  },
+  "No failed webhook deliveries.": {
+    "th": "ไม่มีเว็บฮุกที่ส่งล้มเหลว",
+    "en": "No failed webhook deliveries."
+  },
+  "No preview available yet.": {
+    "th": "ยังไม่มีตัวอย่าง",
+    "en": "No preview available yet."
+  },
+  "No saved presets yet.": {
+    "th": "ยังไม่มีค่าที่บันทึกไว้",
+    "en": "No saved presets yet."
+  },
+  "No staged ERP rows yet.": {
+    "th": "ยังไม่มีข้อมูล ERP ที่รอประมวลผล",
+    "en": "No staged ERP rows yet."
+  },
+  "No steps yet": {
+    "th": "ยังไม่มีขั้นตอน",
+    "en": "No steps yet"
+  },
+  "No steps yet. Add one to get started.": {
+    "th": "ยังไม่มีขั้นตอน เพิ่มขั้นตอนเพื่อเริ่มต้น",
+    "en": "No steps yet. Add one to get started."
+  },
+  "No sticker layers yet.": {
+    "th": "ยังไม่มีเลเยอร์สติกเกอร์",
+    "en": "No sticker layers yet."
+  },
+  "No stock rows yet.": {
+    "th": "ยังไม่มีรายการสต็อก",
+    "en": "No stock rows yet."
+  },
+  "No stock yet": {
+    "th": "ยังไม่มีสต็อก",
+    "en": "No stock yet"
+  },
+  "No subscriptions yet.": {
+    "th": "ยังไม่มีการสมัครรับข้อมูล",
+    "en": "No subscriptions yet."
+  },
+  "No sync jobs yet.": {
+    "th": "ยังไม่มีงานซิงก์",
+    "en": "No sync jobs yet."
+  },
+  "No webhook events yet.": {
+    "th": "ยังไม่มีเหตุการณ์เว็บฮุก",
+    "en": "No webhook events yet."
+  },
+  "No webhook subscriptions configured.": {
+    "th": "ยังไม่ได้ตั้งค่าการสมัครรับเว็บฮุก",
+    "en": "No webhook subscriptions configured."
+  },
+  "Note": {
+    "th": "หมายเหตุ",
+    "en": "Note"
+  },
+  "Notification": {
+    "th": "การแจ้งเตือน",
+    "en": "Notification"
+  },
+  "Notification Catalog": {
+    "th": "แคตตาล็อกการแจ้งเตือน",
+    "en": "Notification Catalog"
+  },
+  "Notification Delivery Stats": {
+    "th": "สถิติการส่งการแจ้งเตือน",
+    "en": "Notification Delivery Stats"
+  },
+  "Notification Stats": {
+    "th": "สถิติการแจ้งเตือน",
+    "en": "Notification Stats"
+  },
+  "Notification body": {
+    "th": "เนื้อหาการแจ้งเตือน",
+    "en": "Notification body"
+  },
+  "Notification title": {
+    "th": "หัวข้อการแจ้งเตือน",
+    "en": "Notification title"
+  },
+  "Notify Templates": {
+    "th": "เทมเพลตการแจ้งเตือน",
+    "en": "Notify Templates"
+  },
+  "Notify external systems when platform events happen — they subscribe, we deliver (signed).": {
+    "th": "แจ้งระบบภายนอกเมื่อมีเหตุการณ์ — ระบบสมัครรับข้อมูล และเราส่งพร้อมลายเซ็น",
+    "en": "Notify external systems when platform events happen — they subscribe, we deliver (signed)."
+  },
+  "Notify sent": {
+    "th": "ส่งการแจ้งเตือนแล้ว",
+    "en": "Notify sent"
+  },
+  "Notify · Email · Popup Templates": {
+    "th": "เทมเพลตแจ้งเตือน · อีเมล · ป๊อปอัป",
+    "en": "Notify · Email · Popup Templates"
+  },
+  "Offer Check": {
+    "th": "ตรวจสอบข้อเสนอ",
+    "en": "Offer Check"
+  },
+  "Offer shown": {
+    "th": "แสดงข้อเสนอแล้ว",
+    "en": "Offer shown"
+  },
+  "Oldest waiting: {0}": {
+    "th": "รอนานที่สุด: {0}",
+    "en": "Oldest waiting: {0}"
+  },
+  "Omise": {
+    "th": "Omise",
+    "en": "Omise"
+  },
+  "Only PNG or WebP files are supported for stickers (need transparency).": {
+    "th": "สติกเกอร์รองรับเฉพาะไฟล์ PNG หรือ WebP ที่มีพื้นหลังโปร่งใส",
+    "en": "Only PNG or WebP files are supported for stickers (need transparency)."
+  },
+  "Opacity": {
+    "th": "ความทึบ",
+    "en": "Opacity"
+  },
+  "Operation": {
+    "th": "การดำเนินการ",
+    "en": "Operation"
+  },
+  "Option 1&#10;Option 2&#10;...": {
+    "th": "ตัวเลือก 1&#10;ตัวเลือก 2&#10;...",
+    "en": "Option 1&#10;Option 2&#10;..."
+  },
+  "Optional notes": {
+    "th": "หมายเหตุเพิ่มเติม",
+    "en": "Optional notes"
+  },
+  "Order / Invoice amount:": {
+    "th": "ยอดออเดอร์ / ใบแจ้งหนี้:",
+    "en": "Order / Invoice amount:"
+  },
+  "Order / Invoice status": {
+    "th": "สถานะออเดอร์ / ใบแจ้งหนี้",
+    "en": "Order / Invoice status"
+  },
+  "Order converted": {
+    "th": "เปลี่ยนเป็นออเดอร์แล้ว",
+    "en": "Order converted"
+  },
+  "Order status": {
+    "th": "สถานะออเดอร์",
+    "en": "Order status"
+  },
+  "Order {0}": {
+    "th": "ออเดอร์ {0}",
+    "en": "Order {0}"
+  },
+  "Order:": {
+    "th": "ออเดอร์:",
+    "en": "Order:"
+  },
+  "Output: WebP / Quality": {
+    "th": "รูปแบบส่งออก: WebP / คุณภาพ",
+    "en": "Output: WebP / Quality"
+  },
+  "Overall conversion (View Item → Purchase):": {
+    "th": "อัตราซื้อรวม (ดูสินค้า → ซื้อ):",
+    "en": "Overall conversion (View Item → Purchase):"
+  },
+  "Overdue Invoices": {
+    "th": "ใบแจ้งหนี้เกินกำหนด",
+    "en": "Overdue Invoices"
+  },
+  "PO": {
+    "th": "ใบสั่งซื้อ",
+    "en": "PO"
+  },
+  "POPUP": {
+    "th": "ป๊อปอัป",
+    "en": "POPUP"
+  },
+  "POPUP CHROME": {
+    "th": "กรอบป๊อปอัป",
+    "en": "POPUP CHROME"
+  },
+  "POST /3pl/delivery-status": {
+    "th": "POST /3pl/delivery-status",
+    "en": "POST /3pl/delivery-status"
+  },
+  "POST /api/3pl/delivery-status": {
+    "th": "POST /api/3pl/delivery-status",
+    "en": "POST /api/3pl/delivery-status"
+  },
+  "POST /api/erp/invoices/status": {
+    "th": "POST /api/erp/invoices/status",
+    "en": "POST /api/erp/invoices/status"
+  },
+  "POST /api/erp/orders/status": {
+    "th": "POST /api/erp/orders/status",
+    "en": "POST /api/erp/orders/status"
+  },
+  "POST /api/erp/testing/shipments/:id/courier": {
+    "th": "POST /api/erp/testing/shipments/:id/courier",
+    "en": "POST /api/erp/testing/shipments/:id/courier"
+  },
+  "POST /api/erp/testing/shipments/:id/delivery-status": {
+    "th": "POST /api/erp/testing/shipments/:id/delivery-status",
+    "en": "POST /api/erp/testing/shipments/:id/delivery-status"
+  },
+  "PREPARING": {
+    "th": "กำลังเตรียม",
+    "en": "PREPARING"
+  },
+  "Parsed": {
+    "th": "อ่านข้อมูลแล้ว",
+    "en": "Parsed"
+  },
+  "Pattern (regex)": {
+    "th": "รูปแบบ (regex)",
+    "en": "Pattern (regex)"
+  },
+  "Pause": {
+    "th": "หยุดชั่วคราว",
+    "en": "Pause"
+  },
+  "Payloads": {
+    "th": "ข้อมูลที่ส่ง",
+    "en": "Payloads"
+  },
+  "Payment QR": {
+    "th": "QR ชำระเงิน",
+    "en": "Payment QR"
+  },
+  "Payment Transactions": {
+    "th": "รายการชำระเงิน",
+    "en": "Payment Transactions"
+  },
+  "Pending decision": {
+    "th": "รอตัดสินใจ",
+    "en": "Pending decision"
+  },
+  "Popup Rules": {
+    "th": "กฎป๊อปอัป",
+    "en": "Popup Rules"
+  },
+  "Position Presets": {
+    "th": "ตำแหน่งที่บันทึกไว้",
+    "en": "Position Presets"
+  },
+  "Pre-Authorized + success": {
+    "th": "อนุมัติวงเงินล่วงหน้า + สำเร็จ",
+    "en": "Pre-Authorized + success"
+  },
+  "Preset name": {
+    "th": "ชื่อค่าที่บันทึก",
+    "en": "Preset name"
+  },
+  "Preview audience": {
+    "th": "ตัวอย่างกลุ่มเป้าหมาย",
+    "en": "Preview audience"
+  },
+  "Price Requests": {
+    "th": "คำขอราคา",
+    "en": "Price Requests"
+  },
+  "Price change": {
+    "th": "การเปลี่ยนราคา",
+    "en": "Price change"
+  },
+  "Process": {
+    "th": "ประมวลผล",
+    "en": "Process"
+  },
+  "Process Lot": {
+    "th": "ประมวลผลรอบงาน",
+    "en": "Process Lot"
+  },
+  "Processing Lot": {
+    "th": "กำลังประมวลผลรอบงาน",
+    "en": "Processing Lot"
+  },
+  "Prod": {
+    "th": "ระบบจริง",
+    "en": "Prod"
+  },
+  "Product Carousels": {
+    "th": "ภาพเลื่อนสินค้า",
+    "en": "Product Carousels"
+  },
+  "Product Notify Funnel": {
+    "th": "เส้นทางแจ้งเตือนสินค้า",
+    "en": "Product Notify Funnel"
+  },
+  "Product Tools": {
+    "th": "เครื่องมือสินค้า",
+    "en": "Product Tools"
+  },
+  "Product bulk upsert": {
+    "th": "เพิ่มหรืออัปเดตสินค้าหลายรายการ",
+    "en": "Product bulk upsert"
+  },
+  "Product upsert": {
+    "th": "เพิ่มหรืออัปเดตสินค้า",
+    "en": "Product upsert"
+  },
+  "Promotion Mechanics": {
+    "th": "กลไกโปรโมชัน",
+    "en": "Promotion Mechanics"
+  },
+  "Promotion Pages": {
+    "th": "หน้าโปรโมชัน",
+    "en": "Promotion Pages"
+  },
+  "Promotion Product Set": {
+    "th": "ชุดสินค้าโปรโมชัน",
+    "en": "Promotion Product Set"
+  },
+  "Promotions": {
+    "th": "โปรโมชัน",
+    "en": "Promotions"
+  },
+  "Proof of Delivery": {
+    "th": "หลักฐานการส่งมอบ",
+    "en": "Proof of Delivery"
+  },
+  "Purchase": {
+    "th": "ซื้อ",
+    "en": "Purchase"
+  },
+  "Push": {
+    "th": "การแจ้งเตือน Push",
+    "en": "Push"
+  },
+  "Push / In-app": {
+    "th": "Push / ภายในแอป",
+    "en": "Push / In-app"
+  },
+  "Push Campaigns": {
+    "th": "แคมเปญ Push",
+    "en": "Push Campaigns"
+  },
+  "Push campaign fail": {
+    "th": "แคมเปญ Push ล้มเหลว",
+    "en": "Push campaign fail"
+  },
+  "QR / PromptPay": {
+    "th": "QR / พร้อมเพย์",
+    "en": "QR / PromptPay"
+  },
+  "QR PromptPay": {
+    "th": "QR พร้อมเพย์",
+    "en": "QR PromptPay"
+  },
+  "Qty change": {
+    "th": "การเปลี่ยนจำนวน",
+    "en": "Qty change"
+  },
+  "Question": {
+    "th": "คำถาม",
+    "en": "Question"
+  },
+  "Queue Board ↗": {
+    "th": "บอร์ดคิว ↗",
+    "en": "Queue Board ↗"
+  },
+  "Queue Dashboard": {
+    "th": "ภาพรวมคิว",
+    "en": "Queue Dashboard"
+  },
+  "Quotation push": {
+    "th": "ส่งใบเสนอราคา",
+    "en": "Quotation push"
+  },
+  "Quotation status": {
+    "th": "สถานะใบเสนอราคา",
+    "en": "Quotation status"
+  },
+  "REF_TOKEN": {
+    "th": "REF_TOKEN",
+    "en": "REF_TOKEN"
+  },
+  "RETURNED": {
+    "th": "คืนแล้ว",
+    "en": "RETURNED"
+  },
+  "Rain": {
+    "th": "ฝน",
+    "en": "Rain"
+  },
+  "Raw": {
+    "th": "ข้อมูลดิบ",
+    "en": "Raw"
+  },
+  "Reactivate": {
+    "th": "เปิดใช้งานอีกครั้ง",
+    "en": "Reactivate"
+  },
+  "Received": {
+    "th": "ได้รับแล้ว",
+    "en": "Received"
+  },
+  "Recent campaigns": {
+    "th": "แคมเปญล่าสุด",
+    "en": "Recent campaigns"
+  },
+  "Recent deliveries ·": {
+    "th": "การส่งล่าสุด ·",
+    "en": "Recent deliveries ·"
+  },
+  "Recent events": {
+    "th": "เหตุการณ์ล่าสุด",
+    "en": "Recent events"
+  },
+  "Reconcile now": {
+    "th": "กระทบยอดตอนนี้",
+    "en": "Reconcile now"
+  },
+  "Redo (Ctrl/Cmd+Shift+Z)": {
+    "th": "ทำซ้ำ (Ctrl/Cmd+Shift+Z)",
+    "en": "Redo (Ctrl/Cmd+Shift+Z)"
+  },
+  "Reference": {
+    "th": "ข้อมูลอ้างอิง",
+    "en": "Reference"
+  },
+  "Refunded": {
+    "th": "คืนเงินแล้ว",
+    "en": "Refunded"
+  },
+  "Refunds": {
+    "th": "คืนเงิน",
+    "en": "Refunds"
+  },
+  "Reject": {
+    "th": "ปฏิเสธ",
+    "en": "Reject"
+  },
+  "Reload": {
+    "th": "โหลดใหม่",
+    "en": "Reload"
+  },
+  "Remove layer": {
+    "th": "ลบเลเยอร์",
+    "en": "Remove layer"
+  },
+  "Rename preset": {
+    "th": "เปลี่ยนชื่อค่าที่บันทึก",
+    "en": "Rename preset"
+  },
+  "Repeat": {
+    "th": "ซ้ำ",
+    "en": "Repeat"
+  },
+  "Replay": {
+    "th": "ส่งซ้ำ",
+    "en": "Replay"
+  },
+  "Request": {
+    "th": "คำขอ",
+    "en": "Request"
+  },
+  "Reset": {
+    "th": "รีเซ็ต",
+    "en": "Reset"
+  },
+  "Resolution": {
+    "th": "ความละเอียด",
+    "en": "Resolution"
+  },
+  "Response": {
+    "th": "คำตอบ",
+    "en": "Response"
+  },
+  "Response —": {
+    "th": "คำตอบ —",
+    "en": "Response —"
+  },
+  "Result": {
+    "th": "ผลลัพธ์",
+    "en": "Result"
+  },
+  "Returns & Refunds": {
+    "th": "คืนสินค้าและคืนเงิน",
+    "en": "Returns & Refunds"
+  },
+  "Review": {
+    "th": "ตรวจสอบ",
+    "en": "Review"
+  },
+  "Revision": {
+    "th": "รุ่นแก้ไข",
+    "en": "Revision"
+  },
+  "Role:": {
+    "th": "บทบาท:",
+    "en": "Role:"
+  },
+  "Rotation": {
+    "th": "การหมุน",
+    "en": "Rotation"
+  },
+  "Route": {
+    "th": "เส้นทาง",
+    "en": "Route"
+  },
+  "Rule Type": {
+    "th": "ประเภทกฎ",
+    "en": "Rule Type"
+  },
+  "Run a connector sync operation and track its result.": {
+    "th": "เริ่มซิงก์ผ่านตัวเชื่อมต่อและติดตามผล",
+    "en": "Run a connector sync operation and track its result."
+  },
+  "Run sync": {
+    "th": "เริ่มซิงก์",
+    "en": "Run sync"
+  },
+  "SHIPPING": {
+    "th": "กำลังจัดส่ง",
+    "en": "SHIPPING"
+  },
+  "SKU / Inventory": {
+    "th": "SKU / สต็อก",
+    "en": "SKU / Inventory"
+  },
+  "SKU order-taking": {
+    "th": "การรับออเดอร์ SKU",
+    "en": "SKU order-taking"
+  },
+  "SKU001 SKU002": {
+    "th": "SKU001 SKU002",
+    "en": "SKU001 SKU002"
+  },
+  "SKU:": {
+    "th": "SKU:",
+    "en": "SKU:"
+  },
+  "Sales": {
+    "th": "ยอดขาย",
+    "en": "Sales"
+  },
+  "Sample Requests": {
+    "th": "คำขอตัวอย่าง",
+    "en": "Sample Requests"
+  },
+  "Save draft": {
+    "th": "บันทึกร่าง",
+    "en": "Save draft"
+  },
+  "Saved campaign:": {
+    "th": "แคมเปญที่บันทึก:",
+    "en": "Saved campaign:"
+  },
+  "Saving...": {
+    "th": "กำลังบันทึก...",
+    "en": "Saving..."
+  },
+  "Scheduled": {
+    "th": "ตั้งเวลาแล้ว",
+    "en": "Scheduled"
+  },
+  "Scheduled fire log": {
+    "th": "บันทึกการทำงานตามเวลา",
+    "en": "Scheduled fire log"
+  },
+  "Secret": {
+    "th": "คีย์ลับ",
+    "en": "Secret"
+  },
+  "Segment IDs": {
+    "th": "รหัสกลุ่มลูกค้า",
+    "en": "Segment IDs"
+  },
+  "Select Folder": {
+    "th": "เลือกโฟลเดอร์",
+    "en": "Select Folder"
+  },
+  "Select a step to edit": {
+    "th": "เลือกขั้นตอนเพื่อแก้ไข",
+    "en": "Select a step to edit"
+  },
+  "Selector {0}": {
+    "th": "ตัวเลือก {0}",
+    "en": "Selector {0}"
+  },
+  "Send ERP": {
+    "th": "ส่ง ERP",
+    "en": "Send ERP"
+  },
+  "Send as ERP →": {
+    "th": "ส่งในนาม ERP →",
+    "en": "Send as ERP →"
+  },
+  "Send mock webhook →": {
+    "th": "ส่งเว็บฮุกจำลอง →",
+    "en": "Send mock webhook →"
+  },
+  "Send now": {
+    "th": "ส่งตอนนี้",
+    "en": "Send now"
+  },
+  "Sent": {
+    "th": "ส่งแล้ว",
+    "en": "Sent"
+  },
+  "Sent today": {
+    "th": "ส่งวันนี้",
+    "en": "Sent today"
+  },
+  "Sessions": {
+    "th": "รอบการใช้งาน",
+    "en": "Sessions"
+  },
+  "Set stock": {
+    "th": "กำหนดสต็อก",
+    "en": "Set stock"
+  },
+  "Set stock level": {
+    "th": "กำหนดระดับสต็อก",
+    "en": "Set stock level"
+  },
+  "Shipment": {
+    "th": "การจัดส่ง",
+    "en": "Shipment"
+  },
+  "Shipment #": {
+    "th": "เลขที่การจัดส่ง",
+    "en": "Shipment #"
+  },
+  "Shop by Cuisine": {
+    "th": "เลือกซื้อตามประเภทอาหาร",
+    "en": "Shop by Cuisine"
+  },
+  "Signature": {
+    "th": "ลายเซ็น",
+    "en": "Signature"
+  },
+  "Skipped": {
+    "th": "ข้ามแล้ว",
+    "en": "Skipped"
+  },
+  "Slide Down": {
+    "th": "เลื่อนลง",
+    "en": "Slide Down"
+  },
+  "Slide Up": {
+    "th": "เลื่อนขึ้น",
+    "en": "Slide Up"
+  },
+  "Slowest routes": {
+    "th": "เส้นทางที่ช้าที่สุด",
+    "en": "Slowest routes"
+  },
+  "Slug": {
+    "th": "ชื่อใน URL",
+    "en": "Slug"
+  },
+  "Slug *": {
+    "th": "ชื่อใน URL *",
+    "en": "Slug *"
+  },
+  "Slug{0}": {
+    "th": "ชื่อใน URL{0}",
+    "en": "Slug{0}"
+  },
+  "Smart Link (self-host)": {
+    "th": "Smart Link (โฮสต์เอง)",
+    "en": "Smart Link (self-host)"
+  },
+  "Smart Link Analytics": {
+    "th": "วิเคราะห์ Smart Link",
+    "en": "Smart Link Analytics"
+  },
+  "Smart Links": {
+    "th": "Smart Link",
+    "en": "Smart Links"
+  },
+  "Staff": {
+    "th": "ทีมงาน",
+    "en": "Staff"
+  },
+  "Staged ERP payloads — review parse/apply outcomes and retry failures.": {
+    "th": "ข้อมูล ERP ที่รอประมวลผล — ตรวจผลการอ่าน/บันทึก และลองรายการล้มเหลวอีกครั้ง",
+    "en": "Staged ERP payloads — review parse/apply outcomes and retry failures."
+  },
+  "Start New Lot": {
+    "th": "เริ่มรอบงานใหม่",
+    "en": "Start New Lot"
+  },
+  "Status Code": {
+    "th": "รหัสสถานะ",
+    "en": "Status Code"
+  },
+  "Step": {
+    "th": "ขั้นตอน",
+    "en": "Step"
+  },
+  "Steps": {
+    "th": "ขั้นตอน",
+    "en": "Steps"
+  },
+  "Steps (": {
+    "th": "ขั้นตอน (",
+    "en": "Steps ("
+  },
+  "Sticker Layers": {
+    "th": "เลเยอร์สติกเกอร์",
+    "en": "Sticker Layers"
+  },
+  "Sticker Settings": {
+    "th": "ตั้งค่าสติกเกอร์",
+    "en": "Sticker Settings"
+  },
+  "Sticker layers": {
+    "th": "เลเยอร์สติกเกอร์",
+    "en": "Sticker layers"
+  },
+  "Stock levels": {
+    "th": "ระดับสต็อก",
+    "en": "Stock levels"
+  },
+  "Storefront": {
+    "th": "หน้าร้าน",
+    "en": "Storefront"
+  },
+  "Stripe": {
+    "th": "Stripe",
+    "en": "Stripe"
+  },
+  "Sub Category Level 2": {
+    "th": "หมวดหมู่ย่อยระดับ 2",
+    "en": "Sub Category Level 2"
+  },
+  "Subscription name": {
+    "th": "ชื่อการสมัครรับข้อมูล",
+    "en": "Subscription name"
+  },
+  "Subscriptions": {
+    "th": "การสมัครรับข้อมูล",
+    "en": "Subscriptions"
+  },
+  "Supplier": {
+    "th": "ผู้จำหน่าย",
+    "en": "Supplier"
+  },
+  "Supplier order period": {
+    "th": "รอบการสั่งจากผู้จำหน่าย",
+    "en": "Supplier order period"
+  },
+  "Support": {
+    "th": "บริการช่วยเหลือ",
+    "en": "Support"
+  },
+  "TRIGGER": {
+    "th": "เหตุการณ์เริ่มต้น",
+    "en": "TRIGGER"
+  },
+  "Target": {
+    "th": "เป้าหมาย",
+    "en": "Target"
+  },
+  "Template ID": {
+    "th": "รหัสเทมเพลต",
+    "en": "Template ID"
+  },
+  "Template Variable Fallbacks": {
+    "th": "ค่าเริ่มต้นของตัวแปรเทมเพลต",
+    "en": "Template Variable Fallbacks"
+  },
+  "Test & preview (userId)": {
+    "th": "ทดสอบและดูตัวอย่าง (userId)",
+    "en": "Test & preview (userId)"
+  },
+  "Test Flow": {
+    "th": "ทดสอบลำดับงาน",
+    "en": "Test Flow"
+  },
+  "Test result: {0}": {
+    "th": "ผลทดสอบ: {0}",
+    "en": "Test result: {0}"
+  },
+  "Test send": {
+    "th": "ทดลองส่ง",
+    "en": "Test send"
+  },
+  "Text before card(s)...": {
+    "th": "ข้อความก่อนการ์ด...",
+    "en": "Text before card(s)..."
+  },
+  "Text when no results...": {
+    "th": "ข้อความเมื่อไม่พบผลลัพธ์...",
+    "en": "Text when no results..."
+  },
+  "Tier": {
+    "th": "ระดับ",
+    "en": "Tier"
+  },
+  "TikTok URL": {
+    "th": "URL ของ TikTok",
+    "en": "TikTok URL"
+  },
+  "Timeline": {
+    "th": "ลำดับเวลา",
+    "en": "Timeline"
+  },
+  "Timing / Analytics": {
+    "th": "เวลา / การวิเคราะห์",
+    "en": "Timing / Analytics"
+  },
+  "Title (TH)": {
+    "th": "หัวข้อภาษาไทย",
+    "en": "Title (TH)"
+  },
+  "Title *": {
+    "th": "หัวข้อ *",
+    "en": "Title *"
+  },
+  "Title B": {
+    "th": "หัวข้อ B",
+    "en": "Title B"
+  },
+  "Title EN": {
+    "th": "หัวข้อภาษาอังกฤษ",
+    "en": "Title EN"
+  },
+  "Today": {
+    "th": "วันนี้",
+    "en": "Today"
+  },
+  "Tool": {
+    "th": "เครื่องมือ",
+    "en": "Tool"
+  },
+  "Top Browsers": {
+    "th": "เบราว์เซอร์ยอดนิยม",
+    "en": "Top Browsers"
+  },
+  "Top Campaigns": {
+    "th": "แคมเปญยอดนิยม",
+    "en": "Top Campaigns"
+  },
+  "Top Devices": {
+    "th": "อุปกรณ์ยอดนิยม",
+    "en": "Top Devices"
+  },
+  "Tries": {
+    "th": "จำนวนครั้งที่ลอง",
+    "en": "Tries"
+  },
+  "Trigger": {
+    "th": "เหตุการณ์เริ่มต้น",
+    "en": "Trigger"
+  },
+  "Trigger Pattern": {
+    "th": "รูปแบบเหตุการณ์เริ่มต้น",
+    "en": "Trigger Pattern"
+  },
+  "Trigger a sync": {
+    "th": "เริ่มซิงก์",
+    "en": "Trigger a sync"
+  },
+  "Trusted Restaurant": {
+    "th": "ร้านอาหารที่เชื่อถือได้",
+    "en": "Trusted Restaurant"
+  },
+  "Trusted Restaurants": {
+    "th": "ร้านอาหารที่เชื่อถือได้",
+    "en": "Trusted Restaurants"
+  },
+  "U": {
+    "th": "U",
+    "en": "U"
+  },
+  "URL": {
+    "th": "URL",
+    "en": "URL"
+  },
+  "URL — Privacy (privacyUrl)": {
+    "th": "URL — ความเป็นส่วนตัว (privacyUrl)",
+    "en": "URL — Privacy (privacyUrl)"
+  },
+  "URL — Terms (termsUrl)": {
+    "th": "URL — ข้อกำหนด (termsUrl)",
+    "en": "URL — Terms (termsUrl)"
+  },
+  "UTC": {
+    "th": "UTC",
+    "en": "UTC"
+  },
+  "UTM & QR": {
+    "th": "UTM & QR",
+    "en": "UTM & QR"
+  },
+  "UUID of response template...": {
+    "th": "UUID ของเทมเพลตคำตอบ...",
+    "en": "UUID of response template..."
+  },
+  "Undo (Ctrl/Cmd+Z)": {
+    "th": "ย้อนกลับ (Ctrl/Cmd+Z)",
+    "en": "Undo (Ctrl/Cmd+Z)"
+  },
+  "Unique Visitors": {
+    "th": "ผู้เข้าชมไม่ซ้ำ",
+    "en": "Unique Visitors"
+  },
+  "Unlock Move Categories": {
+    "th": "ปลดล็อกการย้ายหมวดหมู่",
+    "en": "Unlock Move Categories"
+  },
+  "Updated {0}": {
+    "th": "อัปเดต {0}",
+    "en": "Updated {0}"
+  },
+  "Upload Sticker": {
+    "th": "อัปโหลดสติกเกอร์",
+    "en": "Upload Sticker"
+  },
+  "Users": {
+    "th": "ผู้ใช้",
+    "en": "Users"
+  },
+  "VAT": {
+    "th": "VAT",
+    "en": "VAT"
+  },
+  "VAT Type": {
+    "th": "ประเภท VAT",
+    "en": "VAT Type"
+  },
+  "Validate": {
+    "th": "ตรวจสอบความถูกต้อง",
+    "en": "Validate"
+  },
+  "Value": {
+    "th": "ค่า",
+    "en": "Value"
+  },
+  "Variant B": {
+    "th": "แบบ B",
+    "en": "Variant B"
+  },
+  "Video Upload": {
+    "th": "อัปโหลดวิดีโอ",
+    "en": "Video Upload"
+  },
+  "View Item": {
+    "th": "ดูสินค้า",
+    "en": "View Item"
+  },
+  "Visitors": {
+    "th": "ผู้เข้าชม",
+    "en": "Visitors"
+  },
+  "Visual Builder": {
+    "th": "เครื่องมือออกแบบ",
+    "en": "Visual Builder"
+  },
+  "Voided": {
+    "th": "ยกเลิกแล้ว",
+    "en": "Voided"
+  },
+  "WAIT": {
+    "th": "รอ",
+    "en": "WAIT"
+  },
+  "Web": {
+    "th": "เว็บ",
+    "en": "Web"
+  },
+  "Web URL": {
+    "th": "URL เว็บ",
+    "en": "Web URL"
+  },
+  "Web destination": {
+    "th": "ปลายทางเว็บ",
+    "en": "Web destination"
+  },
+  "WebP / Quality": {
+    "th": "WebP / คุณภาพ",
+    "en": "WebP / Quality"
+  },
+  "WebP Quality": {
+    "th": "คุณภาพ WebP",
+    "en": "WebP Quality"
+  },
+  "Webhook Dead Letter": {
+    "th": "เว็บฮุกที่ส่งไม่สำเร็จ",
+    "en": "Webhook Dead Letter"
+  },
+  "Webhook Platforms": {
+    "th": "แพลตฟอร์มเว็บฮุก",
+    "en": "Webhook Platforms"
+  },
+  "Webhook events": {
+    "th": "เหตุการณ์เว็บฮุก",
+    "en": "Webhook events"
+  },
+  "Welcome Lead Email": {
+    "th": "อีเมลต้อนรับลูกค้าใหม่",
+    "en": "Welcome Lead Email"
+  },
+  "Welcome to NavbarShop!": {
+    "th": "ยินดีต้อนรับสู่ NavbarShop!",
+    "en": "Welcome to NavbarShop!"
+  },
+  "Welcome to SharedUiWeb!": {
+    "th": "ยินดีต้อนรับสู่ SharedUiWeb!",
+    "en": "Welcome to SharedUiWeb!"
+  },
+  "What is this webhook for?": {
+    "th": "เว็บฮุกนี้ใช้ทำอะไร?",
+    "en": "What is this webhook for?"
+  },
+  "When": {
+    "th": "เมื่อ",
+    "en": "When"
+  },
+  "Width": {
+    "th": "ความกว้าง",
+    "en": "Width"
+  },
+  "Workflow": {
+    "th": "เวิร์กโฟลว์",
+    "en": "Workflow"
+  },
+  "Workflow Enrollments": {
+    "th": "รายการเข้าร่วมเวิร์กโฟลว์",
+    "en": "Workflow Enrollments"
+  },
+  "Workflow saved!": {
+    "th": "บันทึกเวิร์กโฟลว์แล้ว!",
+    "en": "Workflow saved!"
+  },
+  "Workflow ·": {
+    "th": "เวิร์กโฟลว์ ·",
+    "en": "Workflow ·"
+  },
+  "Workflows": {
+    "th": "เวิร์กโฟลว์",
+    "en": "Workflows"
+  },
+  "X": {
+    "th": "X",
+    "en": "X"
+  },
+  "Y": {
+    "th": "Y",
+    "en": "Y"
+  },
+  "Yes": {
+    "th": "ใช่",
+    "en": "Yes"
+  },
+  "Zendesk Automation": {
+    "th": "ระบบอัตโนมัติ Zendesk",
+    "en": "Zendesk Automation"
+  },
+  "Zoom": {
+    "th": "ซูม",
+    "en": "Zoom"
+  },
+  "action": {
+    "th": "การทำงาน",
+    "en": "action"
+  },
+  "active_for_shop (": {
+    "th": "active_for_shop (",
+    "en": "active_for_shop ("
+  },
+  "add_to_cart": {
+    "th": "add_to_cart",
+    "en": "add_to_cart"
+  },
+  "archived": {
+    "th": "เก็บถาวรแล้ว",
+    "en": "archived"
+  },
+  "attempts)": {
+    "th": "ครั้ง)",
+    "en": "attempts)"
+  },
+  "bad-checksum": {
+    "th": "bad-checksum",
+    "en": "bad-checksum"
+  },
+  "badge": {
+    "th": "ป้าย",
+    "en": "badge"
+  },
+  "banner": {
+    "th": "แบนเนอร์",
+    "en": "banner"
+  },
+  "c": {
+    "th": "c",
+    "en": "c"
+  },
+  "cancelled": {
+    "th": "ยกเลิกแล้ว",
+    "en": "cancelled"
+  },
+  "card": {
+    "th": "การ์ด",
+    "en": "card"
+  },
+  "card_list": {
+    "th": "card_list",
+    "en": "card_list"
+  },
+  "cart_still_open": {
+    "th": "cart_still_open",
+    "en": "cart_still_open"
+  },
+  "charge": {
+    "th": "charge",
+    "en": "charge"
+  },
+  "commerce": {
+    "th": "commerce",
+    "en": "commerce"
+  },
+  "completed": {
+    "th": "เสร็จแล้ว",
+    "en": "completed"
+  },
+  "conversion": {
+    "th": "การซื้อ",
+    "en": "conversion"
+  },
+  "conversions": {
+    "th": "จำนวนการซื้อ",
+    "en": "conversions"
+  },
+  "converted": {
+    "th": "ซื้อแล้ว",
+    "en": "converted"
+  },
+  "cpc": {
+    "th": "cpc",
+    "en": "cpc"
+  },
+  "custcode": {
+    "th": "custcode",
+    "en": "custcode"
+  },
+  "dormant {0} × {1}%": {
+    "th": "ไม่ใช้งาน {0} × {1}%",
+    "en": "dormant {0} × {1}%"
+  },
+  "keyword": {
+    "th": "คำค้น",
+    "en": "keyword"
+  },
+  "list": {
+    "th": "รายการ",
+    "en": "list"
+  },
+  "live": {
+    "th": "ใช้งานจริง",
+    "en": "live"
+  },
+  "na": {
+    "th": "ไม่มีข้อมูล",
+    "en": "na"
+  },
+  "next": {
+    "th": "ถัดไป",
+    "en": "next"
+  },
+  "no-checksum": {
+    "th": "no-checksum",
+    "en": "no-checksum"
+  },
+  "no-reference": {
+    "th": "no-reference",
+    "en": "no-reference"
+  },
+  "not_tested": {
+    "th": "ยังไม่ทดสอบ",
+    "en": "not_tested"
+  },
+  "now": {
+    "th": "ตอนนี้",
+    "en": "now"
+  },
+  "option": {
+    "th": "ตัวเลือก",
+    "en": "option"
+  },
+  "optional notes": {
+    "th": "หมายเหตุเพิ่มเติม",
+    "en": "optional notes"
+  },
+  "order.status.changed": {
+    "th": "order.status.changed",
+    "en": "order.status.changed"
+  },
+  "orderId:": {
+    "th": "orderId:",
+    "en": "orderId:"
+  },
+  "order_lookup": {
+    "th": "order_lookup",
+    "en": "order_lookup"
+  },
+  "pass": {
+    "th": "ผ่าน",
+    "en": "pass"
+  },
+  "payment_test": {
+    "th": "payment_test",
+    "en": "payment_test"
+  },
+  "pending": {
+    "th": "รอดำเนินการ",
+    "en": "pending"
+  },
+  "pending_decision": {
+    "th": "รอตัดสินใจ",
+    "en": "pending_decision"
+  },
+  "per 100 g": {
+    "th": "ต่อ 100 กรัม",
+    "en": "per 100 g"
+  },
+  "popup banner": {
+    "th": "แบนเนอร์ป๊อปอัป",
+    "en": "popup banner"
+  },
+  "preview-{0}": {
+    "th": "preview-{0}",
+    "en": "preview-{0}"
+  },
+  "price": {
+    "th": "ราคา",
+    "en": "price"
+  },
+  "product media": {
+    "th": "สื่อสินค้า",
+    "en": "product media"
+  },
+  "productName": {
+    "th": "productName",
+    "en": "productName"
+  },
+  "product_recommend": {
+    "th": "product_recommend",
+    "en": "product_recommend"
+  },
+  "product_search": {
+    "th": "product_search",
+    "en": "product_search"
+  },
+  "px)": {
+    "th": "px)",
+    "en": "px)"
+  },
+  "qr": {
+    "th": "qr",
+    "en": "qr"
+  },
+  "quotation · catalog · stock · customer": {
+    "th": "quotation · catalog · stock · customer",
+    "en": "quotation · catalog · stock · customer"
+  },
+  "r": {
+    "th": "r",
+    "en": "r"
+  },
+  "referenceOrder:": {
+    "th": "referenceOrder:",
+    "en": "referenceOrder:"
+  },
+  "refunded": {
+    "th": "คืนเงินแล้ว",
+    "en": "refunded"
+  },
+  "regex": {
+    "th": "regex",
+    "en": "regex"
+  },
+  "rejected": {
+    "th": "ปฏิเสธแล้ว",
+    "en": "rejected"
+  },
+  "replaced": {
+    "th": "แทนที่แล้ว",
+    "en": "replaced"
+  },
+  "resolved_user_id": {
+    "th": "resolved_user_id",
+    "en": "resolved_user_id"
+  },
+  "revision": {
+    "th": "รุ่นแก้ไข",
+    "en": "revision"
+  },
+  "revision {0}": {
+    "th": "รุ่นแก้ไข {0}",
+    "en": "revision {0}"
+  },
+  "running": {
+    "th": "กำลังทำงาน",
+    "en": "running"
+  },
+  "s": {
+    "th": "s",
+    "en": "s"
+  },
+  "seafood": {
+    "th": "อาหารทะเล",
+    "en": "seafood"
+  },
+  "segment": {
+    "th": "กลุ่มลูกค้า",
+    "en": "segment"
+  },
+  "sent": {
+    "th": "ส่งแล้ว",
+    "en": "sent"
+  },
+  "set": {
+    "th": "ชุด",
+    "en": "set"
+  },
+  "shipment": {
+    "th": "การจัดส่ง",
+    "en": "shipment"
+  },
+  "shipment.courier_*": {
+    "th": "shipment.courier_*",
+    "en": "shipment.courier_*"
+  },
+  "skipped": {
+    "th": "ข้ามแล้ว",
+    "en": "skipped"
+  },
+  "sku": {
+    "th": "sku",
+    "en": "sku"
+  },
+  "slug: {0}": {
+    "th": "slug: {0}",
+    "en": "slug: {0}"
+  },
+  "span ×": {
+    "th": "ช่วง ×",
+    "en": "span ×"
+  },
+  "string-livemode": {
+    "th": "string-livemode",
+    "en": "string-livemode"
+  },
+  "success: false": {
+    "th": "success: false",
+    "en": "success: false"
+  },
+  "supplier": {
+    "th": "ผู้จำหน่าย",
+    "en": "supplier"
+  },
+  "sync": {
+    "th": "ซิงก์",
+    "en": "sync"
+  },
+  "test:": {
+    "th": "ทดสอบ:",
+    "en": "test:"
+  },
+  "text": {
+    "th": "ข้อความ",
+    "en": "text"
+  },
+  "tool": {
+    "th": "เครื่องมือ",
+    "en": "tool"
+  },
+  "under_review": {
+    "th": "รอตรวจสอบ",
+    "en": "under_review"
+  },
+  "users": {
+    "th": "ผู้ใช้",
+    "en": "users"
+  },
+  "variant": {
+    "th": "แบบ",
+    "en": "variant"
+  },
+  "we HMAC-sign each delivery": {
+    "th": "เราลงลายเซ็น HMAC ในทุกการส่ง",
+    "en": "we HMAC-sign each delivery"
+  },
+  "weather.0.main": {
+    "th": "weather.0.main",
+    "en": "weather.0.main"
+  },
+  "welcome-lead-email-preview": {
+    "th": "welcome-lead-email-preview",
+    "en": "welcome-lead-email-preview"
+  },
+  "{0} success rate": {
+    "th": "อัตราสำเร็จ {0}",
+    "en": "{0} success rate"
+  },
+  "{0} – {1}": {
+    "th": "{0} – {1}",
+    "en": "{0} – {1}"
+  },
+  "≤": {
+    "th": "≤",
+    "en": "≤"
+  },
+  "≥": {
+    "th": "≥",
+    "en": "≥"
+  },
+  "Across {0} warehouse": {
+    "th": "รวม {0} คลัง",
+    "en": "Across {0} warehouse"
+  },
+  "Across {0} warehouses": {
+    "th": "รวม {0} คลัง",
+    "en": "Across {0} warehouses"
+  },
+  "Trigger: {0}": {
+    "th": "เริ่มเมื่อ: {0}",
+    "en": "Trigger: {0}"
+  },
+  "Zoom in": {
+    "th": "ขยาย",
+    "en": "Zoom in"
+  },
+  "Zoom out": {
+    "th": "ย่อ",
+    "en": "Zoom out"
+  },
+  "Fit view": {
+    "th": "แสดงผังทั้งหมด",
+    "en": "Fit view"
+  },
+  "Toggle interactivity": {
+    "th": "สลับการแก้ไขผัง",
+    "en": "Toggle interactivity"
+  },
+  "Workflow controls": {
+    "th": "ควบคุมผังเวิร์กโฟลว์",
+    "en": "Workflow controls"
+  },
+  "Enter test message:": {
+    "th": "กรอกข้อความทดสอบ:",
+    "en": "Enter test message:"
+  },
+  "(ยังไม่ตั้งเงื่อนไข)": {
+    "th": "(ยังไม่ตั้งเงื่อนไข)",
+    "en": "(No conditions set)"
+  },
+  "This lot contains very large images or a very large image count and may use significant memory.": {
+    "th": "ชุดนี้มีรูปขนาดใหญ่มากหรือมีรูปจำนวนมาก จึงอาจใช้หน่วยความจำมาก",
+    "en": "This lot contains very large images or a very large image count and may use significant memory."
+  },
+  "custypes: {0}": {
+    "th": "ประเภทร้าน: {0}",
+    "en": "custypes: {0}"
+  },
+  "{0} กลุ่ม, {1} ประเภทร้าน": {
+    "th": "{0} กลุ่ม, {1} ประเภทร้าน",
+    "en": "{0} groups, {1} store types"
+  },
+  "{0} ถึง {1}": {
+    "th": "{0} ถึง {1}",
+    "en": "{0} to {1}"
+  },
+  "กรุณากรอกรหัสคูปองและชื่อคูปอง (ไทยและอังกฤษ)": {
+    "th": "กรุณากรอกรหัสคูปองและชื่อคูปอง (ไทยและอังกฤษ)",
+    "en": "Enter the coupon code and name in Thai and English"
+  },
+  "กรุณาระบุวันเริ่มต้นและวันสิ้นสุด": {
+    "th": "กรุณาระบุวันเริ่มต้นและวันสิ้นสุด",
+    "en": "Specify the start and end dates"
+  },
+  "กรุณาเลือก segment": {
+    "th": "กรุณาเลือก segment",
+    "en": "Select a segment"
+  },
+  "กำหนดกลุ่มลูกค้า": {
+    "th": "กำหนดกลุ่มลูกค้า",
+    "en": "Define a customer segment"
+  },
+  "กึ่งกลาง": {
+    "th": "กึ่งกลาง",
+    "en": "Center"
+  },
+  "ขนาดแนะนำ 1200×400 px (3:1) — อัตราส่วนเดียวกับ Desktop JPG/PNG/WebP ไม่เกิน 5MB": {
+    "th": "ขนาดแนะนำ 1200×400 px (3:1) — อัตราส่วนเดียวกับ Desktop JPG/PNG/WebP ไม่เกิน 5MB",
+    "en": "Recommended: 1200×400 px (3:1), the same ratio as Desktop. JPG/PNG/WebP, up to 5 MB"
+  },
+  "ขนาดแนะนำ 1200×400 px (3:1) — เท่ากับแบนเนอร์หน้าแรก JPG/PNG/WebP ไม่เกิน 5MB": {
+    "th": "ขนาดแนะนำ 1200×400 px (3:1) — เท่ากับแบนเนอร์หน้าแรก JPG/PNG/WebP ไม่เกิน 5MB",
+    "en": "Recommended: 1200×400 px (3:1), the same size as the home banner. JPG/PNG/WebP, up to 5 MB"
+  },
+  "ขอบเขตส่วนลด, ยอดตะกร้าขั้นต่ำ, SKU ขั้นต่ำ และช่องทางชำระเงิน": {
+    "th": "ขอบเขตส่วนลด, ยอดตะกร้าขั้นต่ำ, SKU ขั้นต่ำ และช่องทางชำระเงิน",
+    "en": "Discount scope, minimum cart total, minimum SKU count and payment methods"
+  },
+  "ขึ้น popup บน shop หลัง enroll — แนะนำให้วางหลัง Grant Coupon ใน flow เดียวกัน": {
+    "th": "ขึ้น popup บน shop หลัง enroll — แนะนำให้วางหลัง Grant Coupon ใน flow เดียวกัน",
+    "en": "Show a popup in the shop after enrollment. Place it after Grant Coupon in the same flow"
+  },
+  "ข้อความตัวอย่าง": {
+    "th": "ข้อความตัวอย่าง",
+    "en": "Sample message"
+  },
+  "ข้อความตัวอย่าง…": {
+    "th": "ข้อความตัวอย่าง…",
+    "en": "Sample message…"
+  },
+  "ข้อความแจ้งเตือน": {
+    "th": "ข้อความแจ้งเตือน",
+    "en": "Notification message"
+  },
+  "ข้อมูลคู่แข่ง": {
+    "th": "ข้อมูลคู่แข่ง",
+    "en": "Competitor data"
+  },
+  "ข้อมูลบริษัทด้านบน · ผู้ใช้และที่อยู่จัดส่งแยกตามสาขาด้านล่าง": {
+    "th": "ข้อมูลบริษัทด้านบน · ผู้ใช้และที่อยู่จัดส่งแยกตามสาขาด้านล่าง",
+    "en": "Company details above; users and shipping addresses by branch below"
+  },
+  "ข้อมูลปัจจุบัน (ปิดบางส่วนเพื่อความเป็นส่วนตัว)": {
+    "th": "ข้อมูลปัจจุบัน (ปิดบางส่วนเพื่อความเป็นส่วนตัว)",
+    "en": "Current information (partially masked for privacy)"
+  },
+  "ข้าม (ยังไม่ถึงเวลา)": {
+    "th": "ข้าม (ยังไม่ถึงเวลา)",
+    "en": "Skipped (not due yet)"
+  },
+  "คลิกแล้วพิมพ์ข้อความในแผงขวา...": {
+    "th": "คลิกแล้วพิมพ์ข้อความในแผงขวา...",
+    "en": "Click, then enter text in the right panel..."
+  },
+  "คัดลอก deeplink": {
+    "th": "คัดลอก deeplink",
+    "en": "Copy deep link"
+  },
+  "คืนเงิน/เครดิต (Cashback)": {
+    "th": "คืนเงิน/เครดิต (Cashback)",
+    "en": "Refund / credit (cashback)"
+  },
+  "คูปองถูกลบ/ไม่พบในรายการ": {
+    "th": "คูปองถูกลบ/ไม่พบในรายการ",
+    "en": "Coupon deleted or missing from the list"
+  },
+  "ค่า แถวที่ {0}": {
+    "th": "ค่า แถวที่ {0}",
+    "en": "Value, row {0}"
+  },
+  "ค่าปัจจุบัน = \"{0}\" → {1}": {
+    "th": "ค่าปัจจุบัน = \"{0}\" → {1}",
+    "en": "Current value = \"{0}\" → {1}"
+  },
+  "ค่าเป้าหมาย (": {
+    "th": "ค่าเป้าหมาย (",
+    "en": "Target value ("
+  },
+  "ค้นหา Promotion Product Set": {
+    "th": "ค้นหา Promotion Product Set",
+    "en": "Find a promotion product set"
+  },
+  "ค้างนานเท่าไหร่จึงเริ่ม workflow": {
+    "th": "ค้างนานเท่าไหร่จึงเริ่ม workflow",
+    "en": "How long to wait before starting the workflow"
+  },
+  "จาก ~{0} หน้า": {
+    "th": "จาก ~{0} หน้า",
+    "en": "From approximately {0} pages"
+  },
+  "จำกัดช่องทางชำระเงินที่ใช้คูปองได้": {
+    "th": "จำกัดช่องทางชำระเงินที่ใช้คูปองได้",
+    "en": "Limit the payment methods allowed for this coupon"
+  },
+  "จำกัดทั้งระบบ (ครั้ง)": {
+    "th": "จำกัดทั้งระบบ (ครั้ง)",
+    "en": "System-wide limit (uses)"
+  },
+  "จำนวนการเข้าชมหน้า": {
+    "th": "จำนวนการเข้าชมหน้า",
+    "en": "Page views"
+  },
+  "จำนวนครั้งที่เด้งได้ในแท็บนี้ก่อนหยุด (default 1)": {
+    "th": "จำนวนครั้งที่เด้งได้ในแท็บนี้ก่อนหยุด (default 1)",
+    "en": "Maximum popups in this tab before stopping (default: 1)"
+  },
+  "จำนวนชิ้นในแพ็ก": {
+    "th": "จำนวนชิ้นในแพ็ก",
+    "en": "Items per pack"
+  },
+  "จำนวนวันหลัง enroll ที่ยังนับว่าออเดอร์นั้นมาจาก workflow นี้": {
+    "th": "จำนวนวันหลัง enroll ที่ยังนับว่าออเดอร์นั้นมาจาก workflow นี้",
+    "en": "Days after enrollment during which an order is attributed to this workflow"
+  },
+  "จำนวนเงินคงที่ (บาท)": {
+    "th": "จำนวนเงินคงที่ (บาท)",
+    "en": "Fixed amount (THB)"
+  },
+  "ชั่วโมง:นาที:วินาที": {
+    "th": "ชั่วโมง:นาที:วินาที",
+    "en": "Hours:minutes:seconds"
+  },
+  "ชั่วโมงที่ไม่แสดงหลังกดปุ่มนี้ — 8760 = ถาวร": {
+    "th": "ชั่วโมงที่ไม่แสดงหลังกดปุ่มนี้ — 8760 = ถาวร",
+    "en": "Hours to hide after clicking this button; 8760 = permanently"
+  },
+  "ชั่วโมงปัจจุบัน (0-23)": {
+    "th": "ชั่วโมงปัจจุบัน (0-23)",
+    "en": "Current hour (0–23)"
+  },
+  "ชั้นย่อย": {
+    "th": "ชั้นย่อย",
+    "en": "Child layer"
+  },
+  "ชำระเมื่อ": {
+    "th": "ชำระเมื่อ",
+    "en": "Paid on"
+  },
+  "ชื่อ Preset": {
+    "th": "ชื่อ Preset",
+    "en": "Preset name"
+  },
+  "ชื่อผู้รับ": {
+    "th": "ชื่อผู้รับ",
+    "en": "Recipient name"
+  },
+  "ชื่อยาวเกิน 200 ตัวอักษร": {
+    "th": "ชื่อยาวเกิน 200 ตัวอักษร",
+    "en": "Name exceeds 200 characters"
+  },
+  "ชุดต้นทางปิดใช้งาน — โปรยังใช้รายการที่บันทึกไว้": {
+    "th": "ชุดต้นทางปิดใช้งาน — โปรยังใช้รายการที่บันทึกไว้",
+    "en": "Source set disabled; the promotion still uses the saved items"
+  },
+  "ช่วงห้ามทับกับขั้นก่อนหน้า": {
+    "th": "ช่วงห้ามทับกับขั้นก่อนหน้า",
+    "en": "This period must not overlap the previous step"
+  },
+  "ซื้อ (จำนวน)": {
+    "th": "ซื้อ (จำนวน)",
+    "en": "Buy (quantity)"
+  },
+  "ซื้อ X แถม Y (BOGO)": {
+    "th": "ซื้อ X แถม Y (BOGO)",
+    "en": "Buy X, get Y (BOGO)"
+  },
+  "ซ่อนกล่อง &ldquo;โค้ดที่ใช้ได้&rdquo; และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง": {
+    "th": "ซ่อนกล่อง &ldquo;โค้ดที่ใช้ได้&rdquo; และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง",
+    "en": "Hide the “Available code” box and copy button. Suitable for coupons already added to an account; customers do not need to enter a code"
+  },
+  "ฐาน (เช่น per 100 g)": {
+    "th": "ฐาน (เช่น per 100 g)",
+    "en": "Basis (e.g. per 100 g)"
+  },
+  "ดาวน์โหลด template": {
+    "th": "ดาวน์โหลด template",
+    "en": "Download template"
+  },
+  "ดึงค่าไม่สำเร็จ:": {
+    "th": "ดึงค่าไม่สำเร็จ:",
+    "en": "Could not fetch value:"
+  },
+  "ตัวจริง — คนขับ/route ไม่ได้มาจาก invoice.status.changed แยก mock ไว้เพราะเป็นคนละ endpoint กัน ยิงแล้วจะ persist ลง": {
+    "th": "ตัวจริง — คนขับ/route ไม่ได้มาจาก invoice.status.changed แยก mock ไว้เพราะเป็นคนละ endpoint กัน ยิงแล้วจะ persist ลง",
+    "en": "Live endpoint: driver and route data are separate from invoice.status.changed. This has its own mock endpoint, and submitting it persists the data"
+  },
+  "ตัวชี้วัด": {
+    "th": "ตัวชี้วัด",
+    "en": "Metrics"
+  },
+  "ตัวอย่างจากชุดนี้:": {
+    "th": "ตัวอย่างจากชุดนี้:",
+    "en": "Example from this set:"
+  },
+  "ตัวเชื่อม": {
+    "th": "ตัวเชื่อม",
+    "en": "Connector"
+  },
+  "ตัวเปรียบเทียบ": {
+    "th": "ตัวเปรียบเทียบ",
+    "en": "Comparison operator"
+  },
+  "ตั้งเวลาไว้": {
+    "th": "ตั้งเวลาไว้",
+    "en": "Scheduled"
+  },
+  "ถอยย่อหน้าบรรทัดแรก (Shift+Tab / Backspace ต้นบรรทัด)": {
+    "th": "ถอยย่อหน้าบรรทัดแรก (Shift+Tab / Backspace ต้นบรรทัด)",
+    "en": "Decrease first-line indent (Shift+Tab / Backspace at the beginning of a line)"
+  },
+  "ถึง goal แล้ว จึงออกจาก workflow": {
+    "th": "ถึง goal แล้ว จึงออกจาก workflow",
+    "en": "Goal reached; exited the workflow"
+  },
+  "ที่อยู่จัดส่ง:": {
+    "th": "ที่อยู่จัดส่ง:",
+    "en": "Shipping address:"
+  },
+  "ที่อยู่จัดส่งของสาขานี้": {
+    "th": "ที่อยู่จัดส่งของสาขานี้",
+    "en": "Shipping address for this branch"
+  },
+  "ที่อยู่ตามทะเบียนบริษัท — ไม่ใช่ที่อยู่จัดส่งของแต่ละสาขา": {
+    "th": "ที่อยู่ตามทะเบียนบริษัท — ไม่ใช่ที่อยู่จัดส่งของแต่ละสาขา",
+    "en": "Registered company address; each branch has its own shipping address"
+  },
+  "ที่อยู่บริษัท (สำนักงานใหญ่)": {
+    "th": "ที่อยู่บริษัท (สำนักงานใหญ่)",
+    "en": "Company address (head office)"
+  },
+  "ทุก Gateway": {
+    "th": "ทุก Gateway",
+    "en": "All gateways"
+  },
+  "นำ {0} ออก": {
+    "th": "นำ {0} ออก",
+    "en": "Remove {0}"
+  },
+  "น้ำหนัก / ขนาด": {
+    "th": "น้ำหนัก / ขนาด",
+    "en": "Weight / size"
+  },
+  "น้ำหนักต่อหน่วยขายของเรา (กก.)": {
+    "th": "น้ำหนักต่อหน่วยขายของเรา (กก.)",
+    "en": "Weight per selling unit (kg)"
+  },
+  "น้ำหนักที่ไม่ระบุ ใส่ได้ทีหลังตอนตรวจคู่ (ขั้นที่ 2)": {
+    "th": "น้ำหนักที่ไม่ระบุ ใส่ได้ทีหลังตอนตรวจคู่ (ขั้นที่ 2)",
+    "en": "Missing weights can be entered when reviewing matches in step 2"
+  },
+  "บัญชีผู้ใช้ไม่พร้อมรับแคมเปญ": {
+    "th": "บัญชีผู้ใช้ไม่พร้อมรับแคมเปญ",
+    "en": "User account is not eligible for this campaign"
+  },
+  "บันทึกข้อมูลบริษัทสำเร็จ": {
+    "th": "บันทึกข้อมูลบริษัทสำเร็จ",
+    "en": "Company details saved"
+  },
+  "บันทึกสถานะไม่สำเร็จ": {
+    "th": "บันทึกสถานะไม่สำเร็จ",
+    "en": "Could not save status"
+  },
+  "บันทึกหน้าโปร": {
+    "th": "บันทึกหน้าโปร",
+    "en": "Save promotion page"
+  },
+  "ประเภท Template (Type)": {
+    "th": "ประเภท Template (Type)",
+    "en": "Template type"
+  },
+  "ประเภทการแจ้งเตือน": {
+    "th": "ประเภทการแจ้งเตือน",
+    "en": "Notification type"
+  },
+  "ประเภทปุ่ม (Type)": {
+    "th": "ประเภทปุ่ม (Type)",
+    "en": "Button type"
+  },
+  "ปิดบัญชี {0}? ออกจากระบบทันทีทุกเครื่อง": {
+    "th": "ปิดบัญชี {0}? ออกจากระบบทันทีทุกเครื่อง",
+    "en": "Close account {0}? This immediately signs out all devices"
+  },
+  "ปุ่มใหม่": {
+    "th": "ปุ่มใหม่",
+    "en": "New button"
+  },
+  "ผลทดลองดึง": {
+    "th": "ผลทดลองดึง",
+    "en": "Fetch test results"
+  },
+  "ผู้ที่ใช้คูปอง": {
+    "th": "ผู้ที่ใช้คูปอง",
+    "en": "Coupon users"
+  },
+  "ผู้เยี่ยมชมที่ยังไม่ได้เข้าสู่ระบบ": {
+    "th": "ผู้เยี่ยมชมที่ยังไม่ได้เข้าสู่ระบบ",
+    "en": "Visitors who have not signed in"
+  },
+  "ผู้ใช้ยกเลิกการรับข้อความ": {
+    "th": "ผู้ใช้ยกเลิกการรับข้อความ",
+    "en": "User opted out of messages"
+  },
+  "ผู้ใช้รายนี้ยังไม่มี Company — ไม่สามารถกำหนดราคาพิเศษได้": {
+    "th": "ผู้ใช้รายนี้ยังไม่มี Company — ไม่สามารถกำหนดราคาพิเศษได้",
+    "en": "This user has no company; special pricing cannot be assigned"
+  },
+  "ผู้ให้บริการชำระเงิน (Gateway)": {
+    "th": "ผู้ให้บริการชำระเงิน (Gateway)",
+    "en": "Payment gateway"
+  },
+  "พิจารณา": {
+    "th": "พิจารณา",
+    "en": "Review"
+  },
+  "พิมพ์หัวข้อ popup ตรงนี้...": {
+    "th": "พิมพ์หัวข้อ popup ตรงนี้...",
+    "en": "Enter the popup title here..."
+  },
+  "ภายในกี่วันย้อนหลัง (ไม่บังคับ)": {
+    "th": "ภายในกี่วันย้อนหลัง (ไม่บังคับ)",
+    "en": "Look back how many days (optional)"
+  },
+  "มากกว่า (&gt;)": {
+    "th": "มากกว่า (&gt;)",
+    "en": "Greater than (>)"
+  },
+  "มีคู่แล้ว": {
+    "th": "มีคู่แล้ว",
+    "en": "Matched"
+  },
+  "มีสิทธิ์หรือได้รับอนุญาตให้ดึงข้อมูลอัตโนมัติจากแหล่งนี้": {
+    "th": "มีสิทธิ์หรือได้รับอนุญาตให้ดึงข้อมูลอัตโนมัติจากแหล่งนี้",
+    "en": "You have permission to collect data automatically from this source"
+  },
+  "มูลค่ารวมน้อยกว่า (บาท)": {
+    "th": "มูลค่ารวมน้อยกว่า (บาท)",
+    "en": "Total value less than (THB)"
+  },
+  "มูลค่าออเดอร์รวมขั้นต่ำ": {
+    "th": "มูลค่าออเดอร์รวมขั้นต่ำ",
+    "en": "Minimum total order value"
+  },
+  "ยอดออเดอร์ครั้งเดียว": {
+    "th": "ยอดออเดอร์ครั้งเดียว",
+    "en": "Single order total"
+  },
+  "ยังไม่ตั้งเป้า": {
+    "th": "ยังไม่ตั้งเป้า",
+    "en": "No goal set"
+  },
+  "ยังไม่มี Admin ในสาขานี้": {
+    "th": "ยังไม่มี Admin ในสาขานี้",
+    "en": "No admin in this branch yet"
+  },
+  "ยังไม่มี Tier — กด &quot;เพิ่ม Tier&quot; เพื่อสร้าง": {
+    "th": "ยังไม่มี Tier — กด &quot;เพิ่ม Tier&quot; เพื่อสร้าง",
+    "en": "No tiers yet. Click “Add tier” to create one"
+  },
+  "ยังไม่มี conversion สำหรับตัวกรองนี้": {
+    "th": "ยังไม่มี conversion สำหรับตัวกรองนี้",
+    "en": "No conversions for these filters"
+  },
+  "ยังไม่มี element — ลากจาก Elements มาวางได้เลย": {
+    "th": "ยังไม่มี element — ลากจาก Elements มาวางได้เลย",
+    "en": "No elements yet. Drag one from Elements to get started"
+  },
+  "ยังไม่มี show_offer ในผลรัน — เพิ่ม Action &quot;แสดง Offer&quot; เลือกคูปอง แล้วทดสอบอีกครั้ง (ปิด Dry run)": {
+    "th": "ยังไม่มี show_offer ในผลรัน — เพิ่ม Action &quot;แสดง Offer&quot; เลือกคูปอง แล้วทดสอบอีกครั้ง (ปิด Dry run)",
+    "en": "No show_offer in the run results. Add a “Show offer” action, select a coupon, then test again with Dry run disabled"
+  },
+  "ยังไม่มี — เลือกสินค้าจากเว็บด้านล่างได้เลย": {
+    "th": "ยังไม่มี — เลือกสินค้าจากเว็บด้านล่างได้เลย",
+    "en": "None yet. Select products from the website below"
+  },
+  "ยังไม่มีเงื่อนไขในกลุ่มนี้": {
+    "th": "ยังไม่มีเงื่อนไขในกลุ่มนี้",
+    "en": "No conditions in this group yet"
+  },
+  "ยังไม่ระบุ ID": {
+    "th": "ยังไม่ระบุ ID",
+    "en": "No ID specified"
+  },
+  "ยังไม่เลือกช่องทาง": {
+    "th": "ยังไม่เลือกช่องทาง",
+    "en": "No channel selected"
+  },
+  "ยังไม่ได้เลือก": {
+    "th": "ยังไม่ได้เลือก",
+    "en": "Not selected"
+  },
+  "รวมเข้าบัญชีนี้": {
+    "th": "รวมเข้าบัญชีนี้",
+    "en": "Merge into this account"
+  },
+  "รหัสสินค้า (SKU)": {
+    "th": "รหัสสินค้า (SKU)",
+    "en": "Product code (SKU)"
+  },
+  "รหัสหมวดหมู่ (Category ID)": {
+    "th": "รหัสหมวดหมู่ (Category ID)",
+    "en": "Category ID"
+  },
+  "รหัสอุปกรณ์ (individual_id)": {
+    "th": "รหัสอุปกรณ์ (individual_id)",
+    "en": "Device ID (individual_id)"
+  },
+  "ระบบจะตรวจว่าลูกค้ายังอยู่ใน segment ตอนใช้คูปอง": {
+    "th": "ระบบจะตรวจว่าลูกค้ายังอยู่ใน segment ตอนใช้คูปอง",
+    "en": "The system checks segment membership when the customer uses the coupon"
+  },
+  "ระบบจับคู่รูปกับสินค้าจาก": {
+    "th": "ระบบจับคู่รูปกับสินค้าจาก",
+    "en": "The system matches images to products using"
+  },
+  "ระบบจับคู่ให้แล้ว — เอาติ๊กออกเฉพาะตัวที่ผิด": {
+    "th": "ระบบจับคู่ให้แล้ว — เอาติ๊กออกเฉพาะตัวที่ผิด",
+    "en": "Automatically matched. Uncheck only incorrect matches"
+  },
+  "ระบบมั่นใจ {0}%": {
+    "th": "ระบบมั่นใจ {0}%",
+    "en": "Match confidence: {0}%"
+  },
+  "ระบบรองรับเฉพาะไฟล์ jpg, jpeg, png, gif, webp — ตรวจสอบชนิดไฟล์แล้วลองใหม่": {
+    "th": "ระบบรองรับเฉพาะไฟล์ jpg, jpeg, png, gif, webp — ตรวจสอบชนิดไฟล์แล้วลองใหม่",
+    "en": "Supported files: jpg, jpeg, png, gif and webp. Check the file type and try again"
+  },
+  "ระบบสร้าง/อัปเดต/ลบแบนเนอร์ HERO ของหน้านี้ให้เอง — ใช้ภาพและวันที่ของหน้า": {
+    "th": "ระบบสร้าง/อัปเดต/ลบแบนเนอร์ HERO ของหน้านี้ให้เอง — ใช้ภาพและวันที่ของหน้า",
+    "en": "The system creates, updates or removes this page’s HERO banner using its image and dates"
+  },
+  "ระบบเปิดดูไม่เกิน 6 หน้า แล้วบอกว่าเว็บนี้มีข้อมูลอะไร เช่น ชื่อสินค้า ราคา — ยังไม่เริ่มเก็บจริงจนกว่าจะกดยืนยัน": {
+    "th": "ระบบเปิดดูไม่เกิน 6 หน้า แล้วบอกว่าเว็บนี้มีข้อมูลอะไร เช่น ชื่อสินค้า ราคา — ยังไม่เริ่มเก็บจริงจนกว่าจะกดยืนยัน",
+    "en": "The system previews up to 6 pages and identifies available data such as product names and prices. Collection starts only after you confirm"
+  },
+  "ระบุรายชื่อเอง (CSV / user_id)": {
+    "th": "ระบุรายชื่อเอง (CSV / user_id)",
+    "en": "Specify recipients manually (CSV / user_id)"
+  },
+  "ราคาสัญญา (บาท)": {
+    "th": "ราคาสัญญา (บาท)",
+    "en": "Contract price (THB)"
+  },
+  "รูปภาพ (URL)": {
+    "th": "รูปภาพ (URL)",
+    "en": "Image URL"
+  },
+  "รูปแบบการแสดงรูปพื้นหลัง": {
+    "th": "รูปแบบการแสดงรูปพื้นหลัง",
+    "en": "Background image display"
+  },
+  "รูปแบบข้อความที่จับคู่ (Pattern regex)": {
+    "th": "รูปแบบข้อความที่จับคู่ (Pattern regex)",
+    "en": "Matching pattern (regular expression)"
+  },
+  "รูปแบบส่วนลด": {
+    "th": "รูปแบบส่วนลด",
+    "en": "Discount type"
+  },
+  "ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ": {
+    "th": "ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ",
+    "en": "Retry failed files only"
+  },
+  "ลาก element จากแผงซ้ายมาวางบน grid ได้เลย": {
+    "th": "ลาก element จากแผงซ้ายมาวางบน grid ได้เลย",
+    "en": "Drag an element from the left panel onto the grid"
+  },
+  "ลากจุดสีด้านล่าง → ปล่อยบนแถบด้านบนของการ์ดปลายทาง": {
+    "th": "ลากจุดสีด้านล่าง → ปล่อยบนแถบด้านบนของการ์ดปลายทาง",
+    "en": "Drag the colored dot below onto the top bar of the destination card"
+  },
+  "ลากเพื่อปรับความกว้าง": {
+    "th": "ลากเพื่อปรับความกว้าง",
+    "en": "Drag to resize width"
+  },
+  "ลิงก์เว็บ (หรือชื่อ Makro PRO, Big C, Freshket)": {
+    "th": "ลิงก์เว็บ (หรือชื่อ Makro PRO, Big C, Freshket)",
+    "en": "Website URL (or Makro PRO, Big C, Freshket)"
+  },
+  "ลิตร": {
+    "th": "ลิตร",
+    "en": "Liters"
+  },
+  "ลูกค้า: {0}": {
+    "th": "ลูกค้า: {0}",
+    "en": "Customer: {0}"
+  },
+  "ลูกค้าเปิดที่": {
+    "th": "ลูกค้าเปิดที่",
+    "en": "Customer opened on"
+  },
+  "วันจัดส่ง (ไม่บังคับ)": {
+    "th": "วันจัดส่ง (ไม่บังคับ)",
+    "en": "Delivery date (optional)"
+  },
+  "วันสิ้นสุดต้องไม่ก่อนวันเริ่ม": {
+    "th": "วันสิ้นสุดต้องไม่ก่อนวันเริ่ม",
+    "en": "End date must be on or after the start date"
+  },
+  "วันเริ่มต้นต้องไม่เกินวันสิ้นสุด": {
+    "th": "วันเริ่มต้นต้องไม่เกินวันสิ้นสุด",
+    "en": "Start date must be on or before the end date"
+  },
+  "ส": {
+    "th": "ส",
+    "en": "Sat"
+  },
+  "สรุป: ลูกค้าที่": {
+    "th": "สรุป: ลูกค้าที่",
+    "en": "Summary: customers who"
+  },
+  "สร้าง Marketing Workflow ใหม่": {
+    "th": "สร้าง Marketing Workflow ใหม่",
+    "en": "Create a marketing workflow"
+  },
+  "สร้าง QR ชำระเงิน": {
+    "th": "สร้าง QR ชำระเงิน",
+    "en": "Create payment QR code"
+  },
+  "สร้าง popup แบบลากวาง →": {
+    "th": "สร้าง popup แบบลากวาง →",
+    "en": "Create a popup with drag and drop →"
+  },
+  "สร้างออเดอร์แทนลูกค้า": {
+    "th": "สร้างออเดอร์แทนลูกค้า",
+    "en": "Create an order for a customer"
+  },
+  "สร้างเสร็จแล้วกลับมาเพิ่มเข้า Campaign ที่นี่": {
+    "th": "สร้างเสร็จแล้วกลับมาเพิ่มเข้า Campaign ที่นี่",
+    "en": "After creating it, return here to add it to the campaign"
+  },
+  "สร้างไม่สำเร็จ": {
+    "th": "สร้างไม่สำเร็จ",
+    "en": "Could not create"
+  },
+  "สิทธิ์ใน josh ของ {0}": {
+    "th": "สิทธิ์ใน josh ของ {0}",
+    "en": "Josh permissions for {0}"
+  },
+  "สินค้ากลับมามีสต๊อก": {
+    "th": "สินค้ากลับมามีสต๊อก",
+    "en": "Product back in stock"
+  },
+  "สูงสุด {0} ครั้ง/session": {
+    "th": "สูงสุด {0} ครั้ง/session",
+    "en": "Up to {0} times per session"
+  },
+  "ส่งไม่สำเร็จ {0} · กำลังส่ง {1}": {
+    "th": "ส่งไม่สำเร็จ {0} · กำลังส่ง {1}",
+    "en": "Failed: {0} · Sending: {1}"
+  },
+  "ส่วนลดของคูปองนี้กำหนดในส่วน &quot;ประเภทและส่วนลด&quot; ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ": {
+    "th": "ส่วนลดของคูปองนี้กำหนดในส่วน &quot;ประเภทและส่วนลด&quot; ด้านล่าง เหมือนคูปองทั่วไป — ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ",
+    "en": "Set this coupon’s discount in “Type and discount” below, as with other coupons. The section above defines only the conditions for receiving the coupon automatically"
+  },
+  "ส่วนลดแบบเปอร์เซ็นต์ต้องระบุส่วนลดสูงสุด (บาท)": {
+    "th": "ส่วนลดแบบเปอร์เซ็นต์ต้องระบุส่วนลดสูงสุด (บาท)",
+    "en": "Percentage discounts require a maximum discount amount (THB)"
+  },
+  "ส่วนลดแบบเปอร์เซ็นต์ต้องไม่เกิน 100%": {
+    "th": "ส่วนลดแบบเปอร์เซ็นต์ต้องไม่เกิน 100%",
+    "en": "Percentage discount must not exceed 100%"
+  },
+  "หน้า · ดูแหล่งที่มา": {
+    "th": "หน้า · ดูแหล่งที่มา",
+    "en": "pages · View sources"
+  },
+  "หน้า · ไม่สำเร็จ": {
+    "th": "หน้า · ไม่สำเร็จ",
+    "en": "pages · Failed"
+  },
+  "หน้าค้นหาหรือหน้าหมวดสินค้า เช่น makro.pro/c/search?q=* หรือหน้าหมวดเนื้อหมูของ Lotus's": {
+    "th": "หน้าค้นหาหรือหน้าหมวดสินค้า เช่น makro.pro/c/search?q=* หรือหน้าหมวดเนื้อหมูของ Lotus's",
+    "en": "Search or category pages, such as makro.pro/c/search?q=* or the pork category on Lotus’s"
+  },
+  "หน้าโปรจะว่าง — ยังไม่มีโปรอัตโนมัติ และคูปองใน Campaign นี้ไม่แสดงบนหน้าโปรทั้งหมด": {
+    "th": "หน้าโปรจะว่าง — ยังไม่มีโปรอัตโนมัติ และคูปองใน Campaign นี้ไม่แสดงบนหน้าโปรทั้งหมด",
+    "en": "The promotion page will be empty: there are no automatic promotions, and this campaign’s coupons are hidden from promotion pages"
+  },
+  "หน้าโปรจะว่าง — ยังไม่มีโปรอัตโนมัติหรือคูปองใน Campaign นี้": {
+    "th": "หน้าโปรจะว่าง — ยังไม่มีโปรอัตโนมัติหรือคูปองใน Campaign นี้",
+    "en": "The promotion page will be empty: there are no automatic promotions or coupons in this campaign"
+  },
+  "หมดอายุ": {
+    "th": "หมดอายุ",
+    "en": "Expired"
+  },
+  "หัวข้อแจ้งเตือน (ไทย — ต้นฉบับ, จำเป็นต้องกรอก)": {
+    "th": "หัวข้อแจ้งเตือน (ไทย — ต้นฉบับ, จำเป็นต้องกรอก)",
+    "en": "Notification title (Thai original, required)"
+  },
+  "อัตราการกด": {
+    "th": "อัตราการกด",
+    "en": "Click rate"
+  },
+  "อัปโหลดภาพ Desktop (TH)": {
+    "th": "อัปโหลดภาพ Desktop (TH)",
+    "en": "Upload desktop image (TH)"
+  },
+  "อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ &#34;ERP log ของ josh&#34;": {
+    "th": "อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ &#34;ERP log ของ josh&#34;",
+    "en": "Read-only data from Josh Mongo (last 24 hours, up to 7 days). See “Josh ERP log” for ERP requests sent to Josh"
+  },
+  "เงื่อนไขราคา / สาขา / โปรโมชั่น": {
+    "th": "เงื่อนไขราคา / สาขา / โปรโมชั่น",
+    "en": "Pricing / branch / promotion conditions"
+  },
+  "เงื่อนไขราคา:": {
+    "th": "เงื่อนไขราคา:",
+    "en": "Pricing conditions:"
+  },
+  "เงื่อนไขแยกเส้นทาง (Condition)": {
+    "th": "เงื่อนไขแยกเส้นทาง (Condition)",
+    "en": "Branching condition"
+  },
+  "เช่น 95": {
+    "th": "เช่น 95",
+    "en": "E.g. 95"
+  },
+  "เบอร์โทรบริษัท": {
+    "th": "เบอร์โทรบริษัท",
+    "en": "Company phone number"
+  },
+  "เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้)": {
+    "th": "เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้)",
+    "en": "First website visit on this device (including guests)"
+  },
+  "เริ่มจากใส่เว็บด้านบน แล้วกดสำรวจ": {
+    "th": "เริ่มจากใส่เว็บด้านบน แล้วกดสำรวจ",
+    "en": "Enter a website above, then click Explore"
+  },
+  "เลือก template ทางซ้าย หรือกด \"+ สร้าง template ใหม่\"": {
+    "th": "เลือก template ทางซ้าย หรือกด \"+ สร้าง template ใหม่\"",
+    "en": "Select a template on the left or click “+ Create template”"
+  },
+  "เลือกวันเวลาเริ่มและสิ้นสุด": {
+    "th": "เลือกวันเวลาเริ่มและสิ้นสุด",
+    "en": "Choose start and end dates and times"
+  },
+  "เลือกโฟลเดอร์": {
+    "th": "เลือกโฟลเดอร์",
+    "en": "Choose folder"
+  },
+  "เลือกโฟลเดอร์รูปภาพเพื่ออัปโหลด": {
+    "th": "เลือกโฟลเดอร์รูปภาพเพื่ออัปโหลด",
+    "en": "Choose an image folder to upload"
+  },
+  "เลือกไฟล์": {
+    "th": "เลือกไฟล์",
+    "en": "Choose file"
+  },
+  "เลือกไฟล์รูปภาพเพื่ออัปโหลด": {
+    "th": "เลือกไฟล์รูปภาพเพื่ออัปโหลด",
+    "en": "Choose image files to upload"
+  },
+  "เว้นว่าง = ระบบสร้างป้ายตามภาษาให้เอง แยกกันแต่ละภาษา": {
+    "th": "เว้นว่าง = ระบบสร้างป้ายตามภาษาให้เอง แยกกันแต่ละภาษา",
+    "en": "Leave blank to generate a label for each language automatically"
+  },
+  "แก้ไขกลุ่มลูกค้า": {
+    "th": "แก้ไขกลุ่มลูกค้า",
+    "en": "Edit customer segment"
+  },
+  "แก้ไขเทมเพลตบอต": {
+    "th": "แก้ไขเทมเพลตบอต",
+    "en": "Edit bot template"
+  },
+  "แสดง Offer บน Shop": {
+    "th": "แสดง Offer บน Shop",
+    "en": "Show offer in the shop"
+  },
+  "แสดงสูงสุด 100 field — response ถูกตัดบางส่วน": {
+    "th": "แสดงสูงสุด 100 field — response ถูกตัดบางส่วน",
+    "en": "Showing up to 100 fields; the response has been shortened"
+  },
+  "โปรอัตโนมัติ (Promotion mechanics)": {
+    "th": "โปรอัตโนมัติ (Promotion mechanics)",
+    "en": "Automatic promotions (promotion mechanics)"
+  },
+  "โหลดสถิติไม่สำเร็จ": {
+    "th": "โหลดสถิติไม่สำเร็จ",
+    "en": "Could not load statistics"
+  },
+  "โหลดเพิ่ม": {
+    "th": "โหลดเพิ่ม",
+    "en": "Load more"
+  },
+  "ใช้ / เพื่อรวมทุกหน้าในโดเมน · ลิงก์ภายนอกจะไม่ถูกเก็บ": {
+    "th": "ใช้ / เพื่อรวมทุกหน้าในโดเมน · ลิงก์ภายนอกจะไม่ถูกเก็บ",
+    "en": "Use / to include all pages in the domain. External links are excluded"
+  },
+  "ใช้ SKU นี้": {
+    "th": "ใช้ SKU นี้",
+    "en": "Use this SKU"
+  },
+  "ใช้ layout จาก \"": {
+    "th": "ใช้ layout จาก \"",
+    "en": "Apply layout from \""
+  },
+  "ใส่ userId เพื่อดูประวัติการแจ้งเตือน": {
+    "th": "ใส่ userId เพื่อดูประวัติการแจ้งเตือน",
+    "en": "Enter a userId to view notification history"
+  },
+  "ใส่จำนวนเต็ม 0 ขึ้นไป": {
+    "th": "ใส่จำนวนเต็ม 0 ขึ้นไป",
+    "en": "Enter a whole number of 0 or greater"
+  },
+  "ไปที่บริษัท": {
+    "th": "ไปที่บริษัท",
+    "en": "Go to company"
+  },
+  "ไปที่หน้า:": {
+    "th": "ไปที่หน้า:",
+    "en": "Go to page:"
+  },
+  "ไฟล์)": {
+    "th": "ไฟล์)",
+    "en": "files)"
+  },
+  "ไม่จำกัดกลุ่ม — ใครมีรหัสก็ใช้ได้": {
+    "th": "ไม่จำกัดกลุ่ม — ใครมีรหัสก็ใช้ได้",
+    "en": "No segment restriction; anyone with the code can use it"
+  },
+  "ไม่พบ SKU ที่ตรงตัวกรอง": {
+    "th": "ไม่พบ SKU ที่ตรงตัวกรอง",
+    "en": "No SKU matches these filters"
+  },
+  "ไม่พบ notify template": {
+    "th": "ไม่พบ notify template",
+    "en": "Notification template not found"
+  },
+  "ไม่พบกลุ่มลูกค้านี้": {
+    "th": "ไม่พบกลุ่มลูกค้านี้",
+    "en": "Customer segment not found"
+  },
+  "ไม่พบข้อมูล funnel": {
+    "th": "ไม่พบข้อมูล funnel",
+    "en": "Funnel data not found"
+  },
+  "ไม่พบข้อมูล หรือ userId ไม่ถูกต้อง": {
+    "th": "ไม่พบข้อมูล หรือ userId ไม่ถูกต้อง",
+    "en": "No data found, or the userId is invalid"
+  },
+  "ไม่พบข้อมูลบริษัท": {
+    "th": "ไม่พบข้อมูลบริษัท",
+    "en": "Company not found"
+  },
+  "ไม่พบเทมเพลตบอตนี้": {
+    "th": "ไม่พบเทมเพลตบอตนี้",
+    "en": "Bot template not found"
+  },
+  "ไม่มีช่องทางส่ง (email/push/line)": {
+    "th": "ไม่มีช่องทางส่ง (email/push/line)",
+    "en": "No delivery channel (email/push/line)"
+  },
+  "ไม่มีหัวข้อ": {
+    "th": "ไม่มีหัวข้อ",
+    "en": "Untitled"
+  },
+  "ไม่มีหัวข้อกำหนดเอง": {
+    "th": "ไม่มีหัวข้อกำหนดเอง",
+    "en": "No custom title"
+  },
+  "ไม่ระบุการเก็บรักษา": {
+    "th": "ไม่ระบุการเก็บรักษา",
+    "en": "Storage unspecified"
+  },
+  "ไม่ระบุประเทศ": {
+    "th": "ไม่ระบุประเทศ",
+    "en": "Country unspecified"
+  },
+  "ไม่ระบุผู้ใช้": {
+    "th": "ไม่ระบุผู้ใช้",
+    "en": "User unspecified"
+  },
+  "ไม่ระบุหน่วย": {
+    "th": "ไม่ระบุหน่วย",
+    "en": "Unit unspecified"
+  },
+  "ไม่ระบุแพ็ก": {
+    "th": "ไม่ระบุแพ็ก",
+    "en": "Pack unspecified"
+  },
+  "ไม่สั่งซื้อเกิน X วัน": {
+    "th": "ไม่สั่งซื้อเกิน X วัน",
+    "en": "No orders for more than X days"
+  },
+  "ไม่สามารถคำนวณราคาได้": {
+    "th": "ไม่สามารถคำนวณราคาได้",
+    "en": "Could not calculate price"
+  },
+  "ไม่สามารถโหลด log การส่งได้": {
+    "th": "ไม่สามารถโหลด log การส่งได้",
+    "en": "Could not load delivery logs"
+  },
+  "— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก &quot;ดูเอกสาร&quot;": {
+    "th": "— การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก &quot;ดูเอกสาร&quot;",
+    "en": "Approval and rejection are handled in the separate CS-CRM system. Table rows therefore provide only a “View documents” action"
+  },
+  "ยังไม่ได้ตั้ง ERP_WEBHOOK_KEY — dev รับทุก request; production จะตอบ 401": {
+    "th": "ยังไม่ได้ตั้ง ERP_WEBHOOK_KEY — dev รับทุก request; production จะตอบ 401",
+    "en": "ERP_WEBHOOK_KEY is not configured. Development accepts all requests; production returns 401"
+  },
+  "รีเซ็ตเป็น template": {
+    "th": "รีเซ็ตเป็น template",
+    "en": "Reset to template"
+  },
+  "ส่งต่อไป platform (": {
+    "th": "ส่งต่อไป platform (",
+    "en": "Forward to platform ("
+  },
+  "ยังไม่มี — route นี้อาจไม่มี subscription หรือกำลังส่ง": {
+    "th": "ยังไม่มี — route นี้อาจไม่มี subscription หรือกำลังส่ง",
+    "en": "None yet. This route may have no subscription, or delivery may be in progress"
+  },
+  "เบอร์": {
+    "th": "เบอร์",
+    "en": "Phone"
+  },
+  "สินค้าในตะกร้า": {
+    "th": "สินค้าในตะกร้า",
+    "en": "Cart items"
+  },
+  "เพิ่มสินค้าจากรายการด้านซ้าย": {
+    "th": "เพิ่มสินค้าจากรายการด้านซ้าย",
+    "en": "Add products from the list on the left"
+  },
+  "หลังสั่งซื้อ josh แจ้งว่า": {
+    "th": "หลังสั่งซื้อ josh แจ้งว่า",
+    "en": "After ordering, Josh reports"
+  },
+  "จ่ายแล้ว → commerce ยืนยัน order → ส่งไป ERP": {
+    "th": "จ่ายแล้ว → commerce ยืนยัน order → ส่งไป ERP",
+    "en": "Paid → Commerce confirms the order → Sent to ERP"
+  },
+  "จ่ายไม่สำเร็จ → ไม่ส่ง ERP": {
+    "th": "จ่ายไม่สำเร็จ → ไม่ส่ง ERP",
+    "en": "Payment failed → Not sent to ERP"
+  },
+  "ยังไม่จ่าย (ค้างรอจ่าย)": {
+    "th": "ยังไม่จ่าย (ค้างรอจ่าย)",
+    "en": "Unpaid (awaiting payment)"
+  },
+  "ขั้น": {
+    "th": "ขั้น",
+    "en": "Step"
+  },
+  "คำตอบ": {
+    "th": "คำตอบ",
+    "en": "Answer"
+  },
+  "สต็อกที่จอง": {
+    "th": "สต็อกที่จอง",
+    "en": "Reserved stock"
+  },
+  "ค้นหาคูปอง (รหัสหรือชื่อ)": {
+    "th": "ค้นหาคูปอง (รหัสหรือชื่อ)",
+    "en": "Search coupons by code or name"
+  },
+  "จริงจากระบบ": {
+    "th": "จริงจากระบบ",
+    "en": "Live system data"
+  },
+  "ตรวจ SKU": {
+    "th": "ตรวจ SKU",
+    "en": "Check SKU"
+  },
+  "แทนที่แล้ว": {
+    "th": "แทนที่แล้ว",
+    "en": "Replaced"
+  },
+  "ปิดการเก็บข้อมูลเบื้องหลังทุกเว็บ?": {
+    "th": "ปิดการเก็บข้อมูลเบื้องหลังทุกเว็บ?",
+    "en": "Disable background collection for all websites?"
+  },
+  "เพิ่มเว็บให้ SKU นี้": {
+    "th": "เพิ่มเว็บให้ SKU นี้",
+    "en": "Add a website for this SKU"
+  },
+  "ไม่มีรูปเก่าที่ต้องลบ": {
+    "th": "ไม่มีรูปเก่าที่ต้องลบ",
+    "en": "No old images to delete"
+  },
+  "ยังไม่มีหน้าโปร — ลูกค้ายังเปิดดูสินค้าของงานนี้ทั้งชุดในหน้าเดียวไม่ได้": {
+    "th": "ยังไม่มีหน้าโปร — ลูกค้ายังเปิดดูสินค้าของงานนี้ทั้งชุดในหน้าเดียวไม่ได้",
+    "en": "No promotion page yet. Customers cannot view all products in this campaign on one page"
+  },
+  "ราคาที่กำหนด": {
+    "th": "ราคาที่กำหนด",
+    "en": "Set price"
+  },
+  "ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน": {
+    "th": "ลบให้ว่างแล้วบันทึก = ซ่อนไอคอน",
+    "en": "Clear and save to hide the icon"
+  },
+  "วันที่สมัครอยู่ในช่วง (Registered Between)": {
+    "th": "วันที่สมัครอยู่ในช่วง (Registered Between)",
+    "en": "Registered between"
+  },
+  "ไม่พบสินค้านี้": {
+    "th": "ไม่พบสินค้านี้",
+    "en": "Product not found"
+  },
+  "Avg จัดส่ง": {
+    "th": "Avg จัดส่ง",
+    "en": "Average delivery time"
+  },
+  "Avg รวม (สร้าง→ส่งถึง)": {
+    "th": "Avg รวม (สร้าง→ส่งถึง)",
+    "en": "Average total time (created → delivered)"
+  },
+  "Avg รอส่ง": {
+    "th": "Avg รอส่ง",
+    "en": "Average wait to ship"
+  },
+  "Shipments ทั้งหมด": {
+    "th": "Shipments ทั้งหมด",
+    "en": "All shipments"
+  },
+  "Simulator ปิดอยู่หรือเข้าไม่ได้: {0}": {
+    "th": "Simulator ปิดอยู่หรือเข้าไม่ได้: {0}",
+    "en": "Simulator is disabled or unavailable: {0}"
+  },
+  "holdout {0}% · cooldown {1} วัน": {
+    "th": "holdout {0}% · cooldown {1} วัน",
+    "en": "holdout {0}% · cooldown {1} days"
+  },
+  "order {0} · จอง {1}/{2} รายการ": {
+    "th": "order {0} · จอง {1}/{2} รายการ",
+    "en": "order {0} · {1}/{2} items reserved"
+  },
+  "{0} กลุ่ม · ยกเว้น {1}": {
+    "th": "{0} กลุ่ม · ยกเว้น {1}",
+    "en": "{0} segments · {1} excluded"
+  },
+  "{0} ถูกปฏิเสธ {1}: {2}": {
+    "th": "{0} ถูกปฏิเสธ {1}: {2}",
+    "en": "{0} rejected {1}: {2}"
+  },
+  "{0} ใช้งาน · {1} ทั้งหมด": {
+    "th": "{0} ใช้งาน · {1} ทั้งหมด",
+    "en": "{0} active · {1} total"
+  },
+  "กำลังสร้างร่าง workflow": {
+    "th": "กำลังสร้างร่าง workflow",
+    "en": "Creating workflow draft"
+  },
+  "จองสต็อก → สร้าง order → รอจ่าย": {
+    "th": "จองสต็อก → สร้าง order → รอจ่าย",
+    "en": "Reserve stock → Create order → Await payment"
+  },
+  "จัดส่งแล้ว": {
+    "th": "จัดส่งแล้ว",
+    "en": "Shipped"
+  },
+  "ชำระสำเร็จ": {
+    "th": "ชำระสำเร็จ",
+    "en": "Payment succeeded"
+  },
+  "ซื้อซ้ำ": {
+    "th": "ซื้อซ้ำ",
+    "en": "Repeat purchase"
+  },
+  "ตรวจคู่ที่ระบบจับให้": {
+    "th": "ตรวจคู่ที่ระบบจับให้",
+    "en": "Review automatic matches"
+  },
+  "ตอบ {0} ใน {1} ms": {
+    "th": "ตอบ {0} ใน {1} ms",
+    "en": "Response {0} in {1} ms"
+  },
+  "ตาราง + Excel": {
+    "th": "ตาราง + Excel",
+    "en": "Table + Excel"
+  },
+  "ติ๊กตัวที่ถูก บันทึกอัตโนมัติ": {
+    "th": "ติ๊กตัวที่ถูก บันทึกอัตโนมัติ",
+    "en": "Select correct matches; changes save automatically"
+  },
+  "ต้องตรวจการสร้าง workflow": {
+    "th": "ต้องตรวจการสร้าง workflow",
+    "en": "Check workflow creation"
+  },
+  "ผลเทียบราคา": {
+    "th": "ผลเทียบราคา",
+    "en": "Price comparison results"
+  },
+  "ยอดขายรวม (ชำระแล้ว)": {
+    "th": "ยอดขายรวม (ชำระแล้ว)",
+    "en": "Total sales (paid)"
+  },
+  "ยอดขายวันนี้": {
+    "th": "ยอดขายวันนี้",
+    "en": "Sales today"
+  },
+  "ยอดขายและตะกร้าใช้ช่วงถึง {0} (สิ้นชั่วโมงที่ครบแล้ว)": {
+    "th": "ยอดขายและตะกร้าใช้ช่วงถึง {0} (สิ้นชั่วโมงที่ครบแล้ว)",
+    "en": "Sales and cart data are available through {0} (last completed hour)"
+  },
+  "ยอดสำเร็จรวม": {
+    "th": "ยอดสำเร็จรวม",
+    "en": "Total successful payments"
+  },
+  "ยังคำนวณไม่ได้": {
+    "th": "ยังคำนวณไม่ได้",
+    "en": "Not yet calculable"
+  },
+  "ยังสรุปไม่ได้": {
+    "th": "ยังสรุปไม่ได้",
+    "en": "No conclusion yet"
+  },
+  "ยังไม่จ่าย": {
+    "th": "ยังไม่จ่าย",
+    "en": "Unpaid"
+  },
+  "ยังไม่มีแหล่งที่พร้อม — โจทย์จะรอจนกว่าแหล่งข้อมูลจะเชื่อม": {
+    "th": "ยังไม่มีแหล่งที่พร้อม — โจทย์จะรอจนกว่าแหล่งข้อมูลจะเชื่อม",
+    "en": "No sources ready yet. This task will wait for a data source to be connected"
+  },
+  "รอชำระ (มูลค่า)": {
+    "th": "รอชำระ (มูลค่า)",
+    "en": "Awaiting payment (value)"
+  },
+  "รอส่ง…": {
+    "th": "รอส่ง…",
+    "en": "Awaiting delivery…"
+  },
+  "รับ event ที่ /api/internal/erp-events": {
+    "th": "รับ event ที่ /api/internal/erp-events",
+    "en": "Receive events at /api/internal/erp-events"
+  },
+  "รับ order เมื่อจ่ายเงินแล้ว": {
+    "th": "รับ order เมื่อจ่ายเงินแล้ว",
+    "en": "Receive order after payment"
+  },
+  "รับที่ /api/erp/*": {
+    "th": "รับที่ /api/erp/*",
+    "en": "Receive at /api/erp/*"
+  },
+  "ราคาลูกค้า (ต่อบริษัท)": {
+    "th": "ราคาลูกค้า (ต่อบริษัท)",
+    "en": "Customer price (per company)"
+  },
+  "ราคาสัญญา (ต่อสาขา)": {
+    "th": "ราคาสัญญา (ต่อสาขา)",
+    "en": "Contract price (per branch)"
+  },
+  "ลูกค้ากดสั่งซื้อ": {
+    "th": "ลูกค้ากดสั่งซื้อ",
+    "en": "Customer places an order"
+  },
+  "วันนี้ (ยอดสำเร็จ)": {
+    "th": "วันนี้ (ยอดสำเร็จ)",
+    "en": "Today (successful payments)"
+  },
+  "วันนี้ (รายการ)": {
+    "th": "วันนี้ (รายการ)",
+    "en": "Today (transactions)"
+  },
+  "สร้างร่าง workflow แล้ว": {
+    "th": "สร้างร่าง workflow แล้ว",
+    "en": "Workflow draft created"
+  },
+  "สร้างวันนี้": {
+    "th": "สร้างวันนี้",
+    "en": "Created today"
+  },
+  "ส่ง {0}": {
+    "th": "ส่ง {0}",
+    "en": "Send {0}"
+  },
+  "อนุมัติแล้ว": {
+    "th": "อนุมัติแล้ว",
+    "en": "Approved"
+  },
+  "ออเดอร์วันนี้": {
+    "th": "ออเดอร์วันนี้",
+    "en": "Orders today"
+  },
+  "เก็บสินค้าและราคาจากเว็บ": {
+    "th": "เก็บสินค้าและราคาจากเว็บ",
+    "en": "Collect products and prices from websites"
+  },
+  "เราแพงกว่า {0} SKU · Excel": {
+    "th": "เราแพงกว่า {0} SKU · Excel",
+    "en": "Our price is higher for {0} SKUs · Excel"
+  },
+  "เลือก payload แล้วกดส่ง": {
+    "th": "เลือก payload แล้วกดส่ง",
+    "en": "Choose a payload, then click Send"
+  },
+  "โอกาสจากตลาด": {
+    "th": "โอกาสจากตลาด",
+    "en": "Market opportunity"
+  },
+  "ได้เลข {0}{1}": {
+    "th": "ได้เลข {0}{1}",
+    "en": "Number assigned: {0}{1}"
+  },
+  "ไม่พบ Campaign": {
+    "th": "ไม่พบ Campaign",
+    "en": "Campaign not found"
+  },
+  "ไม่มี ERP integration ที่ active": {
+    "th": "ไม่มี ERP integration ที่ active",
+    "en": "No active ERP integration"
+  },
+  "ไม่มี platform ที่ subscribe event นี้ (commerce เก็บไว้เอง)": {
+    "th": "ไม่มี platform ที่ subscribe event นี้ (commerce เก็บไว้เอง)",
+    "en": "No platform subscribes to this event; Commerce keeps it locally"
+  },
+  "ไม่ส่ง (order ยังไม่ยืนยัน)": {
+    "th": "ไม่ส่ง (order ยังไม่ยืนยัน)",
+    "en": "Not sent (order unconfirmed)"
+  },
+  "ค้นเว็บสาธารณะตามสิทธิ์ของ provider; ไม่ใช่การเข้าถึง Facebook/Instagram/TikTok หรือ Google Trends API ทั้งหมด": {
+    "th": "ค้นเว็บสาธารณะตามสิทธิ์ของ provider; ไม่ใช่การเข้าถึง Facebook/Instagram/TikTok หรือ Google Trends API ทั้งหมด",
+    "en": "Search public websites within the provider’s access rights; this does not provide full access to Facebook, Instagram, TikTok or Google Trends APIs"
+  },
+  "GTM event และ purchase event ต้องตรวจ coverage/consent/dedup; ไม่ใช่ยอดรับชำระจริง": {
+    "th": "GTM event และ purchase event ต้องตรวจ coverage/consent/dedup; ไม่ใช่ยอดรับชำระจริง",
+    "en": "Check GTM and purchase events for coverage, consent and deduplication; they do not represent collected payments"
+  },
+  "ข้อเสนอเป็นร่าง; สต็อก ต้นทุน สิทธิ์กลุ่มเป้าหมาย และเงื่อนไขส่งต้องตรวจเพิ่ม": {
+    "th": "ข้อเสนอเป็นร่าง; สต็อก ต้นทุน สิทธิ์กลุ่มเป้าหมาย และเงื่อนไขส่งต้องตรวจเพิ่ม",
+    "en": "Offers are drafts. Stock, costs, audience eligibility and delivery conditions still need review"
+  },
+  "คำนวณจาก Josh read replica ณ เวลาที่ระบุ; ยังไม่ได้วัด replication lag": {
+    "th": "คำนวณจาก Josh read replica ณ เวลาที่ระบุ; ยังไม่ได้วัด replication lag",
+    "en": "Calculated from the Josh read replica at the stated time; replication lag has not been measured"
+  },
+  "กำไรและเวลางานที่ลดลงยังไม่มีต้นทุนจริงหรือเวลาฐานให้ตรวจสอบ": {
+    "th": "กำไรและเวลางานที่ลดลงยังไม่มีต้นทุนจริงหรือเวลาฐานให้ตรวจสอบ",
+    "en": "Actual costs and baseline working hours are not available to verify profit or time savings"
+  },
+  "ยังไม่ได้เชื่อม Josh read replica; ไม่มีข้อมูลตัวอย่างแทนข้อมูลจริง": {
+    "th": "ยังไม่ได้เชื่อม Josh read replica; ไม่มีข้อมูลตัวอย่างแทนข้อมูลจริง",
+    "en": "Josh read replica is not connected; sample data is not substituted for live data"
+  },
+  "ยอดขายที่รับชำระจริง": {
+    "th": "ยอดขายที่รับชำระจริง",
+    "en": "Collected sales revenue"
+  },
+  "30 วันตามเวลาไทย รวม VAT หลังส่วนลด ก่อนหักคืนเงิน": {
+    "th": "30 วันตามเวลาไทย รวม VAT หลังส่วนลด ก่อนหักคืนเงิน",
+    "en": "30 days in Thai time; includes VAT, after discounts and before refunds"
+  },
+  "ออเดอร์ที่รับชำระจริง": {
+    "th": "ออเดอร์ที่รับชำระจริง",
+    "en": "Paid orders"
+  },
+  "สถานะ paid/preparing/shipped/delivered และมี payment success ที่ไม่ใช่ test": {
+    "th": "สถานะ paid/preparing/shipped/delivered และมี payment success ที่ไม่ใช่ test",
+    "en": "Statuses paid/preparing/shipped/delivered with a successful non-test payment"
+  },
+  "ยอดขายเทียบช่วงก่อน": {
+    "th": "ยอดขายเทียบช่วงก่อน",
+    "en": "Sales compared with the previous period"
+  },
+  "เทียบช่วงเวลาก่อนหน้าที่มีความยาวเท่ากัน": {
+    "th": "เทียบช่วงเวลาก่อนหน้าที่มีความยาวเท่ากัน",
+    "en": "Compared with the immediately preceding period of equal length"
+  },
+  "ลูกค้ามีตะกร้าค้าง ≥1 ชม.": {
+    "th": "ลูกค้ามีตะกร้าค้าง ≥1 ชม.",
+    "en": "Customers with carts idle for at least 1 hour"
+  },
+  "snapshot มีสินค้า อัปเดตใน 30 วัน; ยังไม่ใช่รายชื่อที่ผ่านสิทธิ์ส่ง": {
+    "th": "snapshot มีสินค้า อัปเดตใน 30 วัน; ยังไม่ใช่รายชื่อที่ผ่านสิทธิ์ส่ง",
+    "en": "Snapshots with items, updated within 30 days; recipients have not yet passed delivery eligibility checks"
+  },
+  "บัญชีที่เลยรอบซื้อ": {
+    "th": "บัญชีที่เลยรอบซื้อ",
+    "en": "Accounts past their purchase cycle"
+  },
+  "Winback snapshot ที่ delay_ratio ≥1 และมีประวัติรอบซื้อ; ไม่ใช่ยอดขายที่รับประกัน": {
+    "th": "Winback snapshot ที่ delay_ratio ≥1 และมีประวัติรอบซื้อ; ไม่ใช่ยอดขายที่รับประกัน",
+    "en": "Winback snapshots with delay_ratio ≥1 and purchase-cycle history; sales are not guaranteed"
+  },
+  "การรัน workflow ที่ล้มเหลว": {
+    "th": "การรัน workflow ที่ล้มเหลว",
+    "en": "Failed workflow runs"
+  },
+  "scheduled runs ใน 30 วันย้อนหลัง": {
+    "th": "scheduled runs ใน 30 วันย้อนหลัง",
+    "en": "Scheduled runs in the last 30 days"
+  },
+  "ยังไม่มีต้นทุนที่ยืนยันครบ จึงยังคำนวณไม่ได้": {
+    "th": "ยังไม่มีต้นทุนที่ยืนยันครบ จึงยังคำนวณไม่ได้",
+    "en": "Verified costs are incomplete, so this cannot be calculated yet"
+  },
+  "ส่งออกได้เฉพาะร่างที่หยุดไว้: engine เดิมยังไม่ยืนยันการตรวจสต็อก/กำไรและเพดานงบทุกครั้งที่ส่ง": {
+    "th": "ส่งออกได้เฉพาะร่างที่หยุดไว้: engine เดิมยังไม่ยืนยันการตรวจสต็อก/กำไรและเพดานงบทุกครั้งที่ส่ง",
+    "en": "Only paused drafts can be exported. The existing engine does not yet verify stock, profit and budget caps before every send"
+  },
+  "ต้องยืนยัน consent, quiet hours และความถี่รวมของช่องทางก่อนเปิดส่ง": {
+    "th": "ต้องยืนยัน consent, quiet hours และความถี่รวมของช่องทางก่อนเปิดส่ง",
+    "en": "Verify consent, quiet hours and total channel frequency before enabling delivery"
+  },
+  "holdout เดิมสุ่มต่อ enrollment; ยังไม่ใช่การสุ่มคงที่ระดับบริษัท": {
+    "th": "holdout เดิมสุ่มต่อ enrollment; ยังไม่ใช่การสุ่มคงที่ระดับบริษัท",
+    "en": "The existing holdout is randomized per enrollment; it is not a stable company-level assignment"
+  },
+  "โหลด workflow ไม่สำเร็จ": {
+    "th": "โหลด workflow ไม่สำเร็จ",
+    "en": "Could not load workflow"
+  },
+  "Trigger: ตะกร้าค้าง (Cart Idle)": {
+    "th": "Trigger: ตะกร้าค้าง (Cart Idle)",
+    "en": "Trigger: Cart idle"
+  },
+  "stock ของ SKU (≥1 มีของ, <1 หมด) — CHANGED_AT เก่ากว่าค่าที่มีจะไม่ถูกส่งต่อ · รับ object เดี่ยวหรือ array": {
+    "th": "stock ของ SKU (≥1 มีของ, <1 หมด) — CHANGED_AT เก่ากว่าค่าที่มีจะไม่ถูกส่งต่อ · รับ object เดี่ยวหรือ array",
+    "en": "SKU stock (≥1: in stock, <1: out of stock). Older CHANGED_AT updates are not forwarded. Accepts a single object or an array"
+  },
+  "บันทึกอัตโนมัติทุกการติ๊ก": {
+    "th": "บันทึกอัตโนมัติทุกการติ๊ก",
+    "en": "Each selection saves automatically"
+  },
+  "ตะกร้าค้าง (Cart Idle)": {
+    "th": "ตะกร้าค้าง (Cart Idle)",
+    "en": "Cart idle"
+  },
+  "เข้าชมหน้าค้าง (Page Affinity)": {
+    "th": "เข้าชมหน้าค้าง (Page Affinity)",
+    "en": "Repeated page visits"
+  },
+  "ช่วงเวลา + Login (Session In Window)": {
+    "th": "ช่วงเวลา + Login (Session In Window)",
+    "en": "Login within a time window"
+  },
+  "Login ครั้งแรก (First Login)": {
+    "th": "Login ครั้งแรก (First Login)",
+    "en": "First login"
+  },
+  "เข้าเว็บครั้งแรก (First Visit)": {
+    "th": "เข้าเว็บครั้งแรก (First Visit)",
+    "en": "First website visit"
+  },
+  "กำหนดเอง (Custom)": {
+    "th": "กำหนดเอง (Custom)",
+    "en": "Custom"
+  },
+  "ยอดสั่งซื้อถึงเป้า (Milestone)": {
+    "th": "ยอดสั่งซื้อถึงเป้า (Milestone)",
+    "en": "Order milestone"
+  },
+  "ตามเวลา (Scheduled)": {
+    "th": "ตามเวลา (Scheduled)",
+    "en": "Scheduled"
+  },
+  "แสดง {0} จาก {1} รายการ": {
+    "th": "แสดง {0} จาก {1} รายการ",
+    "en": "Showing {0} of {1} records"
+  },
+  "แสดง {0} จาก {1} รายการ · ยอดในรายการที่แสดง: คงเหลือ {2} · จอง {3} · พร้อมใช้ {4}": {
+    "th": "แสดง {0} จาก {1} รายการ · ยอดในรายการที่แสดง: คงเหลือ {2} · จอง {3} · พร้อมใช้ {4}",
+    "en": "Showing {0} of {1} records · Displayed totals: on hand {2} · reserved {3} · available {4}"
+  },
+  "บันทึกแล้ว · เมื่อสักครู่": {
+    "th": "บันทึกแล้ว · เมื่อสักครู่",
+    "en": "Saved just now"
+  },
+  "กำลังบันทึกชุดนี้…": {
+    "th": "กำลังบันทึกชุดนี้…",
+    "en": "Saving this batch…"
+  },
+  "บันทึกชุดนี้แล้ว · จับคู่เพิ่ม {0} คู่": {
+    "th": "บันทึกชุดนี้แล้ว · จับคู่เพิ่ม {0} คู่",
+    "en": "Batch saved · {0} new matches"
+  },
+  "Admin — ทุกเมนู": {
+    "th": "ผู้ดูแลระบบ — ทุกเมนู",
+    "en": "Admin — all menus"
+  },
+  "Marketing — รายงานการตลาดและแคมเปญ": {
+    "th": "การตลาด — รายงานการตลาดและแคมเปญ",
+    "en": "Marketing — marketing reports and campaigns"
+  },
+  "Merchandise — สินค้า สต็อก ราคา โปรโมชัน รอบสั่ง": {
+    "th": "จัดซื้อและสินค้า — สินค้า สต็อก ราคา โปรโมชัน และรอบสั่งซื้อ",
+    "en": "Merchandise — products, stock, prices, promotions and order periods"
+  },
+  "CS — order, shipment, งาน CS": {
+    "th": "บริการลูกค้า — ออเดอร์ การจัดส่ง และงานบริการ",
+    "en": "Customer service — orders, shipments and customer support"
+  },
+  "Sales manager — รายงานร้าน, winback, มอบหมายพนักงานขาย": {
+    "th": "ผู้จัดการฝ่ายขาย — รายงานร้าน ติดตามลูกค้า และมอบหมายพนักงานขาย",
+    "en": "Sales manager — shop reports, customer follow-up and sales assignments"
+  },
+  "Business analyst — อ่านรายงาน สต็อก ออเดอร์ ราคาคู่แข่ง": {
+    "th": "นักวิเคราะห์ธุรกิจ — อ่านรายงาน สต็อก ออเดอร์ และราคาคู่แข่ง",
+    "en": "Business analyst — read reports, stock, orders and competitor prices"
+  },
+  "Graphic — รูปและเนื้อหาสินค้า": {
+    "th": "กราฟิก — รูปภาพและเนื้อหาสินค้า",
+    "en": "Graphic — product images and content"
+  },
+  "Merchandise": {
+    "th": "จัดซื้อและสินค้า",
+    "en": "Merchandise"
+  },
+  "Sale": {
+    "th": "ฝ่ายขาย",
+    "en": "Sale"
+  },
+  "Sale manager": {
+    "th": "ผู้จัดการฝ่ายขาย",
+    "en": "Sales manager"
+  },
+  "Admin": {
+    "th": "ผู้ดูแลระบบ",
+    "en": "Admin"
+  },
+  "Dev": {
+    "th": "นักพัฒนา",
+    "en": "Developer"
+  }
+}

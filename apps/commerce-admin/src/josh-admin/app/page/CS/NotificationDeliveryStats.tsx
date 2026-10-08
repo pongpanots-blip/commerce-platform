@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   getNotificationDeliveryStats,
   type NotificationDeliveryChannel,
@@ -9,11 +10,13 @@ import { useCallback, useEffect, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
 import NotificationDeliveryLogTab from './NotificationDeliveryLogTab';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CHANNEL_OPTIONS = [
-  { value: '', label: 'ทุกช่องทาง' },
-  { value: 'push', label: 'Push' },
-  { value: 'inapp', label: 'In-app' },
-  { value: 'email', label: 'Email' },
+  { value: '', get label(){return __uiText("ทุกช่องทาง");} },
+  { value: 'push', get label(){return __uiText("Push");} },
+  { value: 'inapp', get label(){return __uiText("In-app");} },
+  { value: 'email', get label(){return __uiText("Email");} },
 ] as const;
 
 const EMPTY_TOTALS: NotificationDeliveryStats['totals'] = {
@@ -48,11 +51,12 @@ function Tile({ label, value, hint }: { label: string; value: string; hint?: str
 type Tab = 'summary' | 'log';
 
 const TABS: { key: Tab; label: string; hint: string }[] = [
-  { key: 'summary', label: 'ภาพรวม', hint: 'อัตราส่งถึงและอัตราการกด แยกตามประเภท' },
-  { key: 'log', label: 'Log ดิบ', hint: 'ไล่ทีละแถวว่าใครได้/ไม่ได้รับ และเพราะอะไร' },
+  { key: 'summary', get label(){return __uiText("ภาพรวม");}, get hint(){return __uiText("อัตราส่งถึงและอัตราการกด แยกตามประเภท");} },
+  { key: 'log', get label(){return __uiText("Log ดิบ");}, get hint(){return __uiText("ไล่ทีละแถวว่าใครได้/ไม่ได้รับ และเพราะอะไร");} },
 ];
 
 export default function NotificationDeliveryStatsPage() {
+  __useUiLocale();
   const [tab, setTab] = useState<Tab>('summary');
   const defaultTo = new Date();
   const defaultFrom = new Date(defaultTo.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -79,7 +83,7 @@ export default function NotificationDeliveryStatsPage() {
       setStats(response.data.data);
     } catch {
       setStats(null);
-      setError('ไม่สามารถโหลดสถิติการส่งแจ้งเตือนได้');
+      setError(__uiMessage("ไม่สามารถโหลดสถิติการส่งแจ้งเตือนได้"));
     } finally {
       setLoading(false);
     }
@@ -93,21 +97,21 @@ export default function NotificationDeliveryStatsPage() {
   const totals = stats?.totals ?? EMPTY_TOTALS;
 
   const columns: TableColumn<NotificationDeliveryStatsRow>[] = [
-    { key: 'type', label: 'ประเภท' },
-    { key: 'channel', label: 'ช่องทาง' },
-    { key: 'attempted', label: 'ตั้งใจส่ง' },
-    { key: 'sent', label: 'ส่งสำเร็จ' },
-    { key: 'failed', label: 'ล้มเหลว' },
-    { key: 'skipped', label: 'ไม่ได้ส่ง' },
+    { key: 'type', label: __uiText("ประเภท") },
+    { key: 'channel', label: __uiText("ช่องทาง") },
+    { key: 'attempted', label: __uiText("ตั้งใจส่ง") },
+    { key: 'sent', label: __uiText("ส่งสำเร็จ") },
+    { key: 'failed', label: __uiText("ล้มเหลว") },
+    { key: 'skipped', label: __uiText("ไม่ได้ส่ง") },
     {
       key: 'deliveryRate',
-      label: 'อัตราส่งถึง',
+      label: __uiText("อัตราส่งถึง"),
       render: (value: number) => percent(value),
     },
-    { key: 'clicked', label: 'กดเปิด' },
+    { key: 'clicked', label: __uiText("กดเปิด") },
     {
       key: 'clickRate',
-      label: 'อัตราการกด',
+      label: __uiText("อัตราการกด"),
       render: (value: number) => percent(value),
     },
   ];
@@ -115,8 +119,8 @@ export default function NotificationDeliveryStatsPage() {
   return (
     <div className="p-6">
       <AdminListHeader
-        title="Notification Delivery Stats"
-        subtitle="ผลการส่งแจ้งเตือนแยกตามประเภทและช่องทาง รวมใบที่ไม่ได้ส่งเพราะผู้ใช้ปิดรับ (อ่านอย่างเดียว)"
+        title={__uiText("Notification Delivery Stats")}
+        subtitle={__uiText("ผลการส่งแจ้งเตือนแยกตามประเภทและช่องทาง รวมใบที่ไม่ได้ส่งเพราะผู้ใช้ปิดรับ (อ่านอย่างเดียว)")}
       />
 
       <div className="mb-4 flex gap-1 border-b border-gray-200">
@@ -143,7 +147,7 @@ export default function NotificationDeliveryStatsPage() {
       <>
       <div className="mb-4 grid gap-2 md:grid-cols-2 lg:grid-cols-5">
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">ตั้งแต่วันที่</span>
+          <span className="text-xs text-gray-500">{__uiText("ตั้งแต่วันที่")}</span>
           <input
             type="date"
             className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
@@ -152,7 +156,7 @@ export default function NotificationDeliveryStatsPage() {
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">ถึงวันที่</span>
+          <span className="text-xs text-gray-500">{__uiText("ถึงวันที่")}</span>
           <input
             type="date"
             className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
@@ -161,9 +165,9 @@ export default function NotificationDeliveryStatsPage() {
           />
         </label>
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">ช่องทาง</span>
+          <span className="text-xs text-gray-500">{__uiText("ช่องทาง")}</span>
           <Select
-            aria-label="ช่องทาง"
+            aria-label={__uiText("ช่องทาง")}
             value={channel}
             onChange={(event) =>
               setChannel(event.target.value as NotificationDeliveryChannel | '')
@@ -177,10 +181,10 @@ export default function NotificationDeliveryStatsPage() {
           </Select>
         </div>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">ประเภทการแจ้งเตือน</span>
+          <span className="text-xs text-gray-500">{__uiText("ประเภทการแจ้งเตือน")}</span>
           <input
             className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-            placeholder="ประเภท เช่น order_shipped"
+            placeholder={__uiText("ประเภท เช่น order_shipped")}
             value={type}
             onChange={(event) => setType(event.target.value)}
           />
@@ -190,34 +194,38 @@ export default function NotificationDeliveryStatsPage() {
           className="self-end rounded-lg bg-primary px-4 py-2 text-sm text-white"
           onClick={() => setQuery({ from, to, channel: channel as never, type: type.trim() })}
         >
-          กรองข้อมูล
-        </button>
+          {__uiText("กรองข้อมูล")}</button>
       </div>
 
-      {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
+      {error && <div role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4">
+        <p className="text-sm text-red-700">{__uiText(error)}</p>
+        <button type="button" className="mt-3 min-h-10 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm" onClick={() => void load(query)} disabled={loading}>{__uiText('ลองอีกครั้ง')}</button>
+      </div>}
 
+      {!loading && !error && stats && <>
       <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Tile
-          label="ส่งสำเร็จ"
+          label={__uiText("ส่งสำเร็จ")}
           value={String(totals.sent)}
-          hint={`จากที่ตั้งใจส่ง ${totals.attempted} · ${percent(totals.deliveryRate)}`}
+          hint={__uiText("จากที่ตั้งใจส่ง {0} · {1}", {"0": totals.attempted, "1": percent(totals.deliveryRate)})}
         />
-        <Tile label="ล้มเหลว" value={String(totals.failed)} hint="ดูสาเหตุด้านล่าง" />
+        <Tile label={__uiText("ล้มเหลว")} value={String(totals.failed)} hint={__uiText("ดูสาเหตุด้านล่าง")} />
         <Tile
-          label="ไม่ได้ส่ง"
+          label={__uiText("ไม่ได้ส่ง")}
           value={String(totals.skipped)}
-          hint="ส่วนใหญ่คือผู้ใช้ปิดรับเอง"
+          hint={__uiText("ส่วนใหญ่คือผู้ใช้ปิดรับเอง")}
         />
         <Tile
-          label="กดเปิด"
+          label={__uiText("กดเปิด")}
           value={String(totals.clicked)}
-          hint={`${percent(totals.clickRate)} ของที่ส่งสำเร็จ`}
+          hint={__uiText("{0} ของที่ส่งสำเร็จ", {"0": percent(totals.clickRate)})}
         />
       </div>
+      </>}
 
       {loading ? (
-        <p className="text-sm text-gray-500">กำลังโหลด...</p>
-      ) : (
+        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
+      ) : !error && stats ? (
         <>
           <Table
             columns={columns}
@@ -226,14 +234,12 @@ export default function NotificationDeliveryStatsPage() {
           />
           {!stats?.byTypeChannel.length && (
             <p className="mt-3 text-sm text-gray-400">
-              ยังไม่มีข้อมูลในช่วงนี้ — delivery log เริ่มเก็บตั้งแต่วันที่เปิดใช้งานฟีเจอร์นี้
-              และเก็บย้อนหลัง 90 วัน
-            </p>
+              {__uiText("ยังไม่มีข้อมูลในช่วงนี้ — delivery log เริ่มเก็บตั้งแต่วันที่เปิดใช้งานฟีเจอร์นี้ และเก็บย้อนหลัง 90 วัน")}</p>
           )}
 
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             <div className="rounded-xl border border-gray-100 bg-white p-5">
-              <p className="mb-3 text-sm font-semibold">สาเหตุที่ไม่ถึงผู้ใช้</p>
+              <p className="mb-3 text-sm font-semibold">{__uiText("สาเหตุที่ไม่ถึงผู้ใช้")}</p>
               {stats?.topSkipAndFailReasons.length ? (
                 <ul className="space-y-1 text-sm">
                   {stats.topSkipAndFailReasons.map((row) => (
@@ -244,30 +250,30 @@ export default function NotificationDeliveryStatsPage() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-400">ไม่มี</p>
+                <p className="text-sm text-gray-400">{__uiText("ไม่มี")}</p>
               )}
             </div>
 
             <div className="rounded-xl border border-gray-100 bg-white p-5">
-              <p className="mb-3 text-sm font-semibold">รายวัน</p>
+              <p className="mb-3 text-sm font-semibold">{__uiText("รายวัน")}</p>
               {stats?.byDay.length ? (
                 <ul className="space-y-1 text-sm">
                   {stats.byDay.map((row) => (
                     <li key={row.date} className="flex justify-between">
                       <span className="text-gray-600">{row.date}</span>
                       <span>
-                        ส่ง {row.sent} · ล้มเหลว {row.failed} · กด {row.clicked}
+                        {__uiText("ส่ง ")}{row.sent} {__uiText(" · ล้มเหลว ")}{row.failed} {__uiText(" · กด ")}{row.clicked}
                       </span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-400">ไม่มี</p>
+                <p className="text-sm text-gray-400">{__uiText("ไม่มี")}</p>
               )}
             </div>
           </div>
         </>
-      )}
+      ) : null}
       </>
       )}
     </div>

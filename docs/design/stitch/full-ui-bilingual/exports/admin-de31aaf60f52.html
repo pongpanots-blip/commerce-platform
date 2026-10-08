@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thai Ops Cockpit - การส่งเหตุการณ์ขาออก (Subscriptions)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-lowest": "#ffffff",
+            "outline": "#747687",
+            "on-surface": "#0e1b32",
+            "outline-variant": "#c4c5d8",
+            "surface-variant": "#d7e2ff",
+            "surface-bright": "#f9f9ff",
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-secondary-fixed-variant": "#38485e",
+            "primary": "#0a3fdc",
+            "on-tertiary-container": "#ffebe4",
+            "tertiary-container": "#bc4600",
+            "on-surface-variant": "#444655",
+            "surface-container": "#e8eeff",
+            "inverse-primary": "#b9c3ff",
+            "background": "#f6f8fc",
+            "on-secondary-container": "#54647c",
+            "on-error": "#ffffff",
+            "surface-container-low": "#f1f3ff",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-secondary-fixed": "#0b1c31",
+            "on-tertiary": "#ffffff",
+            "secondary": "#4f5f77",
+            "primary-fixed": "#dde1ff",
+            "surface": "#ffffff",
+            "on-primary-fixed": "#001257",
+            "secondary-fixed": "#d3e3ff",
+            "error-container": "#ffdad6",
+            "inverse-on-surface": "#ecf0ff",
+            "tertiary": "#943500",
+            "on-tertiary-fixed": "#360f00",
+            "surface-container-high": "#e0e8ff",
+            "surface-container-highest": "#d7e2ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "secondary-container": "#d0e1fd",
+            "primary-container": "#365cf5",
+            "primary-fixed-dim": "#b9c3ff",
+            "surface-tint": "#214ce7",
+            "tertiary-fixed-dim": "#ffb597",
+            "on-error-container": "#93000a",
+            "inverse-surface": "#243048",
+            "surface-dim": "#cddaf9",
+            "on-primary-container": "#ededff",
+            "error": "#ba1a1a",
+            "on-background": "#0e1b32",
+            "tertiary-fixed": "#ffdbcd",
+            "on-primary": "#ffffff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "margin": "2rem",
+            "space-sm": "0.5rem",
+            "space-2xl": "2.5rem",
+            "space-md": "1rem",
+            "gutter-mobile": "1rem",
+            "gutter": "1.5rem",
+            "space-xs": "0.25rem",
+            "margin-mobile": "1rem",
+            "space-xl": "2rem",
+            "space-lg": "1.5rem"
+          },
+          fontFamily: {
+            "label-sm": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "label-md": ["Inter", "Noto Sans Thai", "sans-serif"],
+            "headline-sm": ["Noto Sans Thai", "Inter", "sans-serif"],
+            "body-md": ["Noto Sans Thai", "Inter", "sans-serif"],
+            "headline-md": ["Noto Sans Thai", "Inter", "sans-serif"],
+            "body-sm": ["Noto Sans Thai", "Inter", "sans-serif"],
+            "code-sm": ["JetBrains Mono", "monospace"],
+            "body-lg": ["Noto Sans Thai", "Inter", "sans-serif"],
+            "headline-lg": ["Noto Sans Thai", "Inter", "sans-serif"],
+            "headline-lg-mobile": ["Noto Sans Thai", "Inter", "sans-serif"]
+          },
+          fontSize: {
+            "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }],
+            "label-md": ["13px", { lineHeight: "16px", fontWeight: "500" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+            "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "code-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+            "body-lg": ["15px", { lineHeight: "22px", fontWeight: "400" }],
+            "headline-lg": ["28px", { lineHeight: "36px", fontWeight: "700" }],
+            "headline-lg-mobile": ["22px", { lineHeight: "30px", fontWeight: "700" }]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+    }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    .thin-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .thin-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .thin-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-background antialiased flex text-on-surface">
+<!-- SIDEBAR (Persistent 256px) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-surface-container-lowest border-r border-outline-variant shadow-none hidden md:flex flex-col justify-between p-3 select-none">
+<div>
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-3 py-4 mb-2 border-b border-outline-variant/60">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">hub</span>
+</div>
+<div class="overflow-hidden">
+<div class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight truncate" data-i18n="brand_title">Thai Ops Cockpit</div>
+<div class="text-[11px] text-secondary font-label-md truncate" data-i18n="brand_sub">ศูนย์บริหารจัดการร้านค้า</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#inventory">
+<span class="material-symbols-outlined text-outline">inventory_2</span>
+<span class="text-label-md font-label-md">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#orders">
+<span class="material-symbols-outlined text-outline">receipt_long</span>
+<span class="text-label-md font-label-md">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#customers">
+<span class="material-symbols-outlined text-outline">support_agent</span>
+<span class="text-label-md font-label-md">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#marketing">
+<span class="material-symbols-outlined text-outline">campaign</span>
+<span class="text-label-md font-label-md">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#reports">
+<span class="material-symbols-outlined text-outline">analytics</span>
+<span class="text-label-md font-label-md">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ (ACTIVE ITEM) -->
+<div class="space-y-0.5">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-medium border-l-[3px] border-primary cursor-pointer transition-transform duration-150" href="#integrations">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">sync_alt</span>
+<span class="text-label-md font-label-md font-semibold">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Sub-items under active category -->
+<div class="pl-9 pr-2 py-1 space-y-1">
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-[13px] bg-primary/10 text-primary font-medium" href="/subscriptions">
+<span data-i18n="nav_webhooks_sub">การส่งเหตุการณ์ขาออก (Subscriptions)</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="flex items-center px-2.5 py-1 rounded-md text-[13px] text-secondary hover:text-on-surface hover:bg-surface-container-low" href="#api-keys">
+<span>API Credentials</span>
+</a>
+<a class="flex items-center px-2.5 py-1 rounded-md text-[13px] text-secondary hover:text-on-surface hover:bg-surface-container-low" href="#log-stream">
+<span>Webhook Audit Stream</span>
+</a>
+</div>
+</div>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 cursor-pointer active:scale-[0.99]" href="#settings">
+<span class="material-symbols-outlined text-outline">settings</span>
+<span class="text-label-md font-label-md">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom System Badge -->
+<div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/60">
+<div class="flex items-center justify-between text-[11px] font-label-md text-secondary mb-1">
+<span class="flex items-center gap-1.5 text-emerald-700 font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Gateway Active
+        </span>
+<span class="font-code-sm text-code-sm text-outline">v2.4.9</span>
+</div>
+<div class="text-[12px] text-on-surface-variant font-medium truncate">Node: BKK-DC01 (HMAC-SHA256)</div>
+</div>
+</aside>
+<!-- MAIN WRAPPER (Offset 256px on desktop) -->
+<div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- TOP CONTEXTUAL BAR (Sticky 64px) -->
+<header class="sticky top-0 h-16 w-full z-30 bg-surface-container-lowest border-b border-outline-variant/60 px-6 flex justify-between items-center shadow-sm">
+<div class="flex items-center gap-3 flex-wrap">
+<div class="flex items-center gap-2 text-label-md font-label-md text-secondary">
+<span class="font-medium hover:text-primary cursor-pointer transition-colors">ระบบเชื่อมต่อ</span>
+<span class="text-outline">/</span>
+<span class="text-primary font-medium" data-i18n="top_breadcrumb">การส่งเหตุการณ์ขาออก</span>
+</div>
+<!-- Route identifier badge -->
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-code-sm text-[11px] font-semibold tracking-wide border border-primary/20">
+<span class="material-symbols-outlined text-[13px]">fingerprint</span>
+          admin-de31aaf60f52
+        </span>
+<!-- Sample data badge -->
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-medium" data-i18n="badge_sample_data">
+          ข้อมูลตัวอย่าง
+        </span>
+</div>
+<div class="flex items-center gap-3">
+<!-- Bilingual toggle -->
+<button class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-label-md font-medium transition-all active:scale-95 shadow-xs" id="langToggleBtn" onclick="toggleLanguage()" title="สลับภาษา / Toggle language">
+<span class="material-symbols-outlined text-[18px] text-primary">translate</span>
+<span class="font-code-sm font-semibold text-primary" id="currentLangLabel">ไทย / EN</span>
+</button>
+<!-- Notification action -->
+<button class="relative w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500"></span>
+</button>
+<!-- Help action -->
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 active:scale-95" title="ช่วยเหลือ / Documentation">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<!-- Divider -->
+<div class="h-6 w-[1px] bg-outline-variant"></div>
+<!-- Profile Avatar -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer">
+<div class="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-label-md ring-2 ring-primary/10">
+            AD
+          </div>
+<div class="hidden lg:block text-left">
+<div class="text-[13px] font-semibold text-on-surface leading-tight">Admin System</div>
+<div class="text-[11px] text-secondary leading-none">Super Administrator</div>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN OPERATIONAL STAGE -->
+<main class="flex-1 p-4 md:p-8 max-w-[1240px] w-full mx-auto space-y-6">
+<!-- SECTION: PAGE HEADER & PRIMARY ACTIONS -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight" data-i18n="page_title">
+              การส่งเหตุการณ์ขาออก
+            </h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[12px] font-mono font-medium bg-blue-50 text-blue-700 border border-blue-200">
+              Webhook Subscriptions
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-1 max-w-2xl" data-i18n="page_subtitle">
+            Outgoing webhooks — แจ้งเตือนระบบภายนอกเมื่อเกิดเหตุการณ์ในแพลตฟอร์ม (Notify external systems when platform events happen — they subscribe, we deliver (signed).)
+          </p>
+</div>
+<div class="flex items-center gap-2.5 self-start md:self-auto">
+<!-- Refresh Button -->
+<button class="h-10 px-3.5 inline-flex items-center gap-2 rounded-lg bg-white border border-outline-variant hover:bg-slate-50 text-on-surface font-label-md text-label-md transition-all active:scale-95 shadow-xs" onclick="refreshData()">
+<span class="material-symbols-outlined text-[18px] text-secondary" id="refreshIcon">refresh</span>
+<span data-i18n="btn_refresh">Refresh</span>
+</button>
+<!-- Primary + New Subscription Button -->
+<button class="h-10 px-4 inline-flex items-center gap-2 rounded-lg bg-primary hover:bg-[#0030be] text-white font-label-md text-label-md font-medium shadow-sm transition-all active:scale-95" onclick="openModal()">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span data-i18n="btn_new_subscription">+ New subscription</span>
+</button>
+</div>
+</div>
+<!-- SECTION: KPI SUMMARY METRIC CARDS -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1: Total Subscriptions -->
+<div class="bg-white rounded-xl border border-outline-variant/80 p-5 shadow-xs">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md font-medium" data-i18n="kpi_total">Total Subscriptions</span>
+<span class="material-symbols-outlined text-primary text-[20px]">rss_feed</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold font-headline-md text-on-surface">4</span>
+<span class="text-[12px] text-secondary font-label-sm">รายการทั้งหมด</span>
+</div>
+<div class="mt-2.5 flex items-center gap-2 text-[12px]">
+<span class="inline-flex items-center gap-1 text-[#157347] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+              พร้อมใช้งาน 3
+            </span>
+<span class="text-outline-variant">•</span>
+<span class="inline-flex items-center gap-1 text-slate-500 font-medium">
+              ปิดโดยแอดมิน 1
+            </span>
+</div>
+</div>
+<!-- KPI 2: 24h Deliveries -->
+<div class="bg-white rounded-xl border border-outline-variant/80 p-5 shadow-xs">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md font-medium">Deliveries (24 ชม.)</span>
+<span class="material-symbols-outlined text-emerald-600 text-[20px]">send</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold font-headline-md text-on-surface">12,840</span>
+<span class="text-[12px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">99.4% สำเร็จ</span>
+</div>
+<div class="mt-2.5 text-[12px] text-secondary font-label-sm">
+            เฉลี่ยความเร็วตอบสนอง <span class="font-code-sm text-on-surface font-semibold">142ms</span>
+</div>
+</div>
+<!-- KPI 3: Security & Signature -->
+<div class="bg-white rounded-xl border border-outline-variant/80 p-5 shadow-xs">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md font-medium">HMAC Signing Status</span>
+<span class="material-symbols-outlined text-blue-600 text-[20px]">verified_user</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-lg font-bold font-headline-md text-on-surface">HMAC-SHA256</span>
+</div>
+<p class="mt-2.5 text-[12px] text-secondary font-label-sm truncate" title="we HMAC-sign each delivery">
+            we HMAC-sign each delivery
+          </p>
+</div>
+<!-- KPI 4: Failures / Retries -->
+<div class="bg-white rounded-xl border border-outline-variant/80 p-5 shadow-xs">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="text-label-md font-label-md font-medium">Recent Failures / Retries</span>
+<span class="material-symbols-outlined text-[#ba1a1a] text-[20px]">error_outline</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold font-headline-md text-[#ba1a1a]">2</span>
+<span class="text-[12px] text-[#ba1a1a] font-medium bg-red-50 px-1.5 py-0.5 rounded">ล้มเหลว</span>
+</div>
+<div class="mt-2.5 text-[12px] text-secondary font-label-sm">
+            ระบบจัดคิว Retry อัตโนมัติ (Exp-backoff)
+          </div>
+</div>
+</div>
+<!-- SECTION: SUBSCRIPTIONS DATA TABLE -->
+<section class="bg-white rounded-xl border border-outline-variant/80 shadow-xs overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface" data-i18n="table_title_subs">Subscriptions</h2>
+<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold">4 registered</span>
+</div>
+<p class="text-[13px] text-secondary mt-0.5">รายการเว็บฮุกที่สมัครรับอีเวนต์สำหรับส่งข้อมูลออกไปยังปลายทาง</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-outline text-[18px]">search</span>
+<input class="h-9 pl-9 pr-3 text-[13px] rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none w-56 text-on-surface placeholder:text-outline" placeholder="ค้นหาชื่อ / เลขทะเบียน..." type="text"/>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto thin-scrollbar">
+<table class="w-full text-left text-body-sm font-body-sm border-collapse">
+<thead>
+<tr class="h-11 bg-slate-50 border-b border-outline-variant/80 text-[12px] font-bold text-secondary uppercase tracking-wider">
+<th class="py-3 px-6 w-32" data-i18n="col_status">Status</th>
+<th class="py-3 px-6" data-i18n="col_name_desc">Name &amp; Description</th>
+<th class="py-3 px-6" data-i18n="col_target_url">Target URL</th>
+<th class="py-3 px-6" data-i18n="col_events">Events</th>
+<th class="py-3 px-6 w-36" data-i18n="col_secret">Secret</th>
+<th class="py-3 px-6 text-right w-32" data-i18n="col_actions">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60">
+<!-- ROW 1: Central ERP Order Hook -->
+<tr class="h-16 hover:bg-slate-50/80 transition-colors">
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[12px] font-semibold text-[#157347] bg-[#e8f5ed]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="status_active">พร้อมใช้งาน</span>
+</span>
+</td>
+<td class="py-3 px-6">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                    Central ERP Order Hook
+                    <span class="px-1.5 py-0.2 rounded text-[10px] bg-slate-100 text-slate-600 font-mono">ERP-PRD</span>
+</div>
+<div class="text-[12px] text-secondary truncate max-w-xs">ซิงค์ออเดอร์ใหม่เข้าบัญชีและคลังหลักแบบ Real-time</div>
+</td>
+<td class="py-3 px-6">
+<div class="font-code-sm text-code-sm text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-emerald-600">lock</span>
+<span class="hover:underline cursor-pointer truncate max-w-xs" title="https://api.erp.partner-th.com/v1/orders/webhook">https://api.erp.partner-th.com/v1/orders/webhook</span>
+</div>
+</td>
+<td class="py-3 px-6">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm bg-blue-50 text-blue-700 border border-blue-200">order.created</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm bg-blue-50 text-blue-700 border border-blue-200">order.paid</span>
+</div>
+</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1 font-code-sm text-[12px] text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">key</span>
+<span data-i18n="val_set">set</span>
+</span>
+</td>
+<td class="py-3 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-primary transition-colors" onclick="testWebhookDelivery('Central ERP Order Hook')" title="ทดสอบส่งข้อมูล (Test delivery)">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-on-surface transition-colors" onclick="openModal()" title="แก้ไขการตั้งค่า">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 2: WMS Flash Fulfillment Sync -->
+<tr class="h-16 hover:bg-slate-50/80 transition-colors">
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[12px] font-semibold text-[#157347] bg-[#e8f5ed]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="status_active">พร้อมใช้งาน</span>
+</span>
+</td>
+<td class="py-3 px-6">
+<div class="font-semibold text-on-surface">WMS Flash Fulfillment Sync</div>
+<div class="text-[12px] text-secondary truncate max-w-xs">ตัดสต็อกอัตโนมัติเมื่อสร้างรายการจัดส่งพัสดุ</div>
+</td>
+<td class="py-3 px-6">
+<div class="font-code-sm text-code-sm text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-emerald-600">lock</span>
+<span class="hover:underline cursor-pointer truncate max-w-xs" title="https://wms.flash-express.co.th/events/inventory">https://wms.flash-express.co.th/events/inventory</span>
+</div>
+</td>
+<td class="py-3 px-6">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm bg-blue-50 text-blue-700 border border-blue-200">inventory.reserved</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm bg-blue-50 text-blue-700 border border-blue-200">shipment.dispatched</span>
+</div>
+</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1 font-code-sm text-[12px] text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">key</span>
+<span data-i18n="val_set">set</span>
+</span>
+</td>
+<td class="py-3 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-primary transition-colors" onclick="testWebhookDelivery('WMS Flash Fulfillment Sync')" title="ทดสอบส่งข้อมูล">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-on-surface transition-colors" onclick="openModal()" title="แก้ไข">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3: Marketing Loyalty CDP -->
+<tr class="h-16 hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[12px] font-semibold text-slate-600 bg-slate-200">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+<span data-i18n="status_disabled_admin">ปิดโดยแอดมิน</span>
+</span>
+</td>
+<td class="py-3 px-6 opacity-80">
+<div class="font-semibold text-on-surface">Marketing Loyalty CDP</div>
+<div class="text-[12px] text-secondary truncate max-w-xs">ระงับชั่วคราวระหว่างย้ายเซิร์ฟเวอร์ Point Engine</div>
+</td>
+<td class="py-3 px-6 opacity-80">
+<div class="font-code-sm text-code-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-slate-400">link</span>
+<span class="truncate max-w-xs" title="https://cdp.retail-points.th/ingress/member">https://cdp.retail-points.th/ingress/member</span>
+</div>
+</td>
+<td class="py-3 px-6">
+<div class="flex flex-wrap gap-1 opacity-70">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm bg-slate-100 text-slate-700 border border-slate-300">customer.created</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm bg-slate-100 text-slate-700 border border-slate-300">customer.updated</span>
+</div>
+</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1 text-[12px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[14px]">lock_open</span>
+<span data-i18n="val_no_secret">ไม่มีลายเซ็น</span>
+</span>
+</td>
+<td class="py-3 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-slate-400 cursor-not-allowed" disabled="" title="ปิดใช้งานอยู่">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-on-surface transition-colors" onclick="openModal()" title="แก้ไข">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4: TikTok Live Stock Sync -->
+<tr class="h-16 hover:bg-slate-50/80 transition-colors">
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[12px] font-semibold text-[#157347] bg-[#e8f5ed]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+<span data-i18n="status_active">พร้อมใช้งาน</span>
+</span>
+</td>
+<td class="py-3 px-6">
+<div class="font-semibold text-on-surface">TikTok Live Stock Sync</div>
+<div class="text-[12px] text-secondary truncate max-w-xs">อัปเดตจำนวนสต็อกระหว่างไลฟ์สตรีมมิ่งทุกนาที</div>
+</td>
+<td class="py-3 px-6">
+<div class="font-code-sm text-code-sm text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-emerald-600">lock</span>
+<span class="hover:underline cursor-pointer truncate max-w-xs" title="https://sync.tiktok-channel.internal/webhook/stream">https://sync.tiktok-channel.internal/webhook/stream</span>
+</div>
+</td>
+<td class="py-3 px-6">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-[11px] font-code-sm bg-blue-50 text-blue-700 border border-blue-200">inventory.quantity.updated</span>
+</div>
+</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1 font-code-sm text-[12px] text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[14px] text-emerald-600">key</span>
+<span data-i18n="val_set">set</span>
+</span>
+</td>
+<td class="py-3 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-primary transition-colors" onclick="testWebhookDelivery('TikTok Live Stock Sync')" title="ทดสอบส่งข้อมูล">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-on-surface transition-colors" onclick="openModal()" title="แก้ไข">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-slate-200 text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- SECTION: DELIVERY LOG -->
+<section class="bg-white rounded-xl border border-outline-variant/80 shadow-xs overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/60 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface" data-i18n="title_delivery_log">Delivery log</h2>
+<span class="inline-flex items-center gap-1 text-[12px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              Live stream
+            </span>
+</div>
+<button class="h-9 px-3 inline-flex items-center gap-1.5 rounded-lg border border-outline-variant hover:bg-slate-50 text-on-surface font-label-md text-label-md transition-all active:scale-95" onclick="reloadDeliveryLogs()">
+<span class="material-symbols-outlined text-[17px] text-secondary" id="reloadLogIcon">sync</span>
+<span data-i18n="btn_reload">Reload</span>
+</button>
+</div>
+<div class="overflow-x-auto thin-scrollbar">
+<table class="w-full text-left text-body-sm font-body-sm border-collapse">
+<thead>
+<tr class="h-10 bg-slate-50 border-b border-outline-variant/80 text-[12px] font-bold text-secondary uppercase tracking-wider">
+<th class="py-2.5 px-6 w-28" data-i18n="col_log_status">Status</th>
+<th class="py-2.5 px-6" data-i18n="col_log_event">Event</th>
+<th class="py-2.5 px-6" data-i18n="col_log_target">Target</th>
+<th class="py-2.5 px-6 w-28" data-i18n="col_log_http">HTTP</th>
+<th class="py-2.5 px-6 w-36" data-i18n="col_log_when">When</th>
+<th class="py-2.5 px-6 w-28" data-i18n="col_log_tries">Tries</th>
+<th class="py-2.5 px-6 text-right w-24">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60" id="deliveryLogTableBody">
+<!-- LOG 1 -->
+<tr class="h-14 hover:bg-slate-50/70 transition-colors">
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[12px] font-semibold text-[#157347] bg-[#e8f5ed]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                    200 OK
+                  </span>
+</td>
+<td class="py-3 px-6">
+<span class="font-code-sm text-code-sm text-primary font-medium">order.created</span>
+</td>
+<td class="py-3 px-6">
+<div class="font-medium text-on-surface">Central ERP Order Hook</div>
+<div class="text-[11px] text-secondary font-code-sm truncate max-w-xs">req_9df28a7b31</div>
+</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#e8f5ed] text-[#157347]">200</span>
+</td>
+<td class="py-3 px-6 text-[12px] text-secondary">
+                  2 นาทีที่แล้ว
+                </td>
+<td class="py-3 px-6">
+<span class="font-code-sm text-code-sm text-slate-700">1 of 3</span>
+</td>
+<td class="py-3 px-6 text-right">
+<button class="text-primary hover:underline text-[12px] font-medium" onclick="inspectPayload('order.created', 200)">
+                    Inspect
+                  </button>
+</td>
+</tr>
+<!-- LOG 2 -->
+<tr class="h-14 hover:bg-slate-50/70 transition-colors">
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[12px] font-semibold text-[#157347] bg-[#e8f5ed]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                    200 OK
+                  </span>
+</td>
+<td class="py-3 px-6">
+<span class="font-code-sm text-code-sm text-primary font-medium">inventory.quantity.updated</span>
+</td>
+<td class="py-3 px-6">
+<div class="font-medium text-on-surface">TikTok Live Stock Sync</div>
+<div class="text-[11px] text-secondary font-code-sm truncate max-w-xs">req_45b1287c9a</div>
+</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#e8f5ed] text-[#157347]">200</span>
+</td>
+<td class="py-3 px-6 text-[12px] text-secondary">
+                  5 นาทีที่แล้ว
+                </td>
+<td class="py-3 px-6">
+<span class="font-code-sm text-code-sm text-slate-700">1 of 3</span>
+</td>
+<td class="py-3 px-6 text-right">
+<button class="text-primary hover:underline text-[12px] font-medium" onclick="inspectPayload('inventory.quantity.updated', 200)">
+                    Inspect
+                  </button>
+</td>
+</tr>
+<!-- LOG 3: Failed -->
+<tr class="h-14 hover:bg-red-50/40 bg-red-50/10 transition-colors">
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[12px] font-semibold text-[#ba1a1a] bg-[#ffdad6]">
+<span class="material-symbols-outlined text-[14px]">error</span>
+                    504 Gateway
+                  </span>
+</td>
+<td class="py-3 px-6">
+<span class="font-code-sm text-code-sm text-on-surface font-medium">customer.updated</span>
+</td>
+<td class="py-3 px-6">
+<div class="font-medium text-on-surface">Marketing Loyalty CDP</div>
+<div class="text-[11px] text-red-600 font-code-sm truncate max-w-xs">req_108fa3c089 (Retries exhausted)</div>
+</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-red-100 text-[#ba1a1a]">504 (ล้มเหลว)</span>
+</td>
+<td class="py-3 px-6 text-[12px] text-secondary">
+                  14 นาทีที่แล้ว
+                </td>
+<td class="py-3 px-6">
+<span class="font-code-sm text-code-sm text-red-700 font-bold">3 of 3</span>
+</td>
+<td class="py-3 px-6 text-right">
+<button class="text-primary hover:underline text-[12px] font-medium" onclick="inspectPayload('customer.updated', 504)">
+                    Inspect
+                  </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+<!-- MODAL DIALOG: NEW SUBSCRIPTION -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs hidden transition-opacity" id="subscriptionModal">
+<div class="bg-white rounded-xl shadow-2xl border border-outline-variant w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-outline-variant/70 flex items-center justify-between bg-slate-50">
+<div>
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface" data-i18n="modal_title">Create subscription</h3>
+<p class="text-body-sm font-body-sm text-secondary" data-i18n="modal_subtitle">กำหนดปลายทางและเหตุการณ์ที่ต้องการรับข้อมูลผ่าน Webhook</p>
+</div>
+<button class="w-8 h-8 rounded-lg hover:bg-slate-200 flex items-center justify-center text-secondary hover:text-on-surface transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Body (Form) -->
+<form class="p-6 space-y-4 max-h-[768px] overflow-y-auto thin-scrollbar" id="newSubscriptionForm" onsubmit="handleFormSubmit(event)">
+<!-- Field 1: Name -->
+<div>
+<label class="block text-label-md font-label-md font-semibold text-on-surface mb-1">
+<span data-i18n="form_name">Name</span> <span class="text-red-500">*</span>
+</label>
+<input class="w-full h-10 px-3.5 rounded-lg border border-outline-variant text-[14px] text-on-surface placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="e.g. Our e-commerce store" required="" type="text"/>
+</div>
+<!-- Field 2: Target URL -->
+<div>
+<label class="block text-label-md font-label-md font-semibold text-on-surface mb-1">
+<span data-i18n="form_target_url">Target URL</span> <span class="text-red-500">*</span>
+</label>
+<input class="w-full h-10 px-3.5 rounded-lg border border-outline-variant text-[14px] font-code-sm text-on-surface placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="https://api.partner.com/webhook" required="" type="url"/>
+<p class="text-[12px] text-secondary mt-1 flex items-center gap-1 font-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary">security</span>
+<span data-i18n="hint_hmac">we HMAC-sign each delivery</span>
+</p>
+</div>
+<!-- Field 3: Description -->
+<div>
+<label class="block text-label-md font-label-md font-semibold text-on-surface mb-1" data-i18n="form_description">
+            Description
+          </label>
+<textarea class="w-full p-3 rounded-lg border border-outline-variant text-[14px] text-on-surface placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="optional notes" rows="2"></textarea>
+</div>
+<!-- Field 4: Events to send -->
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="text-label-md font-label-md font-semibold text-on-surface" data-i18n="form_events">Events to send</label>
+<span class="text-[11px] text-secondary" data-i18n="form_events_hint">Choose at least one event to subscribe to.</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-lg border border-outline-variant/80 bg-slate-50/60">
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input checked="" class="mt-0.5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<div>
+<span class="font-code-sm text-[12px] font-semibold text-on-surface block">order.created</span>
+<span class="text-[11px] text-secondary">เมื่อมีออเดอร์ใหม่สร้างขึ้น</span>
+</div>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input checked="" class="mt-0.5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<div>
+<span class="font-code-sm text-[12px] font-semibold text-on-surface block">order.paid</span>
+<span class="text-[11px] text-secondary">เมื่อชำระเงินสำเร็จแล้ว</span>
+</div>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input class="mt-0.5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<div>
+<span class="font-code-sm text-[12px] font-semibold text-on-surface block">inventory.quantity.updated</span>
+<span class="text-[11px] text-secondary">เมื่อยอดคงเหลือสต็อกเปลี่ยน</span>
+</div>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input class="mt-0.5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<div>
+<span class="font-code-sm text-[12px] font-semibold text-on-surface block">shipment.dispatched</span>
+<span class="text-[11px] text-secondary">เมื่อพัสดุถูกส่งมอบขนส่ง</span>
+</div>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input class="mt-0.5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<div>
+<span class="font-code-sm text-[12px] font-semibold text-on-surface block">customer.created</span>
+<span class="text-[11px] text-secondary">เมื่อลูกค้าสมัครสมาชิกใหม่</span>
+</div>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input class="mt-0.5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<div>
+<span class="font-code-sm text-[12px] font-semibold text-on-surface block">customer.updated</span>
+<span class="text-[11px] text-secondary">เมื่อแก้ไขโปรไฟล์ลูกค้า</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Field 5: Signing Secret -->
+<div class="p-3.5 bg-blue-50/50 rounded-lg border border-blue-100 flex items-center justify-between">
+<div>
+<div class="text-[12px] font-semibold text-on-surface flex items-center gap-1.5" data-i18n="form_signing_secret">
+<span class="material-symbols-outlined text-[16px] text-primary">key</span>
+              Signing secret
+            </div>
+<div class="text-[11px] text-secondary font-code-sm mt-0.5">sec_whk_98f82a7bc418... <span class="text-blue-700 font-semibold">(auto-generated)</span></div>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-100 text-emerald-800" data-i18n="val_auto_save">
+            เก็บอัตโนมัติ
+          </span>
+</div>
+<!-- Modal Footer Actions -->
+<div class="pt-3 border-t border-outline-variant/60 flex items-center justify-end gap-3">
+<button class="h-10 px-4 rounded-lg border border-outline-variant text-on-surface hover:bg-slate-100 text-label-md font-medium transition-colors" onclick="closeModal()" type="button">
+            ยกเลิก (Cancel)
+          </button>
+<button class="h-10 px-5 rounded-lg bg-primary hover:bg-[#0030be] text-white text-label-md font-medium shadow-sm transition-all active:scale-95 flex items-center gap-1.5" type="submit">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span data-i18n="btn_create_subscription">Create subscription</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<!-- INSPECT PAYLOAD DRAWER / MODAL -->
+<div class="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs hidden" id="inspectDrawer">
+<div class="bg-white w-full max-w-lg h-full shadow-2xl border-l border-outline-variant flex flex-col justify-between animate-in slide-in-from-right duration-200">
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-slate-50">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface" id="drawerTitle">Inspect delivery payload</h3>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-green-100 text-green-800" id="drawerStatusBadge">200 OK</span>
+</div>
+<div class="text-[12px] text-secondary font-code-sm" id="drawerSub">Signature: sha256=d3a98...</div>
+</div>
+<button class="w-8 h-8 rounded-lg hover:bg-slate-200 flex items-center justify-center text-secondary" onclick="closeInspectDrawer()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="p-6 flex-1 overflow-y-auto space-y-4 thin-scrollbar">
+<div>
+<div class="text-[12px] font-bold text-secondary uppercase mb-1">Request Headers</div>
+<pre class="p-3 bg-slate-900 text-slate-100 rounded-lg text-[11px] font-code-sm overflow-x-auto">Content-Type: application/json
+X-ThaiOps-Event: order.created
+X-ThaiOps-Signature: sha256=2b367d8a901ffc33891e...
+User-Agent: ThaiOps-HookBot/2.4</pre>
+</div>
+<div>
+<div class="text-[12px] font-bold text-secondary uppercase mb-1">JSON Payload</div>
+<pre class="p-3 bg-slate-900 text-emerald-400 rounded-lg text-[11px] font-code-sm overflow-x-auto">{
+  "event": "order.created",
+  "occurred_at": "2025-05-18T10:14:22+07:00",
+  "data": {
+    "order_id": "TH-ORD-882910",
+    "customer": {
+      "id": "CUST-9921",
+      "name": "Somsak Somchai",
+      "phone": "+66812345678"
+    },
+    "amount": {
+      "currency": "THB",
+      "subtotal": 1250.00,
+      "vat_included": true
+    }
+  }
+}</pre>
+</div>
+</div>
+<div class="p-4 border-t border-outline-variant bg-slate-50 flex items-center justify-between">
+<span class="text-[12px] text-secondary">Status: Sent via BKK-DC01</span>
+<button class="h-9 px-4 rounded-lg bg-primary text-white text-label-md font-medium hover:bg-[#0030be]" onclick="closeInspectDrawer()">
+          ปิดหน้าต่าง
+        </button>
+</div>
+</div>
+</div>
+<!-- TOAST NOTIFICATION -->
+<div class="fixed bottom-6 right-6 z-50 hidden flex items-center gap-2.5 px-4 py-3 bg-slate-900 text-white rounded-lg shadow-xl text-body-sm transition-all transform duration-200" id="toastNotification">
+<span class="material-symbols-outlined text-[18px] text-emerald-400">check_circle</span>
+<span id="toastMessage">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+</div>
+<!-- INVISIBLE SCRIPT FOR TRANSLATIONS CATALOGUE -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "Outgoing webhooks": {
+      "th": "การส่งเหตุการณ์ขาออก",
+      "en": "Outgoing webhooks"
+    },
+    "Refresh": {
+      "th": "รีเฟรช",
+      "en": "Refresh"
+    },
+    "Status": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "Event": {
+      "th": "เหตุการณ์",
+      "en": "Event"
+    },
+    "Target": {
+      "th": "ปลายทาง",
+      "en": "Target"
+    },
+    "Signing secret": {
+      "th": "รหัสลายเซ็น (Signing secret)",
+      "en": "Signing secret"
+    },
+    "Choose at least one event to subscribe to.": {
+      "th": "เลือกอย่างน้อยหนึ่งเหตุการณ์เพื่อรับข้อมูล",
+      "en": "Choose at least one event to subscribe to."
+    },
+    "Notify external systems when platform events happen — they subscribe, we deliver (signed).": {
+      "th": "แจ้งเตือนระบบภายนอกเมื่อเกิดเหตุการณ์ในแพลตฟอร์ม — พวกเขาสมัครรับ เราส่งมอบข้อมูล (พร้อมลงลายเซ็น)",
+      "en": "Notify external systems when platform events happen — they subscribe, we deliver (signed)."
+    },
+    "New subscription": {
+      "th": "สร้างการส่งเหตุการณ์ใหม่",
+      "en": "New subscription"
+    },
+    "Create subscription": {
+      "th": "สร้างการสมัครรับข้อมูล",
+      "en": "Create subscription"
+    },
+    "Name": {
+      "th": "ชื่อ",
+      "en": "Name"
+    },
+    "e.g. Our e-commerce store": {
+      "th": "เช่น ระบบคลังสินค้าหลักของบริษัท",
+      "en": "e.g. Our e-commerce store"
+    },
+    "Target URL": {
+      "th": "URL ปลายทาง",
+      "en": "Target URL"
+    },
+    "we HMAC-sign each delivery": {
+      "th": "เราลงลายเซ็น HMAC ทุกการส่งมอบเพื่อความปลอดภัย",
+      "en": "we HMAC-sign each delivery"
+    },
+    "Description": {
+      "th": "คำอธิบายเพิ่มเติม",
+      "en": "Description"
+    },
+    "optional notes": {
+      "th": "บันทึกข้อความเสริม (ไม่บังคับ)",
+      "en": "optional notes"
+    },
+    "Events to send": {
+      "th": "เหตุการณ์ที่ต้องการส่ง",
+      "en": "Events to send"
+    },
+    "Subscriptions": {
+      "th": "รายการการสมัครรับข้อมูล",
+      "en": "Subscriptions"
+    },
+    "No subscriptions yet.": {
+      "th": "ยังไม่มีรายการสมัครรับข้อมูล",
+      "en": "No subscriptions yet."
+    },
+    "Events": {
+      "th": "เหตุการณ์",
+      "en": "Events"
+    },
+    "Secret": {
+      "th": "รหัสลับ",
+      "en": "Secret"
+    },
+    "set": {
+      "th": "ตั้งค่าแล้ว",
+      "en": "set"
+    },
+    "Delivery log": {
+      "th": "บันทึกประวัติการส่งข้อมูล",
+      "en": "Delivery log"
+    },
+    "Reload": {
+      "th": "โหลดข้อมูลใหม่",
+      "en": "Reload"
+    },
+    "No deliveries yet — trigger an event (e.g. update a customer).": {
+      "th": "ยังไม่มีประวัติการส่งข้อมูล — ลองสั่งทดสอบหรืออัปเดตข้อมูลลูกค้า",
+      "en": "No deliveries yet — trigger an event (e.g. update a customer)."
+    },
+    "When": {
+      "th": "เวลาที่ส่ง",
+      "en": "When"
+    },
+    "HTTP": {
+      "th": "รหัส HTTP",
+      "en": "HTTP"
+    },
+    "Tries": {
+      "th": "จำนวนครั้งที่ส่ง",
+      "en": "Tries"
+    },
+    "เก็บอัตโนมัติ": {
+      "th": "เก็บอัตโนมัติ",
+      "en": "Auto-saved"
+    },
+    "ค้นหาชื่อ / เลขทะเบียน...": {
+      "th": "ค้นหาชื่อ / เลขทะเบียน...",
+      "en": "Search name / ref..."
+    },
+    "จะเพิ่ม {0} รายชื่อเมื่อกดบันทึก": {
+      "th": "จะเพิ่ม {0} รายชื่อเมื่อกดบันทึก",
+      "en": "Will add {0} contacts on save"
+    },
+    "ชื่อและรายละเอียด (EN)": {
+      "th": "ชื่อและรายละเอียด (EN)",
+      "en": "Name & Description (EN)"
+    },
+    "ตรวจคู่สินค้า": {
+      "th": "ตรวจคู่สินค้า",
+      "en": "Verify product pairing"
+    },
+    "นับ login ย้อนหลังกี่นาที": {
+      "th": "นับ login ย้อนหลังกี่นาที",
+      "en": "Count login lookback (mins)"
+    },
+    "ปิดโดยแอดมิน": {
+      "th": "ปิดโดยแอดมิน",
+      "en": "Disabled by admin"
+    },
+    "เพิ่มสาขาใหม่": {
+      "th": "เพิ่มสาขาใหม่",
+      "en": "Add new branch"
+    },
+    "ไม่มีลายเซ็น": {
+      "th": "ไม่มีลายเซ็น",
+      "en": "No signature"
+    },
+    "ยังไม่มีหัวข้อ": {
+      "th": "ยังไม่มีหัวข้อ",
+      "en": "No topic yet"
+    },
+    "ราคาบนเว็บนี้รวม VAT แล้วหรือยัง?": {
+      "th": "ราคาบนเว็บนี้รวม VAT แล้วหรือยัง?",
+      "en": "Are prices inclusive of VAT?"
+    },
+    "ล้มเหลว": {
+      "th": "ล้มเหลว",
+      "en": "Failed"
+    },
+    "วันที่สั่งซื้อ": {
+      "th": "วันที่สั่งซื้อ",
+      "en": "Order date"
+    },
+    "ส่วนลดที่ใช้": {
+      "th": "ส่วนลดที่ใช้",
+      "en": "Applied discount"
+    },
+    "หัวข้อ": {
+      "th": "หัวข้อ",
+      "en": "Topic"
+    },
+    "สร้างโจทย์ research": {
+      "th": "สร้างโจทย์ research",
+      "en": "Create research task"
+    }
+  }
+  </script>
+<!-- INTERACTIVITY JAVASCRIPT -->
+<script>
+    let currentLanguage = 'th';
+
+    const translationsCatalog = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const text = document.getElementById('toastMessage');
+      text.innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    function toggleLanguage() {
+      currentLanguage = (currentLanguage === 'th') ? 'en' : 'th';
+      const label = document.getElementById('currentLangLabel');
+      label.innerText = currentLanguage === 'th' ? 'ไทย / EN' : 'EN / ไทย';
+
+      // Update text in elements with data-i18n attributes
+      const i18nMap = {
+        'page_title': currentLanguage === 'th' ? 'การส่งเหตุการณ์ขาออก' : 'Outgoing Webhooks',
+        'page_subtitle': currentLanguage === 'th'
+          ? 'Outgoing webhooks — แจ้งเตือนระบบภายนอกเมื่อเกิดเหตุการณ์ในแพลตฟอร์ม (Notify external systems when platform events happen — they subscribe, we deliver (signed).)'
+          : 'Outgoing webhooks — Notify external systems when platform events happen — they subscribe, we deliver (signed).',
+        'top_breadcrumb': currentLanguage === 'th' ? 'การส่งเหตุการณ์ขาออก' : 'Outgoing webhooks',
+        'btn_refresh': currentLanguage === 'th' ? 'Refresh' : 'Refresh',
+        'btn_new_subscription': currentLanguage === 'th' ? '+ New subscription' : '+ New subscription',
+        'table_title_subs': currentLanguage === 'th' ? 'Subscriptions' : 'Subscriptions',
+        'col_status': currentLanguage === 'th' ? 'สถานะ' : 'Status',
+        'col_name_desc': currentLanguage === 'th' ? 'ชื่อและรายละเอียด' : 'Name & Description',
+        'col_target_url': currentLanguage === 'th' ? 'Target URL' : 'Target URL',
+        'col_events': currentLanguage === 'th' ? 'Events' : 'Events',
+        'col_secret': currentLanguage === 'th' ? 'Secret' : 'Secret',
+        'col_actions': currentLanguage === 'th' ? 'การจัดการ' : 'Actions',
+        'title_delivery_log': currentLanguage === 'th' ? 'Delivery log' : 'Delivery log',
+        'btn_reload': currentLanguage === 'th' ? 'Reload' : 'Reload',
+        'col_log_status': currentLanguage === 'th' ? 'Status' : 'Status',
+        'col_log_event': currentLanguage === 'th' ? 'Event' : 'Event',
+        'col_log_target': currentLanguage === 'th' ? 'Target' : 'Target',
+        'col_log_http': currentLanguage === 'th' ? 'HTTP' : 'HTTP',
+        'col_log_when': currentLanguage === 'th' ? 'When' : 'When',
+        'col_log_tries': currentLanguage === 'th' ? 'Tries' : 'Tries',
+        'badge_sample_data': currentLanguage === 'th' ? 'ข้อมูลตัวอย่าง' : 'Sample Data',
+        'status_active': currentLanguage === 'th' ? 'พร้อมใช้งาน' : 'Active',
+        'status_disabled_admin': currentLanguage === 'th' ? 'ปิดโดยแอดมิน' : 'Disabled by admin',
+        'val_set': currentLanguage === 'th' ? 'set' : 'set',
+        'val_no_secret': currentLanguage === 'th' ? 'ไม่มีลายเซ็น' : 'No signature',
+        'modal_title': currentLanguage === 'th' ? 'Create subscription' : 'Create subscription',
+        'btn_create_subscription': currentLanguage === 'th' ? 'Create subscription' : 'Create subscription',
+        'val_auto_save': currentLanguage === 'th' ? 'เก็บอัตโนมัติ' : 'Auto-saved'
+      };
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18nMap[key]) {
+          el.innerText = i18nMap[key];
+        }
+      });
+
+      showToast(currentLanguage === 'th' ? 'เปลี่ยนภาษาเป็น: ภาษาไทย' : 'Language switched to: English');
+    }
+
+    function openModal() {
+      document.getElementById('subscriptionModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('subscriptionModal').classList.add('hidden');
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      closeModal();
+      showToast(currentLanguage === 'th' ? 'สร้างการส่งเหตุการณ์ใหม่สำเร็จ' : 'New subscription created successfully');
+    }
+
+    function refreshData() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast(currentLanguage === 'th' ? 'รีเฟรชข้อมูลล่าสุดแล้ว' : 'Data refreshed successfully');
+      }, 600);
+    }
+
+    function reloadDeliveryLogs() {
+      const icon = document.getElementById('reloadLogIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast(currentLanguage === 'th' ? 'โหลดประวัติการส่งข้อมูลสำเร็จ' : 'Delivery logs reloaded');
+      }, 500);
+    }
+
+    function testWebhookDelivery(name) {
+      showToast(currentLanguage === 'th' ? `กำลังยิงทดสอบคำขอไปยัง: ${name}... (200 OK)` : `Dispatched test payload to: ${name}... (200 OK)`);
+    }
+
+    function inspectPayload(eventName, httpCode) {
+      document.getElementById('drawerTitle').innerText = eventName;
+      const statusBadge = document.getElementById('drawerStatusBadge');
+      if (httpCode === 200) {
+        statusBadge.innerText = '200 OK';
+        statusBadge.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-green-100 text-green-800';
+      } else {
+        statusBadge.innerText = `${httpCode} Gateway Timeout`;
+        statusBadge.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-red-100 text-red-800';
+      }
+      document.getElementById('inspectDrawer').classList.remove('hidden');
+    }
+
+    function closeInspectDrawer() {
+      document.getElementById('inspectDrawer').classList.add('hidden');
+    }
+
+    // Close modals on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        closeInspectDrawer();
+      }
+    });
+  </script>
+</body></html>

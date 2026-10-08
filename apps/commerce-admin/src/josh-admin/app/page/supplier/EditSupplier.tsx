@@ -5,7 +5,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import AdminInsertLayout from '../../components/AdminInsertLayout';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const EditSupplier = () => {
+  __useUiLocale();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
@@ -43,7 +46,7 @@ const EditSupplier = () => {
   const handleSubmit = async () => {
     if (!id) return;
     if (!form.supplier_name) {
-      alert('กรุณากรอกชื่อ Supplier');
+      alert(__uiText("กรุณากรอกชื่อ Supplier"));
       return;
     }
     setSaving(true);
@@ -55,56 +58,55 @@ const EditSupplier = () => {
         alert(response.data.message);
       }
     } catch {
-      alert('เกิดข้อผิดพลาดในการบันทึก');
+      alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
     } finally {
       setSaving(false);
     }
   };
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">กำลังโหลด...</div>;
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   if (loadError) {
     return (
       <div className="p-6 text-sm text-red-500">
-        ไม่พบข้อมูล Supplier หรือโหลดข้อมูลไม่สำเร็จ
-      </div>
+        {__uiText("ไม่พบข้อมูล Supplier หรือโหลดข้อมูลไม่สำเร็จ")}</div>
     );
   }
 
   return (
     <AdminInsertLayout
-      title="แก้ไข Supplier"
-      subtitle="ข้อมูลผู้จัดจำหน่าย / ซัพพลายเออร์"
+      title={__uiText("แก้ไข Supplier")}
+      subtitle={__uiText("ข้อมูลผู้จัดจำหน่าย / ซัพพลายเออร์")}
       backPath={ADMIN_ROUTES.suppliers}
       saving={saving}
       onSave={handleSubmit}
     >
       <Input
-        label="ชื่อ Supplier *"
+        label={__uiText("ชื่อ Supplier *")}
         value={form.supplier_name}
         onChange={(e) => setForm({ ...form, supplier_name: e.target.value })}
       />
       <Input
-        label="ชื่อผู้ติดต่อ"
+        label={__uiText("ชื่อผู้ติดต่อ")}
         value={form.contact_name}
         onChange={(e) => setForm({ ...form, contact_name: e.target.value })}
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
-          label="เบอร์โทร"
+          label={__uiText("เบอร์โทร")}
           value={form.phone}
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
         />
         <Input
-          label="อีเมล"
+          label={__uiText("อีเมล")}
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
       </div>
       <Input
-        label="ที่อยู่"
+        label={__uiText("ที่อยู่")}
         value={form.address}
         onChange={(e) => setForm({ ...form, address: e.target.value })}
       />

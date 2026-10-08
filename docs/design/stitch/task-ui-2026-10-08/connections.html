@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>การเชื่อมต่อ — ระบบเชื่อมต่อ | Commerce Platform</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#365cf5',
+              hover: '#2948d3',
+              subtle: '#eff3ff'
+            },
+            ink: '#17243b',
+            secondary: '#52627a',
+            surface: '#f6f8fc',
+            line: '#e1e7f0',
+            success: {
+              DEFAULT: '#157347',
+              bg: '#eef8f3',
+              border: '#c2ebd5'
+            },
+            warning: {
+              DEFAULT: '#b08900',
+              bg: '#fef9e8',
+              border: '#fae69e'
+            },
+            danger: {
+              DEFAULT: '#c2333f',
+              bg: '#fdf2f2',
+              border: '#f9cfd2'
+            }
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem", // 8px for controls
+            "card": "0.75rem", // 12px for cards
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            display: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            body: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"],
+            label: ["'Noto Sans Thai'", "'Public Sans'", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans Thai', 'Public Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-[#17243b] min-h-screen flex flex-col antialiased select-none md:select-auto">
+<!-- Main Frame Layout: Fixed 256px Sidebar + Main Canvas -->
+<div class="flex min-h-screen">
+<!-- 1. SideNav Component (Fixed 256px, authority from JSON anchors) -->
+<aside class="fixed top-0 left-0 h-screen w-64 bg-white border-r border-[#e1e7f0] flex flex-col justify-between p-4 z-50">
+<!-- Top Brand & Header Section -->
+<div>
+<div class="flex items-center gap-3 px-2 py-2 mb-6 border-b border-[#e1e7f0] pb-4">
+<div class="w-10 h-10 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+<span class="material-symbols-outlined text-2xl">hub</span>
+</div>
+<div>
+<div class="text-base font-bold text-[#17243b] font-headline tracking-tight">Commerce Platform</div>
+<div class="text-xs text-[#52627a]">ระบบปฏิบัติการการค้า</div>
+</div>
+</div>
+<!-- 7 Core Thai Navigation Items -->
+<nav class="space-y-1">
+<!-- Item 0: สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-sm font-medium">สินค้าและสต็อก</span>
+</a>
+<!-- Item 1: ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-sm font-medium">ออเดอร์และการเงิน</span>
+</a>
+<!-- Item 2: ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">ลูกค้าและบริการ</span>
+</a>
+<!-- Item 3: การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-sm font-medium">การตลาด</span>
+</a>
+<!-- Item 4: รายงานและข้อมูล -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">รายงานและข้อมูล</span>
+</a>
+<!-- Item 5: ระบบเชื่อมต่อ (ACTIVE ITEM STRICTLY MAPPED) -->
+<a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#365cf5]/10 text-[#365cf5] font-semibold" href="#">
+<span class="material-symbols-outlined fill text-[#365cf5]">hub</span>
+<span class="text-sm font-semibold">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Item 6: ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Footer Sub-Navigation and System Specs -->
+<div class="pt-4 border-t border-[#e1e7f0]">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#52627a] hover:bg-slate-50 hover:text-[#17243b] transition-colors duration-150 group" href="#">
+<span class="material-symbols-outlined group-hover:text-[#365cf5]">code</span>
+<div class="flex items-center justify-between w-full">
+<span class="text-sm font-medium">นักพัฒนา &amp; API</span>
+<span class="material-symbols-outlined text-[16px] text-slate-400">north_east</span>
+</div>
+</a>
+<div class="px-3 pt-3 flex items-center justify-between text-[11px] text-[#52627a]">
+<span>Commerce Platform</span>
+<span class="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">v2.4.1</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas Wrapper (Left Margin 256px to match sidebar width) -->
+<div class="ml-64 flex-1 flex flex-col min-w-0">
+<!-- 2. Sticky TopNavBar -->
+<header class="sticky top-0 z-40 bg-white border-b border-[#e1e7f0] h-16 w-full">
+<div class="max-w-[1240px] mx-auto h-full px-6 flex items-center justify-between gap-4">
+<!-- Breadcrumb & Area Badge -->
+<div class="flex items-center gap-2 text-sm text-[#52627a] min-w-0">
+<span class="text-slate-400 hover:text-ink cursor-pointer">หน้าหลัก</span>
+<span class="text-slate-300">/</span>
+<span class="text-slate-500 font-medium">ระบบเชื่อมต่อ</span>
+<span class="text-slate-300">/</span>
+<span class="text-[#17243b] font-semibold truncate">การเชื่อมต่อ</span>
+</div>
+<!-- Global Utilities & User Profile -->
+<div class="flex items-center gap-3">
+<!-- Global Operational Search -->
+<div class="relative w-64 lg:w-72">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="w-full pl-9 pr-3 py-1.5 bg-[#f6f8fc] border border-[#e1e7f0] rounded-md text-xs text-[#17243b] placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#365cf5] focus:bg-white transition-all" placeholder="ค้นหาข้อมูลระบบหรือเอกสาร..." type="text"/>
+</div>
+<div class="h-4 w-px bg-slate-200"></div>
+<!-- Action Icons -->
+<button class="p-1.5 text-slate-500 hover:text-[#17243b] hover:bg-slate-100 rounded-md transition-colors" title="รีเฟรชข้อมูล">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+<button class="p-1.5 text-slate-500 hover:text-[#17243b] hover:bg-slate-100 rounded-md transition-colors relative" title="การแจ้งเตือนระบบ">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#c2333f] rounded-full ring-2 ring-white"></span>
+</button>
+<button class="p-1.5 text-slate-500 hover:text-[#17243b] hover:bg-slate-100 rounded-md transition-colors" title="คู่มือและการช่วยเหลือ">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<!-- User Badge -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-[#e1e7f0]">
+<div class="w-8 h-8 rounded-full bg-slate-200 text-[#17243b] flex items-center justify-center font-bold text-xs uppercase border border-slate-300">
+                สช
+              </div>
+<div class="text-left hidden lg:block">
+<div class="text-xs font-semibold text-[#17243b] leading-tight">สมชาย ประเสริฐกิจ</div>
+<div class="text-[11px] text-[#52627a] leading-tight">ทีมปฏิบัติการคลังสินค้า</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Scrollable Work Surface (Max-width 1240px Centered) -->
+<main class="flex-1 p-6 md:p-8 max-w-[1240px] w-full mx-auto space-y-6">
+<!-- 3. Page Header Section with Badges and Primary Actions -->
+<div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-2">
+<div>
+<div class="flex items-center gap-2.5 flex-wrap">
+<h1 class="text-2xl md:text-[28px] font-bold text-[#17243b] tracking-tight">การเชื่อมต่อ</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#365cf5]/10 text-[#365cf5]">
+                ระบบเชื่อมต่อ
+              </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-[#b08900] border border-amber-200">
+                ข้อมูลตัวอย่าง
+              </span>
+</div>
+<p class="text-sm text-[#52627a] mt-1.5 max-w-2xl">
+              จัดการช่องทางเชื่อมต่อระบบภายนอก ตรวจสอบการรับส่งข้อมูล Webhook และติดตามงานซิงก์ข้อมูลอัตโนมัติ
+            </p>
+</div>
+<!-- Top-Right Functional Buttons -->
+<div class="flex items-center gap-2.5 shrink-0">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-[#e1e7f0] bg-white text-[#17243b] rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+              รีเฟรช
+            </button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#365cf5] hover:bg-[#2948d3] text-white rounded-lg text-sm font-medium transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+              + เพิ่มการเชื่อมต่อ
+            </button>
+</div>
+</div>
+<!-- 4. Attention / Operational Status Banner (Calm Warning State) -->
+<div class="bg-[#fef9e8] border border-[#fae69e] rounded-xl p-4 flex items-start gap-3.5">
+<span class="material-symbols-outlined text-[#b08900] shrink-0 mt-0.5 text-xl">warning</span>
+<div class="flex-1 text-sm text-[#17243b]">
+<span class="font-semibold text-amber-950">พบการส่งข้อมูลไม่สำเร็จ 3 รายการล่าสุดใน Flash Express Courier</span>
+<p class="text-xs text-[#52627a] mt-0.5">
+              บริการปลายทางตอบกลับด้วย HTTP 504 Gateway Timeout ระบบกำลังจัดคิวส่งซ้ำอัตโนมัติตามรอบนโยบาย
+            </p>
+</div>
+<a class="shrink-0 inline-flex items-center gap-1 text-xs font-semibold text-[#b08900] hover:underline bg-white/70 px-2.5 py-1.5 rounded-md border border-amber-200/60" href="#failed-deliveries">
+            ตรวจหน้ารายการส่งไม่สำเร็จ
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- 5. Contextual Sub-Navigation Tabs (Under Work Area) -->
+<div class="border-b border-[#e1e7f0]">
+<nav class="flex space-x-6">
+<button class="border-b-2 border-[#365cf5] text-[#365cf5] pb-3 text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+              การเชื่อมต่อ
+              <span class="bg-[#365cf5]/10 text-[#365cf5] text-xs px-2 py-0.5 rounded-full">5</span>
+</button>
+<button class="border-b-2 border-transparent text-[#52627a] hover:text-[#17243b] pb-3 text-sm font-medium flex items-center gap-2 hover:border-slate-300 transition-colors">
+<span class="material-symbols-outlined text-[18px]">input</span>
+              ข้อมูลขาเข้า
+            </button>
+<button class="border-b-2 border-transparent text-[#52627a] hover:text-[#17243b] pb-3 text-sm font-medium flex items-center gap-2 hover:border-slate-300 transition-colors">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+              งานซิงก์ข้อมูล
+            </button>
+<button class="border-b-2 border-transparent text-[#52627a] hover:text-[#17243b] pb-3 text-sm font-medium flex items-center gap-2 hover:border-slate-300 transition-colors">
+<span class="material-symbols-outlined text-[18px]">error_outline</span>
+              รายการส่งไม่สำเร็จ
+              <span class="bg-rose-100 text-[#c2333f] text-xs px-1.5 py-0.5 rounded-full font-bold">3</span>
+</button>
+</nav>
+</div>
+<!-- 6. Search and Filter Bar -->
+<div class="bg-white p-4 rounded-xl border border-[#e1e7f0] flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-3">
+<!-- Current Page Search -->
+<div class="relative flex-1 max-w-md">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-[#e1e7f0] rounded-lg text-sm text-[#17243b] placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#365cf5] focus:bg-white" placeholder="ค้นหาการเชื่อมต่อในหน้านี้..." type="text"/>
+<span class="absolute right-2 top-2 text-[10px] text-slate-400 bg-white border border-slate-200 px-1.5 py-0.5 rounded hidden sm:inline-block">ค้นหาเฉพาะหน้านี้</span>
+</div>
+<!-- Type Filter Dropdown -->
+<div class="flex items-center gap-2">
+<label class="text-xs text-[#52627a] whitespace-nowrap">ประเภท:</label>
+<select class="text-xs bg-slate-50 border border-[#e1e7f0] rounded-lg px-2.5 py-2 text-[#17243b] focus:ring-1 focus:ring-[#365cf5] focus:outline-none">
+<option selected="">ทั้งหมด</option>
+<option>Marketplace</option>
+<option>ระบบชำระเงิน</option>
+<option>โลจิสติกส์</option>
+<option>ERP / บัญชี</option>
+</select>
+</div>
+<!-- Status Filter Dropdown -->
+<div class="flex items-center gap-2">
+<label class="text-xs text-[#52627a] whitespace-nowrap">สถานะ:</label>
+<select class="text-xs bg-slate-50 border border-[#e1e7f0] rounded-lg px-2.5 py-2 text-[#17243b] focus:ring-1 focus:ring-[#365cf5] focus:outline-none">
+<option selected="">ทั้งหมด</option>
+<option>เปิดใช้งาน</option>
+<option>ปิดใช้งาน</option>
+<option>มีข้อผิดพลาด</option>
+</select>
+</div>
+</div>
+<!-- Right side: records per page -->
+<div class="flex items-center justify-end gap-2 text-xs text-[#52627a]">
+<span>แสดง:</span>
+<select class="text-xs bg-slate-50 border border-[#e1e7f0] rounded-lg px-2 py-1.5 text-[#17243b] focus:ring-1 focus:ring-[#365cf5]">
+<option selected="">10 รายการ / หน้า</option>
+<option>25 รายการ / หน้า</option>
+<option>50 รายการ / หน้า</option>
+</select>
+</div>
+</div>
+<!-- 7. Main Connections Data Table -->
+<div class="bg-white rounded-xl border border-[#e1e7f0] overflow-hidden shadow-xs">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-sm">
+<thead>
+<tr class="bg-slate-50/75 border-b border-[#e1e7f0] text-xs font-semibold text-[#52627a]">
+<th class="py-3.5 px-4 font-medium" scope="col">ชื่อการเชื่อมต่อ</th>
+<th class="py-3.5 px-4 font-medium" scope="col">ประเภท</th>
+<th class="py-3.5 px-4 font-medium" scope="col">สถานะ</th>
+<th class="py-3.5 px-4 font-medium" scope="col">ยืนยันลายเซ็น (Signing)</th>
+<th class="py-3.5 px-4 font-medium" scope="col">Webhook Endpoint URL</th>
+<th class="py-3.5 px-4 font-medium text-right" scope="col">การจัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e1e7f0] text-sm">
+<!-- Row 1: Shopee Thailand -->
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-600 font-bold text-xs">
+                        SP
+                      </div>
+<div>
+<div class="font-semibold text-[#17243b]">Shopee Thailand Official</div>
+<div class="text-xs text-[#52627a] font-mono">conn_sp_th_prod_01</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#17243b]">
+                      Marketplace
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#eef8f3] text-[#157347] border border-[#c2ebd5]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      เปิดใช้งาน
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-xs text-[#17243b]">
+<span class="material-symbols-outlined text-[16px] text-[#157347]">verified_user</span>
+<span>HMAC-SHA256 (เปิด)</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2 max-w-xs">
+<code class="text-xs text-[#52627a] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded truncate font-mono">
+                        https://api.commerce.internal/v1/wh/hook_sp_live992
+                      </code>
+<button class="p-1 text-slate-400 hover:text-[#365cf5] hover:bg-slate-100 rounded" onclick="navigator.clipboard.writeText('https://api.commerce.internal/v1/wh/hook_sp_live992')" title="คัดลอก Webhook URL">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="text-xs font-medium text-[#365cf5] hover:underline px-2 py-1">ดูรายละเอียด</button>
+<button class="text-xs font-medium text-slate-600 hover:text-[#17243b] px-2 py-1 ml-1 hover:bg-slate-100 rounded">ทดสอบการเชื่อมต่อ</button>
+</td>
+</tr>
+<!-- Row 2: Lazada Partner API -->
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 font-bold text-xs">
+                        LZ
+                      </div>
+<div>
+<div class="font-semibold text-[#17243b]">Lazada Partner API</div>
+<div class="text-xs text-[#52627a] font-mono">conn_lz_th_prod_04</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#17243b]">
+                      Marketplace
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#eef8f3] text-[#157347] border border-[#c2ebd5]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      เปิดใช้งาน
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-xs text-[#17243b]">
+<span class="material-symbols-outlined text-[16px] text-[#157347]">verified_user</span>
+<span>HMAC-SHA256 (เปิด)</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2 max-w-xs">
+<code class="text-xs text-[#52627a] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded truncate font-mono">
+                        https://api.commerce.internal/v1/wh/hook_lz_93021xa
+                      </code>
+<button class="p-1 text-slate-400 hover:text-[#365cf5] hover:bg-slate-100 rounded" onclick="navigator.clipboard.writeText('https://api.commerce.internal/v1/wh/hook_lz_93021xa')" title="คัดลอก Webhook URL">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="text-xs font-medium text-[#365cf5] hover:underline px-2 py-1">ดูรายละเอียด</button>
+<button class="text-xs font-medium text-slate-600 hover:text-[#17243b] px-2 py-1 ml-1 hover:bg-slate-100 rounded">ทดสอบการเชื่อมต่อ</button>
+</td>
+</tr>
+<!-- Row 3: Flash Express Courier (Error State) -->
+<tr class="bg-rose-50/20 hover:bg-rose-50/40 transition-colors">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-yellow-50 border border-yellow-200 flex items-center justify-center text-yellow-700 font-bold text-xs">
+                        FL
+                      </div>
+<div>
+<div class="font-semibold text-[#17243b] flex items-center gap-1.5">
+                          Flash Express Courier
+                          <span class="w-2 h-2 rounded-full bg-[#c2333f]"></span>
+</div>
+<div class="text-xs text-[#52627a] font-mono">conn_logistics_flash_th</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#17243b]">
+                      โลจิสติกส์
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fdf2f2] text-[#c2333f] border border-[#f9cfd2]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c2333f]"></span>
+                      มีข้อผิดพลาด (504)
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-xs text-[#52627a]">
+<span class="material-symbols-outlined text-[16px] text-slate-400">gpp_maybe</span>
+<span>Bearer Token ตรวจสอบแล้ว</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2 max-w-xs">
+<code class="text-xs text-[#52627a] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded truncate font-mono">
+                        https://api.commerce.internal/v1/wh/hook_fl_status_trk
+                      </code>
+<button class="p-1 text-slate-400 hover:text-[#365cf5] hover:bg-slate-100 rounded" onclick="navigator.clipboard.writeText('https://api.commerce.internal/v1/wh/hook_fl_status_trk')" title="คัดลอก Webhook URL">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="text-xs font-medium text-[#c2333f] hover:underline px-2 py-1">วิเคราะห์ข้อผิดพลาด</button>
+<button class="text-xs font-medium text-[#365cf5] hover:underline px-2 py-1 ml-1">ส่งคำขอใหม่</button>
+</td>
+</tr>
+<!-- Row 4: LINE SHOPPING Sync -->
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold text-xs">
+                        LN
+                      </div>
+<div>
+<div class="font-semibold text-[#17243b]">LINE SHOPPING Sync</div>
+<div class="text-xs text-[#52627a] font-mono">conn_line_oa_shop_02</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#17243b]">
+                      Marketplace
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#eef8f3] text-[#157347] border border-[#c2ebd5]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347]"></span>
+                      เปิดใช้งาน
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-xs text-[#17243b]">
+<span class="material-symbols-outlined text-[16px] text-[#157347]">verified_user</span>
+<span>LINE Signature (เปิด)</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2 max-w-xs">
+<code class="text-xs text-[#52627a] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded truncate font-mono">
+                        https://api.commerce.internal/v1/wh/hook_ln_hook718
+                      </code>
+<button class="p-1 text-slate-400 hover:text-[#365cf5] hover:bg-slate-100 rounded" onclick="navigator.clipboard.writeText('https://api.commerce.internal/v1/wh/hook_ln_hook718')" title="คัดลอก Webhook URL">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="text-xs font-medium text-[#365cf5] hover:underline px-2 py-1">ดูรายละเอียด</button>
+<button class="text-xs font-medium text-slate-600 hover:text-[#17243b] px-2 py-1 ml-1 hover:bg-slate-100 rounded">ทดสอบการเชื่อมต่อ</button>
+</td>
+</tr>
+<!-- Row 5: 2C2P Payment Gateway (Inactive / Draft) -->
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 font-bold text-xs">
+                        2C
+                      </div>
+<div>
+<div class="font-semibold text-[#17243b]">2C2P Payment Gateway</div>
+<div class="text-xs text-[#52627a] font-mono">conn_pay_2c2p_v3</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#17243b]">
+                      ระบบชำระเงิน
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-[#52627a] border border-slate-200">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                      ปิดใช้งานชั่วคราว
+                    </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-xs text-[#52627a]">
+<span class="material-symbols-outlined text-[16px] text-slate-400">lock_clock</span>
+<span>รอการยืนยัน Public Key</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2 max-w-xs">
+<code class="text-xs text-[#52627a] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded truncate font-mono">
+                        https://api.commerce.internal/v1/wh/hook_2c2p_prod90
+                      </code>
+<button class="p-1 text-slate-400 hover:text-[#365cf5] hover:bg-slate-100 rounded" onclick="navigator.clipboard.writeText('https://api.commerce.internal/v1/wh/hook_2c2p_prod90')" title="คัดลอก Webhook URL">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<button class="text-xs font-medium text-[#365cf5] hover:underline px-2 py-1">ตั้งค่าต่อ</button>
+<button class="text-xs font-medium text-slate-400 px-2 py-1 ml-1 cursor-not-allowed">ทดสอบไม่ได้</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination -->
+<div class="py-3 px-4 bg-slate-50/60 border-t border-[#e1e7f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52627a]">
+<div>
+              แสดงรายการที่ <span class="font-semibold text-[#17243b]">1 - 5</span> จากทั้งหมด <span class="font-semibold text-[#17243b]">5</span> รายการ <span class="text-slate-400 font-mono">(ข้อมูลตัวอย่าง)</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 border border-[#e1e7f0] rounded bg-white text-slate-400 cursor-not-allowed flex items-center gap-1" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                ก่อนหน้า
+              </button>
+<button class="px-2.5 py-1 border border-[#365cf5] bg-[#365cf5] text-white rounded font-medium">1</button>
+<button class="px-2.5 py-1 border border-[#e1e7f0] rounded bg-white text-slate-400 cursor-not-allowed flex items-center gap-1" disabled="">
+                ถัดไป
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 8. Task-Based Quick Navigation Cards (Design System Directive) -->
+<div class="pt-4">
+<div class="mb-3">
+<h2 class="text-sm font-bold text-[#17243b]">งานและส่วนระบบที่เกี่ยวข้อง</h2>
+<p class="text-xs text-[#52627a]">เข้าถึงรายการบันทึกดิบ ประวัติการซิงก์รอบเวลา และการแก้ไขข้อผิดพลาดระบบเครือข่าย</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Quick Card 1: Inbound Data -->
+<a class="bg-white border border-[#e1e7f0] hover:border-[#365cf5] rounded-xl p-4 transition-all duration-150 hover:shadow-xs group" href="#">
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-[#365cf5] flex items-center justify-center">
+<span class="material-symbols-outlined">input</span>
+</div>
+<span class="material-symbols-outlined text-slate-300 group-hover:text-[#365cf5] transition-colors">arrow_forward</span>
+</div>
+<h3 class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">
+                ข้อมูลขาเข้า (Inbound Data)
+              </h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2">
+                ตรวจสอบ Payload ดิบและ Headers ที่ระบบปลายทางส่งเข้ามา ตรวจสอบความถูกต้องของลายเซ็น HMAC
+              </p>
+</a>
+<!-- Quick Card 2: Sync Jobs -->
+<a class="bg-white border border-[#e1e7f0] hover:border-[#365cf5] rounded-xl p-4 transition-all duration-150 hover:shadow-xs group" href="#">
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<span class="material-symbols-outlined text-slate-300 group-hover:text-[#365cf5] transition-colors">arrow_forward</span>
+</div>
+<h3 class="text-sm font-semibold text-[#17243b] group-hover:text-[#365cf5] transition-colors">
+                งานซิงก์ข้อมูล (Sync Jobs)
+              </h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2">
+                ตรวจสอบรอบเวลา CRON ประวัติการดึงสต็อกสินค้าจากคลัง และการดึงออเดอร์ใหม่ทุก 5 นาที
+              </p>
+</a>
+<!-- Quick Card 3: Failed Deliveries -->
+<a class="bg-white border border-[#e1e7f0] hover:border-[#c2333f] rounded-xl p-4 transition-all duration-150 hover:shadow-xs group" href="#" id="failed-deliveries">
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-rose-50 text-[#c2333f] flex items-center justify-center">
+<span class="material-symbols-outlined">error_outline</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="text-[11px] font-bold text-[#c2333f] bg-rose-50 px-2 py-0.5 rounded">3 ค้างส่ง</span>
+<span class="material-symbols-outlined text-slate-300 group-hover:text-[#c2333f] transition-colors">arrow_forward</span>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-[#17243b] group-hover:text-[#c2333f] transition-colors">
+                รายการส่งไม่สำเร็จ (Failed Deliveries)
+              </h3>
+<p class="text-xs text-[#52627a] mt-1 line-clamp-2">
+                ตรวจสอบและสั่ง Retry ข้อมูลส่งออก (Outbound) ที่เกิด timeout หรือเซิร์ฟเวอร์ปลายทางปฏิเสธ
+              </p>
+</a>
+</div>
+</div>
+</main>
+<!-- 9. Technical Audit & System Footer Bar -->
+<footer class="mt-auto border-t border-[#e1e7f0] bg-white py-3 px-6 text-xs text-[#52627a]">
+<div class="max-w-[1240px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+<span>สถานะเกตเวย์ API: ทำงานปกติ (Latency: 42ms)</span>
+<span class="text-slate-300">|</span>
+<span>ระบบบันทึก Audit Log การดำเนินงานทุกรายการตามสิทธิ์ของบัญชีเจ้าหน้าที่</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span>เขตเวลา: <span class="font-mono text-slate-600">Asia/Bangkok (GMT+7)</span></span>
+<a class="text-[#365cf5] hover:underline" href="#">เอกสาร API &amp; Webhook</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+    // Copy tooltip feedback affordance
+    document.querySelectorAll('[data-copy]').forEach(button => {
+      button.addEventListener('click', () => {
+        const originalTitle = button.getAttribute('title');
+        button.setAttribute('title', 'คัดลอกสำเร็จ!');
+        setTimeout(() => {
+          button.setAttribute('title', originalTitle);
+        }, 1500);
+      });
+    });
+  </script>
+</body></html>

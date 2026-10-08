@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ภาพรวมลูกค้าและบริการ - Commerce Operations Admin</title>
+<!-- Google Fonts: Noto Sans Thai & Latin -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS Play CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration verbatim from Design System -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed-dim": "#b7c7e3",
+            "on-primary-fixed": "#001257",
+            "tertiary-container": "#bc4600",
+            "secondary-container": "#d0e1fd",
+            "inverse-primary": "#b9c3ff",
+            "error-container": "#ffdad6",
+            "primary": "#0a3fdc",
+            "on-secondary-fixed": "#0b1c31",
+            "tertiary": "#943500",
+            "surface": "#f9f9ff",
+            "on-tertiary-fixed": "#360f00",
+            "outline-variant": "#c4c5d8",
+            "on-surface": "#0e1b32",
+            "on-secondary-container": "#54647c",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-variant": "#d7e2ff",
+            "on-error-container": "#93000a",
+            "surface-container-low": "#f1f3ff",
+            "on-primary": "#ffffff",
+            "secondary": "#4f5f77",
+            "outline": "#747687",
+            "surface-bright": "#f9f9ff",
+            "on-surface-variant": "#444655",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed-variant": "#0034c0",
+            "on-secondary": "#ffffff",
+            "error": "#ba1a1a",
+            "surface-tint": "#214ce7",
+            "surface-container": "#e8eeff",
+            "surface-container-high": "#e0e8ff",
+            "inverse-surface": "#243048",
+            "surface-container-highest": "#d7e2ff",
+            "primary-fixed": "#dde1ff",
+            "surface-dim": "#cddaf9",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#38485e",
+            "on-background": "#0e1b32",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "inverse-on-surface": "#ecf0ff",
+            "on-primary-container": "#ededff",
+            "primary-fixed-dim": "#b9c3ff",
+            "background": "#f9f9ff",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-container": "#ffebe4",
+            "primary-container": "#365cf5",
+            "tertiary-fixed-dim": "#ffb597",
+            "secondary-fixed": "#d3e3ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "margin-desktop": "2rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-xl": "2rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "headline-page": ["Noto Sans"],
+            "label-default": ["Noto Sans"],
+            "display": ["Noto Sans"],
+            "headline-page-mobile": ["Noto Sans"],
+            "code-table": ["Noto Sans"],
+            "body-medium": ["Noto Sans"],
+            "body-default": ["Noto Sans"],
+            "subheading": ["Noto Sans"],
+            "label-caption": ["Noto Sans"],
+            "headline-card": ["Noto Sans"]
+          },
+          "fontSize": {
+            "headline-page": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+            "label-default": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "display": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+            "headline-page-mobile": ["22px", { "lineHeight": "30px", "fontWeight": "600" }],
+            "code-table": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-medium": ["14px", { "lineHeight": "22px", "fontWeight": "500" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "subheading": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-card": ["18px", { "lineHeight": "26px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      color: #0e1b32;
+      background-color: #f6f8fc;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .sample-pill {
+      background-color: #fef9e7;
+      color: #b08900;
+      border: 1px solid #f9e29a;
+    }
+    .border-standard {
+      border: 1px solid #e1e7f0;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #c4c5d8;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full min-h-screen flex antialiased bg-[#f6f8fc]">
+<!-- CRITICAL TRANSLATION RESOURCE BUNDLE (INVISIBLE JSON OBJECT) -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "เมนู": { "th": "เมนู", "en": "Menu" },
+    "จาก": { "th": "จาก", "en": "from" },
+    "เริ่มจากงานที่ต้องทำ": { "th": "เริ่มจากงานที่ต้องทำ", "en": "Start with pending tasks" },
+    "เลือกทางลัดด้านล่าง หรือค้นหาหน้าที่ต้องการในหมวดนี้": { "th": "เลือกทางลัดด้านล่าง หรือค้นหาหน้าที่ต้องการในหมวดนี้", "en": "Select a quick link below or search for workspace pages" },
+    "ทางลัดในหมวด": { "th": "ทางลัดในหมวด", "en": "Category Shortcuts" },
+    "ใช้งานบ่อย": { "th": "ใช้งานบ่อย", "en": "Frequently Used" },
+    "งานทั้งหมดในหมวดนี้": { "th": "งานทั้งหมดในหมวดนี้", "en": "All Workflows in Category" },
+    "ค้นหาในหมวด": { "th": "ค้นหาในหมวด", "en": "Search in Category" },
+    "ค้นหาหน้าที่ต้องการ…": { "th": "ค้นหาหน้าที่ต้องการ…", "en": "Search required screens…" },
+    "ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น": { "th": "ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น", "en": "No matching screens found. Try another keyword" },
+    "ขอบเขต path ที่ตามลิงก์ (หนึ่ง path ต่อบรรทัด)": { "th": "ขอบเขต path ที่ตามลิงก์ (หนึ่ง path ต่อบรรทัด)", "en": "Path scope for tracking links (one path per line)" },
+    "คัดลอกจาก {0} — ตรวจวันที่เริ่ม/สิ้นสุดก่อนบันทึก": { "th": "คัดลอกจาก {0} — ตรวจวันที่เริ่ม/สิ้นสุดก่อนบันทึก", "en": "Copied from {0} — check start/end dates prior to saving" },
+    "จำกัดจำนวนชิ้นที่ขายได้ในราคาโปร (นับรวมทุก SKU ของโปรนี้) — ครบแล้วราคาโปรหยุดใช้เอง ลูกค้าเห็นราคาปกติ": { "th": "จำกัดจำนวนชิ้นที่ขายได้ในราคาโปร (นับรวมทุก SKU ของโปรนี้) — ครบแล้วราคาโปรหยุดใช้เอง ลูกค้าเห็นราคาปกติ", "en": "Limit items sold at promo price (aggregated across all promo SKUs) — reverts to standard price once exhausted" },
+    "ชื่อบริษัท, เลขจดทะเบียน หรือ ERP customer code": { "th": "ชื่อบริษัท, เลขจดทะเบียน หรือ ERP customer code", "en": "Company name, registration number, or ERP customer code" },
+    "ซ่อนรายการ": { "th": "ซ่อนรายการ", "en": "Hide item" },
+    "ตั้งแต่วันที่": { "th": "ตั้งแต่วันที่", "en": "Since date" },
+    "นามสกุลลูกค้า": { "th": "นามสกุลลูกค้า", "en": "Customer surname" },
+    "ปฏิเสธเมื่อ": { "th": "ปฏิเสธเมื่อ", "en": "Rejected at" },
+    "ผู้ใช้ที่ยังไม่ผูกสาขา (": { "th": "ผู้ใช้ที่ยังไม่ผูกสาขา (", "en": "Users unassigned to branch (" },
+    "มีคำว่า": { "th": "มีคำว่า", "en": "Contains" },
+    "ไม่รวม VAT หรือไม่แน่ใจ — เก็บไว้ดูอย่างเดียว ยังไม่เอาไปเทียบ": { "th": "ไม่รวม VAT หรือไม่แน่ใจ — เก็บไว้ดูอย่างเดียว ยังไม่เอาไปเทียบ", "en": "Excludes VAT or uncertain — kept for inspection, excluded from comparison" },
+    "ยังไม่มีคูปองในระบบ —": { "th": "ยังไม่มีคูปองในระบบ —", "en": "No coupon in system —" },
+    "ระบบ": { "th": "ระบบ", "en": "System" },
+    "รูปแบบการแสดงผล (Format)": { "th": "รูปแบบการแสดงผล (Format)", "en": "Display Format" },
+    "ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking": { "th": "ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking", "en": "Universal deep-link for ads — redirects per device platform with tracking" },
+    "วัน · รวมทุกอุปกรณ์ที่เชื่อมโยงกับผู้ใช้นี้": { "th": "วัน · รวมทุกอุปกรณ์ที่เชื่อมโยงกับผู้ใช้นี้", "en": "days · aggregated across all linked devices" },
+    "สร้างคูปองพร้อมกลุ่มเป้าหมายและเงื่อนไขใช้โค้ดในครั้งเดียว": { "th": "สร้างคูปองพร้อมกลุ่มเป้าหมายและเงื่อนไขใช้โค้ดในครั้งเดียว", "en": "Generate coupon, audience segment, and redemption terms in one workflow" },
+    "ใส่ promotion id — พาไปหน้า shop + tag campaign": { "th": "ใส่ promotion id — พาไปหน้า shop + tag campaign", "en": "Specify promotion id — routes to storefront with campaign tags" },
+    "โหลดรายการแบรนด์ไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง": { "th": "โหลดรายการแบรนด์ไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง", "en": "Failed to load brand directory. Please refresh this page" },
+    "รอเริ่ม": { "th": "รอเริ่ม", "en": "Pending launch" },
+    "อยู่ในกลุ่ม holdout (ไม่ส่งข้อความเพื่อวัดผล)": { "th": "อยู่ในกลุ่ม holdout (ไม่ส่งข้อความเพื่อวัดผล)", "en": "Within holdout group (suppressed messaging for incrementality test)" },
+    "เพิ่งเข้าครั้งแรกภายใน {0} ชม.": { "th": "เพิ่งเข้าครั้งแรกภายใน {0} ชม.", "en": "First visit within {0} hrs" },
+    "ระบุราคาโปร (≥ 0)": { "th": "ระบุราคาโปร (≥ 0)", "en": "Enter promo unit price (≥ 0)" }
+  }
+  </script>
+<!-- SHARED COMPONENT 1: SideNavBar (Fixed 256px desktop rail) -->
+<aside class="fixed top-0 left-0 h-full w-64 z-40 bg-surface-container-lowest border-r border-[#e1e7f0] shadow-sm flex flex-col justify-between p-4">
+<div class="flex flex-col space-y-5">
+<!-- App Header & Logo -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-white flex items-center justify-center font-bold text-headline-card shadow-sm">
+<span class="material-symbols-outlined" style="font-size:22px">token</span>
+</div>
+<div class="flex flex-col">
+<span class="text-subheading font-subheading font-bold text-on-surface leading-snug">Commerce Admin</span>
+<span class="text-label-caption font-label-caption text-secondary">ศูนย์จัดการระบบ</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<div>
+<button class="w-full h-10 px-4 bg-primary-container hover:bg-[#2a4ad8] text-white rounded-lg font-body-medium text-body-medium flex items-center justify-center gap-2 shadow-sm transition-all duration-150" type="button">
+<span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
+<span class="i18n-text" data-i18n-en="Create New Entry" data-i18n-th="สร้างรายการใหม่">สร้างรายการใหม่</span>
+</button>
+</div>
+<!-- Navigation Links List (Active tab lock: ลูกค้าและบริการ) -->
+<nav aria-label="Main Navigation" class="flex flex-col space-y-1">
+<!-- Item 1 -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#inventory">
+<span class="material-symbols-outlined text-secondary" style="font-size:20px">inventory_2</span>
+<span class="text-body-default font-body-default i18n-text" data-i18n-en="Products &amp; Stock" data-i18n-th="สินค้าและสต็อก">สินค้าและสต็อก</span>
+</a>
+<!-- Item 2 -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#orders">
+<span class="material-symbols-outlined text-secondary" style="font-size:20px">receipt_long</span>
+<span class="text-body-default font-body-default i18n-text" data-i18n-en="Orders &amp; Finance" data-i18n-th="ออเดอร์และการเงิน">ออเดอร์และการเงิน</span>
+</a>
+<!-- Item 3: ACTIVE TAB (Exact Semantic Match to Customer Category) -->
+<a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-body-medium border-l-[3px] border-primary transition-all duration-150" href="/workspaces/customers">
+<span class="material-symbols-outlined text-primary" style="font-size:20px; font-variation-settings: 'FILL' 1;">support_agent</span>
+<span class="text-body-medium font-body-medium i18n-text font-semibold text-primary" data-i18n-en="Customers &amp; Service" data-i18n-th="ลูกค้าและบริการ">ลูกค้าและบริการ</span>
+</a>
+<!-- Item 4 -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#marketing">
+<span class="material-symbols-outlined text-secondary" style="font-size:20px">campaign</span>
+<span class="text-body-default font-body-default i18n-text" data-i18n-en="Marketing" data-i18n-th="การตลาด">การตลาด</span>
+</a>
+<!-- Item 5 -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#analytics">
+<span class="material-symbols-outlined text-secondary" style="font-size:20px">analytics</span>
+<span class="text-body-default font-body-default i18n-text" data-i18n-en="Reports &amp; Insights" data-i18n-th="รายงานและข้อมูล">รายงานและข้อมูล</span>
+</a>
+<!-- Item 6 -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#integrations">
+<span class="material-symbols-outlined text-secondary" style="font-size:20px">hub</span>
+<span class="text-body-default font-body-default i18n-text" data-i18n-en="Integrations" data-i18n-th="ระบบเชื่อมต่อ">ระบบเชื่อมต่อ</span>
+</a>
+<!-- Item 7 -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#settings">
+<span class="material-symbols-outlined text-secondary" style="font-size:20px">settings</span>
+<span class="text-body-default font-body-default i18n-text" data-i18n-en="Settings &amp; Team" data-i18n-th="ตั้งค่าและทีมงาน">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer Actions -->
+<div class="pt-3 border-t border-[#e1e7f0] flex flex-col space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-low font-body-default transition-all duration-150" href="#help">
+<span class="material-symbols-outlined text-secondary" style="font-size:19px">help_center</span>
+<span class="text-label-default font-label-default i18n-text" data-i18n-en="User Guide" data-i18n-th="คู่มือใช้งาน">คู่มือใช้งาน</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#c2333f] hover:bg-error-container/30 font-body-default transition-all duration-150" href="#logout">
+<span class="material-symbols-outlined text-[#c2333f]" style="font-size:19px">logout</span>
+<span class="text-label-default font-label-default i18n-text" data-i18n-en="Sign Out" data-i18n-th="ออกจากระบบ">ออกจากระบบ</span>
+</a>
+</div>
+</aside>
+<!-- CONTENT STAGE (Calculated offset for fixed 256px nav) -->
+<div class="w-[calc(100%-16rem)] ml-auto min-h-screen flex flex-col bg-[#f6f8fc]">
+<!-- SHARED COMPONENT 2: TopNavBar -->
+<header class="sticky top-0 right-0 z-30 h-16 bg-surface-container-lowest border-b border-[#e1e7f0] shadow-sm px-8 flex justify-between items-center">
+<!-- Left side: Route context and breadcrumb trail -->
+<div class="flex items-center gap-4">
+<nav class="flex items-center gap-1.5 text-label-default font-label-default text-secondary">
+<a class="hover:text-primary transition-colors i18n-text" data-i18n-en="Home" data-i18n-th="หน้าหลัก" href="#">หน้าหลัก</a>
+<span class="material-symbols-outlined text-[#c4c5d8]" style="font-size:16px">chevron_right</span>
+<span class="i18n-text text-secondary" data-i18n-en="Customers &amp; Service" data-i18n-th="ลูกค้าและบริการ">ลูกค้าและบริการ</span>
+<span class="material-symbols-outlined text-[#c4c5d8]" style="font-size:16px">chevron_right</span>
+<span class="text-primary font-medium i18n-text" data-i18n-en="Customer Operations Overview" data-i18n-th="ภาพรวมลูกค้าและบริการ">ภาพรวมลูกค้าและบริการ</span>
+</nav>
+<div class="h-4 w-[1px] bg-[#e1e7f0] mx-1"></div>
+<!-- Sample Data Indicator Pill -->
+<span class="sample-pill text-label-caption font-label-caption px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size:13px">info</span>
+<span class="i18n-text" data-i18n-en="Mock Data Sample" data-i18n-th="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</span>
+</div>
+<!-- Right Utility Cluster -->
+<div class="flex items-center gap-3.5">
+<!-- Bilingual Segmented Switcher (TH | EN) -->
+<div aria-label="Language selection" class="inline-flex p-0.5 bg-[#e1e7f0] rounded-lg items-center h-8" role="group">
+<button class="px-2.5 py-1 text-label-caption font-semibold rounded-md transition-all shadow-sm bg-white text-primary" id="lang-btn-th" onclick="setLanguage('th')" type="button">
+            TH
+          </button>
+<button class="px-2.5 py-1 text-label-caption font-medium rounded-md transition-all text-secondary hover:text-on-surface" id="lang-btn-en" onclick="setLanguage('en')" type="button">
+            EN
+          </button>
+</div>
+<!-- Notification Bell -->
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:bg-[#f1f3ff] relative transition-colors" title="Notifications" type="button">
+<span class="material-symbols-outlined" style="font-size:20px">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-[#ba1a1a] rounded-full"></span>
+</button>
+<!-- Help Documentation -->
+<button class="w-9 h-9 flex items-center justify-center rounded-lg text-secondary hover:bg-[#f1f3ff] transition-colors" title="System Help" type="button">
+<span class="material-symbols-outlined" style="font-size:20px">help_outline</span>
+</button>
+<div class="h-5 w-[1px] bg-[#e1e7f0]"></div>
+<!-- Admin User Profile Identity -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-label-caption font-bold shadow-xs">
+            จน
+          </div>
+<div class="flex flex-col text-left">
+<span class="text-label-default font-body-medium text-on-surface leading-tight">จินดา นวลอนันต์</span>
+<span class="text-label-caption font-label-caption text-secondary">Admin Ops Desk</span>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN WORKSPACE CONTENT CONTAINER (Max 1240px Centered) -->
+<main class="w-full max-w-[1240px] mx-auto px-8 py-8 flex flex-col space-y-7 flex-grow">
+<!-- SECTION 1: Page Header & Semantic Metadata Badges -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#e1e7f0] pb-6">
+<div>
+<div class="flex items-center gap-2.5 mb-1.5">
+<span class="px-2.5 py-0.5 rounded-full text-label-caption font-medium bg-[#e8eeff] text-primary border border-primary/20">
+              Workspace
+            </span>
+<span class="px-2 py-0.5 rounded text-code-table font-code-table text-[#52627a] bg-white border border-[#e1e7f0]">
+              /workspaces/customers
+            </span>
+</div>
+<h1 class="text-headline-page font-headline-page text-on-surface tracking-tight flex items-center gap-3">
+<span class="i18n-text" data-i18n-en="Customer Operations Overview" data-i18n-th="ภาพรวมลูกค้าและบริการ">ภาพรวมลูกค้าและบริการ</span>
+</h1>
+<p class="text-body-default font-body-default text-secondary mt-1">
+<span class="i18n-text" data-i18n-en="Central governance for verification requests, B2B wholesale accounts, CS desk workflows, and conversational automation bots." data-i18n-th="ศูนย์ควบคุมการอนุมัติสิทธิ์ ดูแลลูกค้านิติบุคคล งานบริการลูกค้า CS และการทำงานของระบบบอทอัตโนมัติ">
+              ศูนย์ควบคุมการอนุมัติสิทธิ์ ดูแลลูกค้านิติบุคคล งานบริการลูกค้า CS และการทำงานของระบบบอทอัตโนมัติ
+            </span>
+</p>
+</div>
+<!-- Quick Primary Action -->
+<div class="flex items-center gap-2.5">
+<button class="h-10 px-4 bg-white border border-[#e1e7f0] hover:bg-[#f6f8fc] text-[#17243b] rounded-lg font-body-medium text-label-default flex items-center gap-2 transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size:18px">tune</span>
+<span class="i18n-text" data-i18n-en="Category Permissions" data-i18n-th="ตั้งค่าสิทธิ์หมวด">ตั้งค่าสิทธิ์หมวด</span>
+</button>
+<button class="h-10 px-4 bg-primary hover:bg-[#0034c0] text-white rounded-lg font-body-medium text-label-default flex items-center gap-2 shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size:18px">sync</span>
+<span class="i18n-text" data-i18n-en="Sync Operational Queues" data-i18n-th="รีเฟรชข้อมูลคิวงาน">รีเฟรชข้อมูลคิวงาน</span>
+</button>
+</div>
+</section>
+<!-- SECTION 2: Real-time Operational KPI Status Cards (With Sample Data Indicators) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Metric 1: Pending Approvals -->
+<div class="bg-white rounded-xl p-5 border-standard shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-label-default i18n-text" data-i18n-en="Pending Access Requests" data-i18n-th="คำขอรออนุมัติสิทธิ์">คำขอรออนุมัติสิทธิ์</span>
+<span class="w-8 h-8 rounded-lg bg-[#fef9e7] text-[#b08900] flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size:18px">pending_actions</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<div class="text-display font-display text-on-surface">14</div>
+<span class="sample-pill text-label-caption font-label-caption px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="i18n-text" data-i18n-en="Mock" data-i18n-th="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</span>
+</div>
+<div class="mt-2 text-label-caption font-label-caption text-secondary flex items-center gap-1">
+<span class="text-[#c2333f] font-medium flex items-center">
+<span class="material-symbols-outlined" style="font-size:14px">priority_high</span> 4 ด่วน
+            </span>
+<span>· Admin &amp; Sample queue</span>
+</div>
+</div>
+<!-- Metric 2: KYC Queue -->
+<div class="bg-white rounded-xl p-5 border-standard shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-label-default i18n-text" data-i18n-en="Pending KYC Verification" data-i18n-th="ลูกค้ารอยืนยัน KYC">ลูกค้ารอยืนยัน KYC</span>
+<span class="w-8 h-8 rounded-lg bg-[#e8eeff] text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size:18px">verified_user</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<div class="text-display font-display text-on-surface">28</div>
+<span class="sample-pill text-label-caption font-label-caption px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="i18n-text" data-i18n-en="Mock" data-i18n-th="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</span>
+</div>
+<div class="mt-2 text-label-caption font-label-caption text-secondary">
+<span class="text-[#157347] font-medium">92%</span> SLA ตรงเวลาเฉลี่ย 3.2 ชม.
+          </div>
+</div>
+<!-- Metric 3: Active CS Live Chat & Desk -->
+<div class="bg-white rounded-xl p-5 border-standard shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-label-default i18n-text" data-i18n-en="Open Support Tickets" data-i18n-th="เคสเปิด CS Desk &amp; Chat">เคสเปิด CS Desk &amp; Chat</span>
+<span class="w-8 h-8 rounded-lg bg-[#eaf5ef] text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size:18px">support_agent</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<div class="text-display font-display text-on-surface">19</div>
+<span class="sample-pill text-label-caption font-label-caption px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="i18n-text" data-i18n-en="Mock" data-i18n-th="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</span>
+</div>
+<div class="mt-2 text-label-caption font-label-caption text-secondary">
+<span>7 แชตสดกำลังสนทนา · 12 ทิคเก็ตค้างตรวจ</span>
+</div>
+</div>
+<!-- Metric 4: Automated Active Bots -->
+<div class="bg-white rounded-xl p-5 border-standard shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-label-default font-label-default i18n-text" data-i18n-en="Active Automation Bots" data-i18n-th="ระบบบอทที่เปิดใช้งาน">ระบบบอทที่เปิดใช้งาน</span>
+<span class="w-8 h-8 rounded-lg bg-[#f1f3ff] text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size:18px">smart_toy</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<div class="text-display font-display text-on-surface">6 <span class="text-label-default text-secondary font-normal">/ 8</span></div>
+<span class="sample-pill text-label-caption font-label-caption px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="i18n-text" data-i18n-en="Mock" data-i18n-th="ข้อมูลตัวอย่าง">ข้อมูลตัวอย่าง</span>
+</span>
+</div>
+<div class="mt-2 text-label-caption font-label-caption text-secondary flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+<span>98.4% Auto-Resolution rate</span>
+</div>
+</div>
+</section>
+<!-- SECTION 3: Hero Task Hub & Instant Client-Side Category Search -->
+<section class="bg-white rounded-xl p-6 border-standard shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+<div>
+<h2 class="text-headline-card font-headline-card text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-size:22px">checklist</span>
+<span class="i18n-text" data-i18n-en="Start with pending tasks" data-i18n-th="เริ่มจากงานที่ต้องทำ">เริ่มจากงานที่ต้องทำ</span>
+</h2>
+<p class="text-body-default font-body-default text-secondary mt-0.5">
+<span class="i18n-text" data-i18n-en="Select a quick link below or search for workspace pages" data-i18n-th="เลือกทางลัดด้านล่าง หรือค้นหาหน้าที่ต้องการในหมวดนี้">เลือกทางลัดด้านล่าง หรือค้นหาหน้าที่ต้องการในหมวดนี้</span>
+</p>
+</div>
+<!-- In-Page Category Filter Input -->
+<div class="relative w-full md:w-80">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" style="font-size:19px">search</span>
+<input aria-label="ค้นหาในหมวด" class="w-full h-10 pl-10 pr-9 rounded-lg border border-[#e1e7f0] bg-white text-body-default font-body-default text-on-surface placeholder-[#94a3b8] focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="workspaceSearchInput" oninput="handleWorkspaceSearch(this.value)" placeholder="ค้นหาหน้าที่ต้องการ…" type="text"/>
+<button class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-secondary hover:text-on-surface" id="clearSearchBtn" onclick="clearWorkspaceSearch()" title="Clear search" type="button">
+<span class="material-symbols-outlined" style="font-size:18px">close</span>
+</button>
+</div>
+</div>
+<!-- Section 4: Quick Shortcuts ("ทางลัดในหมวด" / "ใช้งานบ่อย") -->
+<div class="pt-2 border-t border-[#f1f3ff]">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="text-label-default font-label-default text-on-surface font-semibold i18n-text" data-i18n-en="Category Shortcuts" data-i18n-th="ทางลัดในหมวด">ทางลัดในหมวด</span>
+<span class="text-label-caption font-label-caption text-secondary">·</span>
+<span class="text-label-caption font-label-caption text-secondary i18n-text" data-i18n-en="Frequently Used" data-i18n-th="ใช้งานบ่อย">ใช้งานบ่อย</span>
+</div>
+<span class="text-label-caption font-label-caption text-secondary">8 ทางลัดแนะนำ</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3" id="shortcutsGrid">
+<!-- Shortcut 1 -->
+<a class="task-card group p-3.5 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f6f8fc] transition-all bg-white flex flex-col justify-between" data-search-terms="คำขอ admin สมัครใช้งาน web-admin ตรวจสอบ อนุมัติสิทธิ์ /j/admin-access" href="/j/admin-access">
+<div class="flex items-start justify-between">
+<span class="w-8 h-8 rounded-md bg-[#e8eeff] text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size:18px">admin_panel_settings</span>
+</span>
+<span class="text-label-caption text-[#b08900] bg-[#fef9e7] px-1.5 py-0.5 rounded font-medium">รอ 6</span>
+</div>
+<div class="mt-2.5">
+<div class="text-label-default font-body-medium text-on-surface group-hover:text-primary transition-colors">คำขอ Admin</div>
+<div class="text-label-caption text-secondary line-clamp-1">/j/admin-access · ตรวจสอบคำขอสมัครใช้งาน</div>
+</div>
+</a>
+<!-- Shortcut 2 -->
+<a class="task-card group p-3.5 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f6f8fc] transition-all bg-white flex flex-col justify-between" data-search-terms="คำขอสินค้าตัวอย่าง sample request b2b wholesale review /j/cs/sample-requests" href="/j/cs/sample-requests">
+<div class="flex items-start justify-between">
+<span class="w-8 h-8 rounded-md bg-[#f1f3ff] text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size:18px">featured_seasonal_and_gifts</span>
+</span>
+<span class="text-label-caption text-[#157347] bg-[#eaf5ef] px-1.5 py-0.5 rounded font-medium">8 รอตรวจ</span>
+</div>
+<div class="mt-2.5">
+<div class="text-label-default font-body-medium text-on-surface group-hover:text-primary transition-colors">คำขอสินค้าตัวอย่าง</div>
+<div class="text-label-caption text-secondary line-clamp-1">/j/cs/sample-requests · B2B Sample review</div>
+</div>
+</a>
+<!-- Shortcut 3 -->
+<a class="task-card group p-3.5 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f6f8fc] transition-all bg-white flex flex-col justify-between" data-search-terms="จัดการบริษัท b2b สาขา วงเงินเครดิต เทอม /j/company" href="/j/company">
+<div class="flex items-start justify-between">
+<span class="w-8 h-8 rounded-md bg-[#e8eeff] text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size:18px">domain</span>
+</span>
+<span class="text-label-caption text-secondary">3,420 ราย</span>
+</div>
+<div class="mt-2.5">
+<div class="text-label-default font-body-medium text-on-surface group-hover:text-primary transition-colors">จัดการบริษัท B2B</div>
+<div class="text-label-caption text-secondary line-clamp-1">/j/company · เครดิตเทอม &amp; สาขา</div>
+</div>
+</a>
+<!-- Shortcut 4 -->
+<a class="task-card group p-3.5 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f6f8fc] transition-all bg-white flex flex-col justify-between" data-search-terms="kyc ยืนยันตัวตน ตรวจสอบเอกสาร นิติบุคคล ร้านค้า /j/kyc" href="/j/kyc">
+<div class="flex items-start justify-between">
+<span class="w-8 h-8 rounded-md bg-[#eaf5ef] text-[#157347] flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size:18px">fact_check</span>
+</span>
+<span class="text-label-caption text-[#b08900] bg-[#fef9e7] px-1.5 py-0.5 rounded font-medium">รอ 28</span>
+</div>
+<div class="mt-2.5">
+<div class="text-label-default font-body-medium text-on-surface group-hover:text-primary transition-colors">KYC ยืนยันตัวตน</div>
+<div class="text-label-caption text-secondary line-clamp-1">/j/kyc · คิวตรวจสอบเอกสารนิติบุคคล</div>
+</div>
+</a>
+<!-- Shortcut 5 -->
+<a class="task-card group p-3.5 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f6f8fc] transition-all bg-white flex flex-col justify-between" data-search-terms="จัดการผู้ใช้ all users สิทธิ์ retail b2b /j/allusers" href="/j/allusers">
+<div class="flex items-start justify-between">
+<span class="w-8 h-8 rounded-md bg-[#f1f3ff] text-secondary flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size:18px">group</span>
+</span>
+<span class="text-label-caption text-secondary">ค้นหาด่วน</span>
+</div>
+<div class="mt-2.5">
+<div class="text-label-default font-body-medium text-on-surface group-hover:text-primary transition-colors">จัดการผู้ใช้ All Users</div>
+<div class="text-label-caption text-secondary line-clamp-1">/j/allusers · ค้นหา &amp; จัดการสิทธิ์</div>
+</div>
+</a>
+<!-- Shortcut 6 -->
+<a class="task-card group p-3.5 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f6f8fc] transition-all bg-white flex flex-col justify-between" data-search-terms="แชตสด live chat relay cs desk ข้อความ /livechat" href="/livechat">
+<div class="flex items-start justify-between">
+<span class="w-8 h-8 rounded-md bg-[#eaf5ef] text-[#157347] flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size:18px">chat</span>
+</span>
+<span class="text-label-caption text-[#157347] font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#157347] animate-pulse"></span> Live
+                </span>
+</div>
+<div class="mt-2.5">
+<div class="text-label-default font-body-medium text-on-surface group-hover:text-primary transition-colors">แชตสด Live Chat</div>
+<div class="text-label-caption text-secondary line-clamp-1">/livechat · Relay Chat &amp; CS Desk</div>
+</div>
+</a>
+<!-- Shortcut 7 -->
+<a class="task-card group p-3.5 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f6f8fc] transition-all bg-white flex flex-col justify-between" data-search-terms="bot workflow rules intent templates บอท อัตโนมัติ /j/bot/workflows /j/bot/intent-rules" href="/j/bot/workflows">
+<div class="flex items-start justify-between">
+<span class="w-8 h-8 rounded-md bg-[#e8eeff] text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size:18px">account_tree</span>
+</span>
+<span class="text-label-caption text-secondary">3 กฎใหม่</span>
+</div>
+<div class="mt-2.5">
+<div class="text-label-default font-body-medium text-on-surface group-hover:text-primary transition-colors">Bot &amp; Workflow Rules</div>
+<div class="text-label-caption text-secondary line-clamp-1">/j/bot/* · เวิร์กโฟลว์ &amp; Intent Rules</div>
+</div>
+</a>
+<!-- Shortcut 8 -->
+<a class="task-card group p-3.5 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f6f8fc] transition-all bg-white flex flex-col justify-between" data-search-terms="ติดตามลูกค้าเก่า win-back winback reports รายงาน re-engage /reports/winback" href="/reports/winback">
+<div class="flex items-start justify-between">
+<span class="w-8 h-8 rounded-md bg-[#fef9e7] text-[#b08900] flex items-center justify-center group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size:18px">replay</span>
+</span>
+<span class="text-label-caption text-secondary">Holdout 5%</span>
+</div>
+<div class="mt-2.5">
+<div class="text-label-default font-body-medium text-on-surface group-hover:text-primary transition-colors">ติดตามลูกค้าเก่า Win-back</div>
+<div class="text-label-caption text-secondary line-clamp-1">/reports/winback · Re-engagement list</div>
+</div>
+</a>
+</div>
+</div>
+</section>
+<!-- SECTION 5: Categorized All Tasks ("งานทั้งหมดในหมวดนี้") in Bento Card Structure -->
+<section class="flex flex-col space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h2 class="text-headline-card font-headline-card text-on-surface i18n-text" data-i18n-en="All Workflows in Category" data-i18n-th="งานทั้งหมดในหมวดนี้">งานทั้งหมดในหมวดนี้</h2>
+<span class="px-2 py-0.5 rounded text-label-caption font-label-caption bg-[#e1e7f0] text-secondary font-medium" id="totalTasksCount">14 เมนู</span>
+</div>
+<span class="text-label-caption font-label-caption text-secondary">จัดกลุ่มตามขั้นตอนงานปฏิบัติการ (Operations Workflow)</span>
+</div>
+<!-- Empty State Container when Client-side search has 0 matches -->
+<div class="hidden bg-white border border-[#e1e7f0] rounded-xl p-12 text-center flex flex-col items-center justify-center" id="searchEmptyState">
+<div class="w-12 h-12 rounded-full bg-[#f1f3ff] text-secondary flex items-center justify-center mb-3">
+<span class="material-symbols-outlined" style="font-size:26px">search_off</span>
+</div>
+<div class="text-subheading font-subheading font-semibold text-on-surface i18n-text" data-i18n-en="No matching screens found. Try another keyword" data-i18n-th="ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น">
+            ไม่พบเมนูที่ค้นหา ลองใช้คำอื่น
+          </div>
+<p class="text-body-default font-body-default text-secondary mt-1 max-w-sm">
+            ลองค้นหาด้วยรหัส path ย่อ เช่น <span class="font-mono text-primary">/j/kyc</span> หรือคำภาษาไทย เช่น <span class="font-medium">"อนุมัติ"</span>, <span class="font-medium">"บริษัท"</span>
+</p>
+<button class="mt-4 px-4 py-2 bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg text-label-default font-body-medium text-primary hover:bg-[#e8eeff] transition-colors" onclick="clearWorkspaceSearch()" type="button">
+            ล้างคำค้นหา
+          </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="taskGroupsContainer">
+<!-- GROUP 1: Verification & Authorization Group -->
+<div class="task-category-group bg-white rounded-xl border-standard shadow-sm overflow-hidden flex flex-col">
+<div class="p-4 bg-[#f8fafc] border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded bg-[#e8eeff] text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size:18px">approval</span>
+</span>
+<span class="text-subheading font-subheading font-semibold text-on-surface">กลุ่มที่ 1: ตรวจสอบและอนุมัติสิทธิ์</span>
+</div>
+<span class="text-label-caption text-secondary bg-white px-2 py-0.5 rounded border border-[#e1e7f0]">3 หน้า</span>
+</div>
+<div class="p-4 flex flex-col space-y-3 flex-grow">
+<!-- Item 1.1 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="admin access ตรวจสอบคำขอสมัครใช้งาน web-admin สิทธิ์ผู้ดูแล /j/admin-access" href="/j/admin-access">
+<div class="w-8 h-8 rounded-lg bg-[#f1f3ff] text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">lock_person</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">คำขอ Admin (Admin Access)</span>
+<span class="text-code-table font-code-table text-secondary">/j/admin-access</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">ตรวจสอบคำขอสมัครใช้งาน web-admin และกำหนด Role-based permissions</p>
+</div>
+</a>
+<!-- Item 1.2 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="kyc ยืนยันตัวตน นิติบุคคล ร้านค้า ภ.พ.20 หนังสือรับรอง /j/kyc" href="/j/kyc">
+<div class="w-8 h-8 rounded-lg bg-[#eaf5ef] text-[#157347] flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">assignment_turned_in</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">KYC ยืนยันตัวตนเอกสาร</span>
+<span class="text-code-table font-code-table text-secondary">/j/kyc</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">คิวตรวจสอบเอกสารนิติบุคคล ภ.พ.20 และบัตรประชาชนผู้มีอำนาจลงนาม</p>
+</div>
+</a>
+<!-- Item 1.3 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="สินค้าตัวอย่าง sample requests wholesale b2b จัดส่ง /j/cs/sample-requests" href="/j/cs/sample-requests">
+<div class="w-8 h-8 rounded-lg bg-[#fef9e7] text-[#b08900] flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">inventory</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">คำขอสินค้าตัวอย่าง (Sample Requests)</span>
+<span class="text-code-table font-code-table text-secondary">/j/cs/sample-requests</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">B2B/Wholesale sample request review และตัดโควตาคลังสินค้า</p>
+</div>
+</a>
+</div>
+</div>
+<!-- GROUP 2: B2B Accounts & Customer Management -->
+<div class="task-category-group bg-white rounded-xl border-standard shadow-sm overflow-hidden flex flex-col">
+<div class="p-4 bg-[#f8fafc] border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded bg-[#e8eeff] text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size:18px">corporate_fare</span>
+</span>
+<span class="text-subheading font-subheading font-semibold text-on-surface">กลุ่มที่ 2: บัญชีนิติบุคคลและผู้ใช้งาน</span>
+</div>
+<span class="text-label-caption text-secondary bg-white px-2 py-0.5 rounded border border-[#e1e7f0]">4 หน้า</span>
+</div>
+<div class="p-4 flex flex-col space-y-3 flex-grow">
+<!-- Item 2.1 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="จัดการบริษัท b2b สาขา วงเงินเครดิต เครดิตเทอม erp /j/company" href="/j/company">
+<div class="w-8 h-8 rounded-lg bg-[#f1f3ff] text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">store</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">จัดการบริษัท B2B (Company Management)</span>
+<span class="text-code-table font-code-table text-secondary">/j/company</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">ค้นหาด้วยชื่อบริษัท, เลขจดทะเบียน หรือ ERP customer code ผูกสาขาและวงเงินเครดิต</p>
+</div>
+</a>
+<!-- Item 2.2 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="all users บัญชีผู้ใช้ สิทธิ์ ลูกค้าสาขา /j/allusers" href="/j/allusers">
+<div class="w-8 h-8 rounded-lg bg-[#f1f3ff] text-secondary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">badge</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">จัดการผู้ใช้ All Users</span>
+<span class="text-code-table font-code-table text-secondary">/j/allusers</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">ดูรายชื่อผู้ใช้ที่ยังไม่ผูกสาขา แก้ไขเบอร์โทร รีเซ็ตรหัสผ่าน และสิทธิ์ใช้งาน</p>
+</div>
+</a>
+<!-- Item 2.3 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="ลูกค้าทั่วไป retail platform customers สมาชิก /customers/platform" href="/customers/platform">
+<div class="w-8 h-8 rounded-lg bg-[#e8eeff] text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">person_search</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">ฐานข้อมูลลูกค้า Retail (Platform Customers)</span>
+<span class="text-code-table font-code-table text-secondary">/customers/platform</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">สถิติคำสั่งซื้อ ประวัติที่อยู่จัดส่ง และประวัติธุรกรรมรวมทุกอุปกรณ์</p>
+</div>
+</a>
+<!-- Item 2.4 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="ระดับสมาชิก tier membership loyalty สิทธิประโยชน์ /customers/tiers" href="/customers/tiers">
+<div class="w-8 h-8 rounded-lg bg-[#fef9e7] text-[#b08900] flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">military_tech</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">ระดับสมาชิก Membership Tiers</span>
+<span class="text-code-table font-code-table text-secondary">/customers/tiers</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">โครงสร้างส่วนลด Tier B2B/B2C และเงื่อนไขการรักษาสถานะบัญชี</p>
+</div>
+</a>
+</div>
+</div>
+<!-- GROUP 3: CS Desk & Communications -->
+<div class="task-category-group bg-white rounded-xl border-standard shadow-sm overflow-hidden flex flex-col">
+<div class="p-4 bg-[#f8fafc] border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded bg-[#eaf5ef] text-[#157347] flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size:18px">support_agent</span>
+</span>
+<span class="text-subheading font-subheading font-semibold text-on-surface">กลุ่มที่ 3: งานบริการและสนทนา</span>
+</div>
+<span class="text-label-caption text-secondary bg-white px-2 py-0.5 rounded border border-[#e1e7f0]">3 หน้า</span>
+</div>
+<div class="p-4 flex flex-col space-y-3 flex-grow">
+<!-- Item 3.1 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="live chat relay chat แชตสด คุยกับลูกค้า ส่งต่อ desk /livechat" href="/livechat">
+<div class="w-8 h-8 rounded-lg bg-[#eaf5ef] text-[#157347] flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">chat_bubble</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">แชตสด Relay Live Chat</span>
+<span class="text-code-table font-code-table text-secondary">/livechat</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">หน้าต่างตอบแชตสดเชื่อมต่อ LINE OA, Facebook Messenger และ App Chat</p>
+</div>
+</a>
+<!-- Item 3.2 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="cs desk ticket ทิคเก็ต ข้อร้องเรียน ปัญหาเคลมสินค้า /cs/desk" href="/cs/desk">
+<div class="w-8 h-8 rounded-lg bg-[#f1f3ff] text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">confirmation_number</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">CS Desk ศูนย์รับแจ้งปัญหา</span>
+<span class="text-code-table font-code-table text-secondary">/cs/desk</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">บันทึกเคสร้องเรียน ติดตามสินค้าสูญหาย และการประสานงานขนส่งด่วน</p>
+</div>
+</a>
+<!-- Item 3.3 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="win-back winback ลูกค้าเก่า ติดตาม re-engage churned /reports/winback" href="/reports/winback">
+<div class="w-8 h-8 rounded-lg bg-[#fef9e7] text-[#b08900] flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">autorenew</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">ติดตามลูกค้าเก่า Win-back</span>
+<span class="text-code-table font-code-table text-secondary">/reports/winback</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">คัดกรองลูกค้าที่ขาดการซื้อซ้ำเกิน 60 วัน พร้อมกลุ่ม holdout วัดผล</p>
+</div>
+</a>
+</div>
+</div>
+<!-- GROUP 4: Automation & Bots -->
+<div class="task-category-group bg-white rounded-xl border-standard shadow-sm overflow-hidden flex flex-col">
+<div class="p-4 bg-[#f8fafc] border-b border-[#e1e7f0] flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded bg-[#e8eeff] text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size:18px">smart_toy</span>
+</span>
+<span class="text-subheading font-subheading font-semibold text-on-surface">กลุ่มที่ 4: ระบบอัตโนมัติและบอท</span>
+</div>
+<span class="text-label-caption text-secondary bg-white px-2 py-0.5 rounded border border-[#e1e7f0]">4 หน้า</span>
+</div>
+<div class="p-4 flex flex-col space-y-3 flex-grow">
+<!-- Item 4.1 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="bot workflows บอท เวิร์กโฟลว์ routing อัตโนมัติ /j/bot/workflows" href="/j/bot/workflows">
+<div class="w-8 h-8 rounded-lg bg-[#e8eeff] text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">schema</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">Bot Workflows &amp; Triggers</span>
+<span class="text-code-table font-code-table text-secondary">/j/bot/workflows</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">ตั้งค่าเงื่อนไขการส่งต่อเคสตามประเภทสินค้า และเวลาทำการอัตโนมัติ</p>
+</div>
+</a>
+<!-- Item 4.2 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="intent rules ตรวจจับเจตนา nlp คำค้นหา บอท /j/bot/intent-rules" href="/j/bot/intent-rules">
+<div class="w-8 h-8 rounded-lg bg-[#f1f3ff] text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">psychology</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">Intent Rules &amp; AI Keywords</span>
+<span class="text-code-table font-code-table text-secondary">/j/bot/intent-rules</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">จับคู่คำถามลูกค้ากับกลุ่มเจตนา เช่น เช็กสถานะพัสดุ, ขอใบกำกับภาษี</p>
+</div>
+</a>
+<!-- Item 4.3 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="response templates ข้อความตอบกลับอัตโนมัติ เทมเพลต rich message /j/bot/templates" href="/j/bot/templates">
+<div class="w-8 h-8 rounded-lg bg-[#eaf5ef] text-[#157347] flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">quickreply</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">Response Templates (เทมเพลตคำตอบ)</span>
+<span class="text-code-table font-code-table text-secondary">/j/bot/templates</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">ข้อความตอบกลับสำเร็จรูป Rich Cards และแบบฟอร์มยืนยันข้อมูล</p>
+</div>
+</a>
+<!-- Item 4.4 -->
+<a class="task-card group p-3 rounded-lg border border-[#e1e7f0] hover:border-primary hover:bg-[#f8fafc] transition-all flex items-start gap-3.5" data-search-terms="bot analytics สถิติ บอท ประสิทธิภาพ fallback /j/bot/analytics" href="/j/bot/analytics">
+<div class="w-8 h-8 rounded-lg bg-[#fef9e7] text-[#b08900] flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:18px">query_stats</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between">
+<span class="text-body-medium font-body-medium text-on-surface group-hover:text-primary transition-colors">Bot Resolution Analytics</span>
+<span class="text-code-table font-code-table text-secondary">/j/bot/analytics</span>
+</div>
+<p class="text-label-caption text-secondary mt-0.5">รายงานอัตรา Fallback และความพึงพอใจต่อคำตอบของระบบอัตโนมัติ</p>
+</div>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6: Bilingual Policy & Operational Micro-Guide Helper Banner -->
+<section class="bg-white rounded-xl p-5 border-standard shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex items-start gap-3">
+<span class="w-9 h-9 rounded-lg bg-[#e8eeff] text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined" style="font-size:20px">verified</span>
+</span>
+<div>
+<div class="text-body-medium font-body-medium text-on-surface font-semibold">
+<span class="i18n-text" data-i18n-en="B2B Corporate &amp; Credit Term Verification Policy" data-i18n-th="แนวทางการจัดการคำขอนิติบุคคลและเครดิตเทอม">แนวทางการจัดการคำขอนิติบุคคลและเครดิตเทอม</span>
+</div>
+<p class="text-label-caption font-label-caption text-secondary mt-0.5">
+<span class="i18n-text" data-i18n-en="Company name, registration number, or ERP customer code" data-i18n-th="ชื่อบริษัท, เลขจดทะเบียน หรือ ERP customer code">ชื่อบริษัท, เลขจดทะเบียน หรือ ERP customer code</span>
+              · ต้องตรงกับเอกสาร ภ.พ.20 และตรวจสอบวันที่เริ่ม/สิ้นสุดก่อนอนุมัติสิทธิ์ทุกครั้ง
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="text-label-caption font-label-caption text-secondary px-2.5 py-1 rounded bg-[#f6f8fc] border border-[#e1e7f0]">
+            SLA อนุมัติ 24 ชม.
+          </span>
+<button class="text-label-default font-body-medium text-primary hover:underline px-2 py-1" type="button">
+            อ่านคู่มือนโยบาย KYC
+          </button>
+</div>
+</section>
+</main>
+<!-- SECTION 7: DEVELOPER ROUTE META FOOTER -->
+<footer class="w-full bg-white border-t border-[#e1e7f0] py-3.5 px-8 mt-auto text-secondary text-label-caption">
+<div class="max-w-[1240px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+<div class="flex items-center gap-3 font-mono text-code-table">
+<span class="text-on-surface font-medium">route:</span>
+<span class="bg-[#f6f8fc] px-1.5 py-0.5 rounded border border-[#e1e7f0] text-primary font-semibold">admin-a0fb43dbbe76</span>
+<span class="text-[#c4c5d8]">|</span>
+<span class="text-on-surface font-medium">URL:</span>
+<span class="text-secondary">/workspaces/customers</span>
+<span class="text-[#c4c5d8]">|</span>
+<span class="text-on-surface font-medium">Component:</span>
+<span class="text-secondary">Workspace</span>
+</div>
+<div class="text-label-caption text-[#52627a] flex items-center gap-2">
+<span>Commerce Admin Operations Shell v4.12</span>
+<span>·</span>
+<span>Thai/English Parity Active</span>
+</div>
+</div>
+</footer>
+</div>
+<!-- Client-side Interactive Search & Language Management -->
+<script>
+    // State management
+    let currentLanguage = 'th';
+
+    // Instant client-side search across task cards
+    function handleWorkspaceSearch(query) {
+      const trimmed = query.trim().toLowerCase();
+      const clearBtn = document.getElementById('clearSearchBtn');
+      const allCards = document.querySelectorAll('.task-card');
+      const emptyState = document.getElementById('searchEmptyState');
+      const groups = document.querySelectorAll('.task-category-group');
+
+      if (trimmed.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+
+      let totalMatches = 0;
+
+      allCards.forEach(card => {
+        const terms = (card.getAttribute('data-search-terms') || '').toLowerCase();
+        const textContent = card.innerText.toLowerCase();
+        const isMatch = terms.includes(trimmed) || textContent.includes(trimmed);
+
+        if (isMatch) {
+          card.classList.remove('hidden');
+          totalMatches++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      // Handle visibility of category group containers
+      groups.forEach(group => {
+        const visibleChildren = group.querySelectorAll('.task-card:not(.hidden)');
+        if (visibleChildren.length === 0 && trimmed.length > 0) {
+          group.classList.add('hidden');
+        } else {
+          group.classList.remove('hidden');
+        }
+      });
+
+      // Show/Hide Empty State
+      if (totalMatches === 0 && trimmed.length > 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      // Update counter
+      const counterEl = document.getElementById('totalTasksCount');
+      if (counterEl) {
+        counterEl.innerText = totalMatches + ' เมนู';
+      }
+    }
+
+    function clearWorkspaceSearch() {
+      const searchInput = document.getElementById('workspaceSearchInput');
+      searchInput.value = '';
+      handleWorkspaceSearch('');
+      searchInput.focus();
+    }
+
+    // Interactive Language Switcher
+    function setLanguage(lang) {
+      currentLanguage = lang;
+
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'en') {
+        btnEn.className = "px-2.5 py-1 text-label-caption font-semibold rounded-md transition-all shadow-sm bg-white text-primary";
+        btnTh.className = "px-2.5 py-1 text-label-caption font-medium rounded-md transition-all text-secondary hover:text-on-surface";
+      } else {
+        btnTh.className = "px-2.5 py-1 text-label-caption font-semibold rounded-md transition-all shadow-sm bg-white text-primary";
+        btnEn.className = "px-2.5 py-1 text-label-caption font-medium rounded-md transition-all text-secondary hover:text-on-surface";
+      }
+
+      // Read dictionary from the required script object
+      let dict = {};
+      try {
+        const raw = document.getElementById('commerce-ui-translations').textContent;
+        dict = JSON.parse(raw);
+      } catch(e) {
+        console.error('Translation bundle parse failed', e);
+      }
+
+      // Update annotated elements
+      const elements = document.querySelectorAll('.i18n-text');
+      elements.forEach(el => {
+        const keyTh = el.getAttribute('data-i18n-th');
+        const keyEn = el.getAttribute('data-i18n-en');
+
+        if (lang === 'en') {
+          if (keyEn) {
+            el.innerText = keyEn;
+          } else if (dict[keyTh] && dict[keyTh].en) {
+            el.innerText = dict[keyTh].en;
+          }
+        } else {
+          if (keyTh) {
+            el.innerText = keyTh;
+          }
+        }
+      });
+
+      // Update search input placeholder
+      const searchInput = document.getElementById('workspaceSearchInput');
+      if (searchInput) {
+        if (lang === 'en') {
+          searchInput.placeholder = dict["ค้นหาหน้าที่ต้องการ…"] ? dict["ค้นหาหน้าที่ต้องการ…"].en : "Search required screens…";
+        } else {
+          searchInput.placeholder = dict["ค้นหาหน้าที่ต้องการ…"] ? dict["ค้นหาหน้าที่ต้องการ…"].th : "ค้นหาหน้าที่ต้องการ…";
+        }
+      }
+    }
+  </script>
+</body></html>

@@ -29,6 +29,8 @@ import { useBannerLibrary } from './banner-library';
 import { TriggerRuleBuilder } from './TriggerRuleBuilder';
 import { formatDurationLabel } from './trigger-rule.helpers';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type MarketingSidePanelSelection =
   | { kind: 'trigger' }
   | { kind: 'step'; step: MarketingStep };
@@ -64,14 +66,14 @@ function SectionTitle({ kind, title }: { kind: string; title: string }) {
 }
 
 function DeleteButton({ onClick }: { onClick: () => void }) {
+  __useUiLocale();
   return (
     <button
       type="button"
       onClick={onClick}
       className="text-xs font-medium text-red-500 hover:underline"
     >
-      ลบขั้นตอนนี้
-    </button>
+      {__uiText("ลบขั้นตอนนี้")}</button>
   );
 }
 
@@ -86,6 +88,7 @@ function AudienceFields({
   onUpdateStep: (next: MarketingStep) => void;
   onDeleteStep: () => void;
 }) {
+  __useUiLocale();
   const include = step.segmentIds ?? [];
   const exclude = step.excludeSegmentIds ?? [];
   const mode: 'everyone' | 'segments' = include.length > 0 ? 'segments' : 'everyone';
@@ -110,7 +113,7 @@ function AudienceFields({
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="AUDIENCE" title="กลุ่มเป้าหมาย" />
+      <SectionTitle kind="AUDIENCE" title={__uiText("กลุ่มเป้าหมาย")} />
 
       <div className="grid grid-cols-1 gap-2">
         <label
@@ -128,10 +131,9 @@ function AudienceFields({
             className="mt-0.5"
           />
           <span>
-            <span className="font-medium text-gray-800">ทุกคนที่เข้าเงื่อนไข trigger</span>
+            <span className="font-medium text-gray-800">{__uiText("ทุกคนที่เข้าเงื่อนไข trigger")}</span>
             <span className="mt-0.5 block text-xs text-gray-500">
-              ไม่กรอง include segment (ยัง exclude ได้ด้านล่าง) — หรือลบขั้นตอน Audience ทั้งก้อนได้
-            </span>
+              {__uiText("ไม่กรอง include segment (ยัง exclude ได้ด้านล่าง) — หรือลบขั้นตอน Audience ทั้งก้อนได้")}</span>
           </span>
         </label>
         <label
@@ -149,20 +151,19 @@ function AudienceFields({
             className="mt-0.5"
           />
           <span>
-            <span className="font-medium text-gray-800">เลือก segment</span>
+            <span className="font-medium text-gray-800">{__uiText("เลือก segment")}</span>
             <span className="mt-0.5 block text-xs text-gray-500">
-              รวมเฉพาะคนที่อยู่ใน segment ที่เลือก
-            </span>
+              {__uiText("รวมเฉพาะคนที่อยู่ใน segment ที่เลือก")}</span>
           </span>
         </label>
       </div>
 
       {mode === 'segments' && (
         <div>
-          <span className={FIELD_LABEL}>รวมเฉพาะ segment (เลือกได้หลายรายการ)</span>
+          <span className={FIELD_LABEL}>{__uiText("รวมเฉพาะ segment (เลือกได้หลายรายการ)")}</span>
           <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-gray-200 p-2">
             {activeSegments.length === 0 && (
-              <p className="px-1 py-1 text-xs text-gray-400">ยังไม่มี segment</p>
+              <p className="px-1 py-1 text-xs text-gray-400">{__uiText("ยังไม่มี segment")}</p>
             )}
             {activeSegments.map((segment) => (
               <label
@@ -182,10 +183,10 @@ function AudienceFields({
       )}
 
       <div>
-        <span className={FIELD_LABEL}>ไม่รวม segment (exclude)</span>
+        <span className={FIELD_LABEL}>{__uiText("ไม่รวม segment (exclude)")}</span>
         <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-gray-200 p-2">
           {activeSegments.length === 0 && (
-            <p className="px-1 py-1 text-xs text-gray-400">ยังไม่มี segment</p>
+            <p className="px-1 py-1 text-xs text-gray-400">{__uiText("ยังไม่มี segment")}</p>
           )}
           {activeSegments.map((segment) => (
             <label
@@ -216,15 +217,16 @@ function WaitFields({
   onUpdateStep: (next: MarketingStep) => void;
   onDeleteStep: () => void;
 }) {
+  __useUiLocale();
   const hoursInputId = useId();
   const minutesInputId = useId();
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="WAIT" title="หน่วงเวลา" />
+      <SectionTitle kind="WAIT" title={__uiText("หน่วงเวลา")} />
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label htmlFor={hoursInputId} className={FIELD_LABEL}>ชั่วโมง</label>
+          <label htmlFor={hoursInputId} className={FIELD_LABEL}>{__uiText("ชั่วโมง")}</label>
           <input
             id={hoursInputId}
             type="number"
@@ -241,7 +243,7 @@ function WaitFields({
           />
         </div>
         <div>
-          <label htmlFor={minutesInputId} className={FIELD_LABEL}>นาที</label>
+          <label htmlFor={minutesInputId} className={FIELD_LABEL}>{__uiText("นาที")}</label>
           <input
             id={minutesInputId}
             type="number"
@@ -260,21 +262,19 @@ function WaitFields({
         </div>
       </div>
       <p className="text-[11px] text-gray-400">
-        รวม {formatDurationLabel(step.hours, step.minutes)} ก่อนขั้นตอนถัดไป
-      </p>
+        {__uiText("รวม ")}{formatDurationLabel(step.hours, step.minutes)} {__uiText(" ก่อนขั้นตอนถัดไป")}</p>
       <DeleteButton onClick={onDeleteStep} />
     </div>
   );
 }
 
 function GateFields({ onDeleteStep }: { onDeleteStep: () => void }) {
+  __useUiLocale();
   return (
     <div className="space-y-4">
-      <SectionTitle kind="GATE" title="ตรวจเงื่อนไขซ้ำ" />
+      <SectionTitle kind="GATE" title={__uiText("ตรวจเงื่อนไขซ้ำ")} />
       <p className="text-xs text-gray-500">
-        v1 รองรับเงื่อนไขเดียว: <code>cart_still_open</code> — ตะกร้ายังไม่ว่าง/ยังไม่ชำระเงิน
-        ก่อนดำเนินขั้นตอนถัดไป ถ้าไม่ผ่านจะข้าม (skip) enrollment นี้ทันที
-      </p>
+        {__uiText("v1 รองรับเงื่อนไขเดียว: ")}<code>{__uiText("cart_still_open")}</code> {__uiText(" — ตะกร้ายังไม่ว่าง/ยังไม่ชำระเงิน ก่อนดำเนินขั้นตอนถัดไป ถ้าไม่ผ่านจะข้าม (skip) enrollment นี้ทันที")}</p>
       <DeleteButton onClick={onDeleteStep} />
     </div>
   );
@@ -297,44 +297,43 @@ function CouponPicker({
   value: string | undefined;
   onChange: (couponId: string) => void;
 }) {
+  __useUiLocale();
   const known = coupons.some((c) => c.id === value);
   const hasOrphanValue = Boolean(value) && !known;
   const couponSelectId = useId();
 
   return (
     <div>
-      <label htmlFor={couponSelectId} className={FIELD_LABEL}>คูปอง</label>
+      <label htmlFor={couponSelectId} className={FIELD_LABEL}>{__uiText("คูปอง")}</label>
       <Select
         id={couponSelectId}
         className="w-full"
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value)}
       >
-        <option value="">— เลือกคูปอง —</option>
+        <option value="">{__uiText("— เลือกคูปอง —")}</option>
         {coupons.map((coupon) => (
           <option key={coupon.id} value={coupon.id}>
             {coupon.coupon_code} — {coupon.title}
           </option>
         ))}
         {hasOrphanValue && (
-          <option value={value}>คูปองที่ถูกลบ/ไม่พบในรายการ ({value})</option>
+          <option value={value}>{__uiText("คูปองที่ถูกลบ/ไม่พบในรายการ (")}{value})</option>
         )}
       </Select>
       {hasOrphanValue && (
         <p className="mt-1 text-[11px] text-amber-600">
-          คูปองนี้ไม่อยู่ในรายการแล้ว — เลือกคูปองใหม่ก่อน Activate
-        </p>
+          {__uiText("คูปองนี้ไม่อยู่ในรายการแล้ว — เลือกคูปองใหม่ก่อน Activate")}</p>
       )}
       {coupons.length === 0 && !hasOrphanValue && (
         <p className="mt-1 text-[11px] text-gray-500">
-          ยังไม่มีคูปองในระบบ —{' '}
+          {__uiText("ยังไม่มีคูปองในระบบ —")}{' '}
           <Link
             to={ADMIN_ROUTES.couponCreate}
             target="_blank"
             className="font-medium text-primary hover:underline"
           >
-            สร้างคูปองก่อน →
-          </Link>
+            {__uiText("สร้างคูปองก่อน →")}</Link>
         </p>
       )}
     </div>
@@ -352,6 +351,7 @@ function GrantCouponFields({
   onUpdateStep: (next: MarketingStep) => void;
   onDeleteStep: () => void;
 }) {
+  __useUiLocale();
   const action = step.action as Extract<MarketingAction, { kind: 'grant_coupon' }>;
 
   const setCouponId = (couponId: string) =>
@@ -359,7 +359,7 @@ function GrantCouponFields({
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="ACTION" title="แจกคูปอง (Grant Coupon)" />
+      <SectionTitle kind="ACTION" title={__uiText("แจกคูปอง (Grant Coupon)")} />
       <CouponPicker
         coupons={coupons}
         value={action.couponId}
@@ -379,6 +379,7 @@ function NotifyFields({
   onUpdateStep: (next: MarketingStep) => void;
   onDeleteStep: () => void;
 }) {
+  __useUiLocale();
   const action = step.action as Extract<MarketingAction, { kind: 'notify' }>;
   const channels = action.channels ?? [];
 
@@ -391,9 +392,9 @@ function NotifyFields({
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="ACTION" title="แจ้งเตือน (Notify)" />
+      <SectionTitle kind="ACTION" title={__uiText("แจ้งเตือน (Notify)")} />
       <div>
-        <span className={FIELD_LABEL}>ช่องทาง</span>
+        <span className={FIELD_LABEL}>{__uiText("ช่องทาง")}</span>
         <div className="flex flex-wrap gap-3">
           {MARKETING_NOTIFY_CHANNELS.map((channel) => (
             <label key={channel} className="flex items-center gap-1.5 text-sm text-gray-700">
@@ -431,6 +432,7 @@ function NotifyTemplatePicker({
   templateKey: string;
   onSelect: (key: string) => void;
 }) {
+  __useUiLocale();
   const [templates, setTemplates] = useState<MarketingNotifyTemplate[]>([]);
 
   useEffect(() => {
@@ -450,14 +452,13 @@ function NotifyTemplatePicker({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <label htmlFor={templateSelectId} className={FIELD_LABEL.replace('mb-1 ', '')}>เทมเพลตข้อความ (Template)</label>
+        <label htmlFor={templateSelectId} className={FIELD_LABEL.replace('mb-1 ', '')}>{__uiText("เทมเพลตข้อความ (Template)")}</label>
         <Link
           to={ADMIN_ROUTES.marketingNotifyTemplates}
           target="_blank"
           className="text-[11px] font-medium text-primary hover:underline"
         >
-          สร้าง/แก้ไข template (drag &amp; drop) →
-        </Link>
+          {__uiText("สร้าง/แก้ไข template (drag &amp; drop) →")}</Link>
       </div>
       <Select
         id={templateSelectId}
@@ -465,7 +466,7 @@ function NotifyTemplatePicker({
         value={templateKey}
         onChange={(event) => onSelect(event.target.value)}
       >
-        <option value="">— เลือก template —</option>
+        <option value="">{__uiText("— เลือก template —")}</option>
         {MARKETING_NOTIFY_TEMPLATE_KEYS.map((key) => (
           <option key={key} value={key}>
             {MARKETING_BUILTIN_TEMPLATE_LABELS[key] ?? key}
@@ -473,8 +474,7 @@ function NotifyTemplatePicker({
         ))}
         {templates.map((template) => (
           <option key={template.template_key} value={template.template_key}>
-            {template.name} (custom)
-          </option>
+            {template.name} {__uiText(" (custom)")}</option>
         ))}
       </Select>
 
@@ -485,7 +485,7 @@ function NotifyTemplatePicker({
           {selected.image_url && (
             <img
               src={selected.image_url}
-              alt="banner"
+              alt={__uiText("banner")}
               className="max-h-24 w-full rounded-md object-cover"
             />
           )}
@@ -506,6 +506,7 @@ function ShowOfferFields({
   onUpdateStep: (next: MarketingStep) => void;
   onDeleteStep: () => void;
 }) {
+  __useUiLocale();
   const action = step.action as Extract<MarketingAction, { kind: 'show_offer' }>;
   const banners = useBannerLibrary();
   const [popupTemplates, setPopupTemplates] = useState<MarketingNotifyTemplate[]>([]);
@@ -552,12 +553,12 @@ function ShowOfferFields({
     <div className="space-y-4">
       <SectionTitle
         kind="ACTION"
-        title={action.displayOnly ? 'แสดง Popup (โฆษณา)' : 'แสดง Offer บน Shop'}
+        title={action.displayOnly ? __uiText("แสดง Popup (โฆษณา)") : __uiText("แสดง Offer บน Shop")}
       />
       <p className="text-xs text-gray-500">
         {action.displayOnly
-          ? 'เด้ง popup โฆษณาบน shop — ไม่ผูกคูปอง กดปิดแล้วจบใน session (ตั้งจำนวนครั้งได้)'
-          : 'ขึ้น popup บน shop หลัง enroll — แนะนำให้วางหลัง Grant Coupon ใน flow เดียวกัน'}
+          ? __uiText("เด้ง popup โฆษณาบน shop — ไม่ผูกคูปอง กดปิดแล้วจบใน session (ตั้งจำนวนครั้งได้)")
+          : __uiText("ขึ้น popup บน shop หลัง enroll — แนะนำให้วางหลัง Grant Coupon ใน flow เดียวกัน")}
       </p>
       <label className="flex items-start gap-2 text-xs text-gray-600">
         <input
@@ -574,15 +575,13 @@ function ShowOfferFields({
           }
         />
         <span>
-          โฆษณาอย่างเดียว (ไม่ผูกคูปอง)
-          <span className="mt-0.5 block text-[11px] text-gray-400">
-            ไม่ grant entitlement — ปิดแล้วซ่อนแค่ session นี้ ตามจำนวนครั้งด้านล่าง
-          </span>
+          {__uiText("โฆษณาอย่างเดียว (ไม่ผูกคูปอง)")}<span className="mt-0.5 block text-[11px] text-gray-400">
+            {__uiText("ไม่ grant entitlement — ปิดแล้วซ่อนแค่ session นี้ ตามจำนวนครั้งด้านล่าง")}</span>
         </span>
       </label>
       {action.displayOnly ? (
         <div>
-          <label htmlFor={maxPerSessionInputId} className={FIELD_LABEL}>แสดงสูงสุดต่อการเข้าเว็บ (session)</label>
+          <label htmlFor={maxPerSessionInputId} className={FIELD_LABEL}>{__uiText("แสดงสูงสุดต่อการเข้าเว็บ (session)")}</label>
           <input
             id={maxPerSessionInputId}
             type="number"
@@ -596,8 +595,7 @@ function ShowOfferFields({
             }
           />
           <p className="mt-1 text-[11px] text-gray-400">
-            จำนวนครั้งที่เด้งได้ในแท็บนี้ก่อนหยุด (default 1)
-          </p>
+            {__uiText("จำนวนครั้งที่เด้งได้ในแท็บนี้ก่อนหยุด (default 1)")}</p>
         </div>
       ) : (
         <CouponPicker
@@ -607,7 +605,7 @@ function ShowOfferFields({
         />
       )}
       <div>
-        <label htmlFor={titleInputId} className={FIELD_LABEL}>หัวข้อ (ไม่บังคับ)</label>
+        <label htmlFor={titleInputId} className={FIELD_LABEL}>{__uiText("หัวข้อ (ไม่บังคับ)")}</label>
         <input
           id={titleInputId}
           type="text"
@@ -617,7 +615,7 @@ function ShowOfferFields({
         />
       </div>
       <div>
-        <label htmlFor={bodyInputId} className={FIELD_LABEL}>ข้อความ (ไม่บังคับ)</label>
+        <label htmlFor={bodyInputId} className={FIELD_LABEL}>{__uiText("ข้อความ (ไม่บังคับ)")}</label>
         <textarea
           id={bodyInputId}
           className={INPUT_CLASS}
@@ -635,11 +633,8 @@ function ShowOfferFields({
           onChange={(event) => patch({ hideCode: event.target.checked })}
         />
         <span>
-          ไม่ต้องโชว์โค้ดใน popup
-          <span className="mt-0.5 block text-[11px] text-gray-400">
-            ซ่อนกล่อง &ldquo;โค้ดที่ใช้ได้&rdquo; และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว
-            ลูกค้าไม่ต้องกรอกโค้ดเอง
-          </span>
+          {__uiText("ไม่ต้องโชว์โค้ดใน popup")}<span className="mt-0.5 block text-[11px] text-gray-400">
+            {__uiText("ซ่อนกล่อง &ldquo;โค้ดที่ใช้ได้&rdquo; และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง")}</span>
         </span>
       </label>
       ) : null}
@@ -647,18 +642,16 @@ function ShowOfferFields({
       <div className="space-y-2 rounded-lg border border-dashed border-gray-200 p-2.5">
         <div className="flex items-center justify-between gap-2">
           <p className="text-[10px] font-semibold tracking-wide text-gray-400">
-            หน้าตา POPUP (แก้เองได้)
-          </p>
+            {__uiText("หน้าตา POPUP (แก้เองได้)")}</p>
           <Link
             to={ADMIN_ROUTES.marketingNotifyTemplates}
             target="_blank"
             className="text-[11px] font-medium text-primary hover:underline"
           >
-            สร้าง popup แบบลากวาง →
-          </Link>
+            {__uiText("สร้าง popup แบบลากวาง →")}</Link>
         </div>
         <div>
-          <label htmlFor={popupTemplateSelectId} className={FIELD_LABEL}>Popup Template (สร้างจากหน้าลากวาง)</label>
+          <label htmlFor={popupTemplateSelectId} className={FIELD_LABEL}>{__uiText("Popup Template (สร้างจากหน้าลากวาง)")}</label>
           <Select
             id={popupTemplateSelectId}
             className="w-full"
@@ -667,7 +660,7 @@ function ShowOfferFields({
               patch({ popupTemplateKey: event.target.value || undefined })
             }
           >
-            <option value="">— ใช้หน้าตามาตรฐาน (ตั้งค่าด้านล่าง) —</option>
+            <option value="">{__uiText("— ใช้หน้าตามาตรฐาน (ตั้งค่าด้านล่าง) —")}</option>
             {popupTemplates.map((template) => (
               <option key={template.template_key} value={template.template_key}>
                 {template.name}
@@ -676,17 +669,14 @@ function ShowOfferFields({
           </Select>
           {selectedPopupTemplate && (
             <p className="mt-1 rounded-md bg-violet-50 px-2 py-1 text-[11px] text-violet-700">
-              ใช้ layout จาก "{selectedPopupTemplate.name}" — popup จะเรนเดอร์ตามบล็อกที่ลากวางไว้
-              (การตั้งค่ารูป/ปุ่มด้านล่างจะไม่ถูกใช้)
-            </p>
+              {__uiText("ใช้ layout จาก \"")}{selectedPopupTemplate.name}{__uiText("\" — popup จะเรนเดอร์ตามบล็อกที่ลากวางไว้ (การตั้งค่ารูป/ปุ่มด้านล่างจะไม่ถูกใช้)")}</p>
           )}
         </div>
         <div>
           <label htmlFor={popupDefinitionSelectId} className={FIELD_LABEL}>
-            คลัง Popup{' '}
+            {__uiText("คลัง Popup")}{' '}
             <a href="/admin/popups/create" target="_blank" rel="noreferrer" className="text-primary hover:underline">
-              สร้าง popup ใหม่ →
-            </a>
+              {__uiText("สร้าง popup ใหม่ →")}</a>
           </label>
           <Select
             id={popupDefinitionSelectId}
@@ -696,7 +686,7 @@ function ShowOfferFields({
               patch({ popupDefinitionId: e.target.value || undefined, popupTemplateKey: undefined })
             }
           >
-            <option value="">— ใช้ layout inline (popupTemplateKey) —</option>
+            <option value="">{__uiText("— ใช้ layout inline (popupTemplateKey) —")}</option>
             {popupDefinitions.map((d) => (
               <option key={d.id} value={d.id}>{d.name}</option>
             ))}
@@ -707,7 +697,7 @@ function ShowOfferFields({
         <div>
           {banners.length > 0 && (
             <>
-            <label htmlFor={bannerSelectId} className={FIELD_LABEL}>รูป Banner ของ popup</label>
+            <label htmlFor={bannerSelectId} className={FIELD_LABEL}>{__uiText("รูป Banner ของ popup")}</label>
             <Select
               id={bannerSelectId}
               className="w-full"
@@ -720,7 +710,7 @@ function ShowOfferFields({
                 if (event.target.value) patch({ imageUrl: event.target.value });
               }}
             >
-              <option value="">— เลือกจากคลัง Banner (/admin/banner) —</option>
+              <option value="">{__uiText("— เลือกจากคลัง Banner (/admin/banner) —")}</option>
               {banners.map((banner) => (
                 <option key={banner.url} value={banner.url}>
                   {banner.title}
@@ -730,31 +720,30 @@ function ShowOfferFields({
             </>
           )}
           <label htmlFor={imageUrlInputId} className="mb-1 mt-1.5 block text-xs font-medium text-gray-500">
-            หรือวาง URL รูปเอง
-          </label>
+            {__uiText("หรือวาง URL รูปเอง")}</label>
           <input
             id={imageUrlInputId}
             type="text"
             className={`${INPUT_CLASS} font-mono text-xs`}
-            placeholder="ว่าง = ใช้รูปของคูปอง"
+            placeholder={__uiText("ว่าง = ใช้รูปของคูปอง")}
             value={action.imageUrl ?? ''}
             onChange={(event) => patch({ imageUrl: event.target.value || undefined })}
           />
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <label htmlFor={ctaTextInputId} className={FIELD_LABEL}>ข้อความปุ่มหลัก</label>
+            <label htmlFor={ctaTextInputId} className={FIELD_LABEL}>{__uiText("ข้อความปุ่มหลัก")}</label>
             <input
               id={ctaTextInputId}
               type="text"
               className={INPUT_CLASS}
-              placeholder="ไปใช้ที่ตะกร้า"
+              placeholder={__uiText("ไปใช้ที่ตะกร้า")}
               value={action.ctaText ?? ''}
               onChange={(event) => patch({ ctaText: event.target.value || undefined })}
             />
           </div>
           <div>
-            <label htmlFor={ctaUrlInputId} className={FIELD_LABEL}>ลิงก์ปุ่มหลัก</label>
+            <label htmlFor={ctaUrlInputId} className={FIELD_LABEL}>{__uiText("ลิงก์ปุ่มหลัก")}</label>
             <input
               id={ctaUrlInputId}
               type="text"
@@ -772,38 +761,36 @@ function ShowOfferFields({
             {(action.imageUrl ?? '').trim() && (
               <img
                 src={(action.imageUrl ?? '').trim()}
-                alt="popup banner"
+                alt={__uiText("popup banner")}
                 className="h-24 w-full object-cover"
               />
             )}
             <div className="space-y-2 px-3 py-3">
               <p className="text-sm font-semibold text-neutral-900">
-                {action.title?.trim() || 'คุณได้รับคูปอง'}
+                {action.title?.trim() || __uiText("คุณได้รับคูปอง")}
               </p>
               {action.body?.trim() && (
                 <p className="text-xs text-neutral-600">{action.body}</p>
               )}
               <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-2 py-2">
                 <p className="text-[9px] font-medium uppercase tracking-wide text-neutral-500">
-                  โค้ดที่ใช้ได้
-                </p>
+                  {__uiText("โค้ดที่ใช้ได้")}</p>
                 <p className="font-mono text-sm font-semibold text-neutral-900">
-                  {coupons.find((c) => c.id === action.couponId)?.coupon_code || 'COUPON'}
+                  {coupons.find((c) => c.id === action.couponId)?.coupon_code || __uiText("COUPON")}
                 </p>
               </div>
               <div className="flex gap-1.5">
                 <span className="rounded-lg border border-neutral-200 px-2 py-1.5 text-xs font-medium text-neutral-800">
-                  คัดลอกโค้ด
-                </span>
+                  {__uiText("คัดลอกโค้ด")}</span>
                 <span className="rounded-lg bg-neutral-900 px-2 py-1.5 text-xs font-medium text-white">
-                  {action.ctaText?.trim() || 'ไปใช้ที่ตะกร้า'}
+                  {action.ctaText?.trim() || __uiText("ไปใช้ที่ตะกร้า")}
                 </span>
               </div>
             </div>
           </div>
         </div>
         <p className="text-[10px] text-gray-400">
-          พรีวิว popup ที่ลูกค้าเห็นบน shop — ปุ่มหลักลิงก์ไป{' '}
+          {__uiText("พรีวิว popup ที่ลูกค้าเห็นบน shop — ปุ่มหลักลิงก์ไป")}{' '}
           <span className="font-mono">{action.ctaUrl?.trim() || '/cart/placement'}</span>
         </p>
         </>
@@ -818,19 +805,19 @@ function ShowOfferFields({
 function stepLabel(step: MarketingStep): string {
   switch (step.type) {
     case 'audience':
-      return 'Audience';
+      return __uiText("Audience");
     case 'wait':
-      return `Wait (${formatDurationLabel(step.hours, step.minutes)})`;
+      return __uiText("Wait ({0})",{"0":formatDurationLabel(step.hours, step.minutes)});
     case 'gate':
-      return 'Gate (cart_still_open)';
+      return __uiText("Gate (cart_still_open)");
     case 'condition':
-      return `If/Else: ${step.expression.trim() || '(ยังไม่ตั้งเงื่อนไข)'}`;
+      return __uiText("If/Else: {0}",{"0":step.expression.trim() || __uiText("(ยังไม่ตั้งเงื่อนไข)")});
     case 'action':
-      if (step.action.kind === 'grant_coupon') return 'Action: แจกคูปอง';
+      if (step.action.kind === 'grant_coupon') return __uiText("Action: แจกคูปอง");
       if (step.action.kind === 'show_offer') {
-        return step.action.displayOnly ? 'Action: แสดง Popup' : 'Action: แสดง Offer';
+        return step.action.displayOnly ? __uiText("Action: แสดง Popup") : __uiText("Action: แสดง Offer");
       }
-      return 'Action: แจ้งเตือน';
+      return __uiText("Action: แจ้งเตือน");
   }
 }
 
@@ -933,6 +920,7 @@ function ConditionFields({
   onUpdateStep: (next: MarketingStep) => void;
   onDeleteStep: () => void;
 }) {
+  __useUiLocale();
   const [validating, setValidating] = useState(false);
   const [validation, setValidation] = useState<{ ok: boolean; error?: string } | null>(null);
   const [clauses, setClauses] = useState<ConditionClause[]>(() => {
@@ -1037,17 +1025,14 @@ function ConditionFields({
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="IF / ELSE" title="เงื่อนไขแยกเส้นทาง (Condition)" />
+      <SectionTitle kind="IF / ELSE" title={__uiText("เงื่อนไขแยกเส้นทาง (Condition)")} />
       <p className="text-xs text-gray-500">
-        เลือกฟิลด์ / ตัวเปรียบเทียบ / ค่า — ระบบสร้าง expression ให้เอง (whitelist เท่านั้น)
-      </p>
+        {__uiText("เลือกฟิลด์ / ตัวเปรียบเทียบ / ค่า — ระบบสร้าง expression ให้เอง (whitelist เท่านั้น)")}</p>
 
       {advancedMode ? (
         <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50/60 p-3">
           <label htmlFor={expressionTextareaId} className="block text-xs text-amber-800">
-            เงื่อนไขนี้มีวงเล็บหรือรูปแบบที่ตัวเลือกยังไม่รองรับ — แก้ไขด้วยข้อความหรือสร้างใหม่ด้วย
-            select
-          </label>
+            {__uiText("เงื่อนไขนี้มีวงเล็บหรือรูปแบบที่ตัวเลือกยังไม่รองรับ — แก้ไขด้วยข้อความหรือสร้างใหม่ด้วย select")}</label>
           <textarea
             id={expressionTextareaId}
             rows={3}
@@ -1063,12 +1048,11 @@ function ConditionFields({
             onClick={resetToBuilder}
             className="text-xs font-medium text-primary hover:underline"
           >
-            สร้างใหม่ด้วยตัวเลือก
-          </button>
+            {__uiText("สร้างใหม่ด้วยตัวเลือก")}</button>
         </div>
       ) : (
         <div className="space-y-2">
-          <span className={FIELD_LABEL}>เงื่อนไข</span>
+          <span className={FIELD_LABEL}>{__uiText("เงื่อนไข")}</span>
           {clauses.map((clause, index) => {
             const fieldType = MARKETING_EXPRESSION_FIELD_TYPES[clause.field];
             const ops = MARKETING_EXPRESSION_OPS_BY_TYPE[fieldType];
@@ -1076,7 +1060,7 @@ function ConditionFields({
               <div key={index} className="space-y-1.5">
                 {index > 0 && (
                   <div>
-                    <label htmlFor={`${clauseIdPrefix}-${index}-join`} className={FIELD_LABEL}>ตัวเชื่อม</label>
+                    <label htmlFor={`${clauseIdPrefix}-${index}-join`} className={FIELD_LABEL}>{__uiText("ตัวเชื่อม")}</label>
                     <Select
                       id={`${clauseIdPrefix}-${index}-join`}
                       className="w-24"
@@ -1085,15 +1069,15 @@ function ConditionFields({
                         setJoinAt(index - 1, event.target.value as ConditionJoin)
                       }
                     >
-                      <option value="AND">และ (AND)</option>
-                      <option value="OR">หรือ (OR)</option>
+                      <option value="AND">{__uiText("และ (AND)")}</option>
+                      <option value="OR">{__uiText("หรือ (OR)")}</option>
                     </Select>
                   </div>
                 )}
                 <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-2.5 space-y-2">
                   <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[1fr_auto]">
                     <div>
-                      <label htmlFor={`${clauseIdPrefix}-${index}-field`} className={FIELD_LABEL}>ฟิลด์</label>
+                      <label htmlFor={`${clauseIdPrefix}-${index}-field`} className={FIELD_LABEL}>{__uiText("ฟิลด์")}</label>
                       <Select
                         id={`${clauseIdPrefix}-${index}-field`}
                         className="w-full"
@@ -1116,12 +1100,11 @@ function ConditionFields({
                       onClick={() => removeClause(index)}
                       className="text-xs text-red-500 hover:underline sm:justify-self-end"
                     >
-                      ลบ
-                    </button>
+                      {__uiText("ลบ")}</button>
                   </div>
                   <div className="grid grid-cols-[auto_1fr] gap-2">
                     <div>
-                      <label htmlFor={`${clauseIdPrefix}-${index}-operator`} className={FIELD_LABEL}>ตัวเปรียบเทียบ</label>
+                      <label htmlFor={`${clauseIdPrefix}-${index}-operator`} className={FIELD_LABEL}>{__uiText("ตัวเปรียบเทียบ")}</label>
                       <Select
                         id={`${clauseIdPrefix}-${index}-operator`}
                         className="w-full"
@@ -1141,21 +1124,21 @@ function ConditionFields({
                     </div>
                     {fieldType === 'boolean' && (
                       <div>
-                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>ค่า</label>
+                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>{__uiText("ค่า")}</label>
                         <Select
                           id={`${clauseIdPrefix}-${index}-value`}
                           className="w-full"
                           value={clause.value === 'true' ? 'true' : 'false'}
                           onChange={(event) => updateClause(index, { value: event.target.value })}
                         >
-                          <option value="true">จริง (true)</option>
-                          <option value="false">เท็จ (false)</option>
+                          <option value="true">{__uiText("จริง (true)")}</option>
+                          <option value="false">{__uiText("เท็จ (false)")}</option>
                         </Select>
                       </div>
                     )}
                     {fieldType === 'number' && (
                       <div>
-                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>ค่า</label>
+                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>{__uiText("ค่า")}</label>
                         <input
                           id={`${clauseIdPrefix}-${index}-value`}
                           type="number"
@@ -1167,14 +1150,14 @@ function ConditionFields({
                     )}
                     {fieldType === 'segment' && (
                       <div>
-                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>ค่า</label>
+                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>{__uiText("ค่า")}</label>
                         <Select
                           id={`${clauseIdPrefix}-${index}-value`}
                           className="w-full"
                           value={clause.value}
                           onChange={(event) => updateClause(index, { value: event.target.value })}
                         >
-                          <option value="">— เลือก Segment —</option>
+                          <option value="">{__uiText("— เลือก Segment —")}</option>
                           {segments.map((seg) => (
                             <option key={seg.id} value={seg.id}>
                               {seg.name}
@@ -1193,8 +1176,7 @@ function ConditionFields({
             onClick={addClause}
             className="text-xs font-medium text-primary hover:underline"
           >
-            + เพิ่มเงื่อนไข
-          </button>
+            {__uiText("+ เพิ่มเงื่อนไข")}</button>
           {step.expression.trim() && (
             <p className="rounded-md bg-gray-50 px-2 py-1.5 font-mono text-[10px] text-gray-500 break-all">
               {step.expression}
@@ -1210,17 +1192,17 @@ function ConditionFields({
           disabled={validating || !step.expression.trim()}
           className="rounded-lg border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {validating ? 'กำลังตรวจสอบ...' : 'Validate'}
+          {validating ? __uiText("กำลังตรวจสอบ...") : __uiText("Validate")}
         </button>
         {validation && (
           <span className={`text-xs ${validation.ok ? 'text-emerald-600' : 'text-red-500'}`}>
-            {validation.ok ? '✓ เงื่อนไขถูกต้อง' : validation.error}
+            {validation.ok ? __uiText("✓ เงื่อนไขถูกต้อง") : validation.error}
           </span>
         )}
       </div>
 
       <div>
-        <label htmlFor={yesNextSelectId} className={FIELD_LABEL}>ถ้าเป็นจริง (Yes) → ไปที่</label>
+        <label htmlFor={yesNextSelectId} className={FIELD_LABEL}>{__uiText("ถ้าเป็นจริง (Yes) → ไปที่")}</label>
         <Select
           id={yesNextSelectId}
           className="w-full"
@@ -1229,7 +1211,7 @@ function ConditionFields({
             onUpdateStep({ ...step, yesNextId: event.target.value || null })
           }
         >
-          <option value="">— จบ (End) —</option>
+          <option value="">{__uiText("— จบ (End) —")}</option>
           {otherSteps.map((s) => (
             <option key={s.id} value={s.id}>
               {stepLabel(s)}
@@ -1239,7 +1221,7 @@ function ConditionFields({
       </div>
 
       <div>
-        <label htmlFor={noNextSelectId} className={FIELD_LABEL}>ถ้าเป็นเท็จ (No) → ไปที่</label>
+        <label htmlFor={noNextSelectId} className={FIELD_LABEL}>{__uiText("ถ้าเป็นเท็จ (No) → ไปที่")}</label>
         <Select
           id={noNextSelectId}
           className="w-full"
@@ -1248,7 +1230,7 @@ function ConditionFields({
             onUpdateStep({ ...step, noNextId: event.target.value || null })
           }
         >
-          <option value="">— จบ (End) —</option>
+          <option value="">{__uiText("— จบ (End) —")}</option>
           {otherSteps.map((s) => (
             <option key={s.id} value={s.id}>
               {stepLabel(s)}
@@ -1276,10 +1258,11 @@ export function MarketingStepSidePanel({
   onUpdateStep,
   onDeleteStep,
 }: Props) {
+  __useUiLocale();
   if (!selection) {
     return (
       <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-gray-200 p-6 text-center">
-        <p className="text-xs text-gray-400">คลิกที่การ์ดในแผนภาพเพื่อแก้ไขรายละเอียด</p>
+        <p className="text-xs text-gray-400">{__uiText("คลิกที่การ์ดในแผนภาพเพื่อแก้ไขรายละเอียด")}</p>
       </div>
     );
   }
@@ -1362,3 +1345,5 @@ export function MarketingStepSidePanel({
 export { TRIGGER_NODE_ID };
 
 export default MarketingStepSidePanel;
+
+// ui-display-helper-migration: display descriptions; record values and enum keys remain data

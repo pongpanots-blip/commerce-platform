@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commerce Platform - ออเดอร์แพลตฟอร์ม (/orders)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            primary: {
+              DEFAULT: '#365cf5',
+              hover: '#2847d4',
+              subtle: '#edf1fe'
+            },
+            ink: '#17243b',
+            secondary: '#52627a',
+            success: {
+              DEFAULT: '#157347',
+              bg: '#e8f5e9',
+              border: '#c8e6c9'
+            },
+            warning: {
+              DEFAULT: '#b08900',
+              bg: '#fff9db',
+              border: '#ffe066'
+            },
+            danger: {
+              DEFAULT: '#c2333f',
+              bg: '#fde8ea',
+              border: '#f5c2c7'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 14px;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f4f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex antialiased bg-canvas text-ink">
+
+  <!-- Left Sidebar (256px) -->
+  <aside class="w-64 bg-white border-r border-border flex flex-col shrink-0 min-h-screen select-none">
+    <!-- Brand Header -->
+    <div class="h-16 flex items-center px-5 border-b border-border gap-3">
+      <div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </div>
+      <div class="leading-tight">
+        <div class="font-bold text-ink text-sm tracking-tight">Commerce Platform</div>
+        <div class="text-[11px] text-secondary">ระบบจัดการการค้ากลาง</div>
+      </div>
+    </div>
+
+    <!-- Nav List (7 thai work areas) -->
+    <nav class="flex-1 py-4 px-3 space-y-6 overflow-y-auto custom-scroll text-sm">
+      <!-- Section 1 -->
+      <div>
+        <div class="px-3 pb-2 text-[11px] font-semibold text-secondary uppercase tracking-wider">งานหลัก / Operations</div>
+        <ul class="space-y-1">
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              <span>สินค้าและสต็อก</span>
+            </a>
+          </li>
+          <li>
+            <!-- Active Parent Area -->
+            <div class="rounded-lg bg-primary-subtle text-primary font-medium">
+              <a href="/orders" class="flex items-center justify-between px-3 py-2">
+                <span class="flex items-center gap-3">
+                  <svg class="w-4 h-4 shrink-0 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  <span data-i18n="category">ออเดอร์และการเงิน</span>
+                </span>
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              </a>
+              <!-- Submenu links -->
+              <div class="pl-9 pr-2 pb-2 pt-0.5 space-y-1 text-[13px]">
+                <a href="/orders" class="flex items-center justify-between py-1.5 px-2 rounded font-semibold text-primary bg-white shadow-sm border border-blue-100">
+                  <span data-i18n="ออเดอร์ทั้งหมด">ออเดอร์ทั้งหมด</span>
+                  <span class="text-[11px] bg-primary text-white rounded-full px-1.5 font-mono">14</span>
+                </a>
+                <a href="/j/order/import" class="flex items-center justify-between py-1.5 px-2 rounded text-secondary hover:text-ink hover:bg-white/60 transition-colors">
+                  <span>นำเข้าออเดอร์</span>
+                  <span class="text-[10px] bg-slate-200 text-secondary rounded px-1 font-mono">/j</span>
+                </a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              <span>ลูกค้าและบริการ</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+              <span>การตลาด</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              <span>รายงานและข้อมูล</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 2 -->
+      <div>
+        <div class="px-3 pb-2 text-[11px] font-semibold text-secondary uppercase tracking-wider">การจัดการระบบ / Admin</div>
+        <ul class="space-y-1">
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span>ระบบเชื่อมต่อ</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-slate-50 transition-colors">
+              <svg class="w-4 h-4 shrink-0 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span>ตั้งค่าและทีมงาน</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Bottom portal link -->
+    <div class="p-3 border-t border-border bg-slate-50/50">
+      <a href="#" class="flex items-center justify-between p-2.5 rounded-lg border border-border bg-white text-xs hover:border-slate-300 transition-colors">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          <span class="font-medium text-ink">Developer Portal</span>
+        </div>
+        <span class="text-[10px] text-secondary">API & Webhooks ↗</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+
+    <!-- Top Compact Contextual Header -->
+    <header class="h-16 bg-white border-b border-border flex items-center justify-between px-8 sticky top-0 z-20">
+      <div class="flex items-center gap-2 text-xs">
+        <a href="/orders" class="text-secondary hover:text-ink font-medium" data-i18n="ออเดอร์ทั้งหมด">ออเดอร์ทั้งหมด</a>
+        <span class="text-slate-300">/</span>
+        <span class="font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px]">/orders</span>
+        <span class="ml-2 px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-primary border border-blue-200">admin-fc7d055239d9</span>
+      </div>
+
+      <!-- Right controls: Language toggle, User profile -->
+      <div class="flex items-center gap-4">
+        <!-- Bilingual selector -->
+        <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-border text-xs">
+          <button id="lang-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded font-medium transition-all bg-white text-primary shadow-sm">ไทย</button>
+          <button id="lang-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded font-medium transition-all text-secondary hover:text-ink">English</button>
+        </div>
+
+        <div class="h-4 w-px bg-border"></div>
+
+        <!-- Staff Account Status -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 text-slate-700 font-semibold text-xs flex items-center justify-center">
+            OP
+          </div>
+          <div class="text-xs">
+            <div class="font-medium text-ink">สมชาย บริการค้า (Admin)</div>
+            <div class="text-[11px] text-secondary font-mono" data-i18n="บัญชี josh (staff)">บัญชี josh (staff)</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Body (Container max-w ~ 1240px) -->
+    <main class="flex-1 p-8 max-w-[1240px] w-full mx-auto space-y-6">
+
+      <!-- Page Title & Primary Actions Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border">
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-[28px] font-bold text-ink tracking-tight leading-tight" data-i18n="ออเดอร์แพลตฟอร์ม">ออเดอร์แพลตฟอร์ม</h1>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-success-bg text-success border border-success-border">
+              <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+              API Online (v1.4)
+            </span>
+          </div>
+          <p class="text-secondary text-sm mt-1" data-i18n="ดูสถานะและยอดคำสั่งซื้อ เปิดรายละเอียดเพื่อติดตามการชำระเงินและการจองสินค้า">
+            ดูสถานะและยอดคำสั่งซื้อ เปิดรายละเอียดเพื่อติดตามการชำระเงินและการจองสินค้า
+          </p>
+        </div>
+
+        <!-- Top Actions -->
+        <div class="flex items-center gap-2.5 shrink-0">
+          <button onclick="handleRefresh()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg border border-border bg-white text-secondary hover:text-ink hover:bg-slate-50 font-medium text-sm transition-colors shadow-sm">
+            <svg id="refresh-icon" class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span data-i18n="รีเฟรช">รีเฟรช</span>
+          </button>
+
+          <a href="/j/order/import" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg border border-border bg-white text-secondary hover:text-ink hover:bg-slate-50 font-medium text-sm transition-colors shadow-sm">
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            <span data-i18n="อัปโหลด CSV">อัปโหลด CSV</span>
+          </a>
+
+          <button onclick="openCreateModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white font-medium text-sm shadow transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span data-i18n="สร้างออเดอร์">สร้างออเดอร์</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Search & Page-level Filter Bar -->
+      <div class="bg-white rounded-xl border border-border p-4 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <!-- Search input -->
+        <div class="relative flex-1 max-w-md">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="search-input"
+            oninput="handleSearch(this.value)"
+            placeholder="ค้นหารหัสออเดอร์ในหน้านี้…"
+            data-placeholder-th="ค้นหารหัสออเดอร์ในหน้านี้…"
+            data-placeholder-en="Search order code on this page…"
+            class="w-full pl-10 pr-4 py-2 border border-border rounded-lg text-sm text-ink placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+          >
+        </div>
+
+        <!-- Filter status tabs & scope note -->
+        <div class="flex items-center gap-2 overflow-x-auto text-xs">
+          <span class="text-secondary font-medium mr-1 whitespace-nowrap" data-i18n="สถานะ">สถานะ:</span>
+          <button onclick="filterStatus('ALL')" id="filter-btn-ALL" class="px-3 py-1.5 rounded-lg font-medium transition-colors bg-primary text-white">ทั้งหมด (14)</button>
+          <button onclick="filterStatus('PENDING')" id="filter-btn-PENDING" class="px-3 py-1.5 rounded-lg font-medium transition-colors bg-slate-100 text-secondary hover:text-ink">รอดำเนินการ (3)</button>
+          <button onclick="filterStatus('PROCESSING')" id="filter-btn-PROCESSING" class="px-3 py-1.5 rounded-lg font-medium transition-colors bg-slate-100 text-secondary hover:text-ink">กำลังจัดเตรียม (5)</button>
+          <button onclick="filterStatus('COMPLETED')" id="filter-btn-COMPLETED" class="px-3 py-1.5 rounded-lg font-medium transition-colors bg-slate-100 text-secondary hover:text-ink">สำเร็จ (5)</button>
+          <button onclick="filterStatus('CANCELLED')" id="filter-btn-CANCELLED" class="px-3 py-1.5 rounded-lg font-medium transition-colors bg-slate-100 text-secondary hover:text-ink">ยกเลิก (1)</button>
+        </div>
+      </div>
+
+      <!-- Orders Table Container -->
+      <div class="bg-white rounded-xl border border-border shadow-sm overflow-hidden flex flex-col">
+
+        <!-- Table Top Header Info -->
+        <div class="px-6 py-4 border-b border-border flex items-center justify-between bg-slate-50/50">
+          <div class="flex items-center gap-2.5">
+            <h2 class="font-semibold text-ink text-sm" data-i18n="ออเดอร์ทั้งหมด">ออเดอร์ทั้งหมด</h2>
+            <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200" data-i18n="ข้อมูลตัวอย่าง">
+              ข้อมูลตัวอย่าง / Sample data
+            </span>
+          </div>
+          <div class="text-xs text-secondary font-mono">
+            API: GET /api/v1/orders?limit=100
+          </div>
+        </div>
+
+        <!-- Responsive Table -->
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-border bg-slate-50 text-xs font-semibold text-secondary">
+                <th class="py-3 px-6 whitespace-nowrap" data-i18n="รหัสออเดอร์">รหัสออเดอร์</th>
+                <th class="py-3 px-6 whitespace-nowrap" data-i18n="ลูกค้า">ลูกค้า</th>
+                <th class="py-3 px-6 whitespace-nowrap text-right" data-i18n="ยอดรวม">ยอดรวม</th>
+                <th class="py-3 px-6 whitespace-nowrap" data-i18n="สถานะ">สถานะ</th>
+                <th class="py-3 px-6 whitespace-nowrap" data-i18n="วันที่สร้าง">วันที่สร้าง</th>
+                <th class="py-3 px-6 whitespace-nowrap text-right" data-i18n="รายละเอียด">การทำงาน</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody" class="divide-y divide-border">
+              <!-- Row 1 -->
+              <tr class="hover:bg-slate-50/70 transition-colors order-row" data-code="ORD-20250328-001" data-status="COMPLETED">
+                <td class="py-3.5 px-6 font-mono font-medium text-primary whitespace-nowrap">
+                  <a href="javascript:void(0)" onclick="openDetailModal('ORD-20250328-001', 'CUST-0892', 'บจก. สยามเทรดดิ้ง มาร์เก็ต', '฿14,850.00', 'COMPLETED', '28 มี.ค. 2025 09:42')" class="hover:underline flex items-center gap-1.5">
+                    <span>ORD-20250328-001</span>
+                    <svg class="w-3.5 h-3.5 text-primary opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <div class="font-medium text-ink">บจก. สยามเทรดดิ้ง มาร์เก็ต</div>
+                  <div class="text-xs text-secondary font-mono">CUST-0892 (Tax ID: 0105558912301)</div>
+                </td>
+                <td class="py-3.5 px-6 font-mono font-semibold text-right text-ink whitespace-nowrap">
+                  ฿14,850.00
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    สำเร็จ (Completed)
+                  </span>
+                </td>
+                <td class="py-3.5 px-6 text-xs text-secondary whitespace-nowrap">
+                  28 มี.ค. 2025 09:42
+                </td>
+                <td class="py-3.5 px-6 text-right whitespace-nowrap">
+                  <button onclick="openDetailModal('ORD-20250328-001', 'CUST-0892', 'บจก. สยามเทรดดิ้ง มาร์เก็ต', '฿14,850.00', 'COMPLETED', '28 มี.ค. 2025 09:42')" class="px-2.5 py-1.5 rounded border border-border bg-white text-xs text-secondary hover:text-ink hover:bg-slate-50 transition shadow-sm" data-i18n="รายละเอียด">
+                    รายละเอียด
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Row 2 -->
+              <tr class="hover:bg-slate-50/70 transition-colors order-row" data-code="ORD-20250328-002" data-status="PROCESSING">
+                <td class="py-3.5 px-6 font-mono font-medium text-primary whitespace-nowrap">
+                  <a href="javascript:void(0)" onclick="openDetailModal('ORD-20250328-002', 'CUST-1044', 'คุณ กานต์พิชชา วัฒนเวคิน', '฿3,290.00', 'PROCESSING', '28 มี.ค. 2025 10:15')" class="hover:underline flex items-center gap-1.5">
+                    <span>ORD-20250328-002</span>
+                    <svg class="w-3.5 h-3.5 text-primary opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <div class="font-medium text-ink">คุณ กานต์พิชชา วัฒนเวคิน</div>
+                  <div class="text-xs text-secondary font-mono">CUST-1044 (081-998-1122)</div>
+                </td>
+                <td class="py-3.5 px-6 font-mono font-semibold text-right text-ink whitespace-nowrap">
+                  ฿3,290.00
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                    กำลังจัดเตรียม (Processing)
+                  </span>
+                </td>
+                <td class="py-3.5 px-6 text-xs text-secondary whitespace-nowrap">
+                  28 มี.ค. 2025 10:15
+                </td>
+                <td class="py-3.5 px-6 text-right whitespace-nowrap">
+                  <button onclick="openDetailModal('ORD-20250328-002', 'CUST-1044', 'คุณ กานต์พิชชา วัฒนเวคิน', '฿3,290.00', 'PROCESSING', '28 มี.ค. 2025 10:15')" class="px-2.5 py-1.5 rounded border border-border bg-white text-xs text-secondary hover:text-ink hover:bg-slate-50 transition shadow-sm" data-i18n="รายละเอียด">
+                    รายละเอียด
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Row 3 -->
+              <tr class="hover:bg-slate-50/70 transition-colors order-row" data-code="ORD-20250328-003" data-status="PENDING">
+                <td class="py-3.5 px-6 font-mono font-medium text-primary whitespace-nowrap">
+                  <a href="javascript:void(0)" onclick="openDetailModal('ORD-20250328-003', 'CUST-0518', 'หจก. เอเชีย คอมพาวด์', '฿48,500.00', 'PENDING', '28 มี.ค. 2025 11:30')" class="hover:underline flex items-center gap-1.5">
+                    <span>ORD-20250328-003</span>
+                    <svg class="w-3.5 h-3.5 text-primary opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <div class="font-medium text-ink">หจก. เอเชีย คอมพาวด์</div>
+                  <div class="text-xs text-secondary font-mono">CUST-0518 (Credit 30 วัน)</div>
+                </td>
+                <td class="py-3.5 px-6 font-mono font-semibold text-right text-ink whitespace-nowrap">
+                  ฿48,500.00
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                    รอดำเนินการ (Pending Payment)
+                  </span>
+                </td>
+                <td class="py-3.5 px-6 text-xs text-secondary whitespace-nowrap">
+                  28 มี.ค. 2025 11:30
+                </td>
+                <td class="py-3.5 px-6 text-right whitespace-nowrap">
+                  <button onclick="openDetailModal('ORD-20250328-003', 'CUST-0518', 'หจก. เอเชีย คอมพาวด์', '฿48,500.00', 'PENDING', '28 มี.ค. 2025 11:30')" class="px-2.5 py-1.5 rounded border border-border bg-white text-xs text-secondary hover:text-ink hover:bg-slate-50 transition shadow-sm" data-i18n="รายละเอียด">
+                    รายละเอียด
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Row 4 -->
+              <tr class="hover:bg-slate-50/70 transition-colors order-row" data-code="ORD-20250327-015" data-status="COMPLETED">
+                <td class="py-3.5 px-6 font-mono font-medium text-primary whitespace-nowrap">
+                  <a href="javascript:void(0)" onclick="openDetailModal('ORD-20250327-015', 'CUST-0120', 'บริษัท ไทยโฮมมาร์ท 1999 จำกัด', '฿105,400.00', 'COMPLETED', '27 มี.ค. 2025 16:20')" class="hover:underline flex items-center gap-1.5">
+                    <span>ORD-20250327-015</span>
+                    <svg class="w-3.5 h-3.5 text-primary opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <div class="font-medium text-ink">บริษัท ไทยโฮมมาร์ท 1999 จำกัด</div>
+                  <div class="text-xs text-secondary font-mono">CUST-0120 (Wholesale)</div>
+                </td>
+                <td class="py-3.5 px-6 font-mono font-semibold text-right text-ink whitespace-nowrap">
+                  ฿105,400.00
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    สำเร็จ (Completed)
+                  </span>
+                </td>
+                <td class="py-3.5 px-6 text-xs text-secondary whitespace-nowrap">
+                  27 มี.ค. 2025 16:20
+                </td>
+                <td class="py-3.5 px-6 text-right whitespace-nowrap">
+                  <button onclick="openDetailModal('ORD-20250327-015', 'CUST-0120', 'บริษัท ไทยโฮมมาร์ท 1999 จำกัด', '฿105,400.00', 'COMPLETED', '27 มี.ค. 2025 16:20')" class="px-2.5 py-1.5 rounded border border-border bg-white text-xs text-secondary hover:text-ink hover:bg-slate-50 transition shadow-sm" data-i18n="รายละเอียด">
+                    รายละเอียด
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Row 5 -->
+              <tr class="hover:bg-slate-50/70 transition-colors order-row" data-code="ORD-20250327-014" data-status="CANCELLED">
+                <td class="py-3.5 px-6 font-mono font-medium text-primary whitespace-nowrap">
+                  <a href="javascript:void(0)" onclick="openDetailModal('ORD-20250327-014', 'CUST-2201', 'คุณ พรเทพ สิทธิชัย', '฿1,800.00', 'CANCELLED', '27 มี.ค. 2025 14:05')" class="hover:underline flex items-center gap-1.5">
+                    <span>ORD-20250327-014</span>
+                    <svg class="w-3.5 h-3.5 text-primary opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <div class="font-medium text-ink">คุณ พรเทพ สิทธิชัย</div>
+                  <div class="text-xs text-secondary font-mono">CUST-2201 (089-123-4567)</div>
+                </td>
+                <td class="py-3.5 px-6 font-mono font-semibold text-right text-ink whitespace-nowrap">
+                  ฿1,800.00
+                </td>
+                <td class="py-3.5 px-6 whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                    ยกเลิก (Customer Cancelled)
+                  </span>
+                </td>
+                <td class="py-3.5 px-6 text-xs text-secondary whitespace-nowrap">
+                  27 มี.ค. 2025 14:05
+                </td>
+                <td class="py-3.5 px-6 text-right whitespace-nowrap">
+                  <button onclick="openDetailModal('ORD-20250327-014', 'CUST-2201', 'คุณ พรเทพ สิทธิชัย', '฿1,800.00', 'CANCELLED', '27 มี.ค. 2025 14:05')" class="px-2.5 py-1.5 rounded border border-border bg-white text-xs text-secondary hover:text-ink hover:bg-slate-50 transition shadow-sm" data-i18n="รายละเอียด">
+                    รายละเอียด
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Filtered Empty State (Hidden by default) -->
+        <div id="filtered-empty" class="hidden p-12 text-center flex-col items-center justify-center">
+          <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <div class="font-medium text-ink text-sm" data-i18n="ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป">
+            ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป
+          </div>
+          <p class="text-xs text-secondary mt-1 max-w-sm">
+            การค้นหานี้ครอบคลุมเฉพาะข้อมูล 100 รายการแรกในหน้าปัจจุบันของระบบ
+          </p>
+          <button onclick="resetFilters()" class="mt-4 px-3.5 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-ink rounded-lg transition">
+            ล้างตัวกรองทั้งหมด
+          </button>
+        </div>
+
+        <!-- Table Pagination Footer -->
+        <div class="px-6 py-4 border-t border-border bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary">
+          <div class="flex items-center gap-2">
+            <span>แสดง 1 - 5 จากทั้งหมด 14 รายการ</span>
+            <span class="text-slate-300">|</span>
+            <span class="text-slate-500">จำกัด 100 รายการต่อหน้า</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1.5 rounded border border-border bg-white text-slate-400 cursor-not-allowed text-xs font-medium">ก่อนหน้า</button>
+            <span class="px-2.5 py-1 rounded bg-white border border-border font-mono font-medium text-ink text-xs">1</span>
+            <button class="px-3 py-1.5 rounded border border-border bg-white text-secondary hover:text-ink hover:bg-slate-50 text-xs font-medium">ถัดไป</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informational / Guidelines Card -->
+      <div class="bg-blue-50/60 rounded-xl border border-blue-200/80 p-4 flex items-start gap-3.5 text-xs text-slate-700">
+        <svg class="w-5 h-5 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="space-y-1">
+          <div class="font-semibold text-ink" data-i18n="ลูกค้าและรายการสินค้า">ลูกค้าและรายการสินค้า</div>
+          <div class="leading-relaxed" data-i18n="เลือกลูกค้าและสินค้า จากนั้นระบุจำนวนและราคาขาย">
+            เลือกลูกค้าและสินค้า จากนั้นระบุจำนวนและราคาขาย
+          </div>
+          <div class="text-secondary" data-i18n="แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสลูกค้าเอง">
+            แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสลูกค้าเอง
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL: สร้างออเดอร์ (Create Order Form) -->
+  <div id="create-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl border border-border w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-150">
+
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-border flex items-center justify-between bg-slate-50/60">
+        <div>
+          <h3 class="text-base font-bold text-ink" data-i18n="สร้างออเดอร์">สร้างออเดอร์</h3>
+          <p class="text-xs text-secondary mt-0.5" data-i18n="เลือกลูกค้าและสินค้า จากนั้นระบุจำนวนและราคาขาย">
+            เลือกลูกค้าและสินค้า จากนั้นระบุจำนวนและราคาขาย
+          </p>
+        </div>
+        <button onclick="closeCreateModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-ink hover:bg-slate-100 flex items-center justify-center transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable Form) -->
+      <form id="order-create-form" onsubmit="handleCreateOrder(event)" class="flex-1 overflow-y-auto p-6 space-y-6 custom-scroll">
+
+        <!-- Section 1: Customer Selection -->
+        <div class="space-y-3 pb-5 border-b border-border">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-semibold text-ink uppercase tracking-wider flex items-center gap-1.5">
+              <span data-i18n="ลูกค้า">ลูกค้า</span>
+              <span class="text-danger">*</span>
+            </label>
+            <!-- Toggle Manual UUID -->
+            <button type="button" onclick="toggleManualCustomer()" id="toggle-cust-mode-btn" class="text-xs text-primary hover:underline font-medium">
+              <span data-i18n="ระบุรหัสลูกค้าเอง">ระบุรหัสลูกค้าเอง</span>
+            </button>
+          </div>
+
+          <!-- Standard Select -->
+          <div id="cust-select-container">
+            <select id="customer-select" class="w-full px-3 py-2 border border-border rounded-lg text-sm bg-white text-ink focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <option value="" disabled selected data-i18n="เลือกลูกค้า">-- เลือกลูกค้า --</option>
+              <option value="CUST-0892">บจก. สยามเทรดดิ้ง มาร์เก็ต (CUST-0892)</option>
+              <option value="CUST-1044">คุณ กานต์พิชชา วัฒนเวคิน (CUST-1044)</option>
+              <option value="CUST-0518">หจก. เอเชีย คอมพาวด์ (CUST-0518)</option>
+              <option value="CUST-0120">บริษัท ไทยโฮมมาร์ท 1999 จำกัด (CUST-0120)</option>
+            </select>
+            <p class="text-[11px] text-secondary mt-1" data-i18n="แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสลูกค้าเอง">
+              แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสลูกค้าเอง
+            </p>
+          </div>
+
+          <!-- Manual UUID Input (Hidden by default) -->
+          <div id="cust-manual-container" class="hidden space-y-1">
+            <input
+              type="text"
+              id="customer-manual-input"
+              placeholder="รหัส UUID ของลูกค้า (e.g. 550e8400-e29b-41d4-a716-446655440000)"
+              data-placeholder-th="รหัส UUID ของลูกค้า"
+              data-placeholder-en="Customer UUID"
+              class="w-full px-3 py-2 border border-border rounded-lg text-sm font-mono text-ink focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            >
+            <p class="text-[11px] text-secondary font-mono" data-i18n="รหัส UUID ของลูกค้า">รหัส UUID ของลูกค้า</p>
+          </div>
+        </div>
+
+        <!-- Section 2: Items / Products List -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-semibold text-ink uppercase tracking-wider flex items-center gap-1.5">
+              <span>รายการสินค้า (Items)</span>
+              <span class="text-danger">*</span>
+            </label>
+            <button type="button" onclick="addProductLine()" class="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              <span data-i18n="เพิ่มรายการสินค้า">เพิ่มรายการสินค้า</span>
+            </button>
+          </div>
+
+          <!-- Items rows container -->
+          <div id="items-container" class="space-y-3">
+            <!-- Line 1 -->
+            <div class="item-row p-3 rounded-lg border border-border bg-slate-50/70 space-y-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-slate-600">รายการ #1</span>
+                <button type="button" onclick="removeProductLine(this)" class="text-slate-400 hover:text-danger text-xs transition">ลบแถว</button>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-2">
+                <div class="md:col-span-6">
+                  <select onchange="calculateSubtotal()" class="product-picker w-full px-2.5 py-1.5 border border-border rounded-lg text-xs bg-white text-ink focus:ring-1 focus:ring-primary">
+                    <option value="" disabled selected data-i18n="เลือกสินค้า">-- เลือกสินค้า --</option>
+                    <option value="SKU-TH-001" data-price="4900">SKU-TH-001 | ตัวรับสัญญาณ IoT Gateway (฿4,900)</option>
+                    <option value="SKU-TH-002" data-price="250">SKU-TH-002 | เซนเซอร์ความชื้น RS485 (฿250)</option>
+                    <option value="SKU-TH-003" data-price="1200">SKU-TH-003 | Power Supply 24V 5A (฿1,200)</option>
+                    <option value="SKU-TH-004" data-price="850">SKU-TH-004 | ชุดสายไฟมาตรฐานอุตสาหกรรม (฿850)</option>
+                  </select>
+                </div>
+                <div class="md:col-span-3">
+                  <div class="relative">
+                    <input type="number" min="1" value="1" oninput="calculateSubtotal()" class="item-qty w-full px-2.5 py-1.5 border border-border rounded-lg text-xs text-right font-mono" placeholder="จำนวน">
+                    <span class="absolute right-7 top-2 text-[10px] text-slate-400">ชิ้น</span>
+                  </div>
+                </div>
+                <div class="md:col-span-3">
+                  <input type="number" min="0" step="0.5" value="4900" oninput="calculateSubtotal()" class="item-price w-full px-2.5 py-1.5 border border-border rounded-lg text-xs text-right font-mono" placeholder="ราคา/หน่วย (฿)">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inline validation note -->
+          <div id="items-error" class="hidden text-xs text-danger flex items-center gap-1.5 bg-danger-bg p-2 rounded border border-danger-border">
+            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <span data-i18n="กรุณาเพิ่มสินค้าอย่างน้อย 1 รายการ">กรุณาเพิ่มสินค้าอย่างน้อย 1 รายการ</span>
+          </div>
+
+          <!-- Calculated Subtotal Bar -->
+          <div class="flex items-center justify-between p-3.5 bg-slate-100 rounded-lg border border-border">
+            <span class="font-medium text-xs text-slate-700" data-i18n="ยอดรวมรายการ">ยอดรวมรายการ:</span>
+            <span id="subtotal-display" class="text-base font-bold font-mono text-primary">฿4,900.00</span>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Modal Footer (Sticky Cancel & Submit) -->
+      <div class="px-6 py-3.5 border-t border-border bg-slate-50 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeCreateModal()" class="px-4 py-2 border border-border rounded-lg text-sm text-secondary hover:text-ink hover:bg-slate-100 transition font-medium">
+          ยกเลิก
+        </button>
+        <button type="submit" form="order-create-form" class="px-5 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-medium transition shadow-sm">
+          บันทึกและสร้างออเดอร์
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: รายละเอียดออเดอร์ (Order Detail Modal) -->
+  <div id="detail-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl border border-border w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-150">
+      <div class="px-6 py-4 border-b border-border flex items-center justify-between bg-slate-50/60">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-bold text-ink" data-i18n="รายละเอียด">รายละเอียด</h3>
+            <span id="modal-order-code" class="font-mono text-primary font-semibold text-xs px-2 py-0.5 bg-blue-50 border border-blue-200 rounded"></span>
+          </div>
+          <p class="text-xs text-secondary mt-0.5">ข้อมูลคำสั่งซื้อและสถานะการจองสินค้าในคลัง</p>
+        </div>
+        <button onclick="closeDetailModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-ink hover:bg-slate-100 flex items-center justify-center transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 overflow-y-auto custom-scroll text-sm">
+        <div class="grid grid-cols-2 gap-4 pb-4 border-b border-border">
+          <div>
+            <div class="text-xs text-secondary mb-1" data-i18n="ลูกค้า">ลูกค้า:</div>
+            <div id="modal-cust-name" class="font-semibold text-ink"></div>
+            <div id="modal-cust-code" class="text-xs text-secondary font-mono"></div>
+          </div>
+          <div>
+            <div class="text-xs text-secondary mb-1" data-i18n="สถานะ">สถานะ:</div>
+            <div id="modal-status-badge"></div>
+          </div>
+          <div>
+            <div class="text-xs text-secondary mb-1" data-i18n="ยอดรวม">ยอดรวม:</div>
+            <div id="modal-total" class="font-mono font-bold text-lg text-ink"></div>
+          </div>
+          <div>
+            <div class="text-xs text-secondary mb-1" data-i18n="วันที่สร้าง">วันที่สร้าง:</div>
+            <div id="modal-created" class="text-xs text-slate-700"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-xs font-semibold text-secondary uppercase tracking-wider mb-2">รายการสินค้าในคำสั่งซื้อ (Sample Items)</div>
+          <div class="border border-border rounded-lg overflow-hidden">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-50 border-b border-border text-secondary">
+                <tr>
+                  <th class="p-2.5">SKU / รายการ</th>
+                  <th class="p-2.5 text-right">จำนวน</th>
+                  <th class="p-2.5 text-right">ราคา</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                <tr>
+                  <td class="p-2.5 font-medium">SKU-TH-001 - IoT Gateway</td>
+                  <td class="p-2.5 text-right font-mono">2</td>
+                  <td class="p-2.5 text-right font-mono">฿9,800.00</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-medium">SKU-TH-002 - RS485 Sensor</td>
+                  <td class="p-2.5 text-right font-mono">10</td>
+                  <td class="p-2.5 text-right font-mono">฿2,500.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 border-t border-border bg-slate-50 flex justify-end">
+        <button onclick="closeDetailModal()" class="px-4 py-2 border border-border rounded-lg text-xs font-medium bg-white text-secondary hover:text-ink transition">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLETE REQUIRED TRANSLATION DICTIONARY -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "รายละเอียด": { "th": "รายละเอียด", "en": "Details" },
+    "รีเฟรช": { "th": "รีเฟรช", "en": "Refresh" },
+    "ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป": { "th": "ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป", "en": "No records found on this page. Clear filters or view next page" },
+    "สถานะ": { "th": "สถานะ", "en": "Status" },
+    "ลูกค้า": { "th": "ลูกค้า", "en": "Customer" },
+    "รหัสลูกค้า": { "th": "รหัสลูกค้า", "en": "Customer Code" },
+    "รหัสออเดอร์": { "th": "รหัสออเดอร์", "en": "Order Code" },
+    "ยอดรวม": { "th": "ยอดรวม", "en": "Total" },
+    "กรุณาเพิ่มสินค้าอย่างน้อย 1 รายการ": { "th": "กรุณาเพิ่มสินค้าอย่างน้อย 1 รายการ", "en": "Please add at least 1 item" },
+    "ออเดอร์แพลตฟอร์ม": { "th": "ออเดอร์แพลตฟอร์ม", "en": "Platform Orders" },
+    "ดูสถานะและยอดคำสั่งซื้อ เปิดรายละเอียดเพื่อติดตามการชำระเงินและการจองสินค้า": { "th": "ดูสถานะและยอดคำสั่งซื้อ เปิดรายละเอียดเพื่อติดตามการชำระเงินและการจองสินค้า", "en": "View order statuses and totals. Open details to track payments and inventory reservations." },
+    "สร้างออเดอร์": { "th": "สร้างออเดอร์", "en": "Create Order" },
+    "ลูกค้าและรายการสินค้า": { "th": "ลูกค้าและรายการสินค้า", "en": "Customer and Items" },
+    "เลือกลูกค้าและสินค้า จากนั้นระบุจำนวนและราคาขาย": { "th": "เลือกลูกค้าและสินค้า จากนั้นระบุจำนวนและราคาขาย", "en": "Select customer and products, then specify quantities and selling prices." },
+    "แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสลูกค้าเอง": { "th": "แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสลูกค้าเอง", "en": "Showing first 100 records. If not found, enter Customer UUID directly." },
+    "เลือกลูกค้า": { "th": "เลือกลูกค้า", "en": "Select Customer" },
+    "ระบุรหัสลูกค้าเอง": { "th": "ระบุรหัสลูกค้าเอง", "en": "Enter Customer UUID manually" },
+    "รหัส UUID ของลูกค้า": { "th": "รหัส UUID ของลูกค้า", "en": "Customer UUID" },
+    "เลือกสินค้า": { "th": "เลือกสินค้า", "en": "Select Product" },
+    "ระบุรหัสสินค้าเอง": { "th": "ระบุรหัสสินค้าเอง", "en": "Enter Product UUID manually" },
+    "รหัส UUID ของสินค้า": { "th": "รหัส UUID ของสินค้า", "en": "Product UUID" },
+    "เพิ่มรายการสินค้า": { "th": "เพิ่มรายการสินค้า", "en": "Add Product Line" },
+    "ยอดรวมรายการ": { "th": "ยอดรวมรายการ", "en": "Items Subtotal" },
+    "ออเดอร์ทั้งหมด": { "th": "ออเดอร์ทั้งหมด", "en": "All Orders" },
+    "ค้นหารหัสออเดอร์ในหน้านี้…": { "th": "ค้นหารหัสออเดอร์ในหน้านี้…", "en": "Search order code on this page…" },
+    "ยังไม่มีออเดอร์ เริ่มต้นด้วยปุ่ม “สร้างออเดอร์” ด้านบน": { "th": "ยังไม่มีออเดอร์ เริ่มต้นด้วยปุ่ม “สร้างออเดอร์” ด้านบน", "en": "No orders yet. Start by clicking “Create Order” above." },
+    "วันที่สร้าง": { "th": "วันที่สร้าง", "en": "Creation Date" },
+    "· กดวิเคราะห์อีกครั้งเพื่อใช้คำขอเดิม": { "th": "· กดวิเคราะห์อีกครั้งเพื่อใช้คำขอเดิม", "en": "· Re-analyze to reuse the existing request" },
+    "= ดูแผน action อย่างเดียว ไม่ยิงคูปอง/popup": { "th": "= ดูแผน action อย่างเดียว ไม่ยิงคูปอง/popup", "en": "= View action plan only without triggering coupons/popups" },
+    "Bucket": { "th": "Bucket", "en": "Bucket" },
+    "Dismiss checklist": { "th": "ปิดเช็กลิสต์", "en": "Dismiss checklist" },
+    "images loaded — upload a sticker to continue.": { "th": "โหลดรูปภาพแล้ว — อัปโหลดสติกเกอร์เพื่อดำเนินการต่อ", "en": "images loaded — upload a sticker to continue." },
+    "New subscription": { "th": "การสมัครใหม่", "en": "New subscription" },
+    "Product notify funnel": { "th": "กรวยแจ้งเตือนสินค้า", "en": "Product notify funnel" },
+    "Shipment / order": { "th": "การจัดส่ง / คำสั่งซื้อ", "en": "Shipment / order" },
+    "User Segments": { "th": "กลุ่มผู้ใช้", "en": "User Segments" },
+    "กำลัง fetch...": { "th": "กำลัง fetch...", "en": "Fetching..." },
+    "แก้ที่โปรโมชัน “": { "th": "แก้ที่โปรโมชัน “", "en": "Edit at promotion “" },
+    "ค้นหาบริษัท ดู credit และใบแจ้งหนี้ทั้งหมด": { "th": "ค้นหาบริษัท ดู credit และใบแจ้งหนี้ทั้งหมด", "en": "Search company, view credits and all invoices" },
+    "เงื่อนไข:": { "th": "เงื่อนไข:", "en": "Conditions:" },
+    "ชื่อ (อังกฤษ)": { "th": "ชื่อ (อังกฤษ)", "en": "Name (English)" },
+    "ดาวน์โหลด CSV template": { "th": "ดาวน์โหลด CSV template", "en": "Download CSV template" },
+    "ตัวอย่าง {0}": { "th": "ตัวอย่าง {0}", "en": "Sample {0}" },
+    "บัญชี josh (staff)": { "th": "บัญชี josh (staff)", "en": "Account josh (staff)" },
+    "เปลี่ยนรหัสผ่าน": { "th": "เปลี่ยนรหัสผ่าน", "en": "Change Password" },
+    "เพิ่มรายการเรียบร้อยแล้ว": { "th": "เพิ่มรายการเรียบร้อยแล้ว", "en": "Item added successfully" },
+    "ไม่มีการเก็บเบื้องหลังเลย · “ลองดึงข้อมูล” ยังใช้ได้ · เปิดแล้วเก็บต่อจากที่ค้างไว้": { "th": "ไม่มีการเก็บเบื้องหลังเลย · “ลองดึงข้อมูล” ยังใช้ได้ · เปิดแล้วเก็บต่อจากที่ค้างไว้", "en": "No background persistence · “Retry fetch” still active · Resumes where left off" },
+    "ยังไม่มีข้อมูลในช่วง / filter ที่เลือก": { "th": "ยังไม่มีข้อมูลในช่วง / filter ที่เลือก", "en": "No data available in selected period / filter" },
+    "รอบเก็บ": { "th": "รอบเก็บ", "en": "Collection Cycle" },
+    "รายละเอียดแผน": { "th": "รายละเอียดแผน", "en": "Plan Details" },
+    "ลิงก์ปลายทาง (URL)": { "th": "ลิงก์ปลายทาง (URL)", "en": "Destination Link (URL)" },
+    "วิดีโอ": { "th": "วิดีโอ", "en": "Video" },
+    "ส่วนลดทันที (Discount)": { "th": "ส่วนลดทันที (Discount)", "en": "Instant Discount" },
+    "หมวดหมู่ (Category)": { "th": "หมวดหมู่ (Category)", "en": "Category" },
+    "อัปโหลด CSV": { "th": "อัปโหลด CSV", "en": "Upload CSV" }
+  }
+  </script>
+
+  <!-- Interactive Logic for Language & Modal Controls -->
+  <script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-th');
+      const enBtn = document.getElementById('lang-en');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded font-medium transition-all bg-white text-primary shadow-sm";
+        enBtn.className = "px-2.5 py-1 rounded font-medium transition-all text-secondary hover:text-ink";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded font-medium transition-all bg-white text-primary shadow-sm";
+        thBtn.className = "px-2.5 py-1 rounded font-medium transition-all text-secondary hover:text-ink";
+      }
+
+      // Update text in DOM with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[key]) {
+          el.textContent = translationsData[key][lang] || el.textContent;
+        }
+      });
+
+      // Update inputs with placeholder data
+      document.querySelectorAll('[data-placeholder-th]').forEach(el => {
+        el.placeholder = el.getAttribute(`data-placeholder-${lang}`);
+      });
+    }
+
+    // Filter status logic
+    let activeFilter = 'ALL';
+    function filterStatus(status) {
+      activeFilter = status;
+      ['ALL', 'PENDING', 'PROCESSING', 'COMPLETED', 'CANCELLED'].forEach(s => {
+        const btn = document.getElementById(`filter-btn-${s}`);
+        if (btn) {
+          if (s === status) {
+            btn.className = "px-3 py-1.5 rounded-lg font-medium transition-colors bg-primary text-white";
+          } else {
+            btn.className = "px-3 py-1.5 rounded-lg font-medium transition-colors bg-slate-100 text-secondary hover:text-ink";
+          }
+        }
+      });
+      applyFilters();
+    }
+
+    // In-page search logic
+    function handleSearch(query) {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      const rows = document.querySelectorAll('.order-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const rowCode = row.getAttribute('data-code').toLowerCase();
+        const rowStatus = row.getAttribute('data-status');
+        const matchesQuery = !query || rowCode.includes(query);
+        const matchesStatus = activeFilter === 'ALL' || rowStatus === activeFilter;
+
+        if (matchesQuery && matchesStatus) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const emptyState = document.getElementById('filtered-empty');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      filterStatus('ALL');
+    }
+
+    function handleRefresh() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 600);
+    }
+
+    // Modal controls
+    function openCreateModal() {
+      document.getElementById('create-modal').classList.remove('hidden');
+      document.getElementById('create-modal').classList.add('flex');
+    }
+
+    function closeCreateModal() {
+      document.getElementById('create-modal').classList.add('hidden');
+      document.getElementById('create-modal').classList.remove('flex');
+    }
+
+    function toggleManualCustomer() {
+      const selectBox = document.getElementById('cust-select-container');
+      const manualBox = document.getElementById('cust-manual-container');
+      const btn = document.getElementById('toggle-cust-mode-btn');
+
+      if (manualBox.classList.contains('hidden')) {
+        manualBox.classList.remove('hidden');
+        selectBox.classList.add('hidden');
+        btn.textContent = currentLang === 'th' ? "กลับไปเลือกลูกค้าจากรายการ" : "Back to customer list";
+      } else {
+        manualBox.classList.add('hidden');
+        selectBox.classList.remove('hidden');
+        btn.textContent = currentLang === 'th' ? "ระบุรหัสลูกค้าเอง" : "Enter Customer UUID manually";
+      }
+    }
+
+    function addProductLine() {
+      const container = document.getElementById('items-container');
+      const count = container.querySelectorAll('.item-row').length + 1;
+      const row = document.createElement('div');
+      row.className = "item-row p-3 rounded-lg border border-border bg-slate-50/70 space-y-2.5";
+      row.innerHTML = `
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-medium text-slate-600">รายการ #${count}</span>
+          <button type="button" onclick="removeProductLine(this)" class="text-slate-400 hover:text-danger text-xs transition">ลบแถว</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-2">
+          <div class="md:col-span-6">
+            <select onchange="calculateSubtotal()" class="product-picker w-full px-2.5 py-1.5 border border-border rounded-lg text-xs bg-white text-ink focus:ring-1 focus:ring-primary">
+              <option value="" disabled selected>-- เลือกสินค้า --</option>
+              <option value="SKU-TH-001" data-price="4900">SKU-TH-001 | ตัวรับสัญญาณ IoT Gateway (฿4,900)</option>
+              <option value="SKU-TH-002" data-price="250">SKU-TH-002 | เซนเซอร์ความชื้น RS485 (฿250)</option>
+              <option value="SKU-TH-003" data-price="1200">SKU-TH-003 | Power Supply 24V 5A (฿1,200)</option>
+              <option value="SKU-TH-004" data-price="850">SKU-TH-004 | ชุดสายไฟมาตรฐานอุตสาหกรรม (฿850)</option>
+            </select>
+          </div>
+          <div class="md:col-span-3">
+            <div class="relative">
+              <input type="number" min="1" value="1" oninput="calculateSubtotal()" class="item-qty w-full px-2.5 py-1.5 border border-border rounded-lg text-xs text-right font-mono" placeholder="จำนวน">
+              <span class="absolute right-7 top-2 text-[10px] text-slate-400">ชิ้น</span>
+            </div>
+          </div>
+          <div class="md:col-span-3">
+            <input type="number" min="0" step="0.5" value="1200" oninput="calculateSubtotal()" class="item-price w-full px-2.5 py-1.5 border border-border rounded-lg text-xs text-right font-mono" placeholder="ราคา/หน่วย (฿)">
+          </div>
+        </div>
+      `;
+      container.appendChild(row);
+      calculateSubtotal();
+    }
+
+    function removeProductLine(btn) {
+      const container = document.getElementById('items-container');
+      const rows = container.querySelectorAll('.item-row');
+      if (rows.length > 1) {
+        btn.closest('.item-row').remove();
+        calculateSubtotal();
+      } else {
+        alert(currentLang === 'th' ? "กรุณาเพิ่มสินค้าอย่างน้อย 1 รายการ" : "Please add at least 1 item");
+      }
+    }
+
+    function calculateSubtotal() {
+      let total = 0;
+      const rows = document.querySelectorAll('.item-row');
+      rows.forEach(r => {
+        const qty = parseFloat(r.querySelector('.item-qty').value) || 0;
+        const price = parseFloat(r.querySelector('.item-price').value) || 0;
+        total += qty * price;
+      });
+      document.getElementById('subtotal-display').textContent = '฿' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function handleCreateOrder(e) {
+      e.preventDefault();
+      closeCreateModal();
+      alert(currentLang === 'th' ? "เพิ่มรายการเรียบร้อยแล้ว" : "Item added successfully");
+    }
+
+    // Detail modal logic
+    function openDetailModal(code, custCode, custName, total, status, created) {
+      document.getElementById('modal-order-code').textContent = code;
+      document.getElementById('modal-cust-name').textContent = custName;
+      document.getElementById('modal-cust-code').textContent = custCode;
+      document.getElementById('modal-total').textContent = total;
+      document.getElementById('modal-created').textContent = created;
+
+      const badge = document.getElementById('modal-status-badge');
+      if (status === 'COMPLETED') {
+        badge.innerHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">สำเร็จ (Completed)</span>`;
+      } else if (status === 'PROCESSING') {
+        badge.innerHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">กำลังจัดเตรียม (Processing)</span>`;
+      } else if (status === 'PENDING') {
+        badge.innerHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">รอดำเนินการ (Pending Payment)</span>`;
+      } else {
+        badge.innerHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">ยกเลิก (Cancelled)</span>`;
+      }
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+      document.getElementById('detail-modal').classList.add('flex');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+      document.getElementById('detail-modal').classList.remove('flex');
+    }
+
+    // Keyboard support for Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCreateModal();
+        closeDetailModal();
+      }
+    });
+  </script>
+</body>
+</html>

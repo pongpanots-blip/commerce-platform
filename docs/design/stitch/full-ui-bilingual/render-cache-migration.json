@@ -1,0 +1,14 @@
+[
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/admin-access/AdminAccessQueue.tsx",
+    "memos": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+    "memos": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/josh-admin/app/page/user/BranchPricingPanel.tsx",
+    "memos": 1
+  }
+]

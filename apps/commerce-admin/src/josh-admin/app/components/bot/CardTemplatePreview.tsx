@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import type { BotTemplateField, BotTemplateSchema } from '@josh/shared-api';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const IMAGE_SIZE_CLASS: Record<string, string> = {
   sm: 'h-12 w-12',
   md: 'h-20 w-20',
@@ -81,11 +83,12 @@ type Props = {
  * Chat-bubble style preview mirroring shop-web ResponseCard (admin cannot import shop-web).
  */
 const CardTemplatePreview = ({ type, schema, example }: Props) => {
+  __useUiLocale();
   if (type === 'text' || type === 'rich_text') {
     const text = String(example?.text ?? example?.body ?? '');
     return (
       <div className="rounded-xl bg-gray-100 px-3 py-2 text-sm text-gray-800 max-w-[85%]">
-        {text || <span className="text-gray-400 italic">ข้อความตัวอย่าง…</span>}
+        {text || <span className="text-gray-400 italic">{__uiText("ข้อความตัวอย่าง…")}</span>}
       </div>
     );
   }
@@ -94,8 +97,7 @@ const CardTemplatePreview = ({ type, schema, example }: Props) => {
   if (!fields.length) {
     return (
       <div className="rounded-xl border border-dashed border-gray-300 bg-white p-4 text-xs text-gray-400">
-        เพิ่ม field เพื่อดูพรีวิว
-      </div>
+        {__uiText("เพิ่ม field เพื่อดูพรีวิว")}</div>
     );
   }
 
@@ -158,8 +160,7 @@ const CardTemplatePreview = ({ type, schema, example }: Props) => {
   return (
     <div className="flex flex-col gap-2 rounded-2xl bg-[#e5e7eb]/40 p-3">
       <div className="text-[10px] font-medium uppercase tracking-wide text-gray-400">
-        พรีวิวในแชท
-      </div>
+        {__uiText("พรีวิวในแชท")}</div>
       {type === 'card_list' && typeof (example as { intro?: string }).intro === 'string' && (
         <div className="max-w-[85%] rounded-xl bg-gray-100 px-3 py-2 text-xs text-gray-700">
           {(example as { intro: string }).intro}

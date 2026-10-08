@@ -1,3 +1,5 @@
+// ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { getUiLocale as __dateLocale } from '@cp/ui';
 import {
   JagotaPendingPayment,
   listJagotaPendingPayments,
@@ -7,16 +9,19 @@ import { Button, Input } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Result = { success: boolean } | { error: string };
 
 function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString('th-TH', {
+  return new Date(iso).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
     dateStyle: 'short',
     timeStyle: 'short',
   });
 }
 
 export default function JagotaPaymentTesting() {
+  __useUiLocale();
   const [pending, setPending] = useState<JagotaPendingPayment[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [refToken, setRefToken] = useState('');
@@ -57,30 +62,27 @@ export default function JagotaPaymentTesting() {
 
   return (
     <div className="p-6">
-      <AdminListHeader title="Jagota Payment Testing" />
+      <AdminListHeader title={__uiText("Jagota Payment Testing")} />
       <p className="mb-4 max-w-2xl text-sm text-gray-500">
-        เรียก <code>payment_test</code> ของ Jagota เพื่อบังคับให้ REF_TOKEN นั้นเป็น
-        paid — ใช้ได้บน staging เท่านั้น ถ้า backend ชี้ไป production จะได้{' '}
-        <code>success: false</code> เสมอ
-      </p>
+        {__uiText("เรียก ")}<code>{__uiText("payment_test")}</code> {__uiText(" ของ Jagota เพื่อบังคับให้ REF_TOKEN นั้นเป็น paid — ใช้ได้บน staging เท่านั้น ถ้า backend ชี้ไป production จะได้")}{' '}
+        <code>{__uiText("success: false")}</code> {__uiText(" เสมอ")}</p>
 
       <div className="mb-6 max-w-2xl">
         <h3 className="mb-2 text-sm font-semibold text-gray-700">
-          รายการ QR ที่ยังไม่จ่าย (ล่าสุด 20 รายการ)
-        </h3>
+          {__uiText("รายการ QR ที่ยังไม่จ่าย (ล่าสุด 20 รายการ)")}</h3>
         {loadingList ? (
-          <p className="text-sm text-gray-400">กำลังโหลด...</p>
+          <p className="text-sm text-gray-400">{__uiText("กำลังโหลด...")}</p>
         ) : pending.length === 0 ? (
-          <p className="text-sm text-gray-400">ไม่มีรายการที่ยังไม่จ่าย</p>
+          <p className="text-sm text-gray-400">{__uiText("ไม่มีรายการที่ยังไม่จ่าย")}</p>
         ) : (
           <div className="overflow-hidden rounded-lg border">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 text-left text-gray-500">
                 <tr>
-                  <th className="px-3 py-2 font-medium">REF_TOKEN</th>
-                  <th className="px-3 py-2 font-medium">Order ID</th>
-                  <th className="px-3 py-2 font-medium">ยอด</th>
-                  <th className="px-3 py-2 font-medium">สร้างเมื่อ</th>
+                  <th className="px-3 py-2 font-medium">{__uiText("REF_TOKEN")}</th>
+                  <th className="px-3 py-2 font-medium">{__uiText("Order ID")}</th>
+                  <th className="px-3 py-2 font-medium">{__uiText("ยอด")}</th>
+                  <th className="px-3 py-2 font-medium">{__uiText("สร้างเมื่อ")}</th>
                   <th className="px-3 py-2 font-medium" />
                 </tr>
               </thead>
@@ -99,7 +101,7 @@ export default function JagotaPaymentTesting() {
                     </td>
                     <td className="px-3 py-2 text-right">
                       <Button
-                        text={testingToken === row.refToken ? 'กำลังยิง...' : 'เทส Payment'}
+                        text={testingToken === row.refToken ? __uiText("กำลังยิง...") : __uiText("เทส Payment")}
                         variant="secondary"
                         disabled={testingToken !== null}
                         onClick={() => runTest(row.refToken)}
@@ -114,18 +116,17 @@ export default function JagotaPaymentTesting() {
       </div>
 
       <h3 className="mb-2 text-sm font-semibold text-gray-700">
-        หรือกรอก REF_TOKEN เอง
-      </h3>
+        {__uiText("หรือกรอก REF_TOKEN เอง")}</h3>
       <div className="flex max-w-xl items-end gap-3">
         <Input
-          label="REF_TOKEN"
-          placeholder="เช่น 1234567890"
+          label={__uiText("REF_TOKEN")}
+          placeholder={__uiText("เช่น 1234567890")}
           value={refToken}
           onChange={(e) => setRefToken(e.target.value)}
           className="flex-1"
         />
         <Button
-          text={testingToken === refToken.trim() ? 'กำลังยิง...' : 'เทส Payment'}
+          text={testingToken === refToken.trim() ? __uiText("กำลังยิง...") : __uiText("เทส Payment")}
           onClick={() => runTest(refToken)}
           disabled={testingToken !== null || !refToken.trim()}
         />
@@ -134,13 +135,12 @@ export default function JagotaPaymentTesting() {
       {result && (
         <div className="mt-4 max-w-xl rounded-lg border p-3 text-sm">
           {'error' in result ? (
-            <span className="text-red-600">Error: {result.error}</span>
+            <span className="text-red-600">{__uiText("Error: ")}{result.error}</span>
           ) : result.success ? (
-            <span className="text-emerald-600">สำเร็จ — REF_TOKEN นี้ถูกตั้งเป็น paid แล้ว</span>
+            <span className="text-emerald-600">{__uiText("สำเร็จ — REF_TOKEN นี้ถูกตั้งเป็น paid แล้ว")}</span>
           ) : (
             <span className="text-amber-600">
-              ไม่สำเร็จ — ตรวจว่า REF_TOKEN ถูกต้อง และ backend ชี้ไป staging
-            </span>
+              {__uiText("ไม่สำเร็จ — ตรวจว่า REF_TOKEN ถูกต้อง และ backend ชี้ไป staging")}</span>
           )}
         </div>
       )}

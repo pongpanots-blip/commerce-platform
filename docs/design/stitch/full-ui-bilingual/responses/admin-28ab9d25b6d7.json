@@ -1,0 +1,340 @@
+{
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "designSystem": {
+              "designSystem": {
+                "displayName": "Siam Enterprise Commerce System",
+                "styleGuidelines": "## Brand & Style\n\nThis design system delivers a high-density, restrained enterprise cockpit crafted specifically for Thai commerce operations teams, fulfillment managers, and back-office administrators. It prioritizes clarity, rapid scan-ability, and operational certainty over decorative flourish.\n\nThe visual style blends modern corporate utilitarianism with precise operational ergonomics. Information density is calibrated to allow operators to process hundreds of SKUs, order state transitions, and API/webhook integration logs without cognitive exhaustion. The interface conveys institutional reliability, precision, and frictionless workflow speed. Thai typography receives strict structural pairing with Latin glyphs, ensuring native legibility at data-dense sizes without layout truncation or vertical drift.\n\n## Layout & Spacing\n\nThe layout uses a fixed 256px vertical navigation sidebar flanked by a responsive fluid-width operational stage. \n\n- **Sidebar Anchor:** Persistent 256px wide desktop navigation sidebar housing the 7 core Thai functional domains:\n  1. สินค้าและสต็อก (Products & Stock)\n  2. ออเดอร์และการเงิน (Orders & Finance)\n  3. ลูกค้าและบริการ (Customers & Support)\n  4. การตลาด (Marketing & Promotions)\n  5. รายงานและข้อมูล (Reports & Analytics)\n  6. ระบบเชื่อมต่อ (Integrations & Webhooks)\n  7. ตั้งค่าและทีมงาน (Settings & Team)\n- **Grid Architecture:** 12-column dynamic fluid grid on viewports > 1280px with 24px (`1.5rem`) gutters and 32px (`2rem`) container boundary margins.\n- **Tablets (768px – 1024px):** Sidebar collapses to an icon rail (64px wide). Outer margins drop to 24px.\n- **Mobile (< 768px):** Sidebar converts into an off-canvas slide-out sheet. Stage margins tighten to 16px (`1rem`). Data tables transition into horizontally-scrollable bounded viewports or card lists.\n- **Component Rhythms:** Internal card padding is strictly uniform at 24px (`space-lg`), while input form fields and operational action bars observe 16px (`space-md`) spacing.\n\n## Elevation & Depth\n\nThe design system rejects heavy diffuse shadows in favor of low-contrast hairline outlines and subtle structured stacking. This prevents visual muddiness in data-rich enterprise views.\n\n- **Level 0 (Base Canvas):** Background `#f6f8fc` with zero elevation.\n- **Level 1 (Cards & Data Tables):** Surface `#ffffff` bounded by a 1px solid stroke in `#e1e7f0`. Ambient shadow is restrained: `0 1px 3px 0 rgba(23, 36, 59, 0.04)`.\n- **Level 2 (Popovers, Filter Menus, Dropdowns):** Surface `#ffffff`, border 1px `#e1e7f0`, shadow `0 4px 12px -1px rgba(23, 36, 59, 0.08), 0 2px 4px -1px rgba(23, 36, 59, 0.04)`.\n- **Level 3 (Inspect Drawers & Side Sheets):** Anchored to the right viewport edge (480px–640px wide). Surface `#ffffff`, left border 1px `#e1e7f0`, cast shadow `-4px 0 24px 0 rgba(23, 36, 59, 0.08)`. Backing scrim uses `rgba(23, 36, 59, 0.35)` with an optional 2px subtle blur.\n- **Level 4 (Modal Dialogs):** Centered modal overlays with `0 20px 25px -5px rgba(23, 36, 59, 0.1), 0 10px 10px -5px rgba(23, 36, 59, 0.04)`.\n\n## Components\n\n### Buttons & Interactive Controls\n- **Standard Controls:** All inputs, primary action buttons, selects, and icon triggers maintain a strict 40px height with 8px radius.\n- **Primary Button:** `#365cf5` background, `#ffffff` text, font-weight 500, horizontal padding 16px. Hover: `#2947d1`. Focus ring: 2px offset with `#365cf5` at 40% alpha.\n- **Secondary / Outline Button:** `#ffffff` surface, 1px solid `#e1e7f0`, text `#17243b`. Hover: background `#f1f5f9`, border `#cbd5e1`.\n- **Destructive Button:** Tinted `#fdf2f2` with `#c2333f` text for low priority; solid `#c2333f` with white text for irrecoverable actions.\n\n### Form Inputs & Filters\n- **Text Inputs & Selects:** Height 40px, surface `#ffffff`, 1px border `#e1e7f0`, 8px radius. Font size 14px text `#17243b`, placeholder `#8c9bb0`. Focus state shifts border to `#365cf5` with zero vertical jitter.\n- **Inline Search:** Input adorned with a leading 16px search icon, with trailing shortcut indicator (`⌘K` or `Ctrl+K`) in 12px mono.\n\n### Enterprise Data Table\n- **Header:** Height 44px, background `#f8fafc`, text `#52627a`, 12px uppercase/bold, border-bottom 1px solid `#e1e7f0`.\n- **Row:** Height 52px (standard) or 40px (condensed mode). Hover highlights background to `#f8fafc`. Row borders are hairline 1px `#e1e7f0`.\n- **Numeric & Timestamp Cells:** Right-aligned or monospaced font alignment to facilitate vertical comparisons.\n\n### Status Badges & Method Tags\n- **Status Pills:** Height 24px, padding 0 8px, font size 12px semibold, fully rounded (pill).\n  - *สำเร็จ (Fulfilled):* Text `#157347`, bg `#e8f5ed`.\n  - *รอดำเนินการ (Pending):* Text `#b08900`, bg `#fef9e7`.\n  - *ยกเลิก (Cancelled):* Text `#c2333f`, bg `#fdf2f2`.\n- **HTTP Method Badges:** Height 20px, font 11px monospace bold, radius 4px, padding 0 6px.\n  - `GET` (`#314bb5`, bg `#eef2ff`), `POST` (`#157347`, bg `#e8f5ed`), `PUT` (`#997404`, bg `#fef9e7`), `DELETE` (`#c2333f`, bg `#fdf2f2`).\n- **Timing & Latency Metric:** Inline code snippet with `#52627a` text (e.g., `124ms`, `1.2s`), color-shifting to `#c2333f` if duration breaches 1000ms.\n\n### Navigation Sidebar\n- **Dimensions:** Width 256px, background `#ffffff` with 1px right border `#e1e7f0` (or optional dark navy mode `#0f172a`).\n- **Nav Items:** Height 40px, radius 8px, margin 4px 12px, font size 14px medium. Default text `#52627a`. Active item receives `#eef2ff` fill with `#365cf5` text and a 3px active indicator bar on the left edge.\n- **Thai Navigation Labels:** สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน.\n\n### Inspect Drawer (Slide-out Inspector)\n- **Width:** 540px fixed width sliding from the right edge upon clicking an order, webhook log, or SKU entry.\n- **Structure:** Sticky header with record identifier (16px bold), status pill, and close action. Tabbed body (Details, Raw Payload, Audit History) displaying key-value lists and syntax-highlighted JSON snippets. Sticky footer containing contextual actions (e.g., \"พิมพ์ใบปะหน้า\", \"ส่งคำสั่งซื้อซ้ำ\").",
+                "theme": {
+                  "bodyFont": "NOTO_SANS",
+                  "bodyFontFamily": "Noto Sans",
+                  "colorMode": "LIGHT",
+                  "colorVariant": "FIDELITY",
+                  "customColor": "#365cf5",
+                  "designMd": "---\nname: Siam Enterprise Commerce System\ncolors:\n  surface: '#f9f9ff'\n  surface-dim: '#cddaf9'\n  surface-bright: '#f9f9ff'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f1f3ff'\n  surface-container: '#e8eeff'\n  surface-container-high: '#e0e8ff'\n  surface-container-highest: '#d7e2ff'\n  on-surface: '#0e1b32'\n  on-surface-variant: '#444655'\n  inverse-surface: '#243048'\n  inverse-on-surface: '#ecf0ff'\n  outline: '#747687'\n  outline-variant: '#c4c5d8'\n  surface-tint: '#214ce7'\n  primary: '#0a3fdc'\n  on-primary: '#ffffff'\n  primary-container: '#365cf5'\n  on-primary-container: '#ededff'\n  inverse-primary: '#b9c3ff'\n  secondary: '#4f5f77'\n  on-secondary: '#ffffff'\n  secondary-container: '#d0e1fd'\n  on-secondary-container: '#54647c'\n  tertiary: '#943500'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#bc4600'\n  on-tertiary-container: '#ffebe4'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dde1ff'\n  primary-fixed-dim: '#b9c3ff'\n  on-primary-fixed: '#001257'\n  on-primary-fixed-variant: '#0034c0'\n  secondary-fixed: '#d3e3ff'\n  secondary-fixed-dim: '#b7c7e3'\n  on-secondary-fixed: '#0b1c31'\n  on-secondary-fixed-variant: '#38485e'\n  tertiary-fixed: '#ffdbcd'\n  tertiary-fixed-dim: '#ffb597'\n  on-tertiary-fixed: '#360f00'\n  on-tertiary-fixed-variant: '#7e2c00'\n  background: '#f9f9ff'\n  on-background: '#0e1b32'\n  surface-variant: '#d7e2ff'\ntypography:\n  headline-lg:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 28px\n    fontWeight: '700'\n    lineHeight: 36px\n  headline-lg-mobile:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 22px\n    fontWeight: '700'\n    lineHeight: 30px\n  headline-md:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 28px\n  headline-sm:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 16px\n    fontWeight: '600'\n    lineHeight: 24px\n  body-lg:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 15px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-md:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 20px\n  body-sm:\n    fontFamily: Noto Sans, Inter, sans-serif\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\n  label-md:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 13px\n    fontWeight: '500'\n    lineHeight: 16px\n  label-sm:\n    fontFamily: Inter, Noto Sans, sans-serif\n    fontSize: 12px\n    fontWeight: '600'\n    lineHeight: 16px\n    letterSpacing: 0.02em\n  code-sm:\n    fontFamily: JetBrains Mono, monospace\n    fontSize: 12px\n    fontWeight: '500'\n    lineHeight: 16px\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  gutter: 1.5rem\n  margin: 2rem\n  gutter-mobile: 1rem\n  margin-mobile: 1rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n  space-2xl: 2.5rem\n---\n\n## Brand & Style\n\nThis design system delivers a high-density, restrained enterprise cockpit crafted specifically for Thai commerce operations teams, fulfillment managers, and back-office administrators. It prioritizes clarity, rapid scan-ability, and operational certainty over decorative flourish.\n\nThe visual style blends modern corporate utilitarianism with precise operational ergonomics. Information density is calibrated to allow operators to process hundreds of SKUs, order state transitions, and API/webhook integration logs without cognitive exhaustion. The interface conveys institutional reliability, precision, and frictionless workflow speed. Thai typography receives strict structural pairing with Latin glyphs, ensuring native legibility at data-dense sizes without layout truncation or vertical drift.\n\n## Colors\n\nThe palette is engineered for prolonged operational focus under high ambient lighting.\n\n- **Canvas & Surfaces:** Primary application canvas sits on `#f6f8fc` to avoid blinding pure white while defining clear perimeter contrast against `#ffffff` cards and table modules. Auxiliary container fill uses subtle gray `#f1f5f9`. Surface perimeter delineation relies on hairline border `#e1e7f0`.\n- **Text & Ink:** Primary text is grounded in deep ink `#17243b` for authoritative contrast against data tables and forms. Secondary supporting text, hints, and table headers use balanced slate `#52627a`. Muted annotations use `#8c9bb0`.\n- **Action & Brand:** The operational engine centers on `#365cf5` (vibrant royal blue) for primary interactive actions, selected navigation items, and active states. Hover targets step to `#2947d1`; active states depress to `#1f38aa`.\n- **Semantic Status Signals:** Strictly calibrated for regulatory and operational safety:\n  - Success: `#157347` (light tint: `#e8f5ed`, border: `#a3cfbb`)\n  - Warning: `#b08900` (light tint: `#fef9e7`, border: `#ffe69c`)\n  - Error: `#c2333f` (light tint: `#fdf2f2`, border: `#f1aeb5`)\n  - Informational/Method Neutral: `#0c5460` (light tint: `#e7f1f5`, border: `#bee5eb`)\n- **API & Event Badges:**\n  - `GET`: Slate blue tint (`#eef2ff`, text `#314bb5`)\n  - `POST`: Emerald tint (`#e8f5ed`, text `#157347`)\n  - `PUT`: Amber tint (`#fef9e7`, text `#997404`)\n  - `DELETE`: Crimson tint (`#fdf2f2`, text `#c2333f`)\n\n## Typography\n\nThe type system pairs `Noto Sans Thai` with `Inter` to provide balanced baseline alignments between Thai script and Latin metric tokens, SKU identifiers, and monetary values (THB / ฿).\n\n- **Page Titles:** Sized at 28px bold for main operational view headers, dropping to 22px on narrow mobile viewports.\n- **Data Tables & Forms:** Body standard is pinned to 14px regular (`lineHeight: 20px`), ensuring high scan speeds without cramped lines.\n- **Labels & Column Headers:** Compact 13px medium/semibold for form control titles, table header sorting handles, and badge descriptors.\n- **Technical Metrics:** Monospace `JetBrains Mono` at 12px for tracking transaction IDs, payloads, timing latencies (`ms`), HTTP response status codes, and currency figures.\n- **Thai Orthography Rules:** Vertical line heights must not be constrained below 1.4× the font size to accommodate Thai tone marks and vowel diacritics above and below the base consonant.\n\n## Layout & Spacing\n\nThe layout uses a fixed 256px vertical navigation sidebar flanked by a responsive fluid-width operational stage. \n\n- **Sidebar Anchor:** Persistent 256px wide desktop navigation sidebar housing the 7 core Thai functional domains:\n  1. สินค้าและสต็อก (Products & Stock)\n  2. ออเดอร์และการเงิน (Orders & Finance)\n  3. ลูกค้าและบริการ (Customers & Support)\n  4. การตลาด (Marketing & Promotions)\n  5. รายงานและข้อมูล (Reports & Analytics)\n  6. ระบบเชื่อมต่อ (Integrations & Webhooks)\n  7. ตั้งค่าและทีมงาน (Settings & Team)\n- **Grid Architecture:** 12-column dynamic fluid grid on viewports > 1280px with 24px (`1.5rem`) gutters and 32px (`2rem`) container boundary margins.\n- **Tablets (768px – 1024px):** Sidebar collapses to an icon rail (64px wide). Outer margins drop to 24px.\n- **Mobile (< 768px):** Sidebar converts into an off-canvas slide-out sheet. Stage margins tighten to 16px (`1rem`). Data tables transition into horizontally-scrollable bounded viewports or card lists.\n- **Component Rhythms:** Internal card padding is strictly uniform at 24px (`space-lg`), while input form fields and operational action bars observe 16px (`space-md`) spacing.\n\n## Elevation & Depth\n\nThe design system rejects heavy diffuse shadows in favor of low-contrast hairline outlines and subtle structured stacking. This prevents visual muddiness in data-rich enterprise views.\n\n- **Level 0 (Base Canvas):** Background `#f6f8fc` with zero elevation.\n- **Level 1 (Cards & Data Tables):** Surface `#ffffff` bounded by a 1px solid stroke in `#e1e7f0`. Ambient shadow is restrained: `0 1px 3px 0 rgba(23, 36, 59, 0.04)`.\n- **Level 2 (Popovers, Filter Menus, Dropdowns):** Surface `#ffffff`, border 1px `#e1e7f0`, shadow `0 4px 12px -1px rgba(23, 36, 59, 0.08), 0 2px 4px -1px rgba(23, 36, 59, 0.04)`.\n- **Level 3 (Inspect Drawers & Side Sheets):** Anchored to the right viewport edge (480px–640px wide). Surface `#ffffff`, left border 1px `#e1e7f0`, cast shadow `-4px 0 24px 0 rgba(23, 36, 59, 0.08)`. Backing scrim uses `rgba(23, 36, 59, 0.35)` with an optional 2px subtle blur.\n- **Level 4 (Modal Dialogs):** Centered modal overlays with `0 20px 25px -5px rgba(23, 36, 59, 0.1), 0 10px 10px -5px rgba(23, 36, 59, 0.04)`.\n\n## Shapes\n\nThe geometric framework establishes clear distinction between broad structural modules and interactive utilities:\n\n- **Structural Containers (Cards, Modals, Drawers):** 12px corner radius (`rounded-lg`) creates an approachable, modern feel for high-level content blocks without wasting screen space.\n- **Interactive Controls (Inputs, Buttons, Dropdowns):** Standardized 8px corner radius (`rounded-md`).\n- **Data Badges, Status Pills, and Method Tags:** 4px radius for crisp technical labels (e.g., HTTP methods), and pill-shaped (full circular radius) for entity status indicators (e.g., ชำระเงินแล้ว / รอดำเนินการ).\n\n## Components\n\n### Buttons & Interactive Controls\n- **Standard Controls:** All inputs, primary action buttons, selects, and icon triggers maintain a strict 40px height with 8px radius.\n- **Primary Button:** `#365cf5` background, `#ffffff` text, font-weight 500, horizontal padding 16px. Hover: `#2947d1`. Focus ring: 2px offset with `#365cf5` at 40% alpha.\n- **Secondary / Outline Button:** `#ffffff` surface, 1px solid `#e1e7f0`, text `#17243b`. Hover: background `#f1f5f9`, border `#cbd5e1`.\n- **Destructive Button:** Tinted `#fdf2f2` with `#c2333f` text for low priority; solid `#c2333f` with white text for irrecoverable actions.\n\n### Form Inputs & Filters\n- **Text Inputs & Selects:** Height 40px, surface `#ffffff`, 1px border `#e1e7f0`, 8px radius. Font size 14px text `#17243b`, placeholder `#8c9bb0`. Focus state shifts border to `#365cf5` with zero vertical jitter.\n- **Inline Search:** Input adorned with a leading 16px search icon, with trailing shortcut indicator (`⌘K` or `Ctrl+K`) in 12px mono.\n\n### Enterprise Data Table\n- **Header:** Height 44px, background `#f8fafc`, text `#52627a`, 12px uppercase/bold, border-bottom 1px solid `#e1e7f0`.\n- **Row:** Height 52px (standard) or 40px (condensed mode). Hover highlights background to `#f8fafc`. Row borders are hairline 1px `#e1e7f0`.\n- **Numeric & Timestamp Cells:** Right-aligned or monospaced font alignment to facilitate vertical comparisons.\n\n### Status Badges & Method Tags\n- **Status Pills:** Height 24px, padding 0 8px, font size 12px semibold, fully rounded (pill).\n  - *สำเร็จ (Fulfilled):* Text `#157347`, bg `#e8f5ed`.\n  - *รอดำเนินการ (Pending):* Text `#b08900`, bg `#fef9e7`.\n  - *ยกเลิก (Cancelled):* Text `#c2333f`, bg `#fdf2f2`.\n- **HTTP Method Badges:** Height 20px, font 11px monospace bold, radius 4px, padding 0 6px.\n  - `GET` (`#314bb5`, bg `#eef2ff`), `POST` (`#157347`, bg `#e8f5ed`), `PUT` (`#997404`, bg `#fef9e7`), `DELETE` (`#c2333f`, bg `#fdf2f2`).\n- **Timing & Latency Metric:** Inline code snippet with `#52627a` text (e.g., `124ms`, `1.2s`), color-shifting to `#c2333f` if duration breaches 1000ms.\n\n### Navigation Sidebar\n- **Dimensions:** Width 256px, background `#ffffff` with 1px right border `#e1e7f0` (or optional dark navy mode `#0f172a`).\n- **Nav Items:** Height 40px, radius 8px, margin 4px 12px, font size 14px medium. Default text `#52627a`. Active item receives `#eef2ff` fill with `#365cf5` text and a 3px active indicator bar on the left edge.\n- **Thai Navigation Labels:** สินค้าและสต็อก, ออเดอร์และการเงิน, ลูกค้าและบริการ, การตลาด, รายงานและข้อมูล, ระบบเชื่อมต่อ, ตั้งค่าและทีมงาน.\n\n### Inspect Drawer (Slide-out Inspector)\n- **Width:** 540px fixed width sliding from the right edge upon clicking an order, webhook log, or SKU entry.\n- **Structure:** Sticky header with record identifier (16px bold), status pill, and close action. Tabbed body (Details, Raw Payload, Audit History) displaying key-value lists and syntax-highlighted JSON snippets. Sticky footer containing contextual actions (e.g., \"พิมพ์ใบปะหน้า\", \"ส่งคำสั่งซื้อซ้ำ\").",
+                  "font": "NOTO_SANS",
+                  "headlineFont": "NOTO_SANS",
+                  "headlineFontFamily": "Noto Sans",
+                  "labelFont": "INTER",
+                  "labelFontFamily": "Inter",
+                  "namedColors": {
+                    "background": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "error_container": "#ffdad6",
+                    "inverse_on_surface": "#ecf0ff",
+                    "inverse_primary": "#b9c3ff",
+                    "inverse_surface": "#243048",
+                    "on_background": "#0e1b32",
+                    "on_error": "#ffffff",
+                    "on_error_container": "#93000a",
+                    "on_primary": "#ffffff",
+                    "on_primary_container": "#ededff",
+                    "on_primary_fixed": "#001257",
+                    "on_primary_fixed_variant": "#0034c0",
+                    "on_secondary": "#ffffff",
+                    "on_secondary_container": "#54647c",
+                    "on_secondary_fixed": "#0b1c31",
+                    "on_secondary_fixed_variant": "#38485e",
+                    "on_surface": "#0e1b32",
+                    "on_surface_variant": "#444655",
+                    "on_tertiary": "#ffffff",
+                    "on_tertiary_container": "#ffebe4",
+                    "on_tertiary_fixed": "#360f00",
+                    "on_tertiary_fixed_variant": "#7e2c00",
+                    "outline": "#747687",
+                    "outline_variant": "#c4c5d8",
+                    "primary": "#0a3fdc",
+                    "primary_container": "#365cf5",
+                    "primary_fixed": "#dde1ff",
+                    "primary_fixed_dim": "#b9c3ff",
+                    "secondary": "#4f5f77",
+                    "secondary_container": "#d0e1fd",
+                    "secondary_fixed": "#d3e3ff",
+                    "secondary_fixed_dim": "#b7c7e3",
+                    "surface": "#f9f9ff",
+                    "surface_bright": "#f9f9ff",
+                    "surface_container": "#e8eeff",
+                    "surface_container_high": "#e0e8ff",
+                    "surface_container_highest": "#d7e2ff",
+                    "surface_container_low": "#f1f3ff",
+                    "surface_container_lowest": "#ffffff",
+                    "surface_dim": "#cddaf9",
+                    "surface_tint": "#214ce7",
+                    "surface_variant": "#d7e2ff",
+                    "tertiary": "#943500",
+                    "tertiary_container": "#bc4600",
+                    "tertiary_fixed": "#ffdbcd",
+                    "tertiary_fixed_dim": "#ffb597"
+                  },
+                  "overrideNeutralColor": "#17243b",
+                  "overridePrimaryColor": "#365cf5",
+                  "overrideSecondaryColor": "#52627a",
+                  "roundness": "ROUND_EIGHT",
+                  "spacing": {
+                    "gutter": "1.5rem",
+                    "gutter-mobile": "1rem",
+                    "margin": "2rem",
+                    "margin-mobile": "1rem",
+                    "space-2xl": "2.5rem",
+                    "space-lg": "1.5rem",
+                    "space-md": "1rem",
+                    "space-sm": "0.5rem",
+                    "space-xl": "2rem",
+                    "space-xs": "0.25rem"
+                  },
+                  "spacingScale": 2,
+                  "typography": {
+                    "body-lg": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "15px",
+                      "fontWeight": "400",
+                      "lineHeight": "22px"
+                    },
+                    "body-md": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "14px",
+                      "fontWeight": "400",
+                      "lineHeight": "20px"
+                    },
+                    "body-sm": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "13px",
+                      "fontWeight": "400",
+                      "lineHeight": "18px"
+                    },
+                    "code-sm": {
+                      "fontFamily": "JetBrains Mono, monospace",
+                      "fontSize": "12px",
+                      "fontWeight": "500",
+                      "lineHeight": "16px"
+                    },
+                    "headline-lg": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "28px",
+                      "fontWeight": "700",
+                      "lineHeight": "36px"
+                    },
+                    "headline-lg-mobile": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "22px",
+                      "fontWeight": "700",
+                      "lineHeight": "30px"
+                    },
+                    "headline-md": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "20px",
+                      "fontWeight": "600",
+                      "lineHeight": "28px"
+                    },
+                    "headline-sm": {
+                      "fontFamily": "Noto Sans, Inter, sans-serif",
+                      "fontSize": "16px",
+                      "fontWeight": "600",
+                      "lineHeight": "24px"
+                    },
+                    "label-md": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "13px",
+                      "fontWeight": "500",
+                      "lineHeight": "16px"
+                    },
+                    "label-sm": {
+                      "fontFamily": "Inter, Noto Sans, sans-serif",
+                      "fontSize": "12px",
+                      "fontWeight": "600",
+                      "letterSpacing": "0.02em",
+                      "lineHeight": "16px"
+                    }
+                  }
+                }
+              },
+              "name": "assets/5b22f0975d714513b9d6332d476e698b",
+              "version": "1"
+            },
+            "deviceType": "DESKTOP",
+            "generatedBy": "figaro_agent",
+            "height": "6860",
+            "htmlCode": {
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzYxZWZjZDcxMDk1ZDQ1ZWZhMzdhN2E4ZTJiMjhhMTY0EgsSBxD36pCxyw0YAZIBIwoKcHJvamVjdF9pZBIVQhM4NzA0Nzg2NjEyNDQ5MDYzODI3&filename=&opi=96797242",
+              "mimeType": "text/html",
+              "name": "projects/8704786612449063827/files/782818e565ec41a5b55354abaee4c5d6"
+            },
+            "id": "267d1a51de0c4fdf8ca29a4a0f4948e6",
+            "name": "projects/8704786612449063827/screens/267d1a51de0c4fdf8ca29a4a0f4948e6",
+            "prompt": "Route identifier admin-28ab9d25b6d7; URL /j/erp/webhook-simulator; app admin; category ระบบเชื่อมต่อ; component ErpWebhookSimulator; view type screen; title ทดสอบเหตุการณ์ ERP ของร้านค้า.\n\nEnterprise Commerce Platform UI for Thai commerce operations teams.\nDesign follows Siam Enterprise Commerce System: Light canvas #f6f8fc, white cards with 12px corners, restrained borders #e1e7f0, primary blue #365cf5, ink text #17243b, secondary #52627a. 256px SideNavBar (7 tabs, active: ระบบเชื่อมต่อ with sub-items including ERP Webhook Simulator / ทดสอบเหตุการณ์ ERP), compact TopNavBar with breadcrumbs \"ระบบเชื่อมต่อ / ทดสอบเหตุการณ์ ERP ของร้านค้า\", route badge admin-28ab9d25b6d7, bilingual selector ไทย / EN, and user profile avatar.\n\nPage Header:\n- Title: \"ทดสอบเหตุการณ์ ERP ของร้านค้า\" with sub-badge \"ERP Webhook Simulator\"\n- Subtitle: \"ยิง webhook ERP → Josh จำลอง เข้า service handler ตัวจริง (validation + logic เดียวกับ /api/erp/*) — ไม่ต้องรอ ERP sandbox\"\n- Top right actions: Status indicator \"Simulation Sandbox Ready\", Refresh button, and Quick Guide.\n\nMain Workflow Sections (organized cleanly in task-based cards):\n1. Order & Shipment Lookup Panel (\"หา order\"):\n   - Input search for order number: \"เลขที่ order เช่น JOSH-2026-04417\" with button \"ค้นหา\"\n   - Context card showing matched order & shipment details:\n     * Order number: JOSH-2026-04417, \"สถานะปัจจุบัน\": \"ชำระแล้ว รอ ERP ยืนยัน\" (Order status: PREPARING)\n     * \"Shipment ใน\" order: SHP-2026-09142 (\"จาก shipment จริง\")\n     * \"Shipment status\": PREPARING\n     * \"erp_sync_status\": \"มี\" (sync เรียบร้อย)\n     * \"jagota_order_sync\": \"มี\"\n     * \"คนขับ (courier)\": \"ยังไม่มี\"\n     * Summary badge: \"ข้อมูลตัวอย่าง\"\n\n2. Simulator Action Tabs / Modes:\n   - Primary Tabs:\n     * Tab 1 (Active): \"Order / Invoice status\" (order.status.changed / invoice.status.changed)\n     * Tab 2: \"3PL delivery\" (POST /3pl/delivery-status, POST /api/3pl/delivery-status)\n     * Tab 3: \"Courier\" (GET /drivers/tracking, POST /api/erp/testing/shipments/:id/courier)\n     * Tab 4: \"Webhook อื่น ๆ\" (quotation · catalog · stock · customer)\n\n3. Under Tab 1 (\"Order / Invoice status\"):\n   - Sub-panel A: \"order.status.changed\" (POST /api/erp/orders/status)\n     * Radio / options: \"orderStatus flags\":\n       - \"\\\"Order Confirmed\\\": \\\"Y\\\"\" -> help text: \"shipment ไป preparing (จาก paid/payment_pending), จอง stock\"\n       - \"\\\"Order Cancelled\\\": \\\"Y\\\"\" -> help text: \"shipment ไป cancelled, คืน stock\"\n     * Inputs: DOC_BOOK (\"ว่างได้ — backend ใช้ค่าจาก jagota_order_sync\"), DOC_NO\n     * Action button: \"Send mock webhook →\" (or \"จำลอง\")\n   - Sub-panel B: \"invoice.status.changed\" (POST /api/erp/invoices/status)\n     * Inputs: INV_BOOK, INV_NO\n     * Table of \"SKU บน shipment นี้ — ตั้งจำนวนที่ ERP invoice จริง\":\n       Columns: Product / SKU, \"สั่ง\" (Ordered qty), \"ราคา (ex VAT)\", \"Invoice qty\" (editable input with \"กรอกจำนวน ≥ 0\")\n       Row items: e.g. SKU-TH-SILK-01 (สั่ง 10, ฿450), SKU-TH-TEA-002 (สั่ง 5, ฿280)\n     * Credit back estimate alert: \"คาดว่าจะเกิด Credit Back ≈ ฿\" 0.00 \"(ex VAT) — คำนวณจริงฝั่ง backend\"\n     * \"สถานะจัดส่ง (invoice.delivery)\":\n       Notice: \"Packed / Closed for VAT ไม่มีในตัวเลือก — handleInvoiceStatus ไม่อ่าน flag พวกนี้\"\n       Dropdown or chips: \"เลือกสถานะจัดส่ง 1 อัน\" with options:\n         - \"ออก invoice อย่างเดียว (ไม่มี flag)\"\n         - \"\\\"Out for Delivery\\\": \\\"Y\\\"\"\n         - \"\\\"Delivered\\\": \\\"Y\\\"\"\n         - \"\\\"Delivery Failed\\\": \\\"Y\\\"\"\n         - \"\\\"Invoice Cancelled\\\": \\\"Y\\\"\"\n     * Action button: \"Send mock webhook →\" (POST /api/erp/invoices/status)\n\n4. Sub-panel for 3PL Delivery & Courier Testing:\n   - \"3PL status\" selector: PREPARING, SHIPPING, DELIVERED, FAILED_DELIVERY, RETURNED\n   - Description text: \"— คนละเส้นกับ invoice. กด 'จำลอง' โดยไม่กรอกคนขับ จะได้สถานะปัจจุบันแบบ shipment shipped · order preparing · คนขับยังไม่มี (ถ้ายังไม่มี 3PL status จะยิง PREPARING ให้ก่อน). order เป็น delivered เมื่อทุก shipment ส่งถึง; Credit Back ออกจาก tab invoice (ไม่ต้องรอส่งถึง)\"\n   - Courier inputs: \"คนขับ\" (\"ว่างได้ — SHIPPING โดยไม่มีคนขับจะโชว์ ยังไม่มี\"), \"เบอร์คนขับ\", \"ทะเบียนรถ\"\n   - Explanatory note: \"ตัวจริง — คนขับ/route ไม่ได้มาจาก invoice.status.changed แยก mock ไว้เพราะเป็นคนละ endpoint กัน ยิงแล้วจะ persist ลง shipment.courier_* เหมือน flow จริง\"\n   - Action: \"จำลองผล\" (POST /api/erp/testing/shipments/:id/delivery-status)\n\n5. Live Simulation Output & Audit Console (\"ผลล่าสุด —\"):\n   - Split view showing \"ก่อนยิง\" vs \"หลังยิง\"\n   - State comparisons: Order status (ชำระแล้ว รอ ERP ยืนยัน -> ERP ยืนยันแล้ว กำลังเตรียม), Shipment status (PREPARING -> SHIPPING / DELIVERED), Credit Back calculation, and Courier info\n   - Payload & Response Inspector with status 200 OK, latency 48ms, and raw JSON response preview.\n\nEXACT COPY REQUIREMENT:\nThe page must strictly embed the hidden translation catalog in an invisible `<script id=\"commerce-ui-translations\" type=\"application/json\">` containing every exact string specified in the prompt with `{\"th\": \"...\", \"en\": \"...\"}` mappings, including placeholders like {0}, {1}, {name} preserved exactly. All key strings from the catalogue are naturally present and reflected in the page UI.",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "screenType": "DESIGN",
+            "screenshot": {
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WOKpJDA1QWfp6EGrIfZoR6bwi4VzefKbZxUyYGKk8kfj0Zey6hspdtLSclNyIPyHS3BFMscpHfnDfV7NBxfkLhDIgEtEl7EN0l4jNxDNpd0EBVrOXPC2_MQn8ZptXA0im8jUgk-ryWieBMLoQDM2dyE6nuN1P2gJ45cjsDbBujgNivNq6xSnd2-Yl00WMpKRvYs3Qh2I528FMdpgIweNl86unmj0K9-6_wbJ0I0oeyKuZzQulh_lIcow",
+              "name": "projects/8704786612449063827/files/ffa903d4d2074c28a1892f1c4eb229d3"
+            },
+            "theme": {
+              "bodyFont": "NOTO_SANS",
+              "bodyFontFamily": "Noto Sans",
+              "colorMode": "LIGHT",
+              "colorVariant": "FIDELITY",
+              "customColor": "#365cf5",
+              "font": "NOTO_SANS",
+              "headlineFont": "NOTO_SANS",
+              "headlineFontFamily": "Noto Sans",
+              "labelFont": "INTER",
+              "labelFontFamily": "Inter",
+              "namedColors": {
+                "background": "#f9f9ff",
+                "error": "#ba1a1a",
+                "error_container": "#ffdad6",
+                "inverse_on_surface": "#ecf0ff",
+                "inverse_primary": "#b9c3ff",
+                "inverse_surface": "#243048",
+                "on_background": "#0e1b32",
+                "on_error": "#ffffff",
+                "on_error_container": "#93000a",
+                "on_primary": "#ffffff",
+                "on_primary_container": "#ededff",
+                "on_primary_fixed": "#001257",
+                "on_primary_fixed_variant": "#0034c0",
+                "on_secondary": "#ffffff",
+                "on_secondary_container": "#54647c",
+                "on_secondary_fixed": "#0b1c31",
+                "on_secondary_fixed_variant": "#38485e",
+                "on_surface": "#0e1b32",
+                "on_surface_variant": "#444655",
+                "on_tertiary": "#ffffff",
+                "on_tertiary_container": "#ffebe4",
+                "on_tertiary_fixed": "#360f00",
+                "on_tertiary_fixed_variant": "#7e2c00",
+                "outline": "#747687",
+                "outline_variant": "#c4c5d8",
+                "primary": "#0a3fdc",
+                "primary_container": "#365cf5",
+                "primary_fixed": "#dde1ff",
+                "primary_fixed_dim": "#b9c3ff",
+                "secondary": "#4f5f77",
+                "secondary_container": "#d0e1fd",
+                "secondary_fixed": "#d3e3ff",
+                "secondary_fixed_dim": "#b7c7e3",
+                "surface": "#f9f9ff",
+                "surface_bright": "#f9f9ff",
+                "surface_container": "#e8eeff",
+                "surface_container_high": "#e0e8ff",
+                "surface_container_highest": "#d7e2ff",
+                "surface_container_low": "#f1f3ff",
+                "surface_container_lowest": "#ffffff",
+                "surface_dim": "#cddaf9",
+                "surface_tint": "#214ce7",
+                "surface_variant": "#d7e2ff",
+                "tertiary": "#943500",
+                "tertiary_container": "#bc4600",
+                "tertiary_fixed": "#ffdbcd",
+                "tertiary_fixed_dim": "#ffb597"
+              },
+              "overrideNeutralColor": "#17243b",
+              "overridePrimaryColor": "#365cf5",
+              "overrideSecondaryColor": "#52627a",
+              "roundness": "ROUND_EIGHT",
+              "spacing": {
+                "gutter": "1.5rem",
+                "gutter-mobile": "1rem",
+                "margin": "2rem",
+                "margin-mobile": "1rem",
+                "space-2xl": "2.5rem",
+                "space-lg": "1.5rem",
+                "space-md": "1rem",
+                "space-sm": "0.5rem",
+                "space-xl": "2rem",
+                "space-xs": "0.25rem"
+              },
+              "spacingScale": 2,
+              "typography": {
+                "body-lg": {
+                  "fontFamily": "Noto Sans, Inter, sans-serif",
+                  "fontSize": "15px",
+                  "fontWeight": "400",
+                  "lineHeight": "22px"
+                },
+                "body-md": {
+                  "fontFamily": "Noto Sans, Inter, sans-serif",
+                  "fontSize": "14px",
+                  "fontWeight": "400",
+                  "lineHeight": "20px"
+                },
+                "body-sm": {
+                  "fontFamily": "Noto Sans, Inter, sans-serif",
+                  "fontSize": "13px",
+                  "fontWeight": "400",
+                  "lineHeight": "18px"
+                },
+                "code-sm": {
+                  "fontFamily": "JetBrains Mono, monospace",
+                  "fontSize": "12px",
+                  "fontWeight": "500",
+                  "lineHeight": "16px"
+                },
+                "headline-lg": {
+                  "fontFamily": "Noto Sans, Inter, sans-serif",
+                  "fontSize": "28px",
+                  "fontWeight": "700",
+                  "lineHeight": "36px"
+                },
+                "headline-lg-mobile": {
+                  "fontFamily": "Noto Sans, Inter, sans-serif",
+                  "fontSize": "22px",
+                  "fontWeight": "700",
+                  "lineHeight": "30px"
+                },
+                "headline-md": {
+                  "fontFamily": "Noto Sans, Inter, sans-serif",
+                  "fontSize": "20px",
+                  "fontWeight": "600",
+                  "lineHeight": "28px"
+                },
+                "headline-sm": {
+                  "fontFamily": "Noto Sans, Inter, sans-serif",
+                  "fontSize": "16px",
+                  "fontWeight": "600",
+                  "lineHeight": "24px"
+                },
+                "label-md": {
+                  "fontFamily": "Inter, Noto Sans, sans-serif",
+                  "fontSize": "13px",
+                  "fontWeight": "500",
+                  "lineHeight": "16px"
+                },
+                "label-sm": {
+                  "fontFamily": "Inter, Noto Sans, sans-serif",
+                  "fontSize": "12px",
+                  "fontWeight": "600",
+                  "letterSpacing": "0.02em",
+                  "lineHeight": "16px"
+                }
+              }
+            },
+            "title": "ทดสอบเหตุการณ์ ERP ของร้านค้า",
+            "width": "2560"
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "ได้สร้างหน้าจอ **\"ทดสอบเหตุการณ์ ERP ของร้านค้า\" (ERP Webhook Simulator)** รหัสเส้นทาง `admin-28ab9d25b6d7` URL `/j/erp/webhook-simulator` หมวด **ระบบเชื่อมต่อ** เรียบร้อยแล้ว\n\n### สรุปรายละเอียดการออกแบบและองค์ประกอบของหน้าจอ:\n1. **Shell และเลย์เอาต์ระบบ (Siam Enterprise Commerce System)**:\n   - แถบเมนูด้านข้าง (Side Navigation Bar) กว้าง 256px พร้อม 7 หมวดงานหลัก โดยเน้นที่หมวด `ระบบเชื่อมต่อ` (Active)\n   - แถบด้านบน (Top Navigation Bar) แสดง Breadcrumbs `ระบบเชื่อมต่อ / ทดสอบเหตุการณ์ ERP ของร้านค้า`, ป้าย Route ID `admin-28ab9d25b6d7`, สลับภาษา `ไทย / EN`, และโปรไฟล์ผู้ดูแลระบบ\n   - ธีมสีตามข้อกำหนด: พื้นหลัง `#f6f8fc`, การ์ดสีขาวขอบมน 12px, ขอบเขตควบคุม `#e1e7f0`, น้ำหนักคู่สี Primary `#365cf5`, หมึกตัวอักษร `#17243b` และข้อความรอง `#52627a`\n\n2. **ระบบค้นหาและบริบทของ Order (Order Context Panel)**:\n   - ช่องค้นหาเลขออเดอร์ (`เลขที่ order เช่น JOSH-2026-04417`) พร้อมปุ่ม \"ค้นหา\"\n   - แสดงสถานะแบบเรียลไทม์ของ Order ที่จับคู่ได้: Order Status (`PREPARING` / `ชำระแล้ว รอ ERP ยืนยัน`), Shipment ID (`SHP-2026-09142`), `erp_sync_status`, `jagota_order_sync`, และสถานะคนขับ (`ยังไม่มี`)\n\n3. **แผงจำลองการยิง Webhook (ERP Webhook Simulation Tabs)**:\n   - **Step 1: order.status.changed** (`POST /api/erp/orders/status`): รองรับ Flag ยืนยันหรือยกเลิกออเดอร์ (`\"Order Confirmed\": \"Y\"`, `\"Order Cancelled\": \"Y\"`), พร้อมฟิลด์ `DOC_BOOK` และ `DOC_NO`\n   - **Step 2: invoice.status.changed** (`POST /api/erp/invoices/status`): ฟิลด์ `INV_BOOK`, `INV_NO`, ตารางตั้งค่าจำนวนที่ ERP ส่ง Invoice จริงต่อแต่ละ SKU, การประเมิน `Credit Back ≈ ฿0.00`, และสถานะการจัดส่ง (`\"Out for Delivery\": \"Y\"`, `\"Delivered\": \"Y\"`, ฯลฯ)\n   - **Step 3: 3PL Delivery & Courier Simulation** (`POST /api/erp/testing/shipments/:id/delivery-status`): สลับสถานะ 3PL (`PREPARING`, `SHIPPING`, `DELIVERED`, `FAILED_DELIVERY`, `RETURNED`) พร้อมฟิลด์คนขับ เบอร์โทร และทะเบียนรถ\n\n4. **แผงตรวจสอบผลลัพธ์ (Execution Summary & State Diff)**:\n   - แสดงการเปรียบเทียบสถานะ \"ก่อนยิง\" (Current State) กับ \"หลังยิง\" (Projected Next State)\n   - JSON Payload & Handlers trace แสดงผลลัพธ์ HTTP 200 OK และ Latency อย่างชัดเจน\n\n5. **แคตตาล็อกภาษา (Bilingual UI Translation Metadata)**:\n   - บรรจุออบเจกต์ `<script id=\"commerce-ui-translations\" type=\"application/json\">` อย่างครบถ้วนทุกคำตามรายการ Exact UI copy catalogue พร้อมการแมป `{\"th\": \"...\", \"en\": \"...\"}` อย่างสมบูรณ์และถูกต้องตามข้อกำหนด"
+    },
+    {
+      "suggestion": "ทดสอบสลับโหมดภาษาเป็น English ดูการแสดงผล"
+    },
+    {
+      "suggestion": "ปรับแต่งสถานะจำลองข้อผิดพลาด (Failed Delivery / Error trace)"
+    },
+    {
+      "suggestion": "เพิ่ม Preset จำลองคำสั่งซื้อแบบสินค้าขายส่ง (Wholesale Bulk Order)"
+    }
+  ],
+  "projectId": "8704786612449063827",
+  "sessionId": "6057779788963799339"
+}

@@ -3,10 +3,13 @@ import { erpIngestApi, ErpIngestRecordRow, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, DetailSection, Button } from '@cp/ui';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const ENTITY_TYPES = ['product_qty', 'product_price', 'product_moq', 'product', 'stock', 'customer', 'sale_order'];
 const STATUSES = ['received', 'applied', 'failed', 'skipped', 'stale', 'ignored'];
 
 export function InboundLog() {
+  __useUiLocale();
   const [entityType, setEntityType] = useState('');
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
@@ -47,27 +50,27 @@ export function InboundLog() {
 
   return (
     <Page>
-      <PageHeader title="ERP Inbound Log" subtitle="Staged ERP payloads — review parse/apply outcomes and retry failures." actions={<Button icon="refresh" onClick={reload}>Refresh</Button>} />
+      <PageHeader title={__uiText("ERP Inbound Log")} subtitle={__uiText("Staged ERP payloads — review parse/apply outcomes and retry failures.")} actions={<Button icon="refresh" onClick={reload}>{__uiText("Refresh")}</Button>} />
 
       <Panel>
-        <PanelHead title="Filters" actions={<div className="flex flex-wrap gap-2">
+        <PanelHead title={__uiText("Filters")} actions={<div className="flex flex-wrap gap-2">
           <select value={entityType} onChange={(e) => changeEntityType(e.target.value)} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
-            <option value="">All entity types</option>
+            <option value="">{__uiText("All entity types")}</option>
             {ENTITY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
           <select value={status} onChange={(e) => changeStatus(e.target.value)} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
-            <option value="">All statuses</option>
+            <option value="">{__uiText("All statuses")}</option>
             {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>} />
         <ErrorText error={error} />
         <ErrorText error={actionError} />
         {loading && !data ? <Loading /> : !data?.items.length ? (
-          <Empty>No staged ERP rows yet.</Empty>
+          <Empty>{__uiText("No staged ERP rows yet.")}</Empty>
         ) : (
           <Table>
             <THead>
-              <TH>Created</TH><TH>Entity type</TH><TH>External ID</TH><TH>Status</TH><TH>Error</TH><TH></TH>
+              <TH>{__uiText("Created")}</TH><TH>{__uiText("Entity type")}</TH><TH>{__uiText("External ID")}</TH><TH>{__uiText("Status")}</TH><TH>{__uiText("Error")}</TH><TH></TH>
             </THead>
             <TBody>
               {data.items.map((r) => (
@@ -78,18 +81,18 @@ export function InboundLog() {
                     <TD kind="mono">{r.externalId ?? '—'}</TD>
                     <TD><StatusChip status={r.status} /></TD>
                     <TD className="text-on-surface-variant text-xs">{r.error ?? '—'}</TD>
-                    <TD kind="actions"><ExpandToggle open={expandedId === r.id} onClick={() => setExpandedId(cur => cur === r.id ? null : r.id)} /> {(r.status === 'received' || r.status === 'failed') && <Button variant="primary" disabled={busy === r.id} onClick={() => applyOrRetry(r.id)}>{busy === r.id ? '…' : r.status === 'failed' ? 'Retry' : 'Apply'}</Button>}</TD>
+                    <TD kind="actions"><ExpandToggle open={expandedId === r.id} onClick={() => setExpandedId(cur => cur === r.id ? null : r.id)} /> {(r.status === 'received' || r.status === 'failed') && <Button variant="primary" disabled={busy === r.id} onClick={() => applyOrRetry(r.id)}>{busy === r.id ? '…' : r.status === 'failed' ? __uiText("Retry") : __uiText("Apply")}</Button>}</TD>
                   </TR>
                   {expandedId === r.id && (
                     <ExpandRow colSpan={6}>
-                      <DetailSection title="Payloads">
+                      <DetailSection title={__uiText("Payloads")}>
                         <div className="grid md:grid-cols-2 gap-3">
-                          <CodeBlock title="Raw" value={r.rawPayload} maxHeight={300} />
-                          <CodeBlock title="Parsed" value={r.parsedPayload} maxHeight={300} />
+                          <CodeBlock title={__uiText("Raw")} value={r.rawPayload} maxHeight={300} />
+                          <CodeBlock title={__uiText("Parsed")} value={r.parsedPayload} maxHeight={300} />
                         </div>
                       </DetailSection>
                       {r.error && (
-                        <DetailSection title="Error">
+                        <DetailSection title={__uiText("Error")}>
                           <p className="text-xs text-on-surface whitespace-pre-wrap break-words">{r.error}</p>
                         </DetailSection>
                       )}

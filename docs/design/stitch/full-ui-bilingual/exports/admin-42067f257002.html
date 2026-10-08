@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บัญชีทีมงานร้านค้า - Commerce Platform (/settings/josh-staff)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            canvas: '#f6f8fc',
+            border: '#e1e7f0',
+            primary: '#365cf5',
+            'primary-hover': '#254adb',
+            ink: '#17243b',
+            secondary: '#52627a',
+            success: '#157347',
+            warning: '#b08900',
+            error: '#c2333f',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', Inter, sans-serif;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#f6f8fc] text-[#17243b]">
+
+  <!-- Top Global Navigation Bar -->
+  <header class="bg-white border-b border-[#e1e7f0] h-16 sticky top-0 z-30 px-6 flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-sm tracking-wider shadow-sm">
+          CP
+        </div>
+        <span class="font-bold text-[17px] tracking-tight text-[#17243b]">Commerce Admin</span>
+      </div>
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-[#365cf5] border border-blue-100/80" data-i18n-th="ข้อมูลตัวอย่าง" data-i18n-en="Sample data">
+        ข้อมูลตัวอย่าง
+      </span>
+      <div class="h-4 w-[1px] bg-[#e1e7f0] mx-1"></div>
+      <div class="flex items-center text-xs text-[#52627a] font-medium">
+        <span class="text-[#52627a] mr-1.5" data-i18n-th="ร้าน:" data-i18n-en="Store:">ร้าน:</span>
+        <span class="text-[#17243b] font-semibold">สยาม สโตร์ ออนไลน์ (สาขาหลัก)</span>
+      </div>
+    </div>
+
+    <!-- Right utility: Language switch + User profile -->
+    <div class="flex items-center space-x-4">
+      <!-- Language Selector -->
+      <div class="inline-flex rounded-lg border border-[#e1e7f0] p-0.5 bg-[#f8fafc] text-xs font-semibold">
+        <button id="lang-btn-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-sm transition-all duration-150">
+          ไทย
+        </button>
+        <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all duration-150">
+          English
+        </button>
+      </div>
+
+      <div class="h-4 w-[1px] bg-[#e1e7f0]"></div>
+
+      <!-- User avatar and info -->
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-full bg-blue-100 text-[#365cf5] font-semibold flex items-center justify-center text-xs border border-blue-200">
+          ภช
+        </div>
+        <div class="flex flex-col text-left leading-tight">
+          <div class="flex items-center space-x-1.5">
+            <span class="text-xs font-semibold text-[#17243b]">ภานุชญา ส.</span>
+            <span class="text-[10px] bg-blue-50 text-[#365cf5] px-1.5 py-0.2 rounded font-medium border border-blue-100" data-i18n-th="คุณ" data-i18n-en="You">คุณ</span>
+          </div>
+          <span class="text-[11px] text-[#52627a]">Admin (ผู้ดูแลระบบ)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex flex-1">
+    <!-- 256px Left Sidebar with 7 work areas -->
+    <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col justify-between shrink-0 select-none">
+      <div class="p-4 space-y-5">
+        <!-- Workspace switcher / selector -->
+        <div>
+          <label class="block text-[11px] font-semibold text-[#52627a] uppercase tracking-wider mb-1.5" data-i18n-th="พื้นที่ทำงาน" data-i18n-en="Workspace">
+            พื้นที่ทำงาน
+          </label>
+          <div class="w-full flex items-center justify-between px-3 py-2 bg-[#f8fafc] border border-[#e1e7f0] rounded-lg text-xs font-medium text-[#17243b]">
+            <span class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Commerce Hub v2.4</span>
+            </span>
+            <svg class="w-3.5 h-3.5 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </div>
+        </div>
+
+        <!-- 7 Core Work Areas Navigation -->
+        <nav class="space-y-1">
+          <!-- 1. สินค้าและสต็อก -->
+          <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+            <svg class="w-4 h-4 mr-3 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            <span data-i18n-th="สินค้าและสต็อก" data-i18n-en="Products & Stock">สินค้าและสต็อก</span>
+          </a>
+
+          <!-- 2. ออเดอร์และการเงิน -->
+          <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+            <svg class="w-4 h-4 mr-3 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            <span data-i18n-th="ออเดอร์และการเงิน" data-i18n-en="Orders & Finance">ออเดอร์และการเงิน</span>
+          </a>
+
+          <!-- 3. ลูกค้าและบริการ -->
+          <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+            <svg class="w-4 h-4 mr-3 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <span data-i18n-th="ลูกค้าและบริการ" data-i18n-en="Customers & Services">ลูกค้าและบริการ</span>
+          </a>
+
+          <!-- 4. การตลาด -->
+          <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+            <svg class="w-4 h-4 mr-3 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+            <span data-i18n-th="การตลาด" data-i18n-en="Marketing">การตลาด</span>
+          </a>
+
+          <!-- 5. รายงานและข้อมูล -->
+          <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+            <svg class="w-4 h-4 mr-3 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            <span data-i18n-th="รายงานและข้อมูล" data-i18n-en="Reports & Data">รายงานและข้อมูล</span>
+          </a>
+
+          <!-- 6. ระบบเชื่อมต่อ -->
+          <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] hover:text-[#17243b] transition-colors">
+            <svg class="w-4 h-4 mr-3 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <span data-i18n-th="ระบบเชื่อมต่อ" data-i18n-en="Integrations">ระบบเชื่อมต่อ</span>
+          </a>
+
+          <!-- 7. ตั้งค่าและทีมงาน (ACTIVE SECTION) -->
+          <div class="pt-1">
+            <div class="flex items-center px-3 py-2.5 rounded-lg text-xs font-semibold text-[#365cf5] bg-blue-50/70 border border-blue-100">
+              <svg class="w-4 h-4 mr-3 text-[#365cf5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              <span data-i18n-th="ตั้งค่าและทีมงาน" data-i18n-en="Settings & Team">ตั้งค่าและทีมงาน</span>
+            </div>
+
+            <!-- Submenu under Settings & Team -->
+            <div class="ml-7 mt-1.5 space-y-1 border-l-2 border-blue-100 pl-3">
+              <a href="#" class="block py-1.5 text-xs text-[#52627a] hover:text-[#17243b] transition-colors" data-i18n-th="บัญชีทีมงาน" data-i18n-en="Staff Accounts (/settings/staff)">
+                บัญชีทีมงาน
+              </a>
+              <!-- Active Submenu Item: บัญชี josh (staff) /settings/josh-staff -->
+              <a href="#" class="block py-1.5 text-xs font-semibold text-[#365cf5]" data-i18n-key="บัญชี josh (staff)">
+                บัญชี josh (staff)
+              </a>
+              <a href="#" class="block py-1.5 text-xs text-[#52627a] hover:text-[#17243b] transition-colors" data-i18n-th="บทบาทและสิทธิ์" data-i18n-en="Roles & Permissions">
+                บทบาทและสิทธิ์
+              </a>
+              <a href="#" class="block py-1.5 text-xs text-[#52627a] hover:text-[#17243b] transition-colors" data-i18n-th="ข้อมูลร้านค้า" data-i18n-en="Store Profile">
+                ข้อมูลร้านค้า
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Developer Portal Link in Bottom Sidebar -->
+      <div class="p-4 border-t border-[#e1e7f0] bg-[#fafcff]">
+        <a href="#" class="flex items-center justify-between text-xs text-[#52627a] hover:text-[#365cf5] font-medium transition-colors">
+          <span class="flex items-center space-x-2">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            <span>Developer Portal</span>
+          </span>
+          <span class="text-[10px] text-gray-400 font-mono">API & Keys &rarr;</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area: centered ~1240px wide layout -->
+    <main class="flex-1 overflow-y-auto px-8 py-7 custom-scrollbar">
+      <div class="max-w-[1240px] mx-auto space-y-6">
+
+        <!-- Breadcrumbs & Header -->
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div>
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center space-x-2 text-xs text-[#52627a] mb-1 font-medium">
+              <span data-i18n-th="ตั้งค่าและทีมงาน" data-i18n-en="Settings & Team">ตั้งค่าและทีมงาน</span>
+              <span>/</span>
+              <span class="text-[#17243b] font-semibold" data-i18n-th="บัญชีทีมงานร้านค้า (josh-staff)" data-i18n-en="Josh Staff Accounts (josh-staff)">บัญชีทีมงานร้านค้า (josh-staff)</span>
+            </nav>
+
+            <!-- Page Title -->
+            <h1 class="text-[28px] font-bold tracking-tight text-[#17243b] flex items-center gap-3">
+              <span data-i18n-key="บัญชี josh (staff)">บัญชี josh (staff)</span>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span data-i18n-key="ยังดูได้อย่างเดียว">ยังดูได้อย่างเดียว</span>
+              </span>
+            </h1>
+
+            <!-- Domain Context Description -->
+            <p class="text-sm text-[#52627a] mt-1 max-w-3xl leading-relaxed" data-i18n-key="บัญชีพนักงานที่ยังต้องใช้ใน josh — แอปฝ่ายขาย, แชต CS, หน้าที่ยังอยู่ josh · คนละบัญชีกับ commerce-admin">
+              บัญชีพนักงานที่ยังต้องใช้ใน josh — แอปฝ่ายขาย, แชต CS, หน้าที่ยังอยู่ josh · คนละบัญชีกับ commerce-admin
+            </p>
+          </div>
+
+          <!-- Header Actions -->
+          <div class="flex items-center space-x-3 shrink-0">
+            <!-- Refresh Action Button -->
+            <button onclick="handleRefresh()" class="inline-flex items-center px-3.5 py-2 border border-[#e1e7f0] rounded-lg text-xs font-semibold text-[#17243b] bg-white hover:bg-[#f8fafc] shadow-sm transition-colors active:scale-95">
+              <svg id="refresh-icon" class="w-3.5 h-3.5 mr-1.5 text-[#52627a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              <span data-i18n-key="Refresh">Refresh</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- System Banner: COMMERCE_OWNS_STAFF ownership notice -->
+        <div class="rounded-xl border border-amber-200 bg-amber-50/80 p-4 flex items-start space-x-3 text-xs text-amber-900 shadow-sm">
+          <div class="p-1 rounded-md bg-amber-100 text-amber-800 shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="font-semibold text-amber-950 flex items-center gap-2">
+              <span data-i18n-key="josh ยังเป็นเจ้าของบัญชีพนักงาน (COMMERCE_OWNS_STAFF ยังไม่เปิด) — คำขอเข้าใช้ใหม่อนุมัติที่ &quot;Admin access requests&quot;">
+                josh ยังเป็นเจ้าของบัญชีพนักงาน (COMMERCE_OWNS_STAFF ยังไม่เปิด) — คำขอเข้าใช้ใหม่อนุมัติที่ "Admin access requests"
+              </span>
+            </div>
+            <p class="text-amber-800 mt-1 leading-relaxed" data-i18n-th="ข้อมูลบัญชีเจ้าหน้าที่ถูกซิงก์แบบอ่านอย่างเดียวจาก staff.snapshot หากต้องการมอบสิทธิ์ใหม่หรือสร้างบัญชี โปรดจัดการที่ josh Admin Console" data-i18n-en="Staff account records are synced read-only from staff.snapshot. To grant new access or create staff, please manage via josh Admin Console.">
+              ข้อมูลบัญชีเจ้าหน้าที่ถูกซิงก์แบบอ่านอย่างเดียวจาก staff.snapshot หากต้องการมอบสิทธิ์ใหม่หรือสร้างบัญชี โปรดจัดการที่ josh Admin Console
+            </p>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-amber-100/90 text-amber-800 border border-amber-200/80">
+            FLAG: OFF
+          </span>
+        </div>
+
+        <!-- Filter bar & Search box -->
+        <div class="bg-white p-4 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <!-- Filter chips for status / role -->
+          <div class="flex items-center space-x-2 overflow-x-auto">
+            <button onclick="filterTable('all')" id="filter-all" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#365cf5] text-white shadow-sm transition-colors">
+              <span data-i18n-th="ทั้งหมด (5)" data-i18n-en="All (5)">ทั้งหมด (5)</span>
+            </button>
+            <button onclick="filterTable('active')" id="filter-active" class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] border border-transparent hover:border-[#e1e7f0] transition-colors">
+              <span data-i18n-key="เปิดบัญชี">เปิดบัญชี</span> (3)
+            </button>
+            <button onclick="filterTable('waiting')" id="filter-waiting" class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] border border-transparent hover:border-[#e1e7f0] transition-colors">
+              <span data-i18n-key="รอ josh">รอ josh</span> (1)
+            </button>
+            <button onclick="filterTable('inactive')" id="filter-inactive" class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] border border-transparent hover:border-[#e1e7f0] transition-colors">
+              <span data-i18n-key="Inactive">Inactive</span> / <span data-i18n-key="ปิดบัญชี">ปิดบัญชี</span> (1)
+            </button>
+          </div>
+
+          <!-- Current page search input (strictly complying with usability guidelines: search current page only) -->
+          <div class="flex items-center space-x-2 sm:w-80">
+            <div class="relative w-full">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#52627a]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </div>
+              <input id="table-search" type="text" oninput="handleSearch(this.value)" placeholder="ค้นหาในหน้านี้ (ชื่อ, อีเมล)..." data-i18n-placeholder-th="ค้นหาในหน้านี้ (ชื่อ, อีเมล)..." data-i18n-placeholder-en="Search on this page (name, email)..." class="w-full pl-9 pr-8 py-2 bg-[#f8fafc] border border-[#e1e7f0] rounded-lg text-xs text-[#17243b] focus:bg-white focus:outline-none focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] transition-all">
+              <button id="clear-search-btn" onclick="clearSearch()" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-gray-600 hidden" title="ล้างคำค้นหา">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </div>
+            <button onclick="clearSearch()" class="shrink-0 text-xs text-[#52627a] hover:text-[#365cf5] font-medium px-1" data-i18n-key="ล้างคำค้นหา">
+              ล้างคำค้นหา
+            </button>
+          </div>
+        </div>
+
+        <!-- Table Card: Records list -->
+        <div class="bg-white rounded-xl border border-[#e1e7f0] shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-[#f8fafc] border-b border-[#e1e7f0] text-[#52627a] font-semibold">
+                  <th class="py-3 px-4 w-[28%]" data-i18n-key="ชื่อ">ชื่อ</th>
+                  <th class="py-3 px-4 w-[24%]" data-i18n-key="อีเมล">อีเมล</th>
+                  <th class="py-3 px-4 w-[16%]" data-i18n-key="สิทธิ์ใน josh">สิทธิ์ใน josh</th>
+                  <th class="py-3 px-4 w-[12%]" data-i18n-key="สถานะ">สถานะ</th>
+                  <th class="py-3 px-4 w-[10%]" data-i18n-key="เข้าแอปล่าสุด">เข้าแอปล่าสุด</th>
+                  <th class="py-3 px-4 text-right w-[10%]" data-i18n-key="จัดการ">จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="staff-table-body" class="divide-y divide-[#e1e7f0]">
+                <!-- Record 1: Active staff -->
+                <tr class="hover:bg-slate-50/70 transition-colors" data-status="active" data-search="กานต์พิชชา รัตนวิเชียร kanpitcha.r@siamstore.co.th josh-pos-cashier">
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-blue-50 text-[#365cf5] font-bold flex items-center justify-center shrink-0 border border-blue-100">
+                        กพ
+                      </div>
+                      <div>
+                        <div class="font-semibold text-[#17243b]">กานต์พิชชา รัตนวิเชียร</div>
+                        <div class="text-[11px] text-[#52627a] font-mono">ID: JSH-041 · Pos-Staff</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono text-[#52627a]">
+                    kanpitcha.r@siamstore.co.th
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-purple-50 text-purple-700 border border-purple-200">
+                      Cashier & Sales
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-[#157347] border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#157347] mr-1.5"></span>
+                      <span data-i18n-key="เปิดบัญชี">เปิดบัญชี</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a]">
+                    10 นาทีที่แล้ว
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openActionModal('กานต์พิชชา รัตนวิเชียร', 'JSH-041')" class="text-xs font-semibold text-[#365cf5] hover:text-[#254adb] transition-colors p-1" data-i18n-key="จัดการ">
+                      จัดการ
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Record 2: Active staff (CS Specialist) -->
+                <tr class="hover:bg-slate-50/70 transition-colors" data-status="active" data-search="พศิน เจริญวัฒนา pasin.c@siamstore.co.th josh-cs-chat">
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-emerald-50 text-[#157347] font-bold flex items-center justify-center shrink-0 border border-emerald-100">
+                        พศ
+                      </div>
+                      <div>
+                        <div class="font-semibold text-[#17243b]">พศิน เจริญวัฒนา</div>
+                        <div class="text-[11px] text-[#52627a] font-mono">ID: JSH-055 · CS-Chat</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono text-[#52627a]">
+                    pasin.c@siamstore.co.th
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      CS Agent (Chat)
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-[#157347] border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#157347] mr-1.5"></span>
+                      <span data-i18n-key="เปิดบัญชี">เปิดบัญชี</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a]">
+                    เมื่อวานนี้, 16:40
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openActionModal('พศิน เจริญวัฒนา', 'JSH-055')" class="text-xs font-semibold text-[#365cf5] hover:text-[#254adb] transition-colors p-1" data-i18n-key="จัดการ">
+                      จัดการ
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Record 3: Waiting for Josh sync / approval -->
+                <tr class="hover:bg-slate-50/70 transition-colors" data-status="waiting" data-search="วรินทร ดิลกคุณ warintorn.d@siamstore.co.th waiting josh">
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-amber-50 text-[#b08900] font-bold flex items-center justify-center shrink-0 border border-amber-200">
+                        วร
+                      </div>
+                      <div>
+                        <div class="font-semibold text-[#17243b]">วรินทร ดิลกคุณ</div>
+                        <div class="text-[11px] text-[#52627a] font-mono">ID: JSH-092 · Access Pending</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono text-[#52627a]">
+                    warintorn.d@siamstore.co.th
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-[#b08900] border border-amber-200">
+                      Branch Manager
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-[#b08900] border border-amber-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#b08900] mr-1.5"></span>
+                      <span data-i18n-key="รอ josh">รอ josh</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a] italic">
+                    -
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openActionModal('วรินทร ดิลกคุณ', 'JSH-092')" class="text-xs font-semibold text-[#365cf5] hover:text-[#254adb] transition-colors p-1" data-i18n-key="จัดการ">
+                      จัดการ
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Record 4: Active staff -->
+                <tr class="hover:bg-slate-50/70 transition-colors" data-status="active" data-search="ธีรเทพ ประเสริฐสม theeratep.p@siamstore.co.th josh-warehouse">
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-blue-50 text-[#365cf5] font-bold flex items-center justify-center shrink-0 border border-blue-100">
+                        ธร
+                      </div>
+                      <div>
+                        <div class="font-semibold text-[#17243b]">ธีรเทพ ประเสริฐสม</div>
+                        <div class="text-[11px] text-[#52627a] font-mono">ID: JSH-104 · WH-Picker</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono text-[#52627a]">
+                    theeratep.p@siamstore.co.th
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-[#365cf5] border border-blue-200">
+                      Warehouse Packing
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-[#157347] border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#157347] mr-1.5"></span>
+                      <span data-i18n-key="เปิดบัญชี">เปิดบัญชี</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-[#52627a]">
+                    3 วันที่แล้ว
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openActionModal('ธีรเทพ ประเสริฐสม', 'JSH-104')" class="text-xs font-semibold text-[#365cf5] hover:text-[#254adb] transition-colors p-1" data-i18n-key="จัดการ">
+                      จัดการ
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Record 5: Inactive / Disabled -->
+                <tr class="hover:bg-slate-50/70 transition-colors opacity-75" data-status="inactive" data-search="ศุภกิจ ธนไพบูลย์ supakit.t@siamstore.co.th inactive closed">
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-gray-100 text-[#52627a] font-bold flex items-center justify-center shrink-0 border border-gray-200">
+                        ศก
+                      </div>
+                      <div>
+                        <div class="font-semibold text-gray-600 line-through">ศุภกิจ ธนไพบูลย์</div>
+                        <div class="text-[11px] text-gray-400 font-mono">ID: JSH-028 · Offboarding</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 font-mono text-gray-400">
+                    supakit.t@siamstore.co.th
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                      Sales Field
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-[#52627a] border border-gray-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5"></span>
+                      <span data-i18n-key="Inactive">Inactive</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-gray-400">
+                    12 มิ.ย. 2024
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button onclick="openActionModal('ศุภกิจ ธนไพบูลย์', 'JSH-028')" class="text-xs font-semibold text-[#52627a] hover:text-[#17243b] transition-colors p-1" data-i18n-key="จัดการ">
+                      จัดการ
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Filtered Empty State (Initially hidden) -->
+          <div id="table-empty-state" class="hidden py-12 px-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto text-gray-400 mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="text-xs font-semibold text-[#17243b]" data-i18n-key="ว่างเปล่า">ว่างเปล่า</div>
+            <p class="text-xs text-[#52627a] mt-1" data-i18n-th="ไม่พบบัญชีที่ตรงกับเงื่อนไขในหน้านี้" data-i18n-en="No accounts matching criteria on this page">ไม่พบบัญชีที่ตรงกับเงื่อนไขในหน้านี้</p>
+            <button onclick="clearSearch()" class="mt-3 inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-[#f8fafc] text-[#365cf5] border border-[#e1e7f0] hover:bg-white" data-i18n-key="ล้างคำค้นหา">
+              ล้างคำค้นหา
+            </button>
+          </div>
+
+          <!-- Pagination footer (explicitly noting current page limitation) -->
+          <div class="px-4 py-3 border-t border-[#e1e7f0] bg-[#fafcff] flex flex-col sm:flex-row items-center justify-between text-xs text-[#52627a] gap-2">
+            <div class="flex items-center space-x-2">
+              <span id="page-count-text">
+                <span data-i18n-th="แสดง 1 - 5 จาก 5 รวมบัญชี (การค้นหาค้นเฉพาะในหน้าปัจจุบัน)" data-i18n-en="Showing 1 - 5 of 5 accounts (Search operates on current page only)">
+                  แสดง 1 - 5 จาก 5 รวมบัญชี (การค้นหาค้นเฉพาะในหน้าปัจจุบัน)
+                </span>
+              </span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button disabled class="px-2.5 py-1 rounded border border-gray-200 bg-white text-gray-300 cursor-not-allowed text-xs font-medium" data-i18n-th="ก่อนหน้า" data-i18n-en="Previous">
+                ก่อนหน้า
+              </button>
+              <span class="font-medium text-[#17243b]">หน้า 1 / 1</span>
+              <button disabled class="px-2.5 py-1 rounded border border-gray-200 bg-white text-gray-300 cursor-not-allowed text-xs font-medium" data-i18n-th="ถัดไป" data-i18n-en="Next">
+                ถัดไป
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Architecture & Information Cards (Domain Fact Details) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- Card 1: พนักงานใน josh -->
+          <div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="font-bold text-sm text-[#17243b] flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-sm bg-purple-500"></span>
+                  <span data-i18n-key="พนักงานใน josh">พนักงานใน josh</span>
+                </div>
+                <span class="text-[11px] font-mono text-[#52627a]">Snapshot v1</span>
+              </div>
+              <p class="text-xs text-[#52627a] leading-relaxed" data-i18n-key="ยังไม่มีสำเนาพนักงานจาก josh (staff.snapshot — backfill กลุ่ม staff)">
+                ยังไม่มีสำเนาพนักงานจาก josh (staff.snapshot — backfill กลุ่ม staff)
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#f1f5f9] text-[11px] text-gray-400">
+              Sync key: <code class="font-mono text-gray-600">staff.snapshot</code>
+            </div>
+          </div>
+
+          <!-- Card 2: สิทธิ์ใน josh -->
+          <div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="font-bold text-sm text-[#17243b] flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-sm bg-[#365cf5]"></span>
+                  <span data-i18n-key="สิทธิ์ใน josh">สิทธิ์ใน josh</span>
+                </div>
+                <span class="text-[11px] font-mono text-[#52627a]">Role Mapping</span>
+              </div>
+              <p class="text-xs text-[#52627a] leading-relaxed" data-i18n-th="การควบคุมสิทธิ์ใช้งาน เช่น แคชเชียร์หน้าร้าน ฝ่ายคลังสินค้า หรือทีมสนับสนุนแชต ยังคงอิงตามนโยบายความปลอดภัยของระบบ josh หลัก" data-i18n-en="Access control including POS cashier, warehouse picking, or CS chat support adheres to core josh security policy.">
+                การควบคุมสิทธิ์ใช้งาน เช่น แคชเชียร์หน้าร้าน ฝ่ายคลังสินค้า หรือทีมสนับสนุนแชต ยังคงอิงตามนโยบายความปลอดภัยของระบบ josh หลัก
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#f1f5f9] text-[11px] text-gray-400">
+              Managed: <span class="text-gray-600 font-medium">External Auth Provider</span>
+            </div>
+          </div>
+
+          <!-- Card 3: การดูแลความปลอดภัย และเซสชัน -->
+          <div class="bg-white p-5 rounded-xl border border-[#e1e7f0] shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="font-bold text-sm text-[#17243b] flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
+                  <span data-i18n-th="การดูแลความปลอดภัย" data-i18n-en="Security & Sessions">การดูแลความปลอดภัย</span>
+                </div>
+                <span class="text-[11px] font-mono text-[#52627a]">Audit Mode</span>
+              </div>
+              <p class="text-xs text-[#52627a] leading-relaxed" data-i18n-th="ในกรณีที่พนักงานทำอุปกรณ์สูญหายหรือสิ้นสุดสภาพการทำงาน สามารถสั่งตัดเซสชันการเข้าใช้งานได้จากเมนูจัดการของแต่ละบัญชี" data-i18n-en="In case of lost devices or offboarding, operators can terminate active user sessions via the account actions menu.">
+                ในกรณีที่พนักงานทำอุปกรณ์สูญหายหรือสิ้นสุดสภาพการทำงาน สามารถสั่งตัดเซสชันการเข้าใช้งานได้จากเมนูจัดการของแต่ละบัญชี
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#f1f5f9] text-[11px] text-gray-400">
+              Audit log: <span class="text-emerald-700 font-medium" data-i18n-th="บันทึกต่อเนื่อง" data-i18n-en="Continuously Logging">บันทึกต่อเนื่อง</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Manage Account Action Modal (Dialog with accessible Escape and keyboard trap support) -->
+  <div id="action-dialog" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs hidden transition-opacity" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+      <div class="px-5 py-4 border-b border-[#e1e7f0] flex items-center justify-between bg-[#fafcff]">
+        <div>
+          <h3 id="dialog-title" class="font-bold text-sm text-[#17243b]" data-i18n-key="จัดการ">จัดการ</h3>
+          <p id="dialog-subtitle" class="text-xs text-[#52627a] mt-0.5 font-mono">STAFF ACCOUNT</p>
+        </div>
+        <button onclick="closeActionModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 leading-relaxed">
+          <span class="font-semibold" data-i18n-key="ยังดูได้อย่างเดียว">ยังดูได้อย่างเดียว</span>:
+          <span data-i18n-key="josh ยังเป็นเจ้าของบัญชีพนักงาน (COMMERCE_OWNS_STAFF ยังไม่เปิด) — คำขอเข้าใช้ใหม่อนุมัติที่ &quot;Admin access requests&quot;">
+            josh ยังเป็นเจ้าของบัญชีพนักงาน (COMMERCE_OWNS_STAFF ยังไม่เปิด) — คำขอเข้าใช้ใหม่อนุมัติที่ "Admin access requests"
+          </span>
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <div class="font-semibold text-[#17243b] text-xs" data-i18n-th="คำสั่งการทำงานที่มีสิทธิ์:" data-i18n-en="Available Operational Actions:">
+            คำสั่งการทำงานที่มีสิทธิ์:
+          </div>
+
+          <!-- Action 1: Sign out from all devices -->
+          <button onclick="simulateAction('signout')" class="w-full flex items-center justify-between p-3 rounded-lg border border-[#e1e7f0] hover:border-blue-200 hover:bg-blue-50/50 transition-colors text-left group">
+            <div class="flex items-center space-x-2.5">
+              <div class="p-1.5 rounded bg-blue-50 text-[#365cf5] group-hover:bg-blue-100">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              </div>
+              <div>
+                <div class="font-semibold text-[#17243b]" data-i18n-key="ออกจากระบบทุกเครื่อง">ออกจากระบบทุกเครื่อง</div>
+                <div class="text-[11px] text-[#52627a]" data-i18n-th="บังคับสิ้นสุดโทเค็นและเซสชันทั้งหมด" data-i18n-en="Revoke all active tokens & sessions">บังคับสิ้นสุดโทเค็นและเซสชันทั้งหมด</div>
+              </div>
+            </div>
+            <span class="text-xs text-[#365cf5] font-semibold">&rarr;</span>
+          </button>
+
+          <!-- Action 2: Close / Disable account -->
+          <button onclick="simulateAction('close')" class="w-full flex items-center justify-between p-3 rounded-lg border border-[#e1e7f0] hover:border-red-200 hover:bg-red-50/50 transition-colors text-left group">
+            <div class="flex items-center space-x-2.5">
+              <div class="p-1.5 rounded bg-red-50 text-red-600 group-hover:bg-red-100">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+              </div>
+              <div>
+                <div class="font-semibold text-red-700" data-i18n-key="ปิดบัญชี">ปิดบัญชี</div>
+                <div class="text-[11px] text-[#52627a]" data-i18n-th="ระงับการเข้าใช้งาน josh ของพนักงานชั่วคราว" data-i18n-en="Suspend staff josh access temporarily">ระงับการเข้าใช้งาน josh ของพนักงานชั่วคราว</div>
+              </div>
+            </div>
+            <span class="text-xs text-red-600 font-semibold">&rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 bg-[#fafcff] border-t border-[#e1e7f0] flex justify-end">
+        <button onclick="closeActionModal()" class="px-4 py-2 border border-[#e1e7f0] rounded-lg text-xs font-semibold text-[#17243b] hover:bg-white bg-white shadow-sm transition-colors" data-i18n-th="ปิดหน้าต่าง" data-i18n-en="Close">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification container -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 bg-[#17243b] text-white px-4 py-2.5 rounded-lg text-xs shadow-lg flex items-center space-x-2.5 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none">
+    <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    <span id="toast-message">ดำเนินการสำเร็จ</span>
+  </div>
+
+  <!--
+    MANDATORY EXPORT: commerce-ui-translations JSON Object
+    Contains EVERY exact key from the exact UI copy catalogue required by the task prompt.
+  -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "บัญชี josh (staff)": {
+      "th": "บัญชี josh (staff)",
+      "en": "Josh Accounts (staff)"
+    },
+    "Refresh": {
+      "th": "รีเฟรช",
+      "en": "Refresh"
+    },
+    "สถานะ": {
+      "th": "สถานะ",
+      "en": "Status"
+    },
+    "อีเมล": {
+      "th": "อีเมล",
+      "en": "Email"
+    },
+    "ชื่อ": {
+      "th": "ชื่อ",
+      "en": "Name"
+    },
+    "จัดการ": {
+      "th": "จัดการ",
+      "en": "Manage"
+    },
+    "เข้าแอปล่าสุด": {
+      "th": "เข้าแอปล่าสุด",
+      "en": "Last app login"
+    },
+    "บัญชีพนักงานที่ยังต้องใช้ใน josh — แอปฝ่ายขาย, แชต CS, หน้าที่ยังอยู่ josh · คนละบัญชีกับ commerce-admin": {
+      "th": "บัญชีพนักงานที่ยังต้องใช้ใน josh — แอปฝ่ายขาย, แชต CS, หน้าที่ยังอยู่ josh · คนละบัญชีกับ commerce-admin",
+      "en": "Staff accounts still required in josh — Sales app, CS chat, pages still on josh · Separate account from commerce-admin"
+    },
+    "ยังดูได้อย่างเดียว": {
+      "th": "ยังดูได้อย่างเดียว",
+      "en": "View only"
+    },
+    "josh ยังเป็นเจ้าของบัญชีพนักงาน (COMMERCE_OWNS_STAFF ยังไม่เปิด) — คำขอเข้าใช้ใหม่อนุมัติที่ \"Admin access requests\"": {
+      "th": "josh ยังเป็นเจ้าของบัญชีพนักงาน (COMMERCE_OWNS_STAFF ยังไม่เปิด) — คำขอเข้าใช้ใหม่อนุมัติที่ \"Admin access requests\"",
+      "en": "josh still owns staff accounts (COMMERCE_OWNS_STAFF not enabled) — Approve new access requests at \"Admin access requests\""
+    },
+    "พนักงานใน josh": {
+      "th": "พนักงานใน josh",
+      "en": "Staff in josh"
+    },
+    "สิทธิ์ใน josh": {
+      "th": "สิทธิ์ใน josh",
+      "en": "Roles in josh"
+    },
+    "รอ josh": {
+      "th": "รอ josh",
+      "en": "Awaiting josh"
+    },
+    "ออกจากระบบทุกเครื่อง": {
+      "th": "ออกจากระบบทุกเครื่อง",
+      "en": "Sign out from all devices"
+    },
+    "ปิดบัญชี": {
+      "th": "ปิดบัญชี",
+      "en": "Deactivate account"
+    },
+    "เปิดบัญชี": {
+      "th": "เปิดบัญชี",
+      "en": "Active account"
+    },
+    "ยังไม่มีสำเนาพนักงานจาก josh (staff.snapshot — backfill กลุ่ม staff)": {
+      "th": "ยังไม่มีสำเนาพนักงานจาก josh (staff.snapshot — backfill กลุ่ม staff)",
+      "en": "No staff snapshot copy from josh yet (staff.snapshot — backfill staff group)"
+    },
+    "-- เลือกแบรนด์ --": {
+      "th": "-- เลือกแบรนด์ --",
+      "en": "-- Select Brand --"
+    },
+    "+ เพิ่ม:": {
+      "th": "+ เพิ่ม:",
+      "en": "+ Add:"
+    },
+    "Branches": {
+      "th": "สาขา",
+      "en": "Branches"
+    },
+    "Device ID (individual_id) — ว่าง = สร้างให้อัตโนมัติ": {
+      "th": "Device ID (individual_id) — ว่าง = สร้างให้อัตโนมัติ",
+      "en": "Device ID (individual_id) — blank = auto-generate"
+    },
+    "Inactive": {
+      "th": "ไม่ได้ใช้งาน",
+      "en": "Inactive"
+    },
+    "No API keys yet. Create one to get started.": {
+      "th": "ยังไม่มีคีย์ API สร้างคีย์เพื่อเริ่มต้นใช้งาน",
+      "en": "No API keys yet. Create one to get started."
+    },
+    "Promotion Mechanic": {
+      "th": "เงื่อนไขโปรโมชัน",
+      "en": "Promotion Mechanic"
+    },
+    "Size": {
+      "th": "ขนาด",
+      "en": "Size"
+    },
+    "View and retry failed webhook deliveries.": {
+      "th": "ดูและลองส่ง webhook ที่ไม่สำเร็จใหม่อีกครั้ง",
+      "en": "View and retry failed webhook deliveries."
+    },
+    "กำลังนำเข้า...": {
+      "th": "กำลังนำเข้า...",
+      "en": "Importing..."
+    },
+    "ข้อความนำ (ไม่บังคับ)": {
+      "th": "ข้อความนำ (ไม่บังคับ)",
+      "en": "Lead text (optional)"
+    },
+    "คลัง": {
+      "th": "คลัง",
+      "en": "Warehouse"
+    },
+    "จากกลุ่มเป้าหมาย": {
+      "th": "จากกลุ่มเป้าหมาย",
+      "en": "From target audience"
+    },
+    "ชื่อสินค้า (ภาษาอังกฤษ) *": {
+      "th": "ชื่อสินค้า (ภาษาอังกฤษ) *",
+      "en": "Product Name (English) *"
+    },
+    "ตรวจ (": {
+      "th": "ตรวจ (",
+      "en": "Verify ("
+    },
+    "ที่มาราคา": {
+      "th": "ที่มาราคา",
+      "en": "Price source"
+    },
+    "ปฏิเสธการอัปเดตจาก ERP ที่ค้างทั้งหมด (สถานะสินค้าไม่เปลี่ยน)?": {
+      "th": "ปฏิเสธการอัปเดตจาก ERP ที่ค้างทั้งหมด (สถานะสินค้าไม่เปลี่ยน)?",
+      "en": "Reject all pending ERP updates (product status unchanged)?"
+    },
+    "แผน Growth": {
+      "th": "แผน Growth",
+      "en": "Growth Plan"
+    },
+    "ไม่ได้ตั้งค่า": {
+      "th": "ไม่ได้ตั้งค่า",
+      "en": "Not configured"
+    },
+    "ย่อหน้าบรรทัดแรก (Tab)": {
+      "th": "ย่อหน้าบรรทัดแรก (Tab)",
+      "en": "First line indent (Tab)"
+    },
+    "รวมบัญชีซ้ำ": {
+      "th": "รวมบัญชีซ้ำ",
+      "en": "Merge duplicate accounts"
+    },
+    "ร้านในหน้านี้ยังไม่มีพิกัดที่ใช้แสดงแผนที่": {
+      "th": "ร้านในหน้านี้ยังไม่มีพิกัดที่ใช้แสดงแผนที่",
+      "en": "Stores on this page do not have map coordinates yet"
+    },
+    "ล้างคำค้นหา": {
+      "th": "ล้างคำค้นหา",
+      "en": "Clear search"
+    },
+    "ว่างเปล่า": {
+      "th": "ว่างเปล่า",
+      "en": "Empty"
+    },
+    "ส่วนลดของที่แถม": {
+      "th": "ส่วนลดของที่แถม",
+      "en": "Freebie discount"
+    },
+    "หรือวาง email / user_id / custcode (คั่นด้วย comma หรือขึ้นบรรทัดใหม่)": {
+      "th": "หรือวาง email / user_id / custcode (คั่นด้วย comma หรือขึ้นบรรทัดใหม่)",
+      "en": "Or paste email / user_id / custcode (comma or newline separated)"
+    },
+    "โอกาสทำแผนเฉพาะบุคคล": {
+      "th": "โอกาสทำแผนเฉพาะบุคคล",
+      "en": "Personalized opportunity"
+    }
+  }
+  </script>
+
+  <!-- Interactive Logic for Language Switching, Dialog, and Filtering -->
+  <script>
+    let currentLang = 'th';
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Update switcher buttons UI
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-sm transition-all duration-150 font-semibold";
+        enBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all duration-150 font-medium";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-sm transition-all duration-150 font-semibold";
+        thBtn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all duration-150 font-medium";
+      }
+
+      // Update elements bound to exact keys in catalogue
+      document.querySelectorAll('[data-i18n-key]').forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (translationsData[key]) {
+          el.textContent = translationsData[key][lang] || translationsData[key]['th'];
+        }
+      });
+
+      // Update bilingual helpers
+      document.querySelectorAll('[data-i18n-th]').forEach(el => {
+        const thText = el.getAttribute('data-i18n-th');
+        const enText = el.getAttribute('data-i18n-en');
+        el.textContent = lang === 'en' ? enText : thText;
+      });
+
+      // Update input placeholder
+      const searchInput = document.getElementById('table-search');
+      if (searchInput) {
+        searchInput.placeholder = lang === 'en' ?
+          searchInput.getAttribute('data-i18n-placeholder-en') :
+          searchInput.getAttribute('data-i18n-placeholder-th');
+      }
+    }
+
+    // Table Filtering
+    let currentFilter = 'all';
+    function filterTable(type) {
+      currentFilter = type;
+      const buttons = ['all', 'active', 'waiting', 'inactive'];
+      buttons.forEach(b => {
+        const btn = document.getElementById('filter-' + b);
+        if (!btn) return;
+        if (b === type) {
+          btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#365cf5] text-white shadow-sm transition-colors";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-[#52627a] hover:bg-[#f8fafc] border border-transparent hover:border-[#e1e7f0] transition-colors";
+        }
+      });
+      applyFilters();
+    }
+
+    // Search and Filter executor
+    function handleSearch(val) {
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (val && val.trim() !== '') {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      applyFilters();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('table-search');
+      input.value = '';
+      document.getElementById('clear-search-btn').classList.add('hidden');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const searchVal = (document.getElementById('table-search').value || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#staff-table-body tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const status = row.getAttribute('data-status');
+        const searchData = (row.getAttribute('data-search') || '').toLowerCase();
+
+        const matchesStatus = (currentFilter === 'all') || (status === currentFilter);
+        const matchesSearch = !searchVal || searchData.includes(searchVal);
+
+        if (matchesStatus && matchesSearch) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const emptyState = document.getElementById('table-empty-state');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    // Refresh simulation
+    function handleRefresh() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      showToast(currentLang === 'en' ? 'Synchronizing staff records with josh...' : 'กำลังตรวจสอบการซิงก์บัญชีกับ josh...');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        showToast(currentLang === 'en' ? 'Staff snapshot up to date (staff.snapshot)' : 'ข้อมูลพนักงานเป็นปัจจุบันล่าสุดแล้ว');
+      }, 700);
+    }
+
+    // Dialog Modal Interactions
+    let lastActiveElement = null;
+    function openActionModal(staffName, staffId) {
+      lastActiveElement = document.activeElement;
+      document.getElementById('dialog-subtitle').textContent = staffName + ' (' + staffId + ')';
+      const dialog = document.getElementById('action-dialog');
+      dialog.classList.remove('hidden');
+      // Set focus to the first actionable button inside dialog
+      const firstBtn = dialog.querySelector('button');
+      if (firstBtn) firstBtn.focus();
+    }
+
+    function closeActionModal() {
+      const dialog = document.getElementById('action-dialog');
+      dialog.classList.add('hidden');
+      if (lastActiveElement) {
+        lastActiveElement.focus();
+      }
+    }
+
+    // Keyboard Escape handling
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const dialog = document.getElementById('action-dialog');
+        if (!dialog.classList.contains('hidden')) {
+          closeActionModal();
+        }
+      }
+    });
+
+    function simulateAction(type) {
+      closeActionModal();
+      if (type === 'signout') {
+        showToast(currentLang === 'en' ? 'Requested global sign out for user.' : 'ส่งคำสั่งออกจากระบบทุกเครื่องเรียบร้อยแล้ว');
+      } else if (type === 'close') {
+        showToast(currentLang === 'en' ? 'Account marked inactive.' : 'ส่งคำสั่งระงับบัญชีเรียบร้อยแล้ว');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-message');
+      text.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

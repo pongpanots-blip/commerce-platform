@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import {
   formatBangkokRange,
   listCampaigns,
@@ -17,7 +18,10 @@ import { CouponFormErrorBanner } from '../coupon/CouponFormSections';
 import { defaultDeeplink, shopPagePath } from '../promotion-page/promotion-page-form.helpers';
 import { CampaignStatusPill, getErrorMessage } from '../promotion-common';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CampaignList = () => {
+  __useUiLocale();
   const [items, setItems] = useState<CampaignListItem[]>([]);
   // page id → deeplink. The campaign list only carries the slug; an overridden deeplink lives on the page.
   const [deeplinks, setDeeplinks] = useState<Map<string, string>>(new Map());
@@ -58,7 +62,7 @@ const CampaignList = () => {
   const columns: TableColumn<CampaignListItem>[] = [
     {
       key: 'name',
-      label: 'ชื่อ Campaign',
+      label: __uiText("ชื่อ Campaign"),
       render: (value: string, row) => (
         <Link to={ADMIN_ROUTES.campaignDetail(row.id)} className="font-semibold text-blue-600 hover:underline">
           {value}
@@ -67,29 +71,29 @@ const CampaignList = () => {
     },
     {
       key: 'status',
-      label: 'สถานะ',
+      label: __uiText("สถานะ"),
       render: (value: CampaignListItem['status']) => <CampaignStatusPill status={value} />,
     },
     {
       key: 'start_at',
-      label: 'ช่วงเวลา',
+      label: __uiText("ช่วงเวลา"),
       render: (_value, row) => formatBangkokRange(row.start_at, row.end_at, 'th'),
     },
     {
       key: 'mechanic_count',
-      label: 'โปรโมชัน',
+      label: __uiText("โปรโมชัน"),
       render: (_value, row) => (
         <div>
           <span>{(row.mechanic_count + row.coupon_count).toLocaleString('th-TH')}</span>
           <span className="ml-1 text-xs text-ink-muted">
-            (โปรอัตโนมัติ {row.mechanic_count} · คูปอง {row.coupon_count})
+            {__uiText("(โปรอัตโนมัติ ")}{row.mechanic_count} {__uiText(" · คูปอง ")}{row.coupon_count})
           </span>
         </div>
       ),
     },
     {
       key: 'page',
-      label: 'หน้าโปร',
+      label: __uiText("หน้าโปร"),
       render: (page: CampaignListItem['page']) =>
         page ? (
           <div className="flex items-center gap-1">
@@ -103,7 +107,7 @@ const CampaignList = () => {
               <HiOutlineExternalLink size={14} />
             </a>
             {deeplinks.has(page.id) && (
-              <CopyIdButton id={deeplinks.get(page.id) as string} label={`คัดลอก deeplink ${page.slug}`} />
+              <CopyIdButton id={deeplinks.get(page.id) as string} label={__uiText("คัดลอก deeplink {0}", {"0": page.slug})} />
             )}
           </div>
         ) : (
@@ -112,13 +116,13 @@ const CampaignList = () => {
     },
     {
       key: 'actions',
-      label: 'จัดการ',
+      label: __uiText("จัดการ"),
       render: (_value, row) => (
         <Link
           to={ADMIN_ROUTES.campaignDetail(row.id)}
           className="inline-flex rounded-lg p-1.5 text-ink-muted hover:bg-primary-soft hover:text-primary"
-          title="แก้ไข"
-          aria-label={`แก้ไข ${row.name}`}
+          title={__uiText("แก้ไข")}
+          aria-label={__uiText("แก้ไข {0}", {"0": row.name})}
         >
           <AiOutlineEdit size={18} />
         </Link>
@@ -129,20 +133,20 @@ const CampaignList = () => {
   return (
     <div className="flex flex-col gap-5 p-4">
       <AdminListHeader
-        title="Campaigns"
-        subtitle="ซองรวมโปรอัตโนมัติ คูปอง และหน้าโปรของงานเดียวกัน — วันที่อยู่ที่ Campaign ที่เดียว"
-        createLabel="สร้าง Campaign"
+        title={__uiText("Campaigns")}
+        subtitle={__uiText("ซองรวมโปรอัตโนมัติ คูปอง และหน้าโปรของงานเดียวกัน — วันที่อยู่ที่ Campaign ที่เดียว")}
+        createLabel={__uiText("สร้าง Campaign")}
         createPath={ADMIN_ROUTES.campaignCreate}
       />
 
       {loading ? (
-        <p className="text-sm text-ink-muted">กำลังโหลด...</p>
+        <p className="text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</p>
       ) : loadError ? (
         <div className="flex flex-col items-start gap-3">
           <CouponFormErrorBanner error={loadError} />
           <Button
             variant="secondary"
-            text="ลองใหม่"
+            text={__uiText("ลองใหม่")}
             onClick={() => {
               setLoading(true);
               setReloadKey((key) => key + 1);
@@ -153,7 +157,7 @@ const CampaignList = () => {
         <>
           <div className="rounded-lg bg-white p-3 shadow-level-1">
             <Input
-              label="ค้นหาชื่อ Campaign"
+              label={__uiText("ค้นหาชื่อ Campaign")}
               icon={<AiOutlineSearch size={20} />}
               className="md:w-[296px]"
               value={search}

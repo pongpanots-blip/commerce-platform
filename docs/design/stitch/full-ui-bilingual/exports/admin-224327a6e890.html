@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>อัปโหลดวิดีโอสินค้า (ProductVideoUpload - /j/product/video-upload)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-[#f6f8fc] text-[#17243b] text-[14px]">
+
+  <!-- Sidebar (256px) -->
+  <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col flex-shrink-0 min-h-screen select-none">
+    <!-- Brand / App Header -->
+    <div class="h-16 px-5 border-b border-[#e1e7f0] flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-[#365cf5] flex items-center justify-center text-white font-bold text-base shadow-sm">
+          C
+        </div>
+        <div>
+          <div class="font-bold text-[15px] leading-tight flex items-center gap-1.5 text-[#17243b]">
+            Commerce
+            <span class="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded bg-blue-50 text-[#365cf5] border border-blue-100">admin</span>
+          </div>
+          <div class="text-[11px] text-[#52627a] font-normal leading-none mt-0.5">Operations Hub</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Section: 7 Areas -->
+    <div class="px-3 py-3 overflow-y-auto flex-1 custom-scrollbar space-y-4">
+      <div>
+        <div class="px-2 pb-1.5 text-[11px] font-semibold text-[#8a99ad] uppercase tracking-wider">
+          พื้นที่ปฏิบัติการ (7 กลุ่ม)
+        </div>
+
+        <!-- 1. สินค้าและสต็อก (Expanded & Active) -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-between px-2.5 py-2 text-[13px] font-semibold text-[#17243b] rounded-lg bg-blue-50/70 text-[#365cf5]">
+            <span class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-[#365cf5]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              สินค้าและสต็อก
+            </span>
+            <svg class="w-3.5 h-3.5 text-[#365cf5] rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+
+          <div class="pl-7 pr-2 py-1 space-y-0.5 text-[13px] border-l-2 border-blue-100 ml-4">
+            <a href="/products" class="block px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">แคตตาล็อกแพลตฟอร์ม</a>
+            <a href="/j/product/create" class="block px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">เพิ่มสินค้าใหม่</a>
+            <a href="/j/product/video-upload" class="flex items-center justify-between px-2.5 py-1.5 text-[#365cf5] font-medium bg-blue-50 rounded">
+              <span>อัปโหลดวิดีโอสินค้า</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#365cf5]"></span>
+            </a>
+            <a href="/j/brands" class="block px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">แบรนด์</a>
+            <a href="/order-periods" class="block px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">รอบสั่งซื้อ supplier</a>
+            <a href="/product-master-queue" class="flex items-center justify-between px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">
+              <span>คิวข้อมูลสินค้าจาก ERP</span>
+              <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded-full">3</span>
+            </a>
+            <a href="/product-prices" class="block px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">ราคาสินค้า</a>
+            <a href="/stock-moves" class="block px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">ความเคลื่อนไหวสต็อก</a>
+            <a href="/prices/staff" class="block px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">ราคาลูกค้า / ราคาสัญญา</a>
+            <a href="/erp/inventory-warehouse" class="block px-2.5 py-1.5 text-[#52627a] hover:text-[#17243b] rounded transition">สต็อกแยกตามคลัง</a>
+          </div>
+        </div>
+
+        <!-- 2. ออเดอร์และการเงิน -->
+        <a href="#orders" class="flex items-center gap-2.5 px-2.5 py-2 text-[13px] text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg transition mt-1">
+          <svg class="w-4 h-4 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          ออเดอร์และการเงิน
+        </a>
+
+        <!-- 3. ลูกค้าและบริการ -->
+        <a href="#customers" class="flex items-center gap-2.5 px-2.5 py-2 text-[13px] text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg transition">
+          <svg class="w-4 h-4 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          ลูกค้าและบริการ
+        </a>
+
+        <!-- 4. การตลาด -->
+        <a href="#marketing" class="flex items-center gap-2.5 px-2.5 py-2 text-[13px] text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg transition">
+          <svg class="w-4 h-4 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+          การตลาด
+        </a>
+
+        <!-- 5. รายงานและข้อมูล -->
+        <a href="#reports" class="flex items-center gap-2.5 px-2.5 py-2 text-[13px] text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg transition">
+          <svg class="w-4 h-4 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          รายงานและข้อมูล
+        </a>
+
+        <!-- 6. ระบบเชื่อมต่อ -->
+        <a href="#connections" class="flex items-center gap-2.5 px-2.5 py-2 text-[13px] text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg transition">
+          <svg class="w-4 h-4 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          ระบบเชื่อมต่อ
+        </a>
+
+        <!-- 7. ตั้งค่าและทีมงาน -->
+        <a href="#settings" class="flex items-center gap-2.5 px-2.5 py-2 text-[13px] text-[#52627a] hover:text-[#17243b] hover:bg-slate-50 rounded-lg transition">
+          <svg class="w-4 h-4 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          ตั้งค่าและทีมงาน
+        </a>
+      </div>
+    </div>
+
+    <!-- Sidebar Footer (Developer Portal link & Route info) -->
+    <div class="p-3 border-t border-[#e1e7f0] bg-slate-50/60 text-[12px] space-y-1">
+      <a href="/developer-portal" class="flex items-center justify-between text-[#52627a] hover:text-[#365cf5] font-medium py-1 px-1">
+        <span class="flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          Developer Portal
+        </span>
+        <svg class="w-3 h-3 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+      </a>
+      <div class="flex items-center justify-between text-[11px] text-[#8a99ad] px-1 font-mono">
+        <span>/j/product/video-upload</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500" title="API status: connected"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Layout -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Top contextual header -->
+    <header class="h-16 bg-white border-b border-[#e1e7f0] px-8 flex items-center justify-between flex-shrink-0">
+      <!-- Breadcrumb & Route Pill -->
+      <div class="flex items-center gap-3 text-[13px]">
+        <div class="flex items-center gap-2 text-[#52627a]">
+          <span class="hover:text-[#17243b]">สินค้าและสต็อก</span>
+          <svg class="w-3.5 h-3.5 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <a href="/products" class="hover:text-[#17243b]">แคตตาล็อกสินค้า</a>
+          <svg class="w-3.5 h-3.5 text-[#8a99ad]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <span class="text-[#17243b] font-medium" data-i18n="อัปโหลดวิดีโอสินค้า">อัปโหลดวิดีโอสินค้า</span>
+        </div>
+        <span class="text-[11px] font-mono bg-slate-100 text-[#52627a] px-2 py-0.5 rounded border border-slate-200">
+          admin-224327a6e890
+        </span>
+      </div>
+
+      <!-- Controls: Sample Data tag, Language selector, User info -->
+      <div class="flex items-center gap-4">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+          <svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+          <span id="badge-sample-data">ข้อมูลตัวอย่าง</span>
+        </span>
+
+        <!-- Bilingual Selector -->
+        <div class="flex items-center p-0.5 rounded-lg border border-[#e1e7f0] bg-slate-100 text-[12px] font-medium" id="lang-switch-container">
+          <button type="button" id="lang-th-btn" onclick="switchLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-[#365cf5] shadow-xs font-semibold">
+            ไทย
+          </button>
+          <button type="button" id="lang-en-btn" onclick="switchLanguage('en')" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b]">
+            English
+          </button>
+        </div>
+
+        <!-- User profile indicator -->
+        <div class="flex items-center gap-2.5 pl-2 border-l border-[#e1e7f0]">
+          <div class="w-8 h-8 rounded-full bg-blue-100 text-[#365cf5] font-semibold text-xs flex items-center justify-center">
+            OP
+          </div>
+          <div class="text-left hidden lg:block">
+            <div class="text-[13px] font-medium leading-none text-[#17243b]">ทีมปฏิบัติการ</div>
+            <div class="text-[11px] text-[#52627a] leading-none mt-1">Commerce Ops</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Body (max-width 1240px container) -->
+    <main class="flex-1 overflow-y-auto px-8 py-7 custom-scrollbar">
+      <div class="max-w-[1240px] mx-auto space-y-6">
+
+        <!-- Page Header & Action Bar -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#e1e7f0]">
+          <div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-[28px] font-bold text-[#17243b] tracking-tight leading-tight" data-i18n="อัปโหลดวิดีโอสินค้า">
+                อัปโหลดวิดีโอสินค้า
+              </h1>
+              <span class="px-2 py-0.5 bg-blue-50 text-[#365cf5] font-mono text-[12px] rounded border border-blue-200">
+                /j/product/video-upload
+              </span>
+              <span class="px-2 py-0.5 bg-slate-100 text-[#52627a] font-mono text-[12px] rounded border border-slate-200">
+                ProductVideoUpload
+              </span>
+            </div>
+            <p class="text-[14px] text-[#52627a] mt-1" data-i18n="เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)">
+              เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)
+            </p>
+          </div>
+
+          <!-- Sticky action buttons -->
+          <div class="flex items-center gap-3 flex-shrink-0">
+            <button type="button" class="h-10 px-4 rounded-lg border border-[#e1e7f0] bg-white text-[#52627a] hover:bg-slate-50 font-medium text-[13px] transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+              <span id="btn-cancel">ยกเลิกและย้อนกลับ</span>
+            </button>
+            <button type="button" id="submit-btn" onclick="validateAndSubmit()" class="h-10 px-5 rounded-lg bg-[#365cf5] hover:bg-[#2849d4] text-white font-medium text-[13px] shadow-sm transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              <span id="btn-save">อัปโหลดและผูก SKU</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Inline Banner Notifications / Validation Alerts -->
+        <div id="alert-container" class="hidden">
+          <div id="alert-box" class="p-4 rounded-xl border flex items-start gap-3">
+            <svg id="alert-icon" class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"></svg>
+            <div class="flex-1">
+              <div id="alert-title" class="font-semibold text-[14px]"></div>
+              <div id="alert-message" class="text-[13px] mt-0.5"></div>
+            </div>
+            <button type="button" onclick="dismissAlert()" class="text-slate-400 hover:text-slate-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Operational Info Card -->
+        <div class="bg-blue-50/60 border border-blue-200/80 rounded-xl p-4 flex items-start gap-3.5">
+          <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-[#365cf5] flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="text-[13px] leading-relaxed text-[#17243b] space-y-1">
+            <div class="font-semibold text-blue-950 flex items-center gap-2">
+              <span data-i18n="ข้อจำกัด:">ข้อจำกัด:</span>
+              <span class="font-normal text-[#52627a]" data-i18n="เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)">เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)</span>
+            </div>
+            <div class="text-[#52627a] text-[12.5px]">
+              • รองรับไฟล์ MP4, WebM หรือ MOV ขนาดสูงสุด 50MB (ความยาวแนะนำ 15–60 วินาที)<br>
+              • วิดีโอจะถูกประมวลผล HLS/DASH อัตโนมัติเพื่อแสดงบนแอปพลิเคชันและหน้าร้าน Storefront
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-Step Workflow Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <!-- Left Column: Step 1 Video Upload (5 cols) -->
+          <div class="lg:col-span-5 bg-white border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden">
+            <div class="px-5 py-4 border-b border-[#e1e7f0] bg-slate-50/50 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="w-6 h-6 rounded-full bg-[#365cf5] text-white text-xs font-bold flex items-center justify-center">1</span>
+                <h2 class="font-bold text-[15px] text-[#17243b]" data-i18n="1. เลือกวิดีโอ">1. เลือกวิดีโอ</h2>
+              </div>
+              <span class="text-[12px] text-red-500 font-medium">* จำเป็น</span>
+            </div>
+
+            <div class="p-5 space-y-4">
+              <!-- Upload Dropzone -->
+              <div id="dropzone" onclick="simulateFileUpload()" class="border-2 border-dashed border-[#cbd5e1] hover:border-[#365cf5] hover:bg-blue-50/30 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[220px]">
+                <div class="w-12 h-12 rounded-full bg-blue-50 text-[#365cf5] flex items-center justify-center mb-3">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </div>
+                <div class="font-semibold text-[14px] text-[#17243b]" data-i18n="1. เลือกวิดีโอ">คลิกหรือลากไฟล์วิดีโอมาวางที่นี่</div>
+                <div class="text-[12px] text-[#52627a] mt-1">MP4, WebM หรือ MOV (สูงสุด 50MB)</div>
+                <button type="button" class="mt-3.5 px-3 py-1.5 rounded-lg bg-white border border-[#cbd5e1] text-[13px] font-medium text-[#17243b] hover:bg-slate-50 shadow-xs pointer-events-none">
+                  เลือกไฟล์จากคอมพิวเตอร์
+                </button>
+              </div>
+
+              <!-- Selected Video Card (Simulated Attached Video) -->
+              <div id="video-preview-card" class="bg-slate-50 border border-[#e1e7f0] rounded-xl p-3.5 flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-slate-800 text-white flex items-center justify-center flex-shrink-0 relative overflow-hidden">
+                  <svg class="w-5 h-5 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+                  <span class="absolute bottom-0.5 right-1 text-[9px] font-mono text-white/90">0:45</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium text-[13px] text-[#17243b] truncate" id="video-filename">
+                    rice_cooking_tutorial_5kg.mp4
+                  </div>
+                  <div class="text-[11px] text-[#52627a] flex items-center gap-2 mt-0.5">
+                    <span>18.4 MB</span>
+                    <span>•</span>
+                    <span class="text-emerald-700 font-medium">พร้อมอัปโหลด</span>
+                    <span>•</span>
+                    <span class="text-slate-400">1080p 60fps</span>
+                  </div>
+                </div>
+                <button type="button" onclick="removeVideoFile()" class="p-1.5 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-600 transition" title="ลบไฟล์">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+
+              <!-- Media details footnote -->
+              <div class="text-[12px] text-[#52627a] bg-slate-50 rounded-lg p-3 border border-slate-200">
+                <span class="font-medium text-[#17243b]">หมายเหตุตำแหน่งแสดงผล:</span> เมื่อบันทึกเสร็จ วิดีโอจะถูกจัดเป็นลำดับสุดท้ายต่อจากภาพสินค้า (Gallery) บน Storefront และแอปพลิเคชัน
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Step 2 Target SKU Selection (7 cols) -->
+          <div class="lg:col-span-7 space-y-6">
+
+            <!-- Step 2 Card -->
+            <div class="bg-white border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden">
+              <div class="px-5 py-4 border-b border-[#e1e7f0] bg-slate-50/50 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-6 h-6 rounded-full bg-[#365cf5] text-white text-xs font-bold flex items-center justify-center">2</span>
+                  <h2 class="font-bold text-[15px] text-[#17243b]" data-i18n="2. เลือก SKU เป้าหมาย">2. เลือก SKU เป้าหมาย</h2>
+                </div>
+                <span class="text-[12px] text-[#52627a]">
+                  เลือกแล้ว <strong class="text-[#365cf5]" id="selected-count">2</strong> รายการ
+                </span>
+              </div>
+
+              <div class="p-5 space-y-5">
+
+                <!-- Search Current Page Filter -->
+                <div>
+                  <label class="block text-[13px] font-medium text-[#17243b] mb-1.5" data-i18n="ค้นหาสินค้า">
+                    ค้นหาสินค้า
+                  </label>
+                  <div class="relative">
+                    <input type="text" id="catalog-search" oninput="filterCatalog(this.value)" placeholder="ค้นหาสินค้าด้วยชื่อหรือ SKU..." data-i18n-placeholder="ค้นหาสินค้าด้วยชื่อหรือ SKU..." class="w-full h-10 pl-10 pr-4 rounded-lg border border-[#cbd5e1] focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] text-[13px] outline-none">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  </div>
+                  <div class="flex items-center justify-between text-[11px] text-[#52627a] mt-1 px-0.5">
+                    <span>* การค้นหาทำงานเฉพาะข้อมูลในหน้านี้ตามข้อกำหนด Pagination API</span>
+                    <span>แสดง 5 จาก 5 รายการ (ข้อมูลตัวอย่าง)</span>
+                  </div>
+                </div>
+
+                <!-- Product Selection Table -->
+                <div class="border border-[#e1e7f0] rounded-xl overflow-hidden">
+                  <div class="bg-slate-50 px-4 py-2.5 border-b border-[#e1e7f0] text-[12px] font-semibold text-[#52627a] grid grid-cols-12 gap-2 items-center">
+                    <div class="col-span-1 text-center">เลือก</div>
+                    <div class="col-span-3">รหัสสินค้า (SKU)</div>
+                    <div class="col-span-5">ชื่อสินค้า</div>
+                    <div class="col-span-3 text-right">สถานะสต็อก</div>
+                  </div>
+
+                  <div class="divide-y divide-[#e1e7f0] text-[13px]" id="sku-table-body">
+
+                    <!-- Row 1: SKU-TH-8890 (Selected) -->
+                    <div class="sku-row px-4 py-3 grid grid-cols-12 gap-2 items-center hover:bg-slate-50 transition" data-sku="SKU-TH-8890" data-name="ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง">
+                      <div class="col-span-1 text-center">
+                        <input type="checkbox" checked onchange="toggleSku('SKU-TH-8890', 'ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง', this.checked)" class="w-4 h-4 text-[#365cf5] rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                      </div>
+                      <div class="col-span-3 font-mono font-medium text-[#17243b]">
+                        SKU-TH-8890
+                      </div>
+                      <div class="col-span-5 font-normal text-[#17243b] truncate" title="ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง">
+                        ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง
+                      </div>
+                      <div class="col-span-3 text-right">
+                        <span class="inline-flex items-center gap-1 text-[11.5px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 420 ชิ้น
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Row 2: SKU-CH-4412 (Selected) -->
+                    <div class="sku-row px-4 py-3 grid grid-cols-12 gap-2 items-center hover:bg-slate-50 transition" data-sku="SKU-CH-4412" data-name="น้ำมันพืชบรรจุลัง (12 ขวด) ตรา Golden Harvest">
+                      <div class="col-span-1 text-center">
+                        <input type="checkbox" checked onchange="toggleSku('SKU-CH-4412', 'น้ำมันพืชบรรจุลัง (12 ขวด) ตรา Golden Harvest', this.checked)" class="w-4 h-4 text-[#365cf5] rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                      </div>
+                      <div class="col-span-3 font-mono font-medium text-[#17243b]">
+                        SKU-CH-4412
+                      </div>
+                      <div class="col-span-5 font-normal text-[#17243b] truncate" title="น้ำมันพืชบรรจุลัง (12 ขวด) ตรา Golden Harvest">
+                        น้ำมันพืชบรรจุลัง (12 ขวด) ตรา Golden Harvest
+                      </div>
+                      <div class="col-span-3 text-right">
+                        <span class="inline-flex items-center gap-1 text-[11.5px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 1,050 ลัง
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Row 3: SKU-MK-1102 (Unchecked) -->
+                    <div class="sku-row px-4 py-3 grid grid-cols-12 gap-2 items-center hover:bg-slate-50 transition" data-sku="SKU-MK-1102" data-name="นมยูเอชที รสจืด 250มล. (ลัง 36 กล่อง)">
+                      <div class="col-span-1 text-center">
+                        <input type="checkbox" onchange="toggleSku('SKU-MK-1102', 'นมยูเอชที รสจืด 250มล. (ลัง 36 กล่อง)', this.checked)" class="w-4 h-4 text-[#365cf5] rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                      </div>
+                      <div class="col-span-3 font-mono font-medium text-[#17243b]">
+                        SKU-MK-1102
+                      </div>
+                      <div class="col-span-5 font-normal text-[#17243b] truncate" title="นมยูเอชที รสจืด 250มล. (ลัง 36 กล่อง)">
+                        นมยูเอชที รสจืด 250มล. (ลัง 36 กล่อง)
+                      </div>
+                      <div class="col-span-3 text-right">
+                        <span class="inline-flex items-center gap-1 text-[11.5px] font-medium text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                          5 ลัง (ใกล้หมด)
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Row 4: SKU-FD-7741 (Unchecked) -->
+                    <div class="sku-row px-4 py-3 grid grid-cols-12 gap-2 items-center hover:bg-slate-50 transition" data-sku="SKU-FD-7741" data-name="เนยชีสนำเข้าเกรดพรีเมียม 1กก.">
+                      <div class="col-span-1 text-center">
+                        <input type="checkbox" onchange="toggleSku('SKU-FD-7741', 'เนยชีสนำเข้าเกรดพรีเมียม 1กก.', this.checked)" class="w-4 h-4 text-[#365cf5] rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                      </div>
+                      <div class="col-span-3 font-mono font-medium text-[#17243b]">
+                        SKU-FD-7741
+                      </div>
+                      <div class="col-span-5 font-normal text-[#17243b] truncate" title="เนยชีสนำเข้าเกรดพรีเมียม 1กก.">
+                        เนยชีสนำเข้าเกรดพรีเมียม 1กก.
+                      </div>
+                      <div class="col-span-3 text-right">
+                        <span class="inline-flex items-center gap-1 text-[11.5px] font-medium text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                          0 ชิ้น (หมด)
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Row 5: SKU-1 (Unchecked) -->
+                    <div class="sku-row px-4 py-3 grid grid-cols-12 gap-2 items-center hover:bg-slate-50 transition" data-sku="SKU-1" data-name="ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)">
+                      <div class="col-span-1 text-center">
+                        <input type="checkbox" onchange="toggleSku('SKU-1', 'ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)', this.checked)" class="w-4 h-4 text-[#365cf5] rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                      </div>
+                      <div class="col-span-3 font-mono font-medium text-[#17243b]">
+                        SKU-1
+                      </div>
+                      <div class="col-span-5 font-normal text-[#17243b] truncate" title="ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)">
+                        ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)
+                      </div>
+                      <div class="col-span-3 text-right">
+                        <span class="inline-flex items-center gap-1 text-[11.5px] font-medium text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                          รอระบุราคา
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Empty search state -->
+                  <div id="search-empty-state" class="hidden p-8 text-center text-[#52627a]">
+                    <svg class="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div class="font-medium text-[14px]" data-i18n="ไม่พบสินค้า">ไม่พบสินค้า</div>
+                    <div class="text-[12px] text-[#8a99ad] mt-0.5">ลองค้นหาด้วยคำอื่น หรือเพิ่มรหัสสินค้าด้วยตนเองที่ด้านล่าง</div>
+                  </div>
+                </div>
+
+                <!-- Manual SKU Input Section -->
+                <div class="pt-4 border-t border-[#e1e7f0]">
+                  <div class="flex items-center justify-between mb-2">
+                    <label class="text-[13px] font-semibold text-[#17243b]" data-i18n="เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง">
+                      เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง
+                    </label>
+                    <span class="text-[11px] text-[#52627a]" data-i18n="เช่น สินค้าโปรโมชัน / แพ็กพิเศษ">เช่น สินค้าโปรโมชัน / แพ็กพิเศษ</span>
+                  </div>
+
+                  <div class="flex gap-2.5">
+                    <div class="relative flex-1">
+                      <input type="text" id="manual-sku-input" placeholder="พิมพ์ SKU แล้วกดเพิ่ม" data-i18n-placeholder="พิมพ์ SKU แล้วกดเพิ่ม" class="w-full h-10 px-3.5 rounded-lg border border-[#cbd5e1] focus:border-[#365cf5] focus:ring-1 focus:ring-[#365cf5] font-mono text-[13px] outline-none">
+                    </div>
+                    <button type="button" onclick="addManualSku()" class="h-10 px-4 rounded-lg bg-white border border-[#cbd5e1] hover:border-[#365cf5] text-[#17243b] hover:text-[#365cf5] font-medium text-[13px] transition flex items-center gap-1.5 shadow-xs flex-shrink-0">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                      <span data-i18n="เพิ่ม SKU">เพิ่ม SKU</span>
+                    </button>
+                  </div>
+                  <p class="text-[11.5px] text-[#52627a] mt-1.5" data-i18n="ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งให้ทราบ">
+                    ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งให้ทราบ
+                  </p>
+                </div>
+
+                <!-- Selected SKU Chips Container -->
+                <div class="bg-slate-50/70 border border-[#e1e7f0] rounded-xl p-4">
+                  <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[12px] font-semibold text-[#52627a] uppercase tracking-wider">
+                      รายการ SKU ที่จะผูกวิดีโอนี้
+                    </span>
+                    <button type="button" onclick="clearAllSelectedSkus()" class="text-[12px] text-red-600 hover:underline">
+                      ล้างทั้งหมด
+                    </button>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2" id="sku-chips-list">
+                    <!-- Chip 1 -->
+                    <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white border border-blue-200 text-[#17243b] text-[12.5px] shadow-xs" id="chip-SKU-TH-8890">
+                      <span class="font-mono font-semibold text-[#365cf5]">SKU-TH-8890</span>
+                      <span class="text-slate-400">·</span>
+                      <span class="text-[12px] text-[#52627a] max-w-[140px] truncate">ข้าวหอมมะลิตัดพิเศษ</span>
+                      <button type="button" onclick="removeSku('SKU-TH-8890')" class="w-4 h-4 rounded hover:bg-slate-100 text-slate-400 hover:text-red-500 flex items-center justify-center ml-0.5" title="ลบ">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </span>
+
+                    <!-- Chip 2 -->
+                    <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white border border-blue-200 text-[#17243b] text-[12.5px] shadow-xs" id="chip-SKU-CH-4412">
+                      <span class="font-mono font-semibold text-[#365cf5]">SKU-CH-4412</span>
+                      <span class="text-slate-400">·</span>
+                      <span class="text-[12px] text-[#52627a] max-w-[140px] truncate">น้ำมันพืชบรรจุลัง</span>
+                      <button type="button" onclick="removeSku('SKU-CH-4412')" class="w-4 h-4 rounded hover:bg-slate-100 text-slate-400 hover:text-red-500 flex items-center justify-center ml-0.5" title="ลบ">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Operational Reference Guide Card (Standard Bottom Guidance in Platform) -->
+        <div class="bg-white border border-[#e1e7f0] rounded-xl p-5 shadow-xs">
+          <div class="flex items-center gap-2 mb-3 text-[14px] font-semibold text-[#17243b]">
+            <svg class="w-4 h-4 text-[#365cf5]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+            <span>แนวทางปฏิบัติงานและการผูกสื่อสินค้า (Product Media Guidelines)</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-[13px]">
+            <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200">
+              <div class="font-semibold text-[#17243b] mb-1">1. ลำดับการแสดงผลวิดีโอ</div>
+              <div class="text-[#52627a] text-[12.5px] leading-relaxed">
+                ระบบ Commerce กำหนดให้วิดีโอถูกจัดวางต่อจากภาพนิ่งเสมอ เพื่อให้ลูกค้าได้ดูมุมมองหลักของสินค้าก่อนชมคลิปสาธิต
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200">
+              <div class="font-semibold text-[#17243b] mb-1">2. การผูกหลาย SKU พร้อมกัน</div>
+              <div class="text-[#52627a] text-[12.5px] leading-relaxed">
+                กรณีวิดีโอชุดเดียวกันใช้กับสินค้ากลุ่มเดียวกัน (เช่น สีหรือขนาดต่างกัน) สามารถเลือกหลาย SKU เพื่อประหยัดพื้นที่จัดเก็บและลดเวลาอัปโหลด
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200">
+              <div class="font-semibold text-[#17243b] mb-1">3. การแปลงไฟล์และ CDN</div>
+              <div class="text-[#52627a] text-[12.5px] leading-relaxed">
+                หลังการอัปโหลด ระบบเบื้องหลังจะสร้างไฟล์ Adaptive Bitrate Streaming สำหรับทั้งแอปพลิเคชันมือถือและเดสก์ท็อปโดยอัตโนมัติ
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- INVISIBLE REQUIRED DICTIONARY FOR EXPORT -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "ค้นหาสินค้า": { "th": "ค้นหาสินค้า", "en": "Search products" },
+    "ลบ": { "th": "ลบ", "en": "Delete" },
+    "ไม่พบสินค้า": { "th": "ไม่พบสินค้า", "en": "No products found" },
+    "กรุณาอัปโหลดวิดีโอ": { "th": "กรุณาอัปโหลดวิดีโอ", "en": "Please upload a video" },
+    "กรุณาเลือก SKU อย่างน้อย 1 รายการ": { "th": "กรุณาเลือก SKU อย่างน้อย 1 รายการ", "en": "Please select at least 1 SKU" },
+    "เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ": { "th": "เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ", "en": "An error occurred while uploading video" },
+    "อัปโหลดวิดีโอสินค้า": { "th": "อัปโหลดวิดีโอสินค้า", "en": "Upload Product Video" },
+    "เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)": { "th": "เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)", "en": "Select SKUs for this video to display (video will always appear last)" },
+    "1. เลือกวิดีโอ": { "th": "1. เลือกวิดีโอ", "en": "1. Select Video" },
+    "กรุณาเลือกไฟล์วิดีโอเท่านั้น": { "th": "กรุณาเลือกไฟล์วิดีโอเท่านั้น", "en": "Please select video files only" },
+    "2. เลือก SKU เป้าหมาย": { "th": "2. เลือก SKU เป้าหมาย", "en": "2. Select Target SKUs" },
+    "เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง": { "th": "เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง", "en": "Add SKU manually" },
+    "พิมพ์ SKU แล้วกดเพิ่ม": { "th": "พิมพ์ SKU แล้วกดเพิ่ม", "en": "Enter SKU then press Add" },
+    "เพิ่ม SKU": { "th": "เพิ่ม SKU", "en": "Add SKU" },
+    "ค้นหาสินค้าด้วยชื่อหรือ SKU...": { "th": "ค้นหาสินค้าด้วยชื่อหรือ SKU...", "en": "Search products by name or SKU..." },
+    "ไม่มีชื่อ": { "th": "ไม่มีชื่อ", "en": "Unnamed" },
+    "ข้อจำกัด:": { "th": "ข้อจำกัด:", "en": "Limitations:" },
+    "คาดว่าจะมีสต็อกเข้า": { "th": "คาดว่าจะมีสต็อกเข้า", "en": "Expected incoming stock" },
+    "แจกคูปอง (Grant Coupon)": { "th": "แจกคูปอง (Grant Coupon)", "en": "Grant Coupon" },
+    "เช่น สินค้าโปรโมชัน / แพ็กพิเศษ": { "th": "เช่น สินค้าโปรโมชัน / แพ็กพิเศษ", "en": "e.g., Promotional / Special packs" },
+    "ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งให้ทราบ": { "th": "ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งให้ทราบ", "en": "Case-insensitive · Unmatched SKUs will be skipped and notified" },
+    "บันทึกราคาเอง": { "th": "บันทึกราคาเอง", "en": "Custom price entry" },
+    "ผลลัพธ์)": { "th": "ผลลัพธ์)", "en": "results)" },
+    "เมื่อลูกค้าดูหน้าเดิมบ่อยพอในช่วงเวลา (ชม./นาที)": { "th": "เมื่อลูกค้าดูหน้าเดิมบ่อยพอในช่วงเวลา (ชม./นาที)", "en": "When customers view the same page frequently within timeframe (hrs/mins)" },
+    "ยังเทียบไม่ได้": { "th": "ยังเทียบไม่ได้", "en": "Not comparable yet" },
+    "รหัสย่อ": { "th": "รหัสย่อ", "en": "Short code" },
+    "รูปที่": { "th": "รูปที่", "en": "Image #" },
+    "เลือก": { "th": "เลือก", "en": "Select" },
+    "ส่งออกรายชื่อ CSV": { "th": "ส่งออกรายชื่อ CSV", "en": "Export CSV list" },
+    "สีพื้นหลังนอกอีเมล": { "th": "สีพื้นหลังนอกอีเมล", "en": "Email background outer color" },
+    "โหลดรายละเอียดไม่สำเร็จ": { "th": "โหลดรายละเอียดไม่สำเร็จ", "en": "Failed to load details" },
+    "รอแพ็ค": { "th": "รอแพ็ค", "en": "Awaiting pack" }
+  }
+  </script>
+
+  <script>
+    let currentLang = 'th';
+    let selectedSkus = new Set(['SKU-TH-8890', 'SKU-CH-4412']);
+    let hasVideoFile = true;
+
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function switchLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-th-btn');
+      const enBtn = document.getElementById('lang-en-btn');
+
+      if (lang === 'th') {
+        thBtn.className = 'px-2.5 py-1 rounded-md bg-white text-[#365cf5] shadow-xs font-semibold';
+        enBtn.className = 'px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b]';
+        document.getElementById('badge-sample-data').textContent = 'ข้อมูลตัวอย่าง';
+        document.getElementById('btn-cancel').textContent = 'ยกเลิกและย้อนกลับ';
+        document.getElementById('btn-save').textContent = 'อัปโหลดและผูก SKU';
+      } else {
+        enBtn.className = 'px-2.5 py-1 rounded-md bg-white text-[#365cf5] shadow-xs font-semibold';
+        thBtn.className = 'px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b]';
+        document.getElementById('badge-sample-data').textContent = 'Sample data';
+        document.getElementById('btn-cancel').textContent = 'Cancel and go back';
+        document.getElementById('btn-save').textContent = 'Upload & Link SKUs';
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translations[key] && translations[key][lang]) {
+          el.placeholder = translations[key][lang];
+        }
+      });
+    }
+
+    function showAlert(title, message, isError = true) {
+      const container = document.getElementById('alert-container');
+      const box = document.getElementById('alert-box');
+      const titleEl = document.getElementById('alert-title');
+      const msgEl = document.getElementById('alert-message');
+      const icon = document.getElementById('alert-icon');
+
+      container.classList.remove('hidden');
+
+      if (isError) {
+        box.className = 'p-4 rounded-xl border border-red-200 bg-red-50 text-red-900 flex items-start gap-3';
+        icon.className = 'w-5 h-5 flex-shrink-0 mt-0.5 text-red-600';
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>';
+      } else {
+        box.className = 'p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex items-start gap-3';
+        icon.className = 'w-5 h-5 flex-shrink-0 mt-0.5 text-emerald-600';
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+      }
+
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+    }
+
+    function dismissAlert() {
+      document.getElementById('alert-container').classList.add('hidden');
+    }
+
+    function toggleSku(sku, name, isChecked) {
+      if (isChecked) {
+        selectedSkus.add(sku);
+        renderChip(sku, name);
+      } else {
+        selectedSkus.delete(sku);
+        const chip = document.getElementById('chip-' + sku);
+        if (chip) chip.remove();
+      }
+      updateSelectedCount();
+    }
+
+    function renderChip(sku, name) {
+      if (document.getElementById('chip-' + sku)) return;
+      const list = document.getElementById('sku-chips-list');
+      const chip = document.createElement('span');
+      chip.id = 'chip-' + sku;
+      chip.className = 'inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white border border-blue-200 text-[#17243b] text-[12.5px] shadow-xs';
+      chip.innerHTML = `
+        <span class="font-mono font-semibold text-[#365cf5]">${sku}</span>
+        <span class="text-slate-400">·</span>
+        <span class="text-[12px] text-[#52627a] max-w-[140px] truncate">${name || (translations['ไม่มีชื่อ'] ? translations['ไม่มีชื่อ'][currentLang] : 'ไม่มีชื่อ')}</span>
+        <button type="button" onclick="removeSku('${sku}')" class="w-4 h-4 rounded hover:bg-slate-100 text-slate-400 hover:text-red-500 flex items-center justify-center ml-0.5" title="${translations['ลบ'] ? translations['ลบ'][currentLang] : 'ลบ'}">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      `;
+      list.appendChild(chip);
+    }
+
+    function removeSku(sku) {
+      selectedSkus.delete(sku);
+      const chip = document.getElementById('chip-' + sku);
+      if (chip) chip.remove();
+
+      // uncheck in table if exists
+      const row = document.querySelector(`.sku-row[data-sku="${sku}"] input[type="checkbox"]`);
+      if (row) row.checked = false;
+
+      updateSelectedCount();
+    }
+
+    function clearAllSelectedSkus() {
+      selectedSkus.clear();
+      document.getElementById('sku-chips-list').innerHTML = '';
+      document.querySelectorAll('.sku-row input[type="checkbox"]').forEach(cb => cb.checked = false);
+      updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+      document.getElementById('selected-count').textContent = selectedSkus.size;
+    }
+
+    function addManualSku() {
+      const input = document.getElementById('manual-sku-input');
+      const rawVal = input.value.trim().toUpperCase();
+      if (!rawVal) return;
+
+      selectedSkus.add(rawVal);
+      renderChip(rawVal, 'รหัสที่ระบุด้วยตนเอง');
+
+      // check if it matches any row in table
+      const row = document.querySelector(`.sku-row[data-sku="${rawVal}"] input[type="checkbox"]`);
+      if (row) row.checked = true;
+
+      input.value = '';
+      updateSelectedCount();
+    }
+
+    function filterCatalog(term) {
+      const q = term.toLowerCase().trim();
+      const rows = document.querySelectorAll('.sku-row');
+      let visibleCount = 0;
+
+      rows.forEach(r => {
+        const sku = r.getAttribute('data-sku').toLowerCase();
+        const name = r.getAttribute('data-name').toLowerCase();
+        if (!q || sku.includes(q) || name.includes(q)) {
+          r.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          r.classList.add('hidden');
+        }
+      });
+
+      const emptyState = document.getElementById('search-empty-state');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    function removeVideoFile() {
+      hasVideoFile = false;
+      document.getElementById('video-preview-card').classList.add('hidden');
+    }
+
+    function simulateFileUpload() {
+      hasVideoFile = true;
+      document.getElementById('video-preview-card').classList.remove('hidden');
+      dismissAlert();
+    }
+
+    function validateAndSubmit() {
+      if (!hasVideoFile) {
+        const title = translations['กรุณาอัปโหลดวิดีโอ'][currentLang] || 'กรุณาอัปโหลดวิดีโอ';
+        const msg = translations['กรุณาเลือกไฟล์วิดีโอเท่านั้น'][currentLang] || 'กรุณาเลือกไฟล์วิดีโอเท่านั้น';
+        showAlert(title, msg, true);
+        return;
+      }
+
+      if (selectedSkus.size === 0) {
+        const title = translations['กรุณาเลือก SKU อย่างน้อย 1 รายการ'][currentLang] || 'กรุณาเลือก SKU อย่างน้อย 1 รายการ';
+        const msg = translations['เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)'][currentLang] || 'เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง';
+        showAlert(title, msg, true);
+        return;
+      }
+
+      // Success simulation
+      const btn = document.getElementById('submit-btn');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="animate-spin inline-block mr-2">◌</span> กำลังประมวลผล...';
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        showAlert('อัปโหลดและผูก SKU สำเร็จ', `ผูกวิดีโอเข้ากับ ${selectedSkus.size} SKU เรียบร้อยแล้ว (วิดีโอจัดลำดับท้ายสุด)`, false);
+      }, 700);
+    }
+  </script>
+</body>
+</html>

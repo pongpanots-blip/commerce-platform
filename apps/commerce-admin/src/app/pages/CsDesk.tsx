@@ -1,3 +1,4 @@
+// ui-metadata-migration: static labels and UI notices only
 import { useState } from 'react';
 import {
   Alert, Button, CodeBlock, DetailSection, Empty, ErrorText, Field, FormPanel, Hint, Input, Loading, Page, PageHeader, Panel, PanelHead,
@@ -6,6 +7,8 @@ import {
 import { joshAdmin, joshCustomerApi, joshProductApi, JoshRow } from '../../lib/api';
 import { useAsync } from '../hooks';
 
+// ui-copy-migration: only literal UI copy and notification templates
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Row = Record<string, unknown>;
 /** josh answers lists as an array, `{ data }`, `{ data: { items } }` or `{ items }`. */
 function rowsOf(answer: unknown): Row[] {
@@ -30,18 +33,19 @@ type Tab = 'order' | 'samples' | 'merge';
  * CS-admin routes (josh COMMERCE_OWNS_CS_ORDERS / COMMERCE_OWNS_CUSTOMERS lock josh's own buttons).
  */
 export function CsDesk() {
+  __useUiLocale();
   const [tab, setTab] = useState<Tab>('order');
   return (
     <Page>
-      <PageHeader title="งาน CS (josh)" subtitle="สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit" />
+      <PageHeader title={__uiText("งาน CS (josh)")} subtitle={__uiText("สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit")} />
       <div className="overflow-x-auto">
         <Segmented<Tab>
           value={tab}
           onChange={setTab}
           options={[
-            { value: 'order', label: 'สั่งของแทนลูกค้า' },
-            { value: 'samples', label: 'คำขอสินค้าตัวอย่าง' },
-            { value: 'merge', label: 'รวมบัญชี' },
+            { value: 'order', label: __uiText("สั่งของแทนลูกค้า") },
+            { value: 'samples', label: __uiText("คำขอสินค้าตัวอย่าง") },
+            { value: 'merge', label: __uiText("รวมบัญชี") },
           ]}
         />
       </div>
@@ -52,6 +56,7 @@ export function CsDesk() {
 
 /** Company → one of its users and branches (from josh's replica). */
 function CustomerPick({ onPick }: { onPick: (p: { company: JoshRow; userId: string; branchId: string } | null) => void }) {
+  __useUiLocale();
   const [q, setQ] = useState('');
   const [search, setSearch] = useState('');
   const [companyId, setCompanyId] = useState('');
@@ -62,34 +67,34 @@ function CustomerPick({ onPick }: { onPick: (p: { company: JoshRow; userId: stri
   const d = detail.data;
   const pick = (u: string, b: string) => { setUserId(u); setBranchId(b); onPick(d && u && b ? { company: d, userId: u, branchId: b } : null); };
   return (
-    <DetailSection title="1 · ลูกค้า" icon="business">
+    <DetailSection title={__uiText("1 · ลูกค้า")} icon="business">
       <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); setSearch(q.trim()); }}>
-        <SearchInput className="flex-1" aria-label="ค้นหาบริษัท" placeholder="ชื่อบริษัท / รหัสลูกค้า ERP" value={q} onChange={(e) => setQ(e.target.value)} />
-        <Button type="submit" icon="search">ค้นหา</Button>
+        <SearchInput className="flex-1" aria-label={__uiText("ค้นหาบริษัท")} placeholder={__uiText("ชื่อบริษัท / รหัสลูกค้า ERP")} value={q} onChange={(e) => setQ(e.target.value)} />
+        <Button type="submit" icon="search">{__uiText("ค้นหา")}</Button>
       </form>
       {found.data && (
-        <Field label="บริษัท">
+        <Field label={__uiText("บริษัท")}>
           <Select value={companyId} onChange={(e) => { setCompanyId(e.target.value); pick('', ''); }}>
-            <option value="">— เลือก —</option>
+            <option value="">{__uiText("— เลือก —")}</option>
             {found.data.items.map((c) => <option key={c.id} value={c.id}>{c.name} {c.erp_customer_code ? `(${c.erp_customer_code})` : ''}</option>)}
           </Select>
         </Field>
       )}
       {d && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <Field label="ผู้ใช้">
+          <Field label={__uiText("ผู้ใช้")}>
             <Select value={userId} onChange={(e) => pick(e.target.value, branchId)}>
-              <option value="">— เลือก —</option>
+              <option value="">{__uiText("— เลือก —")}</option>
               {d.users.filter((u: JoshRow) => u.is_active).map((u: JoshRow) => <option key={u.id} value={u.id}>{u.first_name} {u.last_name ?? ''} · {u.role}</option>)}
             </Select>
           </Field>
-          <Field label="สาขาที่ส่ง">
+          <Field label={__uiText("สาขาที่ส่ง")}>
             <Select value={branchId} onChange={(e) => pick(userId, e.target.value)}>
-              <option value="">— เลือก —</option>
-              {d.branches.map((b: JoshRow) => <option key={b.id} value={b.id}>{b.name}{b.is_default_delivery ? ' (หลัก)' : ''}</option>)}
+              <option value="">{__uiText("— เลือก —")}</option>
+              {d.branches.map((b: JoshRow) => <option key={b.id} value={b.id}>{b.name}{b.is_default_delivery ? __uiText(" (หลัก)") : ''}</option>)}
             </Select>
           </Field>
-          <Hint className="md:col-span-2">วงเงิน {fmt.baht(d.credit_limit)} · ใช้ไป {fmt.baht(d.credit_used)} · เครดิต {show(d.credit_term_days)} วัน</Hint>
+          <Hint className="md:col-span-2">{__uiText("วงเงิน ")}{fmt.baht(d.credit_limit)} {__uiText(" · ใช้ไป ")}{fmt.baht(d.credit_used)} {__uiText(" · เครดิต ")}{show(d.credit_term_days)} {__uiText(" วัน")}</Hint>
         </div>
       )}
     </DetailSection>
@@ -97,6 +102,7 @@ function CustomerPick({ onPick }: { onPick: (p: { company: JoshRow; userId: stri
 }
 
 function OrderOnBehalf() {
+  __useUiLocale();
   const [who, setWho] = useState<{ company: JoshRow; userId: string; branchId: string } | null>(null);
   const [items, setItems] = useState<{ id: string; sku: string; name: string; quantity: number }[]>([]);
   const [skuQ, setSkuQ] = useState('');
@@ -114,7 +120,7 @@ function OrderOnBehalf() {
   }
   const getQuote = () => run(() => joshAdmin.call('POST', '/cs-admin/orders/quote', body()), (r) => setQuote(r));
   function place() {
-    if (!window.confirm(`สั่ง ${items.length} รายการให้ ${who!.company.name} (${pay.payment_method})?\n\njosh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ`)) return;
+    if (!window.confirm(__uiText("สั่ง {0} รายการให้ {1} ({2})?\n\njosh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ", {"0": items.length, "1": who!.company.name, "2": pay.payment_method}))) return;
     run(() => joshAdmin.call('POST', '/cs-admin/orders/place-on-behalf', { ...body(), payment_method: pay.payment_method,
       ...(pay.coupon_code.trim() ? { coupon_code: pay.coupon_code.trim() } : {}), ...(pay.delivery_date ? { delivery_date: pay.delivery_date } : {}) }),
     (r) => { setMsg({ tone: 'ok', text: `สร้าง order แล้ว: ${JSON.stringify((r as { data?: unknown })?.data ?? r).slice(0, 200)}` }); setItems([]); setQuote(null); });
@@ -127,10 +133,10 @@ function OrderOnBehalf() {
       <Panel className="p-4 space-y-5">
         <CustomerPick onPick={(p) => { setWho(p); setQuote(null); }} />
         {who && (
-          <DetailSection title="2 · สินค้า" icon="inventory_2">
+          <DetailSection title={__uiText("2 · สินค้า")} icon="inventory_2">
             <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); setSkuSearch(skuQ.trim()); }}>
-              <SearchInput className="flex-1" aria-label="ค้นหาสินค้า" placeholder="SKU / ชื่อสินค้า" value={skuQ} onChange={(e) => setSkuQ(e.target.value)} />
-              <Button type="submit" icon="search">ค้นหาสินค้า</Button>
+              <SearchInput className="flex-1" aria-label={__uiText("ค้นหาสินค้า")} placeholder={__uiText("SKU / ชื่อสินค้า")} value={skuQ} onChange={(e) => setSkuQ(e.target.value)} />
+              <Button type="submit" icon="search">{__uiText("ค้นหาสินค้า")}</Button>
             </form>
             {!!products.data?.items.length && (
               <div className="rounded-lg border border-secondary-container divide-y divide-secondary-container/70">
@@ -139,7 +145,7 @@ function OrderOnBehalf() {
                     <span className="font-mono text-[11px] w-36 shrink-0">{p.product_inventory_sku}</span>
                     <span className="flex-1 min-w-0 truncate">{p.name_th ?? p.name_en}</span>
                     <span className="text-on-surface-variant whitespace-nowrap">{fmt.baht(p.selling_unit_price)} / {p.selling_unit ?? '—'}</span>
-                    <Button size="sm" icon="add" onClick={() => changeItems([...items.filter((i) => i.id !== p.product_inventory_id), { id: p.product_inventory_id, sku: p.product_inventory_sku, name: p.name_th ?? '', quantity: 1 }])}>เพิ่ม</Button>
+                    <Button size="sm" icon="add" onClick={() => changeItems([...items.filter((i) => i.id !== p.product_inventory_id), { id: p.product_inventory_id, sku: p.product_inventory_sku, name: p.name_th ?? '', quantity: 1 }])}>{__uiText("เพิ่ม")}</Button>
                   </div>
                 ))}
               </div>
@@ -148,9 +154,9 @@ function OrderOnBehalf() {
               <div className="rounded-lg border border-secondary-container overflow-hidden">
                 <Table>
                   <THead>
-                    <TH>SKU</TH>
-                    <TH>สินค้า</TH>
-                    <TH right>จำนวน</TH>
+                    <TH>{__uiText("SKU")}</TH>
+                    <TH>{__uiText("สินค้า")}</TH>
+                    <TH right>{__uiText("จำนวน")}</TH>
                     <TH />
                   </THead>
                   <TBody>
@@ -159,32 +165,32 @@ function OrderOnBehalf() {
                         <TD kind="mono">{i.sku}</TD>
                         <TD>{i.name}</TD>
                         <TD kind="num">
-                          <Input aria-label={`จำนวน ${i.sku}`} type="number" min={1} className="w-20 text-right" value={i.quantity}
+                          <Input aria-label={__uiText("จำนวน {0}", {"0": i.sku})} type="number" min={1} className="w-20 text-right" value={i.quantity}
                             onChange={(e) => changeItems(items.map((x) => (x.id === i.id ? { ...x, quantity: Math.max(1, Number(e.target.value) || 1) } : x)))} />
                         </TD>
-                        <TD kind="actions"><Button size="sm" variant="danger-ghost" icon="close" onClick={() => changeItems(items.filter((x) => x.id !== i.id))}>เอาออก</Button></TD>
+                        <TD kind="actions"><Button size="sm" variant="danger-ghost" icon="close" onClick={() => changeItems(items.filter((x) => x.id !== i.id))}>{__uiText("เอาออก")}</Button></TD>
                       </TR>
                     ))}
                   </TBody>
                 </Table>
               </div>
             )}
-            <div><Button variant="primary" icon="calculate" disabled={busy || !items.length} onClick={getQuote}>คิดราคา (josh)</Button></div>
+            <div><Button variant="primary" icon="calculate" disabled={busy || !items.length} onClick={getQuote}>{__uiText("คิดราคา (josh)")}</Button></div>
           </DetailSection>
         )}
       </Panel>
 
       {quote != null && (
         <>
-          <CodeBlock title="ราคาจาก josh" value={JSON.stringify(quote, null, 2).slice(0, 4000)} />
-          <FormPanel title="3 · สั่งซื้อ" icon="shopping_cart_checkout" cols={3} submitLabel="สั่งซื้อ" busy={busy} onSubmit={place}>
-            <Field label="ชำระด้วย">
+          <CodeBlock title={__uiText("ราคาจาก josh")} value={JSON.stringify(quote, null, 2).slice(0, 4000)} />
+          <FormPanel title={__uiText("3 · สั่งซื้อ")} icon="shopping_cart_checkout" cols={3} submitLabel={__uiText("สั่งซื้อ")} busy={busy} onSubmit={place}>
+            <Field label={__uiText("ชำระด้วย")}>
               <Select value={pay.payment_method} onChange={(e) => setPay({ ...pay, payment_method: e.target.value })}>
                 {PAYMENT.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
               </Select>
             </Field>
-            <Field label="คูปอง"><Input value={pay.coupon_code} onChange={(e) => setPay({ ...pay, coupon_code: e.target.value })} /></Field>
-            <Field label="วันส่ง (ว่าง = ตามรอบ)"><Input type="date" value={pay.delivery_date} onChange={(e) => setPay({ ...pay, delivery_date: e.target.value })} /></Field>
+            <Field label={__uiText("คูปอง")}><Input value={pay.coupon_code} onChange={(e) => setPay({ ...pay, coupon_code: e.target.value })} /></Field>
+            <Field label={__uiText("วันส่ง (ว่าง = ตามรอบ)")}><Input type="date" value={pay.delivery_date} onChange={(e) => setPay({ ...pay, delivery_date: e.target.value })} /></Field>
           </FormPanel>
         </>
       )}
@@ -193,6 +199,7 @@ function OrderOnBehalf() {
 }
 
 function Samples() {
+  __useUiLocale();
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
@@ -201,7 +208,7 @@ function Samples() {
     const note = window.prompt(`${SAMPLE_STATUS[next]} — หมายเหตุ CS (ไม่บังคับ)`, '');
     if (note === null) return;
     setBusy(true); setMsg('');
-    try { await joshAdmin.call('PATCH', `/cs-admin/sample-requests/${id}`, { status: next, ...(note ? { cs_note: note } : {}) }); setMsg(`${SAMPLE_STATUS[next]}แล้ว`); list.reload(); }
+    try { await joshAdmin.call('PATCH', `/cs-admin/sample-requests/${id}`, { status: next, ...(note ? { cs_note: note } : {}) }); setMsg(__uiMessage("{0}แล้ว", {"0": SAMPLE_STATUS[next]})); list.reload(); }
     catch (e) { setMsg(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
   }
   const rows = rowsOf(list.data);
@@ -209,22 +216,22 @@ function Samples() {
     <Panel className="overflow-hidden">
       <PanelHead
         icon="science"
-        title="คำขอสินค้าตัวอย่าง"
-        actions={<Segmented value={status} onChange={setStatus} options={[{ value: '', label: 'ทั้งหมด' }, ...Object.entries(SAMPLE_STATUS).map(([k, l]) => ({ value: k, label: l }))]} />}
+        title={__uiText("คำขอสินค้าตัวอย่าง")}
+        actions={<Segmented value={status} onChange={setStatus} options={[{ value: '', label: __uiText("ทั้งหมด") }, ...Object.entries(SAMPLE_STATUS).map(([k, l]) => ({ value: k, label: l }))]} />}
       />
-      {msg && <div className="px-4 pt-3"><Alert tone="info" onClose={() => setMsg('')}>{msg}</Alert></div>}
+      {msg && <div className="px-4 pt-3"><Alert tone="info" onClose={() => setMsg('')}>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert></div>}
       <ErrorText error={list.error} />
       {list.loading && !list.data ? (
         <Loading />
       ) : rows.length ? (
         <Table>
           <THead>
-            <TH>ขอเมื่อ</TH>
-            <TH>ลูกค้า</TH>
-            <TH>สินค้า</TH>
-            <TH right>จำนวน</TH>
-            <TH>สถานะ</TH>
-            <TH>หมายเหตุ</TH>
+            <TH>{__uiText("ขอเมื่อ")}</TH>
+            <TH>{__uiText("ลูกค้า")}</TH>
+            <TH>{__uiText("สินค้า")}</TH>
+            <TH right>{__uiText("จำนวน")}</TH>
+            <TH>{__uiText("สถานะ")}</TH>
+            <TH>{__uiText("หมายเหตุ")}</TH>
             <TH />
           </THead>
           <TBody>
@@ -240,11 +247,11 @@ function Samples() {
                   <div className="inline-flex gap-1">
                     {r.status === 'pending' && (
                       <>
-                        <Button size="sm" variant="primary" disabled={busy} onClick={() => decide(String(r.id), 'approved')}>อนุมัติ</Button>
-                        <Button size="sm" variant="danger-ghost" disabled={busy} onClick={() => decide(String(r.id), 'rejected')}>ไม่อนุมัติ</Button>
+                        <Button size="sm" variant="primary" disabled={busy} onClick={() => decide(String(r.id), 'approved')}>{__uiText("อนุมัติ")}</Button>
+                        <Button size="sm" variant="danger-ghost" disabled={busy} onClick={() => decide(String(r.id), 'rejected')}>{__uiText("ไม่อนุมัติ")}</Button>
                       </>
                     )}
-                    {r.status === 'approved' && <Button size="sm" disabled={busy} onClick={() => decide(String(r.id), 'fulfilled')}>ส่งแล้ว</Button>}
+                    {r.status === 'approved' && <Button size="sm" disabled={busy} onClick={() => decide(String(r.id), 'fulfilled')}>{__uiText("ส่งแล้ว")}</Button>}
                   </div>
                 </TD>
               </TR>
@@ -252,13 +259,14 @@ function Samples() {
           </TBody>
         </Table>
       ) : (
-        <Empty icon="science">ไม่มีคำขอ</Empty>
+        <Empty icon="science">{__uiText("ไม่มีคำขอ")}</Empty>
       )}
     </Panel>
   );
 }
 
 function Merge() {
+  __useUiLocale();
   const [v, setV] = useState({ primary_user_id: '', duplicate_user_id: '' });
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
@@ -267,26 +275,26 @@ function Merge() {
   async function submit() {
     setMsg(''); setErr('');
     if (!uuid.test(v.primary_user_id) || !uuid.test(v.duplicate_user_id) || v.primary_user_id === v.duplicate_user_id) return setErr('ใส่ user id (uuid) สองบัญชีที่ต่างกัน');
-    if (!window.confirm(`รวมบัญชี ${v.duplicate_user_id} เข้า ${v.primary_user_id}?\n\nบัญชีซ้ำจะถูกย้ายข้อมูลเข้าบัญชีหลัก ย้อนกลับไม่ได้`)) return;
+    if (!window.confirm(__uiText("รวมบัญชี {0} เข้า {1}?\n\nบัญชีซ้ำจะถูกย้ายข้อมูลเข้าบัญชีหลัก ย้อนกลับไม่ได้", {"0": v.duplicate_user_id, "1": v.primary_user_id}))) return;
     setBusy(true);
-    try { const r = await joshAdmin.call('POST', '/cs-admin/accounts/merge', v); setMsg(`รวมแล้ว: ${JSON.stringify(r).slice(0, 200)}`); setV({ primary_user_id: '', duplicate_user_id: '' }); }
+    try { const r = await joshAdmin.call('POST', '/cs-admin/accounts/merge', v); setMsg(__uiMessage("รวมแล้ว: {0}", {"0": JSON.stringify(r).slice(0, 200)})); setV({ primary_user_id: '', duplicate_user_id: '' }); }
     catch (e) { setErr(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
   }
   return (
     <div className="space-y-4 max-w-2xl">
-      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{msg}</Alert>}
+      {msg && <Alert tone="ok" onClose={() => setMsg('')}>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert>}
       <FormPanel
-        title="รวมบัญชีซ้ำ"
+        title={__uiText("รวมบัญชีซ้ำ")}
         icon="merge"
-        description="หา user id ได้จาก รายงานร้าน › ลูกค้า (รายละเอียด) · ต้องเป็น admin · ย้อนกลับไม่ได้"
+        description={__uiText("หา user id ได้จาก รายงานร้าน › ลูกค้า (รายละเอียด) · ต้องเป็น admin · ย้อนกลับไม่ได้")}
         cols={1}
-        submitLabel="รวมบัญชี"
+        submitLabel={__uiText("รวมบัญชี")}
         busy={busy}
         error={err}
         onSubmit={submit}
       >
-        <Field label="บัญชีหลัก (เก็บไว้)"><Input className="font-mono" value={v.primary_user_id} onChange={(e) => setV({ ...v, primary_user_id: e.target.value.trim() })} /></Field>
-        <Field label="บัญชีซ้ำ (รวมเข้า)"><Input className="font-mono" value={v.duplicate_user_id} onChange={(e) => setV({ ...v, duplicate_user_id: e.target.value.trim() })} /></Field>
+        <Field label={__uiText("บัญชีหลัก (เก็บไว้)")}><Input className="font-mono" value={v.primary_user_id} onChange={(e) => setV({ ...v, primary_user_id: e.target.value.trim() })} /></Field>
+        <Field label={__uiText("บัญชีซ้ำ (รวมเข้า)")}><Input className="font-mono" value={v.duplicate_user_id} onChange={(e) => setV({ ...v, duplicate_user_id: e.target.value.trim() })} /></Field>
       </FormPanel>
     </div>
   );

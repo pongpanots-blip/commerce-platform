@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ความเคลื่อนไหวสต็อก (/stock-moves) - Commerce Operations Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans Thai"', 'sans-serif'],
+          },
+          colors: {
+            canvas: '#f6f8fc',
+            ink: '#17243b',
+            'ink-secondary': '#52627a',
+            border: '#e1e7f0',
+            primary: {
+              DEFAULT: '#365cf5',
+              hover: '#284cd6',
+              light: '#eff3ff',
+            },
+            success: {
+              DEFAULT: '#157347',
+              light: '#edf7f1',
+            },
+            warning: {
+              DEFAULT: '#b08900',
+              light: '#fdf9e8',
+            },
+            error: {
+              DEFAULT: '#c2333f',
+              light: '#fdf2f2',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f6f8fc;
+      color: #17243b;
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-canvas">
+
+  <!-- Sidebar (256px) -->
+  <aside class="w-64 bg-white border-r border-border flex-shrink-0 flex flex-col justify-between min-h-screen sticky top-0 h-screen select-none">
+    <div class="flex flex-col">
+      <!-- App Header / Logo -->
+      <div class="h-16 flex items-center px-5 border-b border-border justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm">
+            C
+          </div>
+          <div>
+            <h1 class="font-bold text-[15px] leading-tight text-ink">Commerce</h1>
+            <p class="text-[11px] text-ink-secondary">Operations Hub</p>
+          </div>
+        </div>
+        <span class="text-[11px] font-semibold text-primary bg-primary-light px-2 py-0.5 rounded border border-blue-100">admin</span>
+      </div>
+
+      <!-- Navigation Menu (7 Work Areas) -->
+      <nav class="p-3 space-y-1">
+        <!-- Section 1: สินค้าและสต็อก (Active Section) -->
+        <div>
+          <button type="button" class="w-full flex items-center justify-between px-3 py-2 text-[13px] font-semibold text-primary bg-blue-50/70 rounded-lg">
+            <span class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+              </svg>
+              <span data-i18n-nav="products">สินค้าและสต็อก</span>
+            </span>
+            <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+
+          <div class="mt-1 ml-4 pl-3 border-l-2 border-primary space-y-1 py-1">
+            <a href="/products" class="block px-2.5 py-1.5 text-[13px] rounded-md text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span data-i18n-nav="catalog">รายการสินค้า</span>
+            </a>
+            <a href="/stock-moves" class="block px-2.5 py-1.5 text-[13px] rounded-md font-medium text-primary bg-primary-light transition-colors">
+              <span data-i18n-nav="stock_moves">ความเคลื่อนไหวสต็อก</span>
+            </a>
+            <a href="/prices/staff" class="block px-2.5 py-1.5 text-[13px] rounded-md text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span data-i18n-nav="pricing">ราคาลูกค้า / ราคาสัญญา</span>
+            </a>
+            <a href="/erp/inventory-warehouse" class="block px-2.5 py-1.5 text-[13px] rounded-md text-ink-secondary hover:text-ink hover:bg-slate-50 transition-colors">
+              <span data-i18n-nav="warehouse_stock">สต็อกแยกตามคลัง</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Section 2: ออเดอร์และการเงิน -->
+        <a href="#orders" class="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span data-i18n-nav="orders">ออเดอร์และการเงิน</span>
+        </a>
+
+        <!-- Section 3: ลูกค้าและบริการ -->
+        <a href="#customers" class="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span data-i18n-nav="customers">ลูกค้าและบริการ</span>
+        </a>
+
+        <!-- Section 4: การตลาด -->
+        <a href="#marketing" class="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span data-i18n-nav="marketing">การตลาด</span>
+        </a>
+
+        <!-- Section 5: รายงานและข้อมูล -->
+        <a href="#reports" class="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span data-i18n-nav="reports">รายงานและข้อมูล</span>
+        </a>
+
+        <!-- Section 6: ระบบเชื่อมต่อ -->
+        <a href="#connections" class="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span data-i18n-nav="connections">ระบบเชื่อมต่อ</span>
+        </a>
+
+        <!-- Section 7: ตั้งค่าและทีมงาน -->
+        <a href="#settings" class="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-ink-secondary hover:text-ink hover:bg-slate-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span data-i18n-nav="settings">ตั้งค่าและทีมงาน</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Sidebar Footer / Developer Portal -->
+    <div class="p-3 border-t border-border bg-slate-50/50">
+      <div class="flex items-center justify-between text-[12px] px-2 py-1 text-ink-secondary">
+        <span>Developer Portal</span>
+        <a href="#api" class="text-primary hover:underline font-medium flex items-center gap-1">
+          API & Webhook
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      <div class="px-2 pt-1 pb-1 flex items-center justify-between text-[11px] font-mono text-slate-500">
+        <span>Route: /stock-moves</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Top Header -->
+    <header class="h-16 bg-white border-b border-border flex items-center justify-between px-8 sticky top-0 z-20">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-[13px] text-ink-secondary">
+        <span class="hover:text-ink cursor-pointer" data-i18n-nav="products">สินค้าและสต็อก</span>
+        <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="font-semibold text-ink" data-i18n="ความเคลื่อนไหวสต็อก">ความเคลื่อนไหวสต็อก</span>
+        <span class="ml-2 font-mono text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200">admin-9307cad420c4</span>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-4">
+        <!-- Sample Data Indicator -->
+        <div class="flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200/80">
+          <svg class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="sample-data-badge">ข้อมูลตัวอย่าง</span>
+        </div>
+
+        <!-- Language Switcher -->
+        <div class="flex items-center border border-border rounded-md p-0.5 bg-slate-100 text-xs font-medium">
+          <button id="lang-btn-th" type="button" class="px-2.5 py-1 rounded bg-white text-ink shadow-xs font-semibold">ไทย</button>
+          <button id="lang-btn-en" type="button" class="px-2.5 py-1 rounded text-ink-secondary hover:text-ink">English</button>
+        </div>
+
+        <!-- User Profile -->
+        <div class="flex items-center gap-2.5 pl-2 border-l border-border">
+          <div class="w-8 h-8 rounded-full bg-blue-100 text-primary font-semibold flex items-center justify-center text-xs border border-blue-200">
+            OP
+          </div>
+          <div class="text-left">
+            <p class="text-xs font-semibold text-ink leading-tight">ทีมปฏิบัติการ</p>
+            <p class="text-[11px] text-ink-secondary leading-tight">Commerce Ops</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Body Container -->
+    <main class="flex-1 p-8 max-w-[1240px] w-full mx-auto space-y-6">
+
+      <!-- Success Notification Banner (Dismissible / Action Feedback) -->
+      <div id="success-banner" class="hidden bg-success-light border border-emerald-200 rounded-xl p-4 flex items-center justify-between transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-success flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-emerald-900" data-i18n="บันทึกสต็อกเรียบร้อย">บันทึกสต็อกเรียบร้อย</h4>
+            <p class="text-xs text-emerald-700" id="success-details">รายการรับเข้าคลัง WH-BKK01 ถูกบันทึกเรียบร้อย ยอดคงเหลือใหม่คือ 450 ชิ้น</p>
+          </div>
+        </div>
+        <button type="button" onclick="document.getElementById('success-banner').classList.add('hidden')" class="text-emerald-700 hover:text-emerald-950 p-1">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Page Title & Header Actions -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-[28px] font-bold text-ink tracking-tight" data-i18n="ความเคลื่อนไหวสต็อก">ความเคลื่อนไหวสต็อก</h2>
+          <p class="text-ink-secondary text-sm mt-1" data-i18n="เลือกงานที่ต้องการ แล้วบันทึกการเปลี่ยนแปลงสินค้าในคลังที่แพลตฟอร์มดูแล">เลือกงานที่ต้องการ แล้วบันทึกการเปลี่ยนแปลงสินค้าในคลังที่แพลตฟอร์มดูแล</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Refresh Warehouses Action -->
+          <button type="button" id="refresh-warehouses-btn" class="h-10 px-4 inline-flex items-center gap-2 bg-white border border-border hover:bg-slate-50 text-ink text-sm font-medium rounded-lg shadow-xs transition-colors">
+            <svg id="refresh-icon" class="w-4 h-4 text-ink-secondary transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span data-i18n="รีเฟรชคลัง">รีเฟรชคลัง</span>
+          </button>
+
+          <!-- Quick link to Warehouse Stock overview -->
+          <a href="/erp/inventory-warehouse" class="h-10 px-4 inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-ink text-sm font-medium rounded-lg transition-colors">
+            <span data-i18n-nav="warehouse_stock">สต็อกแยกตามคลัง</span>
+            <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- ERP vs Platform Warehouse Notice Banner -->
+      <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex items-start gap-3 text-sm text-slate-700">
+        <svg class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div class="flex-1">
+          <span class="font-medium text-slate-900" data-i18n="ยังไม่มีคลังที่ปรับยอดผ่านแพลตฟอร์มได้ หากเป็นคลังจาก ERP ให้บันทึกใน ERP แล้วรอซิงก์ยอดเข้ามา">ยังไม่มีคลังที่ปรับยอดผ่านแพลตฟอร์มได้ หากเป็นคลังจาก ERP ให้บันทึกใน ERP แล้วรอซิงก์ยอดเข้ามา</span>
+          <span class="text-xs text-slate-500 block mt-1">(คลังที่ปรับยอดในหน้านี้ได้ทันที: WH-BKK01, WH-CM02 · สำหรับคลัง ERP-CENTRAL และ ERP-EAST ต้องทำผ่าน SAP/ERP เท่านั้น)</span>
+        </div>
+      </div>
+
+      <!-- Main Layout: Movement Form Card + Side Activity Log / Reference -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Form Card (Primary Task Area - 7 cols) -->
+        <div class="lg:col-span-7 bg-white rounded-xl border border-border shadow-xs overflow-hidden">
+
+          <!-- Card Header & Task Selector Tabs -->
+          <div class="p-6 border-b border-border bg-slate-50/40">
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-xs font-bold text-ink tracking-wide uppercase" data-i18n="ประเภทการเคลื่อนไหวสต็อก">ประเภทการเคลื่อนไหวสต็อก</label>
+              <span class="text-xs text-ink-secondary" id="active-task-label">งาน: รับเข้าสินค้า</span>
+            </div>
+
+            <!-- Movement Type Buttons (4 Core Types) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" role="tablist">
+              <!-- Tab 1: รับเข้า (Receive) -->
+              <button type="button" id="tab-receive" onclick="selectMovementType('receive')" class="movement-tab active flex flex-col items-center justify-center p-3 rounded-lg border-2 border-primary bg-primary-light text-primary font-semibold transition-all shadow-xs">
+                <svg class="w-5 h-5 mb-1 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                <span class="text-sm" data-i18n="รับเข้า">รับเข้า</span>
+              </button>
+
+              <!-- Tab 2: ตรวจนับ (Count) -->
+              <button type="button" id="tab-count" onclick="selectMovementType('count')" class="movement-tab flex flex-col items-center justify-center p-3 rounded-lg border border-border bg-white text-ink-secondary hover:text-ink hover:bg-slate-50 font-medium transition-all">
+                <svg class="w-5 h-5 mb-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                <span class="text-sm" data-i18n="ตรวจนับ">ตรวจนับ</span>
+              </button>
+
+              <!-- Tab 3: ปรับยอด (Adjust) -->
+              <button type="button" id="tab-adjust" onclick="selectMovementType('adjust')" class="movement-tab flex flex-col items-center justify-center p-3 rounded-lg border border-border bg-white text-ink-secondary hover:text-ink hover:bg-slate-50 font-medium transition-all">
+                <svg class="w-5 h-5 mb-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span class="text-sm" data-i18n="ปรับยอด">ปรับยอด</span>
+              </button>
+
+              <!-- Tab 4: โอนย้าย (Transfer) -->
+              <button type="button" id="tab-transfer" onclick="selectMovementType('transfer')" class="movement-tab flex flex-col items-center justify-center p-3 rounded-lg border border-border bg-white text-ink-secondary hover:text-ink hover:bg-slate-50 font-medium transition-all">
+                <svg class="w-5 h-5 mb-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                <span class="text-sm" data-i18n="โอนย้าย">โอนย้าย</span>
+              </button>
+            </div>
+
+            <!-- Movement Description Box (Updates per active tab) -->
+            <div id="movement-explanation" class="mt-4 p-3.5 bg-blue-50/50 border border-blue-100 rounded-lg text-xs leading-relaxed text-slate-700 flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-primary flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <div>
+                <p class="font-semibold text-ink" id="explanation-title" data-i18n="เพิ่มสินค้าที่ได้รับเข้าในคลัง">เพิ่มสินค้าที่ได้รับเข้าในคลัง</p>
+                <p class="text-ink-secondary mt-0.5" id="explanation-body" data-i18n="ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม">ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Fields Container -->
+          <form id="stock-move-form" onsubmit="handleStockMoveSubmit(event)" class="p-6 space-y-5">
+
+            <!-- Field 1: SKU Selector / Input -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="sku-select" class="text-xs font-semibold text-ink flex items-center gap-1">
+                  <span data-i18n="SKU">SKU</span>
+                  <span class="text-error">*</span>
+                  <span class="text-ink-secondary font-normal ml-1" data-i18n="รหัสสินค้าที่ต้องการบันทึก">(รหัสสินค้าที่ต้องการบันทึก)</span>
+                </label>
+                <span class="text-[11px] text-primary hover:underline cursor-pointer" onclick="fillSampleSku('SKU-TH-8890')">ใส่ SKU ตัวอย่าง</span>
+              </div>
+              <div class="relative">
+                <select id="sku-select" onchange="updateCurrentSkuInfo()" class="w-full h-10 px-3 pr-8 rounded-lg border border-border bg-white text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer">
+                  <option value="SKU-TH-8890">SKU-TH-8890 — ข้าวหอมมะลิตัดพิเศษ 5กก. ตราดอกบัวหลวง</option>
+                  <option value="SKU-CH-4412">SKU-CH-4412 — น้ำมันพืชบรรจุลัง (12 ขวด)</option>
+                  <option value="SKU-MK-1102">SKU-MK-1102 — นมยูเอชที รสจืด 250มล. (ลัง 36)</option>
+                  <option value="SKU-FD-7741">SKU-FD-7741 — เนยชีสนำเข้าเกรดพรีเมียม 1กก.</option>
+                  <option value="SKU-1">SKU-1 — ชุดเมล็ดกาแฟ ดอยช้าง คั่วกลาง (1กก.)</option>
+                </select>
+                <svg class="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div id="sku-current-stock-badge" class="mt-2 text-xs text-ink-secondary flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>คงเหลือปัจจุบัน: <strong class="text-ink" id="sku-current-qty">450</strong> <span data-i18n="ชิ้น · เหลือ">ชิ้น · เหลือ</span> พร้อมขาย <strong class="text-success" id="sku-available-qty">420</strong> ชิ้น</span>
+              </div>
+            </div>
+
+            <!-- Warehouse Selection: Single Warehouse vs Transfer (From / To) -->
+            <div id="warehouse-single-container" class="space-y-1.5">
+              <label for="warehouse-select" class="text-xs font-semibold text-ink flex items-center gap-1">
+                <span data-i18n="คลัง">คลัง</span>
+                <span class="text-error">*</span>
+              </label>
+              <div class="relative">
+                <select id="warehouse-select" class="w-full h-10 px-3 pr-8 rounded-lg border border-border bg-white text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer">
+                  <option value="WH-BKK01">WH-BKK01 — คลังกลาง บางนา (Commerce)</option>
+                  <option value="WH-CM02">WH-CM02 — คลังเหนือ เชียงใหม่ (Commerce)</option>
+                  <option value="ERP-CENTRAL" disabled>ERP-CENTRAL — คลังใหญ่ พระราม 3 (ระบบ ERP - ปรับที่นี่ไม่ได้)</option>
+                  <option value="ERP-EAST" disabled>ERP-EAST — คลังบูรพา ชลบุรี (ระบบ ERP - ปรับที่นี่ไม่ได้)</option>
+                </select>
+                <svg class="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+
+            <!-- Transfer Mode: From & To Warehouses (Shown only when 'โอนย้าย' is active) -->
+            <div id="warehouse-transfer-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="from-warehouse-select" class="text-xs font-semibold text-ink flex items-center gap-1 mb-1.5">
+                  <span data-i18n="จากคลัง">จากคลัง</span>
+                  <span class="text-error">*</span>
+                </label>
+                <div class="relative">
+                  <select id="from-warehouse-select" class="w-full h-10 px-3 pr-8 rounded-lg border border-border bg-white text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer">
+                    <option value="WH-BKK01">WH-BKK01 — คลังกลาง บางนา</option>
+                    <option value="WH-CM02">WH-CM02 — คลังเหนือ เชียงใหม่</option>
+                  </select>
+                  <svg class="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
+
+              <div>
+                <label for="to-warehouse-select" class="text-xs font-semibold text-ink flex items-center gap-1 mb-1.5">
+                  <span data-i18n="ไปคลัง">ไปคลัง</span>
+                  <span class="text-error">*</span>
+                </label>
+                <div class="relative">
+                  <select id="to-warehouse-select" class="w-full h-10 px-3 pr-8 rounded-lg border border-border bg-white text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer">
+                    <option value="WH-CM02">WH-CM02 — คลังเหนือ เชียงใหม่</option>
+                    <option value="WH-BKK01">WH-BKK01 — คลังกลาง บางนา</option>
+                  </select>
+                  <svg class="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reason Field (Shown only when 'ปรับยอด' is active) -->
+            <div id="reason-container" class="hidden space-y-1.5">
+              <label for="reason-select" class="text-xs font-semibold text-ink flex items-center gap-1">
+                <span data-i18n="เหตุผล">เหตุผล</span>
+                <span class="text-error">*</span>
+              </label>
+              <div class="relative">
+                <select id="reason-select" class="w-full h-10 px-3 pr-8 rounded-lg border border-border bg-white text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer">
+                  <option value="damage" data-i18n="เสียหาย (ลด)">เสียหาย (ลด)</option>
+                  <option value="return" data-i18n="รับคืน (เพิ่ม)">รับคืน (เพิ่ม)</option>
+                  <option value="correction" data-i18n="แก้ไข (+ เพิ่ม / − ลด)">แก้ไข (+ เพิ่ม / − ลด)</option>
+                </select>
+                <svg class="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <p class="text-[11px] text-ink-secondary" data-i18n="เลือกเหตุผลก่อนกรอกจำนวน: เสียหายจะลดยอด รับคืนจะเพิ่มยอด และแก้ไขใช้จำนวนบวกหรือลบได้">เลือกเหตุผลก่อนกรอกจำนวน: เสียหายจะลดยอด รับคืนจะเพิ่มยอด และแก้ไขใช้จำนวนบวกหรือลบได้</p>
+            </div>
+
+            <!-- Quantity Field (Dynamic labels and hints based on task) -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="quantity-input" class="text-xs font-semibold text-ink flex items-center gap-1">
+                  <span id="qty-field-label" data-i18n="จำนวน">จำนวน</span>
+                  <span class="text-error">*</span>
+                </label>
+                <span id="qty-helper-note" class="text-[11px] text-slate-500" data-i18n="(ไม่นับเป็นยอดขายได้)">(ไม่นับเป็นยอดขายได้)</span>
+              </div>
+              <div class="relative">
+                <input type="number" id="quantity-input" required min="1" placeholder="ระบุจำนวน เช่น 50" class="w-full h-10 px-3 rounded-lg border border-border text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-slate-400">
+                <span class="absolute right-3 top-2.5 text-xs text-ink-secondary font-medium">ชิ้น / ถุง</span>
+              </div>
+              <p id="qty-hint-text" class="text-[11px] text-ink-secondary mt-1" data-i18n="จำนวนบวกเพื่อเพิ่มยอด หรือจำนวนลบเพื่อลดยอด">ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม</p>
+            </div>
+
+            <!-- Note / Reason Description Field -->
+            <div>
+              <label for="note-input" class="text-xs font-semibold text-ink block mb-1.5">
+                <span data-i18n="หมายเหตุ">หมายเหตุ</span>
+                <span class="text-ink-secondary font-normal ml-1" data-i18n="ระบุเอกสารหรือรายละเอียดเพิ่มเติม (ไม่บังคับ)">(ระบุเอกสารหรือรายละเอียดเพิ่มเติม ไม่บังคับ)</span>
+              </label>
+              <textarea id="note-input" rows="2" placeholder="เช่น เลขที่ใบรับสินค้า PO-99201, ตรวจนับประจำสัปดาห์, หรือเลขที่เอกสารภายใน..." class="w-full px-3 py-2 rounded-lg border border-border text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-slate-400 resize-none"></textarea>
+            </div>
+
+            <!-- Verification & Warning Note -->
+            <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-lg flex items-start gap-2.5 text-xs text-amber-900">
+              <svg class="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div>
+                <span class="font-medium" data-i18n="ตรวจ SKU คลัง และจำนวนให้ถูกต้องก่อนบันทึก">ตรวจ SKU คลัง และจำนวนให้ถูกต้องก่อนบันทึก</span>
+                <span class="text-amber-800/80 block mt-0.5">การปรับยอดจะส่งผลต่อการจองและยอดพร้อมขายในทันที</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons: Cancel / Save -->
+            <div class="pt-2 flex items-center justify-end gap-3 border-t border-border">
+              <button type="button" onclick="resetForm()" class="h-10 px-4 rounded-lg border border-border hover:bg-slate-50 text-ink text-sm font-medium transition-colors">
+                ยกเลิก
+              </button>
+              <button type="submit" id="submit-btn" class="h-10 px-6 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold shadow-xs flex items-center gap-2 transition-colors">
+                <svg id="submit-spinner" class="hidden w-4 h-4 animate-spin text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <span id="submit-btn-text" data-i18n="บันทึกสต็อกเรียบร้อย">บันทึกความเคลื่อนไหวสต็อก</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Right Side: Recent Movements List / Verification History (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+
+          <!-- Card: Warehouse Stock Summary for Selected SKU -->
+          <div class="bg-white rounded-xl border border-border shadow-xs p-5">
+            <div class="flex items-center justify-between pb-3 border-b border-border">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+                <h3 class="text-sm font-bold text-ink" data-i18n="สต็อกแยกตามคลัง">สต็อกแยกตามคลัง (SKU ที่เลือก)</h3>
+              </div>
+              <span class="text-xs font-mono text-ink-secondary" id="summary-sku-code">SKU-TH-8890</span>
+            </div>
+
+            <div class="mt-3 divide-y divide-slate-100 text-xs">
+              <!-- WH-BKK01 -->
+              <div class="py-2.5 flex items-center justify-between">
+                <div>
+                  <p class="font-semibold text-ink">WH-BKK01 (คลังกลาง บางนา)</p>
+                  <p class="text-[11px] text-ink-secondary">คลังแพลตฟอร์ม Commerce</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-bold text-ink">350 <span class="text-[11px] font-normal text-slate-500">ชิ้น</span></p>
+                  <p class="text-[11px] text-success">พร้อมใช้ 325 (จอง 25)</p>
+                </div>
+              </div>
+
+              <!-- WH-CM02 -->
+              <div class="py-2.5 flex items-center justify-between">
+                <div>
+                  <p class="font-semibold text-ink">WH-CM02 (คลังเหนือ เชียงใหม่)</p>
+                  <p class="text-[11px] text-ink-secondary">คลังแพลตฟอร์ม Commerce</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-bold text-ink">100 <span class="text-[11px] font-normal text-slate-500">ชิ้น</span></p>
+                  <p class="text-[11px] text-success">พร้อมใช้ 95 (จอง 5)</p>
+                </div>
+              </div>
+
+              <!-- ERP-EAST -->
+              <div class="py-2.5 flex items-center justify-between opacity-70">
+                <div>
+                  <p class="font-semibold text-ink">ERP-EAST (คลังบูรพา ชลบุรี)</p>
+                  <p class="text-[11px] text-amber-700">ซิงก์จาก ERP (อ่านอย่างเดียว)</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-bold text-ink">0 <span class="text-[11px] font-normal text-slate-500">ชิ้น</span></p>
+                  <p class="text-[11px] text-slate-500">พร้อมใช้ 0</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs bg-slate-50/70 p-2.5 rounded-lg">
+              <span class="text-ink-secondary">รวมทุกคลังที่พร้อมใช้:</span>
+              <span class="font-bold text-ink text-sm text-primary">420 ชิ้น</span>
+            </div>
+          </div>
+
+          <!-- Card: Recent Movements Log (Activity Stream) -->
+          <div class="bg-white rounded-xl border border-border shadow-xs overflow-hidden">
+            <div class="p-4 border-b border-border flex items-center justify-between bg-slate-50/50">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 8 12 12 14 14"/><circle cx="12" cy="12" r="10"/></svg>
+                <h3 class="text-sm font-bold text-ink">ประวัติการเคลื่อนไหวล่าสุด</h3>
+              </div>
+              <span class="text-[11px] text-slate-500 bg-white px-2 py-0.5 rounded border border-border">5 รายการล่าสุด</span>
+            </div>
+
+            <!-- List of recent transactions -->
+            <div class="divide-y divide-border text-xs" id="recent-moves-list">
+              <!-- Item 1: Receive -->
+              <div class="p-3.5 hover:bg-slate-50 transition-colors">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-ink flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span data-i18n="รับเข้า">รับเข้า</span>: WH-BKK01
+                  </span>
+                  <span class="font-bold text-success text-sm">+150 ชิ้น</span>
+                </div>
+                <p class="text-ink-secondary mt-1">SKU-TH-8890 · ข้าวหอมมะลิคัดพิเศษ 5กก.</p>
+                <div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>ใบรับ REC-20240328-09</span>
+                  <span>28 มี.ค. 10:15</span>
+                </div>
+              </div>
+
+              <!-- Item 2: Transfer -->
+              <div class="p-3.5 hover:bg-slate-50 transition-colors">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-ink flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span data-i18n="โอนย้าย">โอนย้าย</span>: WH-BKK01 → WH-CM02
+                  </span>
+                  <span class="font-bold text-primary text-sm">30 ชิ้น</span>
+                </div>
+                <p class="text-ink-secondary mt-1">SKU-MK-1102 · นมยูเอชที รสจืด 250มล.</p>
+                <div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>TRF-20240327-02 · ย้ายสต็อกสาขาเหนือ</span>
+                  <span>27 มี.ค. 14:40</span>
+                </div>
+              </div>
+
+              <!-- Item 3: Count Adjustment -->
+              <div class="p-3.5 hover:bg-slate-50 transition-colors">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-ink flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span data-i18n="ตรวจนับ">ตรวจนับ</span>: WH-CM02
+                  </span>
+                  <span class="font-bold text-amber-700 text-sm">ปรับเป็น 25</span>
+                </div>
+                <p class="text-ink-secondary mt-1">SKU-MK-1102 · นับจริงประจำเดือน</p>
+                <div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>audit-cycle-w4</span>
+                  <span>25 มี.ค. 17:00</span>
+                </div>
+              </div>
+
+              <!-- Item 4: Damage Adjust -->
+              <div class="p-3.5 hover:bg-slate-50 transition-colors">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-ink flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span data-i18n="ปรับยอด">ปรับยอด</span>: WH-BKK01 (เสียหาย)
+                  </span>
+                  <span class="font-bold text-error text-sm">-3 ชิ้น</span>
+                </div>
+                <p class="text-ink-secondary mt-1">SKU-CH-4412 · กล่องบรรจุชำรุดระหว่างขนส่ง</p>
+                <div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>DMG-20240324-01</span>
+                  <span>24 มี.ค. 11:20</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer link to all logs -->
+            <div class="p-3 bg-slate-50 border-t border-border text-center">
+              <a href="#all-logs" class="text-xs font-semibold text-primary hover:underline flex items-center justify-center gap-1">
+                ดูประวัติความเคลื่อนไหวทั้งหมด
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Quick Guidance & Operational Rules Card -->
+      <div class="bg-white rounded-xl border border-border p-6 shadow-xs">
+        <h3 class="text-sm font-bold text-ink mb-3 flex items-center gap-2">
+          <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          คำแนะนำและข้อกำหนดการทำงานด้านสต็อก (Stock Operations Guide)
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs text-ink-secondary">
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <p class="font-bold text-ink mb-1" data-i18n="รับเข้า">1. รับเข้า (Receive)</p>
+            <p data-i18n="เพิ่มสินค้าที่ได้รับเข้าในคลัง">เพิ่มสินค้าที่ได้รับเข้าในคลัง</p>
+            <p class="mt-1 text-slate-500" data-i18n="ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม">ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม</p>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <p class="font-bold text-ink mb-1" data-i18n="ตรวจนับ">2. ตรวจนับ (Count)</p>
+            <p data-i18n="ปรับยอดตามจำนวนที่นับได้จริง">ปรับยอดตามจำนวนที่นับได้จริง</p>
+            <p class="mt-1 text-slate-500" data-i18n="ระบุยอดทั้งหมดที่นับได้ ระบบจะใช้จำนวนนี้แทนยอดคงเหลือเดิม">ระบุยอดทั้งหมดที่นับได้ ระบบจะใช้จำนวนนี้แทนยอดคงเหลือเดิม</p>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <p class="font-bold text-ink mb-1" data-i18n="ปรับยอด">3. ปรับยอด (Adjust)</p>
+            <p data-i18n="บันทึกสินค้าเสียหาย รับคืน หรือแก้ไขยอด">บันทึกสินค้าเสียหาย รับคืน หรือแก้ไขยอด</p>
+            <p class="mt-1 text-slate-500" data-i18n="เลือกเหตุผลก่อนกรอกจำนวน: เสียหายจะลดยอด รับคืนจะเพิ่มยอด และแก้ไขใช้จำนวนบวกหรือลบได้">เลือกเหตุผลก่อนกรอกจำนวน: เสียหายจะลดยอด รับคืนจะเพิ่มยอด</p>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <p class="font-bold text-ink mb-1" data-i18n="โอนย้าย">4. โอนย้าย (Transfer)</p>
+            <p data-i18n="ย้ายสินค้าจากคลังหนึ่งไปอีกคลัง">ย้ายสินค้าจากคลังหนึ่งไปอีกคลัง</p>
+            <p class="mt-1 text-slate-500" data-i18n="จำนวนนี้จะลดจากคลังต้นทางและเพิ่มในคลังปลายทาง โดยต้องเลือกคนละคลัง">จำนวนนี้จะลดจากคลังต้นทางและเพิ่มในคลังปลายทาง โดยต้องเลือกคนละคลัง</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- INVISIBLE JSON TRANSLATIONS CATALOGUE: ALL KEYS REQUIRED BY SPEC -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "SKU": { "th": "SKU", "en": "SKU" },
+    "จำนวน": { "th": "จำนวน", "en": "Quantity" },
+    "หมายเหตุ": { "th": "หมายเหตุ", "en": "Note" },
+    "เหตุผล": { "th": "เหตุผล", "en": "Reason" },
+    "คลัง": { "th": "คลัง", "en": "Warehouse" },
+    "กำลังบันทึก…": { "th": "กำลังบันทึก…", "en": "Saving…" },
+    "รับเข้า": { "th": "รับเข้า", "en": "Receive" },
+    "เพิ่มสินค้าที่ได้รับเข้าในคลัง": { "th": "เพิ่มสินค้าที่ได้รับเข้าในคลัง", "en": "Add received items to warehouse inventory" },
+    "ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม": { "th": "ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม", "en": "Specify received quantity. It will be added to the current on-hand balance." },
+    "ตรวจนับ": { "th": "ตรวจนับ", "en": "Stock Count" },
+    "ปรับยอดตามจำนวนที่นับได้จริง": { "th": "ปรับยอดตามจำนวนที่นับได้จริง", "en": "Adjust balance to matched physical count" },
+    "ระบุยอดทั้งหมดที่นับได้ ระบบจะใช้จำนวนนี้แทนยอดคงเหลือเดิม": { "th": "ระบุยอดทั้งหมดที่นับได้ ระบบจะใช้จำนวนนี้แทนยอดคงเหลือเดิม", "en": "Enter total counted quantity. The system will replace the current balance with this value." },
+    "ปรับยอด": { "th": "ปรับยอด", "en": "Adjust" },
+    "บันทึกสินค้าเสียหาย รับคืน หรือแก้ไขยอด": { "th": "บันทึกสินค้าเสียหาย รับคืน หรือแก้ไขยอด", "en": "Record damaged stock, returns, or balance corrections" },
+    "เลือกเหตุผลก่อนกรอกจำนวน: เสียหายจะลดยอด รับคืนจะเพิ่มยอด และแก้ไขใช้จำนวนบวกหรือลบได้": { "th": "เลือกเหตุผลก่อนกรอกจำนวน: เสียหายจะลดยอด รับคืนจะเพิ่มยอด และแก้ไขใช้จำนวนบวกหรือลบได้", "en": "Select a reason before entering quantity: Damage decreases balance, Return increases balance, and Correction allows positive or negative amounts." },
+    "โอนย้าย": { "th": "โอนย้าย", "en": "Transfer" },
+    "ย้ายสินค้าจากคลังหนึ่งไปอีกคลัง": { "th": "ย้ายสินค้าจากคลังหนึ่งไปอีกคลัง", "en": "Move products between warehouses" },
+    "จำนวนนี้จะลดจากคลังต้นทางและเพิ่มในคลังปลายทาง โดยต้องเลือกคนละคลัง": { "th": "จำนวนนี้จะลดจากคลังต้นทางและเพิ่มในคลังปลายทาง โดยต้องเลือกคนละคลัง", "en": "Quantity will be deducted from the origin and added to the destination. Warehouses must differ." },
+    "ความเคลื่อนไหวสต็อก": { "th": "ความเคลื่อนไหวสต็อก", "en": "Stock Movements" },
+    "เลือกงานที่ต้องการ แล้วบันทึกการเปลี่ยนแปลงสินค้าในคลังที่แพลตฟอร์มดูแล": { "th": "เลือกงานที่ต้องการ แล้วบันทึกการเปลี่ยนแปลงสินค้าในคลังที่แพลตฟอร์มดูแล", "en": "Select a task and record inventory changes in platform-managed warehouses." },
+    "รีเฟรชคลัง": { "th": "รีเฟรชคลัง", "en": "Refresh Warehouses" },
+    "ยังไม่มีคลังที่ปรับยอดผ่านแพลตฟอร์มได้ หากเป็นคลังจาก ERP ให้บันทึกใน ERP แล้วรอซิงก์ยอดเข้ามา": { "th": "ยังไม่มีคลังที่ปรับยอดผ่านแพลตฟอร์มได้ หากเป็นคลังจาก ERP ให้บันทึกใน ERP แล้วรอซิงก์ยอดเข้ามา", "en": "No warehouses currently eligible for in-platform adjustment. For ERP warehouses, update via ERP and await automatic sync." },
+    "บันทึกสต็อกเรียบร้อย": { "th": "บันทึกสต็อกเรียบร้อย", "en": "Stock movement saved successfully" },
+    "ประเภทการเคลื่อนไหวสต็อก": { "th": "ประเภทการเคลื่อนไหวสต็อก", "en": "Movement Type" },
+    "รหัสสินค้าที่ต้องการบันทึก": { "th": "รหัสสินค้าที่ต้องการบันทึก", "en": "Product code to record" },
+    "จากคลัง": { "th": "จากคลัง", "en": "From Warehouse" },
+    "เลือกคลัง": { "th": "เลือกคลัง", "en": "Select Warehouse" },
+    "(ไม่นับเป็นยอดขายได้)": { "th": "(ไม่นับเป็นยอดขายได้)", "en": "(Non-saleable item adjustment)" },
+    "ไปคลัง": { "th": "ไปคลัง", "en": "To Warehouse" },
+    "เสียหาย (ลด)": { "th": "เสียหาย (ลด)", "en": "Damaged (Deduct)" },
+    "รับคืน (เพิ่ม)": { "th": "รับคืน (เพิ่ม)", "en": "Customer Return (Add)" },
+    "แก้ไข (+ เพิ่ม / − ลด)": { "th": "แก้ไข (+ เพิ่ม / − ลด)", "en": "Correction (+ Add / − Deduct)" },
+    "ยอดที่นับได้ทั้งหมด": { "th": "ยอดที่นับได้ทั้งหมด", "en": "Total Counted Quantity" },
+    "จำนวนบวกเพื่อเพิ่มยอด หรือจำนวนลบเพื่อลดยอด": { "th": "จำนวนบวกเพื่อเพิ่มยอด หรือจำนวนลบเพื่อลดยอด", "en": "Positive quantity to increase balance, or negative quantity to decrease" },
+    "ระบุเอกสารหรือรายละเอียดเพิ่มเติม (ไม่บังคับ)": { "th": "ระบุเอกสารหรือรายละเอียดเพิ่มเติม (ไม่บังคับ)", "en": "Specify reference document or notes (optional)" },
+    "ตรวจ SKU คลัง และจำนวนให้ถูกต้องก่อนบันทึก": { "th": "ตรวจ SKU คลัง และจำนวนให้ถูกต้องก่อนบันทึก", "en": "Verify SKU, warehouse, and quantity before saving" },
+    "· VAT": { "th": "· VAT", "en": "· VAT" },
+    "+ เลือก Promotion Product Set": { "th": "+ เลือก Promotion Product Set", "en": "+ Select Promotion Product Set" },
+    "Brand Management": { "th": "Brand Management", "en": "Brand Management" },
+    "device_linked_user_id": { "th": "device_linked_user_id", "en": "device_linked_user_id" },
+    "Image URL": { "th": "Image URL", "en": "Image URL" },
+    "Never": { "th": "Never", "en": "Never" },
+    "Product image": { "th": "Product image", "en": "Product image" },
+    "Set up webhook": { "th": "Set up webhook", "en": "Set up webhook" },
+    "User": { "th": "User", "en": "User" },
+    "การแปลจะเขียนทับข้อความภาษา{0}ทั้งหมด ยืนยัน?": { "th": "การแปลจะเขียนทับข้อความภาษา{0}ทั้งหมด ยืนยัน?", "en": "Translation will overwrite all language {0} text. Confirm?" },
+    "แก้ไขสินค้า": { "th": "แก้ไขสินค้า", "en": "Edit Product" },
+    "ค้นหาในหน้านี้": { "th": "ค้นหาในหน้านี้", "en": "Search on this page" },
+    "เงินสด": { "th": "เงินสด", "en": "Cash" },
+    "ชิ้น · เหลือ": { "th": "ชิ้น · เหลือ", "en": "units · available" },
+    "เซลล์": { "th": "เซลล์", "en": "Sales" },
+    "ตัวเลือกแต่ละรายการ (CSS selector)": { "th": "ตัวเลือกแต่ละรายการ (CSS selector)", "en": "Item option (CSS selector)" },
+    "บริษัท / สาขา": { "th": "บริษัท / สาขา", "en": "Company / Branch" },
+    "เป็นช่วง": { "th": "เป็นช่วง", "en": "Range" },
+    "เพิ่มโปร": { "th": "เพิ่มโปร", "en": "Add Promotion" },
+    "ไม่มี log ในช่วงนี้": { "th": "ไม่มี log ในช่วงนี้", "en": "No logs in this period" },
+    "ยังไม่มีข้อมูลการกระจายลูกค้าตาม tier": { "th": "ยังไม่มีข้อมูลการกระจายลูกค้าตาม tier", "en": "No customer tier distribution data available" },
+    "รอชำระ / ยกเลิก": { "th": "รอชำระ / ยกเลิก", "en": "Pending Payment / Cancelled" },
+    "รายละเอียด (ภาษาอังกฤษ)": { "th": "รายละเอียด (ภาษาอังกฤษ)", "en": "Description (English)" },
+    "ลิงก์เดียว — มือถือเด้งเข้าแอป/สโตร์ (deferred deep link) ส่วน desktop เปิดหน้าเว็บสินค้า เอาไปยิง ads ได้เลย": { "th": "ลิงก์เดียว — มือถือเด้งเข้าแอป/สโตร์ (deferred deep link) ส่วน desktop เปิดหน้าเว็บสินค้า เอาไปยิง ads ได้เลย", "en": "Single link — Mobile opens app/store (deferred deep link) while desktop opens product page, ready for ads campaign" },
+    "วางแผนและค้นคว้า": { "th": "วางแผนและค้นคว้า", "en": "Plan and Research" },
+    "ส่วนลด (บาท)": { "th": "ส่วนลด (บาท)", "en": "Discount (THB)" },
+    "หมวดที่ย้ายของในตะกร้าได้": { "th": "หมวดที่ย้ายของในตะกร้าได้", "en": "Categories movable in cart" },
+    "อัปเดตไม่สำเร็จ": { "th": "อัปเดตไม่สำเร็จ", "en": "Update failed" }
+  }
+  </script>
+
+  <!-- Interactive JavaScript Handling Bilingual Switching and UI Logic -->
+  <script>
+    // State
+    let currentLang = 'th';
+    let currentTask = 'receive'; // 'receive' | 'count' | 'adjust' | 'transfer'
+    const translationsData = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    const taskConfig = {
+      receive: {
+        titleKey: "เพิ่มสินค้าที่ได้รับเข้าในคลัง",
+        bodyKey: "ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม",
+        qtyLabelKey: "จำนวน",
+        qtyPlaceholder: "ระบุจำนวน เช่น 50",
+        taskNameTh: "งาน: รับเข้าสินค้า",
+        taskNameEn: "Task: Receive Stock",
+        btnLabelTh: "บันทึกรับเข้าสต็อก",
+        btnLabelEn: "Record Stock Receipt",
+        isTransfer: false,
+        isAdjust: false,
+        hintKey: "ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม"
+      },
+      count: {
+        titleKey: "ปรับยอดตามจำนวนที่นับได้จริง",
+        bodyKey: "ระบุยอดทั้งหมดที่นับได้ ระบบจะใช้จำนวนนี้แทนยอดคงเหลือเดิม",
+        qtyLabelKey: "ยอดที่นับได้ทั้งหมด",
+        qtyPlaceholder: "ระบุยอดคงเหลือจริงที่ตรวจนับได้ เช่น 450",
+        taskNameTh: "งาน: ตรวจนับสต็อก",
+        taskNameEn: "Task: Physical Count",
+        btnLabelTh: "บันทึกผลการตรวจนับ",
+        btnLabelEn: "Save Count Adjustment",
+        isTransfer: false,
+        isAdjust: false,
+        hintKey: "ระบุยอดทั้งหมดที่นับได้ ระบบจะใช้จำนวนนี้แทนยอดคงเหลือเดิม"
+      },
+      adjust: {
+        titleKey: "บันทึกสินค้าเสียหาย รับคืน หรือแก้ไขยอด",
+        bodyKey: "เลือกเหตุผลก่อนกรอกจำนวน: เสียหายจะลดยอด รับคืนจะเพิ่มยอด และแก้ไขใช้จำนวนบวกหรือลบได้",
+        qtyLabelKey: "จำนวน",
+        qtyPlaceholder: "เช่น 5 (เสียหาย), 10 (รับคืน) หรือ -2 (แก้ไข)",
+        taskNameTh: "งาน: ปรับยอดสต็อก",
+        taskNameEn: "Task: Stock Adjustment",
+        btnLabelTh: "บันทึกการปรับยอด",
+        btnLabelEn: "Save Stock Adjustment",
+        isTransfer: false,
+        isAdjust: true,
+        hintKey: "เลือกเหตุผลก่อนกรอกจำนวน: เสียหายจะลดยอด รับคืนจะเพิ่มยอด และแก้ไขใช้จำนวนบวกหรือลบได้"
+      },
+      transfer: {
+        titleKey: "ย้ายสินค้าจากคลังหนึ่งไปอีกคลัง",
+        bodyKey: "จำนวนนี้จะลดจากคลังต้นทางและเพิ่มในคลังปลายทาง โดยต้องเลือกคนละคลัง",
+        qtyLabelKey: "จำนวน",
+        qtyPlaceholder: "ระบุจำนวนที่จะโอนย้าย เช่น 20",
+        taskNameTh: "งาน: โอนย้ายระหว่างคลัง",
+        taskNameEn: "Task: Warehouse Transfer",
+        btnLabelTh: "บันทึกการโอนย้ายสต็อก",
+        btnLabelEn: "Record Stock Transfer",
+        isTransfer: true,
+        isAdjust: false,
+        hintKey: "จำนวนนี้จะลดจากคลังต้นทางและเพิ่มในคลังปลายทาง โดยต้องเลือกคนละคลัง"
+      }
+    };
+
+    function selectMovementType(type) {
+      currentTask = type;
+
+      // Update Tab Styles
+      ['receive', 'count', 'adjust', 'transfer'].forEach(t => {
+        const tab = document.getElementById(`tab-${t}`);
+        if (t === type) {
+          tab.className = "movement-tab active flex flex-col items-center justify-center p-3 rounded-lg border-2 border-primary bg-primary-light text-primary font-semibold transition-all shadow-xs";
+          const icon = tab.querySelector('svg');
+          if (icon) icon.className = "w-5 h-5 mb-1 text-primary";
+        } else {
+          tab.className = "movement-tab flex flex-col items-center justify-center p-3 rounded-lg border border-border bg-white text-ink-secondary hover:text-ink hover:bg-slate-50 font-medium transition-all";
+          const icon = tab.querySelector('svg');
+          if (icon) icon.className = "w-5 h-5 mb-1 text-slate-500";
+        }
+      });
+
+      // Update Form layout per task
+      const cfg = taskConfig[type];
+      const singleContainer = document.getElementById('warehouse-single-container');
+      const transferContainer = document.getElementById('warehouse-transfer-container');
+      const reasonContainer = document.getElementById('reason-container');
+      const qtyLabel = document.getElementById('qty-field-label');
+      const qtyInput = document.getElementById('quantity-input');
+      const taskLabel = document.getElementById('active-task-label');
+      const expTitle = document.getElementById('explanation-title');
+      const expBody = document.getElementById('explanation-body');
+      const qtyHint = document.getElementById('qty-hint-text');
+      const submitText = document.getElementById('submit-btn-text');
+
+      // Containers visibility
+      if (cfg.isTransfer) {
+        singleContainer.classList.add('hidden');
+        transferContainer.classList.remove('hidden');
+      } else {
+        singleContainer.classList.remove('hidden');
+        transferContainer.classList.add('hidden');
+      }
+
+      if (cfg.isAdjust) {
+        reasonContainer.classList.remove('hidden');
+      } else {
+        reasonContainer.classList.add('hidden');
+      }
+
+      // Input configs
+      qtyInput.placeholder = cfg.qtyPlaceholder;
+      taskLabel.textContent = currentLang === 'th' ? cfg.taskNameTh : cfg.taskNameEn;
+
+      // Explanation text
+      const tTitle = translationsData[cfg.titleKey]?.[currentLang] || cfg.titleKey;
+      const tBody = translationsData[cfg.bodyKey]?.[currentLang] || cfg.bodyKey;
+      const tLabel = translationsData[cfg.qtyLabelKey]?.[currentLang] || cfg.qtyLabelKey;
+      const tHint = translationsData[cfg.hintKey]?.[currentLang] || cfg.hintKey;
+      const tBtn = currentLang === 'th' ? cfg.btnLabelTh : cfg.btnLabelEn;
+
+      expTitle.textContent = tTitle;
+      expBody.textContent = tBody;
+      qtyLabel.textContent = tLabel;
+      qtyHint.textContent = tHint;
+      submitText.textContent = tBtn;
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const thBtn = document.getElementById('lang-btn-th');
+      const enBtn = document.getElementById('lang-btn-en');
+      const sampleBadge = document.getElementById('sample-data-badge');
+
+      if (lang === 'th') {
+        thBtn.className = "px-2.5 py-1 rounded bg-white text-ink shadow-xs font-semibold";
+        enBtn.className = "px-2.5 py-1 rounded text-ink-secondary hover:text-ink";
+        sampleBadge.textContent = "ข้อมูลตัวอย่าง";
+      } else {
+        enBtn.className = "px-2.5 py-1 rounded bg-white text-ink shadow-xs font-semibold";
+        thBtn.className = "px-2.5 py-1 rounded text-ink-secondary hover:text-ink";
+        sampleBadge.textContent = "Sample Data";
+      }
+
+      // Translate all data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translationsData[key] && translationsData[key][lang]) {
+          el.textContent = translationsData[key][lang];
+        }
+      });
+
+      // Update current selected task text
+      selectMovementType(currentTask);
+    }
+
+    document.getElementById('lang-btn-th').addEventListener('click', () => setLanguage('th'));
+    document.getElementById('lang-btn-en').addEventListener('click', () => setLanguage('en'));
+
+    // Handle Form Submit
+    function handleStockMoveSubmit(event) {
+      event.preventDefault();
+      const submitBtn = document.getElementById('submit-btn');
+      const spinner = document.getElementById('submit-spinner');
+      const btnText = document.getElementById('submit-btn-text');
+      const banner = document.getElementById('success-banner');
+      const details = document.getElementById('success-details');
+      const sku = document.getElementById('sku-select').value;
+      const qty = document.getElementById('quantity-input').value;
+
+      // Loading state
+      spinner.classList.remove('hidden');
+      btnText.textContent = translationsData["กำลังบันทึก…"]?.[currentLang] || "กำลังบันทึก…";
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        spinner.classList.add('hidden');
+        btnText.textContent = currentLang === 'th' ? taskConfig[currentTask].btnLabelTh : taskConfig[currentTask].btnLabelEn;
+        submitBtn.disabled = false;
+
+        // Show success banner
+        banner.classList.remove('hidden');
+        if (currentLang === 'th') {
+          details.textContent = `รายการ ${sku} จำนวน ${qty} ชิ้น ถูกบันทึกเข้าสู่ระบบเรียบร้อย ยอดคงเหลือถูกอัปเดตแล้ว`;
+        } else {
+          details.textContent = `Movement recorded for ${sku} (${qty} units). Stock balances updated.`;
+        }
+
+        // Scroll to top of banner
+        banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 700);
+    }
+
+    function resetForm() {
+      document.getElementById('stock-move-form').reset();
+      selectMovementType('receive');
+      document.getElementById('success-banner').classList.add('hidden');
+    }
+
+    function fillSampleSku(sku) {
+      document.getElementById('sku-select').value = sku;
+      updateCurrentSkuInfo();
+    }
+
+    function updateCurrentSkuInfo() {
+      const sku = document.getElementById('sku-select').value;
+      document.getElementById('summary-sku-code').textContent = sku;
+      const currentQty = document.getElementById('sku-current-qty');
+      const availQty = document.getElementById('sku-available-qty');
+
+      if (sku === 'SKU-TH-8890') {
+        currentQty.textContent = "450";
+        availQty.textContent = "420";
+      } else if (sku === 'SKU-CH-4412') {
+        currentQty.textContent = "1,200";
+        availQty.textContent = "1,050";
+      } else if (sku === 'SKU-MK-1102') {
+        currentQty.textContent = "125";
+        availQty.textContent = "100";
+      } else {
+        currentQty.textContent = "80";
+        availQty.textContent = "72";
+      }
+    }
+
+    // Refresh warehouses button interactive simulation
+    document.getElementById('refresh-warehouses-btn').addEventListener('click', function() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('rotate-180');
+      setTimeout(() => {
+        icon.classList.remove('rotate-180');
+      }, 500);
+    });
+  </script>
+</body>
+</html>

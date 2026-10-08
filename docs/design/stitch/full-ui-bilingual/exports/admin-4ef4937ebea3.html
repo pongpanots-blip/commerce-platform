@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แชตกับลูกค้า (Live chat) — Commerce Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f6f8fc;
+      color: #17243b;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f4f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- Root Container with 256px Sidebar Layout -->
+  <div class="flex min-h-screen">
+
+    <!-- 256px Left Sidebar (Admin Navigation) -->
+    <aside class="w-64 bg-white border-r border-[#e1e7f0] flex flex-col shrink-0 select-none">
+      <!-- App Brand / Header -->
+      <div class="h-16 px-5 border-b border-[#e1e7f0] flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-[#365cf5] text-white font-bold flex items-center justify-center text-base tracking-wider shadow-sm">
+          CP
+        </div>
+        <div>
+          <div class="font-bold text-[15px] leading-tight text-[#17243b]">Commerce Platform</div>
+          <div class="text-[11px] text-[#52627a] leading-none mt-0.5">ระบบจัดการศูนย์ส่งและสาขา</div>
+        </div>
+      </div>
+
+      <!-- Navigation Sections (7 Work Areas) -->
+      <nav class="p-3 flex-1 overflow-y-auto space-y-1 text-[13px] custom-scroll">
+        <div class="px-3 pt-2 pb-1 text-[11px] font-semibold tracking-wider text-[#52627a]/80 uppercase">พื้นที่ทำงานหลัก (7 สายงาน)</div>
+
+        <!-- 1. สินค้าและสต็อก -->
+        <a href="#products" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 shrink-0 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span data-key="nav-products">สินค้าและสต็อก</span>
+        </a>
+
+        <!-- 2. ออเดอร์และการเงิน -->
+        <a href="#orders" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 shrink-0 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span data-key="nav-orders">ออเดอร์และการเงิน</span>
+        </a>
+
+        <!-- 3. ลูกค้าและบริการ (Active Category) -->
+        <div class="space-y-1 pt-0.5">
+          <div class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#365cf5]/10 text-[#365cf5] font-semibold">
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 shrink-0 text-[#365cf5]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              <span data-key="nav-customers">ลูกค้าและบริการ</span>
+            </div>
+            <span class="w-2 h-2 rounded-full bg-[#365cf5]"></span>
+          </div>
+
+          <!-- Sub items under ลูกค้าและบริการ -->
+          <div class="pl-8 pr-1 space-y-0.5 text-[12.5px]">
+            <a href="#customers-list" class="block py-1.5 px-2 rounded text-[#52627a] hover:text-[#17243b]">รายชื่อลูกค้าและร้านค้า</a>
+            <a href="#winback" class="block py-1.5 px-2 rounded text-[#52627a] hover:text-[#17243b]">ติดตามลูกค้าเก่า (Win-back)</a>
+            <a href="#csdesk" class="block py-1.5 px-2 rounded text-[#52627a] hover:text-[#17243b]">งานบริการลูกค้า (CS Desk)</a>
+            <a href="#livechat" class="block py-1.5 px-2 rounded font-semibold bg-[#e1e7f0]/70 text-[#17243b] border-l-2 border-[#365cf5] -ml-2 pl-3">
+              แชตกับลูกค้า (Live chat)
+            </a>
+            <a href="#tickets" class="block py-1.5 px-2 rounded text-[#52627a] hover:text-[#17243b]">ข้อร้องเรียนและบริการ</a>
+          </div>
+        </div>
+
+        <!-- 4. การตลาด -->
+        <a href="#marketing" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 shrink-0 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+          <span data-key="nav-marketing">การตลาด</span>
+        </a>
+
+        <!-- 5. รายงานและข้อมูล -->
+        <a href="#reports" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 shrink-0 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span data-key="nav-reports">รายงานและข้อมูล</span>
+        </a>
+
+        <!-- 6. ระบบเชื่อมต่อ -->
+        <a href="#connections" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 shrink-0 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+          <span data-key="nav-connections">ระบบเชื่อมต่อ</span>
+        </a>
+
+        <!-- 7. ตั้งค่าและทีมงาน -->
+        <a href="#settings" class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#52627a] hover:bg-[#f6f8fc] hover:text-[#17243b] transition-colors">
+          <svg class="w-4 h-4 shrink-0 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span data-key="nav-settings">ตั้งค่าและทีมงาน</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Footer (Developer Portal link & route info) -->
+      <div class="p-3 border-t border-[#e1e7f0] bg-[#fafbfd] text-xs">
+        <a href="#portal" class="flex items-center gap-2 text-[#52627a] hover:text-[#17243b] font-medium py-1">
+          <svg class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          <span>Developer Portal</span>
+        </a>
+        <div class="mt-2 text-[10px] text-[#52627a]/70 font-mono">
+          route: admin-4ef4937ebea3<br>/livechat (Livechat)
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+
+      <!-- Top Contextual Navigation Bar -->
+      <header class="h-16 bg-white border-b border-[#e1e7f0] px-6 flex items-center justify-between shrink-0">
+        <!-- Search current page -->
+        <div class="flex items-center gap-3 w-96">
+          <div class="relative w-full">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#52627a]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </span>
+            <input
+              id="page-search-input"
+              type="text"
+              placeholder="ค้นหาในหน้านี้… (ค้นหาเฉพาะหน้าปัจจุบัน)"
+              class="w-full h-10 pl-9 pr-3 text-sm bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg text-[#17243b] placeholder-[#52627a]/70 focus:outline-none focus:border-[#365cf5] focus:bg-white transition-all"
+            />
+          </div>
+        </div>
+
+        <!-- Header Actions: Sample Badge, Bilingual Switcher, User Profile -->
+        <div class="flex items-center gap-4">
+          <!-- Sample Data Tag -->
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fef9c3] text-[#854d0e] border border-[#fef08a]" id="badge-sample-data">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#eab308]"></span>
+            <span class="lang-text" data-key="sample-badge">ข้อมูลตัวอย่าง</span>
+          </span>
+
+          <!-- Language Switcher: ไทย / English -->
+          <div class="flex items-center bg-[#f1f4f9] rounded-lg p-0.5 border border-[#e1e7f0] text-xs font-medium">
+            <button id="lang-btn-th" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all">
+              ไทย
+            </button>
+            <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all">
+              English
+            </button>
+          </div>
+
+          <!-- User Info -->
+          <div class="flex items-center gap-2.5 pl-2 border-l border-[#e1e7f0]">
+            <div class="w-8 h-8 rounded-full bg-[#e0e7ff] text-[#365cf5] flex items-center justify-center font-bold text-xs">
+              จน
+            </div>
+            <div class="text-left text-xs">
+              <div class="font-semibold text-[#17243b] leading-tight">จินดา นวลอนันต์</div>
+              <div class="text-[#52627a] text-[11px]">หัวหน้าทีมบริการลูกค้า (CS)</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Scrollable Area -->
+      <main class="flex-1 p-6 overflow-y-auto">
+        <div class="max-w-[1240px] mx-auto space-y-6">
+
+          <!-- Breadcrumb & Page Header -->
+          <div>
+            <nav class="flex items-center gap-2 text-xs text-[#52627a] mb-1.5">
+              <span>ลูกค้าและบริการ</span>
+              <span>/</span>
+              <span class="text-[#17243b] font-medium" data-ui-key="Live chat">Live chat</span>
+            </nav>
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 class="text-[28px] font-bold text-[#17243b] leading-tight flex items-center gap-3">
+                  <span data-ui-key="Live chat">Live chat</span>
+                  <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#e0e7ff] text-[#365cf5]">
+                    Gateway Relay
+                  </span>
+                </h1>
+                <p class="text-sm text-[#52627a] mt-1" data-ui-key="ข้อความแชตหน้าร้านที่วิ่งผ่าน commerce (ลูกค้า → CS-CRM และคำตอบ → ลูกค้า) · CS ยังตอบใน CS-CRM">
+                  ข้อความแชตหน้าร้านที่วิ่งผ่าน commerce (ลูกค้า → CS-CRM และคำตอบ → ลูกค้า) · CS ยังตอบใน CS-CRM
+                </p>
+              </div>
+
+              <!-- Top Primary Actions -->
+              <div class="flex items-center gap-2.5">
+                <button onclick="refreshData()" class="h-10 px-4 rounded-lg bg-white border border-[#e1e7f0] text-sm font-semibold text-[#17243b] hover:bg-[#f6f8fc] active:bg-[#edf2f7] transition-colors flex items-center gap-2 shadow-xs">
+                  <svg id="refresh-icon" class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                  <span data-ui-key="Refresh">Refresh</span>
+                </button>
+                <div class="px-3 py-2 bg-[#dcfce7] border border-[#bbf7d0] rounded-lg text-xs font-semibold text-[#157347] flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-[#157347] animate-pulse"></span>
+                  <span>Relay Engine Online</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Operational System Metrics Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-[#e1e7f0] shadow-xs">
+              <div class="text-xs font-medium text-[#52627a]">ข้อความทั้งหมดวันนี้</div>
+              <div class="mt-1 flex items-baseline justify-between">
+                <span class="text-2xl font-bold text-[#17243b]" id="metric-total">248</span>
+                <span class="text-xs text-[#157347] font-semibold bg-[#dcfce7] px-1.5 py-0.5 rounded">99.8% สำเร็จ</span>
+              </div>
+              <div class="text-[11px] text-[#52627a] mt-1">รีเลย์เรียลไทม์ผ่าน WebSocket</div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-[#e1e7f0] shadow-xs">
+              <div class="text-xs font-medium text-[#52627a]">ฝั่งขาเข้า (ลูกค้า → CS)</div>
+              <div class="mt-1 flex items-baseline justify-between">
+                <span class="text-2xl font-bold text-[#365cf5]">142</span>
+                <span class="text-xs text-[#52627a]">จาก 38 ผู้เยี่ยมชม</span>
+              </div>
+              <div class="text-[11px] text-[#52627a] mt-1">ส่งต่อเข้าคิว CS-CRM Desk</div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-[#e1e7f0] shadow-xs">
+              <div class="text-xs font-medium text-[#52627a]">ฝั่งขาออก (CS → ลูกค้า)</div>
+              <div class="mt-1 flex items-baseline justify-between">
+                <span class="text-2xl font-bold text-[#157347]">106</span>
+                <span class="text-xs text-[#52627a]">เวลาเฉลี่ย 1.2 นาที</span>
+              </div>
+              <div class="text-[11px] text-[#52627a] mt-1">ผลักดันกลับสู่หน้าร้านสำเร็จ</div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-[#e1e7f0] shadow-xs">
+              <div class="text-xs font-medium text-[#52627a]">ผู้เยี่ยมชมที่กำลังสนทนา</div>
+              <div class="mt-1 flex items-baseline justify-between">
+                <span class="text-2xl font-bold text-[#17243b]">6</span>
+                <span class="text-xs text-[#b08900] font-semibold bg-[#fef9c3] px-1.5 py-0.5 rounded">Active Sessions</span>
+              </div>
+              <div class="text-[11px] text-[#52627a] mt-1">อัปเดตล่าสุด 10 วินาทีที่แล้ว</div>
+            </div>
+          </div>
+
+          <!-- Main Live Chat Stream & Filters Card -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] shadow-xs overflow-hidden">
+
+            <!-- Filter Bar -->
+            <div class="p-4 border-b border-[#e1e7f0] bg-[#fafbfd] flex flex-wrap items-center justify-between gap-4">
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2 text-xs font-semibold text-[#52627a]">
+                  <svg class="w-4 h-4 text-[#52627a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                  <span data-ui-key="ตัวกรอง:">ตัวกรอง:</span>
+                </div>
+
+                <!-- Direction Filter -->
+                <div class="flex items-center bg-white rounded-lg p-0.5 border border-[#e1e7f0] text-xs">
+                  <button onclick="setDirectionFilter('all')" id="filter-dir-all" class="px-3 py-1.5 rounded-md bg-[#365cf5] text-white font-medium shadow-xs">
+                    ทั้งหมด
+                  </button>
+                  <button onclick="setDirectionFilter('inbound')" id="filter-dir-in" class="px-3 py-1.5 rounded-md text-[#52627a] hover:text-[#17243b] transition-colors" data-ui-key="ลูกค้า → CS">
+                    ลูกค้า → CS
+                  </button>
+                  <button onclick="setDirectionFilter('outbound')" id="filter-dir-out" class="px-3 py-1.5 rounded-md text-[#52627a] hover:text-[#17243b] transition-colors" data-ui-key="CS → ลูกค้า">
+                    CS → ลูกค้า
+                  </button>
+                </div>
+
+                <!-- Active Visitor Filter Chip (When selected) -->
+                <div id="visitor-filter-chip" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#e0e7ff] text-[#365cf5] text-xs font-medium border border-[#c7d2fe]">
+                  <span>ผู้เยี่ยมชม: <strong id="selected-visitor-label">vis_90214</strong></span>
+                  <button onclick="clearVisitorFilter()" class="hover:text-red-600 ml-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Quick Status Legend -->
+              <div class="text-xs text-[#52627a] flex items-center gap-3">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-[#157347]"></span>
+                  <span>ส่งถึงเรียบร้อย</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-[#b08900]"></span>
+                  <span>กำลังรอรีเลย์</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Table of Live Chat Stream -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm text-[#17243b]" id="chat-table">
+                <thead class="bg-[#f6f8fc] border-b border-[#e1e7f0] text-xs font-semibold text-[#52627a]">
+                  <tr>
+                    <th class="py-3 px-4 w-32" data-ui-key="เวลา">เวลา</th>
+                    <th class="py-3 px-4 w-44" data-ui-key="ผู้เยี่ยมชม">ผู้เยี่ยมชม</th>
+                    <th class="py-3 px-4 w-36" data-ui-key="ทาง">ทาง</th>
+                    <th class="py-3 px-4" data-ui-key="ข้อความ">ข้อความ</th>
+                    <th class="py-3 px-4 w-32 text-center" data-ui-key="ผล">ผล</th>
+                    <th class="py-3 px-4 w-40 text-right">การจัดการ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e1e7f0]" id="chat-stream-body">
+
+                  <!-- Row 1 (Outbound: CS -> Customer) -->
+                  <tr class="hover:bg-[#f8fafc] transition-colors chat-row" data-direction="outbound" data-visitor="vis_90214">
+                    <td class="py-3.5 px-4 font-mono text-xs text-[#52627a]">
+                      14:32:05
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-medium text-xs font-mono text-[#17243b]">vis_90214</div>
+                      <div class="text-[11px] text-[#52627a]">บจก. สยามค้าปลีก โฮลเซล</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#e0e7ff] text-[#365cf5] border border-[#c7d2fe]" data-ui-key="CS → ลูกค้า">
+                        CS → ลูกค้า
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-sm font-medium text-[#17243b]">
+                        เจ้าหน้าที่จัดส่งกำลังนำส่งล็อต CP-DRK-109 เพิ่มเติมให้ภายในช่วงบ่ายนี้ครับ คุณสมชัยสามารถเช็กสถานะรถส่งได้เลยครับ
+                      </div>
+                      <div class="text-[11px] text-[#52627a] mt-0.5">
+                        โดย จินดา นวลอนันต์ (ผ่าน CS-CRM #T-8821)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-[#dcfce7] text-[#157347]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        ส่งสำเร็จ
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <button onclick="filterByVisitor('vis_90214')" class="text-xs font-medium text-[#365cf5] hover:underline" data-ui-key="ดูเฉพาะผู้เยี่ยมชมนี้">
+                        ดูเฉพาะผู้เยี่ยมชมนี้
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Row 2 (Inbound: Customer -> CS) -->
+                  <tr class="hover:bg-[#f8fafc] transition-colors chat-row" data-direction="inbound" data-visitor="vis_90214">
+                    <td class="py-3.5 px-4 font-mono text-xs text-[#52627a]">
+                      14:30:18
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-medium text-xs font-mono text-[#17243b]">vis_90214</div>
+                      <div class="text-[11px] text-[#52627a]">บจก. สยามค้าปลีก โฮลเซล</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#f3e8ff] text-[#7e22ce] border border-[#e9d5ff]" data-ui-key="ลูกค้า → CS">
+                        ลูกค้า → CS
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-sm font-medium text-[#17243b]">
+                        สอบถามหน่อยครับ ออเดอร์น้ำดื่มบริสุทธิ์ 600ml ที่สั่งเพิ่มเมื่อเช้าจะได้รับประมาณกี่โมงครับ พอดีหน้าร้านของเริ่มพร่อง
+                      </div>
+                      <div class="text-[11px] text-[#52627a] mt-0.5">
+                        ส่งจากหน้าสินค้า: /products/cp-drk-109 · IP 184.22.109.12
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-[#dcfce7] text-[#157347]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        ส่งสำเร็จ
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <button onclick="filterByVisitor('vis_90214')" class="text-xs font-medium text-[#365cf5] hover:underline" data-ui-key="ดูเฉพาะผู้เยี่ยมชมนี้">
+                        ดูเฉพาะผู้เยี่ยมชมนี้
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Row 3 (Inbound: Customer -> CS) -->
+                  <tr class="hover:bg-[#f8fafc] transition-colors chat-row" data-direction="inbound" data-visitor="vis_88320">
+                    <td class="py-3.5 px-4 font-mono text-xs text-[#52627a]">
+                      14:26:44
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-medium text-xs font-mono text-[#17243b]">vis_88320</div>
+                      <div class="text-[11px] text-[#52627a]">ร้านทรัพย์ทวีค้าส่ง (สำโรง)</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#f3e8ff] text-[#7e22ce] border border-[#e9d5ff]" data-ui-key="ลูกค้า → CS">
+                        ลูกค้า → CS
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-sm font-medium text-[#17243b]">
+                        ขอใบกำกับภาษีย้อนหลังของบิลเดือนที่แล้วได้ช่องทางไหนบ้างครับ
+                      </div>
+                      <div class="text-[11px] text-[#52627a] mt-0.5">
+                        ส่งจากหน้าเช็กเอาต์: /checkout/tax-invoice · CUST-88491
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-[#dcfce7] text-[#157347]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        ส่งสำเร็จ
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <button onclick="filterByVisitor('vis_88320')" class="text-xs font-medium text-[#365cf5] hover:underline" data-ui-key="ดูเฉพาะผู้เยี่ยมชมนี้">
+                        ดูเฉพาะผู้เยี่ยมชมนี้
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Row 4 (Outbound: CS -> Customer) -->
+                  <tr class="hover:bg-[#f8fafc] transition-colors chat-row" data-direction="outbound" data-visitor="vis_88320">
+                    <td class="py-3.5 px-4 font-mono text-xs text-[#52627a]">
+                      14:28:10
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-medium text-xs font-mono text-[#17243b]">vis_88320</div>
+                      <div class="text-[11px] text-[#52627a]">ร้านทรัพย์ทวีค้าส่ง (สำโรง)</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#e0e7ff] text-[#365cf5] border border-[#c7d2fe]" data-ui-key="CS → ลูกค้า">
+                        CS → ลูกค้า
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-sm font-medium text-[#17243b]">
+                        ระบบส่งไฟล์ e-Tax Invoice ไปยังอีเมลบัญชีการเงินเรียบร้อยแล้วครับ หรือสามารถกดดาวน์โหลดได้จากเมนู ออเดอร์และการเงิน ครับ
+                      </div>
+                      <div class="text-[11px] text-[#52627a] mt-0.5">
+                        โดย ณัฐวุฒิ สิทธิโชค (ทีม B2B CS)
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-[#dcfce7] text-[#157347]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        ส่งสำเร็จ
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <button onclick="filterByVisitor('vis_88320')" class="text-xs font-medium text-[#365cf5] hover:underline" data-ui-key="ดูเฉพาะผู้เยี่ยมชมนี้">
+                        ดูเฉพาะผู้เยี่ยมชมนี้
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Row 5 (Inbound: Customer -> CS) -->
+                  <tr class="hover:bg-[#f8fafc] transition-colors chat-row" data-direction="inbound" data-visitor="vis_77419">
+                    <td class="py-3.5 px-4 font-mono text-xs text-[#52627a]">
+                      14:15:22
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="font-medium text-xs font-mono text-[#17243b]">vis_77419</div>
+                      <div class="text-[11px] text-[#52627a]">โชคอนันต์การค้า พระประแดง</div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-[#f3e8ff] text-[#7e22ce] border border-[#e9d5ff]" data-ui-key="ลูกค้า → CS">
+                        ลูกค้า → CS
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                      <div class="text-sm font-medium text-[#17243b]">
+                        มีส่วนลดโปรโมชันยกลังสำหรับข้าวเกรียบกุ้งกรอบคัดพิเศษไหมครับ
+                      </div>
+                      <div class="text-[11px] text-[#52627a] mt-0.5">
+                        ส่งจากหน้าแค็ตตาล็อก: /catalog/snack · CUST-10492
+                      </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-[#dcfce7] text-[#157347]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        ส่งสำเร็จ
+                      </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                      <button onclick="filterByVisitor('vis_77419')" class="text-xs font-medium text-[#365cf5] hover:underline" data-ui-key="ดูเฉพาะผู้เยี่ยมชมนี้">
+                        ดูเฉพาะผู้เยี่ยมชมนี้
+                      </button>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Empty State Display (Hidden by default, shown when filtering yields 0 results) -->
+            <div id="empty-state" class="hidden py-16 text-center">
+              <div class="w-12 h-12 rounded-full bg-[#f1f4f9] text-[#52627a] mx-auto flex items-center justify-center mb-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              </div>
+              <div class="text-base font-semibold text-[#17243b]" data-ui-key="ยังไม่มีข้อความผ่าน commerce">
+                ยังไม่มีข้อความผ่าน commerce
+              </div>
+              <div class="text-xs text-[#52627a] mt-1 max-w-sm mx-auto">
+                เมื่อลูกค้าหรือทีม CS มีการรับส่งข้อความผ่านหน้าร้าน ข้อมูลการส่งต่อจะปรากฏในหน้านี้โดยอัตโนมัติ
+              </div>
+            </div>
+
+            <!-- Table Footer: Pagination & Page-bound note -->
+            <div class="px-4 py-3 bg-[#f8fafc] border-t border-[#e1e7f0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-[#52627a]">
+              <div>
+                แสดง 5 ข้อความล่าสุดจากรอบการดึงปัจจุบัน (การค้นหาและตัวกรองมีผลเฉพาะในหน้านี้)
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 rounded border border-[#e1e7f0] bg-white text-[#52627a] hover:bg-[#f6f8fc] disabled:opacity-50 font-medium" disabled>
+                  ก่อนหน้า
+                </button>
+                <span class="px-2 font-semibold text-[#17243b]">1</span>
+                <button class="px-3 py-1.5 rounded border border-[#e1e7f0] bg-white text-[#52627a] hover:bg-[#f6f8fc] font-medium">
+                  ถัดไป
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Technical Integration Architecture / Architecture Reference Card -->
+          <div class="bg-white rounded-xl border border-[#e1e7f0] p-5 shadow-xs">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-[#e0e7ff] text-[#365cf5] shrink-0 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div class="flex-1 text-xs space-y-1.5">
+                <div class="font-bold text-sm text-[#17243b]">
+                  หลักการทำงานของ Live chat Gateway (Commerce Relay)
+                </div>
+                <div class="text-[#52627a] leading-relaxed">
+                  หน้าจอนี้ทำหน้าที่เป็น <strong>Relay Observer</strong> แสดงบันทึกข้อความทั้งหมดที่ผ่านระบบ Commerce Gateway ระหว่างลูกค้าร้านค้าและทีม CS โดยอัตโนมัติ
+                  เจ้าหน้าที่ CS ไม่จำเป็นต้องตอบกลับบนหน้านี้ — ให้ปฏิบัติงานตอบแชตผ่าน <strong>CS-CRM Desk</strong> ตามปกติ
+                  ระบบจะทำการเชื่อมต่อข้อมูลและจัดเก็บบันทึกสำหรับการตรวจสอบย้อนหลัง (Audit Log)
+                </div>
+                <div class="pt-2 flex flex-wrap gap-4 text-[11px] font-mono text-[#52627a]">
+                  <span>Gateway Endpoint: wss://gateway.commerce.internal/livechat/v1</span>
+                  <span>CRM Webhook: active (HTTP 200)</span>
+                  <span>Session TTL: 24 ชั่วโมง</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Translation Dictionary JSON script required by platform export specification -->
+  <script id="commerce-ui-translations" type="application/json">
+  {
+    "Live chat": {
+      "th": "Live chat",
+      "en": "Live chat"
+    },
+    "Refresh": {
+      "th": "Refresh",
+      "en": "Refresh"
+    },
+    "เวลา": {
+      "th": "เวลา",
+      "en": "Time"
+    },
+    "ผล": {
+      "th": "ผล",
+      "en": "Result"
+    },
+    "ข้อความแชตหน้าร้านที่วิ่งผ่าน commerce (ลูกค้า → CS-CRM และคำตอบ → ลูกค้า) · CS ยังตอบใน CS-CRM": {
+      "th": "ข้อความแชตหน้าร้านที่วิ่งผ่าน commerce (ลูกค้า → CS-CRM และคำตอบ → ลูกค้า) · CS ยังตอบใน CS-CRM",
+      "en": "Storefront chat messages routed through commerce (Customer → CS-CRM and reply → Customer) · CS agents still respond in CS-CRM"
+    },
+    "ตัวกรอง:": {
+      "th": "ตัวกรอง:",
+      "en": "Filter:"
+    },
+    "ผู้เยี่ยมชม": {
+      "th": "ผู้เยี่ยมชม",
+      "en": "Visitor"
+    },
+    "ทาง": {
+      "th": "ทาง",
+      "en": "Direction"
+    },
+    "ข้อความ": {
+      "th": "ข้อความ",
+      "en": "Message"
+    },
+    "ลูกค้า → CS": {
+      "th": "ลูกค้า → CS",
+      "en": "Customer → CS"
+    },
+    "CS → ลูกค้า": {
+      "th": "CS → ลูกค้า",
+      "en": "CS → Customer"
+    },
+    "ดูเฉพาะผู้เยี่ยมชมนี้": {
+      "th": "ดูเฉพาะผู้เยี่ยมชมนี้",
+      "en": "View only this visitor"
+    },
+    "ยังไม่มีข้อความผ่าน commerce": {
+      "th": "ยังไม่มีข้อความผ่าน commerce",
+      "en": "No messages routed through commerce yet"
+    },
+    "— เลือกคูปอง —": {
+      "th": "— เลือกคูปอง —",
+      "en": "— Select coupon —"
+    },
+    "+ variant ตาม segment": {
+      "th": "+ variant ตาม segment",
+      "en": "+ variant by segment"
+    },
+    "Banners": {
+      "th": "Banners",
+      "en": "Banners"
+    },
+    "default": {
+      "th": "default",
+      "en": "default"
+    },
+    "header.": {
+      "th": "header.",
+      "en": "header."
+    },
+    "Message (TH)": {
+      "th": "Message (TH)",
+      "en": "Message (TH)"
+    },
+    "Preview": {
+      "th": "Preview",
+      "en": "Preview"
+    },
+    "Select…": {
+      "th": "Select…",
+      "en": "Select…"
+    },
+    "Trusted Brands": {
+      "th": "Trusted Brands",
+      "en": "Trusted Brands"
+    },
+    "ก่อน VAT": {
+      "th": "ก่อน VAT",
+      "en": "Before VAT"
+    },
+    "แก้ไข Supplier": {
+      "th": "แก้ไข Supplier",
+      "en": "Edit Supplier"
+    },
+    "ค้นหา slug / title": {
+      "th": "ค้นหา slug / title",
+      "en": "Search slug / title"
+    },
+    "แค็ตตาล็อกหน้าร้าน อ่านจาก replica ของ josh · อนุมัติ / ไม่อนุมัติข้อมูลจาก ERP ทำที่นี่ได้ (josh เป็นคนบันทึก) · แก้ไขอื่นๆ / ใส่รูป ยังทำที่ josh admin": {
+      "th": "แค็ตตาล็อกหน้าร้าน อ่านจาก replica ของ josh · อนุมัติ / ไม่อนุมัติข้อมูลจาก ERP ทำที่นี่ได้ (josh เป็นคนบันทึก) · แก้ไขอื่นๆ / ใส่รูป ยังทำที่ josh admin",
+      "en": "Storefront catalog read from josh replica · Approve / reject data from ERP here (josh records) · Other edits / image uploads still done in josh admin"
+    },
+    "ช่องทางชำระเงิน": {
+      "th": "ช่องทางชำระเงิน",
+      "en": "Payment methods"
+    },
+    "ใช้สินค้าเดิม (ID:": {
+      "th": "ใช้สินค้าเดิม (ID:",
+      "en": "Use existing product (ID:"
+    },
+    "ตั้งชื่อและช่วงเวลา แล้วเพิ่มโปร คูปอง และหน้าโปรในหน้าถัดไป": {
+      "th": "ตั้งชื่อและช่วงเวลา แล้วเพิ่มโปร คูปอง และหน้าโปรในหน้าถัดไป",
+      "en": "Set name and schedule, then add promotions, coupons, and promo pages on next step"
+    },
+    "เนื้อหาที่ส่งจริงสำหรับผู้รับภาษาอังกฤษ (order_paid ฯลฯ) — เว้นว่างได้ ถ้าไม่กรอก ระบบจะใช้ข้อความ EN ที่ตั้งไว้ในโค้ดแทน": {
+      "th": "เนื้อหาที่ส่งจริงสำหรับผู้รับภาษาอังกฤษ (order_paid ฯลฯ) — เว้นว่างได้ ถ้าไม่กรอก ระบบจะใช้ข้อความ EN ที่ตั้งไว้ในโค้ดแทน",
+      "en": "Actual message content for English recipients (order_paid etc.) — can leave empty; system will fall back to code default EN message"
+    },
+    "ปิดใช้งาน": {
+      "th": "ปิดใช้งาน",
+      "en": "Disabled"
+    },
+    "เพิ่ม Workflow": {
+      "th": "เพิ่ม Workflow",
+      "en": "Add Workflow"
+    },
+    "ไม่พบเมนูที่ตรงกับคำค้นหา": {
+      "th": "ไม่พบเมนูที่ตรงกับคำค้นหา",
+      "en": "No menu matches search"
+    },
+    "ยังไม่มี fire log": {
+      "th": "ยังไม่มี fire log",
+      "en": "No fire log yet"
+    },
+    "รหัสและชื่อที่ลูกค้าจะเห็นตอนใช้คูปอง": {
+      "th": "รหัสและชื่อที่ลูกค้าจะเห็นตอนใช้คูปอง",
+      "en": "Code and name customers will see when applying coupon"
+    },
+    "รายการสินค้า (SKU)": {
+      "th": "รายการสินค้า (SKU)",
+      "en": "Product items (SKU)"
+    },
+    "ล้าง Segment": {
+      "th": "ล้าง Segment",
+      "en": "Clear Segment"
+    },
+    "วันนี้ลูกค้าจ่าย": {
+      "th": "วันนี้ลูกค้าจ่าย",
+      "en": "Paid by customers today"
+    },
+    "สร้างหน้าโปรโมชัน": {
+      "th": "สร้างหน้าโปรโมชัน",
+      "en": "Create promotion page"
+    },
+    "หน้าของ campaign = แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — อยู่ที่ {0}": {
+      "th": "หน้าของ campaign = แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — อยู่ที่ {0}",
+      "en": "Campaign page = banner + auto promo items + public campaign coupons (and restricted items) — located at {0}"
+    },
+    "ออเดอร์ · ดูที่ Orders (josh)": {
+      "th": "ออเดอร์ · ดูที่ Orders (josh)",
+      "en": "Orders · view at Orders (josh)"
+    }
+  }
+  </script>
+
+  <!-- Bilingual & Interactive Client Scripts -->
+  <script>
+    let currentLang = 'th';
+    let currentDirection = 'all';
+    let currentVisitor = null;
+    let translations = {};
+
+    try {
+      const transScript = document.getElementById('commerce-ui-translations');
+      if (transScript) {
+        translations = JSON.parse(transScript.textContent);
+      }
+    } catch(e) {
+      console.error('Failed to parse translations', e);
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+      const badgeSample = document.getElementById('badge-sample-data');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        btnEn.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+        if (badgeSample) badgeSample.querySelector('.lang-text').textContent = "ข้อมูลตัวอย่าง";
+        document.getElementById('page-search-input').placeholder = "ค้นหาในหน้านี้… (ค้นหาเฉพาะหน้าปัจจุบัน)";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded-md bg-white text-[#17243b] shadow-xs font-semibold transition-all";
+        btnTh.className = "px-2.5 py-1 rounded-md text-[#52627a] hover:text-[#17243b] transition-all";
+        if (badgeSample) badgeSample.querySelector('.lang-text').textContent = "Sample data";
+        document.getElementById('page-search-input').placeholder = "Search on this page… (current page only)";
+      }
+
+      // Translate all elements with data-ui-key
+      document.querySelectorAll('[data-ui-key]').forEach(el => {
+        const key = el.getAttribute('data-ui-key');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+    }
+
+    function setDirectionFilter(dir) {
+      currentDirection = dir;
+
+      const btnAll = document.getElementById('filter-dir-all');
+      const btnIn = document.getElementById('filter-dir-in');
+      const btnOut = document.getElementById('filter-dir-out');
+
+      [btnAll, btnIn, btnOut].forEach(b => {
+        b.className = "px-3 py-1.5 rounded-md text-[#52627a] hover:text-[#17243b] transition-colors";
+      });
+
+      if (dir === 'all') {
+        btnAll.className = "px-3 py-1.5 rounded-md bg-[#365cf5] text-white font-medium shadow-xs";
+      } else if (dir === 'inbound') {
+        btnIn.className = "px-3 py-1.5 rounded-md bg-[#365cf5] text-white font-medium shadow-xs";
+      } else if (dir === 'outbound') {
+        btnOut.className = "px-3 py-1.5 rounded-md bg-[#365cf5] text-white font-medium shadow-xs";
+      }
+
+      applyFilters();
+    }
+
+    function filterByVisitor(visitorId) {
+      currentVisitor = visitorId;
+      const chip = document.getElementById('visitor-filter-chip');
+      const label = document.getElementById('selected-visitor-label');
+      if (chip && label) {
+        label.textContent = visitorId;
+        chip.classList.remove('hidden');
+        chip.classList.add('flex');
+      }
+      applyFilters();
+    }
+
+    function clearVisitorFilter() {
+      currentVisitor = null;
+      const chip = document.getElementById('visitor-filter-chip');
+      if (chip) {
+        chip.classList.add('hidden');
+        chip.classList.remove('flex');
+      }
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const rows = document.querySelectorAll('.chat-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const rowDir = row.getAttribute('data-direction');
+        const rowVis = row.getAttribute('data-visitor');
+
+        const matchDir = (currentDirection === 'all' || rowDir === currentDirection);
+        const matchVis = (!currentVisitor || rowVis === currentVisitor);
+
+        if (matchDir && matchVis) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const emptyState = document.getElementById('empty-state');
+      const table = document.getElementById('chat-table');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        table.classList.add('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        table.classList.remove('hidden');
+      }
+    }
+
+    function refreshData() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 500);
+    }
+
+    // Initialize in-page filter search (strictly searching current page records)
+    document.getElementById('page-search-input').addEventListener('input', function(e) {
+      const val = e.target.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('.chat-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const matchesSearch = text.includes(val);
+        const rowDir = row.getAttribute('data-direction');
+        const rowVis = row.getAttribute('data-visitor');
+        const matchDir = (currentDirection === 'all' || rowDir === currentDirection);
+        const matchVis = (!currentVisitor || rowVis === currentVisitor);
+
+        if (matchesSearch && matchDir && matchVis) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const emptyState = document.getElementById('empty-state');
+      const table = document.getElementById('chat-table');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        table.classList.add('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        table.classList.remove('hidden');
+      }
+    });
+  </script>
+
+</body>
+</html>

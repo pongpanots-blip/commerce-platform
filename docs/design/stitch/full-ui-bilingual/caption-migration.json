@@ -1,0 +1,54 @@
+[
+  {
+    "file": "apps/commerce-admin/src/app/components/ResourcePage.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/AiConnectors.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshApiLogs.tsx",
+    "edits": 2
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshErpLogs.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/JoshProductDetail.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/MarketingResearch.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/Orders.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/WebhookDeadLetter.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/WebhookPlatforms.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/growth/Plan.tsx",
+    "edits": 3
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/growth/Plans.tsx",
+    "edits": 1
+  },
+  {
+    "file": "apps/commerce-admin/src/app/pages/growth/Workspace.tsx",
+    "edits": 2
+  },
+  {
+    "file": "apps/commerce-portal/src/app/pages/Dashboard.tsx",
+    "edits": 1
+  }
+]

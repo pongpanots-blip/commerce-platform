@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Commerce Platform - การเข้าชม (Traffic Report)</title>
+<!-- Google Fonts: Noto Sans Thai and Latin -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-tint": "#214ce7",
+            "on-tertiary": "#ffffff",
+            "primary-fixed": "#dde1ff",
+            "on-tertiary-fixed-variant": "#7e2c00",
+            "on-primary-container": "#ededff",
+            "on-secondary-fixed-variant": "#38485e",
+            "tertiary-fixed": "#ffdbcd",
+            "surface-dim": "#cddaf9",
+            "primary-fixed-dim": "#b9c3ff",
+            "on-primary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "surface-variant": "#d7e2ff",
+            "on-tertiary-fixed": "#360f00",
+            "on-surface-variant": "#444655",
+            "on-surface": "#0e1b32",
+            "on-error": "#ffffff",
+            "on-background": "#0e1b32",
+            "primary": "#0a3fdc",
+            "outline-variant": "#c4c5d8",
+            "inverse-primary": "#b9c3ff",
+            "background": "#f9f9ff",
+            "surface-container-high": "#e0e8ff",
+            "surface-container": "#e8eeff",
+            "surface-container-highest": "#d7e2ff",
+            "on-primary-fixed-variant": "#0034c0",
+            "inverse-surface": "#243048",
+            "on-tertiary-container": "#ffebe4",
+            "on-error-container": "#93000a",
+            "tertiary-fixed-dim": "#ffb597",
+            "tertiary-container": "#bc4600",
+            "on-secondary-container": "#54647c",
+            "surface": "#f9f9ff",
+            "outline": "#747687",
+            "error": "#ba1a1a",
+            "surface-bright": "#f9f9ff",
+            "secondary-container": "#d0e1fd",
+            "tertiary": "#943500",
+            "primary-container": "#365cf5",
+            "on-secondary-fixed": "#0b1c31",
+            "inverse-on-surface": "#ecf0ff",
+            "on-secondary": "#ffffff",
+            "secondary-fixed": "#d3e3ff",
+            "on-primary-fixed": "#001257",
+            "error-container": "#ffdad6",
+            "secondary-fixed-dim": "#b7c7e3",
+            "surface-container-low": "#f1f3ff",
+            "secondary": "#4f5f77"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "margin": "1.5rem",
+            "space-md": "1rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "label-muted": ["Noto Sans"],
+            "card-title": ["Noto Sans"],
+            "table-header": ["Noto Sans"],
+            "caption": ["Noto Sans"],
+            "label-default": ["Noto Sans"],
+            "body-default": ["Noto Sans"],
+            "page-title": ["Noto Sans"],
+            "body-semibold": ["Noto Sans"],
+            "section-title": ["Noto Sans"],
+            "body-medium": ["Noto Sans"]
+          },
+          "fontSize": {
+            "label-muted": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "card-title": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "table-header": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "caption": ["11px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "label-default": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "page-title": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-semibold": ["14px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "section-title": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "body-medium": ["14px", { "lineHeight": "22px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #f6f8fc;
+      color: #0e1b32;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    /* Tabular currency & metric formatting */
+    .num-tabular {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="bg-[#f6f8fc] text-on-surface antialiased overflow-x-hidden">
+<!-- ========================================================================= -->
+<!-- 1. FIXED NAVIGATION SIDEBAR (256px wide, fixed left)                      -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 w-64 h-screen z-40 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between p-4">
+<div class="flex flex-col gap-5">
+<!-- Tenant Brand Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-lg shadow-sm">
+          CP
+        </div>
+<div class="flex flex-col">
+<span class="text-card-title font-card-title font-bold text-on-surface tracking-tight" data-i18n="brand_title">Commerce Platform</span>
+<span class="text-caption font-caption text-secondary" data-i18n="brand_subtitle">Jagota ERP Connected</span>
+</div>
+</div>
+<!-- Navigation Work Areas (7 Areas defined in Design System & Anchors) -->
+<nav aria-label="Main Navigation" class="flex flex-col gap-1">
+<!-- 1. สินค้าและสต็อก -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined text-secondary">inventory_2</span>
+<span data-i18n="nav_inventory">สินค้าและสต็อก</span>
+</a>
+<!-- 2. ออเดอร์และการเงิน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined text-secondary">receipt_long</span>
+<span data-i18n="nav_orders">ออเดอร์และการเงิน</span>
+</a>
+<!-- 3. ลูกค้าและบริการ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined text-secondary">group</span>
+<span data-i18n="nav_customers">ลูกค้าและบริการ</span>
+</a>
+<!-- 4. การตลาด -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#marketing">
+<span class="material-symbols-outlined text-secondary">campaign</span>
+<span data-i18n="nav_marketing">การตลาด</span>
+</a>
+<!-- 5. รายงานและข้อมูล (ACTIVE NAV TAB) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container text-primary font-semibold border-l-4 border-primary transition-all duration-150" href="#reports">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span data-i18n="nav_reports">รายงานและข้อมูล</span>
+</a>
+<!-- 6. ระบบเชื่อมต่อ -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#integrations">
+<span class="material-symbols-outlined text-secondary">hub</span>
+<span data-i18n="nav_integrations">ระบบเชื่อมต่อ</span>
+</a>
+<!-- 7. ตั้งค่าและทีมงาน -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined text-secondary">settings</span>
+<span data-i18n="nav_settings">ตั้งค่าและทีมงาน</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="flex flex-col gap-2 pt-3 border-t border-outline-variant">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-low text-label-default font-label-default transition-colors duration-150" href="#help">
+<span class="material-symbols-outlined text-secondary">help_outline</span>
+<span data-i18n="nav_help">ช่วยเหลือและคู่มือ</span>
+</a>
+<div class="px-3 py-2 bg-surface-container-low rounded-lg text-caption font-caption text-secondary flex items-center justify-between">
+<span>Josh Replica: Active</span>
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- 2. CONTEXTUAL TOP NAVBAR (Pinned top, left-64)                           -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-64 right-0 h-16 z-30 bg-surface-container-lowest border-b border-outline-variant px-6 flex items-center justify-between">
+<!-- Breadcrumb & Route Pill -->
+<div class="flex items-center gap-3">
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-body-medium font-body-medium text-secondary">
+<span class="hover:text-primary cursor-pointer" data-i18n="crumb_home">หน้าหลัก</span>
+<span class="material-symbols-outlined text-outline-variant text-[16px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer" data-i18n="crumb_reports">รายงานและข้อมูล</span>
+<span class="material-symbols-outlined text-outline-variant text-[16px]">chevron_right</span>
+<span class="text-on-surface font-body-semibold" data-i18n="crumb_traffic">การเข้าชม</span>
+</nav>
+<!-- Technical Route Badge -->
+<span class="ml-2 px-2 py-0.5 rounded text-caption font-caption bg-surface-container text-secondary font-mono">
+        admin-09a118fb037c
+      </span>
+</div>
+<!-- Right Controls: Sync Status, Switcher, Profile -->
+<div class="flex items-center gap-4">
+<!-- Sync Action -->
+<button class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-secondary hover:bg-surface-container-low text-caption font-caption transition-colors" type="button">
+<span class="material-symbols-outlined text-secondary animate-spin-reverse text-[18px]">sync</span>
+<span data-i18n="top_sync_status">Production v2.4</span>
+</button>
+<!-- Language Switcher Pill (Bilingual Equilibrium) -->
+<div aria-label="Language Selector" class="flex items-center bg-[#f6f8fc] p-1 rounded-lg border border-outline-variant h-8" role="group">
+<button class="px-2.5 py-0.5 text-caption font-caption rounded font-semibold bg-surface-container-lowest text-primary shadow-xs transition-all duration-150" id="lang-btn-th" onclick="setLanguage('th')" type="button">
+          TH
+        </button>
+<button class="px-2.5 py-0.5 text-caption font-caption rounded font-medium text-secondary hover:text-on-surface transition-all duration-150" id="lang-btn-en" onclick="setLanguage('en')" type="button">
+          EN
+        </button>
+</div>
+<!-- Notification Icon -->
+<button aria-label="Notifications" class="relative p-1.5 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<!-- User Profile -->
+<div class="flex items-center gap-2.5 pl-3 border-l border-outline-variant">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-semibold text-caption font-caption">
+          VS
+        </div>
+<div class="flex flex-col">
+<span class="text-body-semibold font-body-semibold leading-tight text-on-surface">Verapong S.</span>
+<span class="text-caption font-caption text-secondary leading-tight" data-i18n="user_role">Financial Reconciler</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- 3. MAIN CONTENT CANVAS (Offset: ml-64 pt-16)                             -->
+<!-- ========================================================================= -->
+<main class="ml-64 pt-16 min-h-screen p-8 max-w-[1240px]">
+<!-- Sub-navigation Tabs under รายงานและข้อมูล -->
+<div class="flex items-center gap-2 border-b border-outline-variant mb-6 pb-2">
+<a class="px-3.5 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-body-medium font-body-medium transition-colors" data-i18n="subnav_orders" href="#orders-josh">
+        Orders (josh)
+      </a>
+<a class="px-3.5 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-body-medium font-body-medium transition-colors" data-i18n="subnav_customers" href="#customers-josh">
+        ลูกค้า / บริษัท (josh)
+      </a>
+<a class="px-3.5 py-2 rounded-lg text-secondary hover:bg-surface-container-low text-body-medium font-body-medium transition-colors" data-i18n="subnav_pricing" href="#pricing">
+        ราคาขาย
+      </a>
+<!-- Active Tab: การเข้าชม (Traffic) -->
+<a class="px-3.5 py-2 rounded-lg bg-surface-container text-primary font-body-semibold border-b-2 border-primary transition-colors flex items-center gap-1.5" data-i18n="subnav_traffic" href="#traffic">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span data-i18n="subnav_traffic_label">การเข้าชม</span>
+</a>
+</div>
+<!-- Header & Action Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-page-title font-page-title text-on-surface" data-i18n="page_title">การเข้าชม</h1>
+<span class="px-2.5 py-1 rounded-md text-caption font-caption bg-surface-container-high text-primary font-medium border border-outline-variant" data-i18n="badge_sample">
+            ข้อมูลตัวอย่าง / Sample data
+          </span>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-surface-container-low text-secondary border border-outline-variant" data-i18n="badge_replica">
+            อ่านจาก replica ของ josh
+          </span>
+</div>
+<p class="text-body-default font-body-default text-secondary mt-1" data-i18n="page_subtitle">
+          ผู้เข้าชม การค้นหา และ funnel ของหน้าร้าน josh · อ่านจาก replica ของ josh
+        </p>
+</div>
+<!-- Refresh Button -->
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-primary-container hover:bg-[#2c4ed6] active:bg-[#2240b8] text-white rounded-lg text-body-semibold font-body-semibold shadow-xs transition-colors duration-150" onclick="triggerRefresh(this)" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span data-i18n="btn_refresh">Refresh</span>
+</button>
+</div>
+</div>
+<!-- Filter Bar: Date Range Pills & Custom Date Range -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+<div aria-label="Date presets" class="flex flex-wrap items-center gap-1.5" role="tablist">
+<button class="px-3 py-1.5 rounded-lg text-caption font-caption text-secondary hover:bg-[#f6f8fc] border border-transparent font-medium transition-colors" data-i18n="filter_today" type="button">วันนี้</button>
+<button class="px-3 py-1.5 rounded-lg text-caption font-caption text-secondary hover:bg-[#f6f8fc] border border-transparent font-medium transition-colors" data-i18n="filter_yesterday" type="button">เมื่อวาน</button>
+<button class="px-3 py-1.5 rounded-lg text-caption font-caption bg-primary-container text-white font-semibold shadow-xs" data-i18n="filter_this_week" type="button">สัปดาห์นี้</button>
+<button class="px-3 py-1.5 rounded-lg text-caption font-caption text-secondary hover:bg-[#f6f8fc] border border-transparent font-medium transition-colors" data-i18n="filter_this_month" type="button">เดือนนี้</button>
+<button class="px-3 py-1.5 rounded-lg text-caption font-caption text-secondary hover:bg-[#f6f8fc] border border-transparent font-medium transition-colors" data-i18n="filter_last_month" type="button">เดือนที่แล้ว</button>
+<button class="px-3 py-1.5 rounded-lg text-caption font-caption text-secondary hover:bg-[#f6f8fc] border border-transparent font-medium transition-colors" data-i18n="filter_custom" type="button">กำหนดเอง</button>
+</div>
+<!-- Date Inputs -->
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1 text-label-default font-label-default text-secondary">
+<span data-i18n="filter_from">ตั้งแต่</span>
+<input class="h-9 px-2.5 py-1 text-label-default font-label-default bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-on-surface" type="date" value="2025-05-01"/>
+</div>
+<span class="text-secondary">-</span>
+<div class="flex items-center gap-1 text-label-default font-label-default text-secondary">
+<span data-i18n="filter_to">ถึง</span>
+<input class="h-9 px-2.5 py-1 text-label-default font-label-default bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-on-surface" type="date" value="2025-05-07"/>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 4. METRIC KPI CARDS (Bento Grid)                                         -->
+<!-- ========================================================================= -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<!-- Card 1: Sessions -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-card-title font-card-title text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">insights</span>
+<span data-i18n="kpi_sessions_title">Sessions</span>
+</span>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-emerald-50 text-emerald-700 font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +8.4%
+          </span>
+</div>
+<div>
+<div class="text-[32px] leading-9 font-bold text-on-surface num-tabular">
+            18,420 <span class="text-label-default font-label-default text-secondary font-normal" data-i18n="unit_times">ครั้ง</span>
+</div>
+<p class="text-caption font-caption text-secondary mt-1" data-i18n="kpi_sessions_sub">
+            อัตราการสั่งซื้อสำเร็จเฉลี่ย 6.77% ต่อ Session
+          </p>
+</div>
+<div class="mt-4 pt-3 border-t border-[#f0f4f9] flex items-center justify-between text-caption font-caption text-secondary">
+<span data-i18n="kpi_sessions_bounce">Bounce Rate หน้าร้าน</span>
+<span class="font-semibold text-on-surface">24.2%</span>
+</div>
+</div>
+<!-- Card 2: Visitors -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-card-title font-card-title text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">group</span>
+<span data-i18n="kpi_visitors_title">Visitors</span>
+</span>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-emerald-50 text-emerald-700 font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +11.2%
+          </span>
+</div>
+<div>
+<div class="text-[32px] leading-9 font-bold text-on-surface num-tabular">
+            12,850 <span class="text-label-default font-label-default text-secondary font-normal" data-i18n="unit_users">คน</span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-caption font-caption text-secondary" data-i18n="kpi_logged_in">Login แล้ว:</span>
+<span class="text-caption font-caption font-semibold text-primary num-tabular">4,320 คน (33.6%)</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-[#f0f4f9] flex items-center justify-between text-caption font-caption text-secondary">
+<span data-i18n="kpi_new_visitors">ผู้เข้าชมรายใหม่ (First-time)</span>
+<span class="font-semibold text-on-surface">8,530 คน</span>
+</div>
+</div>
+<!-- Card 3: Funnel Stages Overview -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-card-title font-card-title text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">filter_alt</span>
+<span data-i18n="kpi_funnel_overview_title">Funnel Conversion</span>
+</span>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-surface-container text-primary font-semibold">
+            Overall 6.77%
+          </span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center text-label-default font-label-default">
+<span class="text-secondary" data-i18n="stage_view">ดูสินค้า</span>
+<span class="font-semibold text-on-surface num-tabular">9,640 <span class="text-caption text-secondary">sessions (52.3%)</span></span>
+</div>
+<div class="flex justify-between items-center text-label-default font-label-default">
+<span class="text-secondary" data-i18n="stage_cart">ใส่ตะกร้า</span>
+<span class="font-semibold text-on-surface num-tabular">2,180 <span class="text-caption text-secondary">sessions (11.8%)</span></span>
+</div>
+<div class="flex justify-between items-center text-label-default font-label-default">
+<span class="text-secondary font-medium" data-i18n="stage_buy">ซื้อ (Purchases)</span>
+<span class="font-bold text-primary num-tabular">1,248 <span class="text-caption text-primary/80">sessions (6.77%)</span></span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-[#f0f4f9] flex items-center justify-between text-caption font-caption text-secondary">
+<span data-i18n="kpi_cart_abandonment">อัตราทิ้งตะกร้า (Cart Drop)</span>
+<span class="font-semibold text-error">42.7%</span>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 5. FUNNEL BREAKDOWN VISUALIZATION                                         -->
+<!-- ========================================================================= -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-6 shadow-xs mb-6">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h2 class="text-section-title font-section-title text-on-surface" data-i18n="funnel_heading">Funnel (sessions)</h2>
+<p class="text-body-default font-body-default text-secondary" data-i18n="funnel_desc">เส้นทางการตัดสินใจซื้อของลูกค้า ตั้งแต่เปิดเว็บจนถึงสั่งซื้อสำเร็จ</p>
+</div>
+<div class="flex items-center gap-3 text-caption font-caption text-secondary">
+<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-primary"></span> Session Volume</span>
+<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-outline-variant"></span> Drop-off Volume</span>
+</div>
+</div>
+<!-- Funnel Step Progression Display -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<!-- Step 1: All Sessions -->
+<div class="bg-[#f6f8fc] border border-[#e1e7f0] rounded-xl p-4 flex flex-col justify-between relative">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-caption font-caption font-bold text-primary uppercase tracking-wider">Step 1</span>
+<span class="text-caption font-caption text-secondary">100%</span>
+</div>
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="funnel_step_1">Sessions ทั้งหมด</h3>
+<div class="text-2xl font-bold text-on-surface num-tabular mt-2">18,420</div>
+<p class="text-caption font-caption text-secondary mt-0.5" data-i18n="funnel_step_1_sub">ผู้เข้าชมเริ่มต้นใช้งาน</p>
+</div>
+<div class="mt-4">
+<div class="w-full bg-[#d7e2ff] h-3 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+</div>
+<!-- Step 2: Product Views -->
+<div class="bg-[#f6f8fc] border border-[#e1e7f0] rounded-xl p-4 flex flex-col justify-between relative">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-caption font-caption font-bold text-primary uppercase tracking-wider">Step 2</span>
+<span class="text-caption font-caption text-secondary">52.3% of S1</span>
+</div>
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="funnel_step_2">ดูสินค้า (Views)</h3>
+<div class="text-2xl font-bold text-on-surface num-tabular mt-2">9,640</div>
+<p class="text-caption font-caption text-error mt-0.5">Drop-off: 8,780 (47.7%)</p>
+</div>
+<div class="mt-4">
+<div class="w-full bg-[#d7e2ff] h-3 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 52.3%;"></div>
+</div>
+</div>
+</div>
+<!-- Step 3: Add to Cart -->
+<div class="bg-[#f6f8fc] border border-[#e1e7f0] rounded-xl p-4 flex flex-col justify-between relative">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-caption font-caption font-bold text-primary uppercase tracking-wider">Step 3</span>
+<span class="text-caption font-caption text-secondary">22.6% of S2</span>
+</div>
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="funnel_step_3">ใส่ตะกร้า (Add Cart)</h3>
+<div class="text-2xl font-bold text-on-surface num-tabular mt-2">2,180</div>
+<p class="text-caption font-caption text-error mt-0.5">Drop-off: 7,460 (77.4%)</p>
+</div>
+<div class="mt-4">
+<div class="w-full bg-[#d7e2ff] h-3 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 22.6%;"></div>
+</div>
+</div>
+</div>
+<!-- Step 4: Purchase Completed -->
+<div class="bg-[#f6f8fc] border border-[#e1e7f0] rounded-xl p-4 flex flex-col justify-between relative">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-caption font-caption font-bold text-emerald-600 uppercase tracking-wider">Step 4</span>
+<span class="text-caption font-caption text-emerald-700 font-semibold">57.2% of S3</span>
+</div>
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="funnel_step_4">ซื้อสำเร็จ (Purchased)</h3>
+<div class="text-2xl font-bold text-emerald-700 num-tabular mt-2">1,248</div>
+<p class="text-caption font-caption text-emerald-600 mt-0.5">Drop-off: 932 (42.8%)</p>
+</div>
+<div class="mt-4">
+<div class="w-full bg-[#d7e2ff] h-3 rounded-full overflow-hidden">
+<div class="bg-emerald-600 h-full rounded-full" style="width: 57.2%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 6. TRAFFIC BREAKDOWN & PLATFORMS (Split 8/4 grid)                         -->
+<!-- ========================================================================= -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+<!-- Daily Breakdown Table (8 cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden flex flex-col">
+<div class="p-5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div>
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="daily_heading">Sessions รายวัน</h3>
+<p class="text-caption font-caption text-secondary" data-i18n="daily_sub">สถิติการเข้าใช้งานและสัดส่วนการซื้อย้อนหลัง 7 วัน</p>
+</div>
+<span class="px-2 py-1 rounded text-caption font-caption bg-surface-container text-primary font-medium">7 Days</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-11 bg-[#f6f8fc] border-b border-[#e1e7f0] text-table-header font-table-header text-secondary uppercase">
+<th class="px-4 py-2" data-i18n="col_date">วันที่</th>
+<th class="px-4 py-2 text-right" data-i18n="col_sessions">Sessions</th>
+<th class="px-4 py-2 text-right" data-i18n="col_visitors">Visitors</th>
+<th class="px-4 py-2 text-right" data-i18n="col_views">ดูสินค้า</th>
+<th class="px-4 py-2 text-right" data-i18n="col_cart">ใส่ตะกร้า</th>
+<th class="px-4 py-2 text-right" data-i18n="col_orders">คำสั่งซื้อ</th>
+<th class="px-4 py-2 text-right" data-i18n="col_conv">Conversion</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#eef2f7] text-body-default font-body-default">
+<tr class="h-12 hover:bg-[#f9fafc] transition-colors">
+<td class="px-4 py-2 font-medium text-on-surface">07 พ.ค. 2025</td>
+<td class="px-4 py-2 text-right num-tabular">2,840</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">2,110</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">1,510</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">380</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold text-primary">212</td>
+<td class="px-4 py-2 text-right num-tabular font-medium text-emerald-700">7.46%</td>
+</tr>
+<tr class="h-12 hover:bg-[#f9fafc] transition-colors">
+<td class="px-4 py-2 font-medium text-on-surface">06 พ.ค. 2025</td>
+<td class="px-4 py-2 text-right num-tabular">2,910</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">2,050</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">1,480</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">345</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold text-primary">198</td>
+<td class="px-4 py-2 text-right num-tabular font-medium text-emerald-700">6.80%</td>
+</tr>
+<tr class="h-12 hover:bg-[#f9fafc] transition-colors">
+<td class="px-4 py-2 font-medium text-on-surface">05 พ.ค. 2025</td>
+<td class="px-4 py-2 text-right num-tabular">2,620</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">1,890</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">1,390</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">310</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold text-primary">184</td>
+<td class="px-4 py-2 text-right num-tabular font-medium text-emerald-700">7.02%</td>
+</tr>
+<tr class="h-12 hover:bg-[#f9fafc] transition-colors">
+<td class="px-4 py-2 font-medium text-on-surface">04 พ.ค. 2025</td>
+<td class="px-4 py-2 text-right num-tabular">2,410</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">1,680</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">1,210</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">270</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold text-primary">150</td>
+<td class="px-4 py-2 text-right num-tabular font-medium text-emerald-700">6.22%</td>
+</tr>
+<tr class="h-12 hover:bg-[#f9fafc] transition-colors">
+<td class="px-4 py-2 font-medium text-on-surface">03 พ.ค. 2025</td>
+<td class="px-4 py-2 text-right num-tabular">2,530</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">1,720</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">1,340</td>
+<td class="px-4 py-2 text-right num-tabular text-secondary">295</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold text-primary">172</td>
+<td class="px-4 py-2 text-right num-tabular font-medium text-emerald-700">6.79%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Platform Breakdown (4 cols) -->
+<div class="lg:col-span-4 bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-5 shadow-xs flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="platform_heading">แยกตาม platform</h3>
+<span class="material-symbols-outlined text-secondary text-[20px]">devices</span>
+</div>
+<p class="text-caption font-caption text-secondary mb-4" data-i18n="platform_sub">สัดส่วนอุปกรณ์ที่เชื่อมต่อเข้าสู่หน้าร้าน</p>
+<div class="space-y-4">
+<!-- Mobile Web -->
+<div>
+<div class="flex justify-between items-center text-label-default font-label-default mb-1">
+<span class="flex items-center gap-1.5 text-on-surface font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">smartphone</span>
+                  Mobile Web
+                </span>
+<span class="num-tabular font-semibold text-on-surface">11,973 (65.0%)</span>
+</div>
+<div class="w-full bg-[#f1f3ff] h-2 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+<!-- Desktop -->
+<div>
+<div class="flex justify-between items-center text-label-default font-label-default mb-1">
+<span class="flex items-center gap-1.5 text-on-surface font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">computer</span>
+                  Desktop
+                </span>
+<span class="num-tabular font-semibold text-on-surface">5,342 (29.0%)</span>
+</div>
+<div class="w-full bg-[#f1f3ff] h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 29%;"></div>
+</div>
+</div>
+<!-- Tablet -->
+<div>
+<div class="flex justify-between items-center text-label-default font-label-default mb-1">
+<span class="flex items-center gap-1.5 text-on-surface font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">tablet_mac</span>
+                  Tablet
+                </span>
+<span class="num-tabular font-semibold text-on-surface">1,105 (6.0%)</span>
+</div>
+<div class="w-full bg-[#f1f3ff] h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 6%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 p-3 bg-[#f6f8fc] rounded-lg border border-[#e1e7f0]">
+<div class="flex items-center gap-2 text-caption font-caption text-secondary">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span data-i18n="platform_insight">Mobile Web มี Conversion เติบโตขึ้น 2.4% หลังปรับปรุงหน้า Checkout สำหรับจอสัมผัส</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 7. SEARCH QUERIES & ZERO RESULTS (2 columns)                              -->
+<!-- ========================================================================= -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+<!-- Top Search Queries Card -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden">
+<div class="p-5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div>
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="search_heading">คำค้นยอดนิยม</h3>
+<p class="text-caption font-caption text-secondary" data-i18n="search_sub">คำที่ลูกค้าพิมพ์ค้นหามากที่สุดในระบบ e-Commerce</p>
+</div>
+<span class="material-symbols-outlined text-secondary">search</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-10 bg-[#f6f8fc] border-b border-[#e1e7f0] text-table-header font-table-header text-secondary uppercase">
+<th class="px-4 py-2" data-i18n="col_keyword">คำค้น</th>
+<th class="px-4 py-2 text-right" data-i18n="col_search_count">จำนวน (ครั้ง)</th>
+<th class="px-4 py-2" data-i18n="col_last_searched">ล่าสุด</th>
+<th class="px-4 py-2 text-right" data-i18n="col_products_found">สินค้าที่พบ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#eef2f7] text-body-default font-body-default">
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-on-surface">แซลมอนนอร์เวย์ สด</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">1,420</td>
+<td class="px-4 py-2 text-caption font-caption text-secondary">5 นาทีที่แล้ว</td>
+<td class="px-4 py-2 text-right num-tabular text-emerald-700">14 รายการ</td>
+</tr>
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-on-surface">เนื้อวากิว A5 Kagoshima</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">982</td>
+<td class="px-4 py-2 text-caption font-caption text-secondary">12 นาทีที่แล้ว</td>
+<td class="px-4 py-2 text-right num-tabular text-emerald-700">8 รายการ</td>
+</tr>
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-on-surface">เนยแท้ Elle &amp; Vire</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">740</td>
+<td class="px-4 py-2 text-caption font-caption text-secondary">25 นาทีที่แล้ว</td>
+<td class="px-4 py-2 text-right num-tabular text-emerald-700">6 รายการ</td>
+</tr>
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-on-surface">ทรัฟเฟิลดำ ซอส</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">512</td>
+<td class="px-4 py-2 text-caption font-caption text-secondary">1 ชั่วโมงที่แล้ว</td>
+<td class="px-4 py-2 text-right num-tabular text-emerald-700">5 รายการ</td>
+</tr>
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-on-surface">หอยเชลล์ฮอกไกโด L</td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">430</td>
+<td class="px-4 py-2 text-caption font-caption text-secondary">2 ชั่วโมงที่แล้ว</td>
+<td class="px-4 py-2 text-right num-tabular text-emerald-700">3 รายการ</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Zero-Results Search Queries Card -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl shadow-xs overflow-hidden">
+<div class="p-5 border-b border-[#e1e7f0] flex items-center justify-between">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="zero_heading">ไม่เจอสินค้า</h3>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-amber-50 text-amber-700 font-semibold" data-i18n="badge_opp">
+                โอกาสจัดซื้อ
+              </span>
+</div>
+<p class="text-caption font-caption text-secondary" data-i18n="zero_sub">
+              คำค้นที่ไม่มีสินค้าตรงในระบบ เพื่อให้ทีมจัดซื้อ/สต็อกนำไปวางแผน
+            </p>
+</div>
+<span class="material-symbols-outlined text-amber-600">search_off</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-10 bg-[#f6f8fc] border-b border-[#e1e7f0] text-table-header font-table-header text-secondary uppercase">
+<th class="px-4 py-2" data-i18n="col_keyword">คำค้น</th>
+<th class="px-4 py-2 text-right" data-i18n="col_miss_count">จำนวนค้นหา</th>
+<th class="px-4 py-2" data-i18n="col_suggested_action">การดำเนินการแนะนำ</th>
+<th class="px-4 py-2 text-right" data-i18n="col_action_btn">จัดการ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#eef2f7] text-body-default font-body-default">
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-error flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+                  ไข่ปลาคาเวียร์ Beluga
+                </td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">184 ครั้ง</td>
+<td class="px-4 py-2 text-label-default font-label-default text-secondary">ประสานงานจัดซื้อวัตถุดิบพรีเมียม</td>
+<td class="px-4 py-2 text-right">
+<button class="px-2 py-1 text-caption font-caption text-primary hover:bg-surface-container rounded font-semibold transition-colors" data-i18n="btn_add_tag" type="button">แท็กสินค้า</button>
+</td>
+</tr>
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-error flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+                  มอสซาเรลล่า ชีส ควาย
+                </td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">142 ครั้ง</td>
+<td class="px-4 py-2 text-label-default font-label-default text-secondary">ตั้ง Synonym: Mozzarella di Bufala</td>
+<td class="px-4 py-2 text-right">
+<button class="px-2 py-1 text-caption font-caption text-primary hover:bg-surface-container rounded font-semibold transition-colors" data-i18n="btn_add_syn" type="button">เพิ่มคำพ้อง</button>
+</td>
+</tr>
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-error flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+                  น้ำมันเห็ดทรัฟเฟิลขาว
+                </td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">108 ครั้ง</td>
+<td class="px-4 py-2 text-label-default font-label-default text-secondary">สต็อกหมดชั่วคราว รอ Jagota Inbound</td>
+<td class="px-4 py-2 text-right">
+<button class="px-2 py-1 text-caption font-caption text-primary hover:bg-surface-container rounded font-semibold transition-colors" data-i18n="btn_check_stock" type="button">เช็คสต็อก</button>
+</td>
+</tr>
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-error flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+                  ขาหมูสเปน อิเบอริโก
+                </td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">96 ครั้ง</td>
+<td class="px-4 py-2 text-label-default font-label-default text-secondary">ตั้ง Synonym: Jamon Iberico Bellota</td>
+<td class="px-4 py-2 text-right">
+<button class="px-2 py-1 text-caption font-caption text-primary hover:bg-surface-container rounded font-semibold transition-colors" data-i18n="btn_add_syn" type="button">เพิ่มคำพ้อง</button>
+</td>
+</tr>
+<tr class="h-11 hover:bg-[#f9fafc]">
+<td class="px-4 py-2 font-medium text-error flex items-center gap-1.5">
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+                  เนยทรัฟเฟิล 250g
+                </td>
+<td class="px-4 py-2 text-right num-tabular font-semibold">89 ครั้ง</td>
+<td class="px-4 py-2 text-label-default font-label-default text-secondary">นำเข้าสินค้าใหม่ในหมวดเนย</td>
+<td class="px-4 py-2 text-right">
+<button class="px-2 py-1 text-caption font-caption text-primary hover:bg-surface-container rounded font-semibold transition-colors" data-i18n="btn_add_tag" type="button">แท็กสินค้า</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 8. ERROR & SYSTEM HEALTH (Operational Utility Card)                       -->
+<!-- ========================================================================= -->
+<div class="bg-surface-container-lowest border border-[#e1e7f0] rounded-xl p-6 shadow-xs">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5 pb-4 border-b border-[#e1e7f0]">
+<div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+<h3 class="text-card-title font-card-title text-on-surface" data-i18n="health_heading">Error และสุขภาพระบบ</h3>
+<span class="px-2 py-0.5 rounded text-caption font-caption bg-emerald-50 text-emerald-700 font-semibold" data-i18n="health_status_normal">
+              ปกติ
+            </span>
+</div>
+<p class="text-caption font-caption text-secondary mt-1" data-i18n="health_sub">
+            ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh
+          </p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-caption font-caption text-secondary" data-i18n="health_sync_banner">
+            การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง
+          </span>
+<span class="px-2.5 py-1 bg-surface-container text-primary rounded text-caption font-caption font-medium">
+            Latency 48ms
+          </span>
+</div>
+</div>
+<!-- Health Indicators Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Health Item 1 -->
+<div class="bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg p-3.5 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default font-medium text-on-surface" data-i18n="health_item_1">ส่งข้อมูลถึง platform สำเร็จ</span>
+<span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-xl font-bold text-on-surface num-tabular">99.98%</span>
+<span class="text-caption font-caption text-secondary">0 dead letters</span>
+</div>
+</div>
+<!-- Health Item 2 -->
+<div class="bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg p-3.5 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default font-medium text-on-surface" data-i18n="health_item_2">ส่งไม่สำเร็จ (dead letter)</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">mark_email_read</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-xl font-bold text-on-surface num-tabular">0 <span class="text-caption text-secondary">รายการ</span></span>
+<span class="text-caption font-caption text-emerald-600 font-medium">คิวว่าง</span>
+</div>
+</div>
+<!-- Health Item 3 -->
+<div class="bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg p-3.5 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default font-medium text-on-surface" data-i18n="health_item_3">ชำระเงินไม่สำเร็จ</span>
+<span class="material-symbols-outlined text-amber-600 text-[18px]">payment</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-xl font-bold text-amber-700 num-tabular">4 <span class="text-caption text-secondary">รายการ</span></span>
+<span class="text-caption font-caption text-secondary">OTP timeout</span>
+</div>
+</div>
+<!-- Health Item 4 -->
+<div class="bg-[#f6f8fc] border border-[#e1e7f0] rounded-lg p-3.5 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-default font-label-default font-medium text-on-surface" data-i18n="health_item_4">ส่งออเดอร์ไป Jagota ไม่สำเร็จ</span>
+<span class="material-symbols-outlined text-emerald-600 text-[18px]">sync_saved_locally</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-xl font-bold text-on-surface num-tabular">0 <span class="text-caption text-secondary">รายการ</span></span>
+<span class="text-caption font-caption text-emerald-600 font-medium">ซิงค์ปกติ</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- 9. LOCALIZATION CATALOGUE (JSON) & DYNAMIC SWITCHER LOGIC                 -->
+<!-- ========================================================================= -->
+<script id="commerce-ui-translations" type="application/json">
+  {
+    "brand_title": {
+      "th": "Commerce Platform",
+      "en": "Commerce Platform"
+    },
+    "brand_subtitle": {
+      "th": "Jagota ERP Connected",
+      "en": "Jagota ERP Connected"
+    },
+    "nav_inventory": {
+      "th": "สินค้าและสต็อก",
+      "en": "Products & Stock"
+    },
+    "nav_orders": {
+      "th": "ออเดอร์และการเงิน",
+      "en": "Orders & Finance"
+    },
+    "nav_customers": {
+      "th": "ลูกค้าและบริการ",
+      "en": "Customers & CRM"
+    },
+    "nav_marketing": {
+      "th": "การตลาด",
+      "en": "Marketing"
+    },
+    "nav_reports": {
+      "th": "รายงานและข้อมูล",
+      "en": "Reports & Analytics"
+    },
+    "nav_integrations": {
+      "th": "ระบบเชื่อมต่อ",
+      "en": "Integrations & API"
+    },
+    "nav_settings": {
+      "th": "ตั้งค่าและทีมงาน",
+      "en": "Settings & Staff"
+    },
+    "nav_help": {
+      "th": "ช่วยเหลือและคู่มือ",
+      "en": "Help & Manual"
+    },
+    "crumb_home": {
+      "th": "หน้าหลัก",
+      "en": "Home"
+    },
+    "crumb_reports": {
+      "th": "รายงานและข้อมูล",
+      "en": "Reports & Analytics"
+    },
+    "crumb_traffic": {
+      "th": "การเข้าชม",
+      "en": "Traffic"
+    },
+    "top_sync_status": {
+      "th": "Production v2.4",
+      "en": "Production v2.4"
+    },
+    "user_role": {
+      "th": "Financial Reconciler",
+      "en": "Financial Reconciler"
+    },
+    "subnav_orders": {
+      "th": "Orders (josh)",
+      "en": "Orders (josh)"
+    },
+    "subnav_customers": {
+      "th": "ลูกค้า / บริษัท (josh)",
+      "en": "Customers / Companies (josh)"
+    },
+    "subnav_pricing": {
+      "th": "ราคาขาย",
+      "en": "Sales Pricing"
+    },
+    "subnav_traffic": {
+      "th": "การเข้าชม",
+      "en": "Traffic"
+    },
+    "subnav_traffic_label": {
+      "th": "การเข้าชม",
+      "en": "Traffic"
+    },
+    "page_title": {
+      "th": "การเข้าชม",
+      "en": "Traffic Analytics"
+    },
+    "badge_sample": {
+      "th": "ข้อมูลตัวอย่าง / Sample data",
+      "en": "Sample data"
+    },
+    "badge_replica": {
+      "th": "อ่านจาก replica ของ josh",
+      "en": "Read replica of josh"
+    },
+    "page_subtitle": {
+      "th": "ผู้เข้าชม การค้นหา และ funnel ของหน้าร้าน josh · อ่านจาก replica ของ josh",
+      "en": "Visitors, search queries, and storefront funnel of josh · Loaded from josh read replica"
+    },
+    "btn_refresh": {
+      "th": "Refresh",
+      "en": "Refresh"
+    },
+    "filter_today": {
+      "th": "วันนี้",
+      "en": "Today"
+    },
+    "filter_yesterday": {
+      "th": "เมื่อวาน",
+      "en": "Yesterday"
+    },
+    "filter_this_week": {
+      "th": "สัปดาห์นี้",
+      "en": "This Week"
+    },
+    "filter_this_month": {
+      "th": "เดือนนี้",
+      "en": "This Month"
+    },
+    "filter_last_month": {
+      "th": "เดือนที่แล้ว",
+      "en": "Last Month"
+    },
+    "filter_custom": {
+      "th": "กำหนดเอง",
+      "en": "Custom"
+    },
+    "filter_from": {
+      "th": "ตั้งแต่",
+      "en": "From"
+    },
+    "filter_to": {
+      "th": "ถึง",
+      "en": "To"
+    },
+    "kpi_sessions_title": {
+      "th": "Sessions",
+      "en": "Sessions"
+    },
+    "unit_times": {
+      "th": "ครั้ง",
+      "en": "sessions"
+    },
+    "kpi_sessions_sub": {
+      "th": "อัตราการสั่งซื้อสำเร็จเฉลี่ย 6.77% ต่อ Session",
+      "en": "Average order conversion rate of 6.77% per session"
+    },
+    "kpi_sessions_bounce": {
+      "th": "Bounce Rate หน้าร้าน",
+      "en": "Storefront Bounce Rate"
+    },
+    "kpi_visitors_title": {
+      "th": "Visitors",
+      "en": "Unique Visitors"
+    },
+    "unit_users": {
+      "th": "คน",
+      "en": "users"
+    },
+    "kpi_logged_in": {
+      "th": "Login แล้ว:",
+      "en": "Authenticated:"
+    },
+    "kpi_new_visitors": {
+      "th": "ผู้เข้าชมรายใหม่ (First-time)",
+      "en": "New Visitors (First-time)"
+    },
+    "kpi_funnel_overview_title": {
+      "th": "Funnel Conversion",
+      "en": "Funnel Conversion"
+    },
+    "stage_view": {
+      "th": "ดูสินค้า",
+      "en": "Product Views"
+    },
+    "stage_cart": {
+      "th": "ใส่ตะกร้า",
+      "en": "Add to Cart"
+    },
+    "stage_buy": {
+      "th": "ซื้อ (Purchases)",
+      "en": "Purchases"
+    },
+    "kpi_cart_abandonment": {
+      "th": "อัตราทิ้งตะกร้า (Cart Drop)",
+      "en": "Cart Abandonment Rate"
+    },
+    "funnel_heading": {
+      "th": "Funnel (sessions)",
+      "en": "Funnel (sessions)"
+    },
+    "funnel_desc": {
+      "th": "เส้นทางการตัดสินใจซื้อของลูกค้า ตั้งแต่เปิดเว็บจนถึงสั่งซื้อสำเร็จ",
+      "en": "Customer journey from storefront session to completed order"
+    },
+    "funnel_step_1": {
+      "th": "Sessions ทั้งหมด",
+      "en": "All Sessions"
+    },
+    "funnel_step_1_sub": {
+      "th": "ผู้เข้าชมเริ่มต้นใช้งาน",
+      "en": "Initial visitors landed"
+    },
+    "funnel_step_2": {
+      "th": "ดูสินค้า (Views)",
+      "en": "Product Views"
+    },
+    "funnel_step_3": {
+      "th": "ใส่ตะกร้า (Add Cart)",
+      "en": "Added to Cart"
+    },
+    "funnel_step_4": {
+      "th": "ซื้อสำเร็จ (Purchased)",
+      "en": "Purchased"
+    },
+    "daily_heading": {
+      "th": "Sessions รายวัน",
+      "en": "Daily Sessions"
+    },
+    "daily_sub": {
+      "th": "สถิติการเข้าใช้งานและสัดส่วนการซื้อย้อนหลัง 7 วัน",
+      "en": "Traffic volume and conversion breakdown for the past 7 days"
+    },
+    "col_date": {
+      "th": "วันที่",
+      "en": "Date"
+    },
+    "col_sessions": {
+      "th": "Sessions",
+      "en": "Sessions"
+    },
+    "col_visitors": {
+      "th": "Visitors",
+      "en": "Visitors"
+    },
+    "col_views": {
+      "th": "ดูสินค้า",
+      "en": "Views"
+    },
+    "col_cart": {
+      "th": "ใส่ตะกร้า",
+      "en": "Carts"
+    },
+    "col_orders": {
+      "th": "คำสั่งซื้อ",
+      "en": "Orders"
+    },
+    "col_conv": {
+      "th": "Conversion",
+      "en": "Conversion"
+    },
+    "platform_heading": {
+      "th": "แยกตาม platform",
+      "en": "By Platform"
+    },
+    "platform_sub": {
+      "th": "สัดส่วนอุปกรณ์ที่เชื่อมต่อเข้าสู่หน้าร้าน",
+      "en": "Distribution of devices visiting the storefront"
+    },
+    "platform_insight": {
+      "th": "Mobile Web มี Conversion เติบโตขึ้น 2.4% หลังปรับปรุงหน้า Checkout สำหรับจอสัมผัส",
+      "en": "Mobile Web conversion grew +2.4% after responsive checkout optimizations"
+    },
+    "search_heading": {
+      "th": "คำค้นยอดนิยม",
+      "en": "Top Search Queries"
+    },
+    "search_sub": {
+      "th": "คำที่ลูกค้าพิมพ์ค้นหามากที่สุดในระบบ e-Commerce",
+      "en": "Most frequent queries typed into search"
+    },
+    "col_keyword": {
+      "th": "คำค้น",
+      "en": "Keyword"
+    },
+    "col_search_count": {
+      "th": "จำนวน (ครั้ง)",
+      "en": "Count"
+    },
+    "col_last_searched": {
+      "th": "ล่าสุด",
+      "en": "Last Seen"
+    },
+    "col_products_found": {
+      "th": "สินค้าที่พบ",
+      "en": "Found"
+    },
+    "zero_heading": {
+      "th": "ไม่เจอสินค้า",
+      "en": "Zero Results"
+    },
+    "badge_opp": {
+      "th": "โอกาสจัดซื้อ",
+      "en": "Procurement Opportunity"
+    },
+    "zero_sub": {
+      "th": "คำค้นที่ไม่มีสินค้าตรงในระบบ เพื่อให้ทีมจัดซื้อ/สต็อกนำไปวางแผน",
+      "en": "Keywords returning 0 products, useful for procurement and catalog planning"
+    },
+    "col_miss_count": {
+      "th": "จำนวนค้นหา",
+      "en": "Miss Count"
+    },
+    "col_suggested_action": {
+      "th": "การดำเนินการแนะนำ",
+      "en": "Suggested Action"
+    },
+    "col_action_btn": {
+      "th": "จัดการ",
+      "en": "Action"
+    },
+    "btn_add_tag": {
+      "th": "แท็กสินค้า",
+      "en": "Tag SKU"
+    },
+    "btn_add_syn": {
+      "th": "เพิ่มคำพ้อง",
+      "en": "Add Synonym"
+    },
+    "btn_check_stock": {
+      "th": "เช็คสต็อก",
+      "en": "Check Stock"
+    },
+    "health_heading": {
+      "th": "Error และสุขภาพระบบ",
+      "en": "System Health & Errors"
+    },
+    "health_status_normal": {
+      "th": "ปกติ",
+      "en": "Healthy"
+    },
+    "health_sub": {
+      "th": "ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh",
+      "en": "Real-time error health checks and failure logs across Commerce and Josh"
+    },
+    "health_sync_banner": {
+      "th": "การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง",
+      "en": "Platform data synchronization is on time with no queue backlog"
+    },
+    "health_item_1": {
+      "th": "ส่งข้อมูลถึง platform สำเร็จ",
+      "en": "Platform Delivery Success"
+    },
+    "health_item_2": {
+      "th": "ส่งไม่สำเร็จ (dead letter)",
+      "en": "Failed Deliveries (Dead Letter)"
+    },
+    "health_item_3": {
+      "th": "ชำระเงินไม่สำเร็จ",
+      "en": "Payment Gateway Failures"
+    },
+    "health_item_4": {
+      "th": "ส่งออเดอร์ไป Jagota ไม่สำเร็จ",
+      "en": "Failed Josh ERP Syncs"
+    }
+  }
+  </script>
+<script>
+    // Language Switcher Logic
+    let currentLang = 'th';
+    const translations = JSON.parse(document.getElementById('commerce-ui-translations').textContent);
+
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Update toggle buttons styling
+      const btnTh = document.getElementById('lang-btn-th');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'th') {
+        btnTh.className = "px-2.5 py-0.5 text-caption font-caption rounded font-semibold bg-surface-container-lowest text-primary shadow-xs transition-all duration-150";
+        btnEn.className = "px-2.5 py-0.5 text-caption font-caption rounded font-medium text-secondary hover:text-on-surface transition-all duration-150";
+      } else {
+        btnEn.className = "px-2.5 py-0.5 text-caption font-caption rounded font-semibold bg-surface-container-lowest text-primary shadow-xs transition-all duration-150";
+        btnTh.className = "px-2.5 py-0.5 text-caption font-caption rounded font-medium text-secondary hover:text-on-surface transition-all duration-150";
+      }
+
+      // Translate all DOM elements tagged with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key] && translations[key][lang]) {
+          el.textContent = translations[key][lang];
+        }
+      });
+    }
+
+    // Interactive button animation
+    function triggerRefresh(button) {
+      const icon = button.querySelector('.material-symbols-outlined');
+      icon.classList.add('animate-spin');
+      button.disabled = true;
+      button.classList.add('opacity-80');
+
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        button.disabled = false;
+        button.classList.remove('opacity-80');
+      }, 700);
+    }
+  </script>
+</body></html>

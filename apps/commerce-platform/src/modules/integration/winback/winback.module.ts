@@ -26,6 +26,7 @@ import { WinbackMeetingAck } from './entities/winback-meeting-ack.entity';
 import { WinbackAppRecord } from './entities/winback-app-record.entity';
 import { WinbackController } from './winback.controller';
 import { WinbackAppController } from './winback-app.controller';
+import { WinbackRestaurantPlaceController } from './winback-restaurant-place.controller';
 import { OpportunityService } from './opportunity.service';
 import { OpportunityCollabService } from './opportunity-collab.service';
 import { SignalService } from './signal.service';
@@ -54,7 +55,7 @@ import { WinbackReportsController } from './winback-reports.controller';
 // and AdminWriteGuard verifies both sources. Writes only when commerce owns winback.
 // UseGuards appends class metadata: on the app, auth → sales role gate → ownership. Admin callers use
 // WinbackController / reports; relays carry the sales user's Josh JWT, and crons call services directly.
-for (const c of [WinbackController, WinbackAppController, WinbackIntakeController]) { Public()(c); UseGuards(WinbackOwnershipGuard)(c); }
+for (const c of [WinbackController, WinbackAppController, WinbackRestaurantPlaceController, WinbackIntakeController]) { Public()(c); UseGuards(WinbackOwnershipGuard)(c); }
 
 /**
  * Winback — the sales win-back CRM behind the saleactivity app — run by commerce: josh's module
@@ -69,7 +70,7 @@ for (const c of [WinbackController, WinbackAppController, WinbackIntakeControlle
     ApiKeyModule,
     TypeOrmModule.forFeature([WinbackAccount, WinbackActivity, WinbackContact, WinbackSalesTarget, WinbackStageHistory, WinbackMeetingAck, WinbackAppRecord, ...JOSH_COPY_TABLES]),
   ],
-  controllers: [WinbackController, WinbackAppController, WinbackIntakeController, WinbackLoginController, WinbackReportsController],
+  controllers: [WinbackController, WinbackAppController, WinbackRestaurantPlaceController, WinbackIntakeController, WinbackLoginController, WinbackReportsController],
   providers: [
     AdminWriteGuard,
     WinbackStaffIdentityService,

@@ -18,7 +18,10 @@ const manager = { user: { sub: 'mgr-1', role: 'manager' } } as any;
 const UUID = '00000000-0000-4000-8000-000000000001';
 
 function createController() {
-  const opportunities = { list: jest.fn(), provinces: jest.fn(), detail: jest.fn(), convert: jest.fn() };
+  const opportunities = {
+    list: jest.fn(), provinces: jest.fn(), detail: jest.fn(), convert: jest.fn(),
+    meta: jest.fn(), filterMeta: jest.fn(), accountOpportunities: jest.fn(),
+  };
   const signals = { list: jest.fn(), complete: jest.fn(), snooze: jest.fn(), dismiss: jest.fn(), revenueContext: jest.fn() };
   const catalog = { listProducts: jest.fn() };
   const records = new Proxy({} as Record<string, jest.Mock>, {
@@ -27,14 +30,18 @@ function createController() {
   const commercial = new Proxy({} as Record<string, jest.Mock>, {
     get: (target, key: string) => (target[key] ??= jest.fn()),
   });
+  const collab = new Proxy({} as Record<string, jest.Mock>, {
+    get: (target, key: string) => (target[key] ??= jest.fn()),
+  });
   const controller = new WinbackAppController(
     opportunities as any,
     signals as any,
     catalog as any,
     records as any,
     commercial as any,
+    collab as any,
   );
-  return { controller, opportunities, signals, catalog, records, commercial };
+  return { controller, opportunities, signals, catalog, records, commercial, collab };
 }
 
 function routes() {
@@ -86,6 +93,29 @@ describe('WinbackAppController contract', () => {
       expect(records.listTeams).toHaveBeenCalled();
     });
 
+    it('§4.11.8: list / filter-meta / meta and collaboration writes get the caller as actor', () => {
+      const { controller, opportunities, collab } = createController();
+      controller.listOpportunities(sale, { page: 1, limit: 20, owner_sales_user_id: UUID } as any);
+      expect(opportunities.list).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, { page: 1, limit: 20, owner_sales_user_id: UUID });
+      controller.opportunityFilterMeta(manager);
+      expect(opportunities.filterMeta).toHaveBeenCalledWith({ id: 'mgr-1', isManager: true });
+      controller.updateOpportunityMeta(sale, UUID, { stage: 'contacted', expected_version: 0 });
+      expect(collab.updateMeta).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID, { stage: 'contacted', expected_version: 0 });
+      controller.createCollabRequest(sale, UUID, { kind: 'handoff', recipient_id: UUID, reason: 'r' });
+      expect(collab.createRequest).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID, { kind: 'handoff', recipient_id: UUID, reason: 'r' });
+      controller.resolveCollabRequest(manager, UUID, UUID, { status: 'approved', note: 'ok' });
+      expect(collab.resolveRequest).toHaveBeenCalledWith({ id: 'mgr-1', isManager: true }, UUID, UUID, { status: 'approved', note: 'ok' });
+      controller.postCollabMessage(sale, UUID, { recipient_id: UUID, text: 't' });
+      expect(collab.postMessage).toHaveBeenCalledWith({ id: 'sales-1', isManager: false }, UUID, { recipient_id: UUID, text: 't' });
+      controller.collaborationDirectory();
+      expect(collab.directory).toHaveBeenCalled();
+    });
+
+    it('filter-meta is declared before opportunities/:id (else ParseUUIDPipe would 400 it)', () => {
+      const r = routes();
+      expect(r.findIndex((x) => x.includes('opportunities/filter-meta'))).toBeLessThan(r.findIndex((x) => x.startsWith('GET /winback/opportunities/:id ')));
+    });
+
     it('convert stamps the caller as the lead creator', () => {
       const { controller, opportunities } = createController();
       controller.convertOpportunity(sale, UUID);
@@ -114,7 +144,44 @@ describe('WinbackAppController contract', () => {
         pagination: { page: 1, limit: 20, total: 1 },
         counts: { recommended: 1, near_warehouse: 0, needs_enrich: 3 },
       });
-      expect(wrapWinbackResponse(await controller.listOpportunities({ page: 1, limit: 20 } as any))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.listOpportunities(sale, { page: 1, limit: 20 } as any))).toMatchSnapshot();
+    });
+
+    it('opportunity meta + filter-meta + collaboration (§4.11.8)', async () => {
+      const { controller, opportunities, collab } = createController();
+      opportunities.meta.mockResolvedValue({
+        opportunity_id: UUID, stage: 'prospect', purpose: 'new_product', owner_sales_user_id: null, owner_name: null,
+        cuisine_id: null, district_code: null, source: 'derived', version: 0, updated_at: null,
+        recommendation: {
+          reason: 'needs_research', reason_detail: 'ข้อมูลร้านยังไม่ครบ (ยังไม่มีช่วงราคาต่อหัว)', suggestion: 'เก็บข้อมูลร้านก่อนประเมินการเสนอขาย',
+          urgency: 'research', source: 'restaurant_place', source_date: '2026-09-01T00:00:00.000Z', historical_monthly_purchase_baht: null,
+          purchase_evidence: null, proposal_monthly_estimate_baht: null, product_summary: null,
+        },
+      });
+      opportunities.filterMeta.mockResolvedValue({
+        stages: [{ value: 'prospect', count: 3 }], purposes: [{ value: 'new_product', count: 3 }],
+        recommendation_reasons: [{ value: 'needs_research', count: 1 }], owners: [{ sales_user_id: 'sales-1', name: 'Rep One', count: 1 }],
+        unassigned_count: 2,
+      });
+      collab.collaboration.mockResolvedValue({
+        opportunity_id: UUID, owner_sales_user_id: 'sales-1', owner_name: 'Rep One', revision: 2,
+        requests: [{
+          id: UUID, kind: 'handoff', requester_id: 'sales-2', requester_name: 'Rep Two', recipient_id: 'sales-1', recipient_name: 'Rep One',
+          reason: 'ช่วยดูแลต่อ', created_at: '2026-10-08T00:00:00.000Z', status: 'approved', resolution_note: 'รับ',
+          resolved_by_id: 'sales-1', resolved_by_name: 'Rep One', resolved_at: '2026-10-08T01:00:00.000Z',
+        }],
+        messages: [{
+          id: UUID, author_id: 'sales-1', author_name: 'Rep One', recipient_id: 'sales-2', recipient_name: 'Rep Two',
+          text: 'โทรแล้ว', is_call_note: true, created_at: '2026-10-08T02:00:00.000Z',
+        }],
+      });
+      opportunities.accountOpportunities.mockResolvedValue([UUID]);
+      collab.directory.mockResolvedValue([{ id: 'sales-1', name: 'Rep One' }]);
+      expect(wrapWinbackResponse(await controller.opportunityMeta(UUID))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.opportunityFilterMeta(sale))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.opportunityCollaboration(UUID))).toMatchSnapshot();
+      expect(wrapWinbackResponse(await controller.accountOpportunities(UUID))).toEqual({ data: [UUID] });
+      expect(wrapWinbackResponse(await controller.collaborationDirectory())).toEqual({ data: [{ id: 'sales-1', name: 'Rep One' }] });
     });
 
     it('convert', async () => {

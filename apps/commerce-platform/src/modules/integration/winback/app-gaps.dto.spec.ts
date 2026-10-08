@@ -4,6 +4,8 @@ import { validate } from 'class-validator';
 import {
   ActivityDraftDto,
   AppointmentPlanDto,
+  CollabMessageDto,
+  CreateCollabRequestDto,
   CompleteSignalDto,
   CreateCoachingTaskDto,
   DiscoveryQueryDto,
@@ -12,10 +14,12 @@ import {
   OpportunityQueryDto,
   QuoteDispatchDto,
   QuoteTermsCatalogDto,
+  ResolveCollabRequestDto,
   ReviewDailyReportDto,
   SaveQuoteDto,
   SignalQueryDto,
   TeamDto,
+  UpdateOpportunityMetaDto,
   VisitCompletionDto,
   VisitStartEvidenceDto,
   WorkPlanDto,
@@ -43,6 +47,35 @@ describe('app gap DTOs', () => {
     expect((await check(OpportunityQueryDto, { province_codes: 'Bangkok' })).fields).toEqual(['province_codes']);
     expect((await check(OpportunityQueryDto, { segments: 'thai' })).fields).toEqual(['segments']);
     expect((await check(OpportunityQueryDto, { limit: '101' })).fields).toEqual(['limit']);
+  });
+
+  it('opportunity query (§4.11.8): stage / purpose / recommendation enums, owner UUID, unassigned_only boolean', async () => {
+    const { dto, fields } = await check(OpportunityQueryDto, {
+      stage: 'negotiate', purpose: 'winback', recommendation: 'needs_research', owner_sales_user_id: UUID, unassigned_only: 'false',
+    });
+    expect(fields).toEqual([]);
+    expect(dto).toMatchObject({ stage: 'negotiate', purpose: 'winback', recommendation: 'needs_research', owner_sales_user_id: UUID, unassigned_only: false });
+    expect((await check(OpportunityQueryDto, { unassigned_only: 'true' })).dto.unassigned_only).toBe(true);
+    expect((await check(OpportunityQueryDto, { stage: 'hot' })).fields).toEqual(['stage']);
+    expect((await check(OpportunityQueryDto, { purpose: 'upsell' })).fields).toEqual(['purpose']);
+    expect((await check(OpportunityQueryDto, { recommendation: 'urgent' })).fields).toEqual(['recommendation']);
+    expect((await check(OpportunityQueryDto, { owner_sales_user_id: 'rep-1' })).fields).toEqual(['owner_sales_user_id']);
+    // not offered: restaurant_place has no cuisine / district code (whitelist drops them)
+    expect((await check(OpportunityQueryDto, { cuisine_id: UUID, district_codes: '1001' })).dto).not.toHaveProperty('cuisine_id');
+  });
+
+  it('opportunity meta PATCH + collaboration bodies', async () => {
+    expect((await check(UpdateOpportunityMetaDto, { stage: 'won', purpose: 'expansion', expected_version: '0' })).dto.expected_version).toBe(0);
+    expect((await check(UpdateOpportunityMetaDto, { stage: 'hot' })).fields).toEqual(['stage']);
+    expect((await check(UpdateOpportunityMetaDto, { purpose: 'x' })).fields).toEqual(['purpose']);
+    expect((await check(UpdateOpportunityMetaDto, { expected_version: -1 })).fields).toEqual(['expected_version']);
+    expect((await check(CreateCollabRequestDto, { kind: 'handoff', recipient_id: UUID, reason: 'r' })).fields).toEqual([]);
+    expect((await check(CreateCollabRequestDto, { kind: 'transfer', recipient_id: 'x', reason: '' })).fields).toEqual(['kind', 'recipient_id', 'reason']);
+    expect((await check(CreateCollabRequestDto, { kind: 'coordinate', recipient_id: UUID, reason: 'r'.repeat(1001) })).fields).toEqual(['reason']);
+    expect((await check(ResolveCollabRequestDto, { status: 'approved', note: 'ok' })).fields).toEqual([]);
+    expect((await check(ResolveCollabRequestDto, { status: 'pending', note: '' })).fields).toEqual(['status', 'note']);
+    expect((await check(CollabMessageDto, { recipient_id: UUID, text: 'hi', is_call_note: true })).fields).toEqual([]);
+    expect((await check(CollabMessageDto, { recipient_id: UUID, text: '', is_call_note: 'yes' })).fields).toEqual(['text', 'is_call_note']);
   });
 
   it('signals: status enum, ordered is not a completion outcome, dismiss needs a reason', async () => {

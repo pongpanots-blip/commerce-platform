@@ -26,6 +26,7 @@ import { claimsFromBearer, RequestWithUser } from './winback.controller';
 import { isWinbackManager } from './winback-roles';
 import { WinbackResponseInterceptor } from './winback-response.interceptor';
 import { OpportunityService } from './opportunity.service';
+import { OpportunityCollabService } from './opportunity-collab.service';
 import { SignalService } from './signal.service';
 import { WinbackCatalogService } from './winback-catalog.service';
 import { AppRecordsService, SYNC_SOURCES, WinbackActor } from './app-records.service';
@@ -34,6 +35,8 @@ import {
   ActivityDraftDto,
   AppointmentPlanDto,
   CoachingTaskQueryDto,
+  CollabMessageDto,
+  CreateCollabRequestDto,
   CompleteSignalDto,
   CreateCoachingTaskDto,
   DailyReportQueryDto,
@@ -49,6 +52,7 @@ import {
   QuoteFollowUpDto,
   QuoteQueryDto,
   QuoteTermsCatalogDto,
+  ResolveCollabRequestDto,
   ReviewDailyReportDto,
   SaveDailyReportDto,
   SaveQuoteDto,
@@ -58,6 +62,7 @@ import {
   SyncRunQueryDto,
   TeamDto,
   UpdateCoachingTaskDto,
+  UpdateOpportunityMetaDto,
   VisitCompletionDto,
   VisitStartEvidenceDto,
   WorkPlanDto,
@@ -88,6 +93,7 @@ export class WinbackAppController {
     private readonly catalog: WinbackCatalogService,
     private readonly records: AppRecordsService,
     private readonly commercial: CommercialService,
+    private readonly collab: OpportunityCollabService,
   ) {}
 
   private actor(req: RequestWithUser): WinbackActor {
@@ -106,15 +112,21 @@ export class WinbackAppController {
 
   // --- Opportunities (Market Explorer places with no lead yet) ---
 
-  @ApiOperation({ summary: 'โอกาสการขาย: ร้านใน Market Explorer ที่ยังไม่มี lead — { items, pagination, counts }' })
+  @ApiOperation({ summary: 'โอกาสการขาย: ร้านใน Market Explorer ที่ยังไม่มี lead — { items (+ meta), pagination, counts }' })
   @Get('opportunities')
-  listOpportunities(@Query(pipe) q: OpportunityQueryDto) {
-    return this.opportunities.list(q);
+  listOpportunities(@Req() req: RequestWithUser, @Query(pipe) q: OpportunityQueryDto) {
+    return this.opportunities.list(this.actor(req), q);
   }
 
   @Get('opportunities/provinces')
   opportunityProvinces(@Query(pipe) q: OpportunityProvinceQueryDto) {
     return this.opportunities.provinces(q);
+  }
+
+  /** นับตาม stage / purpose / recommendation / owner ในขอบเขตของผู้เรียก (sale: ของตัวเอง + ยังไม่มีเจ้าของ) */
+  @Get('opportunities/filter-meta')
+  opportunityFilterMeta(@Req() req: RequestWithUser) {
+    return this.opportunities.filterMeta(this.actor(req));
   }
 
   @Get('opportunities/:id')
@@ -126,6 +138,54 @@ export class WinbackAppController {
   @Post('opportunities/:id/convert')
   convertOpportunity(@Req() req: RequestWithUser, @Param('id', uuid()) id: string) {
     return this.opportunities.convert(this.actor(req).id, id);
+  }
+
+  // --- Opportunity filter metadata + collaboration (§4.11.8, record-only: nothing is sent or reassigned) ---
+
+  @Get('opportunities/:id/meta')
+  opportunityMeta(@Param('id', uuid()) id: string) {
+    return this.opportunities.meta(id);
+  }
+
+  @Patch('opportunities/:id/meta')
+  updateOpportunityMeta(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Body(pipe) dto: UpdateOpportunityMetaDto) {
+    return this.collab.updateMeta(this.actor(req), id, dto);
+  }
+
+  @Get('opportunities/:id/collaboration')
+  opportunityCollaboration(@Param('id', uuid()) id: string) {
+    return this.collab.collaboration(id);
+  }
+
+  @Post('opportunities/:id/collaboration')
+  createCollabRequest(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Body(pipe) dto: CreateCollabRequestDto) {
+    return this.collab.createRequest(this.actor(req), id, dto);
+  }
+
+  @Post('opportunities/:id/collaboration/messages')
+  postCollabMessage(@Req() req: RequestWithUser, @Param('id', uuid()) id: string, @Body(pipe) dto: CollabMessageDto) {
+    return this.collab.postMessage(this.actor(req), id, dto);
+  }
+
+  @Patch('opportunities/:id/collaboration/:requestId')
+  resolveCollabRequest(
+    @Req() req: RequestWithUser,
+    @Param('id', uuid()) id: string,
+    @Param('requestId', uuid()) requestId: string,
+    @Body(pipe) dto: ResolveCollabRequestDto,
+  ) {
+    return this.collab.resolveRequest(this.actor(req), id, requestId, dto);
+  }
+
+  @Get('account/:id/opportunities')
+  accountOpportunities(@Param('id', uuid()) id: string) {
+    return this.opportunities.accountOpportunities(id);
+  }
+
+  /** รายชื่อเซลล์ (ชื่ออย่างเดียว) ให้เลือกผู้รับคำขอ/ข้อความ — sale ดู `/sales-users` ไม่ได้ */
+  @Get('collaboration/directory')
+  collaborationDirectory() {
+    return this.collab.directory();
   }
 
   // --- Revenue signals (id = account id) ---

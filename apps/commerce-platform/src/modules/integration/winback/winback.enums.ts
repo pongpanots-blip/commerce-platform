@@ -142,6 +142,10 @@ export enum WinbackAppRecordKind {
   QUOTE_DISPATCH = 'quote_dispatch',
   QUOTE_TERMS_CATALOG = 'quote_terms_catalog',
   DAILY_REPORT = 'daily_report',
+  /** One per opportunity (key = restaurant place id): stage / purpose / coordination owner (§4.11.8). */
+  OPPORTUNITY_META = 'opportunity_meta',
+  /** One per opportunity (key = restaurant place id): handoff / coordinate requests + internal messages. */
+  OPPORTUNITY_COLLAB = 'opportunity_collab',
 }
 
 /** Revenue-signal kinds. Only `reactivate` / `prevent` are computed today (from the reorder baseline). */
@@ -238,6 +242,45 @@ export enum WinbackDailyReportStatus {
   NEEDS_REVISION = 'needs_revision',
 }
 
+// --- Opportunity filter metadata + collaboration (§4.11.8) ---
+
+/** Why the team works an opportunity — a campaign purpose, not an appointment purpose. */
+export enum WinbackOpportunityPurpose {
+  WINBACK = 'winback',
+  NEW_PRODUCT = 'new_product',
+  EXPANSION = 'expansion',
+}
+
+/** Recommendation reasons the app knows. Only `needs_research` is derived today (see opportunity-meta.helpers). */
+export enum WinbackRecommendationReason {
+  LATE_ORDER = 'late_order',
+  PRICE_REVIEW = 'price_review',
+  BRANCH_EXPANSION = 'branch_expansion',
+  PRODUCT_FIT = 'product_fit',
+  NEEDS_RESEARCH = 'needs_research',
+}
+
+export enum WinbackRecommendationUrgency {
+  URGENT = 'urgent',
+  TODAY = 'today',
+  NEXT = 'next',
+  RESEARCH = 'research',
+}
+
+export enum WinbackCollabRequestKind {
+  /** Hand the opportunity to the recipient: approving makes them the coordination owner (record only). */
+  HANDOFF = 'handoff',
+  /** Ask the recipient to work it together; ownership stays. */
+  COORDINATE = 'coordinate',
+}
+
+export enum WinbackCollabRequestStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  CANCELLED = 'cancelled',
+}
+
 export const WINBACK_APP_RECORD_KINDS = Object.values(WinbackAppRecordKind);
 export const WINBACK_SIGNAL_TYPES = Object.values(WinbackSignalType);
 export const WINBACK_SIGNAL_STATUSES = Object.values(WinbackSignalStatus);
@@ -251,3 +294,8 @@ export const WINBACK_APPOINTMENT_PURPOSES = Object.values(WinbackAppointmentPurp
 export const WINBACK_QUOTE_STATUSES = Object.values(WinbackQuoteStatus);
 export const WINBACK_QUOTE_DISPATCH_CHANNELS = Object.values(WinbackQuoteDispatchChannel);
 export const WINBACK_DAILY_REPORT_STATUSES = Object.values(WinbackDailyReportStatus);
+export const WINBACK_OPPORTUNITY_PURPOSES = Object.values(WinbackOpportunityPurpose);
+export const WINBACK_RECOMMENDATION_REASONS = Object.values(WinbackRecommendationReason);
+export const WINBACK_RECOMMENDATION_URGENCIES = Object.values(WinbackRecommendationUrgency);
+export const WINBACK_COLLAB_REQUEST_KINDS = Object.values(WinbackCollabRequestKind);
+export const WINBACK_COLLAB_REQUEST_STATUSES = Object.values(WinbackCollabRequestStatus);

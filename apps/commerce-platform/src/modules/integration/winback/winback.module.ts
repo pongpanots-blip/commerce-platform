@@ -24,6 +24,7 @@ import { WinbackAppRecord } from './entities/winback-app-record.entity';
 import { WinbackController } from './winback.controller';
 import { WinbackAppController } from './winback-app.controller';
 import { OpportunityService } from './opportunity.service';
+import { OpportunityCollabService } from './opportunity-collab.service';
 import { SignalService } from './signal.service';
 import { WinbackCatalogService } from './winback-catalog.service';
 import { AppRecordsService } from './app-records.service';
@@ -90,6 +91,7 @@ for (const c of [WinbackController, WinbackAppController, WinbackIntakeControlle
     WinbackNotifyCron,
     WinbackReports,
     OpportunityService,
+    OpportunityCollabService,
     SignalService,
     WinbackCatalogService,
     AppRecordsService,

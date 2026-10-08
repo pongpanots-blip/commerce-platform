@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotFoundExc
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
+import { Paged, QueuePage, queueList, QueueSql } from '../queue-page';
 import { splitLogistics } from './logistics-fields';
 import { mapErpOrderPeriods } from './order-periods';
 import { ProductLogisticsSnapshot, SupplierOrderPeriodsSnapshot } from './ordering-snapshot.events';
@@ -11,6 +12,12 @@ export const ownsOrdering = () => process.env.COMMERCE_OWNS_ORDERING === 'true';
 const PERIOD_COLS = `erp_order_period, to_char(date_from, 'YYYY-MM-DD') AS date_from, to_char(date_to, 'YYYY-MM-DD') AS date_to, close_at, status`;
 type PeriodDbRow = { erp_order_period: string; date_from: string; date_to: string; close_at: Date | string | null; status: string };
 const iso = (v: Date | string | null) => (v == null ? null : new Date(v).toISOString());
+export type OrderPeriodRow = PeriodDbRow & { sup_code: string; synced_at: Date };
+const PERIODS_SQL: QueueSql = {
+  select: `sup_code, ${PERIOD_COLS}, synced_at`,
+  from: `supplier_order_periods WHERE $1::text IS NULL OR sup_code ILIKE '%' || $1 || '%'`,
+  order: `sup_code, (status = 'C'), date_from DESC, erp_order_period`,
+};
 
 /**
  * Ordering / logistics owned by commerce (stage 4f, COMMERCE_OWNS_ORDERING): the ERP's supplier order rounds (checkout
@@ -50,12 +57,11 @@ export class OrderingService {
     return { upserted: rows.length, suppliers: suppliers.length };
   }
 
-  /** Rounds per supplier, open first (admin page). */
-  periods(supCode?: string) {
-    return this.db.query(
-      `SELECT sup_code, ${PERIOD_COLS}, synced_at FROM supplier_order_periods
-        WHERE $1::text IS NULL OR sup_code ILIKE '%' || $1 || '%'
-        ORDER BY sup_code, (status = 'C'), date_from DESC LIMIT 1000`, [supCode?.trim() || null]);
+  /** Rounds per supplier, open first (admin page). Without paging: the legacy bare array, capped at 1000. */
+  periods(supCode?: string): Promise<OrderPeriodRow[]>;
+  periods(supCode: string | undefined, paging: QueuePage | undefined): Promise<OrderPeriodRow[] | Paged<OrderPeriodRow>>;
+  periods(supCode?: string, paging?: QueuePage): Promise<OrderPeriodRow[] | Paged<OrderPeriodRow>> {
+    return queueList<OrderPeriodRow>(this.db, PERIODS_SQL, [supCode?.trim() || null], paging, 1000);
   }
 
   /** Send one supplier's rounds to josh again (repair after a dead-letter / a long-off subscription). */

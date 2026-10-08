@@ -357,11 +357,14 @@ export interface PricePending {
   sku: string; selling_unit_price: string | null; ordering_price: string | null; moq: number | null; changed_at: string | null; received_at: string;
   current_selling_unit_price: string | null; current_ordering_price: string | null; current_moq: number | null;
 }
-const q = (search: string) => (search ? `?search=${encodeURIComponent(search)}` : '');
+/** The product queues page server-side when `page`/`limit` are sent (20/100); the API returns `{ items, total, page, limit }`. */
+export interface QueuePage<T> { items: T[]; total: number; page: number; limit: number }
+const q = (filter: Record<string, string>, page: number, limit: number) =>
+  `?${new URLSearchParams({ ...Object.fromEntries(Object.entries(filter).filter(([, v]) => v)), page: String(page), limit: String(limit) })}`;
 export const productPricesApi = {
   ownership: () => api.get<{ prices?: boolean; productContent?: boolean; productMaster?: boolean; productImages?: boolean; ordering?: boolean }>('/ownership'),
-  list: (search: string) => api.get<PriceRow[]>(`/product-prices${q(search)}`),
-  pending: (search: string) => api.get<PricePending[]>(`/product-prices/pending${q(search)}`),
+  list: (search: string, page: number, limit: number) => api.get<QueuePage<PriceRow>>(`/product-prices${q({ search }, page, limit)}`),
+  pending: (search: string, page: number, limit: number) => api.get<QueuePage<PricePending>>(`/product-prices/pending${q({ search }, page, limit)}`),
   approve: (skus: string[]) => api.post<{ approved: number }>('/product-prices/pending/approve', { skus }),
   reject: (skus: string[]) => api.post<{ rejected: number }>('/product-prices/pending/reject', { skus }),
   edit: (sku: string, body: { sellingUnitPrice?: number; orderingPrice?: number; moq?: number }) =>
@@ -376,7 +379,7 @@ export const productContentsApi = {
 // ---- ERP product master (stage 4d: units / pack / status / category … and their MER queue, owned by commerce) ----
 export interface MasterPending { sku: string; patch: Record<string, unknown>; current: Record<string, unknown>; changed_at: string | null; received_at: string }
 export const productMastersApi = {
-  pending: (search: string) => api.get<MasterPending[]>(`/product-masters/pending${search ? `?search=${encodeURIComponent(search)}` : ''}`),
+  pending: (search: string, page: number, limit: number) => api.get<QueuePage<MasterPending>>(`/product-masters/pending${q({ search }, page, limit)}`),
   approve: (skus: string[]) => api.post<{ approved: number }>('/product-masters/pending/approve', { skus }),
   reject: (skus: string[]) => api.post<{ rejected: number }>('/product-masters/pending/reject', { skus }),
   get: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown> }>(`/product-masters/${encodeURIComponent(sku)}`),
@@ -385,7 +388,7 @@ export const productMastersApi = {
 // ---- Ordering / logistics (stage 4f: ERP supplier order rounds and SKU logistics fields, owned by commerce) ----
 export interface OrderPeriodRow { sup_code: string; erp_order_period: string; date_from: string; date_to: string; close_at: string | null; status: string; synced_at: string }
 export const orderingApi = {
-  periods: (supCode: string) => api.get<OrderPeriodRow[]>(`/order-periods${supCode ? `?supCode=${encodeURIComponent(supCode)}` : ''}`),
+  periods: (supCode: string, page: number, limit: number) => api.get<QueuePage<OrderPeriodRow>>(`/order-periods${q({ supCode }, page, limit)}`),
   republish: (supCode: string) => api.post<{ supCode: string; periods: unknown[] }>(`/order-periods/${encodeURIComponent(supCode)}/republish`, {}),
   logistics: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown> }>(`/product-logistics/${encodeURIComponent(sku)}`),
 };

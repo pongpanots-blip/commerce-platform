@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ArrayMaxSize, ArrayNotEmpty, IsArray, IsInt, IsNumber, IsOptional, IsString, MaxLength, Min, ValidateIf } from 'class-validator';
 import { StaffRequest, StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
+import { QueuePageQuery, queuePage } from '../queue-page';
 import { ProductPricesService } from './product-prices.service';
 
 class SkusDto {
@@ -19,9 +20,11 @@ class EditPriceDto {
 export class ProductPricesController {
   constructor(private readonly prices: ProductPricesService) {}
 
-  @Get() list(@Query('search') search?: string) { return this.prices.list(search); }
+  /** `page`/`limit` → `{ items, total, page, limit }` (20/100); neither → the bare array (first 200). */
+  @Get() list(@Query() q: QueuePageQuery, @Query('search') search?: string) { return this.prices.list(search, queuePage(q)); }
 
-  @Get('pending') pending(@Query('search') search?: string) { return this.prices.pending(search); }
+  /** `page`/`limit` → `{ items, total, page, limit }` (20/100); neither → the bare array (newest 500). */
+  @Get('pending') pending(@Query() q: QueuePageQuery, @Query('search') search?: string) { return this.prices.pending(search, queuePage(q)); }
 
   @Post('pending/approve')
   approve(@Body() dto: SkusDto, @Req() req: StaffRequest) { return this.prices.approve(dto.skus, req.staff.userId); }

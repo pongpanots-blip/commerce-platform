@@ -1,8 +1,8 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
-import { useState } from 'react';
-import { Button, Checkbox, Empty, ErrorText, Hint, Page, PageHeader, Panel, PanelHead, SearchInput, Table, TBody, TD, TH, THead, TR } from '@cp/ui';
+import { useEffect, useState } from 'react';
+import { Button, Checkbox, Empty, ErrorText, Hint, Page, PageHeader, Pager, Panel, PanelHead, SearchInput, Table, TBody, TD, TH, THead, TR } from '@cp/ui';
 import { MasterPending, productMastersApi, productPricesApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -27,10 +27,19 @@ export function ProductMasterQueue() {
   const owned = useAsync(() => productPricesApi.ownership(), []);
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
-  const pending = useAsync(() => productMastersApi.pending(search), [search]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const pending = useAsync(() => productMastersApi.pending(search, page, pageSize), [search, page, pageSize]);
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const isOwned = owned.data?.productMaster === true;
+
+  // Bulk approve / reject is page-scoped: changing page clears the selection; a page emptied by approve steps back.
+  const go = (p: number, size = pageSize) => { setPicked(new Set()); setPageSize(size); setPage(p); };
+  useEffect(() => {
+    const d = pending.data;
+    if (d && !d.items.length && d.total > 0 && d.page > 1) setPage(Math.ceil(d.total / d.limit));
+  }, [pending.data]);
 
   const toggle = (sku: string) => setPicked((s) => { const n = new Set(s); n.has(sku) ? n.delete(sku) : n.add(sku); return n; });
   async function act(kind: 'approve' | 'reject') {
@@ -47,35 +56,38 @@ export function ProductMasterQueue() {
       <PageHeader title={__uiText("คิวข้อมูลสินค้าจาก ERP")} subtitle={__uiText("หน่วย แพ็ก แบรนด์ VAT สถานะ หมวด การสั่งซื้อ ของสินค้าที่ขายอยู่ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · สินค้าใหม่ (draft) อนุมัติที่หน้าสินค้า")} />
       {owned.data && !isOwned && <Hint>{__uiText("ยังไม่ได้สลับ — คิวนี้ยังอยู่ที่ josh (COMMERCE_OWNS_PRODUCT_MASTER)")}</Hint>}
       <ErrorText error={error ?? pending.error ?? null} />
-      <form className="flex gap-2 items-end" onSubmit={(e) => { e.preventDefault(); setSearch(query.trim()); }}>
+      <form className="flex gap-2 items-end" onSubmit={(e) => { e.preventDefault(); setSearch(query.trim()); go(1); }}>
         <div className="flex-1 max-w-sm"><SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={__uiText("SKU")} /></div>
         <Button type="submit">{__uiText("ค้นหา")}</Button>
       </form>
       <Panel>
-        <PanelHead title={__uiText("รออนุมัติ ({0})", {"0": pending.data?.length ?? 0})} />
+        <PanelHead title={__uiText("รออนุมัติ ({0})", {"0": pending.data?.total ?? 0})} />
         <div className="px-4 py-2 flex gap-2">
           <Button variant="primary" disabled={!isOwned || picked.size === 0} onClick={() => void act('approve')}>{__uiText("อนุมัติ ")}{picked.size || ''}</Button>
           <Button variant="danger-ghost" disabled={!isOwned || picked.size === 0} onClick={() => void act('reject')}>{__uiText("ไม่อนุมัติ")}</Button>
         </div>
-        {pending.data?.length ? (
-          <Table>
-            <THead><TR><TH /><TH>{__uiText("SKU")}</TH><TH>{__uiText("ERP เปลี่ยน (ตอนนี้ → ใหม่)")}</TH><TH>{__uiText("ERP ส่งเมื่อ")}</TH></TR></THead>
-            <TBody>
-              {pending.data.map((r: MasterPending) => (
-                <TR key={r.sku} selected={picked.has(r.sku)} onClick={() => toggle(r.sku)}>
-                  <TD><Checkbox checked={picked.has(r.sku)} onChange={() => toggle(r.sku)} onClick={(e) => e.stopPropagation()} /></TD>
-                  <TD kind="mono">{r.sku}</TD>
-                  <TD>
-                    {Object.entries(r.patch).map(([k, v]) => {
-                      const same = show(r.current[k]) === show(v);
-                      return <div key={k} className={same ? 'text-on-surface-variant' : ''}>{LABEL[k] ?? k}: {show(r.current[k])} → {same ? show(v) : <strong>{show(v)}</strong>}</div>;
-                    })}
-                  </TD>
-                  <TD kind="time">{new Date(r.changed_at ?? r.received_at).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}</TD>
-                </TR>
-              ))}
-            </TBody>
-          </Table>
+        {pending.data?.items.length ? (
+          <>
+            <Table>
+              <THead><TR><TH /><TH>{__uiText("SKU")}</TH><TH>{__uiText("ERP เปลี่ยน (ตอนนี้ → ใหม่)")}</TH><TH>{__uiText("ERP ส่งเมื่อ")}</TH></TR></THead>
+              <TBody>
+                {pending.data.items.map((r: MasterPending) => (
+                  <TR key={r.sku} selected={picked.has(r.sku)} onClick={() => toggle(r.sku)}>
+                    <TD><Checkbox checked={picked.has(r.sku)} onChange={() => toggle(r.sku)} onClick={(e) => e.stopPropagation()} /></TD>
+                    <TD kind="mono">{r.sku}</TD>
+                    <TD>
+                      {Object.entries(r.patch).map(([k, v]) => {
+                        const same = show(r.current[k]) === show(v);
+                        return <div key={k} className={same ? 'text-on-surface-variant' : ''}>{LABEL[k] ?? k}: {show(r.current[k])} → {same ? show(v) : <strong>{show(v)}</strong>}</div>;
+                      })}
+                    </TD>
+                    <TD kind="time">{new Date(r.changed_at ?? r.received_at).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}</TD>
+                  </TR>
+                ))}
+              </TBody>
+            </Table>
+            <Pager page={page} pageSize={pageSize} total={pending.data.total} onPage={(p) => go(p)} onPageSize={(n) => go(1, n)} />
+          </>
         ) : <Empty>{__uiText("ไม่มีข้อมูลที่รออนุมัติ")}</Empty>}
       </Panel>
     </Page>

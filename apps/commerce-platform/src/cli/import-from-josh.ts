@@ -27,6 +27,8 @@
  *   segment_membership_snapshots → segment_members, customers only (staff are matched in josh);
  *   verified_by (a josh user id) becomes that josh user's email.
  * - sales-reps (stage 2b): every josh company's rep → company_sales_reps (same ids; id, assigned_sales_user_id, updated_at).
+ *   Also copies non-customer users → josh_staff (source_version 0) so the sales app can sign in and CS can assign a
+ *   rep before the stage 2c staff.snapshot backfill. A later snapshot (version > 0) is left as josh sent it.
  * Commerce side: uses the normal COMMERCE_DB_* / COMMERCE_DATABASE_URL env.
  */
 import 'reflect-metadata';
@@ -286,6 +288,37 @@ async function importOrdering(josh: DataSource, commerce: DataSource) {
   console.log(`supplier_order_period → supplier_order_periods: ${rows.length} rounds · product_inventory → product_logistics: ${total} SKUs`);
 }
 
+/**
+ * Non-customer josh users → josh_staff. Same predicate as the stage 2c staff count (user_type IS DISTINCT FROM
+ * 'customer'). source_version 0 so a staff.snapshot still wins; a staff.deleted tombstone is not resurrected.
+ */
+export const STAFF_FROM_JOSH_SQL = `SELECT u.id, u.email, u.first_name, u.last_name, u.role, r.user_type,
+  COALESCE(u.is_active, true) AS is_active, COALESCE(u.token_version, 0) AS token_version,
+  u.company_id, u.created_at, u.last_app_login_at
+  FROM users u LEFT JOIN app_roles r ON r.code = u.role
+  WHERE r.user_type IS DISTINCT FROM 'customer'`;
+
+export async function importStaff(josh: DataSource, commerce: DataSource) {
+  const rows: Array<Record<string, unknown>> = await josh.query(STAFF_FROM_JOSH_SQL);
+  let wrote = 0;
+  await commerce.transaction(async (m) => {
+    for (const r of rows) {
+      const saved: unknown[] = await m.query(
+        `INSERT INTO josh_staff (id, email, first_name, last_name, role, user_type, is_active, token_version, company_id, created_at, last_app_login_at, source_version)
+         SELECT $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 0
+         WHERE NOT EXISTS (SELECT 1 FROM josh_reference_tombstones WHERE tbl = 'josh_staff' AND id = $1)
+         ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email, first_name = EXCLUDED.first_name, last_name = EXCLUDED.last_name,
+           role = EXCLUDED.role, user_type = EXCLUDED.user_type, is_active = EXCLUDED.is_active, token_version = EXCLUDED.token_version,
+           company_id = EXCLUDED.company_id, created_at = EXCLUDED.created_at, last_app_login_at = EXCLUDED.last_app_login_at
+         WHERE josh_staff.source_version = 0
+         RETURNING id`,
+        [r.id, r.email, r.first_name, r.last_name, r.role, r.user_type, r.is_active, r.token_version, r.company_id, r.created_at, r.last_app_login_at]);
+      if (saved.length) wrote++;
+    }
+  });
+  console.log(`users (non-customer) → josh_staff: ${wrote} rows (of ${rows.length}; event-owned rows kept)`);
+}
+
 const PAGE = 5000;
 
 /** Big tables: pages of PAGE rows by plan.pageBy, one multi-row upsert each, so memory stays flat. */
@@ -329,6 +362,7 @@ async function main() {
         try { console.log(`josh_catalog_products: ${await sync.syncAll()} products synced`); } finally { await replica.onModuleDestroy(); }
       }
       for (const plan of PLANS[s]) await copy(josh, commerce, plan, users);
+      if (s === 'sales-reps') await importStaff(josh, commerce);
       if (s === 'prices') await importPendingPrices(josh, commerce);
       if (s === 'contents') await importContents(josh, commerce);
       if (s === 'categories') await importCategories(josh, commerce);
@@ -342,7 +376,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

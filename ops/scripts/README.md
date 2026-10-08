@@ -12,3 +12,4 @@ Scripts must never print secrets.
 - `image-roundtrip` — stage 4e: upload 1 image to a josh draft SKU via commerce → josh product_media → restore → josh restored
 - `seg-test`  — stage 2a: create an inactive test segment in commerce → wait for it (same id, member_count) in josh → delete → wait gone
 - `winback-staff-backfill-dry` — runs `winback-staff-backfill --json` in **dry-run only** (never `--apply`, `SCRIPT_ARGS` ignored; read-only repeatable-read transaction; ids/counts only). Kept from the deleted `ops/winback-staff-backfill-dry` branch; see `docs/runbooks/saleactivity-commerce-staff-cutover.md`.
+- `winback-staff-backfill-apply` — `SCRIPT_ARGS='apply links=<n> rows=<m>'` (numbers from the reviewed dry run): dry run → refuse if the plan differs → `winback-staff-backfill --apply` (app CLI, needs `WINBACK_OWNER=commerce` + `COMMERCE_OWNS_SALES_REPS=true`) → dry run must be empty. Counts only.

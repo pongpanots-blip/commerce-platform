@@ -1,76 +1,110 @@
-# saleactivity → commerce staff sign-in (`STAFF_AUTH=commerce`) — cutover runbook
+# saleactivity → commerce staff sign-in (`STAFF_AUTH=commerce`) — executable cutover runbook
 
-Status: **prepared, not executed.** Nothing here has been switched in prod. Every step below is an operator action that needs the
-user's OK for the switch time.
+Status: **prepared, not executed.** The user approved the switch itself; the operator (Grok Bot) runs it after the prep PRs pass
+review. Nothing below has been run against prod. Every command is copy-paste; secrets come from env vars and are never echoed.
 
-## Pieces
+## What changes where
 
-| Piece | Where | What it does |
+| Piece | Repo / PR | Effect |
 |---|---|---|
-| App switch | saleactivity `config/prod.json` (`STAFF_AUTH`, `COMMERCE_API_BASE_URL`) | compile-time; `josh` today. In `commerce` mode the app signs in at commerce and sends the commerce token to commerce only |
-| Same-origin proxy | Webjosh nginx, gate `COMMERCE_STAFF_PROXY=true` | `https://joshapp.io/api/commerce/…` → commerce **private IP** (origin of the existing `COMMERCE_PLATFORM_BASE_URL`, `http://172.31.40.66:3100`). Allowlist only: `POST admin/auth/{login,refresh,logout,password}` and `winback/*`; everything else under `/api/commerce/` is 404 |
-| Commerce read endpoints | commerce `GET /api/winback/restaurant-place[/:id]` | Market Explorer browse for sale / sales_manager / admin (was josh-only) |
-| Backfill | `npm run winback-staff-backfill` (CLI already on master) + `ops/scripts/winback-staff-backfill-dry.cjs` (this PR) | links Josh rep ids to commerce accounts and rewrites stored ids |
+| Commerce read endpoints | commerce-platform — restaurant-place PR | `GET /api/winback/restaurant-place[/:id]` for sale / sales_manager / admin (Market Explorer; was josh-only) |
+| Runbook + backfill wrappers | commerce-platform — this PR | `ops/scripts/winback-staff-backfill-dry.cjs` (rescued from `ops/winback-staff-backfill-dry`) and `ops/scripts/winback-staff-backfill-apply.cjs`, both run the app's own `winback-staff-backfill` CLI through the existing **Ops platform** workflow |
+| Same-origin proxy | Webjosh — branch `feat/commerce-staff-auth-proxy` | gate `COMMERCE_STAFF_PROXY=true` → `https://joshapp.io/api/commerce/…` forwards to commerce's **private** origin `http://172.31.40.66:3100` (from the existing `COMMERCE_PLATFORM_BASE_URL`). Allowlist: `POST admin/auth/{login,refresh,logout,password}` + `winback/*`; everything else 404 |
+| App | saleactivity — app PR | `config/prod.json`: `COMMERCE_API_BASE_URL=https://joshapp.io/api/commerce`, `STAFF_AUTH` (stays `josh` until step 6) |
 
-**No CORS change.** The saleactivity web build is served at `https://joshapp.io/sale` and now calls `https://joshapp.io/api/commerce/…`
-(same origin); native apps are not subject to CORS. `COMMERCE_CORS_ORIGINS` stays as it is, and commerce's public host is not used by the app.
+**No CORS change.** saleactivity ships as the iOS/Android app (josh no longer serves a `/sale` web build), and it calls
+`joshapp.io` only. Native apps aren't subject to CORS, and the proxy keeps commerce's public host out of the app.
+`COMMERCE_CORS_ORIGINS` is unchanged.
 
-## Env changes
+## Preconditions (read-only checks)
 
-| Where | Change | When |
-|---|---|---|
-| josh web EC2 host `.env` (nginx) | add `COMMERCE_STAFF_PROXY=true` (reuses `COMMERCE_PLATFORM_BASE_URL`, unchanged) | step 3 |
-| josh `prod.yml` | none (`WINBACK_VIA_COMMERCE=true`, `WINBACK_OWNED_BY_COMMERCE=true` are already pinned) | — |
-| commerce | none required. Keep `WINBACK_ACCEPT_JOSH_JWT` on (default) so installs still on `STAFF_AUTH=josh` keep working. Confirm `WINBACK_OWNER=commerce` and `COMMERCE_OWNS_SALES_REPS=true` (needed by backfill `--apply`) and that `RESTAURANTS_SOURCE=copies` or the replica is configured (else restaurant-place answers 503) with ops-platform `status` | before step 4 |
-| commerce `COMMERCE_CORS_ORIGINS` | **no change** | — |
-| saleactivity `config/prod.json` | `STAFF_AUTH: "commerce"` (`COMMERCE_API_BASE_URL` is already `https://joshapp.io/api/commerce` after the app PR) | step 6 |
+- Commerce flags: Ops platform → `action=status`. Need `WINBACK_OWNER=commerce` and `COMMERCE_OWNS_SALES_REPS=true` (the backfill refuses otherwise),
+  `WINBACK_ACCEPT_JOSH_JWT` unset or `true` (keeps josh-mode installs working), and `RESTAURANTS_SOURCE=copies` or a configured replica (else restaurant-place → 503).
+  ```sh
+  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref master -f action=status
+  ```
+- Josh `prod.yml` already pins `WINBACK_VIA_COMMERCE=true` and `WINBACK_OWNED_BY_COMMERCE=true`. Nothing to change there.
+- Staff accounts (read-only gap check 2026-10-08): 2 josh sales staff (1 `sale`, 1 `manager`), **both** have active commerce accounts
+  (`sale`, `sales_manager`), both still `mustChangePassword`, ids differ (so the backfill links them). **0 missing.**
 
-## Deploy order
+## 1. Merge + deploy order
 
-1. **Commerce** — merge + deploy the restaurant-place endpoint PR (additive, no migration). Smoke: `GET /api/winback/restaurant-place?limit=1`
-   with a sale token → 200; with a cs token → 403.
-2. **Webjosh nginx** — the change is prepared on Webjosh branch `feat/commerce-staff-auth-proxy`
-   (template `docker/nginx/snippets/commerce-staff-proxy.conf.template`, entrypoint gate `COMMERCE_STAFF_PROXY`, compose wiring,
-   render tests + mock-upstream smoke, `docs/nginx-commerce-staff-proxy.md`). Merge it, cut an `nginx-v*` tag, deploy nginx with the
-   gate **off** (rendered config is byte-identical to today). The exact block it renders when the gate is on (origin = the existing
-   `COMMERCE_PLATFORM_BASE_URL` without `/api`) is in [Appendix A](#appendix-a--nginx-block-rendered-when-commerce_staff_proxytrue).
-3. **Enable the proxy** — host `.env` `COMMERCE_STAFF_PROXY=true`, rerun Prod for nginx with the same tag and `env_diff_only=false`
-   (recreate, not reload). Check:
-   - `curl -s -o /dev/null -w '%{http_code}' -X POST https://joshapp.io/api/commerce/admin/auth/login -H 'content-type: application/json' -d '{"email":"nobody@example.com","password":"x"}'` → `401` (commerce's `invalid credentials`)
-   - `curl -s -o /dev/null -w '%{http_code}' https://joshapp.io/api/commerce/winback/me` → `401`
-   - `curl -s -o /dev/null -w '%{http_code}' https://joshapp.io/api/commerce/admin/staff` → `404` (not proxied)
-   - `https://joshapp.io/api/auth/login` still answers from josh.
-4. **Accounts** — every active Josh sales rep needs an active commerce `sale` / `sales_manager` account with the temporary password
-   already changed (read-only gap check 2026-10-08: 2 Josh sales staff, both have commerce accounts, both still `mustChangePassword`;
-   0 missing). Use the existing commerce-admin flow; `npm run winback-staff-accounts-plan -- --json` is the dry-run planner.
-5. **Backfill** (maintenance window, ~15 min, sales app writes paused):
-   1. Dry run: ops-platform `action=script script=winback-staff-backfill-dry` (read-only). The 2026-10-08 run gave **2 links, 37 rows**;
-      review any change in counts, unmatched, ambiguous or ineligible entries before going on.
-   2. Apply on the commerce host: `npm run winback-staff-backfill -- --apply --json` (refuses unless `WINBACK_OWNER=commerce` and
-      `COMMERCE_OWNS_SALES_REPS=true`; locks, rolls back on any conflict).
-   3. Re-run the dry run → **0 planned rewrites, 0 new links**. Wait 60 s for identity caches (or restart platform workers).
-   Josh-token sessions keep working after this (links resolve Josh subjects to the commerce id).
-6. **Flip the app** — saleactivity `config/prod.json` `STAFF_AUTH: "commerce"`; build and deploy the web build (`joshapp.io/sale`)
-   and ship the mobile builds. Existing sessions are from the other issuer and are discarded → everyone signs in again with the commerce account.
-7. **Smoke** (below). Keep `WINBACK_ACCEPT_JOSH_JWT` on until every installed mobile build is on commerce mode.
+1. **commerce restaurant-place PR**: merge → normal commerce deploy (tag/workflow as usual). It's additive with no migration.
+   Check: `GET /api/winback/restaurant-place?limit=1` with a sale token → 200; with a cs token → 403.
+2. **commerce runbook PR (this one)**: merge to master. That puts both backfill scripts where the Ops platform workflow reads them (`--ref master`). No deploy needed.
+3. **Webjosh nginx PR**: merge → cut `nginx-v<x.y.z>` → deploy nginx with the gate **off** (the rendered config is byte-identical to today's).
+4. **Enable the proxy**: add `COMMERCE_STAFF_PROXY=true` to the josh web host `.env` (`EC2_WEB_DEPLOY_DIR`) and rerun **Prod** with the same nginx tag and
+   `env_diff_only=false`. That recreates the container; a reload isn't enough. Check:
+   ```sh
+   curl -s -o /dev/null -w '%{http_code}\n' -X POST https://joshapp.io/api/commerce/admin/auth/login -H 'content-type: application/json' -d '{"email":"nobody@example.com","password":"x"}'   # 401 (commerce)
+   curl -s -o /dev/null -w '%{http_code}\n' https://joshapp.io/api/commerce/winback/me          # 401
+   curl -s -o /dev/null -w '%{http_code}\n' https://joshapp.io/api/commerce/admin/staff         # 404 (not proxied)
+   curl -s -o /dev/null -w '%{http_code}\n' -X GET https://joshapp.io/api/commerce/admin/auth/login   # 405
+   ```
+5. **Backfill**: see §3.
+6. **Flip the app**: see §2.
+7. **Smoke**: see §4.
 
-## Smoke checks (after step 6)
+## 2. Where `STAFF_AUTH` lives, how to switch, one-step rollback
 
-- **Login as sale** (the `sale` account): temporary password → change-password step → workspace; `/winback/me` role `sale`, sale UI.
-- **Login as sales_manager**: manager UI (team, dashboard, assignment).
-- **List**: pool, My Day and opportunities load; Market Explorer browse + place preview load (commerce restaurant-place).
-- **Handoff**: manager assigns a test lead to the sale account → it shows in the sale's list; the sale gets the lead-assigned push.
-- **Collab log**: open an opportunity, send a collaboration request/message → it appears in `/collaboration/logs` for both users.
-- Refresh: leave the app > 15 min idle, then use it — silent token refresh, no logout.
-- Josh-only by design in commerce mode: notification history/preferences show an "unavailable with this sign-in" notice (push still arrives).
+- It's a **compile-time** value in saleactivity `config/prod.json` → `"STAFF_AUTH": "josh" | "commerce"`. `tool/build.sh` injects it with
+  `--dart-define-from-file=config/prod.json`. Its sibling `"COMMERCE_API_BASE_URL": "https://joshapp.io/api/commerce"` is already set by the app PR.
+- **Switch**: on saleactivity master, set `"STAFF_AUTH": "commerce"` in `config/prod.json` in a one-line PR → merge →
+  `tool/build.sh ipa` (TestFlight) and `tool/build.sh appbundle` (Play) → distribute. On first launch the app discards the stored josh session
+  (issuer check), and users sign in with their commerce account. A temporary password forces the change-password step.
+- **Rollback (one step)**: in TestFlight / Play, re-release the **previous josh-mode build**. Keep it available and don't expire it until the switch is
+  confirmed. No server change is needed, because commerce keeps accepting josh tokens while `WINBACK_ACCEPT_JOSH_JWT` is on. The code
+  equivalent is setting `"STAFF_AUTH": "josh"` back and rebuilding. Users sign in again with josh accounts. The nginx gate and the commerce endpoint can stay;
+  they're inert for josh-mode builds. The backfill isn't reverted, and links keep josh subjects resolving to the same commerce ids.
 
-## Rollback
+## 3. Backfill (2 links, 37 rows): app-level CLI via the existing Ops platform workflow
 
-1. App: set `STAFF_AUTH: "josh"` again, rebuild + redeploy web (and mobile if shipped). Users sign in again with Josh accounts
-   (the issuer check discards commerce sessions). Josh tokens are still accepted by commerce winback (`WINBACK_ACCEPT_JOSH_JWT` on).
-2. nginx: optional — set `COMMERCE_STAFF_PROXY=false` (or remove it) and recreate nginx; the route disappears.
-3. Commerce endpoint: additive, leave it.
-4. Backfill: not reverted. Links keep Josh subjects resolving to the commerce ids, so josh-mode users still see their rows.
+Both scripts run the app's own `src/cli/winback-staff-backfill.js` inside the running platform container. There's **no hand-written SQL, no
+direct DB session from the operator, and no JWT minting**. The workflow only supplies the container env it already has.
+
+- **Dry run** (read-only, repeatable-read transaction; ids and counts only):
+  ```sh
+  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref master -f action=script -f script=winback-staff-backfill-dry
+  gh run watch -R pongpanots-blip/commerce-platform "$(gh run list -R pongpanots-blip/commerce-platform --workflow ops-platform.yml -L1 --json databaseId -q '.[0].databaseId')"
+  ```
+  Expect `counts.links = 2`, rows (sum of `rowsChanged`) `= 37`, `ambiguous = 0`. Review `unmatched` and `ineligible`.
+- **Real run** (maintenance window of about 15 min; ask reps to pause app writes):
+  ```sh
+  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref master -f action=script -f script=winback-staff-backfill-apply -f args='apply links=2 rows=37'
+  ```
+  The wrapper re-runs the dry run and **refuses** if the plan isn't exactly `links=2 rows=37` or anything is ambiguous. Then it runs `--apply`
+  (the CLI refuses unless `WINBACK_OWNER=commerce` and `COMMERCE_OWNS_SALES_REPS=true`; one locked transaction that rolls back on any conflict).
+  Finally it runs the dry run again and fails unless that one plans **0 links / 0 rows**. Wait 60 s for identity caches before reopening the app.
+  Josh-mode installs keep working afterwards.
+  (Before the runbook PR is merged, use `--ref feat/saleactivity-commerce-cutover` instead of `--ref master`.)
+
+## 4. Smoke checks (read-only apart from the sign-in itself)
+
+Accounts: **sale** = `pongpanot_s2@jagota.com` (commerce `sale`), **manager** = `pongpanot_s@jagota.com` (commerce `sales_manager`).
+Both still have a temporary password, so the owner must sign in once in the app (or commerce-admin) and set a real password first. No password
+is stored in this repo. Export it locally without echoing (`read -rs SMOKE_PW`).
+
+```sh
+B=https://joshapp.io/api/commerce
+login() { curl -s -X POST "$B/admin/auth/login" -H 'content-type: application/json' \
+  -d "$(jq -nc --arg e "$1" --arg p "$SMOKE_PW" '{email:$e,password:$p}')" | jq -r '.accessToken // .data.accessToken // empty'; }
+read -rs SMOKE_PW; T=$(login pongpanot_s2@jagota.com); unset SMOKE_PW      # sale
+curl -s -H "authorization: Bearer $T" $B/winback/me | jq '.data // . | {role, isManager}'                 # role sale, isManager false
+curl -s -o /dev/null -w 'opportunities %{http_code}\n' -H "authorization: Bearer $T" "$B/winback/opportunities?limit=5"
+curl -s -o /dev/null -w 'pool %{http_code}\n'          -H "authorization: Bearer $T" "$B/winback/pool?limit=5"
+curl -s -o /dev/null -w 'my-day %{http_code}\n'        -H "authorization: Bearer $T" "$B/winback/my-day"
+curl -s -o /dev/null -w 'places %{http_code}\n'        -H "authorization: Bearer $T" "$B/winback/restaurant-place?limit=5"
+curl -s -o /dev/null -w 'sales-users %{http_code}\n'   -H "authorization: Bearer $T" "$B/winback/sales-users"    # 403 for a sale
+read -rs SMOKE_PW; T=$(login pongpanot_s@jagota.com); unset SMOKE_PW       # manager
+curl -s -H "authorization: Bearer $T" $B/winback/me | jq '.data // . | {role, isManager}'                 # sales_manager, true
+curl -s -o /dev/null -w 'opportunities %{http_code}\n' -H "authorization: Bearer $T" "$B/winback/opportunities?limit=5"
+curl -s -o /dev/null -w 'team-stats %{http_code}\n'    -H "authorization: Bearer $T" "$B/winback/team-stats"
+curl -s -o /dev/null -w 'collab logs %{http_code}\n'   -H "authorization: Bearer $T" "$B/winback/collaboration/logs"
+unset T
+```
+All 200 except the sale's `sales-users` (403). In the app, the same two sign-ins should show the sale and manager home screens, the
+opportunities list and Market Explorer. Notification history shows the "not available with this sign-in" notice by design, and push still arrives.
+Optional write checks (handoff, collaboration message) need a test lead and the user's OK; they're not part of the read-only smoke.
 
 ## Appendix A — nginx block rendered when `COMMERCE_STAFF_PROXY=true`
 

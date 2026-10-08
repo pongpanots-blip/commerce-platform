@@ -1,4 +1,4 @@
-import { bangkokRange } from './josh-insights';
+import { bangkokRange, JoshInsights } from './josh-insights';
 
 // 2026-10-05 13:40 Bangkok = 06:40Z, a Monday
 const NOW = Date.parse('2026-10-05T06:40:00Z');
@@ -35,5 +35,23 @@ describe('bangkokRange', () => {
     expect(() => bangkokRange('custom', NOW)).toThrow('YYYY-MM-DD');
     expect(() => bangkokRange('custom', NOW, '2026-02-01', '2026-01-01')).toThrow('after');
     expect(() => bangkokRange('custom', NOW, '2024-01-01', '2026-01-01')).toThrow('366');
+  });
+});
+
+describe('order target group: customer code search', () => {
+  it.each([
+    ['%%', '%\\%\\%%'], ['_', '%\\_%'], ['a%b', '%a\\%b%'], ['a\\b', '%a\\\\b%'], ['acme', '%acme%'],
+  ])('%s matches literally: bound as %s with ESCAPE \'\\\'', async (custCode, pattern) => {
+    const query = jest.fn().mockResolvedValue([]);
+    await new JoshInsights({ query } as never, {} as never).orderTargetgroup({ custCode });
+    const [sql, params] = query.mock.calls[0];
+    expect(params[1]).toBe(pattern);
+    expect(sql).toContain(`cust_code ILIKE $2 ESCAPE '\\'`);
+  });
+
+  it('no code: no filter', async () => {
+    const query = jest.fn().mockResolvedValue([]);
+    await new JoshInsights({ query } as never, {} as never).orderTargetgroup({});
+    expect(query.mock.calls[0][1][1]).toBeNull();
   });
 });

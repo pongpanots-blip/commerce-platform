@@ -1,6 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import { JoshProducts, PRODUCT_ISSUES, productWhere } from './josh-products';
 
+const LIKE_CASES: [string, string][] = [
+  ['%%', '%\\%\\%%'], ['_', '%\\_%'], ['a%b', '%a\\%b%'], ['a\\b', '%a\\\\b%'], ['acme', '%acme%'],
+];
+
 describe('josh products (read-only catalog)', () => {
   it('binds typed values as parameters and maps issues to fixed SQL', () => {
     const { where, params } = productWhere({ search: "x'; drop", issue: 'no_image', brand: 'Josh', orderTaking: 'Y' });
@@ -8,6 +12,14 @@ describe('josh products (read-only catalog)', () => {
     expect(params).toEqual(["%x'; drop%", '%Josh%', 'Y']);
     expect(where).toContain(PRODUCT_ISSUES.no_image);
     expect(productWhere({})).toEqual({ where: '', params: [] });
+  });
+
+  it.each(LIKE_CASES)('search / brand %s match literally: bound as %s, every ILIKE has ESCAPE \'\\\'', (search, pattern) => {
+    for (const d of [productWhere({ search, brand: search }), productWhere({ search, brand: search }, { nameTh: 'p.name_th', nameEn: 'p.name_en', issues: PRODUCT_ISSUES })]) {
+      expect(d.params).toEqual([pattern, pattern]);
+      expect(d.where.match(/ILIKE \$\d+ ESCAPE '\\'/g)).toHaveLength(4);
+      expect(d.where.match(/ILIKE/g)).toHaveLength(4);
+    }
   });
 
   it('rejects unknown issues and non-uuid categories', () => {

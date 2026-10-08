@@ -158,7 +158,7 @@ export function App() {
       <AppShell
         sidebar={
           <Sidebar
-            brand={{ title: 'Commerce Platform', subtitle: 'หลังบ้านของทีม' }}
+            brand={{ title: __uiText('ระบบหลังบ้าน'), subtitle: 'สำหรับทีมงาน' }}
             env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? __uiText("Prod") : __uiText("Local dev")}</>}
             nav={nav}
             searchable

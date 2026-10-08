@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { repScopeSql } from './sales-rep-scope';
+import { containsPattern } from '../../../../shared-kernel/helpers/like.helper';
 import { JoshReplica } from './josh-replica';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -74,7 +75,7 @@ export class JoshPrices {
     const s = search?.trim().slice(0, 100);
     const params: unknown[] = [];
     const w: string[] = [];
-    if (s) { params.push(`%${s}%`); w.push('(c.name ILIKE $1 OR b.name ILIKE $1 OR c.erp_customer_code ILIKE $1)'); }
+    if (s) { params.push(containsPattern(s)); w.push(`(c.name ILIKE $1 ESCAPE '\\' OR b.name ILIKE $1 ESCAPE '\\' OR c.erp_customer_code ILIKE $1 ESCAPE '\\')`); }
     if (repIds !== undefined) { params.push(repIds); w.push(repScopeSql('c', `$${params.length}`)); }
     return this.replica.query(`SELECT b.id AS branch_id, b.name AS branch_name, b.erp_branch_code, COALESCE(b.company_id, sh.company_id) AS company_id,
         c.name AS company_name, c.erp_customer_code
@@ -96,11 +97,11 @@ export class JoshPrices {
       `SELECT p.product_inventory_id AS id, p.product_inventory_sku AS sku, COALESCE(th.product_name, p.product_inventory_sku) AS name,
               COALESCE(p.selling_unit_price, 0)::float AS base
          FROM product_inventory p LEFT JOIN product_translation th ON th.product_inventory_id = p.product_inventory_id AND th.language_code = 'th'
-        WHERE ${s ? `(p.product_inventory_sku ILIKE $3 OR th.product_name ILIKE $3)` : `(
+        WHERE ${s ? `(p.product_inventory_sku ILIKE $3 ESCAPE '\\' OR th.product_name ILIKE $3 ESCAPE '\\')` : `(
               EXISTS (SELECT 1 FROM private_price x WHERE x.company_id = $1 AND x.product_inventory_id = p.product_inventory_id)
            OR EXISTS (SELECT 1 FROM branch_contract_price x WHERE x.branch_id = $2 AND x.product_inventory_id = p.product_inventory_id)
            OR EXISTS (SELECT 1 FROM product_branch_specials x WHERE x.branch_id = $2 AND x.product_inventory_id = p.product_inventory_id AND x.is_active))`}
-        ORDER BY p.product_inventory_sku LIMIT 200`, s ? [...params, `%${s}%`] : params);
+        ORDER BY p.product_inventory_sku LIMIT 200`, s ? [...params, containsPattern(s)] : params);
     const ids = products.map((p) => p.id);
     if (!ids.length) return { branch, at: at.toISOString(), items: [] };
     const dated = (sql: string, key: string | null) => this.replica.query<Dated & { product_inventory_id: string }>(sql, key === null ? [ids] : [key, ids]);

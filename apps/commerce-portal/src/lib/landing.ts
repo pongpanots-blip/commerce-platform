@@ -12,32 +12,50 @@ export const ROLE_LANDING: Readonly<Record<string, string>> = { developer: '/' }
 export const FALLBACK_LANDING = '/docs';
 const FALLBACK_ROUTES: readonly string[] = [FALLBACK_LANDING];
 
-/** Internal app path only: one leading slash, no scheme / protocol-relative / backslash tricks. */
-export function isSafeInternalPath(path: unknown): path is string {
-  if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//')) return false;
-  if (/[\\\u0000-\u001f\u007f]/.test(path)) return false;
-  try {
-    return new URL(path, 'http://app.invalid').origin === 'http://app.invalid';
-  } catch {
-    return false;
+const BASE = 'http://app.invalid';
+
+/**
+ * The internal path the router would really open, or null: one leading slash, no scheme / protocol-relative /
+ * backslash / control characters, `.` and `..` resolved, and no percent-encoded dot, slash or backslash (at any
+ * decoding depth) that could turn into a different path later — those are ambiguous, so refused.
+ */
+export function normalizeInternalPath(path: unknown): string | null {
+  if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//')) return null;
+  if (/[\\\u0000-\u001f\u007f]/.test(path)) return null;
+  let pathname = path.split(/[?#]/)[0];
+  for (let depth = 0; depth < 4; depth++) {
+    if (/%(2e|2f|5c)/i.test(pathname)) return null;
+    let decoded: string;
+    try { decoded = decodeURIComponent(pathname); } catch { return null; }
+    if (decoded === pathname) break;
+    if (/[\\\u0000-\u001f\u007f]/.test(decoded)) return null;
+    pathname = decoded;
   }
+  let url: URL;
+  try { url = new URL(path, BASE); } catch { return null; }
+  if (url.origin !== BASE || url.pathname.startsWith('//')) return null;
+  return url.pathname + url.search + url.hash;
 }
+
+export const isSafeInternalPath = (path: unknown): path is string => normalizeInternalPath(path) !== null;
 
 const pathnameOf = (path: string) => path.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
 
 export function isRouteAllowed(role: string | null | undefined, path: string): boolean {
-  if (!isSafeInternalPath(path)) return false;
-  const routes = (role && ROLE_ROUTES[role]) || FALLBACK_ROUTES;
-  return routes.includes(pathnameOf(path));
+  const normalized = normalizeInternalPath(path);
+  if (!normalized) return false;
+  const routes = (role && Object.prototype.hasOwnProperty.call(ROLE_ROUTES, role) && ROLE_ROUTES[role]) || FALLBACK_ROUTES;
+  return routes.includes(pathnameOf(normalized));
 }
 
 export function landingFor(role: string | null | undefined): string {
-  return (role && ROLE_LANDING[role]) || FALLBACK_LANDING;
+  return (role && Object.prototype.hasOwnProperty.call(ROLE_LANDING, role) && ROLE_LANDING[role]) || FALLBACK_LANDING;
 }
 
-/** After sign-in / silent restore: the deep link if it is internal and allowed, else the role's home. */
+/** After sign-in / silent restore: the (normalised) deep link if it is internal and allowed, else the role's home. */
 export function resolvePostLoginPath(role: string | null | undefined, redirect: string | null | undefined): string {
-  return redirect && isRouteAllowed(role, redirect) ? redirect : landingFor(role);
+  const target = normalizeInternalPath(redirect);
+  return target && isRouteAllowed(role, target) ? target : landingFor(role);
 }
 
 /** The login URL that brings you back to `here` afterwards. */

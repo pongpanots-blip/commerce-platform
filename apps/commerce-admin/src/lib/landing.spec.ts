@@ -73,6 +73,32 @@ describe('deep links', () => {
     expect(isRouteAllowed('cs', '/workspaces/marketing')).toBe(false);
   });
 
+  it('resolves dot segments before the allow-list check', () => {
+    expect(resolvePostLoginPath('merchandising', '/products/../settings/staff')).toBe('/products');
+    expect(isRouteAllowed('merchandising', '/products/../settings/staff')).toBe(false);
+    expect(resolvePostLoginPath('merchandising', '/products/./1')).toBe('/products/1');
+    expect(resolvePostLoginPath('admin', '/products/../settings/staff')).toBe('/settings/staff');
+    expect(resolvePostLoginPath('sale', '/reports/sales/../../settings/staff')).toBe('/reports/sales');
+  });
+
+  it('refuses percent-encoded dot / slash / backslash tricks (any case, double-encoded)', () => {
+    for (const bad of [
+      '/products/%2e%2e/settings/staff', '/products/%2E%2e/settings/staff', '/products/%2e%2E/', '/products/.%2e/settings/staff',
+      '/products%2f..%2fsettings%2fstaff', '/products/%252e%252e/settings/staff', '/products/%5c..%5csettings', '/products/%ZZ',
+    ]) {
+      expect(isRouteAllowed('merchandising', bad)).toBe(false);
+      expect(resolvePostLoginPath('merchandising', bad)).toBe('/products');
+      expect(resolvePostLoginPath('admin', bad)).toBe('/');
+    }
+  });
+
+  it('legit paths (with query, hash, encoded spaces / Thai) still pass', () => {
+    expect(resolvePostLoginPath('merchandising', '/products/1?tab=prices#top')).toBe('/products/1?tab=prices#top');
+    expect(resolvePostLoginPath('merchandising', '/products/SKU%20A')).toBe('/products/SKU%20A');
+    expect(resolvePostLoginPath('merchandising', '/products/%E0%B8%81')).toBe('/products/%E0%B8%81');
+    expect(resolvePostLoginPath('sales_manager', '/reports/sales?period=today')).toBe('/reports/sales?period=today');
+  });
+
   it('rejects open redirects', () => {
     for (const bad of ['https://evil.example/', '//evil.example/x', '/\\evil.example', '\\\\evil.example', 'javascript:alert(1)', 'products', '/a\nb', '', null, undefined]) {
       expect(resolvePostLoginPath('admin', bad as string)).toBe('/');

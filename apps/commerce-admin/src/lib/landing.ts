@@ -9,24 +9,41 @@ export { ROLE_HOME as ROLE_LANDING } from './role-home';
 /** Any role, including one the app does not know yet: GET /admin/auth/me + POST /admin/auth/password are @AnyStaff. */
 export const FALLBACK_LANDING = '/account/password';
 
-/** Internal app path only: one leading slash, no scheme / protocol-relative / backslash tricks. */
-export function isSafeInternalPath(path: unknown): path is string {
-  if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//')) return false;
-  if (/[\\\u0000-\u001f\u007f]/.test(path)) return false;
-  try {
-    return new URL(path, 'http://app.invalid').origin === 'http://app.invalid';
-  } catch {
-    return false;
+const BASE = 'http://app.invalid';
+
+/**
+ * The internal path the router would really open, or null: one leading slash, no scheme / protocol-relative /
+ * backslash / control characters, `.` and `..` resolved, and no percent-encoded dot, slash or backslash (at any
+ * decoding depth) that could turn into a different path later — those are ambiguous, so refused.
+ */
+export function normalizeInternalPath(path: unknown): string | null {
+  if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//')) return null;
+  if (/[\\\u0000-\u001f\u007f]/.test(path)) return null;
+  let pathname = path.split(/[?#]/)[0];
+  for (let depth = 0; depth < 4; depth++) {
+    if (/%(2e|2f|5c)/i.test(pathname)) return null;
+    let decoded: string;
+    try { decoded = decodeURIComponent(pathname); } catch { return null; }
+    if (decoded === pathname) break;
+    if (/[\\\u0000-\u001f\u007f]/.test(decoded)) return null;
+    pathname = decoded;
   }
+  let url: URL;
+  try { url = new URL(path, BASE); } catch { return null; }
+  if (url.origin !== BASE || url.pathname.startsWith('//')) return null;
+  return url.pathname + url.search + url.hash;
 }
+
+export const isSafeInternalPath = (path: unknown): path is string => normalizeInternalPath(path) !== null;
 
 const pathnameOf = (path: string) => path.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
 
 /** Whether the role may open the page; the longest ROLE_ACCESS entry covering the path decides (detail pages included). */
 export function isRouteAllowed(roleRaw: string | null | undefined, path: string): boolean {
   const role = normalizeRole(roleRaw);
-  if (!role || !isSafeInternalPath(path)) return false;
-  const pathname = pathnameOf(path);
+  const normalized = normalizeInternalPath(path);
+  if (!role || !normalized) return false;
+  const pathname = pathnameOf(normalized);
   if (pathname === '/login') return false;
   if (role === 'admin') return true;
   if (pathname === '/') return false;
@@ -43,9 +60,10 @@ export function landingFor(roleRaw: string | null | undefined): string {
   return landing && isRouteAllowed(role, landing) ? landing : FALLBACK_LANDING;
 }
 
-/** After sign-in / silent restore: the deep link if it is internal and the role may open it, else the role's home. */
+/** After sign-in / silent restore: the (normalised) deep link if the role may open it, else the role's home. */
 export function resolvePostLoginPath(role: string | null | undefined, redirect: string | null | undefined): string {
-  return redirect && isSafeInternalPath(redirect) && isRouteAllowed(role, redirect) ? redirect : landingFor(role);
+  const target = normalizeInternalPath(redirect);
+  return target && isRouteAllowed(role, target) ? target : landingFor(role);
 }
 
 /** The login URL that brings you back to `here` afterwards (nothing to remember for / or /login itself). */

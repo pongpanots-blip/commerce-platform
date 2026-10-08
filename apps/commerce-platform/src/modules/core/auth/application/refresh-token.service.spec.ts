@@ -37,10 +37,32 @@ function setup(initialUsers: UserRow[] = [{ id: 'u-1', email: 'mer@jagota.co.th'
     count: jest.fn(async ({ where }: { where: Record<string, unknown> }) => users.filter((u) => matches(u, where)).length),
     save: jest.fn(async (u: UserRow) => { users = [...users.filter((x) => x.id !== u.id), u]; return u; }),
   };
+  // pg_advisory_xact_lock stand-in: one queue per key, held until the transaction callback settles
+  const held = new Map<string, Promise<void>>();
+  const locks: string[] = [];
+  const transaction = jest.fn(async <T>(work: (m: unknown) => Promise<T>): Promise<T> => {
+    const releases: (() => void)[] = [];
+    const m = {
+      getRepository: (entity: unknown) => (entity === AuthRefreshToken ? tokens : usersRepo),
+      query: jest.fn(async (sql: string, params: string[]) => {
+        expect(sql).toContain('pg_advisory_xact_lock');
+        const key = params.join('|');
+        locks.push(key);
+        const before = held.get(key) ?? Promise.resolve();
+        let release!: () => void;
+        const mine = new Promise<void>((r) => { release = r; });
+        held.set(key, before.then(() => mine));
+        await before;
+        releases.push(release);
+      }),
+    };
+    try { return await work(m); } finally { releases.forEach((r) => r()); }
+  });
+  Object.assign(tokens, { manager: { transaction, getRepository: (entity: unknown) => (entity === AuthRefreshToken ? tokens : usersRepo) } });
   const jwt = new JwtService({ secret: 'test-secret', signOptions: { expiresIn: '12h' } });
-  const service = new RefreshTokenService(tokens as never, usersRepo as never, jwt);
+  const service = new RefreshTokenService(tokens as never, jwt);
   const user = (id = 'u-1') => users.find((u) => u.id === id)! as never;
-  return { service, jwt, tokens, usersRepo, rows: () => rows, users: () => users, user };
+  return { service, jwt, tokens, usersRepo, transaction, locks, rows: () => rows, users: () => users, user };
 }
 
 const rejected401 = (p: Promise<unknown>) => expect(p).rejects.toBeInstanceOf(UnauthorizedException);
@@ -49,6 +71,8 @@ describe('RefreshTokenService', () => {
   afterEach(() => {
     delete process.env.AUTH_ACCESS_TOKEN_TTL_SECONDS;
     delete process.env.AUTH_REFRESH_TOKEN_TTL_DAYS;
+    delete process.env.AUTH_REFRESH_TOKEN_FAMILY_MAX_DAYS;
+    jest.useRealTimers();
   });
 
   it('a sign-in gets a 15-minute access JWT and an opaque refresh token stored only as its sha256', async () => {
@@ -112,12 +136,54 @@ describe('RefreshTokenService', () => {
     await expect(service.refresh(phone.refreshToken, 'staff')).resolves.toMatchObject({ role: 'merchandising' });
   });
 
-  it('two concurrent refreshes of one token: only one wins', async () => {
-    const { service, user } = setup();
+  it('two concurrent refreshes of one token: one wins, the other is reuse and also ends the winner\'s new token', async () => {
+    const { service, rows, user } = setup();
     const s = await service.issueSession(user(), 'staff');
     const results = await Promise.allSettled([service.refresh(s.refreshToken, 'staff'), service.refresh(s.refreshToken, 'staff')]);
-    expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(1);
+    const won = results.filter((r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof service.refresh>>> => r.status === 'fulfilled');
+    expect(won).toHaveLength(1);
     expect(results.filter((r) => r.status === 'rejected')).toHaveLength(1);
+    await rejected401(service.refresh(won[0].value.refreshToken, 'staff'));
+    expect(rows()).toHaveLength(2); // exactly one successor was ever issued
+    expect(rows().every((r) => r.revokedReason === 'reuse')).toBe(true);
+  });
+
+  it('refresh, logout and revokeAllForUser take the same per-account lock', async () => {
+    const { service, locks, user } = setup();
+    const a = await service.issueSession(user(), 'staff');
+    const b = await service.refresh(a.refreshToken, 'staff');
+    await service.logout(b.refreshToken, 'staff');
+    await service.revokeAllForUser('u-1', 'disabled');
+    expect(locks).toEqual(['u-1', 'u-1', 'u-1']);
+  });
+
+  it('logout racing a refresh: whichever runs second sees the other — never a live successor after logout', async () => {
+    const { service, rows, user } = setup();
+    const s = await service.issueSession(user(), 'staff');
+    const [refreshed] = await Promise.allSettled([service.refresh(s.refreshToken, 'staff'), service.logout(s.refreshToken, 'staff')]);
+    expect(rows().every((r) => r.revokedAt)).toBe(true);
+    if (refreshed.status === 'fulfilled') await rejected401(service.refresh(refreshed.value.refreshToken, 'staff'));
+  });
+
+  it('family cap: successors never outlive family start + AUTH_REFRESH_TOKEN_FAMILY_MAX_DAYS; past it refresh is refused', async () => {
+    jest.useFakeTimers({ now: new Date('2026-01-01T00:00:00Z'), doNotFake: ['nextTick', 'setImmediate'] });
+    process.env.AUTH_REFRESH_TOKEN_FAMILY_MAX_DAYS = '40';
+    const { service, rows, user } = setup();
+    let s = await service.issueSession(user(), 'staff');
+    expect(s.refreshExpiresIn).toBe(30 * 86400); // sliding TTL < cap
+    jest.setSystemTime(new Date('2026-01-26T00:00:00Z')); // day 25: sliding would give day 55
+    s = await service.refresh(s.refreshToken, 'staff');
+    expect(s.refreshExpiresIn).toBe(15 * 86400); // capped at day 40
+    expect(rows()[1].expiresAt.toISOString()).toBe('2026-02-10T00:00:00.000Z');
+    expect(rows()[1].familyCreatedAt.toISOString()).toBe('2026-01-01T00:00:00.000Z');
+    jest.setSystemTime(new Date('2026-02-09T23:59:00Z'));
+    s = await service.refresh(s.refreshToken, 'staff');
+    expect(s.refreshExpiresIn).toBe(60);
+    // the cap also holds if a row's own expiry were later (e.g. the cap was lowered after issue)
+    rows()[2].expiresAt = new Date('2026-03-01T00:00:00Z');
+    jest.setSystemTime(new Date('2026-02-10T00:00:01Z'));
+    await rejected401(service.refresh(s.refreshToken, 'staff'));
+    expect(rows().filter((r) => !r.usedAt).every((r) => r.revokedReason === 'family_expired')).toBe(true);
   });
 
   it('an expired, unknown or empty token is a 401 with one generic message', async () => {

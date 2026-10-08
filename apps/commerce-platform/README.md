@@ -71,7 +71,8 @@ Core (see `.env.example`): `COMMERCE_DATABASE_URL` *or* `COMMERCE_DB_HOST` /
 |---|---|---|
 | `PORTAL_JWT_SECRET` | *(dev fallback `dev-portal-secret`)* | Signs/verifies developer-portal JWTs (`PortalAuthService`, `PortalJwtGuard`). **Required in `NODE_ENV=production`** — register/login and every `PortalJwtGuard`-protected route fail closed (`503`/`401`) without it, rather than silently falling back to the public dev secret. |
 | `AUTH_ACCESS_TOKEN_TTL_SECONDS` | `900` (15 min) | Lifetime of the access JWT returned by staff (`/api/admin/auth/login`) and portal (`/api/v1/portal/auth/login`) sign-in and refresh. The shared `JwtModule` default (12 h) is unchanged for other signers. |
-| `AUTH_REFRESH_TOKEN_TTL_DAYS` | `30` | Lifetime of the opaque refresh token (sliding: every rotation issues a fresh one with the full TTL). Only its sha256 is stored (`auth_refresh_token`). |
+| `AUTH_REFRESH_TOKEN_TTL_DAYS` | `30` | Lifetime of the opaque refresh token (sliding: every rotation issues a fresh one with the full TTL, up to the family cap below). Only its sha256 is stored (`auth_refresh_token`). |
+| `AUTH_REFRESH_TOKEN_FAMILY_MAX_DAYS` | `90` | Absolute cap on one sign-in (a refresh-token family) counted from the password login: successors never expire later than this, and a refresh past it is refused (`401`, family revoked as `family_expired`). |
 | `STOREFRONT_API_KEYS` | *(unset)* | Still supported as a bootstrap/e2e fallback for `StorefrontApiKeyGuard` — see "API keys" below for how it now interacts with DB-backed keys. |
 
 ## Endpoints

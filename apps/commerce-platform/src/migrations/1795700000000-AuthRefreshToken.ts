@@ -2,7 +2,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
  * auth_refresh_token — rotating refresh tokens for commerce-admin (staff) and developer-portal sign-ins.
- * Only the sha256 of each token is stored. Additive only: a new table, nothing else is touched.
+ * Only the sha256 of each token is stored; family_created_at caps how long one sign-in can be refreshed.
+ * Additive only: a new table, nothing else is touched.
  */
 export class AuthRefreshToken1795700000000 implements MigrationInterface {
   name = 'AuthRefreshToken1795700000000';
@@ -11,6 +12,7 @@ export class AuthRefreshToken1795700000000 implements MigrationInterface {
     id uuid DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
     user_id uuid NOT NULL,
     family_id uuid NOT NULL,
+    family_created_at timestamp with time zone NOT NULL,
     token_hash character varying(64) NOT NULL,
     audience character varying(12) NOT NULL,
     role_at_issue character varying(24) NOT NULL,

@@ -5,6 +5,11 @@ import { FindOperator } from 'typeorm';
 import { AuthRefreshToken } from '../infrastructure/auth-refresh-token.entity';
 import { RefreshTokenService } from './refresh-token.service';
 import { StaffAccountsService } from './staff-accounts.service';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from '../auth.module';
+import { COMMERCE_JWT_ISSUER } from '../../../../shared-kernel/presentation/jwt-issuer';
+import { AdminWriteGuard, winbackTokenKind } from '../../../integration/winback/shared/admin-write.guard';
+import { WinbackStaffIdentityService } from '../../../integration/winback/shared/winback-staff-identity.service';
 
 type UserRow = { id: string; email: string; role: string; status: string; mustChangePassword?: boolean; passwordHash?: string | null; name?: string | null; createdAt?: Date };
 
@@ -14,7 +19,10 @@ const matches = (row: object, where: Record<string, unknown>) => Object.entries(
   return v instanceof FindOperator && v.type === 'isNull' ? value === null || value === undefined : value === v;
 });
 
-function setup(initialUsers: UserRow[] = [{ id: 'u-1', email: 'mer@jagota.co.th', role: 'merchandising', status: 'active' }]) {
+function setup(
+  initialUsers: UserRow[] = [{ id: 'u-1', email: 'mer@jagota.co.th', role: 'merchandising', status: 'active' }],
+  jwt = new JwtService({ secret: 'test-secret', signOptions: { expiresIn: '12h' } }),
+) {
   let rows: AuthRefreshToken[] = [];
   let users = initialUsers.map((u) => ({ ...u }));
   let seq = 0;
@@ -59,7 +67,6 @@ function setup(initialUsers: UserRow[] = [{ id: 'u-1', email: 'mer@jagota.co.th'
     try { return await work(m); } finally { releases.forEach((r) => r()); }
   });
   Object.assign(tokens, { manager: { transaction, getRepository: (entity: unknown) => (entity === AuthRefreshToken ? tokens : usersRepo) } });
-  const jwt = new JwtService({ secret: 'test-secret', signOptions: { expiresIn: '12h' } });
   const service = new RefreshTokenService(tokens as never, jwt);
   const user = (id = 'u-1') => users.find((u) => u.id === id)! as never;
   return { service, jwt, tokens, usersRepo, transaction, locks, rows: () => rows, users: () => users, user };
@@ -148,13 +155,43 @@ describe('RefreshTokenService', () => {
     expect(rows().every((r) => r.revokedReason === 'reuse')).toBe(true);
   });
 
-  it('refresh, logout and revokeAllForUser take the same per-account lock', async () => {
+  it('login, refresh, logout and revokeAllForUser take the same per-account lock', async () => {
     const { service, locks, user } = setup();
     const a = await service.issueSession(user(), 'staff');
     const b = await service.refresh(a.refreshToken, 'staff');
     await service.logout(b.refreshToken, 'staff');
     await service.revokeAllForUser('u-1', 'disabled');
-    expect(locks).toEqual(['u-1', 'u-1', 'u-1']);
+    expect(locks).toEqual(['u-1', 'u-1', 'u-1', 'u-1']);
+  });
+
+  it('login re-checks the account under the lock: a sign-in checked before a disable / role / password change gets no family', async () => {
+    const { service, rows, users, user } = setup([
+      { id: 'u-1', email: 'a@x', role: 'merchandising', status: 'active', passwordHash: 'h1' },
+      { id: 'u-2', email: 'b@x', role: 'marketing', status: 'active', passwordHash: 'h2' },
+      { id: 'u-3', email: 'c@x', role: 'cs', status: 'active', passwordHash: 'h3' },
+    ]);
+    // what each login verified (snapshots), then the account changed + revokeAllForUser ran before the insert
+    const checked = ['u-1', 'u-2', 'u-3'].map((id) => ({ ...(user(id) as object) }) as never);
+    users().find((u) => u.id === 'u-1')!.status = 'disabled';
+    users().find((u) => u.id === 'u-2')!.role = 'graphic';
+    users().find((u) => u.id === 'u-3')!.passwordHash = 'h3-new';
+    for (const id of ['u-1', 'u-2', 'u-3']) await service.revokeAllForUser(id, 'changed');
+    for (const stale of checked) await expect(service.issueSession(stale, 'staff')).rejects.toThrow('invalid credentials');
+    expect(rows()).toEqual([]);
+    // the account as it is now signs in fine
+    await expect(service.issueSession(user('u-3'), 'staff')).resolves.toBeDefined();
+  });
+
+  it('login racing revokeAllForUser: whichever takes the lock second sees the other — no live token survives', async () => {
+    const { service, rows, user } = setup();
+    await Promise.all([service.issueSession(user(), 'staff'), service.revokeAllForUser('u-1', 'disabled')]);
+    // login first → its row is revoked; revoke first → login (account unchanged here) inserts after it, which is fine
+    expect(rows().filter((r) => !r.revokedAt).length).toBeLessThanOrEqual(1);
+    const { service: s2, rows: rows2, users: users2, user: user2 } = setup();
+    const checked = { ...(user2() as object) } as never;
+    users2()[0].status = 'disabled';
+    await Promise.allSettled([s2.issueSession(checked, 'staff'), s2.revokeAllForUser('u-1', 'disabled')]);
+    expect(rows2().filter((r) => !r.revokedAt)).toEqual([]);
   });
 
   it('logout racing a refresh: whichever runs second sees the other — never a live successor after logout', async () => {
@@ -283,6 +320,34 @@ describe('RefreshTokenService', () => {
     await rejected401(service.refresh(a1.refreshToken, 'staff'));
     await rejected401(service.refresh(a2.refreshToken, 'portal'));
     await expect(service.refresh(b.refreshToken, 'staff')).resolves.toBeDefined();
+  });
+
+  it('login and refreshed access tokens carry iss=commerce-platform (AuthModule signOptions) and #85\'s winback guard takes them as commerce', async () => {
+    const imports = Reflect.getMetadata('imports', AuthModule) as Array<{ module?: unknown; providers?: Array<{ useValue?: { signOptions?: object } }> }>;
+    const moduleOptions = imports.find((m) => m?.module === JwtModule)?.providers?.find((p) => p.useValue?.signOptions)?.useValue;
+    const SALE = '11111111-1111-4111-8111-1111111a0701';
+    const { service, user } = setup([{ id: SALE, email: 'rep@jagota.co.th', role: 'sale', status: 'active' }],
+      new JwtService({ secret: 'commerce-test', signOptions: moduleOptions?.signOptions }));
+    const login = await service.issueSession(user(SALE), 'staff');
+    const refreshed = await service.refresh(login.refreshToken, 'staff');
+    for (const s of [login, refreshed]) {
+      const claims = JSON.parse(Buffer.from(s.accessToken.split('.')[1], 'base64url').toString('utf8'));
+      expect(claims.iss).toBe(COMMERCE_JWT_ISSUER);
+      expect(claims.exp - claims.iat).toBe(900); // the per-call 15 min TTL still wins over the module's 12 h
+      expect(winbackTokenKind(s.accessToken)).toBe('commerce');
+    }
+    const savedSecret = process.env.PORTAL_JWT_SECRET;
+    process.env.PORTAL_JWT_SECRET = 'commerce-test';
+    try {
+      const db = { query: jest.fn(async (sql: string) => (sql.includes('FROM users')
+        ? [{ id: SALE, email: 'rep@jagota.co.th', role: 'sale', status: 'active', must_change_password: false }] : [])) };
+      const guard = new AdminWriteGuard(db as never, new WinbackStaffIdentityService(db as never));
+      const req: { headers: { authorization: string }; winbackActor?: unknown } = { headers: { authorization: `Bearer ${refreshed.accessToken}` } };
+      await expect(guard.canActivate({ switchToHttp: () => ({ getRequest: () => req }) } as never)).resolves.toBe(true);
+      expect(req.winbackActor).toMatchObject({ id: SALE });
+    } finally {
+      if (savedSecret === undefined) delete process.env.PORTAL_JWT_SECRET; else process.env.PORTAL_JWT_SECRET = savedSecret;
+    }
   });
 
   describe('through the StaffAccountsService hooks (real service, shared fake tables)', () => {

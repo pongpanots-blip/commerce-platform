@@ -40,8 +40,9 @@ const tokenHash = (value: string) => createHash('sha256').update(value).digest('
 const invalid = () => new UnauthorizedException('invalid refresh token');
 
 /**
- * Transaction-scoped advisory lock on one account's refresh tokens. refresh, logout and revokeAllForUser all
- * take exactly this one lock (never two), so they serialize per account and cannot deadlock each other.
+ * Transaction-scoped advisory lock on one account's refresh tokens. issueSession (login), refresh, logout and
+ * revokeAllForUser all take exactly this one lock (never two), so they serialize per account and cannot
+ * deadlock each other.
  */
 const lockAccount = (m: EntityManager, userId: string) =>
   m.query(`SELECT pg_advisory_xact_lock(hashtext('auth_refresh_token'), hashtext($1))`, [userId]);
@@ -62,10 +63,25 @@ export class RefreshTokenService {
     private readonly jwt: JwtService,
   ) {}
 
-  /** A new sign-in: a fresh family. */
+  /**
+   * A new sign-in: a fresh family, inserted under the account lock. The caller checked the account (password,
+   * status, role) before this point; it is re-read under the lock, so a disable / role change / password change
+   * whose revokeAllForUser already ran cannot be followed by a family minted from the stale check.
+   * Every writer saves the account first and revokes second, so the re-read always sees the change.
+   */
   async issueSession(user: User, audience: RefreshAudience, meta: ClientMeta = {}): Promise<AuthSession> {
-    const now = new Date();
-    return (await this.session(this.tokens.manager, user, audience, { familyId: randomUUID(), familyCreatedAt: now }, meta, now)).session;
+    return this.tokens.manager.transaction(async (m) => {
+      await lockAccount(m, user.id);
+      const current = await m.getRepository(User).findOne({ where: { id: user.id } });
+      const role = current ? normalizeStaffRole(current.role) : '';
+      if (!current || current.status !== 'active' || role !== normalizeStaffRole(user.role)
+        || (current.passwordHash ?? null) !== (user.passwordHash ?? null)
+        || (audience === 'staff' && !STAFF_ROLES.includes(role as never))) {
+        throw new UnauthorizedException('invalid credentials');
+      }
+      const now = new Date();
+      return (await this.session(m, current, audience, { familyId: randomUUID(), familyCreatedAt: now }, meta, now)).session;
+    });
   }
 
   async refresh(token: string, audience: RefreshAudience, meta: ClientMeta = {}): Promise<AuthSession> {

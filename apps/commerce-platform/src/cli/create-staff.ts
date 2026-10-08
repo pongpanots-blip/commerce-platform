@@ -11,10 +11,11 @@
 import 'reflect-metadata';
 import { randomBytes } from 'crypto';
 import * as bcrypt from 'bcrypt';
-import { IsNull } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { AppDataSource } from '../data-source';
 import { User } from '../modules/core/user/infrastructure/user.entity';
 import { AuthRefreshToken } from '../modules/core/auth/infrastructure/auth-refresh-token.entity';
+import { RefreshTokenService } from '../modules/core/auth/application/refresh-token.service';
 import { STAFF_ROLES } from '../shared-kernel/presentation/auth.decorators';
 
 async function main() {
@@ -34,9 +35,10 @@ async function main() {
     ...(existing ?? {}), email, role, status: 'active', passwordHash: await bcrypt.hash(password, 10), mustChangePassword: generated,
   }));
   if (existing) {
-    // new password (and maybe role): end the account's existing sign-ins
+    // new password (and maybe role): end the account's existing sign-ins — through revokeAllForUser, so it takes
+    // the same per-account lock as a login or refresh racing it (the JwtService is never used for a revoke)
     try {
-      await AppDataSource.getRepository(AuthRefreshToken).update({ userId: existing.id, revokedAt: IsNull() }, { revokedAt: new Date(), revokedReason: 'cli' });
+      await new RefreshTokenService(AppDataSource.getRepository(AuthRefreshToken), new JwtService()).revokeAllForUser(existing.id, 'cli');
     } catch (error) {
       console.warn(`could not revoke existing sign-ins (auth_refresh_token migration not run yet?): ${(error as Error).message}`);
     }

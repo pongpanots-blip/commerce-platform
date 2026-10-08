@@ -5,8 +5,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * Only the sha256 of each token is stored; family_created_at caps how long one sign-in can be refreshed.
  * Additive only: a new table, nothing else is touched.
  */
-export class AuthRefreshToken1795700000000 implements MigrationInterface {
-  name = 'AuthRefreshToken1795700000000';
+export class AuthRefreshToken1795800000000 implements MigrationInterface {
+  name = 'AuthRefreshToken1795800000000';
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`CREATE TABLE IF NOT EXISTS auth_refresh_token (
     id uuid DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,

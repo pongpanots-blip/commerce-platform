@@ -5,10 +5,9 @@ import { normalizeStaffRole } from '../../../shared-kernel/presentation/auth.dec
  * is NOT: it is the customer-side "Company Super Admin" (first person of a
  * customer company), so listing it here leaked customer accounts into
  * `GET /winback/sales-users`, team stats and analytics rep lists.
- * `winback-roles.spec.ts` pins the customer codes out. Commerce's sales_manager is a separate staff login.
+ * `winback-roles.spec.ts` pins the customer codes out. Commerce staff sales_manager is normalized by the winback auth guard.
  */
 
-// Commerce sales_manager takes effect for app JWTs after the stacked commerce-auth change.
 /** Roles that see team scope + aging (Zoho-style manager sharing). */
 export const WINBACK_MANAGER_ROLES = new Set(['platform_admin', 'admin', 'manager', 'sales_manager']);
 

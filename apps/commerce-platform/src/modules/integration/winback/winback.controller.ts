@@ -1,3 +1,4 @@
+import { winbackActorOf, WinbackRequest } from './shared/winback-actor';
 // apps/backend/src/app/winback/winback.controller.ts
 import {
   BadRequestException,
@@ -68,7 +69,7 @@ import { normalizeActor, normalizeId } from './opportunity-meta.helpers';
 
 const pipe = new ValidationPipe({ transform: true, whitelist: true });
 
-export interface RequestWithUser {
+export interface RequestWithUser extends WinbackRequest {
   user?: { sub?: string; email?: string; role?: string };
   headers?: { authorization?: string };
 }
@@ -127,18 +128,13 @@ export class WinbackController {
   ) {}
 
   private salesId(req: RequestWithUser): string {
-    // In dev, AdminWriteGuard short-circuits without populating req.user, so fall
-    // back to decoding the Bearer token (access is already gated by the guard).
-    return req?.user?.sub || subFromBearer(req);
+    return winbackActorOf(req)?.id || subFromBearer(req);
   }
 
   private claims(req: RequestWithUser): JwtClaims {
+    const actor = winbackActorOf(req);
     const fromToken = claimsFromBearer(req);
-    return {
-      sub: req?.user?.sub || fromToken.sub,
-      email: req?.user?.email || fromToken.email,
-      role: req?.user?.role || fromToken.role,
-    };
+    return { sub: actor?.id || fromToken.sub, email: actor?.email || fromToken.email, role: actor?.role || fromToken.role };
   }
 
   /** ดึงข้อมูล claims ของผู้ใช้ที่ login อยู่ (role/email) */
@@ -147,6 +143,8 @@ export class WinbackController {
     const c = this.claims(req);
     return {
       salesUserId: c.sub,
+      id: c.sub,
+      source: winbackActorOf(req)?.source,
       email: c.email,
       role: c.role || 'sale',
       isManager: isWinbackManager(c.role),

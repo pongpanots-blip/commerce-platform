@@ -30,7 +30,7 @@ describe('winback roles', () => {
 
 describe('WinbackAppRoleGuard', () => {
   const guard = new WinbackAppRoleGuard();
-  const ctx = (role?: string) => ({ switchToHttp: () => ({ getRequest: () => ({ user: role === undefined ? undefined : { role } }) }) }) as never;
+  const ctx = (role?: string) => ({ switchToHttp: () => ({ getRequest: () => ({ user: role === undefined ? undefined : { sub: 'rep', role } }) }) }) as never;
 
   it.each(['cs', 'marketing', 'dev', 'merchandising', undefined, ''])('403 for %s', (role) => {
     expect(() => guard.canActivate(ctx(role))).toThrow(ForbiddenException);

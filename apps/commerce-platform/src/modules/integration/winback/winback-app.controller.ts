@@ -1,3 +1,4 @@
+import { winbackActorOf } from './shared/winback-actor';
 // The saleactivity screens that had no API: opportunities, revenue signals, product catalog, visit /
 // appointment extras, drafts, coaching, teams, work plan / saved places / discovery, sync history and the
 // record-only commercial screens. Same path, DTOs and response shape on josh and commerce (only imports and
@@ -101,10 +102,11 @@ export class WinbackAppController {
   ) {}
 
   private actor(req: RequestWithUser): WinbackActor {
+    const principal = winbackActorOf(req);
     const fromToken = claimsFromBearer(req);
     return {
-      id: req?.user?.sub || fromToken.sub,
-      isManager: isWinbackManager(req?.user?.role || fromToken.role),
+      id: principal?.id || fromToken.sub,
+      isManager: principal?.isManager ?? isWinbackManager(fromToken.role),
     };
   }
 

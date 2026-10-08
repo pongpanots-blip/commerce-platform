@@ -1,21 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import { FALLBACK_LANDING, isRouteAllowed, isSafeInternalPath, landingFor, loginPathFor, redirectParam, resolvePostLoginPath, ROLE_LANDING } from './landing';
-import { navFor } from '../app/navigation';
+import { navFor, SECTIONS, shortcutsFor } from '../app/navigation';
 
 const STAFF_ROLES = ['admin', 'marketing', 'merchandising', 'cs', 'sale', 'sales_manager', 'business_analyst', 'graphic'];
 
 describe('role landing (commerce-admin)', () => {
+  // every role lands on its home page (/home, RoleHome: shortcuts to its main tasks); intentional change vs #82/#83
   it.each([
-    ['admin', '/'],
-    ['merchandising', '/products'],
-    ['sales_manager', '/reports/sales'],
-    ['business_analyst', '/reports/sales'],
-    ['cs', '/cs'],
-    ['graphic', '/j/product/bulk-image-upload'],
-    ['marketing', '/marketing/growth'],
-    ['sale', '/reports/sales'],
-    ['sale_manager', '/reports/sales'], // stored alias of sales_manager
-    [' SALE_MANAGER ', '/reports/sales'],
+    ['admin', '/home'],
+    ['merchandising', '/home'],
+    ['sales_manager', '/home'],
+    ['business_analyst', '/home'],
+    ['cs', '/home'],
+    ['graphic', '/home'],
+    ['marketing', '/home'],
+    ['sale', '/home'],
+    ['sale_manager', '/home'], // stored alias of sales_manager
+    [' SALE_MANAGER ', '/home'],
   ])('%s → %s', (role, path) => {
     expect(landingFor(role)).toBe(path);
   });
@@ -29,6 +30,22 @@ describe('role landing (commerce-admin)', () => {
     }
   });
 
+  it.each([
+    ['admin', null, '/'], // Dashboard, outside the sections
+    ['merchandising', 'catalog', '/products'],
+    ['graphic', 'catalog', '/j/product/bulk-image-upload'],
+    ['marketing', 'marketing', '/marketing/growth'],
+    ['sales_manager', 'reports', '/reports/sales'],
+    ['business_analyst', 'reports', '/reports/sales'],
+    ['cs', 'customers', '/cs'],
+    ['sale', 'reports', '/reports/sales'],
+  ])('%s: the first home shortcut is its main page (%s › %s), never behind "show more"', (role, section, first) => {
+    expect(shortcutsFor(role)[0].to).toBe(first);
+    const group = navFor(role).find((g) => g.group && g.links.some((l) => l.to === first)) ?? navFor(role)[0];
+    expect(group.group ?? null).toBe(section && SECTIONS.find((s) => s.id === section)!.title);
+    expect(group.links.find((l) => l.to === first)!.more).toBeFalsy();
+  });
+
   it('unknown or missing role → the page every staff role can open', () => {
     expect(landingFor('platform_admin')).toBe(FALLBACK_LANDING);
     expect(landingFor(undefined)).toBe('/account/password');
@@ -40,45 +57,44 @@ describe('deep links', () => {
   it.each([
     ['merchandising', '/products/123?tab=prices', '/products/123?tab=prices'],
     ['merchandising', '/stock-moves', '/stock-moves'],
-    ['merchandising', '/settings/staff', '/products'], // admin-only page
-    ['merchandising', '/reports/sales', '/products'],
+    ['merchandising', '/settings/staff', '/home'], // admin-only page
+    ['merchandising', '/reports/sales', '/home'],
     ['sales_manager', '/reports/customers/abc', '/reports/customers/abc'],
-    ['sales_manager', '/products', '/reports/sales'],
+    ['sales_manager', '/products', '/home'],
     ['business_analyst', '/marketing/growth', '/marketing/growth'],
-    ['business_analyst', '/marketing/growth/plans', '/reports/sales'], // the more specific entry is marketing only
+    ['business_analyst', '/marketing/growth/plans', '/home'], // the more specific entry is marketing only
     ['graphic', '/j/allproducts', '/j/allproducts'],
-    ['graphic', '/j/coupons', '/j/product/bulk-image-upload'],
+    ['graphic', '/j/coupons', '/home'],
     ['marketing', '/workspaces/marketing', '/workspaces/marketing'],
     ['cs', '/account/password', '/account/password'],
-    ['cs', '/', '/cs'],
+    ['cs', '/', '/home'],
     ['admin', '/settings/staff', '/settings/staff'],
-    ['admin', '/login?redirect=/x', '/'],
+    ['admin', '/login?redirect=/x', '/home'],
     ['sale', '/reports/winback/my', '/reports/winback/my'],
-    ['sale', '/reports/winback', '/reports/sales'], // the team view is sales_manager / business_analyst
+    ['sale', '/reports/winback', '/home'], // the team view is sales_manager / business_analyst
     ['sale', '/reports/customers/c-1', '/reports/customers/c-1'],
-    ['sale', '/cs/sales-assignment', '/reports/sales'],
+    ['sale', '/cs/sales-assignment', '/home'],
     ['sale_manager', '/cs/sales-assignment', '/cs/sales-assignment'],
     ['sales_manager', '/reports/winback/opportunities', '/reports/winback/opportunities'],
-    ['sales_manager', '/reports/winback/my', '/reports/sales'],
+    ['sales_manager', '/reports/winback/my', '/home'],
   ])('%s + redirect %s → %s', (role, redirect, expected) => {
     expect(resolvePostLoginPath(role, redirect)).toBe(expected);
   });
 
-  it('a workspace page only when the role has links in it', () => {
-    const own = navFor('cs').flatMap((g) => g.links.map((l) => l.to)).filter((to) => to.startsWith('/workspaces/'));
-    expect(own.length).toBeGreaterThan(0);
-    for (const id of ['catalog', 'orders', 'customers', 'marketing', 'reports', 'connections', 'settings']) {
-      expect(isRouteAllowed('cs', `/workspaces/${id}`)).toBe(own.includes(`/workspaces/${id}`));
-    }
-    expect(isRouteAllowed('cs', '/workspaces/marketing')).toBe(false);
+  it('an old workspace page only when the replacing section has a page for the role', () => {
+    // cs: Orders and Customers & Service yes; Marketing / Reports / Advanced (old "connections") no
+    expect(['catalog', 'orders', 'customers', 'marketing', 'reports', 'connections', 'settings'].filter((id) => isRouteAllowed('cs', `/workspaces/${id}`)))
+      .toEqual(['orders', 'customers', 'settings']);
+    expect(isRouteAllowed('marketing', '/workspaces/connections')).toBe(true); // Advanced: AI connections, marketing tools
+    expect(isRouteAllowed('graphic', '/workspaces/marketing')).toBe(false);
   });
 
   it('resolves dot segments before the allow-list check', () => {
-    expect(resolvePostLoginPath('merchandising', '/products/../settings/staff')).toBe('/products');
+    expect(resolvePostLoginPath('merchandising', '/products/../settings/staff')).toBe('/home');
     expect(isRouteAllowed('merchandising', '/products/../settings/staff')).toBe(false);
     expect(resolvePostLoginPath('merchandising', '/products/./1')).toBe('/products/1');
     expect(resolvePostLoginPath('admin', '/products/../settings/staff')).toBe('/settings/staff');
-    expect(resolvePostLoginPath('sale', '/reports/sales/../../settings/staff')).toBe('/reports/sales');
+    expect(resolvePostLoginPath('sale', '/reports/sales/../../settings/staff')).toBe('/home');
   });
 
   it('refuses percent-encoded dot / slash / backslash tricks (any case, double-encoded)', () => {
@@ -87,8 +103,8 @@ describe('deep links', () => {
       '/products%2f..%2fsettings%2fstaff', '/products/%252e%252e/settings/staff', '/products/%5c..%5csettings', '/products/%ZZ',
     ]) {
       expect(isRouteAllowed('merchandising', bad)).toBe(false);
-      expect(resolvePostLoginPath('merchandising', bad)).toBe('/products');
-      expect(resolvePostLoginPath('admin', bad)).toBe('/');
+      expect(resolvePostLoginPath('merchandising', bad)).toBe('/home');
+      expect(resolvePostLoginPath('admin', bad)).toBe('/home');
     }
   });
 
@@ -101,7 +117,7 @@ describe('deep links', () => {
 
   it('rejects open redirects', () => {
     for (const bad of ['https://evil.example/', '//evil.example/x', '/\\evil.example', '\\\\evil.example', 'javascript:alert(1)', 'products', '/a\nb', '', null, undefined]) {
-      expect(resolvePostLoginPath('admin', bad as string)).toBe('/');
+      expect(resolvePostLoginPath('admin', bad as string)).toBe('/home');
     }
     expect(isSafeInternalPath('/reports/sales?period=today#top')).toBe(true);
     expect(isSafeInternalPath('//evil.example')).toBe(false);

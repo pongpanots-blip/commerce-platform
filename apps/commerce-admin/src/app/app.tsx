@@ -2,9 +2,10 @@ import { SalesAssignment } from './pages/SalesAssignment';
 import { MyWinback } from './pages/MyWinback';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, useUiLocale } from '@cp/ui';
+import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
 import { navFor } from './navigation';
 import { Workspace } from './pages/Workspace';
+import { RoleHome } from './pages/RoleHome';
 import { AdminStats, api, logout, reportsApi, restoreSession, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
 import { initialAuthState } from '../lib/auth';
 import { landingFor, loginPathFor, redirectParam, resolvePostLoginPath } from '../lib/landing';
@@ -80,17 +81,14 @@ function AdminTopBar({ role }: { role?: string }) {
     refresh();
     return () => observer.disconnect();
   }, [pathname]);
-  const nav = navFor(session.claims()?.role);
-  const current = nav.flatMap(group => group.links.map(link => ({ group, link })))
-    .filter(({ link }) => pathname === link.to || (link.to !== '/' && !link.end && pathname.startsWith(link.to + '/')))
-    .sort((a, b) => b.link.to.length - a.link.to.length)[0];
+  const current = currentNavItem(navFor(session.claims()?.role), pathname);
   const stats = useAsync(() => role === 'admin' ? api.get<AdminStats>('/admin/stats') : Promise.resolve(null), [role]);
   const health = useAsync(() => role === 'admin' ? reportsApi.health({ period: 'today' }) : Promise.resolve(null), [role]);
   const problems = health.data?.now.problems.length ?? 0;
   const docsBase = import.meta.env.VITE_COMMERCE_API || (import.meta.env.DEV ? 'http://localhost:3100/api' : '/api');
   return <TopBar
     left={<div className="flex flex-wrap items-center gap-3">
-      <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("Commerce workspace")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "พื้นที่ทำงาน")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
+      <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("ตอนนี้อยู่ที่")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "หน้าหลัก")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
       {role === 'admin' && <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>}
     </div>}
     right={<><LanguageSelector /><CommandMenu />{role === 'admin' && <IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />}<IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
@@ -160,7 +158,7 @@ export function App() {
       <AppShell
         sidebar={
           <Sidebar
-            brand={{ title: 'Commerce Platform', subtitle: 'พื้นที่ทำงานของทีม' }}
+            brand={{ title: 'Commerce Platform', subtitle: 'หลังบ้านของทีม' }}
             env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? __uiText("Prod") : __uiText("Local dev")}</>}
             nav={nav}
             searchable
@@ -172,7 +170,9 @@ export function App() {
           <Routes>
             <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={landingFor(role)} replace />} />
             <Route path="/login" element={<LoginRedirect role={role} />} />
-            <Route path="/workspaces/:workspaceId" element={<Workspace />} />
+            <Route path="/home" element={<RoleHome role={role} />} />
+            {/* #80 workspace overview pages: old links open the replacing section */}
+            <Route path="/workspaces/:workspaceId" element={<Workspace role={role} />} />
             <Route path="/settings/staff" element={<StaffAccounts />} />
             <Route path="/settings/josh-staff" element={<JoshStaff />} />
             <Route path="/account/password" element={<ChangePassword />} />

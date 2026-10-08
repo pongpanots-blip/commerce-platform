@@ -50,7 +50,7 @@ describe('commerce-admin sign-in gate', () => {
   it('a valid access token skips the login page; / goes to the role landing', async () => {
     sessionStorage.setItem('cp_admin_token', jwt('merchandising', 900));
     await render('/');
-    expect(window.location.pathname).toBe('/products');
+    expect(window.location.pathname).toBe('/home');
     expect(loginFormShown()).toBe(false);
   });
 
@@ -79,6 +79,38 @@ describe('commerce-admin sign-in gate', () => {
     act(() => root.unmount());
     container.remove();
     await render('/login?redirect=%2Fsettings%2Fstaff'); // admin-only
-    expect(window.location.pathname).toBe('/products');
+    expect(window.location.pathname).toBe('/home');
+  });
+
+  it('old workspace overview links open the replacing section, or the role home', async () => {
+    sessionStorage.setItem('cp_admin_token', jwt('merchandising', 900));
+    await render('/workspaces/settings');
+    expect(window.location.pathname).toBe('/account/password');
+    act(() => root.unmount());
+    container.remove();
+    await render('/workspaces/connections'); // now Settings › Advanced: nothing there for merchandising
+    expect(window.location.pathname).toBe('/home');
+  });
+
+  it('the sidebar lists task sections, highlights the current page and explains it in a tooltip', async () => {
+    sessionStorage.setItem('cp_admin_token', jwt('merchandising', 900));
+    await render('/account/password');
+    const groups = [...container.querySelectorAll('aside nav button[aria-expanded]')].map((b) => b.textContent);
+    expect(groups.some((t) => t?.includes('สินค้าและสต็อก'))).toBe(true);
+    expect(groups.some((t) => t?.includes('ตั้งค่าขั้นสูง'))).toBe(false);
+    const current = container.querySelector('aside a[aria-current="page"]');
+    expect(current?.getAttribute('href')).toBe('/account/password');
+    expect(current?.getAttribute('title')).toBe('เปลี่ยนรหัสผ่านของคุณ');
+  });
+
+  it('home page: big shortcuts to the role\'s main tasks, without calling the API', async () => {
+    sessionStorage.setItem('cp_admin_token', jwt('merchandising', 900));
+    const fetchMock = globalThis.fetch as unknown as { mock: { calls: unknown[][] } };
+    await render('/home');
+    const calls = fetchMock.mock.calls.map((c) => String(c[0]).slice(BASE.length)).filter((p) => p !== '/admin/auth/me');
+    expect(calls).toEqual([]);
+    expect(container.querySelector('main h1')?.textContent).toBe('วันนี้ต้องการทำอะไร');
+    const cards = [...container.querySelectorAll('main section a')].map((a) => a.getAttribute('href'));
+    expect(cards).toEqual(['/products', '/j/allproducts', '/product-prices', '/product-master-queue', '/stock-moves', '/j/categories']);
   });
 });

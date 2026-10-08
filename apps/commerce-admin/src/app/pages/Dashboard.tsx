@@ -10,7 +10,7 @@ import {
 } from '@cp/ui';
 import { AdminStats, Integration, SyncJob, api, webhookApi } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { WORKSPACES } from '../navigation';
+import { SECTIONS } from '../navigation';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -67,10 +67,10 @@ export function Dashboard() {
       <section aria-label={__uiText("เลือกหมวดงาน")}>
         <div className="mb-3 flex items-center gap-2"><h2 className="font-semibold">{__uiText("เลือกหมวดงาน")}</h2><span className="text-xs text-on-surface-variant">{__uiText("ทุกเครื่องมือ จัดตามงานที่คุณทำ")}</span></div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {WORKSPACES.map(workspace => <Link key={workspace.id} to={`/workspaces/${workspace.id}`} className="group rounded-xl border border-secondary-container bg-white p-4 transition-colors hover:border-primary/50 hover:bg-primary-container/20 focus-visible:outline-2 focus-visible:outline-primary">
-            <div className="flex items-center justify-between"><span className="flex size-9 items-center justify-center rounded-lg bg-surface-container-low text-primary"><Icon name={workspace.icon} size={21} /></span><Icon name="arrow_forward" size={17} className="text-outline group-hover:text-primary" /></div>
-            <h3 className="mt-3 text-sm font-semibold">{__uiText(workspace.title)}</h3><p className="mt-1 text-xs leading-relaxed text-on-surface-variant">{__uiText(workspace.description)}</p>
-            <p className="mt-3 text-[11px] text-outline">{Math.max(0, (nav.find(group => group.group === workspace.title)?.links.length ?? 1) - 1)} {__uiText(" เมนู")}</p>
+          {SECTIONS.map(section => ({ section, links: nav.find(group => group.group === section.title)?.links ?? [] })).filter(({ links }) => links.length > 0).map(({ section, links }) => <Link key={section.id} to={links[0].to} className="group rounded-xl border border-secondary-container bg-white p-4 transition-colors hover:border-primary/50 hover:bg-primary-container/20 focus-visible:outline-2 focus-visible:outline-primary">
+            <div className="flex items-center justify-between"><span className="flex size-9 items-center justify-center rounded-lg bg-surface-container-low text-primary"><Icon name={section.icon} size={21} /></span><Icon name="arrow_forward" size={17} className="text-outline group-hover:text-primary" /></div>
+            <h3 className="mt-3 text-sm font-semibold">{__uiText(section.title)}</h3><p className="mt-1 text-xs leading-relaxed text-on-surface-variant">{__uiText(section.description)}</p>
+            <p className="mt-3 text-[11px] text-outline">{links.length} {__uiText(" เมนู")}</p>
           </Link>)}
         </div>
       </section>

@@ -20,7 +20,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Link, NavLink, matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ICONS } from './icons';
 import { LanguageSelector } from './i18n';
 
@@ -1035,8 +1035,40 @@ function useNavCrumbs(): string[] | undefined {
   return undefined;
 }
 
-export type NavItem = { to: string; label: string; end?: boolean; icon?: string; badge?: ReactNode };
+export type NavItem = {
+  to: string;
+  label: string;
+  end?: boolean;
+  icon?: string;
+  badge?: ReactNode;
+  /** One line on what the page is for (UI copy): the item's tooltip and menu-search text. */
+  description?: string;
+  /** Sub-pages outside `to` (create / edit / detail) that highlight this item, e.g. '/j/coupon'. */
+  activeFor?: string[];
+  /** Less used: listed after the group's "show more" item (menu search still finds it). */
+  more?: boolean;
+};
 export type NavGroup = { group?: string; icon?: string; links: NavItem[] };
+
+const startsWithPath = (pathname: string, prefix: string) => pathname === prefix || pathname.startsWith(prefix.endsWith('/') ? prefix : `${prefix}/`);
+
+/** How specifically `item` covers `pathname` (0 = not at all); the longest match is the current page. */
+export function navMatchLength(item: NavItem, pathname: string): number {
+  if (item.to === '/') return pathname === '/' ? 1 : 0;
+  if (matchPath({ path: item.to, end: item.end ?? false }, pathname)) return item.to.length;
+  return Math.max(0, ...(item.activeFor ?? []).filter(prefix => startsWithPath(pathname, prefix)).map(prefix => prefix.length));
+}
+
+/** The nav item (and its group) for the current page, sub-pages included. */
+export function currentNavItem(nav: NavGroup[], pathname: string): { group: NavGroup; link: NavItem } | undefined {
+  let best: { group: NavGroup; link: NavItem } | undefined;
+  let bestLength = 0;
+  for (const group of nav) for (const link of group.links) {
+    const length = navMatchLength(link, pathname);
+    if (length > bestLength) { bestLength = length; best = { group, link }; }
+  }
+  return best;
+}
 
 /** Keyboard-accessible page search. Searches the permitted navigation, never business data. */
 export function CommandMenu() {
@@ -1052,7 +1084,7 @@ export function CommandMenu() {
   const titleId = useId();
   const resultsId = useId();
   const results = nav.flatMap(group => group.links.map(link => ({ ...link, group: group.group })))
-    .filter(link => `${link.label} ${link.group ?? ''} ${__uiText(link.label)} ${link.group ? __uiText(link.group) : ''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
+    .filter(link => `${link.label} ${link.group ?? ''} ${__uiText(link.label)} ${link.group ? __uiText(link.group) : ''} ${link.description ? __uiText(link.description) : ''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
   const close = () => setOpen(false);
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
@@ -1083,7 +1115,7 @@ export function CommandMenu() {
       <div id={resultsId} role="listbox" aria-label={__uiText("ผลการค้นหาเมนู")} className="max-h-[55vh] overflow-y-auto border-t border-secondary-container p-2">
         {results.length ? results.map((item, index) => <div key={item.to} id={`${resultsId}-${index}`} role="option" aria-selected={selected === index} className={cx('rounded-lg', selected === index && 'bg-primary-container/50')}>
           <button type="button" tabIndex={-1} onClick={() => visit(index)} className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left">
-            <span><span className="block text-sm font-medium">{__uiText(item.label)}</span><span className="mt-0.5 block text-xs text-on-surface-variant">{item.group ? __uiText(item.group) : __uiText("หน้าหลัก")}</span></span><Icon name="arrow_forward" className="text-outline" />
+            <span><span className="block text-sm font-medium">{__uiText(item.label)}</span><span className="mt-0.5 block text-xs text-on-surface-variant">{item.group ? __uiText(item.group) : __uiText("หน้าหลัก")}{item.description ? ` · ${__uiText(item.description)}` : ''}</span></span><Icon name="arrow_forward" className="text-outline" />
           </button>
         </div>) : <Empty icon="search_off">{__uiText("ไม่พบเมนู ลองค้นหาด้วยคำอื่น")}</Empty>}
       </div>
@@ -1118,9 +1150,11 @@ export function Sidebar({
   useEffect(() => setMobileOpen(false), [pathname]);
   const navId = useId();
   const [toggled, setToggled] = useState<Record<string, boolean>>({});
+  const [showMore, setShowMore] = useState<Record<string, boolean>>({});
   const q = query.trim().toLowerCase();
-  const isCurrent = (l: NavItem) => Boolean(matchPath({ path: l.to, end: l.end ?? false }, pathname));
-  const activeDestination = nav.flatMap(group => group.links).filter(isCurrent).sort((a, b) => b.to.length - a.to.length)[0]?.to;
+  const activeDestination = currentNavItem(nav, pathname)?.link.to;
+  const isCurrent = (l: NavItem) => l.to === activeDestination;
+  const matches = (group: string | undefined, l: NavItem) => `${group ?? ''} ${__uiText(group ?? '')} ${l.label} ${__uiText(l.label)} ${l.description ? __uiText(l.description) : ''}`.toLowerCase().includes(q);
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>
     cx(
@@ -1166,24 +1200,28 @@ export function Sidebar({
 
         <nav id={navId} className={cx('space-y-3', !mobileOpen && 'hidden md:block')} onClick={(event) => { if ((event.target as HTMLElement).closest('a')) setMobileOpen(false); }}>
           {nav.map((section, gi) => {
-            const links = q ? section.links.filter((l) => `${section.group ?? ''} ${__uiText(section.group ?? '')} ${l.label} ${__uiText(l.label)}`.toLowerCase().includes(q)) : section.links;
+            const links = q ? section.links.filter((l) => matches(section.group, l)) : section.links;
             if (!links.length) return null;
             // Untitled group: a flat list of top-level links (portal, "Overview").
             if (!section.group) {
               return (
                 <div key={gi} className="space-y-0.5">
                   {links.map((l) => (
-                    <NavLink key={l.to} to={l.to} end={l.end} aria-current={l.to === activeDestination ? 'page' : false} className={({ isActive }) => linkCls({ isActive: isActive && l.to === activeDestination })}>
+                    <Link key={l.to} to={l.to} title={l.description ? __uiText(l.description) : undefined} aria-current={isCurrent(l) ? 'page' : undefined} className={linkCls({ isActive: isCurrent(l) })}>
                       <Icon name={l.icon ?? 'circle'} />
                       <span className="flex-1 truncate">{__uiText(l.label)}</span>
                       {l.badge}
-                    </NavLink>
+                    </Link>
                   ))}
                 </div>
               );
             }
             const expanded = Boolean(q) || (toggled[section.group] ?? section.links.some(isCurrent));
             const holdsCurrent = section.links.some(isCurrent);
+            // "show more": less used items follow a toggle item (same look as the others) unless searching or one is open
+            const moreCount = links.filter((l) => l.more).length;
+            const moreOpen = Boolean(q) || (showMore[section.group] ?? links.some((l) => l.more && isCurrent(l)));
+            const shown = moreOpen ? links : links.filter((l) => !l.more);
             return (
               <div key={section.group}>
                 <button
@@ -1204,23 +1242,26 @@ export function Sidebar({
                 </button>
                 {expanded && (
                   <div id={`${navId}-${gi}`} className="mt-0.5 space-y-0.5 pl-1.5 border-l-2 border-primary/20 ml-3">
-                    {links.map((l) => (
-                      <NavLink key={l.to} to={l.to} end={l.end} aria-current={l.to === activeDestination ? 'page' : false} className={({ isActive }) => subLinkCls({ isActive: isActive && l.to === activeDestination })}>
-                        {({ isActive }) => (
-                          <>
-                            <span className={cx('w-1.5 h-1.5 rounded-full shrink-0', isActive && l.to === activeDestination ? 'bg-primary' : 'bg-outline-variant')} />
-                            <span className="flex-1 truncate">{__uiText(l.label)}</span>
-                            {l.badge}
-                          </>
-                        )}
-                      </NavLink>
+                    {shown.map((l) => (
+                      <Link key={l.to} to={l.to} title={l.description ? __uiText(l.description) : undefined} aria-current={isCurrent(l) ? 'page' : undefined} className={subLinkCls({ isActive: isCurrent(l) })}>
+                        <span className={cx('w-1.5 h-1.5 rounded-full shrink-0', isCurrent(l) ? 'bg-primary' : 'bg-outline-variant')} />
+                        <span className="flex-1 truncate">{__uiText(l.label)}</span>
+                        {l.badge}
+                      </Link>
                     ))}
+                    {moreCount > 0 && !q && (
+                      <button type="button" aria-expanded={moreOpen} onClick={() => setShowMore((m) => ({ ...m, [section.group as string]: !moreOpen }))} className={cx(subLinkCls({ isActive: false }), 'w-full text-left')}>
+                        <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-outline-variant" />
+                        <span className="flex-1 truncate">{moreOpen ? __uiText('แสดงน้อยลง') : __uiText('แสดงเพิ่มเติม ({0})', { 0: moreCount })}</span>
+                        <Icon name={moreOpen ? 'expand_more' : 'chevron_right'} size={16} className="text-outline" />
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
             );
           })}
-          {q && !nav.some(group => group.links.some(link => `${group.group ?? ''} ${link.label} ${__uiText(link.label)} ${group.group ? __uiText(group.group) : ''}`.toLowerCase().includes(q))) && <p role="status" className="px-3 py-4 text-xs text-on-surface-variant">{__uiText("ไม่พบเมนู ลองใช้คำอื่น")}</p>}
+          {q && !nav.some(group => group.links.some(link => matches(group.group, link))) && <p role="status" className="px-3 py-4 text-xs text-on-surface-variant">{__uiText("ไม่พบเมนู ลองใช้คำอื่น")}</p>}
         </nav>
       </div>
 

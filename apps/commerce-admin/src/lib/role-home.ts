@@ -1,16 +1,17 @@
 /**
- * Shared homes for commerce staff (also the post-login landing in landing.ts). Each is a page in the role's
- * own sidebar whose first API calls the platform allows for that role.
+ * Shared homes for commerce staff (also the post-login landing in landing.ts). Every role lands on /home,
+ * its "What do you want to do today?" page (app/pages/RoleHome.tsx): shortcuts to the role's main tasks
+ * (navigation.ts ROLE_SHORTCUTS). /home makes no API call, so it never 403s for any role.
  */
 export const ROLE_HOME: Readonly<Record<string, string>> = {
-  admin: '/', // Dashboard (admin-only)
-  merchandising: '/products', // GET /products
-  business_analyst: '/reports/sales', // GET /reports/sales (read-only role)
-  cs: '/cs', // CS desk — no API call on load; tabs use the josh relay /cs-admin/*
-  graphic: '/j/product/bulk-image-upload', // relay /product/images*
-  marketing: '/marketing/growth', // GET /growth/*
-  sale: '/reports/sales', // own sales, scoped to the caller's reps
-  sales_manager: '/reports/sales', // team sales
+  admin: '/home', // shortcuts include the Dashboard (/)
+  merchandising: '/home',
+  business_analyst: '/home',
+  cs: '/home',
+  graphic: '/home',
+  marketing: '/home',
+  sale: '/home',
+  sales_manager: '/home',
 };
 
 export function normalizeRole(role: string | null | undefined): string {

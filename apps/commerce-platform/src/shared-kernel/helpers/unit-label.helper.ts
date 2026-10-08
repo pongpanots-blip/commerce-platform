@@ -1,5 +1,4 @@
-// Copied from josh apps/backend/src/shared/{helpers,types} (origin/main d84d692b). Only imports changed:
-// josh entities → slim copies in ./josh-pricing-tables, date helper → ../jagota/date-only.helper.
+// Copied from josh apps/backend/src/shared/{helpers,types} (origin/main d84d692b).
 /** josh request-lang.helper RequestLang. */
 export type RequestLang = 'th' | 'en';
 

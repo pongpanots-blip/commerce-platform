@@ -4,8 +4,8 @@ import { DataSource, FindOptionsWhere, Not, Repository } from 'typeorm';
 import { PromotionMechanic, PromotionMechanicSkuItem, PromotionPage } from './josh-pricing-tables';
 import { isActiveDateRange } from '../jagota/date-only.helper';
 import { PromotionValue } from './promotion-value';
-import type { RequestLang } from './unit-label.helper';
-import { localizeRuleUnitLabels } from './unit-label.helper';
+import type { RequestLang } from '../../../../../shared-kernel/helpers/unit-label.helper';
+import { localizeRuleUnitLabels } from '../../../../../shared-kernel/helpers/unit-label.helper';
 
 export type ProductActivePromotion = {
   mechanic_id: string;

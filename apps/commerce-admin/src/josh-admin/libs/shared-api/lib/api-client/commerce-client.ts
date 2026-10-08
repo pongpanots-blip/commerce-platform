@@ -5,7 +5,7 @@
  * josh `/competitor-scraping/*` is `/scraping/*` in commerce.
  */
 import type { AxiosResponse } from 'axios';
-import { api, request, session } from '../../../../../lib/api';
+import { authedFetch, request } from '../../../../../lib/api';
 
 type Config = { params?: Record<string, unknown>; responseType?: string; timeout?: number };
 type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -29,8 +29,7 @@ async function call<T>(method: Method, url: string, body?: unknown, config?: Con
   try {
     let data: T;
     if (config?.responseType === 'blob') {
-      const token = session.get();
-      const res = await fetch(`${api.base}${path}`, { method, headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      const res = await authedFetch(path, { method });
       if (!res.ok) throw Object.assign(new Error(`${res.status} ${res.statusText}`), { status: res.status });
       data = (await res.blob()) as T;
     } else {

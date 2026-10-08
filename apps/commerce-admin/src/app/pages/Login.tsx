@@ -4,7 +4,7 @@ import { login } from '../../lib/api';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-export function Login({ onSignedIn }: { onSignedIn: () => void }) {
+export function Login({ onSignedIn }: { onSignedIn: (role: string) => void }) {
   __useUiLocale();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,8 +15,8 @@ export function Login({ onSignedIn }: { onSignedIn: () => void }) {
     setBusy(true);
     setError(null);
     try {
-      await login(email, password);
-      onSignedIn();
+      const { role } = await login(email, password);
+      onSignedIn(role);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

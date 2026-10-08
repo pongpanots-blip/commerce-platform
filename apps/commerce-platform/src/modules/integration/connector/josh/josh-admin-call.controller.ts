@@ -8,16 +8,23 @@ const M: StaffRole[] = ['marketing'];
 const MER: StaffRole[] = ['marketing', 'merchandising'];
 const CS: StaffRole[] = ['cs'];
 const ADMIN: StaffRole[] = [];
+/** josh RELAY_ROUTES' id and path-segment patterns. */
+const ID = '[0-9a-fA-F-]{36}';
+const SEG = '[A-Za-z0-9_-]{1,64}';
+const exact = (path: string) => new RegExp(`^${path}$`);
 /**
  * josh admin routes commerce-admin calls through josh's admin-call relay — same list as josh RELAY_ROUTES, plus who
- * may call here besides admin. Stage 6: MER (`merchandising`) gets the product / category / brand / supplier areas,
- * CS the order / shipment / CS-desk / credit areas; customer PII, KYC, staff access and payment testing stay admin.
+ * may call here besides admin. Stage 6: MER (`merchandising`) gets the product / category / brand / supplier areas.
+ * cs and graphic get only the method + path pairs their pages call (cs: CsDesk, /j/order(/:id), /j/shipments(/:id),
+ * /j/credit-notes, /j/credit-backs, /j/cs/*; graphic: /j/allproducts, /j/product/bulk-image-upload, /j/brands); the rest
+ * of each area (account merge, order import / relink, customer users / branches, credit decisions, billing, customer
+ * prices) stays admin. Customer PII, KYC, staff access and payment testing stay admin.
  */
 const AREAS: { path: RegExp; roles: StaffRole[]; methods?: string[] }[] = [
   // graphic: read products and categories, and the image paths commerce-admin uploads through. First path+method match wins.
   { path: /^\/product\/images(\/|$)/, roles: [...MER, 'graphic'] },
   { path: /^\/upload\/image(\/|$)/, roles: [...MER, 'graphic'] },
-  { path: /^\/product\//, roles: [...MER, 'graphic'], methods: ['GET'] },
+  { path: /^\/product\/admin\/list$/, roles: [...MER, 'graphic'], methods: ['GET'] },
   { path: /^\/(product-category|brands)(\/|$)/, roles: [...MER, 'graphic'], methods: ['GET'] },
   { path: /^\/(product\/|admin\/promotion-product-sets)/, roles: MER },
   { path: /^\/promotion-pages/, roles: M },
@@ -29,10 +36,24 @@ const AREAS: { path: RegExp; roles: StaffRole[]; methods?: string[] }[] = [
   { path: /^\/(product-category|brands|cuisine)(\/|$)/, roles: MER },
   { path: /^\/(marketing-notify-templates|marketing-settings|smart-links|marketing-offers|marketing\/deeplink)(\/|$)/, roles: M },
   { path: /^\/(membership-tiers|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, roles: ADMIN },
-  { path: /^\/(orders|shipments)(\/|$)/, roles: CS },
+  // cs: order list / analytics / detail, a shipment's detail, order and shipment status, send a shipment to the ERP.
+  { path: exact(`/(orders|shipments)(/${SEG})?`), roles: CS, methods: ['GET'] },
+  { path: exact(`/shipments/by-order/${SEG}`), roles: CS, methods: ['GET'] },
+  { path: exact(`/(orders|shipments)/${ID}/status`), roles: CS, methods: ['PATCH'] },
+  { path: exact(`/shipments/${ID}/send`), roles: CS, methods: ['POST'] },
+  { path: /^\/(orders|shipments)(\/|$)/, roles: ADMIN }, // order import / relink-users / relink-all
   { path: /^\/payment\/kbank\/testing(\/|$)/, roles: ADMIN },
-  { path: /^\/(cs-admin\/|admin\/cart-move-allowed-categories$)/, roles: CS },
-  { path: /^\/(credit-notes|credit-backs)(\/|$)/, roles: CS },
+  // cs: the CS desk (quote, order on behalf, samples), refund requests and payment QR on an order, delivery schedule, cart-move categories.
+  { path: exact('/cs-admin/orders/(quote|place-on-behalf)'), roles: CS, methods: ['POST'] },
+  { path: exact('/cs-admin/sample-requests'), roles: CS, methods: ['GET'] },
+  { path: exact(`/cs-admin/sample-requests/${ID}`), roles: CS, methods: ['PATCH'] },
+  { path: exact(`/cs-admin/orders/${ID}/payment-qr`), roles: CS, methods: ['GET'] },
+  { path: exact('/cs-admin/refunds'), roles: CS, methods: ['GET', 'POST'] },
+  { path: exact('/cs-admin/delivery-schedule'), roles: CS, methods: ['GET'] },
+  { path: exact('/admin/cart-move-allowed-categories'), roles: CS, methods: ['GET', 'PUT'] },
+  { path: /^\/(cs-admin\/|admin\/cart-move-allowed-categories$)/, roles: ADMIN }, // account merge, users, branches, credit, billing, …
+  { path: exact(`/(credit-notes|credit-backs)(/${SEG})?`), roles: CS, methods: ['GET'] },
+  { path: /^\/(credit-notes|credit-backs)(\/|$)/, roles: ADMIN },
   { path: /^\/(supplier|promotion-mechanics)(\/|$)/, roles: MER },
   { path: /^\/product$/, roles: MER },
   { path: /^\/admin\/(push-campaigns|notifications|product-notify-funnel|audit-logs)(\/|$)/, roles: M },
@@ -56,7 +77,7 @@ export interface AdminCallBody {
  * One door for commerce-admin pages that drive josh admin features (coupons, product sets, promotion
  * pages, campaigns, segments, bot, workflow editor, CS orders / samples, account merge). josh checks
  * its own allowlist, runs its own route as the same staff member and answers `{ status, data }`;
- * a josh 4xx comes back as the same error here. Admin; marketing / MER / CS for their areas (AREAS).
+ * a josh 4xx comes back as the same error here. Admin; marketing / MER / CS / graphic for their areas (AREAS).
  */
 @Controller('josh/admin-call')
 @StaffRoles('marketing', 'merchandising', 'cs', 'graphic')

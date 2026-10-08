@@ -55,6 +55,14 @@ if [[ -f .env.jagota-gateway ]]; then
     printf '%s\n' "$line" >> .env
   done < .env.jagota-gateway
 fi
+# Free disk before pulling: every deploy leaves its tagged image behind (prune -f below only drops
+# dangling ones) and the runner builds on this box, so the disk filled up (deploy 37769310791:
+# "no space left on device" while extracting). Images in use by any container are never removed;
+# older tags stay in ECR for rollback (deploy-ecr image_tag or ./ec2-deploy.sh <tag>).
+df -h / | tail -1 || true
+docker image prune -af --filter "until=48h" || true
+docker builder prune -f --filter "until=48h" || true
+df -h / | tail -1 || true
 "${COMPOSE[@]}" pull "${SERVICES[@]}"
 # Schema first: the app never runs migrations itself (migrationsRun is off). A failed migration
 # stops the deploy before the new platform container replaces the running one.

@@ -18,6 +18,9 @@
 #     COMMERCE_CORS_ORIGINS, JOSH_DATABASE_URL, JOSH_MONGO_URL (optional, read-only josh DB users)
 #   Jagota gateway (optional): vars JAGOTA_GATEWAY_ENABLED, JAGOTA_NODEAPI_BASE_URL;
 #     secrets JAGOTA_NODEAPI_USERNAME, JAGOTA_NODEAPI_PASSWORD
+#   Media + intake (optional; unset = upload 503 / intake 401): secrets AWS_ACCESS_KEY_ID,
+#     AWS_SECRET_ACCESS_KEY, WINBACK_INTAKE_KEY. Bucket / region / base URL go in vars PLATFORM_FLAGS
+#     (S3_MEDIA_BUCKET, AWS_REGION, MEDIA_BASE_URL) — not these secrets.
 #
 # ECR repos (create once): <account>.dkr.ecr.<region>.amazonaws.com/commerce-platform,
 #   commerce-admin, commerce-portal
@@ -169,6 +172,10 @@ jobs:
           RESEARCH_FREE_WORKER_ENABLED: ${{ vars.RESEARCH_FREE_WORKER_ENABLED }}
           SCRAPING_CRON_DISABLED: ${{ vars.SCRAPING_CRON_DISABLED }}
           PLATFORM_FLAGS: ${{ vars.PLATFORM_FLAGS }}
+          # Media uploads + external winback intake. Unset = 503 / 401. Not PLATFORM_FLAGS (that file refuses secrets).
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          WINBACK_INTAKE_KEY: ${{ secrets.WINBACK_INTAKE_KEY }}
         run: |
           cd "${{ secrets.EC2_DEPLOY_DIR }}/docker"
           # Persist the env for manual compose commands on the box (ssl-init.sh, logs, exec). Compose reads
@@ -179,10 +186,12 @@ jobs:
                      STOREFRONT_API_KEYS PORTAL_JWT_SECRET COMMERCE_CORS_ORIGINS JOSH_DATABASE_URL JOSH_MONGO_URL \
                      JOSH_MONGO_DB JOSH_API_URL JOSH_EVENTS_SECRET JOSH_JWT_SECRET \
                      JAGOTA_GATEWAY_ENABLED JAGOTA_NODEAPI_BASE_URL JAGOTA_NODEAPI_USERNAME JAGOTA_NODEAPI_PASSWORD \
-                     CRON_COMPETITOR_PRICES_REFRESH_ENABLED CRON_MARKETING_RESEARCH_ENABLED RESEARCH_FREE_WORKER_ENABLED SCRAPING_CRON_DISABLED; do
+                     CRON_COMPETITOR_PRICES_REFRESH_ENABLED CRON_MARKETING_RESEARCH_ENABLED RESEARCH_FREE_WORKER_ENABLED SCRAPING_CRON_DISABLED \
+                     AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY WINBACK_INTAKE_KEY; do
               if [ -n "${!v}" ]; then printf "%s='%s'\n" "$v" "${!v}"; fi
             done; } > .env.new && mv .env.new .env
           SVC_LIST=$(echo "$SERVICES" | tr -d '[]"' | tr ',' ' ')
           # Cutover flags: repo variable PLATFORM_FLAGS (KEY=VALUE lines, non-secret) → platform-flags.env (compose env_file).
           printf '%s\n' "$PLATFORM_FLAGS" | grep -E '^[A-Z][A-Z0-9_]*=[^ ]*$' > platform-flags.env || true
-                    ./ec2-deploy.sh "$TAG" $SVC_LIST
+          if grep -Eiq '(SECRET|PASSWORD|TOKEN|_KEY|DATABASE_URL)=' platform-flags.env; then echo "::error::PLATFORM_FLAGS must not carry secrets"; exit 1; fi
+          ./ec2-deploy.sh "$TAG" $SVC_LIST

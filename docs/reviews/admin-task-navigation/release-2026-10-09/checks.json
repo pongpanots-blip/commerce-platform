@@ -1,0 +1,86 @@
+{
+  "recordedAt": "2026-10-09T09:35:45.132384+00:00",
+  "releaseBranch": "release/admin-task-navigation-20261009",
+  "upstreamBase": "7a6eae64dfa42477b2901464f8a68748d75d2f71",
+  "preservedPreviousHead": "ba7e4aa32265e5f44ed51fc0c2bb2693e95e3393",
+  "validatedCodeCommit": "2c51fd5f67e83ea481c20357e292490f56f761ea",
+  "runtimeSourceFingerprintSha256": "43b6b37fdbbc716428bbb0be85176a278a297a64e1b38048a25ed61be3048d02",
+  "sourceTrees": {
+    "apps/commerce-admin": "7dadd4532b743cacb3e60011ff0c6a1276911252",
+    "apps/commerce-portal": "fe660fafd512138f4da0ce33792b53281112f2d1",
+    "libs/ui": "5cbc2cfe77255a855c7254c995e1ecc4d9ae904d",
+    "docker": "6bee5b10e55ab21eef8b501fcc39d36468024a79",
+    ".github/workflows": "8101b0156794f329fcfbc530f7612baf9ddbbabd"
+  },
+  "adminTests": 272,
+  "portalTests": 34,
+  "browserActionScenarios": 46,
+  "browserFormScenarios": 6,
+  "actualFixtureScreenshots": 12,
+  "validationMode": "Serial localhost API fixtures; no production persistence; original runners only change output destination",
+  "checks": [
+    {
+      "name": "admin-tests",
+      "command": "npx vitest run --config apps/commerce-admin/vite.config.mts --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "log": "logs/admin-tests.log",
+      "sha256": "8d1e13f10e11d44dd09c5d11d7a74d040c02c02c3aff3b97d0249e451c6ad868"
+    },
+    {
+      "name": "portal-tests",
+      "command": "npx vitest run --config apps/commerce-portal/vite.config.mts --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "log": "logs/portal-tests.log",
+      "sha256": "56694bdc4a2a1300ecf0c321a9db51f1a97db04047a7b231758c2758d08428f8"
+    },
+    {
+      "name": "admin-types",
+      "command": "npx tsc -p apps/commerce-admin/tsconfig.app.json --noEmit",
+      "exitCode": 0,
+      "log": "logs/admin-types.log",
+      "sha256": "76162e465989f3f070a9de8db711fbf358e53b74d09ce1bbdb57c727e4c4a16d"
+    },
+    {
+      "name": "portal-types",
+      "command": "npx tsc -p apps/commerce-portal/tsconfig.app.json --noEmit",
+      "exitCode": 0,
+      "log": "logs/portal-types.log",
+      "sha256": "76162e465989f3f070a9de8db711fbf358e53b74d09ce1bbdb57c727e4c4a16d"
+    },
+    {
+      "name": "admin-build",
+      "command": "NX_DAEMON=false NX_NO_CLOUD=true NODE_OPTIONS=--max-old-space-size=4096 npx nx build commerce-admin --skip-nx-cache",
+      "exitCode": 0,
+      "log": "logs/admin-build.log",
+      "sha256": "66e210839a6e01ee26cd6bbdf48a78043b22cca4615e4b18d909326175704231"
+    },
+    {
+      "name": "action-browser",
+      "command": "ADMIN_URL=http://127.0.0.1:4415 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node .e2e-out/release-admin-review/task-navigation.mjs",
+      "exitCode": 0,
+      "log": "logs/action-browser.log",
+      "sha256": "aa45177b259f8bf95d25553cb35e9c162825432da3e0d24871fae3553a6f4559"
+    },
+    {
+      "name": "form-browser",
+      "command": "UI_FORM_BASE_URL=http://127.0.0.1:4416 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node .e2e-out/release-admin-review/task-form-components.mjs",
+      "exitCode": 0,
+      "log": "logs/form-browser.log",
+      "sha256": "38ec813a980e11a8cb87b01522572cfd4b2775b5f106dca3849e93076d4db5bc"
+    },
+    {
+      "name": "patch-replay",
+      "command": "git apply --check reconciled-implementation.patch against7a6eae6 temporary reconstructed tree",
+      "exitCode": 0,
+      "log": "logs/patch-replay.log",
+      "sha256": "c786a61bcdd29e64b9834687d7a85b3505f91f36a42eeada76fec49c61ac951e"
+    }
+  ],
+  "backendOrPortalRelease": false,
+  "migrationExecuted": false,
+  "workflowDispatched": false,
+  "productionHealthVerified": false,
+  "deploymentStatus": "BLOCKED before dispatch: stopped-container writable-layer deletion was not approved and recoverability is unknown",
+  "cleanupSkipOption": "None. --keep protects image tags; --retention-only runs cleanup. Neither disables container prune. skip_deploy skips the entire EC2 stage.",
+  "remoteWorkflowRunEndpoint": "Earlier separate connector allowlist denial preserved; no alternate route or retry used."
+}

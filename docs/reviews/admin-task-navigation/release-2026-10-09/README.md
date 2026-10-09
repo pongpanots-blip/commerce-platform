@@ -1,0 +1,15 @@
+# Admin release preparation, 2026-10-09
+
+Executor availability was verified. Original `ba7e4aa32265e5f44ed51fc0c2bb2693e95e3393` is preserved on `redesign/admin-task-navigation-upstream`; the earlier snapshot `30e1f78` also remains.
+
+Current master `7a6eae64dfa42477b2901464f8a68748d75d2f71` adds only five ERP CLI/table/migration/package-script paths. Both redesign commits were cherry-picked without conflicts onto `release/admin-task-navigation-20261009`. All five upstream files remain byte-identical. Admin, portal, shared UI, Docker and workflow source match the previously reviewed tree. The backend is not selected for release; its newly imported migration was not executed.
+
+Fresh local validation: 272 admin tests, 34 portal tests, both TypeScript checks, the Docker-used Nx admin build target, 46 action scenarios, six shared-form scenarios and source-patch replay against current master passed. Browser data is intercepted fixture data, with twelve genuine captures; it proves no production persistence. `checks.json` and `harness.json` identify exact runtime source trees, commands, logs and runner derivation. The old combined report/ZIP retain their earlier base and are historical evidence.
+
+The proposed workflow is `deploy-ecr.yml` on this release branch, service `admin`, an image tag derived from the final release commit, with `skip_deploy=false`. Ordinary branch pushes do not trigger any checked-in workflow. Tag pushes do; no tag push is authorized here. No master merge, force push, portal/backend image release, security change, permission change or credential change is included.
+
+Deployment has not been dispatched. Selecting admin skips the explicit migration CLI, but the approved platform/Redis possible dependency restart and shared configuration/edge updates still apply. Additionally, `docker/ec2-deploy.sh` unconditionally runs image pruning before pull and, after all service health checks pass, app-wide image retention plus `docker container prune -f` and build-cache pruning. Stopped-container writable-layer data may be irrecoverable. The user confirmation covered production admin and possible platform/Redis restart, not that data deletion. There is no supported skip-cleanup flag; `--keep` does not protect stopped containers and `--retention-only` runs cleanup.
+
+Stop before dispatch until the coordinator obtains either explicit action-time consent for permanent stopped-container deletion after recoverability/scope review, or explicit authorization for a reviewed non-destructive deployment change. Do not silently edit the workflow or bypass cleanup guards. No automatic rollback exists on health failure; the previous image tag must be identified before any eventual deployment.
+
+Actual AWS account/instance/deploy-directory mapping, current/previous image tags, runner state and secret presence require authorized verification without printing secret values. The previously denied workflow-run metadata endpoint is not retried or accessed through another route. Remote CI, deployment commit/environment and production health are not claimed.

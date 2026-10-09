@@ -1,0 +1,34 @@
+{
+  "fixtureOnly": true,
+  "scope": "Shared-component fixture; application consumers are verified separately by task-navigation.mjs",
+  "interceptedApi": true,
+  "actualPersistenceVerified": false,
+  "results": [
+    {
+      "name": "Tab follows native enabled controls, skips disabled/loading, and select supports keyboard values",
+      "passed": true
+    },
+    {
+      "name": "Enter submits natively and focuses first invalid field with associated inline errors",
+      "passed": true
+    },
+    {
+      "name": "Pending submit blocks duplicate clicks and Enter; success waits for receipt",
+      "passed": true
+    },
+    {
+      "name": "Business false and network failures preserve controlled/uncontrolled values and never show success",
+      "passed": true
+    },
+    {
+      "name": "Retry succeeds after an explicit API receipt and editing removes stale success",
+      "passed": true
+    },
+    {
+      "name": "Long Thai labels wrap on phones, controls retain 44px targets and no horizontal overflow",
+      "passed": true
+    }
+  ],
+  "apiCalls": 4,
+  "pageErrors": []
+}

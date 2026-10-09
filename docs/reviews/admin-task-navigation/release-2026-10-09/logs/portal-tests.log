@@ -1,0 +1,14 @@
+
+ RUN  v4.1.10 /workspace/commerce-platform/apps/commerce-portal
+
+
+ Test Files  3 passed (3)
+      Tests  34 passed (34)
+   Start at  09:30:04
+   Duration  2.04s (transform 563ms, setup 0ms, import 798ms, tests 315ms, environment 565ms)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

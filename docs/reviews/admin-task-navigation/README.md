@@ -1,5 +1,7 @@
 # Commerce-admin combined-tree navigation and design review
 
+The subsequent [release preparation](release-2026-10-09/README.md) reconciles current master7a6eae6 and records fresh local checks. Production deployment remains blocked before dispatch by unapproved stopped-container data deletion. Original evidence below retains its reviewed e4346b7 base.
+
 Implemented in the existing application on `redesign/admin-task-navigation-upstream`, based on exact
 requested `e4346b7687c196ba4a1a8ca276e74448b90c3317`. The original checkout was clean at
 `69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9`. Before integration all task changes were preserved in

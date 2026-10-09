@@ -28,8 +28,8 @@ describe('page usability', () => {
   });
 
   it('gives a guide only for a route that has its own', () => {
-    expect(pageGuide('/j/segments/builder')?.summary).toContain('ไม่ล็อกรายชื่อ');
-    expect(pageGuide('/j/segments/builder/00000000-0000-4000-8000-000000000001')?.summary).toContain('ไม่ล็อกรายชื่อ');
+    expect(pageGuide('/j/segments/builder')?.summary).toContain('ล็อกรายชื่อเมื่อบันทึกกลุ่ม');
+    expect(pageGuide('/j/segments/builder/00000000-0000-4000-8000-000000000001')?.summary).toContain('จะล็อกเมื่อเปิดหน้านี้');
     expect(pageGuide('/marketing/research')?.steps.length).toBeGreaterThan(0);
     expect(pageGuide('/anything/create')).toBeUndefined();
     expect(pageGuide('/anything/12')).toBeUndefined();

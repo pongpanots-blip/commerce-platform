@@ -230,7 +230,8 @@ export default function InsertProductForm() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{__uiText("แบรนด์")}</label>
               <MasterDataSelect
-                options={brandOptions}
+                aria-label={__uiText("แบรนด์")}
+                options={[{ value: '', label: __uiText("ไม่ระบุแบรนด์") }, ...brandOptions]}
                 value={formData.brand_code}
                 onChange={(next) => handleInputChange('brand_code', String(next))}
               />

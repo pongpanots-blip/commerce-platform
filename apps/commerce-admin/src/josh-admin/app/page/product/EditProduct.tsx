@@ -433,7 +433,8 @@ const EditProduct = () => {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">{__uiText("แบรนด์")}</label>
           <MasterDataSelect
-            options={brandOptions}
+            aria-label={__uiText("แบรนด์")}
+            options={[{ value: '', label: __uiText("ไม่ระบุแบรนด์") }, ...brandOptions]}
             value={form.brand_code}
             onChange={(next) => handleInput('brand_code', String(next))}
           />

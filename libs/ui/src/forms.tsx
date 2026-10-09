@@ -81,8 +81,9 @@ export function FormActions({
   );
 }
 
-let unsavedDirty = false;
-let unsavedAsk: (() => Promise<boolean>) | null = null;
+// Each mounted form owns its registration. Mounting, saving or closing another
+// form must never clear the unsaved edits of a form that remains on screen.
+const unsavedForms = new Set<symbol>();
 
 function askToLeave() {
   return confirmAction({
@@ -96,8 +97,8 @@ function askToLeave() {
 
 /** True when nothing is unsaved, or the person agrees to drop the edits. */
 export function confirmLeaveIfDirty(): Promise<boolean> {
-  if (!unsavedDirty || !unsavedAsk) return Promise.resolve(true);
-  return unsavedAsk();
+  if (!unsavedForms.size) return Promise.resolve(true);
+  return askToLeave();
 }
 
 /**
@@ -107,11 +108,13 @@ export function confirmLeaveIfDirty(): Promise<boolean> {
  * ponytail: browser Back is not trapped. BrowserRouter has no blocker, and a fake history entry leaves the page when a save clears the form.
  */
 export function useUnsavedChanges(dirty: boolean) {
+  const formId = useRef(Symbol('unsaved-form'));
   useEffect(() => {
-    unsavedDirty = dirty;
-    unsavedAsk = dirty ? askToLeave : null;
+    const id = formId.current;
     if (!dirty) return;
+    unsavedForms.add(id);
     const warn = (event: BeforeUnloadEvent) => {
+      if (!unsavedForms.has(id)) return;
       event.preventDefault();
       event.returnValue = '';
     };
@@ -128,8 +131,7 @@ export function useUnsavedChanges(dirty: boolean) {
       event.stopPropagation();
       void askToLeave().then((ok) => {
         if (!ok) return;
-        unsavedDirty = false;
-        unsavedAsk = null;
+        unsavedForms.clear();
         window.location.assign(anchor.href);
       });
     };
@@ -138,8 +140,7 @@ export function useUnsavedChanges(dirty: boolean) {
     return () => {
       window.removeEventListener('beforeunload', warn);
       document.removeEventListener('click', onClick, true);
-      unsavedDirty = false;
-      unsavedAsk = null;
+      unsavedForms.delete(id);
     };
   }, [dirty]);
   return async function requestLeave(go: () => void) {
@@ -286,6 +287,8 @@ export function MasterDataSelect({
   createFrom = 'name',
   onCreate,
   disabled,
+  required = false,
+  'aria-label': label,
   'aria-labelledby': labelledBy,
 }: {
   options: MasterOption[];
@@ -300,9 +303,11 @@ export function MasterDataSelect({
   createFrom?: string;
   onCreate?: (draft: Record<string, string>) => Promise<MasterOption>;
   disabled?: boolean;
+  required?: boolean;
+  'aria-label'?: string;
   'aria-labelledby'?: string;
 }) {
-  useUiLocale();
+  const locale = useUiLocale();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
@@ -311,6 +316,7 @@ export function MasterDataSelect({
   const [saving, setSaving] = useState(false);
   const [createError, setCreateError] = useState('');
   const box = useRef<HTMLDivElement>(null);
+  const input = useRef<HTMLInputElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const listId = useId();
   const selected = new Set(Array.isArray(value) ? value : value ? [value] : []);
@@ -322,6 +328,12 @@ export function MasterDataSelect({
   const offerCreate = canCreate && !!onCreate && !!needle && !exact;
   const offerBlankCreate = canCreate && !!onCreate && !offerCreate;
   const rows = shown.length + (offerCreate || offerBlankCreate ? 1 : 0);
+
+  useEffect(() => {
+    // Search text is not a selected record. Keep native form validation tied
+    // to the stored value even while someone types an unmatched query.
+    input.current?.setCustomValidity(required && !disabled && !selected.size ? uiText('ค้นหาแล้วเลือก') : '');
+  }, [required, disabled, selected.size, locale]);
 
   useEffect(() => {
     if (!open) return;
@@ -340,14 +352,21 @@ export function MasterDataSelect({
     return () => { node.close(); };
   }, [dialogOpen]);
 
+  function change(next: string | string[]) {
+    onChange(next);
+    // Selecting a loaded option does not type into the input. Notify the form
+    // so its existing unsaved-changes guard also protects mouse selections.
+    box.current?.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
   function choose(option: MasterOption) {
     if (multiple) {
       const next = selected.has(option.value) ? [...selected].filter((item) => item !== option.value) : [...selected, option.value];
-      onChange(next);
+      change(next);
       setQuery('');
       return;
     }
-    onChange(option.value);
+    change(option.value);
     setQuery('');
     setOpen(false);
   }
@@ -379,8 +398,8 @@ export function MasterDataSelect({
       const again = findMasterMatch(all, made.label) ?? findMasterMatch(all, made.value);
       const option = again ?? made;
       if (!again) setExtra((items) => [...items, made]);
-      if (multiple) onChange([...selected, option.value]);
-      else onChange(option.value);
+      if (multiple) change([...selected, option.value]);
+      else change(option.value);
       setQuery('');
       setCreating(null);
     } catch (err) {
@@ -405,11 +424,14 @@ export function MasterDataSelect({
         </div>
       )}
       <input
+        ref={input}
         type="text"
+        required={required}
         role="combobox"
         aria-expanded={open}
         aria-controls={listId}
         aria-autocomplete="list"
+        aria-label={label}
         aria-labelledby={labelledBy}
         className={masterInputCls}
         disabled={disabled}

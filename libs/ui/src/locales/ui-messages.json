@@ -24694,5 +24694,29 @@
   "หลักฐานไม่พอ": {
     "th": "หลักฐานไม่พอ",
     "en": "Not enough evidence"
+  },
+  "สร้างกลุ่มลูกค้าด้วยเงื่อนไขที่อ่านได้ ระบบล็อกรายชื่อเมื่อบันทึกกลุ่ม": {
+    "th": "สร้างกลุ่มลูกค้าด้วยเงื่อนไขที่อ่านได้ ระบบล็อกรายชื่อเมื่อบันทึกกลุ่ม",
+    "en": "Build a customer group with clear conditions. Saving the group freezes its members."
+  },
+  "เพิ่มเงื่อนไขอย่างน้อยหนึ่งข้อ แล้วประมาณจำนวนลูกค้าก่อนบันทึก": {
+    "th": "เพิ่มเงื่อนไขอย่างน้อยหนึ่งข้อ แล้วประมาณจำนวนลูกค้าก่อนบันทึก",
+    "en": "Add at least one condition, then estimate the customer count before saving."
+  },
+  "กดบันทึกกลุ่มลูกค้า ระบบจะจำรายชื่อตอนนี้ไว้": {
+    "th": "กดบันทึกกลุ่มลูกค้า ระบบจะจำรายชื่อตอนนี้ไว้",
+    "en": "Save the customer group to freeze its current members."
+  },
+  "แก้ชื่อหรือคำอธิบายของกลุ่มลูกค้า กลุ่มเก่าที่ยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดหน้านี้": {
+    "th": "แก้ชื่อหรือคำอธิบายของกลุ่มลูกค้า กลุ่มเก่าที่ยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดหน้านี้",
+    "en": "Edit the group name or description. Opening this page freezes older groups whose members are not yet frozen."
+  },
+  "กดบันทึกชื่อ คำอธิบาย หรือสถานะ เงื่อนไขของกลุ่มที่ล็อกแล้วแก้ไม่ได้": {
+    "th": "กดบันทึกชื่อ คำอธิบาย หรือสถานะ เงื่อนไขของกลุ่มที่ล็อกแล้วแก้ไม่ได้",
+    "en": "Save the name, description or status. Conditions of a frozen group cannot be changed."
+  },
+  "รายการกลุ่มลูกค้า กลุ่มเก่าที่ไม่ใช่กลุ่มสดและยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดรายการ": {
+    "th": "รายการกลุ่มลูกค้า กลุ่มเก่าที่ไม่ใช่กลุ่มสดและยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดรายการ",
+    "en": "Customer groups. Opening this list freezes older non-live groups whose members are not yet frozen."
   }
 }

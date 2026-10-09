@@ -78,6 +78,7 @@ export function StockMoves() {
           <Field label={__uiText("สินค้า")} hint={__uiText("รหัสสินค้าที่ต้องการบันทึก")}><Input value={form.sku} onChange={set('sku')} required maxLength={64} placeholder="BREAD-001" /></Field>
           <Field label={tab === 'transfer' ? __uiText("จากคลัง") : __uiText("คลัง")}>
             <MasterDataSelect
+              required
               options={own.map((w) => ({ value: w.code, label: `${w.code} — ${w.name}${w.sellable ? '' : __uiText(" (ไม่นับเป็นยอดขายได้)")}` }))}
               value={form.warehouse}
               onChange={(next) => set('warehouse')({ target: { value: String(next) } })}
@@ -86,6 +87,7 @@ export function StockMoves() {
           {tab === 'transfer' && (
             <Field label={__uiText("ไปคลัง")}>
               <MasterDataSelect
+                required
                 options={own.filter((w) => w.code !== form.warehouse).map((w) => ({ value: w.code, label: `${w.code} — ${w.name}` }))}
                 value={form.to}
                 onChange={(next) => set('to')({ target: { value: String(next) } })}

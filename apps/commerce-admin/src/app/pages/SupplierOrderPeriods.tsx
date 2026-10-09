@@ -52,7 +52,7 @@ export function SupplierOrderPeriods() {
         {list.length ? (
           <>
             <Table>
-              <THead><TR><TH>{__uiText("supplier")}</TH><TH>{__uiText("รอบ")}</TH><TH>{__uiText("วันส่ง")}</TH><TH>{__uiText("ปิดรับ")}</TH><TH>{__uiText("สถานะ")}</TH><TH>{__uiText("ERP ส่งล่าสุด")}</TH><TH /></TR></THead>
+              <THead><TH>{__uiText("supplier")}</TH><TH>{__uiText("รอบ")}</TH><TH>{__uiText("วันส่ง")}</TH><TH>{__uiText("ปิดรับ")}</TH><TH>{__uiText("สถานะ")}</TH><TH>{__uiText("ERP ส่งล่าสุด")}</TH><TH /></THead>
               <TBody>
                 {list.map((r: OrderPeriodRow, i) => (
                   <TR key={`${r.sup_code}:${r.erp_order_period}`}>

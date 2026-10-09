@@ -75,7 +75,7 @@ export default function PriceRequestsAdmin() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={__uiText("Price Requests")} subtitle={__uiText("คำขอราคาพิเศษจากลูกค้า")} />
       {error ? <ErrorText error={error} /> : <Table columns={columns} data={rows} loading={loading} />}
     </div>

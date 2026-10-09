@@ -110,7 +110,7 @@ const EditSegment = () => {
   const handleSubmit = async () => {
     if (!id || !form.name.trim()) {
       alert(__uiText("กรุณากรอกชื่อ"));
-      return;
+      return false;
     }
 
     let payload: Parameters<typeof updateUserSegment>[1] = {
@@ -125,7 +125,7 @@ const EditSegment = () => {
       const ruleError = validateRuleForm(form.rule_type, ruleForm);
       if (ruleError) {
         alert(ruleError);
-        return;
+        return false;
       }
 
       payload = {
@@ -141,6 +141,7 @@ const EditSegment = () => {
 
       if (response.status >= 200 && response.status < 300) {
         navigate(returnDestination);
+        return true;
       }
     } catch (err: unknown) {
       const msg =
@@ -149,14 +150,16 @@ const EditSegment = () => {
               ?.data?.message
           : undefined;
       alert(msg ?? __uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   if (loadError) return <LoadError title={__uiText('แก้ไขกลุ่มลูกค้า')} error={loadError} onRetry={() => { setLoadError(null); setLoading(true); setReload(value => value + 1); }} />;
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (

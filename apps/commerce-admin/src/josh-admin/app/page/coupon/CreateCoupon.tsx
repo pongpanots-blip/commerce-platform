@@ -323,31 +323,31 @@ const CreateCoupon = () => {
     const coreValidation = validateCouponCoreForm(form);
     if (coreValidation.formError) {
       setFormError(coreValidation.formError);
-      return;
+      return false;
     }
 
     if (kind === 'chain') {
       if (!chainSourceId) {
         setFormError(__uiMessage("กรุณาเลือกคูปองที่ต้องใช้ก่อน"));
-        return;
+        return false;
       }
       const rewardFormError = validateCouponRewardForm(rewardForm);
       if (rewardFormError) {
         setFormError(rewardFormError);
-        return;
+        return false;
       }
     } else {
       const audienceError = validateCouponAudienceForm(audience);
       if (audienceError) {
         setFormError(audienceError);
-        return;
+        return false;
       }
     }
 
     const redemptionError = validateCouponRedemptionForm(redemption, form.discount_scope);
     if (redemptionError) {
       setFormError(redemptionError);
-      return;
+      return false;
     }
 
     setSaving(true);
@@ -373,7 +373,7 @@ const CreateCoupon = () => {
 
         if (!couponId) {
           setFormError(__uiMessage("สร้างคูปองไม่สำเร็จ — ไม่พบรหัสคูปองจากระบบ"));
-          return;
+          return false;
         }
         setCreatedCouponId(couponId);
 
@@ -396,7 +396,7 @@ const CreateCoupon = () => {
                 importSummary: `สร้างคูปองแล้ว แต่เชื่อมกับคูปองต้นทางไม่สำเร็จ: ${extractApiError(rewardRuleError)} — คูปองนี้ยังไม่สามารถมอบให้ใครได้ ปิดใช้งาน/ลบคูปองนี้แล้วสร้างใหม่อีกครั้ง`,
               },
             });
-            return;
+            return false;
           }
         }
       } else {
@@ -490,15 +490,18 @@ const CreateCoupon = () => {
             `บันทึก${result.failed.label}ไม่สำเร็จ: ${extractApiError(result.failed.error)}. ` +
             `แก้ไขส่วนไหนของหน้านี้ก็ได้แล้วกดบันทึกอีกครั้ง — จะส่งค่าปัจจุบันของทุกขั้นซ้ำทั้งหมด ไม่ใช่แค่ขั้นที่พัง`,
         );
-        return; // Stay on this page — see the comment above the step list.
+        return false; // Stay on this page — see the comment above the step list.
       }
 
       navigate(ADMIN_ROUTES.couponDetail(couponId), { state: { importSummary: recipientImportSummary } });
+      return true;
     } catch (error: unknown) {
       setFormError(extractApiError(error));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   // True once the coupon row exists (first submit attempt succeeded) — everything that a retry

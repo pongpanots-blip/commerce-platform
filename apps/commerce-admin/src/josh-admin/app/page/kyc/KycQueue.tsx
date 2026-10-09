@@ -153,7 +153,7 @@ export default function KycQueue() {
   ];
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader title={__uiText("KYC — ยืนยันตัวตน")} subtitle={__uiText("คิวคำขอยืนยันตัวตนของลูกค้าทั้งหมด")} />
 
       <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">

@@ -49,11 +49,12 @@ function PageEditor({
         saveLabel="บันทึกหน้าโปรโมชัน"
         steps={['ตั้งชื่อหน้า', 'เลือกแคมเปญและภาพ', 'บันทึกหน้าโปรโมชัน']}
         saving={state.saving}
+        savedRevision={historyKey}
         wide
         onBack={() =>
           guard.requestLeave(() => navigate(ADMIN_ROUTES.promotionPages))
         }
-        onSave={() => void state.save()}
+        onSave={() => state.save()}
       >
         <CouponFormErrorBanner error={state.saveError} />
         {state.saved && (
@@ -111,10 +112,10 @@ function PageEditorLoader({ id }: { id?: string }) {
   }, [id, reloadKey]);
 
   if (loading)
-    return <div className="p-6 text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</div>;
   if (loadError) {
     return (
-      <div className="mx-auto max-w-3xl p-6">
+      <div className="cp-management-page space-y-4">
         <CouponFormErrorBanner error={loadError} />
         <Button
           variant="secondary"

@@ -80,7 +80,7 @@ export default function SmartLinkAnalyticsPage() {
   }, [id]);
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={id ? __uiText("Analytics — {0}", {"0": linkLabel ?? '…'}) : __uiText("Smart Link Analytics")}
         subtitle={__uiText("คลิก / ผู้เข้าชม / conversion ตามช่วงเวลา")}

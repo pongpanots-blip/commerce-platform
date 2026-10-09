@@ -45,7 +45,7 @@ export default function InvoicesOverdue() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={__uiText("Invoice Overdue")} subtitle={__uiText("ใบแจ้งหนี้เลยกำหนดชำระ")} />
       {error ? <ErrorText error={error} /> : <Table columns={columns} data={rows} loading={loading} />}
     </div>

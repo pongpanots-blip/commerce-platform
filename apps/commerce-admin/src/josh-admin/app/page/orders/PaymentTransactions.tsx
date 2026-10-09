@@ -22,7 +22,7 @@ import { AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_SIZE = 20;
 
 const STATUS_OPTIONS = [
@@ -283,10 +283,10 @@ const PaymentTransactions = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-4">
+    <div className="cp-management-page flex flex-col gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col">
-          <Text bold text={__uiText("Payment Transactions")} size="2xl" />
+          <PageHeader title={__uiText("Payment Transactions")} />
           <Text
             text={__uiText("บันทึกการชำระเงินจาก Omise, Stripe, เครดิตลูกค้า และ COD")}
             size="sm"
@@ -302,7 +302,7 @@ const PaymentTransactions = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {cardData.map((card) => (
           <CardAdmin
             key={card.name}
@@ -313,7 +313,7 @@ const PaymentTransactions = () => {
         ))}
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-4 rounded-md border border-gray-200 bg-white p-3 shadow-lg">
+      <div className="flex flex-wrap items-end justify-between gap-4 rounded-xl border border-secondary-container bg-surface-container-lowest p-4">
         <div className="flex flex-wrap items-center gap-4">
           <AiOutlineFilter size={24} />
           <div className="w-48">

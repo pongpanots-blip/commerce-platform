@@ -20,17 +20,20 @@ const CreateBotIntentRule = () => {
   const handleSubmit = async () => {
     if (!form.pattern) {
       alert(__uiText("กรุณากรอก Pattern"));
-      return;
+      return false;
     }
     setSaving(true);
     try {
       await createBotIntentRule(form);
       navigate(ADMIN_ROUTES.botIntentRules);
+      return true;
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (

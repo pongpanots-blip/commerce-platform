@@ -80,7 +80,7 @@ export default function SmartLinkEdit() {
   };
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={isEdit ? __uiText("แก้ไข Smart Link") : __uiText("สร้าง Smart Link")} subtitle="" />
       <div className="mt-4 max-w-2xl space-y-4 rounded-xl border border-gray-100 bg-white p-5">
         <div>

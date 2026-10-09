@@ -37,10 +37,10 @@ const EditSupplier = () => {
   }, [id]);
 
   const handleSubmit = async () => {
-    if (!id) return;
+    if (!id) return false;
     if (!form.supplier_name.trim()) {
       setNameError(true);
-      return;
+      return false;
     }
     setNameError(false);
     setSaving(true);
@@ -49,18 +49,21 @@ const EditSupplier = () => {
       if (response.data?.status) {
         toast('บันทึกผู้จัดจำหน่ายแล้ว', { label: 'เปิดรายการผู้จัดจำหน่าย', href: ADMIN_ROUTES.suppliers });
         navigate(ADMIN_ROUTES.suppliers);
+        return true;
       } else if (response.data?.message) {
         alert(response.data.message);
       }
     } catch {
       alert(__uiText('เกิดข้อผิดพลาดในการบันทึก'));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
-  if (loading) return <div className="p-6 text-sm text-gray-500">{__uiText('กำลังโหลด...')}</div>;
-  if (loadError) return <div className="p-6 text-sm text-red-500">{__uiText('ไม่พบผู้จัดจำหน่าย หรือโหลดข้อมูลไม่สำเร็จ')}</div>;
+  if (loading) return <div className="cp-management-page text-sm text-gray-500">{__uiText('กำลังโหลด...')}</div>;
+  if (loadError) return <div className="cp-management-page text-sm text-red-500">{__uiText('ไม่พบผู้จัดจำหน่าย หรือโหลดข้อมูลไม่สำเร็จ')}</div>;
 
   return (
     <AdminInsertLayout

@@ -5,13 +5,12 @@ import {
   getShipmentById,
   type ShipmentDetail,
 } from '@josh/shared-api';
-import { Text } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS_LABELS: Record<string, string> = {
   get to_ship(){return __uiText("รอส่ง");},
   get shipping(){return __uiText("กำลังจัดส่ง");},
@@ -93,14 +92,14 @@ const ShipmentDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="py-12 text-center text-gray-500 text-sm">{__uiText("กำลังโหลด...")}</div>
+      <div className="cp-management-page py-12 text-center text-gray-500 text-sm">{__uiText("กำลังโหลด...")}</div>
     );
   }
 
   if (!data) {
     return (
-      <div className="flex flex-col gap-3 py-8">
-        <Text bold text={__uiText("Shipment")} size="2xl" />
+      <div className="cp-management-page flex flex-col gap-3 py-8">
+        <PageHeader title={__uiText("Shipment")} />
         <p className="text-sm text-red-600">{error || __uiText("ไม่พบข้อมูล")}</p>
         <button
           type="button"
@@ -117,7 +116,7 @@ const ShipmentDetailPage = () => {
   const timing = data.timing;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="cp-management-page flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <button
@@ -126,7 +125,7 @@ const ShipmentDetailPage = () => {
             onClick={() => navigate(ADMIN_ROUTES.shipments)}
           >
             {__uiText("← Shipments")}</button>
-          <Text bold text={data.shipmentNumber} size="2xl" />
+          <PageHeader title={data.shipmentNumber} />
           <p className="text-sm text-gray-500 mt-1">
             {data.shipmentIndexLabel}
             {data.status ? ` · ${STATUS_LABELS[data.status] ?? data.statusLabel}` : __uiText(" · รอชำระ")}

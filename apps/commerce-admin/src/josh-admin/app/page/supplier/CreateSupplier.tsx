@@ -17,7 +17,7 @@ const CreateSupplier = () => {
   const handleSubmit = async () => {
     if (!form.supplier_name.trim()) {
       setNameError(true);
-      return;
+      return false;
     }
     setNameError(false);
     setSaving(true);
@@ -26,14 +26,17 @@ const CreateSupplier = () => {
       if (response.data?.message === '') {
         toast('บันทึกผู้จัดจำหน่ายแล้ว', { label: 'เปิดรายการผู้จัดจำหน่าย', href: ADMIN_ROUTES.suppliers });
         navigate(ADMIN_ROUTES.suppliers);
+        return true;
       } else if (response.data?.message) {
         alert(response.data.message);
       }
     } catch {
       alert(__uiText('เกิดข้อผิดพลาดในการบันทึก'));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (

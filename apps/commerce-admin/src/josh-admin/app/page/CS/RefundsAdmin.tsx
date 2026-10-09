@@ -257,7 +257,7 @@ export default function RefundsAdmin() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Returns & Refunds")}
         subtitle={__uiText("คำขอคืนเงิน / คืนสินค้า")}

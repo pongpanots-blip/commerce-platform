@@ -555,11 +555,11 @@ export default function WelcomeLeadEmailPage() {
   };
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด…")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด…")}</div>;
   }
 
   return (
-    <div className="mx-auto max-w-[1500px] space-y-6 p-6">
+    <div className="cp-management-page space-y-6">
       <div>
         <Link to={ADMIN_ROUTES.marketingSettings} className="text-sm text-gray-500 hover:text-gray-700">
           {__uiText("← Marketing Settings")}</Link>

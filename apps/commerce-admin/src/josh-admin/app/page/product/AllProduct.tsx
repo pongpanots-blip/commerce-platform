@@ -347,7 +347,7 @@ const AllProduct = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
         title={__uiText("Product List")}
         subtitle={__uiText("รายการสินค้าทั้งหมด")}

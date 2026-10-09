@@ -31,12 +31,12 @@ export default function CreateCampaign() {
   const patch = (partial: Partial<CampaignForm>) => setForm((current) => ({ ...current, ...partial }));
 
   const handleSave = async () => {
-    if (saving) return;
+    if (saving) return false;
     const found = validateCampaignForm(form);
     setErrors(found);
     if (Object.keys(found).length > 0) {
       setSaveError(__uiMessage("กรอกข้อมูลไม่ครบหรือไม่ถูกต้อง — ตรวจช่องที่ขึ้นสีแดง"));
-      return;
+      return false;
     }
     setSaveError('');
     setSaving(true);
@@ -44,10 +44,13 @@ export default function CreateCampaign() {
       const created = await createCampaign(buildCreateCampaignPayload(form));
       toast('บันทึกแคมเปญแล้ว', { label: 'ขั้นถัดไป: เพิ่มโปรหรือคูปอง', href: ADMIN_ROUTES.campaignDetail(created.id) });
       navigate(ADMIN_ROUTES.campaignDetail(created.id));
+      return true;
     } catch (err) {
       setSaveError(getErrorMessage(err, 'สร้าง Campaign ไม่สำเร็จ'));
       setSaving(false);
+      return false;
     }
+    return false;
   };
 
   return (
@@ -58,7 +61,7 @@ export default function CreateCampaign() {
       saving={saving}
       saveLabel="บันทึกแคมเปญ"
       steps={['ตั้งชื่อแคมเปญ', 'เลือกวันเริ่มและวันสิ้นสุด', 'บันทึก แล้วไปเพิ่มโปรในหน้าถัดไป']}
-      onSave={() => void handleSave()}
+      onSave={() => handleSave()}
     >
       <CouponFormErrorBanner error={saveError} />
       <Section title={__uiText("ข้อมูล Campaign")}>

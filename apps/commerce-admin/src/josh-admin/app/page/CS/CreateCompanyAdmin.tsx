@@ -23,7 +23,7 @@ export default function CreateCompanyAdmin() {
   const handleSubmit = async () => {
     if (!name.trim()) {
       setError(__uiMessage('กรอกชื่อบริษัท เช่น บริษัท ตัวอย่าง จำกัด'));
-      return;
+      return false;
     }
     setSaving(true);
     setError('');
@@ -40,11 +40,14 @@ export default function CreateCompanyAdmin() {
       const next = id ? ADMIN_ROUTES.companyEdit(String(id)) : ADMIN_ROUTES.company;
       toast('บันทึกบริษัทแล้ว', { label: 'เปิดบริษัท', href: next });
       navigate(next);
+      return true;
     } catch (err: any) {
       setError(err?.response?.data?.message ?? __uiMessage('บันทึกไม่สำเร็จ'));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (
@@ -55,7 +58,7 @@ export default function CreateCompanyAdmin() {
       saving={saving}
       saveLabel="บันทึกบริษัท"
       steps={['กรอกชื่อบริษัท', 'ใส่ที่อยู่ถ้ามี', 'บันทึกบริษัท']}
-      onSave={() => void handleSubmit()}
+      onSave={() => handleSubmit()}
     >
       {error && <p className="text-sm text-alert">{typeof error === 'string' ? __uiText(error) : error}</p>}
       <FormSection title="ข้อมูลบริษัท" description="ชื่อที่ทีมใช้เรียกบริษัทนี้">

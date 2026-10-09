@@ -123,13 +123,13 @@ function CampaignHub({ id }: { id: string }) {
   };
 
   const handleSave = async () => {
-    if (saving) return;
+    if (saving) return false;
     const found = validateCampaignForm(form);
     setErrors(found);
     setSaved(false);
     if (Object.keys(found).length > 0) {
       setSaveError(__uiMessage("กรอกข้อมูลไม่ครบหรือไม่ถูกต้อง — ตรวจช่องที่ขึ้นสีแดง"));
-      return;
+      return false;
     }
     setSaveError('');
     setSaving(true);
@@ -142,11 +142,14 @@ function CampaignHub({ id }: { id: string }) {
       setForm(formFromCampaign(updated));
       setBaseline(formFromCampaign(updated));
       setSaved(true);
+      return true;
     } catch (err) {
       setSaveError(getErrorMessage(err, 'บันทึกไม่สำเร็จ'));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   const handleDelete = async () => {
@@ -168,10 +171,10 @@ function CampaignHub({ id }: { id: string }) {
   const guard = useUnsavedChangesGuard(infoDirty || pageDirty);
 
   if (loading)
-    return <div className="p-6 text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</div>;
   if (loadError || !detail) {
     return (
-      <div className="mx-auto max-w-3xl p-6">
+      <div className="cp-management-page space-y-4">
         <CouponFormErrorBanner error={loadError || __uiText("ไม่พบ Campaign")} />
         <Button
           variant="secondary"
@@ -236,7 +239,7 @@ function CampaignHub({ id }: { id: string }) {
         }
         wide
         headerActions={<CampaignStatusPill status={detail.status} />}
-        onSave={() => void handleSave()}
+        onSave={() => handleSave()}
       >
         <Section title={__uiText("ข้อมูล Campaign")}>
           <CouponFormErrorBanner error={saveError} />

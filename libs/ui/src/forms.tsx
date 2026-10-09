@@ -438,6 +438,7 @@ export function MasterDataSelect({
         placeholder={uiText(placeholder)}
         value={open || multiple ? query : singleLabel}
         onFocus={() => { setOpen(true); setActive(0); }}
+        onClick={() => { setOpen(true); setActive(0); }}
         onChange={(event) => { setQuery(event.target.value); setOpen(true); setActive(0); }}
         onKeyDown={(event) => {
           if (event.key === 'ArrowDown') { event.preventDefault(); setOpen(true); setActive((index) => Math.min(index + 1, Math.max(rows - 1, 0))); }

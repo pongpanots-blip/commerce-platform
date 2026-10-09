@@ -26,7 +26,7 @@ const CreateBotTemplate = () => {
   const handleSubmit = async () => {
     if (!form.name) {
       alert(__uiText("กรุณากรอกชื่อ Template"));
-      return;
+      return false;
     }
     let schema: any;
     let example: any;
@@ -36,13 +36,13 @@ const CreateBotTemplate = () => {
       schema = JSON.parse(form.schemaText);
     } catch {
       setSchemaError(__uiMessage("Schema ไม่ใช่ JSON ที่ถูกต้อง"));
-      return;
+      return false;
     }
     try {
       example = JSON.parse(form.exampleText);
     } catch {
       setExampleError(__uiMessage("Example ไม่ใช่ JSON ที่ถูกต้อง"));
-      return;
+      return false;
     }
     setSaving(true);
     try {
@@ -54,11 +54,14 @@ const CreateBotTemplate = () => {
         active: form.active,
       });
       navigate(ADMIN_ROUTES.botTemplates);
+      return true;
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (

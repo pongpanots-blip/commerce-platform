@@ -126,7 +126,7 @@ export default function MarketingJourneyFunnel() {
   const overallConversion = firstStepCount > 0 ? lastStepCount / firstStepCount : null;
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <AdminListHeader
           title={__uiText("Journey Funnel")}

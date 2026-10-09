@@ -72,13 +72,13 @@ export function Table<T>({
   const totalColumnsCount = (columns?.length || 0) + (hasCheckbox ? 1 : 0);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="bg-surface-container-lowest rounded-xl border border-secondary-container overflow-hidden">
       <div
         className={`overflow-x-auto ${bodyMaxHeightClassName ? `${bodyMaxHeightClassName} overflow-y-auto` : ''}`}
       >
         <table className="w-full text-left border-collapse min-w-[540px]">
           <thead
-            className={`bg-gray-50 border-b border-gray-200 text-xs font-semibold uppercase tracking-wider text-gray-500 ${bodyMaxHeightClassName ? 'sticky top-0 z-10' : ''}`}
+            className={`bg-surface-container-low border-b border-secondary-container text-xs font-semibold text-on-surface-variant ${bodyMaxHeightClassName ? 'sticky top-0 z-10' : ''}`}
           >
             <tr>
               {hasCheckbox && (
@@ -115,7 +115,7 @@ export function Table<T>({
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
+          <tbody className="divide-y divide-secondary-container text-sm text-on-surface">
             {safeData.length === 0 ? (
               <tr>
                 <td colSpan={totalColumnsCount} className="p-8 text-center text-gray-400">

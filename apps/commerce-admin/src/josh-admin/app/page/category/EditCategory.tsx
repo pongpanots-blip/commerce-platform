@@ -62,7 +62,7 @@ const EditCategory = () => {
   const handleSubmit = async () => {
     if (!id || !form.category_name_en) {
       setError('กรุณากรอกชื่อหมวดหมู่ (EN)');
-      return;
+      return false;
     }
     setSaving(true);
     setError('');
@@ -73,7 +73,7 @@ const EditCategory = () => {
       } catch {
         setError('รูปแบบ Sort Options JSON ไม่ถูกต้อง');
         setSaving(false);
-        return;
+        return false;
       }
 
       const response = await updateCategory(id, {
@@ -89,16 +89,19 @@ const EditCategory = () => {
       if (response.data?.status) {
         await queryClient.invalidateQueries({ queryKey: CATEGORY_ROWS_QUERY_KEY });
         navigate(ADMIN_ROUTES.categories);
+        return true;
       }
     } catch (err: any) {
       setError(err?.response?.data?.message || 'เกิดข้อผิดพลาดในการบันทึก');
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   if (isLoading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText('กำลังโหลด...')}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText('กำลังโหลด...')}</div>;
   }
 
   return (

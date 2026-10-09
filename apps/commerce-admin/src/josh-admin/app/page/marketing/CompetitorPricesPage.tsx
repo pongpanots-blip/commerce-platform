@@ -195,7 +195,7 @@ export default function CompetitorPricesPage() {
     </div>;
   }
 
-  return <div className="mx-auto max-w-7xl space-y-5 p-4 text-gray-900 md:p-6">
+  return <div className="cp-management-page space-y-5 text-gray-900">
     <ScrapingNavigation />
     <header className="flex flex-wrap items-start justify-between gap-3">
       <div><h1 className="text-2xl font-semibold">{__uiText("เทียบราคาคู่แข่ง")}</h1>

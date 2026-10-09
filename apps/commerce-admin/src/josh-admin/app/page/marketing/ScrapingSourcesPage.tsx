@@ -131,7 +131,7 @@ export default function ScrapingSourcesPage() {
   const picked = (key: string) => !!discovery?.fields.find(field => field.key === key)?.required || !!form?.config.selectedFields?.includes(key);
   const columns = discovery?.fields.filter(field => field.key !== 'url' && picked(field.key)) || [];
 
-  return <div className="mx-auto max-w-7xl space-y-5 p-4 md:p-6">
+  return <div className="cp-management-page space-y-5">
     <ScrapingNavigation />
     <header className="flex flex-wrap justify-between gap-3"><div><h1 className="text-2xl font-semibold">{__uiText("ตั้งค่าเก็บข้อมูลจากเว็บ")}</h1>
       <p className="mt-1 text-sm text-gray-500">{__uiText("กำหนดหน้าที่เก็บและฟิลด์เองได้ ทั้งสินค้า ราคา รายละเอียด และข้อมูลอื่น")}</p></div>

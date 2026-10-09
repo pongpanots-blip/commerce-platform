@@ -177,7 +177,7 @@ export default function MarketingQueueDashboard() {
   const topWorkflow = data?.byWorkflow[0] ?? null;
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <AdminListHeader
           title={__uiText("Marketing Queue")}

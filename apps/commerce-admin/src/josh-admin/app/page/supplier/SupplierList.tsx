@@ -67,7 +67,7 @@ const SupplierList = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("Suppliers")}
         createLabel={__uiText("เพิ่ม Supplier")}

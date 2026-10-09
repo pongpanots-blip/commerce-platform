@@ -85,11 +85,11 @@ const ProductDetail = () => {
 
   if (loadError) return <LoadError title={__uiText('รายละเอียดสินค้า')} error={loadError} onRetry={() => setReload(value => value + 1)} />;
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   if (!product) {
-    return <div className="p-6 text-sm text-red-500">{__uiText("ไม่พบข้อมูลสินค้า")}</div>;
+    return <div className="cp-management-page text-sm text-red-500">{__uiText("ไม่พบข้อมูลสินค้า")}</div>;
   }
 
   const translations = (product.translations as Array<Record<string, string>>) ?? [];
@@ -116,7 +116,7 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <div className="cp-management-page">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <button

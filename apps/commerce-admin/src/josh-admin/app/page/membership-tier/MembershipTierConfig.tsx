@@ -271,7 +271,7 @@ export function MembershipTierConfig() {
   };
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("Membership Tiers")}
         subtitle={__uiText("กำหนดระดับสมาชิกตามยอดใช้จ่ายสะสม (lifetime spend) — ใช้จัดกลุ่มลูกค้าและสิทธิประโยชน์")}

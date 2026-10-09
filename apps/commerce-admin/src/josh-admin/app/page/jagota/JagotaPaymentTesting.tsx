@@ -61,7 +61,7 @@ export default function JagotaPaymentTesting() {
   };
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={__uiText("Jagota Payment Testing")} />
       <p className="mb-4 max-w-2xl text-sm text-gray-500">
         {__uiText("เรียก ")}<code>{__uiText("payment_test")}</code> {__uiText(" ของ Jagota เพื่อบังคับให้ REF_TOKEN นั้นเป็น paid — ใช้ได้บน staging เท่านั้น ถ้า backend ชี้ไป production จะได้")}{' '}

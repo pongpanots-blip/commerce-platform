@@ -216,14 +216,14 @@ const CompanyEdit = () => {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl p-4 text-sm text-gray-500">
+      <div className="cp-management-page text-sm text-gray-500">
         {__uiText("กำลังโหลดข้อมูลบริษัท...")}</div>
     );
   }
 
   if (error || !company) {
     return (
-      <div className="mx-auto max-w-6xl p-4">
+      <div className="cp-management-page">
         <p className="text-sm text-red-600">{error || __uiText("ไม่พบข้อมูลบริษัท")}</p>
         <button
           type="button"
@@ -236,7 +236,7 @@ const CompanyEdit = () => {
   }
 
   return (
-    <div className="mx-auto grid w-full max-w-6xl gap-6 p-4">
+    <div className="cp-management-page grid w-full gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <button

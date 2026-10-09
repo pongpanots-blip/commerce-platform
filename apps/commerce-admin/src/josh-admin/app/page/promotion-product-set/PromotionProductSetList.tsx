@@ -131,7 +131,7 @@ const PromotionProductSetList = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       {returnTo && (
         <button
           type="button"

@@ -21,7 +21,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type RefundRow = {
   id: string;
   order_id: string;
@@ -411,13 +411,13 @@ const OrderDetail = () => {
 
   if (loading) {
     return (
-      <div className="py-12 text-center text-gray-500 text-sm">{__uiText("กำลังโหลด...")}</div>
+      <div className="cp-management-page py-12 text-center text-gray-500 text-sm">{__uiText("กำลังโหลด...")}</div>
     );
   }
 
   if (error && !order) {
     return (
-      <div className="flex flex-col gap-4 p-4">
+      <div className="cp-management-page flex flex-col gap-4">
         <Text text={error || __uiText("ไม่พบคำสั่งซื้อ")} size="base" />
         <Button text={__uiText("กลับรายการออเดอร์")} onClick={() => navigate(ADMIN_ROUTES.orders)} />
       </div>
@@ -431,10 +431,10 @@ const OrderDetail = () => {
   const statusChanged = statusDraft !== order.status;
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <Text bold text={__uiText("Order {0}", {"0": order.order_id})} size="2xl" />
+          <PageHeader title={__uiText("Order {0}", {"0": order.order_id})} />
           <Text text={__uiText("ลูกค้า: {0}", {"0": order.customer_name})} size="sm" />
         </div>
         <Button text={__uiText("← กลับ")} onClick={() => navigate(ADMIN_ROUTES.orders)} />

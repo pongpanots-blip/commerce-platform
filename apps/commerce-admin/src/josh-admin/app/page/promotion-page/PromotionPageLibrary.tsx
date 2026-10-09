@@ -176,7 +176,7 @@ export default function PromotionPageLibrary() {
   ];
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("Promotion Pages")}
         subtitle={__uiText("หน้าของ campaign = แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — อยู่ที่ {0}", {"0": toShopPath('/promotions/<slug>')})}

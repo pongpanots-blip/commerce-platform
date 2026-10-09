@@ -303,27 +303,27 @@ const EditProduct = () => {
   };
 
   const handleSubmit = async () => {
-    if (!id) return;
+    if (!id) return false;
     if (!form.product_inventory_sku || !form.product_name_th || !form.product_name_en) {
       alert(__uiText("กรุณากรอก SKU และชื่อสินค้าทั้ง 2 ภาษา"));
-      return;
+      return false;
     }
 
     const graphic = session.claims()?.role === 'graphic';
     if (!graphic && !form.selling_unit_price.trim()) {
       alert(__uiText("กรุณาระบุราคาขาย"));
-      return;
+      return false;
     }
 
     if (totalImageCount > MAX_IMAGES) {
       alert(__uiText("รูปภาพได้สูงสุด {0} รูป", {"0": MAX_IMAGES}));
-      return;
+      return false;
     }
 
     const tierError = graphic || rulesLockedBy ? null : validatePromotionMechanicForm(tierForm);
     if (tierError) {
       alert(tierError);
-      return;
+      return false;
     }
 
     const payload = new FormData();
@@ -357,19 +357,21 @@ const EditProduct = () => {
             await setProductCuisines(id, selectedCuisineIds);
           } catch {
             alert(__uiText("บันทึกสินค้าแล้ว แต่บันทึก cuisine ไม่สำเร็จ — ลองบันทึกอีกครั้ง"));
-            return;
+            return false;
           }
         }
         navigate(ADMIN_ROUTES.productDetail(id));
-        return;
+        return true;
       }
       alert(response.data?.message ?? __uiText("บันทึกไม่สำเร็จ"));
     } catch (err) {
       // e.g. 400 promotion_rules_locked_by_mechanic — the message names the mechanic
       alert(saveErrorMessage(err, 'เกิดข้อผิดพลาดในการบันทึก'));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   const toggleCuisine = (cuisineId: string) => {
@@ -391,7 +393,7 @@ const EditProduct = () => {
 
   if (loadError) return <LoadError title={__uiText('แก้ไขสินค้า')} error={loadError} onRetry={() => { setLoadError(null); setLoading(true); setReload(value => value + 1); }} />;
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
@@ -497,7 +499,7 @@ const EditProduct = () => {
             rules={mechanicHasTiers ? tierForm.rules : []}
           />
         ) : (
-          <PromotionQuantityRuleFields value={tierForm} onChange={setTierForm} />
+          <PromotionQuantityRuleFields value={tierForm} onChange={setTierForm} compact />
         )}
       </div>
 

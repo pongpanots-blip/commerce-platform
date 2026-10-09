@@ -27,7 +27,7 @@ import { roleCanWrite } from '../../../../app/role-can';
 // import { Button, Input, DragDropUpload, DateRangeInput } from '@/components/common';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { MasterDataSelect, PageHeader, Stepper, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { MasterDataSelect, PageHeader, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export default function InsertProductForm() {
   __useUiLocale();
   const categoryRows = useCategoryRows();
@@ -186,16 +186,14 @@ export default function InsertProductForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="space-y-6 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+    <div className="cp-page-panel space-y-6 border border-gray-200 bg-white rounded-xl p-4 md:p-6">
         <PageHeader title={__uiText('เพิ่มสินค้า')} subtitle={__uiText('กรอกชื่อที่ลูกค้าเห็น ราคา และหมวด แล้วบันทึก')} />
-        <Stepper steps={['ข้อมูลสินค้า', 'ราคา', 'รายละเอียด', 'รูปภาพ']} />
 
         {/* 📌 ส่วนที่ 1: ข้อมูลหลักสินค้า (ใช้ Component กลาง <Input />) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">
             {__uiText('1. ข้อมูลสินค้า')}</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <Input
                 label={__uiText("รหัสสินค้า")}
@@ -239,9 +237,8 @@ export default function InsertProductForm() {
           </div>
         </div>
 
-        <hr />
-
-        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <Input
               label={__uiText("ราคาขาย")}
@@ -272,7 +269,7 @@ export default function InsertProductForm() {
         <p className="text-xs text-gray-500">
           {__uiText("ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic")}</p>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <Input
               label={__uiText("จำนวนในคลังเริ่มต้น")}
@@ -290,10 +287,10 @@ export default function InsertProductForm() {
         <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
           <h3 className="mb-2 text-sm font-semibold text-gray-800">
             {__uiText("ราคาตามจำนวนซื้อ (Tier)")}</h3>
-          <PromotionQuantityRuleFields value={tierForm} onChange={setTierForm} />
+          <PromotionQuantityRuleFields value={tierForm} onChange={setTierForm} compact />
         </div>
 
-        <hr />
+        </div>
 
         {/* 🇹🇭 ส่วนที่ 2: ข้อมูลภาษาไทย (Thai Translation) */}
         <div className="space-y-4">
@@ -320,8 +317,6 @@ export default function InsertProductForm() {
           />
         </div>
 
-        <hr />
-
         {/* 🇺🇸 ส่วนที่ 3: ข้อมูลภาษาอังกฤษ (English Translation) */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">
@@ -347,16 +342,12 @@ export default function InsertProductForm() {
           />
         </div>
 
-        <hr />
-
         <ProductDetailFormFields
           values={detailForm}
           onChange={(name, value) =>
             setDetailForm((prev) => ({ ...prev, [name]: value }))
           }
         />
-
-        <hr />
 
         {/* 📸 ส่วนที่ 4: ลากวางอัปโหลดไฟล์จริง (Component กลาง <DragDropUpload />) */}
         <div className="space-y-4">
@@ -408,7 +399,6 @@ export default function InsertProductForm() {
             onClick={() => handleSubmit()}
           />
         </div>
-      </div>
     </div>
   );
 }

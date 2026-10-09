@@ -118,7 +118,7 @@ export default function CreditBacksAdmin() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Credit Backs")}
         subtitle={__uiText("เครดิตคืนจากส่วนต่าง invoice — view=admin")}

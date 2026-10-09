@@ -154,11 +154,11 @@ const PromotionProductSetForm = () => {
   };
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
-    <div className="mx-auto space-y-6 rounded-md bg-white p-6">
+    <div className="cp-page-panel space-y-6 bg-white border border-secondary-container rounded-xl p-4 md:p-6">
       <header className="flex items-center justify-between border-b pb-4">
         <h1 className="text-2xl font-black text-gray-800">
           {id ? __uiText("แก้ไข Promotion Product Set") : __uiText("สร้าง Promotion Product Set")}

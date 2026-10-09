@@ -187,7 +187,7 @@ export default function Billing() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={__uiText("Billing")} subtitle={__uiText("ค้นหาบริษัท ดู credit และใบแจ้งหนี้ทั้งหมด")} />
 
       <div className="mb-6 max-w-md">

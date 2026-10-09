@@ -211,13 +211,13 @@ const UserDetail = () => {
 
   if (loading) {
     return (
-      <div className="p-8 text-sm text-gray-500">{__uiText("กำลังโหลดข้อมูลลูกค้า...")}</div>
+      <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลดข้อมูลลูกค้า...")}</div>
     );
   }
 
   if (error || !dashboard) {
     return (
-      <div className="grid gap-4 p-8">
+      <div className="cp-management-page grid gap-4">
         <p className="text-sm text-red-600">{error || __uiText("ไม่พบข้อมูล")}</p>
         <button
           type="button"
@@ -233,7 +233,7 @@ const UserDetail = () => {
   const topProduct = top_products[0];
 
   return (
-    <div className="grid mx-auto w-full gap-5 p-4">
+    <div className="cp-management-page grid w-full gap-5">
       <AdminListHeader
         title={user.full_name}
         subtitle={`${user.email} · ${user.custcode ?? 'ไม่มี custcode'}`}

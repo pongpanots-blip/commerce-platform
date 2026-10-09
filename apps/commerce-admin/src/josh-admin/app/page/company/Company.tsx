@@ -89,7 +89,7 @@ const Company = () => {
   }, [currentPage, search]);
 
   return (
-    <div className="grid mx-auto gap-5 w-full p-4">
+    <div className="cp-management-page grid gap-5 w-full">
       <AdminListHeader
         title={__uiText("Company Management")}
         subtitle={__uiText("จัดการข้อมูลเครดิตเทอม, ดูสถานะ Overdue และควบคุมสิทธิ์สั่งซื้อรายองค์กร B2B")}

@@ -57,7 +57,7 @@ const CreateCategory = () => {
     setFieldErrors(next);
     if (next.parent || next.name) {
       setError('ยังบันทึกไม่ได้ — แก้ช่องที่ขึ้นสีแดงตามคำแนะนำ');
-      return;
+      return false;
     }
     setError('');
     setSaving(true);
@@ -73,12 +73,15 @@ const CreateCategory = () => {
         await queryClient.invalidateQueries({ queryKey: CATEGORY_ROWS_QUERY_KEY });
         toast('บันทึกหมวดหมู่แล้ว', { label: 'ไปจัดลำดับในรายการหมวด', href: ADMIN_ROUTES.categories });
         navigate(ADMIN_ROUTES.categories);
+        return true;
       }
     } catch (err: any) {
       setError(err?.response?.data?.message || 'เกิดข้อผิดพลาดในการบันทึก');
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (

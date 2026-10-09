@@ -294,7 +294,7 @@ const Alluser = () => {
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
   return (
-    <div className="grid mx-auto w-full gap-5 p-4">
+    <div className="cp-management-page grid w-full gap-5">
       <AdminListHeader
         title={__uiText("All Users")}
         subtitle={__uiText("รายชื่อลูกค้า B2B · แสดง {0} รายการต่อหน้า{1}{2}{3}", {"0": PAGE_SIZE, "1": search ? ` · ค้นหา: "${search}"` : '', "2": selectedSegment ? ` · Segment: ${selectedSegment.name}` : '', "3": onboarding ? ` · สถานะสมัคร: ${selectedOnboardingLabel}` : ''})}

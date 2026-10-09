@@ -79,7 +79,7 @@ export default function MarketingOfferCheckPage() {
   };
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <div>
         <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
           {__uiText("&larr; Marketing Workflows")}</Link>

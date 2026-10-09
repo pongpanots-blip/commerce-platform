@@ -5,11 +5,13 @@ import { Select } from '@josh/shared-ui-web';
 import { BotClient } from '../../lib/api/bot.client';
 import { BotFlowEditor } from '../../components/bot/BotFlowEditor';
 import { LoadError } from '../../components/LoadError';
+import AdminInsertLayout from '../../components/AdminInsertLayout';
+import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { BotWorkflow } from '@josh/shared-api';
 import styles from './EditBotWorkflow.module.css';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const botClient = new BotClient();
 
 export const EditBotWorkflow: React.FC = () => {
@@ -32,14 +34,16 @@ export const EditBotWorkflow: React.FC = () => {
   }, [data]);
 
   const handleSave = async () => {
-    if (!id || !workflow) return;
+    if (!id || !workflow) return false;
     setIsSaving(true);
     try {
       await botClient.updateWorkflow(id, workflow);
       alert(__uiText("Workflow saved!"));
+      return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       alert(__uiText("Error saving workflow: {0}", {"0": message}));
+      return false;
     } finally {
       setIsSaving(false);
     }
@@ -68,18 +72,14 @@ export const EditBotWorkflow: React.FC = () => {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <h1>{__uiText("Edit Workflow: ")}{workflow.name}</h1>
-        <div className={styles.actions}>
-          <button onClick={handleTest} className={styles.testBtn}>
-            {__uiText("Test Flow")}</button>
-          <button onClick={handleSave} disabled={isSaving} className={styles.saveBtn}>
-            {isSaving ? __uiText("Saving...") : __uiText("Save")}
-          </button>
-        </div>
-      </div>
-
+    <AdminInsertLayout
+      title={`${__uiText("Edit Workflow: ")}${workflow.name}`}
+      saveLabel="Save"
+      saving={isSaving}
+      onSave={handleSave}
+      backPath={ADMIN_ROUTES.botWorkflows}
+      headerActions={<Button variant="secondary" onClick={handleTest} disabled={isSaving}>{__uiText("Test Flow")}</Button>}
+    >
       <div className={styles.settings}>
         <div className={styles.settingRow}>
           <label htmlFor="workflow-name">{__uiText("ชื่อ Workflow")}</label>
@@ -119,13 +119,13 @@ export const EditBotWorkflow: React.FC = () => {
         </div>
       </div>
 
-      <h2>{__uiText("Flow Design")}</h2>
+      <h2 className={styles.sectionTitle}>{__uiText("Flow Design")}</h2>
       {workflow.steps && workflow.steps.length > 0 ? (
         <BotFlowEditor workflow={workflow} onWorkflowChange={setWorkflow} />
       ) : (
         <div className={styles.empty}>{__uiText("No steps yet. Add one to get started.")}</div>
       )}
-    </div>
+    </AdminInsertLayout>
   );
 };
 

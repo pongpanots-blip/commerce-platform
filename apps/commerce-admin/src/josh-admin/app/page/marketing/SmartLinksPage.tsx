@@ -130,7 +130,7 @@ export default function SmartLinksPage() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Smart Links")}
         subtitle={__uiText("ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking")}

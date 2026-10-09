@@ -15,6 +15,12 @@ const customerId = '00000000-0000-4000-8000-000000000001';
 const productId = '00000000-0000-4000-8000-000000000002';
 const category = { category_id_uuid: '00000000-0000-4000-8000-000000000003', category_name_en: 'Bakery', category_name_th: 'Bakery fixture', category_code: 'BAK', parent_id_uuid: null, category_level: 0 };
 const errors = [], checks = [], screenshots = [], blockedExternal = [];
+const layoutVisits = [], layoutIssues = [];
+const inventory = JSON.parse(readFileSync('docs/design/stitch/full-ui-bilingual/inventory.json', 'utf8')).routes;
+const managementRoutes = [...readFileSync('apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx', 'utf8').matchAll(/<Route path="([^"]+)"/g)]
+  .filter(match => match[1] !== '*').map(match => ({ app: 'admin', path: '/j/' + match[1] }));
+managementRoutes.push(...inventory.filter(route => route.app === 'admin' && route.file.includes('/workflow-editor/')));
+const layoutPreviews = new Set(['/j/categories/create', '/j/supplier/create', '/j/order', '/j/shipments', '/j/bot/workflows/create', '/j/marketing-links', '/j/product/create', '/j/product/edit/:id', '/j/bot/workflows/edit/:id', '/j/supplier/edit/:id']);
 const servers = [];
 let browser;
 mkdirSync(out, { recursive: true });
@@ -40,6 +46,7 @@ async function fixture(base, locale, role = 'admin') {
   const requests = [];
   const claims = Buffer.from(JSON.stringify({ sub: 'local-usability-fixture', email: 'fixture@example.invalid', role, exp: 4102444800 })).toString('base64url');
   await context.addInitScript(({ claims, locale }) => {
+    if (window.top !== window) return;
     sessionStorage.setItem('cp_admin_token', `e30.${claims}.fixture`);
     localStorage.setItem('cp_ui_locale', locale);
   }, { claims, locale });
@@ -55,8 +62,14 @@ async function fixture(base, locale, role = 'admin') {
     if (path === '/ownership') return json({ segments: true, categories: true, promotions: true });
     if (path === '/josh/admin-call' && body?.method === 'GET') {
       if (body.path === '/brands') return json({ data: [{ brand_code: 'FIX', brand_name_en: 'Fixture brand', brand_name_th: 'Fixture brand' }] });
+      if (/^\/product-category\/[^/]+$/.test(body.path)) return json({ data: category });
       if (body.path.startsWith('/product-category')) return json({ data: [category] });
-      return json({ data: [], total: 0 });
+      if (/^\/product\/[^/]+\/cuisines$/.test(body.path) || body.path === '/cuisine/catalog') return json({ data: [] });
+      if (/^\/product\/[^/]+$/.test(body.path)) return json({ product_inventory_id: productId, product_inventory_sku: 'FIX-001', product_name: 'Fixture product', product_status: 1, product_inventory_quantity: 3, base_selling_price: 25, selling_unit_price: 25, selling_unit: 'piece', brand_code: 'FIX', translations: [{ lang: 'th', product_name: 'Fixture product' }, { lang: 'en', product_name: 'Fixture product' }], media: [], promotion_rules: [] });
+      if (/^\/supplier\/[^/]+$/.test(body.path)) return json({ data: { id: customerId, supplier_name: 'Fixture supplier', contact_name: '', phone: '', email: '', address: '' } });
+      if (/^\/admin\/bot\/workflows\/[^/]+$/.test(body.path)) return json({ id: customerId, name: 'Fixture workflow', triggerEvent: 'message', active: true, steps: [] });
+      if (['/supplier', '/bot/templates', '/bot/workflows', '/user-segments', '/product-inventory'].includes(body.path)) return json({ data: [], total: 0, meta: { page: 1, total: 0, totalPages: 1 } });
+      return route.fulfill({ status: 503, json: { message: 'Unavailable in local fixture' } });
     }
     if (method === 'GET' && ['/customers', '/products', '/orders'].includes(path)) {
       const items = path === '/customers' ? [{ id: customerId, name: 'Fixture customer', code: 'C001' }] : path === '/products' ? [{ id: productId, sku: 'FIX-001', name: 'Fixture product' }] : [];
@@ -101,6 +114,45 @@ async function shot(page, build, locale, name) {
   await page.locator('#review-fixture-label').evaluate(node => node.remove());
 }
 
+async function auditLayouts(base, build, locale) {
+  const routes = build === 'before' ? managementRoutes.filter(route => layoutPreviews.has(route.path)) : managementRoutes;
+  for (const [viewport, width, height] of [['desktop', 1440, 1000], ['phone', 390, 844]]) {
+    const { context, page } = await fixture(base, locale);
+    await page.setViewportSize({ width, height });
+    for (const route of routes) {
+      const path = route.path.replace(/:\w+/g, customerId);
+      await page.goto(base + path, { waitUntil: 'networkidle' });
+      await page.locator('main').waitFor();
+      const metrics = await page.locator('main').evaluate(main => {
+        const frame = main.querySelector('.cp-task-content');
+        const root = frame?.firstElementChild;
+        const bounds = node => node ? { x: node.getBoundingClientRect().x, width: node.getBoundingClientRect().width, padding: getComputedStyle(node).paddingLeft } : null;
+        const overflow = document.documentElement.scrollWidth > document.documentElement.clientWidth + 1;
+        const offenders = overflow ? [...main.querySelectorAll('*')].filter(node => {
+          const rect = node.getBoundingClientRect();
+          if (!rect.width || rect.right <= innerWidth + 1) return false;
+          for (let owner = node.parentElement; owner && owner !== main; owner = owner.parentElement) if (['auto', 'scroll', 'hidden'].includes(getComputedStyle(owner).overflowX)) return false;
+          return true;
+        }).slice(0, 6).map(node => ({ tag: node.tagName, className: node.className, text: node.textContent?.slice(0, 100) })) : [];
+        return { title: main.querySelector('h1')?.textContent ?? null, textLength: main.textContent?.trim().length ?? 0, overflow, frame: bounds(frame), root: bounds(root), offenders };
+      });
+      const visit = { build, locale, viewport, path: route.path, ...metrics };
+      layoutVisits.push(visit);
+      if (layoutVisits.length % 50 === 0) console.log(`Checked ${layoutVisits.length} layout visits`);
+      if (build === 'after' && (metrics.overflow || !metrics.textLength || new URL(page.url()).pathname !== path || (metrics.frame && metrics.root && Math.abs(metrics.root.x - metrics.frame.x) > 1))) layoutIssues.push(visit);
+      if (layoutPreviews.has(route.path) && !(viewport === 'desktop' && route.path === '/j/product/create')) {
+        await page.evaluate(() => {
+          const main = document.querySelector('main');
+          const header = document.querySelector('header');
+          window.scrollTo(0, Math.max(0, main.getBoundingClientRect().top + scrollY - (header?.getBoundingClientRect().height ?? 0) - 16));
+        });
+        await shot(page, build, locale, `layout-${viewport}-${route.path.slice(3).replaceAll('/', '-')}`);
+      }
+    }
+    await context.close();
+  }
+}
+
 try {
   browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
   for (const [build, root] of builds) {
@@ -112,12 +164,12 @@ try {
       if (build === 'after') {
         const brand = page.getByRole('combobox', { name: text(locale, 'แบรนด์'), exact: true });
         await brand.click();
-        await page.getByRole('option', { name: 'Fixture brand', exact: true }).click();
-        assert.equal(await brand.inputValue(), 'Fixture brand');
+        await page.getByRole('option', { name: 'Fixture brand (FIX)', exact: true }).click();
+        assert.equal(await brand.inputValue(), 'Fixture brand (FIX)');
         await brand.click();
         await page.getByRole('option', { name: text(locale, 'ไม่ระบุแบรนด์'), exact: true }).click();
         assert.equal(await brand.inputValue(), text(locale, 'ไม่ระบุแบรนด์'));
-        const categoryPicker = page.getByRole('combobox').first();
+        const categoryPicker = page.locator('main input[role="combobox"]').first();
         await categoryPicker.fill('New fixture category');
         await page.getByRole('option', { name: text(locale, 'สร้าง "{0}"').replace('{0}', 'New fixture category'), exact: true }).click();
         const mini = page.locator('dialog[open]');
@@ -192,11 +244,29 @@ try {
         await next.page.waitForURL(base + '/orders');
         assert.deepEqual(nativeDialogs, [], 'One custom confirmation must not trigger a second browser prompt');
         checks.push(`${locale}: failed research keeps text and guard; confirmed navigation asks once`);
+        await open(next.page, base, '/j/supplier/create');
+        const supplier = next.page.getByLabel(text(locale, 'ชื่อผู้จัดจำหน่าย'), { exact: false });
+        await supplier.fill('Unsaved supplier fixture');
+        const failedSave = next.page.waitForResponse(response => response.url().endsWith('/api/josh/admin-call') && response.request().postDataJSON()?.method === 'POST');
+        await next.page.getByRole('button', { name: text(locale, 'บันทึกผู้จัดจำหน่าย'), exact: true }).click();
+        await failedSave;
+        const menu = next.page.locator('aside nav button[aria-expanded="false"]');
+        while (await menu.count()) await menu.first().click();
+        await next.page.locator('aside a[href="/orders"]').first().click();
+        const keep = next.page.locator('dialog[open]');
+        await keep.waitFor();
+        await keep.getByRole('button').first().click();
+        assert.equal(await supplier.inputValue(), 'Unsaved supplier fixture');
+        assert.equal(new URL(next.page.url()).pathname, '/j/supplier/create');
+        checks.push(`${locale}: failed legacy editor save preserves values and leave protection`);
       }
       await next.context.close();
+      if (!process.env.UI_REVIEW_SKIP_ROUTE_AUDIT) await auditLayouts(base, build, locale);
     }
   }
+  writeFileSync(resolve(out, 'layout-results.json'), JSON.stringify({ routes: managementRoutes.length, visits: layoutVisits, issues: layoutIssues, apiMode: 'synthetic fixtures; unavailable reads show error states' }, null, 2) + '\n');
   assert.deepEqual(errors, []);
+  assert.equal(layoutIssues.length, 0, 'Management layout failures: ' + layoutIssues.map(item => `${item.locale}/${item.viewport} ${item.path}`).join(', '));
   writeFileSync(resolve(out, 'results.json'), JSON.stringify({ checks, screenshots, errors, blockedExternal: [...new Set(blockedExternal)], apiMode: 'synthetic fixtures', productionRequests: 0 }, null, 2) + '\n');
   console.log(`PASS: ${checks.length} workflow checks; ${screenshots.length} before/after screenshots`);
 } finally {

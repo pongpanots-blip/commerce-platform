@@ -1,5 +1,5 @@
 import { Button, PageHeader, Panel, Stepper, scrollToFirstInvalid, useUnsavedChanges } from '@cp/ui';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -12,7 +12,10 @@ type AdminInsertLayoutProps = {
   /** Header save button text (default `บันทึก`) — set it when the page has other save buttons. */
   saveLabel?: string;
   wide?: boolean;
-  onSave: () => unknown;
+  /** Only a confirmed save may clear the unsaved-changes guard. */
+  onSave: () => boolean | Promise<boolean>;
+  /** A completed save from a separate confirmation dialog. */
+  savedRevision?: number;
   /** Intercepts both the "← กลับ" and "ยกเลิก" buttons (e.g. to show an unsaved-changes
    * confirm dialog) instead of navigating straight to backPath/-1. */
   onBack?: () => void;
@@ -31,6 +34,7 @@ export function AdminInsertLayout({
   saveLabel = 'บันทึก',
   wide = false,
   onSave,
+  savedRevision,
   onBack,
   headerActions,
   steps,
@@ -40,6 +44,7 @@ export function AdminInsertLayout({
   const navigate = useNavigate();
   const root = useRef<HTMLDivElement>(null);
   const [dirty, setDirty] = useState(false);
+  useEffect(() => { if (savedRevision !== undefined) setDirty(false); }, [savedRevision]);
   const requestLeave = useUnsavedChanges(dirty);
   const leave = () => requestLeave(() => (onBack ? onBack() : backPath ? navigate(backPath) : navigate(-1)));
   const save = () => {
@@ -49,13 +54,13 @@ export function AdminInsertLayout({
           scrollToFirstInvalid(root.current);
           return;
         }
-        if (result !== false) setDirty(false);
+        if (result === true) setDirty(false);
       }, 0);
     });
   };
 
   return (
-    <div ref={root} className={`${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto space-y-5 cp-editor-layout`} onInput={() => setDirty(true)}>
+    <div ref={root} className={`${wide ? 'max-w-5xl' : 'max-w-4xl'} w-full min-w-0 space-y-5 cp-editor-layout`} onInput={() => setDirty(true)}>
       <Button variant="ghost" icon="arrow_back" onClick={() => void leave()}>{__uiText("กลับ")}</Button>
       <PageHeader title={title} subtitle={subtitle} actions={headerActions} />
       {steps && steps.length > 0 && <Stepper steps={steps} />}

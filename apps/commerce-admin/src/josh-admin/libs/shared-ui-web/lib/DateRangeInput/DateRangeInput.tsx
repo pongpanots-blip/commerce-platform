@@ -24,7 +24,7 @@ export function DateRangeInput({
   const endId = React.useId();
 
   const dateRangeField = (
-    <div className={`flex items-center gap-2 bg-white border border-gray-200 px-3 py-2.5 rounded-lg shadow-sm ${className}`}>
+    <div className={`flex min-w-0 max-w-full flex-col gap-2 bg-surface-container-lowest border border-secondary-container px-3 py-2.5 rounded-lg sm:flex-row sm:items-center ${className}`}>
 
       {/* วันที่เริ่มต้น */}
       <div className="flex items-center gap-1.5">
@@ -39,7 +39,7 @@ export function DateRangeInput({
       </div>
 
       {/* เส้นแบ่งกลาง */}
-      <span className="text-gray-300 text-xs">─</span>
+      <span className="hidden text-gray-300 text-xs sm:inline">─</span>
 
       {/* วันที่สิ้นสุด */}
       <div className="flex items-center gap-1.5">
@@ -63,7 +63,7 @@ export function DateRangeInput({
   }
 
   return (
-    <div className="inline-flex flex-col">
+    <div className="inline-flex min-w-0 max-w-full flex-col">
       <label htmlFor={startId} className="mb-1 block text-sm text-gray-600">{label}</label>
       {dateRangeField}
     </div>

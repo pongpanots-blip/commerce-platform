@@ -34,7 +34,7 @@ const CreateBotWorkflow = () => {
   const handleSubmit = async () => {
     if (!form.name || !form.triggerPattern) {
       alert(__uiText("กรุณากรอกชื่อและ Trigger Pattern"));
-      return;
+      return false;
     }
     setSaving(true);
     try {
@@ -49,11 +49,14 @@ const CreateBotWorkflow = () => {
         active: form.active,
       });
       navigate(ADMIN_ROUTES.botWorkflows);
+      return true;
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (

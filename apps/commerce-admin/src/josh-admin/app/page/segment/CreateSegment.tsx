@@ -58,11 +58,11 @@ const CreateSegment = () => {
   const handleSubmit = async () => {
     if (!form.name.trim()) {
       alert(__uiText("กรอกชื่อกลุ่มลูกค้า เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน"));
-      return;
+      return false;
     }
     if (!form.slug.trim()) {
       alert(__uiText("กรอกรหัสอ้างอิง เป็นตัวพิมพ์เล็กและขีด เช่น vip-customers"));
-      return;
+      return false;
     }
 
     // A legacy `cuisine_parent` type never gets created again — the cuisine card always
@@ -73,7 +73,7 @@ const CreateSegment = () => {
     const ruleError = validateRuleForm(effectiveRuleType, ruleForm);
     if (ruleError) {
       alert(ruleError);
-      return;
+      return false;
     }
 
     setSaving(true);
@@ -90,12 +90,15 @@ const CreateSegment = () => {
       if (response.status >= 200 && response.status < 300) {
         toast('บันทึกกลุ่มลูกค้าแล้ว', { label: 'เปิดรายการกลุ่มลูกค้า', href: returnDestination });
         navigate(returnDestination);
+        return true;
       }
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (

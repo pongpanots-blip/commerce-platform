@@ -46,7 +46,7 @@ export default function ScrapedCatalogPage() {
       .catch(err => { if (active) setError(scrapingError(err)); }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [sourceId, query, page, refresh]);
-  return <div className="mx-auto max-w-7xl space-y-5 p-4 md:p-6">
+  return <div className="cp-management-page space-y-5">
     <ScrapingNavigation />
     <header className="flex flex-wrap items-start justify-between gap-3"><div><h1 className="text-2xl font-semibold">{__uiText("ข้อมูลจากเว็บ")}</h1>
       <p className="mt-1 text-sm text-gray-500">{__uiText("ค้นหาสินค้า ตรวจข้อมูลต้นทาง แล้วเลือกจับคู่กับ SKU ของเรา")}</p></div><Link className={scrapingPrimary} to={ADMIN_ROUTES.scrapingSources}>{__uiText("ตั้งค่า / เริ่มเก็บเว็บ")}</Link></header>

@@ -9,7 +9,7 @@ import { AiOutlineEdit, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_SIZE = 20;
 
 const ORDER_STATUS_LABELS: Record<AdminOrderUiStatus, string> = {
@@ -248,10 +248,10 @@ const Order = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-4">
+    <div className="cp-management-page flex flex-col gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col">
-          <Text bold={true} text={__uiText("All Orders")} size="2xl" />
+          <PageHeader title={__uiText("All Orders")} />
           <Text text={__uiText("Manage and monitor all customer orders")} size="sm" />
           <Text
             text={__uiText("Click the edit icon on an order to change its status")}
@@ -272,7 +272,7 @@ const Order = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {cardData.map((card) => (
           <CardAdmin
             key={card.name}
@@ -283,10 +283,10 @@ const Order = () => {
         ))}
       </div>
 
-      <div className="bg-white border border-gray-200 p-3 flex justify-between mt-2 shadow-lg rounded-md">
-        <div className="flex gap-4 items-center">
+      <div className="bg-surface-container-lowest border border-secondary-container p-4 flex flex-wrap items-end justify-between gap-3 rounded-xl">
+        <div className="flex min-w-0 flex-wrap gap-4 items-end">
           <AiOutlineFilter size={24} />
-          <div className="w-64">
+          <div className="w-64 max-w-full">
             <Select
               label={__uiText("สถานะออเดอร์")}
               data={orderStatusOptions}

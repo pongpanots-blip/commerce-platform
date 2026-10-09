@@ -191,7 +191,7 @@ const PromotionMechanic = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("Promotion Mechanics")}
         subtitle={__uiText("ส่วนลดระดับสินค้า — SKU มาจาก Product set, วันที่ตาม Campaign")}

@@ -225,7 +225,7 @@ export default function CartMoveCategoriesAdmin() {
   const loading = loadingTree || loadingAllowlist;
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Unlock Move Categories")}
         subtitle={__uiText("หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate")}

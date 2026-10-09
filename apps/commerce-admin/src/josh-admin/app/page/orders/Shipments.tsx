@@ -25,7 +25,7 @@ import { AiOutlineClose, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_SIZE = 20;
 const CUSTOMER_SEARCH_DEBOUNCE_MS = 300;
 
@@ -418,10 +418,10 @@ const Shipments = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-4">
+    <div className="cp-management-page flex flex-col gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col">
-          <Text bold={true} text={__uiText("Shipments")} size="2xl" />
+          <PageHeader title={__uiText("Shipments")} />
           <Text
             text={__uiText("ดู shipment แยกจาก order — timing ต่อสถานะ + ลิงก์กลับ order")}
             size="sm"
@@ -434,7 +434,7 @@ const Shipments = () => {
           {__uiText("All Orders")}</Link>
       </div>
 
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
         {cardData.map((card) => (
           <CardAdmin
             key={card.name}
@@ -445,7 +445,7 @@ const Shipments = () => {
         ))}
       </div>
 
-      <div className="bg-white border border-gray-200 p-3 flex flex-wrap justify-between gap-3 mt-2 shadow-lg rounded-md">
+      <div className="bg-surface-container-lowest border border-secondary-container p-4 flex flex-wrap justify-between gap-3 rounded-xl">
         <div className="flex flex-wrap gap-4 items-end">
           <AiOutlineFilter size={24} className="mb-2 text-gray-500" />
           <div className="w-48">

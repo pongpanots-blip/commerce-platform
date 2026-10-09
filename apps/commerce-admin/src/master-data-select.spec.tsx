@@ -11,7 +11,7 @@ HTMLDialogElement.prototype.close ??= function close(this: HTMLDialogElement) { 
 function Example({ required = false }: { required?: boolean }) {
   const [brand, setBrand] = useState('');
   return <><FormPanel title="Product" onSubmit={() => false}>
-    <MasterDataSelect required={required} aria-label="Brand" options={[{ value: 'b1', label: 'Acme' }]} value={brand} onChange={value => setBrand(String(value))} />
+    <MasterDataSelect required={required} aria-label="Brand" options={[{ value: 'b1', label: 'Acme' }, ...(!required ? [{ value: '', label: 'No brand' }] : [])]} value={brand} onChange={value => setBrand(String(value))} />
   </FormPanel><ConfirmHost /></>;
 }
 
@@ -63,6 +63,30 @@ it('keeps a required picker invalid until an actual option is selected', async (
     await act(async () => (container.querySelector('[role="option"]') as HTMLElement).dispatchEvent(new MouseEvent('mousedown', { bubbles: true })));
     expect(input.value).toBe('Acme');
     expect(input.checkValidity()).toBe(true);
+  } finally {
+    await act(async () => root.unmount());
+    container.remove();
+  }
+});
+
+it('reopens a focused picker so an optional selection can be cleared', async () => {
+  const container = document.createElement('div');
+  document.body.appendChild(container);
+  const root = createRoot(container);
+  try {
+    await act(async () => root.render(<Example />));
+    const input = container.querySelector('input[role="combobox"]') as HTMLInputElement;
+    await act(async () => input.focus());
+    await act(async () => (container.querySelector('[role="option"]') as HTMLElement).dispatchEvent(new MouseEvent('mousedown', { bubbles: true })));
+    expect(input.value).toBe('Acme');
+    expect(input.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(input);
+    await act(async () => input.click());
+    expect(input.getAttribute('aria-expanded')).toBe('true');
+    const clear = [...container.querySelectorAll('[role="option"]')].find(option => option.textContent === 'No brand') as HTMLElement;
+    await act(async () => clear.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })));
+    expect(input.value).toBe('No brand');
+    expect(input.getAttribute('aria-expanded')).toBe('false');
   } finally {
     await act(async () => root.unmount());
     container.remove();

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-09T16:38:02.717814+00:00",
+  "updatedAt": "2026-10-09T17:04:22.924239+00:00",
   "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
   "designGuidance": {
     "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
@@ -37,7 +37,7 @@
     {
       "priority": 2,
       "task": "Role-based Today work inbox",
-      "status": "Queued; role-home API and marketing summary integration are verified locally.",
+      "status": "Today read-only inbox implemented at /today using existing role-scoped summaries and queues, private admin drafts and explicitly selected order findings. Unknown assignment/freshness and missing CS/graphic aggregate coverage remain explicit. No persistent actions, new permissions or additional feature slice.",
       "dependencies": [
         "Source-backed role home API",
         "Existing authorized queues and owner/freshness definitions"

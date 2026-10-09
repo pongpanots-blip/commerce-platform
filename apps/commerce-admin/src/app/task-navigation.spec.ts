@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { navFor } from './navigation';
-import { taskSectionsFor, taskSidebarFor, isProtectedWelcome } from './task-navigation';
+import { taskFeatureNavFor, taskSectionsFor, taskSidebarFor, isProtectedWelcome } from './task-navigation';
 import { isRouteAllowed, resolvePostLoginPath } from '../lib/landing';
 const roles = ['admin', 'marketing', 'merchandising', 'cs', 'sale', 'sales_manager', 'business_analyst', 'graphic'];
 describe('canonical task indexes', () => {
@@ -30,6 +30,13 @@ describe('canonical task indexes', () => {
     expect(isRouteAllowed('sale', '/tasks/not-a-section')).toBe(false);
     expect(taskSidebarFor('sale_manager')).toEqual(taskSidebarFor('sales_manager'));
     expect(taskSectionsFor('unrecognized')).toEqual([]);
+  });
+  it.each(roles)('%s has one canonical Today entry and retains legacy home access', role => {
+    expect(taskFeatureNavFor(role).flatMap(g => g.links).filter(l => l.to === '/today')).toHaveLength(1);
+    expect(taskSidebarFor(role).flatMap(g => g.links).filter(l => l.to === '/today')).toHaveLength(1);
+    expect(isRouteAllowed(role, '/today?group=gap')).toBe(true);
+    expect(isRouteAllowed(role, '/home')).toBe(true);
+    expect(resolvePostLoginPath(role, '/today?group=pending')).toBe('/today?group=pending');
   });
   it('protects the welcome route including trailing slash without excluding other marketing pages', () => {
     expect(isProtectedWelcome('/j/marketing/welcome-lead-email')).toBe(true);

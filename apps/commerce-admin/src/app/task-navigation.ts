@@ -5,7 +5,10 @@ import { commerceText as text } from './commerce-copy';
 
 /** Admin-only proposal/review homes; the legacy navigation used by welcome is unchanged. */
 export function taskFeatureNavFor(role?: string): NavGroup[] {
-  const existing = navFor(role);
+  const existing = navFor(role).map(group => ({ ...group, links: group.links.map(link => link.to === HOME.to ? {
+    ...link, to: '/today', label: text('งานที่ทบทวนวันนี้', 'Today work inbox'), icon: 'checklist',
+    description: text('เลือกสิ่งที่จะตรวจจากหลักฐานที่อ่านได้', 'Choose work from readable evidence.'), activeFor: [HOME.to],
+  } : link) }));
   if (normalizeRole(role) !== 'admin') return existing;
   return existing.map(group => {
     const section = SECTIONS.find(s => s.title === group.group);
@@ -26,7 +29,7 @@ export function taskSectionsFor(role?: string) {
 
 /** A short sidebar; every authorized feature remains in its task index and command search. */
 export function taskSidebarFor(role?: string): NavGroup[] {
-  const home = navFor(role)[0]?.links.filter(link => link.to === HOME.to) ?? [];
+  const home = taskFeatureNavFor(role)[0]?.links.filter(link => link.to === '/today') ?? [];
   return [{ links: [
     ...home,
     ...(normalizeRole(role) === 'admin' ? [DASHBOARD] : []),

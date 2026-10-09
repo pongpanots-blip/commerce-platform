@@ -13,6 +13,8 @@ export interface StaffAccount { id: string; email: string; name: string | null; 
 export interface StaffActor { userId: string; email: string }
 
 export const MIN_PASSWORD = 10;
+/** Self-registration is open to this company domain only. */
+export const STAFF_EMAIL_DOMAIN = '@jagota.co.th';
 const temporaryPassword = () => randomBytes(12).toString('base64url');
 const view = (u: User): StaffAccount => ({ id: u.id, email: u.email, name: u.name, role: normalizeStaffRole(u.role) as StaffRole, status: u.status as StaffStatus, mustChangePassword: !!u.mustChangePassword, createdAt: u.createdAt });
 
@@ -47,6 +49,22 @@ export class StaffAccountsService {
     }));
     await this.log(actor, 'staff.create', saved.id, null, { email, role: input.role });
     return { account: view(saved), temporaryPassword: password };
+  }
+
+  /**
+   * Self-registration from the admin sign-in page. Nothing proves the person owns the mailbox (no email verification),
+   * so the account starts disabled with the least-privileged read-only role; an admin opens it (and picks the role) in บัญชี staff.
+   */
+  async register(emailRaw: string, password: string, nameRaw?: string | null) {
+    const email = emailRaw.trim().toLowerCase();
+    if (!email.endsWith(STAFF_EMAIL_DOMAIN)) throw new BadRequestException(`email must end with ${STAFF_EMAIL_DOMAIN}`);
+    if (password.length < MIN_PASSWORD) throw new BadRequestException(`password: at least ${MIN_PASSWORD} characters`);
+    if (await this.users.findOne({ where: { email }, withDeleted: true })) throw new ConflictException(`${email} already has an account`);
+    const saved = await this.users.save(this.users.create({
+      email, name: nameRaw?.trim() || null, role: 'business_analyst', status: 'disabled', passwordHash: await bcrypt.hash(password, 10), mustChangePassword: false,
+    }));
+    await this.log({ userId: saved.id, email }, 'staff.self_register', saved.id, null, { email, role: saved.role });
+    return { email, status: saved.status };
   }
 
   async update(id: string, changes: { name?: string | null; role?: string; status?: StaffStatus }, actor: StaffActor) {

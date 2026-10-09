@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-10-09T10:29:44.663712+00:00",
+  "releaseCommit": "944f87d0e9afdc1de7cecb35e41caf93091ad0a0",
+  "request": {
+    "ref": "release/admin-task-navigation-20261009",
+    "inputs": {
+      "deploy_service": "admin",
+      "image_tag": "944f87d0e9afdc1de7cecb35e41caf93091ad0a0",
+      "skip_deploy": false,
+      "skip_cleanup": true,
+      "expected_admin_tag": "873a9a443272c21242b6f364ffa2f9b478df90cc"
+    },
+    "return_run_details": true
+  },
+  "response": {
+    "workflow_run_id": 37917355287,
+    "run_url": "https://api.github.com/repos/pongpanots-blip/commerce-platform/actions/runs/37917355287",
+    "html_url": "https://github.com/pongpanots-blip/commerce-platform/actions/runs/37917355287"
+  },
+  "dispatchExitCode": 0,
+  "workflowDispatched": true,
+  "productionHealthVerified": true,
+  "status": "SUCCEEDED",
+  "publicBundleVerified": false,
+  "completedHealthAt": "2026-10-09T10:26:35.2961293Z",
+  "healthScope": "Localhost platform/admin/portal before and after deployment on the existing production runner; no authenticated business writes",
+  "deployedAdminTag": "944f87d0e9afdc1de7cecb35e41caf93091ad0a0",
+  "registryManifestDigest": "sha256:93b5e2332f033edcfb5eec5b00d83b2a44825d9bdf3927a983a5541b78375217",
+  "previousAdminTag": "873a9a443272c21242b6f364ffa2f9b478df90cc",
+  "originalProductionTagBeforeFirstRelease": "020066e",
+  "backendPortalTagsPreserved": "020066e",
+  "expectedAdminTagCheckPassed": true,
+  "cleanupDisabledConfirmed": true,
+  "migrationExecuted": false,
+  "backendPortalImageRelease": false,
+  "businessDataWritten": false,
+  "publicVerificationResult": "Unauthenticated public GET /admin/ and /api returned403 from this executor; see public-after.json",
+  "evidenceFiles": [
+    "jobs-final.json",
+    "logs/production-deploy-excerpt.log",
+    "logs/production-build-identity-excerpt.log",
+    "public-after.json"
+  ],
+  "evidenceSha256": {
+    "jobs-final.json": "a3380836ff34b3329ffec0007f77481f5a4a70ea9b981ef6154c227862ffd55d",
+    "logs/production-deploy-excerpt.log": "0a179fd34f89e88c5ad9458e13f9abad72b08089b0e5ec4f2e87fcca4dd34d51",
+    "logs/production-build-identity-excerpt.log": "43e594ce23722f36c4030fabf203854277eb8b37192ba2d340f4dadff63f7d2e",
+    "public-after.json": "1357a4cc50b8dcbf67e1a528a3b3417d4b17554ff3ea3da057ec629e2b4774a6"
+  }
+}

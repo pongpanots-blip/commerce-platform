@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotFoundExc
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
+import { Paged, QueuePage, queueList, QueueSql } from '../queue-page';
 import { ProductPriceSnapshot } from './product-price-snapshot.event';
 
 export const ownsPrices = () => process.env.COMMERCE_OWNS_PRICES === 'true';
@@ -11,6 +12,25 @@ type Row = { product_inventory_sku: string; selling_unit_price: string | null; o
 
 const num = (v: string | number | null | undefined) => (v == null ? null : Number(v));
 const COLS: Array<[keyof PricePatch, string]> = [['sellingUnitPrice', 'selling_unit_price'], ['orderingPrice', 'ordering_price'], ['moq', 'moq']];
+
+export interface PendingPriceRow {
+  sku: string; selling_unit_price: string | null; ordering_price: string | null; moq: number | null; changed_at: Date | null; received_at: Date;
+  current_selling_unit_price: string | null; current_ordering_price: string | null; current_moq: number | null;
+}
+export interface PriceListRow { sku: string; selling_unit_price: string | null; ordering_price: string | null; moq: number | null; source: string; updated_by: string | null; updated_at: Date }
+
+const PENDING_SQL: QueueSql = {
+  select: `q.product_inventory_sku AS sku, q.selling_unit_price, q.ordering_price, q.moq, q.changed_at, q.received_at,
+           p.selling_unit_price AS current_selling_unit_price, p.ordering_price AS current_ordering_price, p.moq AS current_moq`,
+  from: `product_price_pending q LEFT JOIN product_prices p USING (product_inventory_sku)
+         WHERE $1::text IS NULL OR q.product_inventory_sku ILIKE '%' || $1 || '%'`,
+  order: 'q.received_at DESC, q.product_inventory_sku',
+};
+const LIST_SQL: QueueSql = {
+  select: 'product_inventory_sku AS sku, selling_unit_price, ordering_price, moq, source, updated_by, updated_at',
+  from: `product_prices WHERE $1::text IS NULL OR product_inventory_sku ILIKE '%' || $1 || '%'`,
+  order: 'product_inventory_sku',
+};
 
 /**
  * Product prices owned by commerce (stage 4a, COMMERCE_OWNS_PRICES): base price, ERP box price and MOQ per SKU, and the
@@ -36,20 +56,18 @@ export class ProductPricesService {
       [sku, changedAt, ...set.map(([k]) => patch[k])]);
   }
 
-  pending(search?: string) {
-    return this.db.query(
-      `SELECT q.product_inventory_sku AS sku, q.selling_unit_price, q.ordering_price, q.moq, q.changed_at, q.received_at,
-              p.selling_unit_price AS current_selling_unit_price, p.ordering_price AS current_ordering_price, p.moq AS current_moq
-         FROM product_price_pending q LEFT JOIN product_prices p USING (product_inventory_sku)
-        WHERE $1::text IS NULL OR q.product_inventory_sku ILIKE '%' || $1 || '%'
-        ORDER BY q.received_at DESC LIMIT 500`, [search?.trim() || null]);
+  /** The MER queue, newest ERP change first. Without paging: the legacy bare array, capped at 500. */
+  pending(search?: string): Promise<PendingPriceRow[]>;
+  pending(search: string | undefined, paging: QueuePage | undefined): Promise<PendingPriceRow[] | Paged<PendingPriceRow>>;
+  pending(search?: string, paging?: QueuePage): Promise<PendingPriceRow[] | Paged<PendingPriceRow>> {
+    return queueList<PendingPriceRow>(this.db, PENDING_SQL, [search?.trim() || null], paging, 500);
   }
 
-  list(search?: string) {
-    return this.db.query(
-      `SELECT product_inventory_sku AS sku, selling_unit_price, ordering_price, moq, source, updated_by, updated_at FROM product_prices
-        WHERE $1::text IS NULL OR product_inventory_sku ILIKE '%' || $1 || '%' ORDER BY product_inventory_sku LIMIT 200`,
-      [search?.trim() || null]);
+  /** Live prices by SKU. Without paging: the legacy bare array, capped at 200. */
+  list(search?: string): Promise<PriceListRow[]>;
+  list(search: string | undefined, paging: QueuePage | undefined): Promise<PriceListRow[] | Paged<PriceListRow>>;
+  list(search?: string, paging?: QueuePage): Promise<PriceListRow[] | Paged<PriceListRow>> {
+    return queueList<PriceListRow>(this.db, LIST_SQL, [search?.trim() || null], paging, 200);
   }
 
   /** MER approves: the pending fields become the live price (others stay), the queue row goes, josh gets the snapshot. */

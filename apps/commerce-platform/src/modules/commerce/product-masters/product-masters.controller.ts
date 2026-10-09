@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ArrayMaxSize, ArrayNotEmpty, IsArray, IsString, MaxLength } from 'class-validator';
 import { StaffRequest, StaffRoles } from '../../../shared-kernel/presentation/auth.decorators';
+import { QueuePageQuery, queuePage } from '../queue-page';
 import { ProductMastersService } from './product-masters.service';
 
 class SkusDto {
@@ -13,7 +14,8 @@ class SkusDto {
 export class ProductMastersController {
   constructor(private readonly masters: ProductMastersService) {}
 
-  @Get('pending') pending(@Query('search') search?: string) { return this.masters.pending(search); }
+  /** `page`/`limit` → `{ items, total, page, limit }` (20/100); neither → the bare array (newest 500). */
+  @Get('pending') pending(@Query() q: QueuePageQuery, @Query('search') search?: string) { return this.masters.pending(search, queuePage(q)); }
 
   @Post('pending/approve')
   approve(@Body() dto: SkusDto, @Req() req: StaffRequest) { return this.masters.approve(dto.skus, req.staff.userId); }

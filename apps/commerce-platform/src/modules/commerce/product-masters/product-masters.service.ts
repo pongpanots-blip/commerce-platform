@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotFoundExc
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
+import { Paged, QueuePage, queueList, QueueSql } from '../queue-page';
 import { buildMasterPatch, splitMaster } from './master-fields';
 import { ProductMasterSnapshot } from './product-master-snapshot.event';
 
@@ -9,6 +10,14 @@ import { ProductMasterSnapshot } from './product-master-snapshot.event';
 const PACK_DERIVED = ['packaging_type', 'units_per_box', 'weight_per_unit'];
 
 export const ownsProductMaster = () => process.env.COMMERCE_OWNS_PRODUCT_MASTER === 'true';
+
+export interface PendingMasterRow { sku: string; patch: Record<string, unknown>; changed_at: Date | null; received_at: Date; current: Record<string, unknown> }
+const PENDING_SQL: QueueSql = {
+  select: `q.product_inventory_sku AS sku, q.patch, q.changed_at, q.received_at, COALESCE(p.fields, '{}') AS current`,
+  from: `product_master_pending q LEFT JOIN product_masters p USING (product_inventory_sku)
+         WHERE $1::text IS NULL OR q.product_inventory_sku ILIKE '%' || $1 || '%'`,
+  order: 'q.received_at DESC, q.product_inventory_sku',
+};
 
 /**
  * The ERP product master owned by commerce (stage 4d, COMMERCE_OWNS_PRODUCT_MASTER): units, pack, brand name, VAT,
@@ -48,12 +57,11 @@ export class ProductMastersService {
     return staged;
   }
 
-  pending(search?: string) {
-    return this.db.query(
-      `SELECT q.product_inventory_sku AS sku, q.patch, q.changed_at, q.received_at, COALESCE(p.fields, '{}') AS current
-         FROM product_master_pending q LEFT JOIN product_masters p USING (product_inventory_sku)
-        WHERE $1::text IS NULL OR q.product_inventory_sku ILIKE '%' || $1 || '%'
-        ORDER BY q.received_at DESC LIMIT 500`, [search?.trim() || null]);
+  /** The MER queue, newest ERP change first. Without paging: the legacy bare array, capped at 500. */
+  pending(search?: string): Promise<PendingMasterRow[]>;
+  pending(search: string | undefined, paging: QueuePage | undefined): Promise<PendingMasterRow[] | Paged<PendingMasterRow>>;
+  pending(search?: string, paging?: QueuePage): Promise<PendingMasterRow[] | Paged<PendingMasterRow>> {
+    return queueList<PendingMasterRow>(this.db, PENDING_SQL, [search?.trim() || null], paging, 500);
   }
 
   async get(sku: string) {

@@ -326,13 +326,20 @@ export class CommercialService {
 
   async listReports(actor: WinbackActor, q: DailyReportQueryDto) {
     const salesUserId = actor.isManager ? q.sales_user_id : actor.id;
-    const where: Payload = { kind: Kind.DAILY_REPORT };
-    if (salesUserId) where.sales_user_id = salesUserId;
-    if (q.status) where.status = q.status;
-    const rows = await this.records.find({ where, order: { create_date: 'DESC' }, take: 500 });
+    // The day range is part of the query, so the 500 cap applies after it (an older range is not cut off).
+    const qb = this.records.createQueryBuilder('r').where('r.kind = :kind', { kind: Kind.DAILY_REPORT });
+    if (salesUserId) qb.andWhere('r.sales_user_id = :salesUserId', { salesUserId });
+    if (q.status) qb.andWhere('r.status = :status', { status: q.status });
+    if (q.from) qb.andWhere("r.payload->>'day' >= :from", { from: q.from });
+    if (q.to) qb.andWhere("r.payload->>'day' <= :to", { to: q.to });
+    const rows = await qb
+      .orderBy("r.payload->>'day'", 'DESC')
+      .addOrderBy('r.create_date', 'DESC')
+      .addOrderBy('r.id', 'DESC')
+      .limit(500)
+      .getMany();
     return rows
       .map((r) => this.reportView(r.sales_user_id!, String(r.payload.day), r))
-      .filter((r) => (!q.from || r.day >= q.from) && (!q.to || r.day <= q.to))
       .sort((a, b) => b.day.localeCompare(a.day));
   }
 

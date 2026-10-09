@@ -482,6 +482,48 @@ describe('WinbackService.getCounts', () => {
   });
 });
 
+describe('WinbackService.getAging', () => {
+  function agingService(rows: Partial<WinbackAccount>[]) {
+    const calls: string[] = [];
+    const qb: Record<string, jest.Mock> = {};
+    for (const m of ['where', 'andWhere', 'orderBy', 'addOrderBy', 'take']) {
+      qb[m] = jest.fn((...args: unknown[]) => { calls.push(`${m} ${String(args[0])}`); return qb; });
+    }
+    qb.getMany = jest.fn(async () => rows);
+    const accounts = { createQueryBuilder: jest.fn(() => qb) } as unknown as Repository<WinbackAccount>;
+    const service = new WinbackService(accounts, {} as never, {} as never, {} as never, {} as never, {} as never, {} as never, {} as MatchingService);
+    return { service, qb, calls };
+  }
+  const SCOPE_SQL = '(a.assigned_sales_user_id = :agingRep OR a.assigned_sales_user_id IS NULL)';
+
+  it('a sales user is scoped to own + unassigned leads before the 100 cap', async () => {
+    const created = new Date('2026-08-01T00:00:00Z');
+    const { service, qb, calls } = agingService([
+      account({ id: 'mine', assigned_sales_user_id: 'sale-1', create_date: created }),
+      account({ id: 'open', assigned_sales_user_id: null, create_date: created }),
+    ]);
+    const rows = await service.getAging(3, { salesUserId: 'sale-1' });
+    expect(qb.andWhere).toHaveBeenCalledWith(SCOPE_SQL, { agingRep: 'sale-1' });
+    expect(calls.indexOf(`andWhere ${SCOPE_SQL}`)).toBeLessThan(calls.indexOf('take 100'));
+    expect(calls).toContain('addOrderBy a.id'); // deterministic tie-break on create_date
+    expect(rows.map((r) => r.id)).toEqual(['mine', 'open']);
+    expect(rows[0]).toMatchObject({ assigned_sales_user_id: 'sale-1', customer_code: 'TMP-001', create_date: created });
+  });
+
+  it('an empty sales id only sees unassigned leads (null never equals a uuid)', async () => {
+    const { service, qb } = agingService([]);
+    await service.getAging(3, { salesUserId: '' });
+    expect(qb.andWhere).toHaveBeenCalledWith(SCOPE_SQL, { agingRep: null });
+  });
+
+  it('managers and the team reports keep the whole team (no scope)', async () => {
+    const { service, qb, calls } = agingService([]);
+    await service.getAging(7);
+    expect(qb.andWhere).not.toHaveBeenCalledWith(SCOPE_SQL, expect.anything());
+    expect(calls).toContain('take 100');
+  });
+});
+
 describe('pool place candidate coordination owners', () => {
   it.each([
     ['sale excludes other coordination owners', { id: 'rep-1', isManager: false }, ['own', 'unowned']],

@@ -2,8 +2,10 @@
 # Developer portal + ERP inbound ingest + ERP order push e2e (scenarios P / I / O).
 #
 # Prereqs (see apps/commerce-platform/README.md):
-#   - platform running on :3100 with PORTAL_JWT_SECRET set; jq, curl, openssl,
-#     psql installed
+#   - platform running on :3100 with PORTAL_JWT_SECRET set and
+#     PORTAL_SELF_REGISTER=true + PORTAL_KEY_MINT_ACCOUNT_IDS='*' (P1 registers a
+#     fresh account, P3 mints a key for it); jq, curl,
+#     openssl, psql installed
 #   - STOREFRONT_API_KEYS must include the KEY this script uses as its env
 #     fallback (default "e2e-key") for helper calls (products, erp-stub/stock,
 #     admin) — P3/P4 exercise a freshly portal-issued DB-backed key instead.

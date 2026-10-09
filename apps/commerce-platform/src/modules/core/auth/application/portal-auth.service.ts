@@ -15,6 +15,14 @@ const DUMMY_HASH = bcrypt.hashSync('dummy-timing-password', 10);
 
 const PG_UNIQUE_VIOLATION = '23505';
 
+/** Shown on a 403 register; the portal's Register page has the same copy (TH/EN). */
+export const SELF_REGISTER_DISABLED_MESSAGE =
+  'Self-registration is disabled; contact the Commerce Platform team for a developer account';
+
+/** Developer self-signup is off unless PORTAL_SELF_REGISTER is "true"/"1"; read per call like the COMMERCE_OWNS_* flags. */
+export const portalSelfRegisterEnabled = () =>
+  ['true', '1'].includes(process.env.PORTAL_SELF_REGISTER?.trim().toLowerCase() ?? '');
+
 function isUniqueViolation(error: unknown): boolean {
   const e = error as { code?: string; driverError?: { code?: string }; message?: unknown };
   return (
@@ -39,6 +47,8 @@ export class PortalAuthService {
   }
 
   async register(emailRaw: string, password: string) {
+    // Before any lookup, so a closed register cannot be used to probe which emails exist (409).
+    if (!portalSelfRegisterEnabled()) throw new ForbiddenException(SELF_REGISTER_DISABLED_MESSAGE);
     this.assertSecret();
     const email = emailRaw.trim().toLowerCase();
     if (await this.users.findOne({ where: { email } })) {

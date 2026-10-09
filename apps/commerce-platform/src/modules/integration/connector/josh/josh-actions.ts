@@ -71,7 +71,7 @@ export class JoshActions {
   /** All commerce doors (editor, controller and MCP) share this boundary. Growth exports cannot send until runtime guard support exists. */
   private async guardGrowthWorkflow(target: JoshActionTarget, action: string, args: Record<string, unknown>, actor: JoshActionActor) {
     let id: string | undefined, operation = action;
-    if (target === 'marketing-workflows' && ['update', 'activate'].includes(action)) id = String(args.id ?? '');
+    if (target === 'marketing-workflows' && ['update', 'activate', 'test'].includes(action)) id = String(args.id ?? '');
     if (target === 'admin-call') {
       const method = String(args.method ?? '').toUpperCase();
       const match = String(args.path ?? '').match(/^\/marketing-workflows\/([0-9a-f-]{36})(?:\/(.*))?$/i);

@@ -16,6 +16,7 @@ import type { WinbackStaffActions } from '../../winback/winback-staff-actions';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActionActor, JoshActions } from './josh-actions';
 import { JoshCatalogSyncService } from './josh-catalog-sync.service';
+import { MarketingTesters } from './marketing-testers';
 
 /** In CONTENT_FIELDS, but a price / stock setting. Graphic must not write them. */
 const GRAPHIC_COMMERCIAL = ['buying_price', 'low_stock_threshold', 'reorder_quantity'] as const;
@@ -35,7 +36,7 @@ const GRAPHIC_COPY = new Set<string>(PRODUCT_COPY_FIELDS);
  */
 @Controller('josh')
 export class JoshActionsController {
-  constructor(private readonly josh: JoshActions, private readonly catalog: JoshCatalogSyncService, private readonly modules: ModuleRef) {}
+  constructor(private readonly josh: JoshActions, private readonly catalog: JoshCatalogSyncService, private readonly modules: ModuleRef, private readonly testers: MarketingTesters) {}
 
   private as(req: StaffRequest) { return { userId: req.staff.userId, email: req.staff.email }; }
 
@@ -78,7 +79,8 @@ export class JoshActionsController {
   }
 
   @Post('push-campaigns/:id/test') @HttpCode(HttpStatus.OK) @StaffRoles('marketing')
-  test(@Param('id', ParseUUIDPipe) id: string, @Body() b: { userId?: string }, @Req() req: StaffRequest) {
+  async test(@Param('id', ParseUUIDPipe) id: string, @Body() b: { userId?: string }, @Req() req: StaffRequest) {
+    await this.testers.assert(b?.userId);
     return this.josh.run('push-campaigns', 'test', { id, userId: b?.userId }, this.as(req), 'admin');
   }
 

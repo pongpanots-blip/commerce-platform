@@ -38,6 +38,7 @@ import { JoshPromotions } from '../modules/integration/connector/josh/josh-promo
 import { JoshActions } from '../modules/integration/connector/josh/josh-actions';
 import { joshAdminCall } from '../modules/integration/connector/josh/josh-admin-call.controller';
 import { JoshMarketingWorkflows } from '../modules/integration/connector/josh/josh-marketing-workflows';
+import { MarketingTesters } from '../modules/integration/connector/josh/marketing-testers';
 import { JagotaSyncHistoryImport } from '../modules/integration/connector/josh/jagota/jagota-sync-history';
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
@@ -132,6 +133,7 @@ export class McpTools {
     private readonly analyst: MarketAnalystService,
     private readonly catalogSync: JoshCatalogSyncService,
     private readonly modules: ModuleRef,
+    private readonly testers: MarketingTesters,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -339,6 +341,13 @@ export class McpTools {
       return json({ overview, campaigns: rows.slice(0, limit).map((r) => ({ id: r.id, name: r.name, status: r.status, title: r.title,
         audience: r.audience, ab_enabled: r.ab_enabled, scheduled_at: r.scheduled_at, sent_at: r.sent_at, stats: r.stats, last_error: r.last_error })) });
     });
+
+    server.registerTool('marketing_testers', {
+      title: 'Marketing testers',
+      description: 'The josh accounts that may receive real test sends (push_campaign_test, marketing_workflow_test). Staff add or remove them in commerce-admin › การตลาด › ข้อความอัตโนมัติ › Tester.',
+      inputSchema: {},
+      annotations: READ_ONLY,
+    }, async () => json({ testers: (await this.testers.list()).map((t) => ({ email: t.email, name: t.name })) }));
 
     server.registerTool('josh_products', {
       title: 'Shop products (josh catalog)',
@@ -632,6 +641,49 @@ export class McpTools {
         Object.assign(log, { entityType: 'josh.workflow', entityId: args.id, summary: `pause Marketing workflow ${args.id}`, adminUrl: adminUrl(MARKETING_KINDS.workflow.admin(args.id)) });
         return this.joshActions.run('marketing-workflows', 'pause', { id: args.id }, joshActor, 'mcp');
       }));
+
+    // Test sends reach a real device, so they only ever go to the tester list — never to customers.
+    const testTargets = async (email?: string) => {
+      const all = await this.testers.list();
+      const to = email ? all.filter((t) => t.email.toLowerCase() === email.toLowerCase()) : all;
+      if (!to.length) throw new Error(email ? `${email} is not a tester (marketing_testers)` : 'no testers yet — add them in commerce-admin › การตลาด › ข้อความอัตโนมัติ › Tester');
+      return to;
+    };
+    const eachTester = async (to: { userId: string; email: string }[], send: (userId: string) => Promise<unknown>) => {
+      const results: { email: string; ok: boolean; error?: string }[] = [];
+      for (const t of to) results.push(await send(t.userId).then(() => ({ email: t.email, ok: true }), (e) => ({ email: t.email, ok: false, error: e instanceof Error ? e.message : String(e) })));
+      return { results };
+    };
+
+    server.registerTool('push_campaign_test', {
+      title: 'Test-send a push campaign to testers (needs confirmation)',
+      description: 'Send one josh push campaign as a test to marketing testers only (see marketing_testers) — never to customers. Omit testerEmail to send to every tester.',
+      inputSchema: { id: z.string().uuid(), testerEmail: z.string().email().optional(), confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => {
+      const to = await testTargets(args.testerEmail);
+      return this.twoStep(staff, clientId, 'push_campaign_test', args,
+        async () => ({ action: 'test-send push campaign', campaign: this.push.available ? await this.push.findOne(args.id).then((c) => ({ id: c.id, name: c.name, title: c.title }), () => ({ id: args.id })) : { id: args.id }, to: to.map((t) => t.email) }),
+        (log) => {
+          Object.assign(log, { entityType: 'josh.push_campaign', entityId: args.id, summary: `test-send push campaign ${args.id} to ${to.map((t) => t.email).join(', ')}` });
+          return eachTester(to, (userId) => this.joshActions.run('push-campaigns', 'test', { id: args.id, userId }, joshActor, 'mcp'));
+        });
+    });
+
+    server.registerTool('marketing_workflow_test', {
+      title: 'Test a marketing workflow on testers (needs confirmation)',
+      description: 'Run one josh marketing workflow for marketing testers only (see marketing_testers). dryRun true (default) only describes what would be sent; false really sends its messages to the testers.',
+      inputSchema: { id: z.string().uuid(), testerEmail: z.string().email().optional(), dryRun: z.boolean().default(true), confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => {
+      const to = await testTargets(args.testerEmail);
+      return this.twoStep(staff, clientId, 'marketing_workflow_test', args,
+        async () => ({ action: args.dryRun ? 'dry-run marketing workflow (nothing is sent)' : 'test-send marketing workflow', workflow: await this.workflows.detail(args.id).then((w) => { const r = w as Record<string, unknown>; return { id: r.id, name: r.name, status: r.status }; }).catch(() => ({ id: args.id })), to: to.map((t) => t.email) }),
+        (log) => {
+          Object.assign(log, { entityType: 'josh.workflow', entityId: args.id, summary: `${args.dryRun ? 'dry-run' : 'test-send'} Marketing workflow ${args.id} for ${to.map((t) => t.email).join(', ')}`, adminUrl: adminUrl(MARKETING_KINDS.workflow.admin(args.id)) });
+          return eachTester(to, (userId) => this.joshActions.run('marketing-workflows', 'test', { id: args.id, userId, dryRun: args.dryRun }, joshActor, 'mcp'));
+        });
+    });
 
 
     server.registerTool('research_create_topic', {

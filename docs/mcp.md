@@ -39,6 +39,7 @@
 | `marketing_list` / `segment_preview` | marketing, admin | อ่าน coupon, segment, campaign, product set, promotion page, banner (HERO = carousel หน้าแรก), notify template, smart link และอีเมลต้อนรับ lead ที่มีอยู่ และลองนับกลุ่มก่อนบันทึก segment |
 | `marketing_fields` | marketing, admin | JSON schema ของ `data` ที่ `marketing_save` รับในแต่ละ kind (field ที่ต้องมี, enum, ขีดจำกัด), สร้างแล้วปิดไว้ไหม และการแก้เป็นแบบส่งบางส่วนหรือแทนทั้งก้อน |
 | `marketing_workflows` / `josh_promotions` / `push_campaigns` | marketing, admin | อ่าน workflow โปรโมชัน และผลส่งแคมเปญเดิม เพื่อปรับจากสิ่งที่มีและตรวจข้อผิดพลาดก่อนสร้างเพิ่ม |
+| `marketing_testers` | marketing, admin | รายชื่อ tester (อีเมล ชื่อ) — บัญชี josh ที่รับข้อความทดสอบจริงได้ · แก้รายชื่อที่ commerce-admin › การตลาด › ข้อความอัตโนมัติ › Tester |
 | `restaurant_places` | marketing, admin | กรองชื่อ เขต ประเภท ช่วงคะแนน/จำนวนรีวิว ราคา บริการ สถานะ enrichment และช่วงเวลาที่คนเยอะวันนี้ (เวลาไทย) พร้อมจำนวนแยกประเภท/พื้นที่; ส่ง `id` จากรายการเพื่ออ่านรายละเอียด เวลาเปิด บริการ แหล่งข้อมูล และวันที่ enrichment; จำนวนโต๊ะเป็นค่าประมาณจากรีวิว |
 | `growth_workspace` | marketing, admin | โอกาสจากยอดที่รับชำระจริง ตะกร้าค้าง รอบซื้อ และ workflow ที่ล้มเหลว พร้อมหลักฐาน ช่วงเวลา และข้อจำกัดของการเปิดส่ง |
 | `growth_plans` | marketing, admin | อ่านแผนเต็มพร้อมข้อความ หลักฐาน งาน ประวัติ สถานะ เวอร์ชัน และ `canManage`; ไม่ส่ง id จะได้รายการแบบแบ่งหน้า (`page`, `limit`, `search`, `status`, `month`) |
@@ -68,6 +69,7 @@
 | `growth_plan_tasks` | marketing, admin | เปลี่ยนงานทั้งหมดด้วย `id`, `update: { version, tasks }`; เพิ่มเวอร์ชันโดยเก็บเนื้อหาที่อนุมัติไว้ |
 | `growth_plan_action` | marketing, admin | `submit` ส่งตรวจ, `export` สร้าง workflow draft ที่ยังหยุดอยู่จากเนื้อหาที่อนุมัติ; admin เพิ่ม `approve` และ `reconcile` โดย `workflowId` ใช้เฉพาะ reconcile ผลส่งออกที่ยังยืนยันไม่ได้ |
 | `marketing_save` / `marketing_workflow_pause` | marketing, admin | สร้าง/แก้ workflow, promotion, coupon, segment, campaign, product set, promotion page, banner/carousel, notify template, smart link, push campaign draft และแก้อีเมลต้อนรับ lead (มีอันเดียว ไม่ส่ง id) หรือหยุด workflow เดิม รายละเอียดดูหัวข้อ `marketing_save` ด้านล่าง |
+| `push_campaign_test` / `marketing_workflow_test` | marketing, admin | ส่งทดสอบ push campaign / ทดลองรัน workflow (`dryRun` ค่าเริ่มต้น true = ไม่ส่งจริง) **ให้ tester เท่านั้น** (ทุกคน หรือระบุ `testerEmail`) — ไม่มีทางส่งถึงลูกค้า · commerce ตรวจรายชื่อทุกทาง (หน้า admin, admin-call, MCP) · ส่งจริงให้ลูกค้า (schedule/send, activate) ยังทำผ่าน MCP ไม่ได้ |
 | `product_content_save` | admin | แก้ชื่อ คำอธิบาย และข้อความการตลาดของสินค้า (field ชุดเดียวกับที่ graphic แก้ได้ใน commerce-admin) ราคา ต้นทุน สต็อก สถานะ SKU และ master จาก ERP แก้ไม่ได้ แก้แล้วขึ้นหน้าร้านทันที |
 | `research_create_topic` | marketing, admin | สร้างโจทย์ research |
 | `research_request_run` | marketing, admin | สั่งรันโจทย์ (ของตัวเอง ส่วน admin รันของทุกคนได้) |

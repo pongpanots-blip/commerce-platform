@@ -7,7 +7,7 @@ describe('JoshActionsController — back-office actions', () => {
   const josh = { run: jest.fn(async () => ({ ok: true })) };
   const catalog = { syncId: jest.fn(async () => undefined) };
   const local = { act: jest.fn(async () => ({ local: true })) };
-  const c = new JoshActionsController(josh as never, catalog as never, { get: () => local } as never);
+  const c = new JoshActionsController(josh as never, catalog as never, { get: () => local } as never, {} as never);
   beforeEach(() => { josh.run.mockClear(); catalog.syncId.mockClear(); local.act.mockClear(); });
   afterEach(() => { delete process.env.WINBACK_OWNER; });
 
@@ -41,7 +41,7 @@ describe('JoshActionsController — back-office actions', () => {
   it('graphic saves copy fields only and drops every commercial field', async () => {
     const contents = { edit: jest.fn(async () => ({ sku: 'SKU-1' })) };
     const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
-    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never);
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never, {} as never);
     const graphic = { staff: { userId: 'staff-1', email: 'g@jagota.co.th', role: 'graphic' } } as never;
     const commercial = [
       ['buying_price', 12.5], ['low_stock_threshold', 3], ['reorder_quantity', 4],
@@ -72,7 +72,7 @@ describe('JoshActionsController — back-office actions', () => {
   it('stage 4a: once commerce owns prices the base price is saved in commerce, the rest still goes to josh', async () => {
     const prices = { edit: jest.fn(async () => ({ sku: 'SKU-1', sellingUnitPrice: 12 })) };
     const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
-    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : prices) } as never);
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : prices) } as never, {} as never);
     await ctl.updateProduct(ID, { fields: { selling_unit_price: 10, product_name_th: 'ซอส' } }, req);
     expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: { selling_unit_price: 10, product_name_th: 'ซอส' } }, expect.anything(), 'admin');
     process.env.COMMERCE_OWNS_PRICES = 'true';
@@ -90,7 +90,7 @@ describe('JoshActionsController — back-office actions', () => {
   it('stage 4b: once commerce owns content those keys are validated and saved in commerce, the rest still goes to josh', async () => {
     const contents = { edit: jest.fn(async () => ({ sku: 'SKU-1', fields: {} })) };
     const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
-    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never);
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never, {} as never);
     process.env.COMMERCE_OWNS_PRODUCT_CONTENT = 'true';
     try {
       await ctl.updateProduct(ID, { fields: { product_name_th: ' ซอส ', ingredients: '', selling_unit: 'kg' } }, req);
@@ -110,7 +110,7 @@ describe('JoshActionsController — back-office actions', () => {
   it('stage 4d: once commerce owns the product master, status / category / units go to commerce, the rest to josh', async () => {
     const masters = { edit: jest.fn(async () => ({})) };
     const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
-    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : masters) } as never);
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : masters) } as never, {} as never);
     process.env.COMMERCE_OWNS_PRODUCT_MASTER = 'true';
     try {
       await ctl.updateProduct(ID, { fields: { product_status: 'inactive', category_id: 'cat-1', selling_unit: 'KG', low_stock_threshold: 5 } }, req);
@@ -123,7 +123,7 @@ describe('JoshActionsController — back-office actions', () => {
   it('stage 4f: once commerce owns ordering, the logistics keys go to commerce (validated first), the rest to josh', async () => {
     const ordering = { editLogistics: jest.fn(async () => ({})) };
     const db = { query: jest.fn(async () => [{ sku: 'SKU-1' }]) };
-    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : ordering) } as never);
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : ordering) } as never, {} as never);
     process.env.COMMERCE_OWNS_ORDERING = 'true';
     try {
       await ctl.updateProduct(ID, { fields: { unit_ratio: '12', delivery_dates: 'monday', low_stock_threshold: 5 } }, req);
@@ -138,7 +138,7 @@ describe('JoshActionsController — back-office actions', () => {
   it('a product not in the catalog copy yet is pulled from josh once before its content / price is saved', async () => {
     const contents = { edit: jest.fn(async () => ({})) };
     const db = { query: jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([{ sku: 'SKU-9' }]) };
-    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never);
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: (cls: { name: string }) => (cls.name === 'DataSource' ? db : contents) } as never, {} as never);
     process.env.COMMERCE_OWNS_PRODUCT_CONTENT = 'true';
     try {
       await ctl.updateProduct(ID, { fields: { allergens: 'นม' } }, req);
@@ -184,7 +184,7 @@ describe('G9 product rule routing', () => {
     const edit = jest.fn(async () => ({ rules: [] }));
     const josh = { run: jest.fn(async (..._args: unknown[]) => ({})) };
     const ctl = new JoshActionsController(josh as never, { syncId: async () => undefined } as never,
-      { get: (cls: { name: string }) => cls.name === 'DataSource' ? { query: async () => [{ sku: 'SKU' }] } : { edit } } as never);
+      { get: (cls: { name: string }) => cls.name === 'DataSource' ? { query: async () => [{ sku: 'SKU' }] } : { edit } } as never, {} as never);
     const req = { staff: { userId: 's', email: 's@example.com' } } as never;
     await ctl.updateProduct('id', { fields: { tier_prices: '[]', product_name: 'A' } }, req);
     expect(edit).toHaveBeenCalledWith('SKU', [], 's');
@@ -199,7 +199,7 @@ describe('G9 product rule routing', () => {
     process.env.COMMERCE_OWNS_PROMOTIONS = 'true';
     const edit = jest.fn(async () => ({}));
     const josh = { run: jest.fn(async (..._args: unknown[]) => ({ product_inventory_id: 'id' })) };
-    const ctl = new JoshActionsController(josh as never, { syncId: async () => undefined } as never, { get: () => ({ edit }) } as never);
+    const ctl = new JoshActionsController(josh as never, { syncId: async () => undefined } as never, { get: () => ({ edit }) } as never, {} as never);
     await ctl.createProduct({ product: { product_inventory_sku: 'SKU', promotion_rules: '[]' } }, { staff: { userId: 's' } } as never);
     expect(josh.run.mock.calls[0][2]).toEqual({ product: { product_inventory_sku: 'SKU' } });
     expect(edit).toHaveBeenCalledWith('SKU', [], 's', 'create');

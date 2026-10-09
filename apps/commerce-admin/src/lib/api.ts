@@ -400,6 +400,14 @@ export const orderingApi = {
   logistics: (sku: string) => api.get<{ sku: string; fields: Record<string, unknown> }>(`/product-logistics/${encodeURIComponent(sku)}`),
 };
 
+// ---- Marketing testers: the only josh accounts real test sends (push campaign, workflow) may reach ----
+export interface MarketingTester { userId: string; email: string; name: string | null; addedBy: string; addedAt: string }
+export const marketingTestersApi = {
+  list: () => api.get<MarketingTester[]>('/marketing/testers'),
+  add: (email: string) => api.post<MarketingTester[]>('/marketing/testers', { email }),
+  remove: (userId: string) => api.del<MarketingTester[]>(`/marketing/testers/${userId}`),
+};
+
 // ---- Product galleries (stage 4e: owned by commerce; files in josh's media bucket) ----
 export const productImagesApi = {
   get: (sku: string) => api.get<{ sku: string; images: string[] }>(`/product-images/${encodeURIComponent(sku)}`),

@@ -1,19 +1,20 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { JoshAdminCallController, joshAdminCall } from './josh-admin-call.controller';
+import { MarketingTesters } from './marketing-testers';
 
 const req = (role: 'admin' | 'marketing' | 'merchandising' | 'cs' | 'graphic') => ({ staff: { userId: 's-1', email: 'x@jagota.co.th', role } }) as never;
 
 describe('JoshAdminCallController', () => {
   it('passes josh admin routes through and unwraps josh\'s answer', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: { id: 'c-1' } })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     expect(await c.call({ method: 'post', path: '/coupon', body: { coupon_code: 'A' } }, req('marketing'))).toEqual({ id: 'c-1' });
     expect(josh.run).toHaveBeenCalledWith('admin-call', 'call', { method: 'POST', path: '/coupon', query: undefined, body: { coupon_code: 'A' }, files: undefined },
       { userId: 's-1', email: 'x@jagota.co.th' }, 'admin');
   });
 
   it('refuses paths outside the josh admin areas, traversal, and CS routes for marketing', async () => {
-    const c = new JoshAdminCallController({ run: jest.fn() } as never);
+    const c = new JoshAdminCallController({ run: jest.fn() } as never, {} as never);
     await expect(c.call({ method: 'POST', path: '/auth/login' }, req('admin'))).rejects.toBeInstanceOf(ForbiddenException);
     await expect(c.call({ method: 'GET', path: '/coupon/../users' }, req('admin'))).rejects.toBeInstanceOf(BadRequestException);
     await expect(c.call({ method: 'POST', path: '/cs-admin/accounts/merge' }, req('marketing'))).rejects.toBeInstanceOf(ForbiddenException);
@@ -23,7 +24,7 @@ describe('JoshAdminCallController', () => {
 
   it('marketing edits a banner by id; other banner sub-paths and other roles stay out', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     await c.call({ method: 'PATCH', path: '/banner/11111111-1111-4111-8111-111111111111' }, req('marketing'));
     expect(josh.run).toHaveBeenCalledTimes(1);
     await expect(c.call({ method: 'PATCH', path: '/banner/criteria' }, req('marketing'))).rejects.toBeInstanceOf(ForbiddenException);
@@ -32,7 +33,7 @@ describe('JoshAdminCallController', () => {
 
   it('CS tools (delivery schedule, cart-move categories) are admin calls', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: [] })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     await c.call({ method: 'PUT', path: '/admin/cart-move-allowed-categories', body: { categoryIds: [] } }, req('admin'));
     await c.call({ method: 'GET', path: '/cs-admin/delivery-schedule' }, req('admin'));
     expect(josh.run).toHaveBeenCalledTimes(2);
@@ -40,7 +41,7 @@ describe('JoshAdminCallController', () => {
 
   it('stage 6: MER reaches the product areas, CS the order / CS-desk areas, neither reaches PII or staff access', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     await c.call({ method: 'PATCH', path: '/product/p-1' }, req('merchandising'));
     await c.call({ method: 'POST', path: '/product-category' }, req('merchandising'));
     await c.call({ method: 'GET', path: '/supplier' }, req('merchandising'));
@@ -56,7 +57,7 @@ describe('JoshAdminCallController', () => {
 
   it('graphic reads products and categories, uploads images, and cannot write the catalog or reach PII', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     await c.call({ method: 'GET', path: '/product/admin/list' }, req('graphic'));
     await c.call({ method: 'GET', path: '/product-category' }, req('graphic'));
     await c.call({ method: 'GET', path: '/brands' }, req('graphic'));
@@ -96,14 +97,14 @@ describe('JoshAdminCallController', () => {
 
   it('cs reaches exactly the calls its pages make', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     for (const [method, path] of CS_UI_CALLS) await c.call({ method, path }, req('cs'));
     expect(josh.run).toHaveBeenCalledTimes(CS_UI_CALLS.length);
   });
 
   it('cs no longer reaches account merge, customer users / branches, credit decisions, billing, refund decisions or order import (admin still does)', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     for (const [method, path] of CS_REFUSED) {
       await expect(c.call({ method, path }, req('cs'))).rejects.toThrow('admin only');
       await c.call({ method, path }, req('admin'));
@@ -113,7 +114,7 @@ describe('JoshAdminCallController', () => {
 
   it('graphic lists products but cannot read a product, its customer prices or cuisines; MER and marketing still can', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     await c.call({ method: 'GET', path: '/product/admin/list' }, req('graphic'));
     await c.call({ method: 'GET', path: '/product/images/bulk-upload/logs' }, req('graphic'));
     await c.call({ method: 'POST', path: '/product/images/bulk-upload/prune-superseded' }, req('graphic'));
@@ -136,13 +137,30 @@ describe('JoshAdminCallController', () => {
 
   it('marketing keeps its areas (product, upload, coupons)', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
-    const c = new JoshAdminCallController(josh as never);
+    const c = new JoshAdminCallController(josh as never, {} as never);
     for (const path of ['/product/p-1', '/upload/image', '/coupon', '/product-category', '/admin/audit-logs']) await c.call({ method: 'GET', path }, req('marketing'));
     expect(josh.run).toHaveBeenCalledTimes(5);
   });
 
   it('josh 4xx becomes the same kind of error with josh\'s message', async () => {
-    const c = new JoshAdminCallController({ run: jest.fn(async () => ({ status: 400, data: { message: ['coupon_code must be a string'] } })) } as never);
+    const c = new JoshAdminCallController({ run: jest.fn(async () => ({ status: 400, data: { message: ['coupon_code must be a string'] } })) } as never, {} as never);
     await expect(c.call({ method: 'POST', path: '/coupon', body: {} }, req('admin'))).rejects.toThrow('josh: coupon_code must be a string');
+  });
+
+  it('test sends: only to the tester list, only from callers that check it; dry runs pass', async () => {
+    const T = '22222222-2222-4222-8222-222222222222';
+    const repo = { findOneBy: jest.fn(async () => ({ value: { testers: [{ userId: T, email: 't@x.co' }] } })) };
+    const testers = new MarketingTesters(repo as never, {} as never);
+    const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
+    const c = new JoshAdminCallController(josh as never, testers);
+    const push = { method: 'POST', path: `/admin/push-campaigns/${U}/test` };
+    const flow = { method: 'POST', path: `/marketing-workflows/${U}/test` };
+    await expect(c.call({ ...push, body: { userId: U } }, req('marketing'))).rejects.toThrow('tester');
+    await c.call({ ...push, body: { userId: T } }, req('marketing'));
+    await expect(c.call({ ...flow, body: { userId: U, dryRun: false } }, req('marketing'))).rejects.toThrow('tester');
+    await c.call({ ...flow, body: { userId: U } }, req('marketing')); // josh defaults to a dry run
+    await c.call({ ...flow, body: { userId: T, dryRun: false } }, req('marketing'));
+    await expect(joshAdminCall(josh as never, { userId: 's-1', email: 'x@jagota.co.th', role: 'admin' }, { ...push, body: { userId: T } }, 'growth')).rejects.toBeInstanceOf(ForbiddenException);
+    expect(josh.run).toHaveBeenCalledTimes(3);
   });
 });

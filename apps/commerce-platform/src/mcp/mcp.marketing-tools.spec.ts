@@ -1,9 +1,11 @@
 import { MCP_WRITE_SCOPE } from './mcp-oauth.provider';
 import { McpTools } from './mcp.tools';
+import { MarketingTesters } from '../modules/integration/connector/josh/marketing-testers';
 
 const SEG = '22222222-2222-4222-8222-222222222222';
 const NEW = '33333333-3333-4333-8333-333333333333';
 const PRODUCT = '44444444-4444-4444-8444-444444444444';
+const TESTER = '55555555-5555-4555-8555-555555555555';
 const COUPON = {
   coupon_code: 'NEW10', title: 'ลด 10', applicable_products_th: 'ทุกสินค้า', applicable_products_en: 'All products',
   discount_type: 'PERCENTAGE', discount_value: 10, global_limit: 100, start_date: '2026-11-01T00:00:00+07:00', end_date: '2026-11-30T23:59:59+07:00',
@@ -25,6 +27,8 @@ function setup(role: 'marketing' | 'admin' = 'marketing') {
     modules: { get: () => ({ query: async () => [{ sku: 'SKU1' }] }) },
     workflows: { detail: jest.fn(async () => ({ id: 'w-1', name: 'ตะกร้าค้าง', status: 'active' })) },
     promotions: { available: false },
+    push: { available: false },
+    testers: new MarketingTesters({ findOneBy: jest.fn(async () => ({ value: { testers: [{ userId: TESTER, email: 'tester@jagota.co.th', name: 'T' }] } })) } as never, {} as never),
     oauth: {
       issueConfirm: jest.fn(async (_u: string, _c: string, tool: string, hash: string) => { codes.set('code-1', `${tool}:${hash}`); return 'code-1'; }),
       consumeConfirm: jest.fn(async (code: string, _u: string, _c: string, tool: string, hash: string) => codes.get(code) === `${tool}:${hash}`),
@@ -44,6 +48,21 @@ function setup(role: 'marketing' | 'admin' = 'marketing') {
 }
 
 describe('MCP marketing tools', () => {
+  it('test sends go to the tester list only, after confirmation; a non-tester email is refused', async () => {
+    const { call, run, josh } = setup();
+    expect((await call('marketing_testers', {})).testers).toEqual([{ email: 'tester@jagota.co.th', name: 'T' }]);
+    await expect(call('push_campaign_test', { id: NEW, testerEmail: 'customer@shop.co' })).rejects.toThrow('not a tester');
+    const preview = await call('push_campaign_test', { id: NEW });
+    expect(preview.willDo.to).toEqual(['tester@jagota.co.th']);
+    expect(josh.run).not.toHaveBeenCalled();
+    await run('push_campaign_test', { id: NEW });
+    await run('marketing_workflow_test', { id: NEW, dryRun: false });
+    expect(josh.run.mock.calls.map((c) => c.slice(0, 3))).toEqual([
+      ['push-campaigns', 'test', { id: NEW, userId: TESTER }],
+      ['marketing-workflows', 'test', { id: NEW, userId: TESTER, dryRun: false }],
+    ]);
+  });
+
   it('marketing_save creates a coupon switched off, only after confirmation, through josh admin-call', async () => {
     const { call, josh } = setup();
     const args = { kind: 'coupon', data: COUPON };

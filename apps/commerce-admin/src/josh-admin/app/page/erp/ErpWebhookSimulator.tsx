@@ -375,7 +375,7 @@ export default function ErpWebhookSimulator() {
   const courierNameError = submitAttempted && !courierName.trim() ? 'กรอกชื่อคนขับก่อน' : undefined;
 
   return (
-    <div className="flex flex-col gap-4 p-6">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
         title={__uiText("ERP Webhook Simulator")}
         subtitle={__uiText("ยิง webhook ERP → Josh จำลอง เข้า service handler ตัวจริง (validation + logic เดียวกับ /api/erp/*) — ไม่ต้องรอ ERP sandbox")}

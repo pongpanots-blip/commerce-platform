@@ -65,11 +65,11 @@ const ProductVideoUpload = () => {
   const handleSubmit = async () => {
     if (!videoFile) {
       alert(__uiText("กรุณาอัปโหลดวิดีโอ"));
-      return;
+      return false;
     }
     if (selectedSkus.length === 0) {
       alert(__uiText("กรุณาเลือก SKU อย่างน้อย 1 รายการ"));
-      return;
+      return false;
     }
 
     const payload = new FormData();
@@ -87,20 +87,23 @@ const ProductVideoUpload = () => {
           : `อัปโหลดวิดีโอสำเร็จ ${result.updated_skus?.length ?? 0} SKU`;
         alert(message);
         navigate(ADMIN_ROUTES.products);
-        return;
+        return true;
       }
       alert(result?.message ?? __uiText("อัปโหลดไม่สำเร็จ"));
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการอัปโหลดวิดีโอ"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (
     <AdminInsertLayout
       title={__uiText("อัปโหลดวิดีโอสินค้า")}
-      subtitle={__uiText("เลือก SKU ที่ต้องการให้วิดีโอนี้ไปแสดง (วิดีโอจะอยู่ลำดับสุดท้ายเสมอ)")}
+      subtitle={__uiText("เลือกสินค้าที่ต้องการให้วิดีโอนี้ไปแสดง วิดีโอจะอยู่ท้ายสุดเสมอ")}
+      saveLabel="บันทึกวิดีโอ"
       backPath={ADMIN_ROUTES.products}
       saving={saving}
       onSave={handleSubmit}

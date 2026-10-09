@@ -1,5 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
-import { compareCategoryOrder, getProductCategories } from '@josh/shared-api';
+import { compareCategoryOrder, createProductCategory, getProductCategories } from '@josh/shared-api';
 import { Select } from '@josh/shared-ui-web';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
@@ -26,20 +26,35 @@ export type CategoryRow = {
  * — ไม่ใช่ 1-4 แบบที่ฟอร์มเดิมเดาไว้
  */
 export const LEVEL_LABELS: Record<number, string> = {
-  get 0(){return __uiText("Division — หมวดบนสุด (FRESHFOOD / DRYFOOD / NONFOOD)");},
-  get 1(){return __uiText("Category High Level — แถวไอคอนบนหน้าแรก");},
-  get 2(){return __uiText("Sub Category Level 2");},
-  get 3(){return __uiText("Sub Category Level 3 — ชั้นที่ผูกสินค้า");},
+  get 0(){return __uiText("กลุ่มบนสุด เช่น อาหารสด อาหารแห้ง");},
+  get 1(){return __uiText("หมวดที่ขึ้นเป็นไอคอนบนหน้าแรกของร้าน");},
+  get 2(){return __uiText("หมวดย่อยภายในกลุ่ม");},
+  get 3(){return __uiText("ชั้นวางสินค้า — สินค้าผูกกับชั้นนี้");},
 };
 
 export function levelLabel(level: number): string {
-  return __uiText("Level {0} · {1}",{"0":level,"1":LEVEL_LABELS[level] ?? __uiText("ชั้นย่อย")});
+  return LEVEL_LABELS[level] ?? __uiText("ชั้นย่อย");
 }
 
 /**
  * หมวดปลายกิ่ง — หมวดที่ไม่มีลูก
  * สินค้าผูกกับหมวดแบบนี้เสมอ (ปัจจุบัน 5,889 SKU อยู่บน leaf 152 หมวด ไม่มีตัวไหนแขวนบนหมวดที่มีลูก)
  */
+export function categoryOption(row: CategoryRow) {
+  const name = row.category_name_th || row.category_name_en || row.category_path || row.category_id_uuid;
+  return { value: row.category_id_uuid, label: row.category_code ? `${name} (${row.category_code})` : String(name) };
+}
+
+export async function createCategoryOption(draft: Record<string, string>) {
+  const response: { data?: { data?: CategoryRow; category_id_uuid?: string } } = await createProductCategory({
+    category_name_en: draft.category_name_en.trim(),
+    parent_id: draft.parent_id || undefined,
+  });
+  const made = response.data?.data?.category_id_uuid ? response.data.data : response.data?.category_id_uuid ? response.data as CategoryRow : null;
+  if (!made?.category_id_uuid) throw new Error(__uiText('สร้างหมวดไม่สำเร็จ'));
+  return categoryOption(made);
+}
+
 export function leafCategories(rows: CategoryRow[]): CategoryRow[] {
   const hasChildren = new Set(
     rows.map((row) => row.parent_id_uuid).filter((id): id is string => Boolean(id)),
@@ -63,20 +78,24 @@ export function splitPath(path: string | null | undefined, groupDepth = 2) {
 export function Field({
   label,
   hint,
+  required,
+  error,
   children,
 }: {
   label: string;
   hint?: string;
+  required?: boolean;
+  error?: string;
   children: React.ReactNode;
 }) {
   __useUiLocale();
   return (
     <div>
       <label className="block">
-        <span className="mb-1 block text-sm text-ink-secondary">{__uiText(label)}</span>
+        <span className="mb-1 block text-sm text-ink-secondary">{__uiText(label)}{required && <span className="text-alert"> *</span>}</span>
         {children}
       </label>
-      {hint && <p className="mt-1 text-xs text-ink-muted">{__uiText(hint)}</p>}
+      {error ? <p className="mt-1 text-xs text-alert">{__uiText(error)}</p> : hint && <p className="mt-1 text-xs text-ink-muted">{__uiText(hint)}</p>}
     </div>
   );
 }
@@ -173,8 +192,8 @@ export function CategorySelect({
             .filter((row) => splitPath(row.category_path, groupDepth).group === group)
             .map((row) => (
               <option key={row.category_id_uuid} value={row.category_id_uuid}>
-                {row.category_code ? `${row.category_code} · ` : ''}
-                {splitPath(row.category_path, groupDepth).label}
+                {row.category_name_th || row.category_name_en || splitPath(row.category_path, groupDepth).label}
+                {row.category_code ? ` (${row.category_code})` : ''}
               </option>
             ))}
         </optgroup>

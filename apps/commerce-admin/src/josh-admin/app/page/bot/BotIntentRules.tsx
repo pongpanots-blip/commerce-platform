@@ -71,11 +71,11 @@ const BotIntentRules = () => {
   ];
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("Bot Intent Rules")}
         createLabel={__uiText("เพิ่ม Intent Rule")}

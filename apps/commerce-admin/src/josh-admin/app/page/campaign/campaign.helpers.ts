@@ -31,12 +31,12 @@ export const formFromCampaign = (campaign: CampaignDetail): CampaignForm => ({
 export function validateCampaignForm(form: CampaignForm): CampaignFormErrors {
   const errors: CampaignFormErrors = {};
   const name = form.name.trim();
-  if (!name) errors.name = 'กรอกชื่อ Campaign';
-  else if (name.length > 200) errors.name = 'ชื่อยาวเกิน 200 ตัวอักษร';
+  if (!name) errors.name = 'ใส่ชื่อแคมเปญ เช่น ลดราคาขนมปังสิ้นเดือน';
+  else if (name.length > 200) errors.name = 'ย่อชื่อให้ไม่เกิน 200 ตัวอักษร';
   const start = fromBangkokInputValue(form.startAt);
   const end = fromBangkokInputValue(form.endAt);
-  if (!start || !end) errors.dates = 'เลือกวันเวลาเริ่มและสิ้นสุด';
-  else if (new Date(end) < new Date(start)) errors.dates = 'วันสิ้นสุดต้องไม่ก่อนวันเริ่ม';
+  if (!start || !end) errors.dates = 'เลือกทั้งวันเริ่มและวันสิ้นสุด เช่น วันนี้ถึงสิ้นเดือน';
+  else if (new Date(end) < new Date(start)) errors.dates = 'เลื่อนวันสิ้นสุดให้หลังวันเริ่ม';
   return errors;
 }
 

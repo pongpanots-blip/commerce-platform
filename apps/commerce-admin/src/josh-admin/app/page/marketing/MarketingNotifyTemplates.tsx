@@ -803,7 +803,7 @@ export default function MarketingNotifyTemplates() {
     pushEnEntry.sourceBody !== compiled.body;
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="cp-management-page flex flex-col gap-4">
       <div>
         <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
           {__uiText("&larr; Marketing Workflows")}</Link>

@@ -161,7 +161,7 @@ const CouponList = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("Coupons")}
         subtitle={__uiText("Promotions → จัดการรายชื่อและแจ้งเตือนได้ที่หน้ารายละเอียดคูปอง")}

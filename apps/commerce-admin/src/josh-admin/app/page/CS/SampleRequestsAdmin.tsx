@@ -72,7 +72,7 @@ export default function SampleRequestsAdmin() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={__uiText("สินค้าตัวอย่าง")} subtitle={__uiText("คำขอสินค้าตัวอย่างก่อนสั่งซื้อ")} />
       {error ? <ErrorText error={error} /> : <Table columns={columns} data={rows} loading={loading} />}
     </div>

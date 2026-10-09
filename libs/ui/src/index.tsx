@@ -23,6 +23,8 @@ import {
 import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ICONS } from './icons';
 import { LanguageSelector } from './i18n';
+import { PageChrome, PageHelpLink, fieldExample, fieldHint } from './usability';
+import { blankFieldMessage, confirmLeaveIfDirty, scrollToFirstInvalid, useUnsavedChanges } from './forms';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from "./i18n";
@@ -219,26 +221,55 @@ export function SearchInput({ className, ...rest }: InputHTMLAttributes<HTMLInpu
   );
 }
 
-/** Labelled form field. */
-export function Field({ label, hint, children, className }: { label: ReactNode; hint?: ReactNode; children: ReactNode; className?: string }) {
+/** Label, star, example, helper, and an error that says how to fix the value. */
+export function FormField({ label, hint, required, error, children, className }: { label: ReactNode; hint?: ReactNode; required?: boolean; error?: ReactNode; children: ReactNode; className?: string }) {
   __useUiLocale();
   const labelId = useId();
   const hintId = useId();
+  const [blank, setBlank] = useState(false);
+  const labelText = typeof label === 'string' ? label : '';
+  const first = Children.toArray(children)[0];
+  const firstEl = isValidElement<{ type?: string; placeholder?: string; required?: boolean; disabled?: boolean; readOnly?: boolean }>(first) ? first : null;
+  const isRequired = Boolean(required || firstEl?.props.required);
+  const skipHint = Boolean(firstEl?.props.disabled || firstEl?.props.readOnly);
+  const exampleText = firstEl?.props.placeholder ?? fieldExample(firstEl?.type === 'select' ? 'select' : firstEl?.props.type);
+  const shownError = error || (blank && labelText && isRequired ? blankFieldMessage(labelText, exampleText) : '');
+  const help = shownError ? undefined : hint !== undefined ? hint : (!skipHint && isRequired ? fieldHint(true) : undefined);
+  const describedBy = [help || shownError ? hintId : ''].filter(Boolean).join(' ');
   const controls = Children.map(children, (child, index) => {
-    if (index !== 0 || !isValidElement<{ 'aria-labelledby'?: string; 'aria-describedby'?: string; 'aria-label'?: string }>(child)) return child;
+    if (index !== 0 || !isValidElement<{ type?: string; placeholder?: string; onBlur?: (event: unknown) => void; onChange?: (event: unknown) => void; 'aria-labelledby'?: string; 'aria-describedby'?: string; 'aria-label'?: string; 'aria-invalid'?: boolean }>(child)) return child;
+    const example = child.props.placeholder ?? fieldExample(child.type === 'select' ? 'select' : child.props.type);
     return cloneElement(child, {
+      ...(example && !child.props.placeholder ? { placeholder: __uiText(example) } : {}),
       ...(label && !child.props['aria-label'] && !child.props['aria-labelledby'] ? { 'aria-labelledby': labelId } : {}),
-      ...(hint ? { 'aria-describedby': [child.props['aria-describedby'], hintId].filter(Boolean).join(' ') } : {}),
+      ...(describedBy ? { 'aria-describedby': [child.props['aria-describedby'], describedBy].filter(Boolean).join(' ') } : {}),
+      ...(shownError ? { 'aria-invalid': true } : {}),
+      onBlur: (event: unknown) => {
+        child.props.onBlur?.(event);
+        const target = (event as { target?: { value?: string; type?: string } | null }).target;
+        if (target?.type === 'checkbox' || target?.type === 'radio') return;
+        if (isRequired && labelText && !String(target?.value ?? '').trim()) setBlank(true);
+      },
+      onChange: (event: unknown) => {
+        child.props.onChange?.(event);
+        const target = (event as { target?: { value?: string } | null }).target;
+        if (String(target?.value ?? '').trim()) setBlank(false);
+      },
     });
   });
   return (
     <label className={cx('flex flex-col gap-1 min-w-0', className)}>
-      <span id={labelId} className="text-xs font-medium text-on-surface">{typeof label === 'string' ? __uiText(label) : label}</span>
+      <span id={labelId} className="text-xs font-medium text-on-surface">
+        {typeof label === 'string' ? __uiText(label) : label}
+        {isRequired && <span className="text-[#c2333f]"> *</span>}
+      </span>
       {controls}
-      {hint && <span id={hintId} className="text-[11px] text-outline">{typeof hint === 'string' ? __uiText(hint) : hint}</span>}
+      {shownError ? <span id={hintId} className="text-[11px] text-[#c2333f]">{typeof shownError === 'string' ? __uiText(shownError) : shownError}</span> : help && <span id={hintId} className="text-[11px] text-outline">{typeof help === 'string' ? __uiText(help) : help}</span>}
     </label>
   );
 }
+
+export const Field = FormField;
 
 export function Checkbox({ label, className, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label?: ReactNode }) {
   __useUiLocale();
@@ -394,6 +425,7 @@ export function PageHeader({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl md:text-[28px] font-semibold tracking-tight text-on-surface font-headline break-words [overflow-wrap:anywhere]">{title}</h1>
+            <PageHelpLink />
             {badge}
           </div>
           {subtitle && <p className="text-sm text-on-surface-variant mt-2 max-w-3xl leading-relaxed">{subtitle}</p>}
@@ -427,7 +459,11 @@ export function SectionTitle({ children, note }: { children: ReactNode; note?: R
 
 /** The standard page body width + vertical rhythm. */
 export function Page({ children }: { children: ReactNode }) {
-  return <div className="max-w-[1240px] mx-auto space-y-4">{children}</div>;
+  return (
+    <div className="max-w-[1240px] mx-auto space-y-4">
+      <PageChrome>{children}</PageChrome>
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------- create / edit forms and detail views
@@ -463,13 +499,20 @@ export function FormPanel({
   extraActions?: ReactNode;
 }) {
   __useUiLocale();
+  const [dirty, setDirty] = useState(false);
+  const requestLeave = useUnsavedChanges(dirty);
   const grid = { 1: '', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' }[cols];
   return (
     <form data-panel
       className={cx(panelCls, 'overflow-hidden')}
+      onInput={() => setDirty(true)}
       onSubmit={(e) => {
         e.preventDefault();
-        void onSubmit(e);
+        if (e.currentTarget.querySelector('[aria-invalid="true"]')) {
+          scrollToFirstInvalid(e.currentTarget);
+          return;
+        }
+        void Promise.resolve(onSubmit(e)).then((result) => { if (result !== false) setDirty(false); });
       }}
     >
       <div className="flex items-start gap-3 px-4 py-3 border-b border-secondary-container">
@@ -490,7 +533,7 @@ export function FormPanel({
       <div className="flex flex-wrap items-center justify-end gap-2 px-4 py-3 border-t border-secondary-container bg-surface-container-low/50">
         {extraActions}
         {onCancel && (
-          <Button variant="ghost" onClick={onCancel} disabled={busy}>
+          <Button variant="ghost" onClick={() => { void requestLeave(onCancel); }} disabled={busy}>
             {__uiText("ยกเลิก")}</Button>
         )}
         <Button variant="primary" type="submit" icon={busy ? 'progress_activity' : 'check'} disabled={busy}>
@@ -507,17 +550,25 @@ export function Span({ children, className }: { children: ReactNode; className?:
 }
 
 /** Detail facts: label above value, in a responsive grid. Values may be any node (chips, mono, links). */
-export function KeyValueGrid({ items, cols = 4 }: { items: { label: ReactNode; value: ReactNode; mono?: boolean; wide?: boolean }[]; cols?: 2 | 3 | 4 }) {
+export function KeyValueGrid({ items, cols = 4 }: { items: { label: ReactNode; value: ReactNode; mono?: boolean; wide?: boolean; copy?: boolean }[]; cols?: 2 | 3 | 4 }) {
   __useUiLocale();
   const grid = { 2: 'sm:grid-cols-2', 3: 'sm:grid-cols-2 lg:grid-cols-3', 4: 'sm:grid-cols-2 lg:grid-cols-4' }[cols];
   return (
     <dl className={cx('grid grid-cols-1 gap-x-6 gap-y-3', grid)}>
-      {items.map((it, i) => (
-        <div key={i} className={cx('min-w-0', it.wide && 'col-span-full')}>
-          <dt className="text-[10px] font-semibold uppercase tracking-wide text-outline">{typeof it.label === 'string' ? __uiText(it.label) : it.label}</dt>
-          <dd className={cx('mt-0.5 text-xs text-on-surface break-words', it.mono && 'font-mono text-[11px]')}>{it.value ?? '—'}</dd>
-        </div>
-      ))}
+      {items.map((it, i) => {
+        const empty = it.value === null || it.value === undefined || it.value === '';
+        return (
+          <div key={i} className={cx('min-w-0', it.wide && 'col-span-full')}>
+            <dt className="text-[10px] font-semibold uppercase tracking-wide text-outline">{typeof it.label === 'string' ? __uiText(it.label) : it.label}</dt>
+            <dd className={cx('mt-0.5 text-xs text-on-surface break-words', it.mono && 'font-mono text-[11px]')}>
+              {empty ? '—' : it.value}
+              {it.copy && typeof it.value === 'string' && it.value && (
+                <button type="button" className="ml-1.5 text-[10px] font-medium normal-case tracking-normal text-primary" onClick={() => { void navigator.clipboard?.writeText(it.value as string); }}>{__uiText('คัดลอก')}</button>
+              )}
+            </dd>
+          </div>
+        );
+      })}
     </dl>
   );
 }
@@ -1345,11 +1396,11 @@ export function Modal({ title, onClose, children, footer, width = 480 }: { title
     };
   }, []);
   return (
-    <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) onClose(); }} className={cx(panelCls, 'm-auto w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto p-0 shadow-xl backdrop:bg-inverse-surface/40')} style={{ maxWidth: width }}>
+    <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} onClick={event => { if (event.target === event.currentTarget) void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} className={cx(panelCls, 'm-auto w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto p-0 shadow-xl backdrop:bg-inverse-surface/40')} style={{ maxWidth: width }}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-secondary-container">
           <h2 id={titleId} className="min-w-0 text-sm font-semibold break-words [overflow-wrap:anywhere]">{title}</h2>
           <div className="flex shrink-0 items-center gap-2"><LanguageSelector />
-          <button type="button" onClick={onClose} aria-label={__uiText("ปิด")} className="text-outline hover:text-on-surface">
+          <button type="button" onClick={() => { void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} aria-label={__uiText("ปิด")} className="text-outline hover:text-on-surface">
             <Icon name="close" size={18} />
           </button></div>
         </div>
@@ -1367,9 +1418,9 @@ export const fmt = {
     n === null || n === undefined || n === '' ? '—' : `฿${Number(n).toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })}`,
   /** "24 ต.ค. 2026 10:42" */
   when: (d: string | number | Date | null | undefined) =>
-    d ? new Date(d).toLocaleString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—',
+    d ? new Date(d).toLocaleString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' }) : '—',
   date: (d: string | number | Date | null | undefined) =>
-    d ? new Date(d).toLocaleDateString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—',
+    d ? new Date(d).toLocaleDateString(getUiLocale() === 'th' ? 'th-TH-u-ca-gregory' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Bangkok' }) : '—',
   /** "3 นาทีที่แล้ว" */
   ago: (d: string | number | Date | null | undefined) => {
     if (!d) return '—';
@@ -1381,3 +1432,7 @@ export const fmt = {
 };
 export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
 export { TaskPageFrame } from './TaskPageFrame';
+export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, PageHelpLink, enablePageGuides, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
+export { FormSection, FormActions, DetailHeader, CopyableId, MasterDataSelect, findMasterMatch, masterKey, useUnsavedChanges, confirmLeaveIfDirty, scrollToFirstInvalid, blankFieldMessage } from './forms';
+export { pageGuide } from './page-guides';
+export type { PageGuide } from './page-guides';

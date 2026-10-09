@@ -119,7 +119,7 @@ export default function CreditNotesAdmin() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Credit Notes")}
         subtitle={__uiText("ใบลดหนี้จากเคลม — view=admin")}

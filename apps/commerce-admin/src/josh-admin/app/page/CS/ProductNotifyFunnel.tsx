@@ -165,7 +165,7 @@ export default function ProductNotifyFunnelPage() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Product Notify Funnel")}
         subtitle={__uiText("จำนวนครั้งที่แจ้งเตือนก่อนลูกค้าสั่งซื้อ แยกตามช่องทาง (อ่านอย่างเดียว)")}

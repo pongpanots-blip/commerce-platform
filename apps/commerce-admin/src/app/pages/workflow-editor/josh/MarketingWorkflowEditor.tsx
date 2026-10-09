@@ -51,7 +51,7 @@ import { TriggerRuleBuilder } from './TriggerRuleBuilder';
 import { defaultTriggerConfigFor } from './trigger-rule.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type CouponOption = { id: string; coupon_code: string; title: string };
 
 const STATUS_LABEL: Record<MarketingWorkflow['status'], string> = {
@@ -668,14 +668,13 @@ function CreateWorkflowScreen() {
   };
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-5 p-6">
+    <div className="cp-editor-layout w-full max-w-4xl flex flex-col gap-5">
       <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
         {__uiText("&larr; กลับไปหน้ารายการ Workflow")}</Link>
-      <div>
-        <h1 className="text-xl font-bold text-gray-800">{__uiText("สร้าง Marketing Workflow ใหม่")}</h1>
-        <p className="mt-1 text-xs text-gray-500">
-          {__uiText("ตั้งชื่อ แล้วสร้างเงื่อนไขเริ่มต้นเอง (เลือกประเภท + ปรับค่า) — Audience ไม่บังคับ (ทุกคนที่เข้าเงื่อนไข trigger ได้) · ขั้นตอน action แก้ต่อใน canvas ได้หลังสร้าง")}</p>
-      </div>
+      <PageHeader
+        title={__uiText("สร้าง Marketing Workflow ใหม่")}
+        subtitle={__uiText("ตั้งชื่อ แล้วสร้างเงื่อนไขเริ่มต้นเอง (เลือกประเภท + ปรับค่า) — Audience ไม่บังคับ (ทุกคนที่เข้าเงื่อนไข trigger ได้) · ขั้นตอน action แก้ต่อใน canvas ได้หลังสร้าง")}
+      />
 
       <section className="space-y-2">
         <h2 className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("1 · ชื่อ Workflow")}</h2>
@@ -1188,18 +1187,18 @@ function EditWorkflowScreen({ id }: { id: string }) {
   };
 
   if (loadedId !== id && loadError) {
-    return <div className="space-y-4 p-4">
+    return <div className="cp-management-page space-y-4">
       <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-sm text-primary hover:underline">{__uiText('&larr; กลับไปหน้ารายการ Workflow')}</Link>
       <LoadError title={__uiText('Marketing Workflow')} error={loadError} onRetry={() => void loadWorkflow()} />
     </div>;
   }
 
   if (loading || loadedId !== id) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="cp-management-page flex flex-col gap-4">
       <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
         {__uiText("&larr; กลับไปหน้ารายการ Workflow")}</Link>
 

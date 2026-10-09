@@ -218,7 +218,7 @@ const CategoryList = () => {
         : __uiText("หมวดย่อย {0} หมวด — ลากเพื่อจัดลำดับ แล้วกดบันทึก", { "0": order.length });
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
         title={__uiText("จัดการหมวดหมู่")}
         subtitle={__uiText("หน้าแรกของ shop แสดงหมวด Level 1 ทั้งชั้น — ลากเรียงลำดับและติ๊กเลือกว่าหมวดไหนขึ้นหน้าแรกได้ที่นี่")}

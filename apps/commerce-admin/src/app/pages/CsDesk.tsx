@@ -25,6 +25,11 @@ function rowsOf(answer: unknown): Row[] {
 const PAYMENT = [['credit', 'เครดิตเทอม'], ['qr', 'QR'], ['cod', 'เก็บปลายทาง'], ['payment_link', 'ลิงก์ชำระเงิน'], ['customer_credit', 'เครดิตลูกค้า']];
 const SAMPLE_STATUS: Record<string, string> = { pending: 'รอพิจารณา', approved: 'อนุมัติ', rejected: 'ไม่อนุมัติ', fulfilled: 'ส่งแล้ว' };
 const show = (v: unknown) => (v == null ? '—' : typeof v === 'object' ? JSON.stringify(v) : String(v));
+/** Backend rejects a CS search shorter than 2 characters. */
+function readySearch(value: string) {
+  const term = value.trim();
+  return term.length >= 2 ? term : '';
+}
 type Tab = 'order' | 'samples' | 'merge';
 
 /**
@@ -62,7 +67,8 @@ function CustomerPick({ onPick }: { onPick: (p: { company: JoshRow; userId: stri
   const [companyId, setCompanyId] = useState('');
   const [userId, setUserId] = useState('');
   const [branchId, setBranchId] = useState('');
-  const found = useAsync(() => (search ? joshCustomerApi.list({ search, page: 1, limit: 20 }) : Promise.resolve(null)), [search]);
+  const term = readySearch(search);
+  const found = useAsync(() => (term ? joshCustomerApi.list({ search: term, page: 1, limit: 20 }) : Promise.resolve(null)), [term]);
   const detail = useAsync(() => (companyId ? joshCustomerApi.detail(companyId) : Promise.resolve(null)), [companyId]);
   const d = detail.data;
   const pick = (u: string, b: string) => { setUserId(u); setBranchId(b); onPick(d && u && b ? { company: d, userId: u, branchId: b } : null); };
@@ -72,7 +78,9 @@ function CustomerPick({ onPick }: { onPick: (p: { company: JoshRow; userId: stri
         <SearchInput className="flex-1" aria-label={__uiText("ค้นหาบริษัท")} placeholder={__uiText("ชื่อบริษัท / รหัสลูกค้า ERP")} value={q} onChange={(e) => setQ(e.target.value)} />
         <Button type="submit" icon="search">{__uiText("ค้นหา")}</Button>
       </form>
-      {found.data && (
+      {q.trim().length > 0 && q.trim().length < 2 && <Hint>{__uiText("พิมพ์อย่างน้อย 2 ตัวอักษร")}</Hint>}
+      {term && found.data && !found.data.items.length && <Empty icon="search_off">{__uiText("ไม่พบบริษัทที่ตรงกับคำค้น")}</Empty>}
+      {!!found.data?.items.length && (
         <Field label={__uiText("บริษัท")}>
           <Select value={companyId} onChange={(e) => { setCompanyId(e.target.value); pick('', ''); }}>
             <option value="">{__uiText("— เลือก —")}</option>
@@ -111,7 +119,8 @@ function OrderOnBehalf() {
   const [pay, setPay] = useState({ payment_method: 'credit', coupon_code: '', delivery_date: '' });
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ tone: 'ok' | 'danger'; text: string } | null>(null);
-  const products = useAsync(() => (skuSearch ? joshProductApi.list({ search: skuSearch, status: 'active', page: 1, limit: 10 }) : Promise.resolve(null)), [skuSearch]);
+  const skuTerm = readySearch(skuSearch);
+  const products = useAsync(() => (skuTerm ? joshProductApi.list({ search: skuTerm, status: 'active', page: 1, limit: 10 }) : Promise.resolve(null)), [skuTerm]);
   const body = () => ({ user_id: who!.userId, branch_id: who!.branchId, items: items.map((i) => ({ product_inventory_id: i.id, quantity: i.quantity })) });
 
   async function run(fn: () => Promise<unknown>, after: (r: unknown) => void) {
@@ -138,6 +147,8 @@ function OrderOnBehalf() {
               <SearchInput className="flex-1" aria-label={__uiText("ค้นหาสินค้า")} placeholder={__uiText("SKU / ชื่อสินค้า")} value={skuQ} onChange={(e) => setSkuQ(e.target.value)} />
               <Button type="submit" icon="search">{__uiText("ค้นหาสินค้า")}</Button>
             </form>
+            {skuQ.trim().length > 0 && skuQ.trim().length < 2 && <Hint>{__uiText("พิมพ์อย่างน้อย 2 ตัวอักษร")}</Hint>}
+            {skuTerm && products.data && !products.data.items.length && <Empty icon="search_off">{__uiText("ไม่พบสินค้าที่ตรงกับคำค้น")}</Empty>}
             {!!products.data?.items.length && (
               <div className="rounded-lg border border-secondary-container divide-y divide-secondary-container/70">
                 {products.data.items.map((p) => (

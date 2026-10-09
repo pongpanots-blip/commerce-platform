@@ -20,23 +20,27 @@ const CreateBotIntentRule = () => {
   const handleSubmit = async () => {
     if (!form.pattern) {
       alert(__uiText("กรุณากรอก Pattern"));
-      return;
+      return false;
     }
     setSaving(true);
     try {
       await createBotIntentRule(form);
       navigate(ADMIN_ROUTES.botIntentRules);
+      return true;
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่ม Intent Rule")}
-      subtitle={__uiText("กฎจับคู่ intent ของ chatbot จาก pattern (regex)")}
+      title={__uiText("เพิ่มกติกาที่บอทใช้ตอบ")}
+      subtitle={__uiText("บอกคำที่ลูกค้าพิมพ์ แล้วเลือกรูปแบบคำตอบที่บอทใช้")}
+      saveLabel="บันทึกกติกา"
       backPath={ADMIN_ROUTES.botIntentRules}
       saving={saving}
       onSave={handleSubmit}

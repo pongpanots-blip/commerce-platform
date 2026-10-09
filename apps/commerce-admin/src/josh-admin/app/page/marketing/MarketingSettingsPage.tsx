@@ -92,7 +92,7 @@ export default function MarketingSettingsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-6">
+    <div className="cp-management-page space-y-6">
       <div>
         <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
           {__uiText("&larr; Marketing Workflows")}</Link>

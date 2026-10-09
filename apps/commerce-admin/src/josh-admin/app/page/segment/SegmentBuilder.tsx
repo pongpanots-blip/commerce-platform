@@ -237,11 +237,11 @@ export function SegmentBuilder() {
 
   if (loadError) return <LoadError title={__uiText('กำหนดกลุ่มลูกค้า')} error={loadError} onRetry={() => { setLoadError(null); setLoadingFields(true); setLoadingSegment(Boolean(routeId)); setReload(value => value + 1); }} />;
   if (loadingFields || loadingSegment) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-5 p-4 md:p-6">
+    <div className="cp-management-page flex flex-col gap-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <button

@@ -55,7 +55,7 @@ const EditBotTemplate = () => {
   const handleSubmit = async () => {
     if (!id || !form.name) {
       alert(__uiText("กรุณากรอกชื่อ Template"));
-      return;
+      return false;
     }
     let schema: any;
     let example: any;
@@ -65,13 +65,13 @@ const EditBotTemplate = () => {
       schema = JSON.parse(form.schemaText);
     } catch {
       setSchemaError(__uiMessage("Schema ไม่ใช่ JSON ที่ถูกต้อง"));
-      return;
+      return false;
     }
     try {
       example = JSON.parse(form.exampleText);
     } catch {
       setExampleError(__uiMessage("Example ไม่ใช่ JSON ที่ถูกต้อง"));
-      return;
+      return false;
     }
     setSaving(true);
     try {
@@ -83,21 +83,25 @@ const EditBotTemplate = () => {
         active: form.active,
       });
       navigate(ADMIN_ROUTES.botTemplates);
+      return true;
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   if (loadError) return <LoadError title={__uiText('แก้ไขเทมเพลตบอต')} error={loadError} onRetry={() => setReload(value => value + 1)} />;
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <AdminInsertLayout
-      title={__uiText("แก้ไข Template")}
+      title={__uiText("แก้ไขรูปแบบคำตอบ")}
+      saveLabel="บันทึกรูปแบบคำตอบ"
       backPath={ADMIN_ROUTES.botTemplates}
       saving={saving}
       onSave={handleSubmit}

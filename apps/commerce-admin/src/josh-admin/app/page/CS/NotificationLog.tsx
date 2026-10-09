@@ -127,17 +127,17 @@ export default function NotificationLog() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Notification Log")}
         subtitle={__uiText("ประวัติการแจ้งเตือนของผู้ใช้ (อ่านอย่างเดียว) — สำหรับทีมซัพพอร์ต")}
       />
 
-      <div className="mb-4 flex items-end gap-2">
-        <label className="flex flex-col gap-1">
+      <div className="mb-4 flex flex-wrap items-end gap-2">
+        <label className="flex min-w-0 max-w-full flex-col gap-1">
           <span className="text-xs text-gray-500">{__uiText("รหัสผู้ใช้ (User ID)")}</span>
           <input
-            className="w-96 rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className="w-96 max-w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
             value={userIdInput}
             onChange={(e) => setUserIdInput(e.target.value)}
             onKeyDown={(e) => {

@@ -47,7 +47,7 @@ export default function DeliveryScheduleAdmin() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Delivery Schedule")}
         subtitle={__uiText("รอบจัดส่งและเกณฑ์จาก CS admin API")}

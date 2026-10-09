@@ -56,7 +56,7 @@ import {
 } from '../campain/promotion-mechanic.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { MasterDataSelect, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const MAX_IMAGES = 3;
 const NUTRITION_FORM_KEYS = new Set(['nutrition_basis', 'nutrition_items']);
 
@@ -116,7 +116,6 @@ const EditProduct = () => {
   });
 
   const [brandOptions, setBrandOptions] = useState<{ value: string; label: string }[]>([]);
-  const [newBrandCode, setNewBrandCode] = useState('');
   // ERP PRICE (ราคากล่อง/หน่วยสั่ง) — read-only ที่นี่ เจ้าของค่าคือ ERP ไม่ใช่ admin
   const [orderingPrice, setOrderingPrice] = useState<string>('');
 
@@ -304,27 +303,27 @@ const EditProduct = () => {
   };
 
   const handleSubmit = async () => {
-    if (!id) return;
+    if (!id) return false;
     if (!form.product_inventory_sku || !form.product_name_th || !form.product_name_en) {
       alert(__uiText("กรุณากรอก SKU และชื่อสินค้าทั้ง 2 ภาษา"));
-      return;
+      return false;
     }
 
     const graphic = session.claims()?.role === 'graphic';
     if (!graphic && !form.selling_unit_price.trim()) {
       alert(__uiText("กรุณาระบุราคาขาย"));
-      return;
+      return false;
     }
 
     if (totalImageCount > MAX_IMAGES) {
       alert(__uiText("รูปภาพได้สูงสุด {0} รูป", {"0": MAX_IMAGES}));
-      return;
+      return false;
     }
 
     const tierError = graphic || rulesLockedBy ? null : validatePromotionMechanicForm(tierForm);
     if (tierError) {
       alert(tierError);
-      return;
+      return false;
     }
 
     const payload = new FormData();
@@ -358,19 +357,21 @@ const EditProduct = () => {
             await setProductCuisines(id, selectedCuisineIds);
           } catch {
             alert(__uiText("บันทึกสินค้าแล้ว แต่บันทึก cuisine ไม่สำเร็จ — ลองบันทึกอีกครั้ง"));
-            return;
+            return false;
           }
         }
         navigate(ADMIN_ROUTES.productDetail(id));
-        return;
+        return true;
       }
       alert(response.data?.message ?? __uiText("บันทึกไม่สำเร็จ"));
     } catch (err) {
       // e.g. 400 promotion_rules_locked_by_mechanic — the message names the mechanic
       alert(saveErrorMessage(err, 'เกิดข้อผิดพลาดในการบันทึก'));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   const toggleCuisine = (cuisineId: string) => {
@@ -392,13 +393,15 @@ const EditProduct = () => {
 
   if (loadError) return <LoadError title={__uiText('แก้ไขสินค้า')} error={loadError} onRetry={() => { setLoadError(null); setLoading(true); setReload(value => value + 1); }} />;
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <AdminInsertLayout
       title={__uiText("แก้ไขสินค้า")}
-      subtitle={__uiText("อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้า Upload Video")}
+      subtitle={__uiText("อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้าอัปโหลดวิดีโอ")}
+      saveLabel="บันทึกสินค้า"
+      steps={['ตรวจชื่อสินค้า', 'แก้ราคาหรือรูป', 'บันทึกสินค้า']}
       backPath={id ? ADMIN_ROUTES.productDetail(id) : ADMIN_ROUTES.products}
       saving={saving}
       onSave={handleSubmit}
@@ -411,12 +414,14 @@ const EditProduct = () => {
           disabled
           readOnly
         />
-        <Input
-          label={__uiText("สถานะสินค้า")}
-          hint={__uiText("1 = ใช้งาน, 0 = ปิด")}
-          value={form.product_status}
-          onChange={(e) => handleInput('product_status', e.target.value)}
-        />
+        <label className="block text-sm font-medium text-gray-700">
+          <span className="mb-1 block">{__uiText("สถานะสินค้า")}</span>
+          <select className="w-full border rounded-lg px-3 py-2" value={form.product_status} onChange={(e) => handleInput('product_status', e.target.value)}>
+            {form.product_status && !['1', '0'].includes(String(form.product_status)) && <option value={form.product_status}>{form.product_status}</option>}
+            <option value="1">{__uiText("ใช้งาน")}</option>
+            <option value="0">{__uiText("ปิดการขาย")}</option>
+          </select>
+        </label>
         <Input
           label={__uiText("จำนวนสต็อก")}
           value={form.product_inventory_quantity}
@@ -429,26 +434,11 @@ const EditProduct = () => {
         />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">{__uiText("แบรนด์")}</label>
-          <select
-            className="w-full border rounded-lg px-3 py-2"
+          <MasterDataSelect
+            aria-label={__uiText("แบรนด์")}
+            options={[{ value: '', label: __uiText("ไม่ระบุแบรนด์") }, ...brandOptions]}
             value={form.brand_code}
-            onChange={(e) => handleInput('brand_code', e.target.value)}
-          >
-            <option value="">{__uiText("-- เลือกแบรนด์ --")}</option>
-            {brandOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <Input
-            label={__uiText("หรือพิมพ์รหัสแบรนด์ใหม่ (ถ้ายังไม่มีในลิสต์)")}
-            value={newBrandCode}
-            onChange={(e: any) => {
-              setNewBrandCode(e.target.value);
-              handleInput('brand_code', e.target.value || form.brand_code);
-            }}
-            placeholder={__uiText("เช่น ACME")}
+            onChange={(next) => handleInput('brand_code', String(next))}
           />
         </div>
         <Input
@@ -456,12 +446,15 @@ const EditProduct = () => {
           value={form.marketed_by}
           onChange={(e) => handleInput('marketed_by', e.target.value)}
         />
-        <Input
-          label={__uiText("ประเภทภาษีมูลค่าเพิ่ม (VAT Type)")}
-          hint={__uiText("0% หรือ 7%")}
-          value={form.vat_type}
-          onChange={(e) => handleInput('vat_type', e.target.value)}
-        />
+        <label className="block text-sm font-medium text-gray-700">
+          <span className="mb-1 block">{__uiText("ประเภทภาษีมูลค่าเพิ่ม (VAT Type)")}</span>
+          <select className="w-full border rounded-lg px-3 py-2" value={form.vat_type} onChange={(e) => handleInput('vat_type', e.target.value)}>
+            <option value="">{__uiText("ค้นหาแล้วเลือก")}</option>
+            {form.vat_type && !['0%', '7%'].includes(form.vat_type) && <option value={form.vat_type}>{form.vat_type}</option>}
+            <option value="0%">0%</option>
+            <option value="7%">7%</option>
+          </select>
+        </label>
         <Input
           label={__uiText("อุณหภูมิเก็บรักษา")}
           value={form.storage_temperature}
@@ -506,7 +499,7 @@ const EditProduct = () => {
             rules={mechanicHasTiers ? tierForm.rules : []}
           />
         ) : (
-          <PromotionQuantityRuleFields value={tierForm} onChange={setTierForm} />
+          <PromotionQuantityRuleFields value={tierForm} onChange={setTierForm} compact />
         )}
       </div>
 

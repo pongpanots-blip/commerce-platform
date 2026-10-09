@@ -327,7 +327,7 @@ export default function PushCampaignsPage() {
   );
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Push Campaigns")}
         subtitle={__uiText("Compose · Audience · Schedule/Send — ส่งผ่าน OneSignal ของ Josh")}

@@ -12,11 +12,14 @@ module.exports = {
     extend: {
       fontFamily: { sans: ['"Noto Sans Thai"', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
       colors: {
-        primary: { DEFAULT: '#365cf5', dark: '#2648d8', light: '#6b86ff', soft: '#eef2ff', border: '#dce3ef' },
+        primary: { DEFAULT: '#365cf5', dark: '#2948d4', light: '#6b86ff', soft: '#e8edff', border: 'var(--color-secondary-container)' },
         alert: { DEFAULT: '#BF0013', dark: '#7B0008', soft: '#FFF2F0', light: '#FF5E54' },
-        ink: { DEFAULT: '#041A3D', secondary: '#354764', muted: '#808C9F', disabled: '#B1B9C5' },
-        surface: { disabled: '#FBFBFB' },
-        line: '#D5F2F2',
+        ink: { DEFAULT: 'var(--color-on-surface)', secondary: 'var(--color-on-surface-variant)', muted: 'var(--color-outline)', disabled: 'var(--color-outline-variant)' },
+        surface: { disabled: 'var(--color-surface-container-low)', 'container-lowest': 'var(--color-surface-container-lowest)', 'container-low': 'var(--color-surface-container-low)' },
+        'on-surface': 'var(--color-on-surface)',
+        'on-surface-variant': 'var(--color-on-surface-variant)',
+        'secondary-container': 'var(--color-secondary-container)',
+        line: 'var(--color-secondary-container)',
       },
       boxShadow: { 'level-1': '0 1px 3px rgba(20,30,60,0.06)' },
     },

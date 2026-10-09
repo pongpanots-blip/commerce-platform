@@ -1,67 +1,10 @@
-.page {
-  padding: 24px;
-  background: #f9fafb;
-  min-height: 100vh;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
-.saveBtn,
-.testBtn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.saveBtn {
-  background: #3b82f6;
-  color: white;
-}
-
-.saveBtn:hover:not(:disabled) {
-  background: #2563eb;
-}
-
-.saveBtn:disabled {
-  background: #d1d5db;
-  cursor: not-allowed;
-}
-
-.testBtn {
-  background: #10b981;
-  color: white;
-}
-
-.testBtn:hover {
-  background: #059669;
-}
-
 .settings {
-  background: white;
+  background: var(--color-surface-container-lowest);
   padding: 16px;
   border-radius: 8px;
-  margin-bottom: 24px;
+  border: 1px solid var(--color-secondary-container);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
@@ -74,14 +17,14 @@
 .settingRow label {
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-on-surface-variant);
 }
 
 .settingRow input,
 .settingRow select {
   padding: 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+  border: 1px solid var(--color-secondary-container);
+  border-radius: 8px;
   font-size: 13px;
 }
 
@@ -92,20 +35,24 @@
 
 .loading {
   text-align: center;
-  padding: 48px;
-  color: #9ca3af;
+  padding: 24px;
+  color: var(--color-outline);
 }
 
 .empty {
-  background: white;
-  padding: 48px;
+  background: var(--color-surface-container-lowest);
+  padding: 24px;
   border-radius: 8px;
   text-align: center;
-  color: #9ca3af;
+  color: var(--color-outline);
 }
 
-h2 {
+.sectionTitle {
   margin-bottom: 16px;
   font-size: 18px;
   font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .settings { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }

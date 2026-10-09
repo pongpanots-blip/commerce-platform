@@ -5,6 +5,7 @@ import {
   Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, RowLink,
   StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
+import { customerFields } from './catalog-fields';
 import { api, customersApi, Customer, OrderRow, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -60,12 +61,10 @@ export function CustomerDetail() {
         title={c?.name ?? __uiText("รายละเอียดลูกค้า")}
         badge={c && <StatusChip status={c.status} />}
         subtitle={c?.code && <span className="font-mono">{c.code}</span>}
-        actions={
-          <>
-            <Button icon="refresh" onClick={() => { customer.reload(); orders.reload(); }}>{__uiText("รีเฟรช")}</Button>
-            {c && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขลูกค้า")}</Button>}
-          </>
-        }
+        actions={<>
+          <Button icon="refresh" onClick={() => { customer.reload(); orders.reload(); }}>{__uiText("รีเฟรช")}</Button>
+          {c && <Button icon="edit" variant="primary" onClick={() => setEditing(true)}>{__uiText("แก้ไขลูกค้า")}</Button>}
+        </>}
       />
 
       {msg && <Alert tone="ok" onClose={() => setMsg('')}>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert>}
@@ -76,11 +75,11 @@ export function CustomerDetail() {
       ) : c ? (
         <>
           {editing && <Modal title={__uiText("แก้ไขลูกค้า")} onClose={cancelEdit} width={640}>
-            <FormPanel title={__uiText("ข้อมูลลูกค้า")} icon="edit" busy={busy} error={error} onSubmit={save} onCancel={cancelEdit}>
-              <Field label={__uiText("ชื่อลูกค้า")}><Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
-              <Field label={__uiText("รหัสลูกค้า")}><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></Field>
-              <Field label={__uiText("อีเมล")}><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
-              <Field label={__uiText("เบอร์โทร")}><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field>
+            <FormPanel title={__uiText("ข้อมูลลูกค้า")} description={__uiText("ช่องเดียวกับตอนเพิ่มลูกค้า")} icon="edit" submitLabel={__uiText("บันทึกลูกค้า")} busy={busy} error={error} onSubmit={save} onCancel={cancelEdit}>
+              {customerFields.map((f) => {
+                const key = f.name as keyof Form;
+                return <Field key={f.name} label={f.label} required={f.required} hint={f.hint}><Input type={f.type === 'textarea' ? 'text' : f.type} placeholder={f.placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} /></Field>;
+              })}
             </FormPanel>
           </Modal>}
             <Panel className="p-4">
@@ -89,7 +88,7 @@ export function CustomerDetail() {
                   { label: __uiText("รหัสลูกค้า"), value: c.code ?? '—', mono: true },
                   { label: __uiText("อีเมล"), value: c.email ?? '—' },
                   { label: __uiText("เบอร์โทร"), value: c.phone ?? '—' },
-                  { label: 'Customer ID', value: c.id, mono: true },
+                  { label: 'รหัสอ้างอิง', value: c.id, copy: true },
                   { label: __uiText("จำนวนออเดอร์"), value: orders.data ? fmt.num(orders.data.total) : orders.error ? 'โหลดไม่สำเร็จ' : '…' },
                   { label: __uiText("มูลค่าออเดอร์ที่แสดง"), value: Object.entries(values).map(([currency, value]) => `${currency} ${fmt.num(value.toFixed(2))}`).join(' · ') || '—' },
                 ]}

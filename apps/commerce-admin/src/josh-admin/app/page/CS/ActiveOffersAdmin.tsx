@@ -47,7 +47,7 @@ export default function ActiveOffersAdmin() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={__uiText("Active Offers")} subtitle={__uiText("Private price ที่ใช้งานอยู่")} />
       {error ? <ErrorText error={error} /> : <Table columns={columns} data={rows} loading={loading} />}
     </div>

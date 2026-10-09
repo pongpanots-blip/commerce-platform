@@ -223,7 +223,7 @@ const SegmentList = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("User Segments")}
         subtitle={__uiText("กลุ่มลูกค้าที่ล็อกรายชื่อตอนสร้าง — ใช้กับ Coupon, Banner และกรองรายชื่อ Users")}

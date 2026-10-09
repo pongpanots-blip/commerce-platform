@@ -119,7 +119,7 @@ export default function OrderImport() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="cp-management-page space-y-5">
       <AdminListHeader
         title={__uiText("Order Import")}
         subtitle={__uiText("นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)")}

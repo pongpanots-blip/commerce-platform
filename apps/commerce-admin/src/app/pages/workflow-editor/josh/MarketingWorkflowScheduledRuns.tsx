@@ -110,11 +110,11 @@ export default function MarketingWorkflowScheduledRuns() {
   ];
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           to={id ? ADMIN_ROUTES.marketingWorkflowEdit(id) : ADMIN_ROUTES.marketingWorkflows}

@@ -121,22 +121,22 @@ export function usePageForm({
     !!original && !!form.campaignId && form.campaignId !== original.campaignId;
 
   const save = async (attachConfirmed = false) => {
-    if (saving) return;
+    if (saving) return false;
     if (Object.values(uploading).some(Boolean)) {
       setSaveError(__uiMessage("กำลังอัปโหลดรูป — รอสักครู่แล้วกดบันทึกอีกครั้ง"));
-      return;
+      return false;
     }
     const found = validatePageForm(form, original);
     setErrors(found);
     setSaved(false);
     if (Object.keys(found).length > 0) {
       setSaveError(REQUIRED_FIELDS_ERROR);
-      return;
+      return false;
     }
     if (attaching && !attachConfirmed) {
       setSaveError('');
       setAttachPending(true);
-      return;
+      return false;
     }
     setSaveError('');
     setSaving(true);
@@ -154,11 +154,14 @@ export function usePageForm({
       } else {
         onSaved(await createPromotionPage(buildCreatePagePayload(form)));
       }
+      return true;
     } catch (err) {
       setSaveError(getErrorMessage(err, 'บันทึกไม่สำเร็จ'));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   const dirty = isPageFormDirty(form, original ?? emptyPageForm(campaignId));

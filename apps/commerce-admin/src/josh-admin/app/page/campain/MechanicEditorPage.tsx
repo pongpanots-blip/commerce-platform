@@ -128,13 +128,13 @@ function MechanicEditor({ id }: { id?: string }) {
   };
 
   const handleSave = async () => {
-    if (saving) return;
+    if (saving) return false;
     const found = validateMechanicForm(form, original);
     setErrors(found);
     setSaved(false);
     if (Object.keys(found).length > 0) {
       setSaveError(__uiMessage("กรอกข้อมูลไม่ครบหรือไม่ถูกต้อง — ตรวจช่องที่ขึ้นสีแดง"));
-      return;
+      return false;
     }
     setSaveError('');
     setSaving(true);
@@ -151,7 +151,9 @@ function MechanicEditor({ id }: { id?: string }) {
             ? ADMIN_ROUTES.campaignDetail(form.campaignId)
             : ADMIN_ROUTES.promotionsMechanicEdit(created.id),
         );
+        return true;
       }
+      return true;
     } catch (err) {
       const duplicates = getDuplicateSkus(err);
       setSaveError(
@@ -159,17 +161,19 @@ function MechanicEditor({ id }: { id?: string }) {
           ? __uiMessage("SKU ซ้ำกับโปรอื่นใน campaign นี้: {0}",{"0":duplicates.join(', ')})
           : getErrorMessage(err, 'บันทึกไม่สำเร็จ'),
       );
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   if (loading) {
-    return <div className="p-6 text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-ink-muted">{__uiText("กำลังโหลด...")}</div>;
   }
   if (loadError) {
     return (
-      <div className="mx-auto max-w-3xl p-6">
+      <div className="cp-management-page space-y-4">
         <CouponFormErrorBanner error={loadError} />
         <Button
           variant="secondary"
@@ -192,13 +196,15 @@ function MechanicEditor({ id }: { id?: string }) {
 
   return (
     <AdminInsertLayout
-      title={isEdit ? __uiText("แก้ไข Promotion Mechanic") : __uiText("สร้าง Promotion Mechanic")}
-      subtitle={__uiText("ทุก SKU ในโปรได้ส่วนลดเดียวกัน — SKU มาจาก Product set ที่เลือก")}
+      title={isEdit ? __uiText("แก้ไขโปรโมชัน") : __uiText("สร้างโปรโมชัน")}
+      subtitle={__uiText("สินค้าในชุดที่เลือกได้ส่วนลดเท่ากันทั้งหมด")}
+      saveLabel="บันทึกโปรโมชัน"
+      steps={['ตั้งชื่อโปรโมชัน', 'เลือกชุดสินค้าและส่วนลด', 'บันทึกโปรโมชัน']}
       backPath={campaignParam ? ADMIN_ROUTES.campaignDetail(campaignParam) : ADMIN_ROUTES.promotionsMechanic}
       saving={saving}
       wide
       headerActions={status ? <CampaignStatusPill status={status} /> : undefined}
-      onSave={() => void handleSave()}
+      onSave={() => handleSave()}
     >
       <CouponFormErrorBanner error={saveError} />
       {saved && (

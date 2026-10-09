@@ -116,7 +116,7 @@ export default function CreditTermsAdmin() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={__uiText("Credit Term แอป")} subtitle={__uiText("อนุมัติ / ขอเอกสาร / ปฏิเสธคำขอเครดิต")} />
       <div className="mb-4 w-48">
         <Select

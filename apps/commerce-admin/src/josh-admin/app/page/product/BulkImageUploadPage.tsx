@@ -452,7 +452,7 @@ const BulkImageUploadPage = () => {
   const totalToSendForProgress = readyRows.length;
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6">
+    <div className="cp-management-page">
       <button
         type="button"
         onClick={() => navigate(ADMIN_ROUTES.products)}

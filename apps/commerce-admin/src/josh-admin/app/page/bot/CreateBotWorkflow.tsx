@@ -34,7 +34,7 @@ const CreateBotWorkflow = () => {
   const handleSubmit = async () => {
     if (!form.name || !form.triggerPattern) {
       alert(__uiText("กรุณากรอกชื่อและ Trigger Pattern"));
-      return;
+      return false;
     }
     setSaving(true);
     try {
@@ -49,17 +49,21 @@ const CreateBotWorkflow = () => {
         active: form.active,
       });
       navigate(ADMIN_ROUTES.botWorkflows);
+      return true;
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่ม Workflow")}
-      subtitle={__uiText("กำหนด trigger, action และ response template ของ chatbot workflow")}
+      title={__uiText("เพิ่มขั้นตอนของบอท")}
+      subtitle={__uiText("เลือกเหตุการณ์ที่เริ่มขั้นตอน แล้วเลือกว่าบอททำอะไรและตอบด้วยข้อความไหน")}
+      saveLabel="บันทึกขั้นตอนของบอท"
       backPath={ADMIN_ROUTES.botWorkflows}
       saving={saving}
       onSave={handleSubmit}

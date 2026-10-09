@@ -438,7 +438,7 @@ export default function KbankTestingConsole() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader title={__uiText("KBank Testing Console")} subtitle={__uiText("Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway")} />
 
       <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">

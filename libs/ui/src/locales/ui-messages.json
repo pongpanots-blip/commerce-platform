@@ -23226,5 +23226,1505 @@
   "หลังบ้านของทีม": {
     "th": "หลังบ้านของทีม",
     "en": "Team back office"
+  },
+  "วิธีทำในหน้านี้": {
+    "th": "วิธีทำในหน้านี้",
+    "en": "How to do this"
+  },
+  "<1 นาที": {
+    "th": "<1 นาที",
+    "en": "<1 min"
+  },
+  "{0} ชม.": {
+    "th": "{0} ชม.",
+    "en": "{0} hr"
+  },
+  "กรอก{0} ตัวอย่าง: {1}": {
+    "th": "กรอก{0} ตัวอย่าง: {1}",
+    "en": "Enter {0}. For example: {1}"
+  },
+  "เปิดรายการที่เพิ่งบันทึก": {
+    "th": "เปิดรายการที่เพิ่งบันทึก",
+    "en": "Open the record you just saved"
+  },
+  "ตัวอย่าง: {0}": {
+    "th": "ตัวอย่าง: {0}",
+    "en": "Example: {0}"
+  },
+  "เมื่อมีข้อมูล รายการจะแสดงที่นี่": {
+    "th": "เมื่อมีข้อมูล รายการจะแสดงที่นี่",
+    "en": "Records will show up here when there is data"
+  },
+  "เริ่มด้วยการเพิ่มรายการแรก": {
+    "th": "เริ่มด้วยการเพิ่มรายการแรก",
+    "en": "Start by adding the first record"
+  },
+  "ไม่พบรายการในหน้านี้": {
+    "th": "ไม่พบรายการในหน้านี้",
+    "en": "No matches on this page"
+  },
+  "ล้างตัวกรองเพื่อดูรายการทั้งหมดในหน้านี้ หรือเปิดหน้าถัดไป": {
+    "th": "ล้างตัวกรองเพื่อดูรายการทั้งหมดในหน้านี้ หรือเปิดหน้าถัดไป",
+    "en": "Clear the filters to see every row on this page, or go to the next page"
+  },
+  "แสดง {0} จาก {1} รายการในหน้านี้ · ค้นหาและกรองเฉพาะหน้าที่เปิดอยู่": {
+    "th": "แสดง {0} จาก {1} รายการในหน้านี้ · ค้นหาและกรองเฉพาะหน้าที่เปิดอยู่",
+    "en": "Showing {0} of {1} rows on this page. Search and filters apply only to this page"
+  },
+  "พิมพ์ชื่อหรือรหัสที่เห็นในตารางนี้": {
+    "th": "พิมพ์ชื่อหรือรหัสที่เห็นในตารางนี้",
+    "en": "Type a name or code you can see in this table"
+  },
+  "แสดงเฉพาะสถานะที่อยู่ในหน้านี้": {
+    "th": "แสดงเฉพาะสถานะที่อยู่ในหน้านี้",
+    "en": "Show only a status that appears on this page"
+  },
+  "รหัสสินค้า": {
+    "th": "รหัสสินค้า",
+    "en": "Product code"
+  },
+  "รหัสสั้นที่ใช้ค้นสินค้าในระบบ ลูกค้าเห็นชื่อสินค้า ไม่ใช่รหัสนี้": {
+    "th": "รหัสสั้นที่ใช้ค้นสินค้าในระบบ ลูกค้าเห็นชื่อสินค้า ไม่ใช่รหัสนี้",
+    "en": "A short code used to find the product. Customers see the product name, not this code"
+  },
+  "ชื่อที่ทีมและลูกค้าอ่านรู้เรื่อง": {
+    "th": "ชื่อที่ทีมและลูกค้าอ่านรู้เรื่อง",
+    "en": "A name the team and customers can read"
+  },
+  "ไม่บังคับ อธิบายสั้น ๆ ว่าสินค้านี้คืออะไร": {
+    "th": "ไม่บังคับ อธิบายสั้น ๆ ว่าสินค้านี้คืออะไร",
+    "en": "Optional. A short note about what this product is"
+  },
+  "ชื่อที่ทีมใช้เรียกลูกค้ารายนี้": {
+    "th": "ชื่อที่ทีมใช้เรียกลูกค้ารายนี้",
+    "en": "The name the team uses for this customer"
+  },
+  "ไม่บังคับ ใช้เมื่อต้องการอ้างอิงรหัสเดิม": {
+    "th": "ไม่บังคับ ใช้เมื่อต้องการอ้างอิงรหัสเดิม",
+    "en": "Optional. Use it when you need to keep an existing code"
+  },
+  "ไม่บังคับ ใช้ส่งเอกสาร": {
+    "th": "ไม่บังคับ ใช้ส่งเอกสาร",
+    "en": "Optional. Used to send documents"
+  },
+  "ไม่บังคับ ใส่ตัวเลขโดยไม่ต้องมีขีด": {
+    "th": "ไม่บังคับ ใส่ตัวเลขโดยไม่ต้องมีขีด",
+    "en": "Optional. Digits only, no dashes"
+  },
+  "บันทึกหมวดหมู่": {
+    "th": "บันทึกหมวดหมู่",
+    "en": "Save category"
+  },
+  "เลือกหมวดที่อยู่เหนือกว่า": {
+    "th": "เลือกหมวดที่อยู่เหนือกว่า",
+    "en": "Choose the parent category"
+  },
+  "ตั้งชื่อ": {
+    "th": "ตั้งชื่อ",
+    "en": "Name it"
+  },
+  "ใส่รูปถ้าต้องการ": {
+    "th": "ใส่รูปถ้าต้องการ",
+    "en": "Add a picture if you want one"
+  },
+  "ตรวจชื่อหมวด": {
+    "th": "ตรวจชื่อหมวด",
+    "en": "Check the category name"
+  },
+  "แก้ชื่อหรือรูป": {
+    "th": "แก้ชื่อหรือรูป",
+    "en": "Change the name or picture"
+  },
+  "เลือกหมวดที่อยู่เหนือหมวดใหม่ เช่น เบเกอรี่ หมวดชั้นวางสินค้าเลือกเป็นหมวดแม่ไม่ได้": {
+    "th": "เลือกหมวดที่อยู่เหนือหมวดใหม่ เช่น เบเกอรี่ หมวดชั้นวางสินค้าเลือกเป็นหมวดแม่ไม่ได้",
+    "en": "Choose the category this new one sits inside, for example Bakery. A product shelf cannot be a parent"
+  },
+  "ใส่ชื่อภาษาอังกฤษสั้น ๆ เช่น Bakery": {
+    "th": "ใส่ชื่อภาษาอังกฤษสั้น ๆ เช่น Bakery",
+    "en": "Enter a short English name, for example Bakery"
+  },
+  "ยังบันทึกไม่ได้ — แก้ช่องที่ขึ้นสีแดงตามคำแนะนำ": {
+    "th": "ยังบันทึกไม่ได้ — แก้ช่องที่ขึ้นสีแดงตามคำแนะนำ",
+    "en": "Not saved yet. Fix the red fields using the instructions under them"
+  },
+  "บันทึกหมวดหมู่แล้ว": {
+    "th": "บันทึกหมวดหมู่แล้ว",
+    "en": "Category saved"
+  },
+  "ไปจัดลำดับในรายการหมวด": {
+    "th": "ไปจัดลำดับในรายการหมวด",
+    "en": "Next: arrange it in the category list"
+  },
+  "เลือกหมวดที่อยู่เหนือกว่า แล้วตั้งชื่อที่ลูกค้าอ่านได้": {
+    "th": "เลือกหมวดที่อยู่เหนือกว่า แล้วตั้งชื่อที่ลูกค้าอ่านได้",
+    "en": "Choose the parent category, then give it a name customers can read"
+  },
+  "หมวดที่อยู่เหนือกว่า": {
+    "th": "หมวดที่อยู่เหนือกว่า",
+    "en": "Parent category"
+  },
+  "เลือกกลุ่มที่หมวดใหม่อยู่ข้างใน ชั้นวางสินค้า (ชั้นลึกสุด) เลือกไม่ได้": {
+    "th": "เลือกกลุ่มที่หมวดใหม่อยู่ข้างใน ชั้นวางสินค้า (ชั้นลึกสุด) เลือกไม่ได้",
+    "en": "Choose the group this category belongs to. A product shelf, the deepest level, cannot be chosen"
+  },
+  "ชื่อภาษาอังกฤษ": {
+    "th": "ชื่อภาษาอังกฤษ",
+    "en": "an English name"
+  },
+  "ใช้ในระบบและหน้าร้านภาษาอังกฤษ เช่น Bakery": {
+    "th": "ใช้ในระบบและหน้าร้านภาษาอังกฤษ เช่น Bakery",
+    "en": "Used in the system and on the English storefront, for example Bakery"
+  },
+  "ชื่อภาษาไทย": {
+    "th": "ชื่อภาษาไทย",
+    "en": "Thai name"
+  },
+  "ชื่อที่ลูกค้าภาษาไทยเห็น ถ้าว่าง ร้านจะใช้ชื่อภาษาอังกฤษ": {
+    "th": "ชื่อที่ลูกค้าภาษาไทยเห็น ถ้าว่าง ร้านจะใช้ชื่อภาษาอังกฤษ",
+    "en": "What Thai-speaking customers see. If you leave it blank, the store uses the English name"
+  },
+  "กลุ่มบนสุด เช่น อาหารสด อาหารแห้ง": {
+    "th": "กลุ่มบนสุด เช่น อาหารสด อาหารแห้ง",
+    "en": "Top group, for example fresh food or dry food"
+  },
+  "หมวดที่ขึ้นเป็นไอคอนบนหน้าแรกของร้าน": {
+    "th": "หมวดที่ขึ้นเป็นไอคอนบนหน้าแรกของร้าน",
+    "en": "Shown as an icon on the store home page"
+  },
+  "หมวดย่อยภายในกลุ่ม": {
+    "th": "หมวดย่อยภายในกลุ่ม",
+    "en": "A group inside that"
+  },
+  "ชั้นวางสินค้า — สินค้าผูกกับชั้นนี้": {
+    "th": "ชั้นวางสินค้า — สินค้าผูกกับชั้นนี้",
+    "en": "Product shelf. Products belong to this level"
+  },
+  "บันทึกแคมเปญ": {
+    "th": "บันทึกแคมเปญ",
+    "en": "Save campaign"
+  },
+  "ตั้งชื่อแคมเปญ": {
+    "th": "ตั้งชื่อแคมเปญ",
+    "en": "Name the campaign"
+  },
+  "เลือกวันเริ่มและวันสิ้นสุด": {
+    "th": "เลือกวันเริ่มและวันสิ้นสุด",
+    "en": "Choose the start and end dates"
+  },
+  "บันทึก แล้วไปเพิ่มโปรในหน้าถัดไป": {
+    "th": "บันทึก แล้วไปเพิ่มโปรในหน้าถัดไป",
+    "en": "Save, then add offers on the next page"
+  },
+  "บันทึกแคมเปญแล้ว": {
+    "th": "บันทึกแคมเปญแล้ว",
+    "en": "Campaign saved"
+  },
+  "ขั้นถัดไป: เพิ่มโปรหรือคูปอง": {
+    "th": "ขั้นถัดไป: เพิ่มโปรหรือคูปอง",
+    "en": "Next: add an offer or a coupon"
+  },
+  "สร้างแคมเปญ": {
+    "th": "สร้างแคมเปญ",
+    "en": "Create a campaign"
+  },
+  "ตั้งชื่อและช่วงเวลาที่โปรนี้ใช้ได้ โปรและคูปองเพิ่มในหน้าถัดไป": {
+    "th": "ตั้งชื่อและช่วงเวลาที่โปรนี้ใช้ได้ โปรและคูปองเพิ่มในหน้าถัดไป",
+    "en": "Name it and set when it runs. Add offers and coupons on the next page"
+  },
+  "ชื่อแคมเปญ": {
+    "th": "ชื่อแคมเปญ",
+    "en": "Campaign name"
+  },
+  "ชื่อที่ทีมและลูกค้าเข้าใจ เช่น ลดราคาขนมปังสิ้นเดือน": {
+    "th": "ชื่อที่ทีมและลูกค้าเข้าใจ เช่น ลดราคาขนมปังสิ้นเดือน",
+    "en": "A name the team and customers understand, for example End-of-month bread sale"
+  },
+  "ลดราคาขนมปังสิ้นเดือน": {
+    "th": "ลดราคาขนมปังสิ้นเดือน",
+    "en": "End-of-month bread sale"
+  },
+  "ใส่ชื่อแคมเปญ เช่น ลดราคาขนมปังสิ้นเดือน": {
+    "th": "ใส่ชื่อแคมเปญ เช่น ลดราคาขนมปังสิ้นเดือน",
+    "en": "Enter a campaign name, for example End-of-month bread sale"
+  },
+  "ย่อชื่อให้ไม่เกิน 200 ตัวอักษร": {
+    "th": "ย่อชื่อให้ไม่เกิน 200 ตัวอักษร",
+    "en": "Shorten the name to 200 characters or fewer"
+  },
+  "เลือกทั้งวันเริ่มและวันสิ้นสุด เช่น วันนี้ถึงสิ้นเดือน": {
+    "th": "เลือกทั้งวันเริ่มและวันสิ้นสุด เช่น วันนี้ถึงสิ้นเดือน",
+    "en": "Choose both a start and an end, for example today through the end of the month"
+  },
+  "เลื่อนวันสิ้นสุดให้หลังวันเริ่ม": {
+    "th": "เลื่อนวันสิ้นสุดให้หลังวันเริ่ม",
+    "en": "Move the end date to after the start date"
+  },
+  "กรอกชื่อที่ลูกค้าเห็น ราคา และหมวด แล้วบันทึก": {
+    "th": "กรอกชื่อที่ลูกค้าเห็น ราคา และหมวด แล้วบันทึก",
+    "en": "Enter the name customers see, the price, and the category, then save"
+  },
+  "1. ข้อมูลสินค้า": {
+    "th": "1. ข้อมูลสินค้า",
+    "en": "1. Product details"
+  },
+  "รหัสสั้นที่ใช้ค้นในระบบ เช่น BREAD-001 ลูกค้าเห็นชื่อสินค้า ไม่ใช่รหัสนี้": {
+    "th": "รหัสสั้นที่ใช้ค้นในระบบ เช่น BREAD-001 ลูกค้าเห็นชื่อสินค้า ไม่ใช่รหัสนี้",
+    "en": "A short code used to find it, for example BREAD-001. Customers see the product name, not this code"
+  },
+  "BREAD-001": {
+    "th": "BREAD-001",
+    "en": "BREAD-001"
+  },
+  "ราคาต่อหน่วยที่ลูกค้าจ่าย เช่น 45": {
+    "th": "ราคาต่อหน่วยที่ลูกค้าจ่าย เช่น 45",
+    "en": "The price the customer pays per unit, for example 45"
+  },
+  "หน่วยที่ลูกค้าสั่ง เช่น ชิ้น แพ็ก หรือกิโลกรัม": {
+    "th": "หน่วยที่ลูกค้าสั่ง เช่น ชิ้น แพ็ก หรือกิโลกรัม",
+    "en": "The unit customers order, for example piece, pack, or kilogram"
+  },
+  "จำนวนในคลังเริ่มต้น": {
+    "th": "จำนวนในคลังเริ่มต้น",
+    "en": "Starting quantity in stock"
+  },
+  "ไม่บังคับ ใส่ 0 ถ้ายังไม่รับสินค้าเข้า": {
+    "th": "ไม่บังคับ ใส่ 0 ถ้ายังไม่รับสินค้าเข้า",
+    "en": "Optional. Enter 0 if stock has not arrived yet"
+  },
+  "2. ชื่อและคำอธิบายภาษาไทย": {
+    "th": "2. ชื่อและคำอธิบายภาษาไทย",
+    "en": "2. Thai name and description"
+  },
+  "ชื่อสินค้าภาษาไทย": {
+    "th": "ชื่อสินค้าภาษาไทย",
+    "en": "Thai product name"
+  },
+  "ชื่อที่ลูกค้าภาษาไทยเห็นบนร้าน": {
+    "th": "ชื่อที่ลูกค้าภาษาไทยเห็นบนร้าน",
+    "en": "The name Thai-speaking customers see in the store"
+  },
+  "ขนมปังโฮลวีต": {
+    "th": "ขนมปังโฮลวีต",
+    "en": "Whole wheat bread"
+  },
+  "คำอธิบายภาษาไทย": {
+    "th": "คำอธิบายภาษาไทย",
+    "en": "Thai description"
+  },
+  "ไม่บังคับ สั้น ๆ หนึ่งถึงสองประโยค": {
+    "th": "ไม่บังคับ สั้น ๆ หนึ่งถึงสองประโยค",
+    "en": "Optional. One or two short sentences"
+  },
+  "ขนมปังโฮลวีต 450 กรัม": {
+    "th": "ขนมปังโฮลวีต 450 กรัม",
+    "en": "Whole wheat bread, 450 g"
+  },
+  "3. ชื่อและคำอธิบายภาษาอังกฤษ": {
+    "th": "3. ชื่อและคำอธิบายภาษาอังกฤษ",
+    "en": "3. English name and description"
+  },
+  "ชื่อสินค้าภาษาอังกฤษ": {
+    "th": "ชื่อสินค้าภาษาอังกฤษ",
+    "en": "English product name"
+  },
+  "ชื่อที่ลูกค้าภาษาอังกฤษเห็น": {
+    "th": "ชื่อที่ลูกค้าภาษาอังกฤษเห็น",
+    "en": "The name English-speaking customers see"
+  },
+  "คำอธิบายภาษาอังกฤษ": {
+    "th": "คำอธิบายภาษาอังกฤษ",
+    "en": "English description"
+  },
+  "4. รูปสินค้า สูงสุด 3 รูป": {
+    "th": "4. รูปสินค้า สูงสุด 3 รูป",
+    "en": "4. Product photos, up to 3"
+  },
+  "บันทึกสินค้า": {
+    "th": "บันทึกสินค้า",
+    "en": "Save product"
+  },
+  "บันทึกสินค้าแล้ว": {
+    "th": "บันทึกสินค้าแล้ว",
+    "en": "Product saved"
+  },
+  "ขั้นถัดไป: เปิดดูสินค้าในรายการ": {
+    "th": "ขั้นถัดไป: เปิดดูสินค้าในรายการ",
+    "en": "Next: open the product in the list"
+  },
+  "รหัสสินค้า เช่น BREAD-001": {
+    "th": "รหัสสินค้า เช่น BREAD-001",
+    "en": "a product code, for example BREAD-001"
+  },
+  "ชื่อภาษาไทยที่ลูกค้าเห็น": {
+    "th": "ชื่อภาษาไทยที่ลูกค้าเห็น",
+    "en": "the Thai name customers see"
+  },
+  "ราคาขายเป็นตัวเลข เช่น 45": {
+    "th": "ราคาขายเป็นตัวเลข เช่น 45",
+    "en": "a selling price as a number, for example 45"
+  },
+  "ยังบันทึกสินค้าไม่ได้ กรอกให้ครบ: {0}": {
+    "th": "ยังบันทึกสินค้าไม่ได้ กรอกให้ครบ: {0}",
+    "en": "The product was not saved. Fill in: {0}"
+  },
+  "ล็อกรายชื่อลูกค้าในกลุ่มนี้?": {
+    "th": "ล็อกรายชื่อลูกค้าในกลุ่มนี้?",
+    "en": "Lock the customer list for this group?"
+  },
+  "ระบบจะจำรายชื่อที่ตรงเงื่อนไขตอนนี้ไว้ ลูกค้าที่เข้าเงื่อนไขทีหลังจะไม่ถูกเพิ่มให้อัตโนมัติ": {
+    "th": "ระบบจะจำรายชื่อที่ตรงเงื่อนไขตอนนี้ไว้ ลูกค้าที่เข้าเงื่อนไขทีหลังจะไม่ถูกเพิ่มให้อัตโนมัติ",
+    "en": "This saves who matches right now. People who match later are not added automatically"
+  },
+  "ล็อกรายชื่อ": {
+    "th": "ล็อกรายชื่อ",
+    "en": "Lock the list"
+  },
+  "ล็อกรายชื่อแล้ว": {
+    "th": "ล็อกรายชื่อแล้ว",
+    "en": "Customer list locked"
+  },
+  "กลับไปรายการกลุ่มลูกค้า": {
+    "th": "กลับไปรายการกลุ่มลูกค้า",
+    "en": "Back to customer groups"
+  },
+  "ล็อกรายชื่อไม่สำเร็จ ลองอีกครั้ง": {
+    "th": "ล็อกรายชื่อไม่สำเร็จ ลองอีกครั้ง",
+    "en": "Could not lock the list. Try again"
+  },
+  "กำลังล็อกรายชื่อ...": {
+    "th": "กำลังล็อกรายชื่อ...",
+    "en": "Locking the list..."
+  },
+  "ยังไม่ทราบจำนวน": {
+    "th": "ยังไม่ทราบจำนวน",
+    "en": "Count not available yet"
+  },
+  "ใส่ชื่อกลุ่มที่ทีมเข้าใจ เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน": {
+    "th": "ใส่ชื่อกลุ่มที่ทีมเข้าใจ เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน",
+    "en": "Enter a name the team understands, for example Customers with no order in 30 days"
+  },
+  "ใส่รหัสอ้างอิงภาษาอังกฤษตัวเล็ก เช่น vip-customers": {
+    "th": "ใส่รหัสอ้างอิงภาษาอังกฤษตัวเล็ก เช่น vip-customers",
+    "en": "Enter a short lowercase code, for example vip-customers"
+  },
+  "เพิ่มอย่างน้อย 1 เงื่อนไข เช่น ไม่ได้สั่งซื้อเกิน 30 วัน": {
+    "th": "เพิ่มอย่างน้อย 1 เงื่อนไข เช่น ไม่ได้สั่งซื้อเกิน 30 วัน",
+    "en": "Add at least one condition, for example no order for more than 30 days"
+  },
+  "สร้างกลุ่มลูกค้า": {
+    "th": "สร้างกลุ่มลูกค้า",
+    "en": "Create a customer group"
+  },
+  "ตั้งชื่อแล้วเพิ่มเงื่อนไขที่อ่านได้ การเปิดหน้านี้ไม่บันทึกและไม่ล็อกรายชื่อ": {
+    "th": "ตั้งชื่อแล้วเพิ่มเงื่อนไขที่อ่านได้ การเปิดหน้านี้ไม่บันทึกและไม่ล็อกรายชื่อ",
+    "en": "Name the group and add conditions you can read. Opening this page does not save or lock the list"
+  },
+  "บันทึกกลุ่มลูกค้า": {
+    "th": "บันทึกกลุ่มลูกค้า",
+    "en": "Save customer group"
+  },
+  "รหัสอ้างอิง": {
+    "th": "รหัสอ้างอิง",
+    "en": "Reference code"
+  },
+  "ตัวอักษรอังกฤษตัวเล็กและขีดกลาง เช่น vip-customers ใช้ในระบบ ไม่ใช่ชื่อที่ลูกค้าเห็น": {
+    "th": "ตัวอักษรอังกฤษตัวเล็กและขีดกลาง เช่น vip-customers ใช้ในระบบ ไม่ใช่ชื่อที่ลูกค้าเห็น",
+    "en": "Lowercase letters and hyphens, for example vip-customers. Used in the system, not shown to customers as a name"
+  },
+  "ชื่อกลุ่ม": {
+    "th": "ชื่อกลุ่ม",
+    "en": "Group name"
+  },
+  "ชื่อที่ทีมเข้าใจ เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน": {
+    "th": "ชื่อที่ทีมเข้าใจ เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน",
+    "en": "A name the team understands, for example Customers with no order in 30 days"
+  },
+  "ลูกค้าที่ไม่ได้สั่ง 30 วัน": {
+    "th": "ลูกค้าที่ไม่ได้สั่ง 30 วัน",
+    "en": "Customers with no order in 30 days"
+  },
+  "ไม่บังคับ บอกว่ากลุ่มนี้ใช้กับงานอะไร": {
+    "th": "ไม่บังคับ บอกว่ากลุ่มนี้ใช้กับงานอะไร",
+    "en": "Optional. Say what this group is used for"
+  },
+  "วิธีเลือก": {
+    "th": "วิธีเลือก",
+    "en": "How people are chosen"
+  },
+  "ตัวสร้างเงื่อนไข": {
+    "th": "ตัวสร้างเงื่อนไข",
+    "en": "Condition builder"
+  },
+  "นับสด": {
+    "th": "นับสด",
+    "en": "Counted live"
+  },
+  "ยังไม่ล็อก": {
+    "th": "ยังไม่ล็อก",
+    "en": "Not locked"
+  },
+  "ล็อกรายชื่อของกลุ่มนี้?": {
+    "th": "ล็อกรายชื่อของกลุ่มนี้?",
+    "en": "Lock the list for this group?"
+  },
+  "ระบบจะจำรายชื่อที่ตรงเงื่อนไขของ {0} ตอนนี้ไว้ ลูกค้าที่เข้าเงื่อนไขทีหลังจะไม่ถูกเพิ่มให้อัตโนมัติ": {
+    "th": "ระบบจะจำรายชื่อที่ตรงเงื่อนไขของ {0} ตอนนี้ไว้ ลูกค้าที่เข้าเงื่อนไขทีหลังจะไม่ถูกเพิ่มให้อัตโนมัติ",
+    "en": "This saves who matches {0} right now. People who match later are not added automatically"
+  },
+  "ล็อกรายชื่อไม่สำเร็จ: {0}": {
+    "th": "ล็อกรายชื่อไม่สำเร็จ: {0}",
+    "en": "Could not lock the list: {0}"
+  },
+  "ลบกลุ่มลูกค้านี้?": {
+    "th": "ลบกลุ่มลูกค้านี้?",
+    "en": "Delete this customer group?"
+  },
+  "{0} จะหายจากรายการ คูปองหรือข้อความที่ใช้อยู่จะหากลุ่มนี้ไม่เจอ": {
+    "th": "{0} จะหายจากรายการ คูปองหรือข้อความที่ใช้อยู่จะหากลุ่มนี้ไม่เจอ",
+    "en": "{0} will leave the list. Coupons or messages that use it will not find this group"
+  },
+  "ลบกลุ่มลูกค้า": {
+    "th": "ลบกลุ่มลูกค้า",
+    "en": "Delete customer group"
+  },
+  "รหัสอ้างอิง: {0}": {
+    "th": "รหัสอ้างอิง: {0}",
+    "en": "Reference code: {0}"
+  },
+  "ต้องการรายชื่อชุดใหม่? สร้างกลุ่มลูกค้าใหม่": {
+    "th": "ต้องการรายชื่อชุดใหม่? สร้างกลุ่มลูกค้าใหม่",
+    "en": "Need a new list? Create a new customer group"
+  },
+  "ใส่หัวข้อเป็นประโยค เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ": {
+    "th": "ใส่หัวข้อเป็นประโยค เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ",
+    "en": "Write the topic as a sentence, for example New Japanese restaurants in Bangkok"
+  },
+  "บันทึกโจทย์แล้ว": {
+    "th": "บันทึกโจทย์แล้ว",
+    "en": "Topic saved"
+  },
+  "ขั้นถัดไป: เปิดรายงานเมื่อมีผล": {
+    "th": "ขั้นถัดไป: เปิดรายงานเมื่อมีผล",
+    "en": "Next: open the report when results are ready"
+  },
+  "เก็บโจทย์นี้ไว้ในประวัติ?": {
+    "th": "เก็บโจทย์นี้ไว้ในประวัติ?",
+    "en": "Move this topic to history?"
+  },
+  "โจทย์จะหายจากรายการที่ใช้งาน และจะไม่ถูกรันต่อ รายงานที่เก็บไว้แล้วยังอยู่": {
+    "th": "โจทย์จะหายจากรายการที่ใช้งาน และจะไม่ถูกรันต่อ รายงานที่เก็บไว้แล้วยังอยู่",
+    "en": "The topic leaves the active list and will not run again. Reports you already kept stay"
+  },
+  "เก็บโจทย์": {
+    "th": "เก็บโจทย์",
+    "en": "Move to history"
+  },
+  "เขียนเป็นประโยคที่คนอ่านรู้เรื่อง": {
+    "th": "เขียนเป็นประโยคที่คนอ่านรู้เรื่อง",
+    "en": "Write a sentence a person can understand"
+  },
+  "ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ": {
+    "th": "ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ",
+    "en": "New Japanese restaurants in Bangkok"
+  },
+  "กรอกหัวข้อด้านบน แล้วกดบันทึกโจทย์": {
+    "th": "กรอกหัวข้อด้านบน แล้วกดบันทึกโจทย์",
+    "en": "Enter a topic above, then choose Save topic"
+  },
+  "เริ่มตั้งโจทย์": {
+    "th": "เริ่มตั้งโจทย์",
+    "en": "Start a topic"
+  },
+  "หน้านี้เป็นรายการ ใช้ค้นหาแล้วเปิดรายการที่ต้องการ หรือกดปุ่มหลักมุมขวาบนเพื่อเริ่มงานใหม่": {
+    "th": "หน้านี้เป็นรายการ ใช้ค้นหาแล้วเปิดรายการที่ต้องการ หรือกดปุ่มหลักมุมขวาบนเพื่อเริ่มงานใหม่",
+    "en": "This is a list. Search, open a row, or use the main button at the top right to start something new"
+  },
+  "อ่านชื่อหน้าและคำอธิบายสั้น ๆ เพื่อรู้ว่ากำลังจัดการอะไร": {
+    "th": "อ่านชื่อหน้าและคำอธิบายสั้น ๆ เพื่อรู้ว่ากำลังจัดการอะไร",
+    "en": "Read the page title and the one-line description so you know what this page is for"
+  },
+  "ใช้ช่องค้นหาหรือตัวกรองที่อยู่เหนือรายการ ถ้าต้องการเจอรายการเดิม": {
+    "th": "ใช้ช่องค้นหาหรือตัวกรองที่อยู่เหนือรายการ ถ้าต้องการเจอรายการเดิม",
+    "en": "Use the search or filters above the list when you are looking for something that already exists"
+  },
+  "เปิดแถวเพื่อดูหรือแก้ไข หรือกดปุ่มหลักมุมขวาบนเพื่อเพิ่มรายการใหม่": {
+    "th": "เปิดแถวเพื่อดูหรือแก้ไข หรือกดปุ่มหลักมุมขวาบนเพื่อเพิ่มรายการใหม่",
+    "en": "Open a row to view or edit it, or use the main button at the top right to add a new one"
+  },
+  "หน้านี้ใช้สร้างรายการใหม่ กรอกช่องที่มีดอกจันให้ครบ แล้วกดปุ่มบันทึกที่บอกชื่อสิ่งที่กำลังบันทึก": {
+    "th": "หน้านี้ใช้สร้างรายการใหม่ กรอกช่องที่มีดอกจันให้ครบ แล้วกดปุ่มบันทึกที่บอกชื่อสิ่งที่กำลังบันทึก",
+    "en": "This page creates something new. Fill every field with a star, then press the save button that names what you are saving"
+  },
+  "ทำตามลำดับขั้นตอนด้านบน ทีละส่วน": {
+    "th": "ทำตามลำดับขั้นตอนด้านบน ทีละส่วน",
+    "en": "Follow the numbered steps at the top, one part at a time"
+  },
+  "ช่องที่มีดอกจันจำเป็นต้องกรอก ตัวอย่างอยู่ในช่อง และคำอธิบายสั้น ๆ อยู่ใต้ช่อง": {
+    "th": "ช่องที่มีดอกจันจำเป็นต้องกรอก ตัวอย่างอยู่ในช่อง และคำอธิบายสั้น ๆ อยู่ใต้ช่อง",
+    "en": "Fields with a star are required. The box shows an example, and a short note sits under the field"
+  },
+  "ถ้ามีข้อความสีแดง ให้อ่านแล้วแก้ตามที่บอก แล้วกดปุ่มบันทึกอีกครั้ง": {
+    "th": "ถ้ามีข้อความสีแดง ให้อ่านแล้วแก้ตามที่บอก แล้วกดปุ่มบันทึกอีกครั้ง",
+    "en": "If a field turns red, read it, fix it the way it says, then press save again"
+  },
+  "หน้านี้ใช้แก้รายการที่มีอยู่แล้ว เปลี่ยนเฉพาะส่วนที่ต้องการ แล้วกดปุ่มบันทึก": {
+    "th": "หน้านี้ใช้แก้รายการที่มีอยู่แล้ว เปลี่ยนเฉพาะส่วนที่ต้องการ แล้วกดปุ่มบันทึก",
+    "en": "This page edits something that already exists. Change only what you need, then press save"
+  },
+  "ตรวจชื่อรายการด้านบนว่าเป็นรายการที่ต้องการแก้": {
+    "th": "ตรวจชื่อรายการด้านบนว่าเป็นรายการที่ต้องการแก้",
+    "en": "Check the name at the top so you are editing the right record"
+  },
+  "แก้ช่องที่ต้องการ ช่องที่มีดอกจันห้ามเว้นว่าง": {
+    "th": "แก้ช่องที่ต้องการ ช่องที่มีดอกจันห้ามเว้นว่าง",
+    "en": "Change the fields you need. Do not leave a starred field empty"
+  },
+  "กดปุ่มบันทึกเมื่อพร้อม ถ้ายังไม่ต้องการเปลี่ยน กดยกเลิกเพื่อกลับ": {
+    "th": "กดปุ่มบันทึกเมื่อพร้อม ถ้ายังไม่ต้องการเปลี่ยน กดยกเลิกเพื่อกลับ",
+    "en": "Press save when you are ready. If you do not want to change anything, press Cancel to go back"
+  },
+  "หน้านี้แสดงรายละเอียดของหนึ่งรายการ ใช้ปุ่มด้านบนเมื่อต้องการแก้ ลบ หรือทำขั้นถัดไป": {
+    "th": "หน้านี้แสดงรายละเอียดของหนึ่งรายการ ใช้ปุ่มด้านบนเมื่อต้องการแก้ ลบ หรือทำขั้นถัดไป",
+    "en": "This page shows one record. Use the buttons at the top to edit, delete, or take the next step"
+  },
+  "อ่านสถานะและข้อมูลหลักก่อนลงมือ": {
+    "th": "อ่านสถานะและข้อมูลหลักก่อนลงมือ",
+    "en": "Read the status and the main facts before you change anything"
+  },
+  "ถ้าจะลบหรือยกเลิก ระบบจะถามให้ยืนยันและบอกผลที่จะเกิดขึ้น": {
+    "th": "ถ้าจะลบหรือยกเลิก ระบบจะถามให้ยืนยันและบอกผลที่จะเกิดขึ้น",
+    "en": "If you delete or cancel, the system asks you to confirm and tells you what will happen"
+  },
+  "ใช้ลิงก์กลับเพื่อไปหน้ารายการ": {
+    "th": "ใช้ลิงก์กลับเพื่อไปหน้ารายการ",
+    "en": "Use the back link to return to the list"
+  },
+  "หน้านี้สรุปงานที่ต้องดูวันนี้ ตัวเลขมาจากข้อมูลจริง": {
+    "th": "หน้านี้สรุปงานที่ต้องดูวันนี้ ตัวเลขมาจากข้อมูลจริง",
+    "en": "This page summarizes what to look at today. The numbers come from live data"
+  },
+  "ดูการ์ดที่ต้องสนใจก่อน เช่น งานที่ล้มเหลว": {
+    "th": "ดูการ์ดที่ต้องสนใจก่อน เช่น งานที่ล้มเหลว",
+    "en": "Look at the cards that need attention first, such as failed work"
+  },
+  "กดการ์ดหรือลิงก์เพื่อเปิดหน้ารายการที่เกี่ยวข้อง": {
+    "th": "กดการ์ดหรือลิงก์เพื่อเปิดหน้ารายการที่เกี่ยวข้อง",
+    "en": "Press a card or a link to open the related list"
+  },
+  "ใช้เมนูซ้ายเมื่อรู้แล้วว่าจะไปทำงานส่วนไหน": {
+    "th": "ใช้เมนูซ้ายเมื่อรู้แล้วว่าจะไปทำงานส่วนไหน",
+    "en": "Use the left menu once you know which area you want to work in"
+  },
+  "ดูและเพิ่มสินค้าในคลังของแพลตฟอร์ม ใช้รหัสสินค้าเพื่อแยกรายการ": {
+    "th": "ดูและเพิ่มสินค้าในคลังของแพลตฟอร์ม ใช้รหัสสินค้าเพื่อแยกรายการ",
+    "en": "View and add products in the platform catalog. The product code tells records apart"
+  },
+  "ค้นหาจากรหัสหรือชื่อในหน้านี้": {
+    "th": "ค้นหาจากรหัสหรือชื่อในหน้านี้",
+    "en": "Search by code or name on this page"
+  },
+  "เปิดแถวเพื่อดูรายละเอียดสินค้า": {
+    "th": "เปิดแถวเพื่อดูรายละเอียดสินค้า",
+    "en": "Open a row to see the product"
+  },
+  "กดเพิ่มสินค้าแล้วกรอกชื่อและรหัส ตัวอย่างอยู่ในแต่ละช่อง": {
+    "th": "กดเพิ่มสินค้าแล้วกรอกชื่อและรหัส ตัวอย่างอยู่ในแต่ละช่อง",
+    "en": "Press Add a product, then enter the name and code. Each field shows an example"
+  },
+  "ดูและเพิ่มลูกค้าในแพลตฟอร์ม ใช้ชื่อที่ทีมเรียกจริง": {
+    "th": "ดูและเพิ่มลูกค้าในแพลตฟอร์ม ใช้ชื่อที่ทีมเรียกจริง",
+    "en": "View and add customers. Use the name the team actually uses"
+  },
+  "ค้นหาจากชื่อ รหัส อีเมล หรือเบอร์โทรในหน้านี้": {
+    "th": "ค้นหาจากชื่อ รหัส อีเมล หรือเบอร์โทรในหน้านี้",
+    "en": "Search by name, code, email, or phone on this page"
+  },
+  "เปิดแถวเพื่อดูข้อมูลติดต่อ": {
+    "th": "เปิดแถวเพื่อดูข้อมูลติดต่อ",
+    "en": "Open a row to see contact details"
+  },
+  "กดเพิ่มลูกค้าเมื่อยังไม่มีรายการนี้": {
+    "th": "กดเพิ่มลูกค้าเมื่อยังไม่มีรายการนี้",
+    "en": "Press Add a customer if this person is not here yet"
+  },
+  "ดูออเดอร์ของแพลตฟอร์มและเปิดรายการเพื่อตรวจสถานะ": {
+    "th": "ดูออเดอร์ของแพลตฟอร์มและเปิดรายการเพื่อตรวจสถานะ",
+    "en": "See platform orders and open one to check its status"
+  },
+  "ค้นหารหัสออเดอร์ในหน้านี้": {
+    "th": "ค้นหารหัสออเดอร์ในหน้านี้",
+    "en": "Search for an order number on this page"
+  },
+  "กรองตามสถานะถ้าต้องการดูเฉพาะกลุ่ม": {
+    "th": "กรองตามสถานะถ้าต้องการดูเฉพาะกลุ่ม",
+    "en": "Filter by status when you only want one group"
+  },
+  "เปิดแถวเพื่อดูรายละเอียดและขั้นถัดไป": {
+    "th": "เปิดแถวเพื่อดูรายละเอียดและขั้นถัดไป",
+    "en": "Open a row to see the details and the next step"
+  },
+  "บันทึกสินค้าเข้า ออก นับสต็อก หรือโอนระหว่างคลังที่แพลตฟอร์มดูแล": {
+    "th": "บันทึกสินค้าเข้า ออก นับสต็อก หรือโอนระหว่างคลังที่แพลตฟอร์มดูแล",
+    "en": "Record stock coming in, going out, a count, or a transfer between warehouses this platform manages"
+  },
+  "เลือกงานที่ต้องการทำก่อน รับเข้า นับ ปรับ หรือโอน": {
+    "th": "เลือกงานที่ต้องการทำก่อน รับเข้า นับ ปรับ หรือโอน",
+    "en": "Choose the job first: receive, count, adjust, or transfer"
+  },
+  "เลือกคลังและสินค้า แล้วใส่จำนวนตามที่หน้านี้บอก": {
+    "th": "เลือกคลังและสินค้า แล้วใส่จำนวนตามที่หน้านี้บอก",
+    "en": "Choose the warehouse and the product, then enter the quantity the page asks for"
+  },
+  "ตรวจผลก่อนกดบันทึก เพราะจำนวนจะเปลี่ยนทันที": {
+    "th": "ตรวจผลก่อนกดบันทึก เพราะจำนวนจะเปลี่ยนทันที",
+    "en": "Check the result before you save, because the quantity changes immediately"
+  },
+  "ตั้งโจทย์วิจัยตลาด แล้วเปิดรายงานเมื่อระบบเก็บหลักฐานแล้ว การเปิดหน้านี้ไม่แก้ข้อมูล": {
+    "th": "ตั้งโจทย์วิจัยตลาด แล้วเปิดรายงานเมื่อระบบเก็บหลักฐานแล้ว การเปิดหน้านี้ไม่แก้ข้อมูล",
+    "en": "Set a market-research topic, then open the report after evidence is collected. Opening this page does not change data"
+  },
+  "กรอกหัวข้อเป็นประโยคที่คนอ่านรู้เรื่อง เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ": {
+    "th": "กรอกหัวข้อเป็นประโยคที่คนอ่านรู้เรื่อง เช่น ร้านอาหารญี่ปุ่นเปิดใหม่ในกรุงเทพ",
+    "en": "Write the topic as a sentence a person can understand, for example New Japanese restaurants in Bangkok"
+  },
+  "เลือกประเภท พื้นที่ และแหล่งข้อมูล แล้วกดบันทึกโจทย์": {
+    "th": "เลือกประเภท พื้นที่ และแหล่งข้อมูล แล้วกดบันทึกโจทย์",
+    "en": "Choose the type, area, and sources, then press Save topic"
+  },
+  "เปิดรายงานของโจทย์เมื่อต้องการดูผล การลบหรือเก็บโจทย์จะถามยืนยันก่อน": {
+    "th": "เปิดรายงานของโจทย์เมื่อต้องการดูผล การลบหรือเก็บโจทย์จะถามยืนยันก่อน",
+    "en": "Open a topic's report when you want the results. Removing or archiving a topic asks you to confirm first"
+  },
+  "จัดหมวดสินค้าที่ลูกค้าเห็นในร้าน ชื่อที่คนอ่านมาก่อน รหัสอยู่รอง": {
+    "th": "จัดหมวดสินค้าที่ลูกค้าเห็นในร้าน ชื่อที่คนอ่านมาก่อน รหัสอยู่รอง",
+    "en": "Organize the categories customers see. The readable name comes first; the code is secondary"
+  },
+  "หาหมวดจากชื่อ": {
+    "th": "หาหมวดจากชื่อ",
+    "en": "Find a category by its name"
+  },
+  "เปิดหมวดเพื่อแก้ชื่อหรือรูป": {
+    "th": "เปิดหมวดเพื่อแก้ชื่อหรือรูป",
+    "en": "Open a category to change its name or picture"
+  },
+  "กดสร้างหมวดหมู่เมื่อต้องการเพิ่มกลุ่มใหม่ใต้หมวดที่มีอยู่": {
+    "th": "กดสร้างหมวดหมู่เมื่อต้องการเพิ่มกลุ่มใหม่ใต้หมวดที่มีอยู่",
+    "en": "Press Create category when you want a new group under an existing one"
+  },
+  "สร้างหมวดใหม่โดยเลือกหมวดที่อยู่เหนือกว่า แล้วตั้งชื่อที่ลูกค้าอ่านได้": {
+    "th": "สร้างหมวดใหม่โดยเลือกหมวดที่อยู่เหนือกว่า แล้วตั้งชื่อที่ลูกค้าอ่านได้",
+    "en": "Create a category by choosing its parent, then give it a name customers can read"
+  },
+  "เลือกหมวดที่อยู่เหนือหมวดใหม่ หมวดชั้นวางสินค้า (ชั้นลึกสุด) เลือกเป็นหมวดแม่ไม่ได้": {
+    "th": "เลือกหมวดที่อยู่เหนือหมวดใหม่ หมวดชั้นวางสินค้า (ชั้นลึกสุด) เลือกเป็นหมวดแม่ไม่ได้",
+    "en": "Choose the category above the new one. A product shelf, the deepest level, cannot be a parent"
+  },
+  "ใส่ชื่อภาษาอังกฤษที่ใช้ในระบบ และชื่อไทยที่ลูกค้าเห็น": {
+    "th": "ใส่ชื่อภาษาอังกฤษที่ใช้ในระบบ และชื่อไทยที่ลูกค้าเห็น",
+    "en": "Enter the English name used in the system and the Thai name customers see"
+  },
+  "ใส่รูปถ้าต้องการ แล้วกดบันทึกหมวดหมู่": {
+    "th": "ใส่รูปถ้าต้องการ แล้วกดบันทึกหมวดหมู่",
+    "en": "Add a picture if you want one, then press Save category"
+  },
+  "แก้ชื่อ รูป และลำดับของหมวดนี้ ตำแหน่งในต้นไม้ย้ายจากหน้านี้ไม่ได้": {
+    "th": "แก้ชื่อ รูป และลำดับของหมวดนี้ ตำแหน่งในต้นไม้ย้ายจากหน้านี้ไม่ได้",
+    "en": "Change this category's name, picture, and order. You cannot move it in the tree from this page"
+  },
+  "ตรวจว่าชื่อตรงกับหมวดที่ต้องการแก้": {
+    "th": "ตรวจว่าชื่อตรงกับหมวดที่ต้องการแก้",
+    "en": "Check that the name is the category you meant to edit"
+  },
+  "แก้ชื่อหรือรูป ชื่อภาษาอังกฤษห้ามเว้นว่าง": {
+    "th": "แก้ชื่อหรือรูป ชื่อภาษาอังกฤษห้ามเว้นว่าง",
+    "en": "Change the name or picture. The English name cannot be empty"
+  },
+  "กดบันทึกหมวดหมู่": {
+    "th": "กดบันทึกหมวดหมู่",
+    "en": "Press Save category"
+  },
+  "เพิ่มสินค้าใหม่ทีละขั้นตอน ชื่อที่ลูกค้าเห็นมาก่อน รหัสสินค้าอยู่รอง": {
+    "th": "เพิ่มสินค้าใหม่ทีละขั้นตอน ชื่อที่ลูกค้าเห็นมาก่อน รหัสสินค้าอยู่รอง",
+    "en": "Add a product step by step. The customer-facing name comes first; the product code is secondary"
+  },
+  "ใส่รหัสสินค้า ชื่อไทย ชื่ออังกฤษ และราคาขาย ช่องเหล่านี้จำเป็น": {
+    "th": "ใส่รหัสสินค้า ชื่อไทย ชื่ออังกฤษ และราคาขาย ช่องเหล่านี้จำเป็น",
+    "en": "Enter the product code, Thai name, English name, and selling price. These fields are required"
+  },
+  "เลือกหมวดที่เป็นชั้นวางสินค้า และแบรนด์จากชื่อ": {
+    "th": "เลือกหมวดที่เป็นชั้นวางสินค้า และแบรนด์จากชื่อ",
+    "en": "Choose the product-shelf category and the brand by its name"
+  },
+  "ใส่รูปถ้ามี แล้วกดบันทึกสินค้า": {
+    "th": "ใส่รูปถ้ามี แล้วกดบันทึกสินค้า",
+    "en": "Add photos if you have them, then press Save product"
+  },
+  "รายการสินค้าในร้าน ค้นจากชื่อหรือรหัส แล้วเปิดเพื่อแก้": {
+    "th": "รายการสินค้าในร้าน ค้นจากชื่อหรือรหัส แล้วเปิดเพื่อแก้",
+    "en": "The store's product list. Search by name or code, then open a row to edit"
+  },
+  "ค้นหาสินค้าจากชื่อหรือรหัส": {
+    "th": "ค้นหาสินค้าจากชื่อหรือรหัส",
+    "en": "Search for a product by name or code"
+  },
+  "เปิดแถวเพื่อดูหรือแก้ไข": {
+    "th": "เปิดแถวเพื่อดูหรือแก้ไข",
+    "en": "Open a row to view or edit it"
+  },
+  "กดเพิ่มสินค้าเมื่อยังไม่มีรายการนี้": {
+    "th": "กดเพิ่มสินค้าเมื่อยังไม่มีรายการนี้",
+    "en": "Press Add a product if it is not in the list yet"
+  },
+  "ตั้งชื่อแคมเปญและช่วงเวลาที่โปรนี้ใช้ได้ โปรและคูปองเพิ่มในหน้าถัดไป": {
+    "th": "ตั้งชื่อแคมเปญและช่วงเวลาที่โปรนี้ใช้ได้ โปรและคูปองเพิ่มในหน้าถัดไป",
+    "en": "Name the campaign and when it runs. Add offers and coupons on the next page"
+  },
+  "ตั้งชื่อที่ทีมและลูกค้าเข้าใจ เช่น ลดราคาขนมปังสิ้นเดือน": {
+    "th": "ตั้งชื่อที่ทีมและลูกค้าเข้าใจ เช่น ลดราคาขนมปังสิ้นเดือน",
+    "en": "Use a name the team and customers understand, for example End-of-month bread sale"
+  },
+  "กดบันทึกแคมเปญ แล้วไปเพิ่มโปรหรือคูปองในหน้าถัดไป": {
+    "th": "กดบันทึกแคมเปญ แล้วไปเพิ่มโปรหรือคูปองในหน้าถัดไป",
+    "en": "Press Save campaign, then add an offer or coupon on the next page"
+  },
+  "สร้างกติกาโปรโมชันว่าสินค้าชุดไหนได้ส่วนลดเท่าไร": {
+    "th": "สร้างกติกาโปรโมชันว่าสินค้าชุดไหนได้ส่วนลดเท่าไร",
+    "en": "Create the offer rule: which product set gets which discount"
+  },
+  "ตั้งชื่อโปรที่ทีมอ่านรู้เรื่อง": {
+    "th": "ตั้งชื่อโปรที่ทีมอ่านรู้เรื่อง",
+    "en": "Name the offer so the team can read it"
+  },
+  "เลือกชุดสินค้าและส่วนลด": {
+    "th": "เลือกชุดสินค้าและส่วนลด",
+    "en": "Choose the product set and the discount"
+  },
+  "กดบันทึกโปรโมชันเมื่อกติกาครบ": {
+    "th": "กดบันทึกโปรโมชันเมื่อกติกาครบ",
+    "en": "Press Save promotion when the rule is complete"
+  },
+  "สร้างหน้าโปรที่ลูกค้าเปิดดู รวมแบนเนอร์ สินค้า และคูปองของแคมเปญ": {
+    "th": "สร้างหน้าโปรที่ลูกค้าเปิดดู รวมแบนเนอร์ สินค้า และคูปองของแคมเปญ",
+    "en": "Create the page customers open, with the banner, products, and coupons for the campaign"
+  },
+  "ตั้งชื่อหน้าและเลือกแคมเปญที่หน้านี้สังกัด": {
+    "th": "ตั้งชื่อหน้าและเลือกแคมเปญที่หน้านี้สังกัด",
+    "en": "Name the page and choose the campaign it belongs to"
+  },
+  "ใส่แบนเนอร์และตรวจสินค้าที่จะแสดง": {
+    "th": "ใส่แบนเนอร์และตรวจสินค้าที่จะแสดง",
+    "en": "Add a banner and check which products will show"
+  },
+  "กดบันทึกหน้าโปรโมชัน": {
+    "th": "กดบันทึกหน้าโปรโมชัน",
+    "en": "Press Save promotion page"
+  },
+  "สร้างคูปองที่ลูกค้าใช้เป็นส่วนลด ตั้งชื่อ โค้ด และเงื่อนไขให้ครบก่อนบันทึก": {
+    "th": "สร้างคูปองที่ลูกค้าใช้เป็นส่วนลด ตั้งชื่อ โค้ด และเงื่อนไขให้ครบก่อนบันทึก",
+    "en": "Create a coupon customers use as a discount. Set the name, code, and rules before you save"
+  },
+  "ตั้งชื่อคูปองและโค้ดที่ลูกค้ากรอก": {
+    "th": "ตั้งชื่อคูปองและโค้ดที่ลูกค้ากรอก",
+    "en": "Set the coupon name and the code the customer types"
+  },
+  "กำหนดส่วนลด วันใช้ได้ และกลุ่มลูกค้า": {
+    "th": "กำหนดส่วนลด วันใช้ได้ และกลุ่มลูกค้า",
+    "en": "Set the discount, the dates it works, and who can use it"
+  },
+  "กดบันทึกคูปอง": {
+    "th": "กดบันทึกคูปอง",
+    "en": "Press Save coupon"
+  },
+  "สร้างกลุ่มลูกค้าด้วยเงื่อนไขที่อ่านได้ การเปิดหน้านี้ไม่ล็อกรายชื่อ": {
+    "th": "สร้างกลุ่มลูกค้าด้วยเงื่อนไขที่อ่านได้ การเปิดหน้านี้ไม่ล็อกรายชื่อ",
+    "en": "Build a customer group with conditions you can read. Opening this page does not lock the list"
+  },
+  "ตั้งชื่อกลุ่มที่ทีมเข้าใจ เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน": {
+    "th": "ตั้งชื่อกลุ่มที่ทีมเข้าใจ เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน",
+    "en": "Name the group so the team understands it, for example Customers with no order in 30 days"
+  },
+  "เพิ่มเงื่อนไขอย่างน้อยหนึ่งข้อ ระบบจะประมาณจำนวนให้ แต่ยังไม่ล็อกรายชื่อ": {
+    "th": "เพิ่มเงื่อนไขอย่างน้อยหนึ่งข้อ ระบบจะประมาณจำนวนให้ แต่ยังไม่ล็อกรายชื่อ",
+    "en": "Add at least one condition. The page estimates the count but does not lock the list"
+  },
+  "กดบันทึกกลุ่มลูกค้า เมื่อต้องการจำรายชื่อตอนนี้ ให้กดล็อกรายชื่อแยกต่างหาก": {
+    "th": "กดบันทึกกลุ่มลูกค้า เมื่อต้องการจำรายชื่อตอนนี้ ให้กดล็อกรายชื่อแยกต่างหาก",
+    "en": "Press Save customer group. When you want to remember who matches right now, press Lock the list separately"
+  },
+  "แก้ชื่อหรือคำอธิบายของกลุ่มลูกค้า การเปิดหน้านี้ไม่ล็อกรายชื่อและไม่บันทึกเงื่อนไขเอง": {
+    "th": "แก้ชื่อหรือคำอธิบายของกลุ่มลูกค้า การเปิดหน้านี้ไม่ล็อกรายชื่อและไม่บันทึกเงื่อนไขเอง",
+    "en": "Edit the group's name or description. Opening this page does not lock the list or save conditions by itself"
+  },
+  "ตรวจชื่อกลุ่ม": {
+    "th": "ตรวจชื่อกลุ่ม",
+    "en": "Check the group name"
+  },
+  "แก้คำอธิบายหรือสถานะการใช้งาน": {
+    "th": "แก้คำอธิบายหรือสถานะการใช้งาน",
+    "en": "Change the description or whether the group is in use"
+  },
+  "กดบันทึกกลุ่มลูกค้า ถ้ายังไม่ล็อกรายชื่อและต้องการจำรายชื่อตอนนี้ ให้กดล็อกรายชื่อ": {
+    "th": "กดบันทึกกลุ่มลูกค้า ถ้ายังไม่ล็อกรายชื่อและต้องการจำรายชื่อตอนนี้ ให้กดล็อกรายชื่อ",
+    "en": "Press Save customer group. If the list is not locked and you want to remember who matches now, press Lock the list"
+  },
+  "รายการกลุ่มลูกค้า ใช้เลือกคนสำหรับคูปองหรือข้อความ": {
+    "th": "รายการกลุ่มลูกค้า ใช้เลือกคนสำหรับคูปองหรือข้อความ",
+    "en": "Customer groups, used to choose people for a coupon or a message"
+  },
+  "เปิดกลุ่มเพื่อดูเงื่อนไข": {
+    "th": "เปิดกลุ่มเพื่อดูเงื่อนไข",
+    "en": "Open a group to see its conditions"
+  },
+  "กดสร้างกลุ่มลูกค้าเมื่อยังไม่มีกลุ่มที่ต้องการ": {
+    "th": "กดสร้างกลุ่มลูกค้าเมื่อยังไม่มีกลุ่มที่ต้องการ",
+    "en": "Press Create a customer group if the one you need is not here"
+  },
+  "การลบกลุ่มจะถามยืนยัน เพราะคูปองที่ใช้อยู่จะหากลุ่มนี้ไม่เจอ": {
+    "th": "การลบกลุ่มจะถามยืนยัน เพราะคูปองที่ใช้อยู่จะหากลุ่มนี้ไม่เจอ",
+    "en": "Deleting a group asks you to confirm, because coupons that use it will not find this group"
+  },
+  "แก้ข้อความอีเมลต้อนรับคนที่เพิ่งสนใจร้าน ตัวอย่างทางขวาเป็นการดูอย่างเดียว จนกว่าจะกดบันทึก": {
+    "th": "แก้ข้อความอีเมลต้อนรับคนที่เพิ่งสนใจร้าน ตัวอย่างทางขวาเป็นการดูอย่างเดียว จนกว่าจะกดบันทึก",
+    "en": "Edit the welcome email for someone who just showed interest. The preview on the side is view-only until you press save"
+  },
+  "แก้หัวเรื่องและข้อความที่ผู้รับจะอ่าน": {
+    "th": "แก้หัวเรื่องและข้อความที่ผู้รับจะอ่าน",
+    "en": "Edit the subject and the message the recipient will read"
+  },
+  "ดูตัวอย่างเพื่อตรวจภาษา": {
+    "th": "ดูตัวอย่างเพื่อตรวจภาษา",
+    "en": "Look at the preview to check the wording"
+  },
+  "กดบันทึกเมื่อต้องการให้อีเมลฉบับถัดไปใช้ข้อความใหม่": {
+    "th": "กดบันทึกเมื่อต้องการให้อีเมลฉบับถัดไปใช้ข้อความใหม่",
+    "en": "Press save when the next email should use the new text"
+  },
+  "สร้างข้อความแจ้งเตือนบนมือถือ การเปิดหน้านี้ยังไม่ส่งหาลูกค้า": {
+    "th": "สร้างข้อความแจ้งเตือนบนมือถือ การเปิดหน้านี้ยังไม่ส่งหาลูกค้า",
+    "en": "Create a phone notification. Opening this page does not send it"
+  },
+  "เขียนหัวข้อและข้อความที่ผู้รับจะเห็น": {
+    "th": "เขียนหัวข้อและข้อความที่ผู้รับจะเห็น",
+    "en": "Write the title and the message the recipient will see"
+  },
+  "เลือกกลุ่มผู้รับ แล้วกดประมาณจำนวนเมื่อต้องการรู้ว่าจะถึงกี่คน": {
+    "th": "เลือกกลุ่มผู้รับ แล้วกดประมาณจำนวนเมื่อต้องการรู้ว่าจะถึงกี่คน",
+    "en": "Choose who receives it, then press the estimate button when you want to know how many people that is"
+  },
+  "บันทึกฉบับร่างก่อน แล้วค่อยส่งหรือตั้งเวลาเมื่อพร้อม": {
+    "th": "บันทึกฉบับร่างก่อน แล้วค่อยส่งหรือตั้งเวลาเมื่อพร้อม",
+    "en": "Save a draft first, then send or schedule it when you are ready"
+  },
+  "จัดการบัญชีพนักงานที่เข้าสู่ระบบนี้ได้": {
+    "th": "จัดการบัญชีพนักงานที่เข้าสู่ระบบนี้ได้",
+    "en": "Manage the staff accounts that can sign in here"
+  },
+  "หาคนจากชื่อหรืออีเมล": {
+    "th": "หาคนจากชื่อหรืออีเมล",
+    "en": "Find a person by name or email"
+  },
+  "เปลี่ยนบทบาทหรือปิดบัญชีได้จากแถวนั้น ระบบจะถามผลก่อนทำ": {
+    "th": "เปลี่ยนบทบาทหรือปิดบัญชีได้จากแถวนั้น ระบบจะถามผลก่อนทำ",
+    "en": "Change a role or turn an account off from its row. The system tells you the result before it does it"
+  },
+  "กดเพิ่มบัญชีเมื่อมีพนักงานใหม่": {
+    "th": "กดเพิ่มบัญชีเมื่อมีพนักงานใหม่",
+    "en": "Press Add an account when someone new joins"
+  },
+  "ค้นหาจากชื่อ": {
+    "th": "ค้นหาจากชื่อ",
+    "en": "Search by name"
+  },
+  "เช่น ชื่อที่ทีมใช้": {
+    "th": "เช่น ชื่อที่ทีมใช้",
+    "en": "For example, the name your team uses"
+  },
+  "จำเป็น ดูตัวอย่างในช่อง แล้วพิมพ์ค่าจริง": {
+    "th": "จำเป็น ดูตัวอย่างในช่อง แล้วพิมพ์ค่าจริง",
+    "en": "Required. Use the example in the field, then type the real value"
+  },
+  "ไม่จำเป็น เว้นว่างได้": {
+    "th": "ไม่จำเป็น เว้นว่างได้",
+    "en": "Optional. Leave blank if you do not have it"
+  },
+  "กรอกชื่อกลุ่มลูกค้า เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน": {
+    "th": "กรอกชื่อกลุ่มลูกค้า เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน",
+    "en": "Enter a group name, for example Customers with no order in 30 days"
+  },
+  "กรอกรหัสอ้างอิง เป็นตัวพิมพ์เล็กและขีด เช่น vip-customers": {
+    "th": "กรอกรหัสอ้างอิง เป็นตัวพิมพ์เล็กและขีด เช่น vip-customers",
+    "en": "Enter a reference code in lowercase with hyphens, for example vip-customers"
+  },
+  "บันทึกกลุ่มลูกค้าแล้ว": {
+    "th": "บันทึกกลุ่มลูกค้าแล้ว",
+    "en": "Customer group saved"
+  },
+  "เปิดรายการกลุ่มลูกค้า": {
+    "th": "เปิดรายการกลุ่มลูกค้า",
+    "en": "Open the customer groups"
+  },
+  "ตั้งชื่อกลุ่ม แล้วเลือกเงื่อนไขว่าใครอยู่ในกลุ่ม": {
+    "th": "ตั้งชื่อกลุ่ม แล้วเลือกเงื่อนไขว่าใครอยู่ในกลุ่ม",
+    "en": "Name the group, then choose who belongs in it"
+  },
+  "ตั้งชื่อกลุ่ม": {
+    "th": "ตั้งชื่อกลุ่ม",
+    "en": "Name the group"
+  },
+  "เลือกเงื่อนไข": {
+    "th": "เลือกเงื่อนไข",
+    "en": "Choose the conditions"
+  },
+  "ชื่อกลุ่มลูกค้า": {
+    "th": "ชื่อกลุ่มลูกค้า",
+    "en": "Customer group name"
+  },
+  "ใช้ชื่อที่ทีมเรียกจริง": {
+    "th": "ใช้ชื่อที่ทีมเรียกจริง",
+    "en": "Use the name your team actually says"
+  },
+  "เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน": {
+    "th": "เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน",
+    "en": "For example, Customers with no order in 30 days"
+  },
+  "เช่น ใช้กับคูปองเรียกกลับ": {
+    "th": "เช่น ใช้กับคูปองเรียกกลับ",
+    "en": "For example, Used with a win-back coupon"
+  },
+  "สร้างจากชื่อให้อัตโนมัติ แก้ได้ถ้าต้องการ": {
+    "th": "สร้างจากชื่อให้อัตโนมัติ แก้ได้ถ้าต้องการ",
+    "en": "Filled in from the name. Change it if you need to"
+  },
+  "เปิดใช้กลุ่มนี้": {
+    "th": "เปิดใช้กลุ่มนี้",
+    "en": "Turn this group on"
+  },
+  "กรอกชื่อผู้จัดจำหน่าย เช่น บริษัท ตัวอย่าง จำกัด": {
+    "th": "กรอกชื่อผู้จัดจำหน่าย เช่น บริษัท ตัวอย่าง จำกัด",
+    "en": "Enter the supplier name, for example Example Co., Ltd."
+  },
+  "บันทึกผู้จัดจำหน่ายแล้ว": {
+    "th": "บันทึกผู้จัดจำหน่ายแล้ว",
+    "en": "Supplier saved"
+  },
+  "เปิดรายการผู้จัดจำหน่าย": {
+    "th": "เปิดรายการผู้จัดจำหน่าย",
+    "en": "Open the supplier list"
+  },
+  "เพิ่มผู้จัดจำหน่าย": {
+    "th": "เพิ่มผู้จัดจำหน่าย",
+    "en": "Add a supplier"
+  },
+  "ชื่อร้านหรือบริษัทที่ส่งสินค้าให้เรา": {
+    "th": "ชื่อร้านหรือบริษัทที่ส่งสินค้าให้เรา",
+    "en": "The shop or company that sends us goods"
+  },
+  "บันทึกผู้จัดจำหน่าย": {
+    "th": "บันทึกผู้จัดจำหน่าย",
+    "en": "Save supplier"
+  },
+  "กรอกชื่อ": {
+    "th": "กรอกชื่อ",
+    "en": "Enter the name"
+  },
+  "ใส่ช่องทางติดต่อ": {
+    "th": "ใส่ช่องทางติดต่อ",
+    "en": "Add contact details"
+  },
+  "ชื่อผู้จัดจำหน่าย": {
+    "th": "ชื่อผู้จัดจำหน่าย",
+    "en": "Supplier name"
+  },
+  "เช่น บริษัท ตัวอย่าง จำกัด": {
+    "th": "เช่น บริษัท ตัวอย่าง จำกัด",
+    "en": "For example, Example Co., Ltd."
+  },
+  "แก้ไขผู้จัดจำหน่าย": {
+    "th": "แก้ไขผู้จัดจำหน่าย",
+    "en": "Edit supplier"
+  },
+  "แก้ชื่อหรือช่องทางติดต่อ แล้วกดบันทึก": {
+    "th": "แก้ชื่อหรือช่องทางติดต่อ แล้วกดบันทึก",
+    "en": "Change the name or contact details, then save"
+  },
+  "สร้างคูปอง": {
+    "th": "สร้างคูปอง",
+    "en": "Create a coupon"
+  },
+  "บันทึกคูปอง": {
+    "th": "บันทึกคูปอง",
+    "en": "Save coupon"
+  },
+  "ตั้งชื่อและโค้ด": {
+    "th": "ตั้งชื่อและโค้ด",
+    "en": "Set the name and code"
+  },
+  "เลือกส่วนลดและกลุ่มลูกค้า": {
+    "th": "เลือกส่วนลดและกลุ่มลูกค้า",
+    "en": "Choose the discount and customer group"
+  },
+  "อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้าอัปโหลดวิดีโอ": {
+    "th": "อัปเดตข้อมูลและรูปภาพ (สูงสุด 3 รูป) — วิดีโอให้ใช้หน้าอัปโหลดวิดีโอ",
+    "en": "Update the details and photos (up to 3). Use the video upload page for video"
+  },
+  "ตรวจชื่อสินค้า": {
+    "th": "ตรวจชื่อสินค้า",
+    "en": "Check the product name"
+  },
+  "แก้ราคาหรือรูป": {
+    "th": "แก้ราคาหรือรูป",
+    "en": "Change the price or photos"
+  },
+  "เลือกสินค้าที่ต้องการให้วิดีโอนี้ไปแสดง วิดีโอจะอยู่ท้ายสุดเสมอ": {
+    "th": "เลือกสินค้าที่ต้องการให้วิดีโอนี้ไปแสดง วิดีโอจะอยู่ท้ายสุดเสมอ",
+    "en": "Choose the products that should show this video. The video always stays last"
+  },
+  "บันทึกวิดีโอ": {
+    "th": "บันทึกวิดีโอ",
+    "en": "Save video"
+  },
+  "ใส่ภาพแบนเนอร์ แล้วเลือกแคมเปญ สินค้าและคูปองบนหน้านั้นมาจากแคมเปญที่เลือก บันทึกแล้วลูกค้าเห็นได้เลย": {
+    "th": "ใส่ภาพแบนเนอร์ แล้วเลือกแคมเปญ สินค้าและคูปองบนหน้านั้นมาจากแคมเปญที่เลือก บันทึกแล้วลูกค้าเห็นได้เลย",
+    "en": "Add a banner and choose a campaign. Products and coupons on the page come from that campaign. Customers can see it as soon as you save"
+  },
+  "บันทึกหน้าโปรโมชัน": {
+    "th": "บันทึกหน้าโปรโมชัน",
+    "en": "Save promotion page"
+  },
+  "ตั้งชื่อหน้า": {
+    "th": "ตั้งชื่อหน้า",
+    "en": "Name the page"
+  },
+  "เลือกแคมเปญและภาพ": {
+    "th": "เลือกแคมเปญและภาพ",
+    "en": "Choose the campaign and image"
+  },
+  "แก้ไขโปรโมชัน": {
+    "th": "แก้ไขโปรโมชัน",
+    "en": "Edit promotion"
+  },
+  "สร้างโปรโมชัน": {
+    "th": "สร้างโปรโมชัน",
+    "en": "Create a promotion"
+  },
+  "สินค้าในชุดที่เลือกได้ส่วนลดเท่ากันทั้งหมด": {
+    "th": "สินค้าในชุดที่เลือกได้ส่วนลดเท่ากันทั้งหมด",
+    "en": "Every product in the set you pick gets the same discount"
+  },
+  "บันทึกโปรโมชัน": {
+    "th": "บันทึกโปรโมชัน",
+    "en": "Save promotion"
+  },
+  "ตั้งชื่อโปรโมชัน": {
+    "th": "ตั้งชื่อโปรโมชัน",
+    "en": "Name the promotion"
+  },
+  "เพิ่มรูปแบบคำตอบ": {
+    "th": "เพิ่มรูปแบบคำตอบ",
+    "en": "Add a reply"
+  },
+  "เขียนข้อความที่บอทใช้ตอบลูกค้า": {
+    "th": "เขียนข้อความที่บอทใช้ตอบลูกค้า",
+    "en": "Write the message the bot sends to customers"
+  },
+  "บันทึกรูปแบบคำตอบ": {
+    "th": "บันทึกรูปแบบคำตอบ",
+    "en": "Save reply"
+  },
+  "แก้ไขรูปแบบคำตอบ": {
+    "th": "แก้ไขรูปแบบคำตอบ",
+    "en": "Edit reply"
+  },
+  "เพิ่มกติกาที่บอทใช้ตอบ": {
+    "th": "เพิ่มกติกาที่บอทใช้ตอบ",
+    "en": "Add a rule for how the bot replies"
+  },
+  "บอกคำที่ลูกค้าพิมพ์ แล้วเลือกรูปแบบคำตอบที่บอทใช้": {
+    "th": "บอกคำที่ลูกค้าพิมพ์ แล้วเลือกรูปแบบคำตอบที่บอทใช้",
+    "en": "Say what the customer types, then pick the reply the bot uses"
+  },
+  "บันทึกกติกา": {
+    "th": "บันทึกกติกา",
+    "en": "Save rule"
+  },
+  "แก้ไขกติกาที่บอทใช้ตอบ": {
+    "th": "แก้ไขกติกาที่บอทใช้ตอบ",
+    "en": "Edit a rule for how the bot replies"
+  },
+  "เพิ่มขั้นตอนของบอท": {
+    "th": "เพิ่มขั้นตอนของบอท",
+    "en": "Add a bot step"
+  },
+  "เลือกเหตุการณ์ที่เริ่มขั้นตอน แล้วเลือกว่าบอททำอะไรและตอบด้วยข้อความไหน": {
+    "th": "เลือกเหตุการณ์ที่เริ่มขั้นตอน แล้วเลือกว่าบอททำอะไรและตอบด้วยข้อความไหน",
+    "en": "Choose what starts the step, then what the bot does and which message it sends"
+  },
+  "บันทึกขั้นตอนของบอท": {
+    "th": "บันทึกขั้นตอนของบอท",
+    "en": "Save bot step"
+  },
+  "แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวดชั้นบนสุด": {
+    "th": "แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวดชั้นบนสุด",
+    "en": "The homepage icon row shows only top-level categories, so this box appears only when you create a top-level category"
+  },
+  "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้รหัสสินค้าเพื่อแยกรายการ": {
+    "th": "ดูและจัดการสินค้าในแพลตฟอร์ม ใช้รหัสสินค้าเพื่อแยกรายการ",
+    "en": "View and manage platform products. Use the product code to tell items apart"
+  },
+  "ค้นหารหัสหรือชื่อสินค้า…": {
+    "th": "ค้นหารหัสหรือชื่อสินค้า…",
+    "en": "Search by product code or name…"
+  },
+  "ละทิ้งการเปลี่ยนแปลง?": {
+    "th": "ละทิ้งการเปลี่ยนแปลง?",
+    "en": "Discard the changes?"
+  },
+  "สิ่งที่แก้ไว้ยังไม่ถูกบันทึก และจะหายไปถ้าออกจากหน้านี้": {
+    "th": "สิ่งที่แก้ไว้ยังไม่ถูกบันทึก และจะหายไปถ้าออกจากหน้านี้",
+    "en": "What you changed is not saved yet, and it will be lost if you leave this page"
+  },
+  "ละทิ้งการเปลี่ยนแปลง": {
+    "th": "ละทิ้งการเปลี่ยนแปลง",
+    "en": "Discard changes"
+  },
+  "อยู่หน้านี้ต่อ": {
+    "th": "อยู่หน้านี้ต่อ",
+    "en": "Stay on this page"
+  },
+  "ข้อมูลที่ต้องกรอก": {
+    "th": "ข้อมูลที่ต้องกรอก",
+    "en": "What to fill in"
+  },
+  "ช่องที่มีดอกจันต้องกรอกก่อนบันทึก ช่องที่ไม่มีดอกจันเว้นว่างได้": {
+    "th": "ช่องที่มีดอกจันต้องกรอกก่อนบันทึก ช่องที่ไม่มีดอกจันเว้นว่างได้",
+    "en": "Fields with a star must be filled in before saving. Fields without a star can be left blank"
+  },
+  "การทำงานอื่น": {
+    "th": "การทำงานอื่น",
+    "en": "Other actions"
+  },
+  "บันทึกลูกค้า": {
+    "th": "บันทึกลูกค้า",
+    "en": "Save customer"
+  },
+  "บันทึกบริษัท": {
+    "th": "บันทึกบริษัท",
+    "en": "Save company"
+  },
+  "บันทึกบริษัทแล้ว": {
+    "th": "บันทึกบริษัทแล้ว",
+    "en": "Company saved"
+  },
+  "เปิดบริษัท": {
+    "th": "เปิดบริษัท",
+    "en": "Open the company"
+  },
+  "ชื่อบริษัทมาก่อน วงเงินใส่ทีหลังได้": {
+    "th": "ชื่อบริษัทมาก่อน วงเงินใส่ทีหลังได้",
+    "en": "The company name comes first. Credit can wait"
+  },
+  "กรอกชื่อบริษัท": {
+    "th": "กรอกชื่อบริษัท",
+    "en": "Enter the company name"
+  },
+  "ใส่ที่อยู่ถ้ามี": {
+    "th": "ใส่ที่อยู่ถ้ามี",
+    "en": "Add an address if you have one"
+  },
+  "กรอกชื่อบริษัท เช่น บริษัท ตัวอย่าง จำกัด": {
+    "th": "กรอกชื่อบริษัท เช่น บริษัท ตัวอย่าง จำกัด",
+    "en": "Enter the company name, for example Example Co., Ltd."
+  },
+  "ชื่อที่ทีมใช้เรียกบริษัทนี้": {
+    "th": "ชื่อที่ทีมใช้เรียกบริษัทนี้",
+    "en": "The name your team uses for this company"
+  },
+  "ชื่อบนเอกสาร": {
+    "th": "ชื่อบนเอกสาร",
+    "en": "The name on documents"
+  },
+  "เช่น 99 ถนนสุขุมวิท กรุงเทพ": {
+    "th": "เช่น 99 ถนนสุขุมวิท กรุงเทพ",
+    "en": "For example, 99 Sukhumvit Road, Bangkok"
+  },
+  "ไม่จำเป็นตอนสร้าง ใส่ 0 ได้": {
+    "th": "ไม่จำเป็นตอนสร้าง ใส่ 0 ได้",
+    "en": "Optional when creating. You can enter 0"
+  },
+  "จำนวนเงินสูงสุดที่บริษัทซื้อเชื่อได้": {
+    "th": "จำนวนเงินสูงสุดที่บริษัทซื้อเชื่อได้",
+    "en": "The most this company can buy on credit"
+  },
+  "จำนวนวันเครดิต": {
+    "th": "จำนวนวันเครดิต",
+    "en": "Credit days"
+  },
+  "กี่วันหลังส่งของจึงต้องชำระ": {
+    "th": "กี่วันหลังส่งของจึงต้องชำระ",
+    "en": "How many days after delivery payment is due"
+  },
+  "ช่องเดียวกับตอนเพิ่มสินค้า": {
+    "th": "ช่องเดียวกับตอนเพิ่มสินค้า",
+    "en": "The same fields as when you add a product"
+  },
+  "ช่องเดียวกับตอนเพิ่มลูกค้า": {
+    "th": "ช่องเดียวกับตอนเพิ่มลูกค้า",
+    "en": "The same fields as when you add a customer"
+  },
+  "ออเดอร์ {0}": {
+    "th": "ออเดอร์ {0}",
+    "en": "Order {0}"
+  },
+  "ยืนยันออเดอร์แล้ว": {
+    "th": "ยืนยันออเดอร์แล้ว",
+    "en": "Order confirmed"
+  },
+  "ยืนยันออเดอร์": {
+    "th": "ยืนยันออเดอร์",
+    "en": "Confirm order"
+  },
+  "บันทึกว่าชำระแล้ว": {
+    "th": "บันทึกว่าชำระแล้ว",
+    "en": "Mark as paid"
+  },
+  "บันทึกว่าชำระไม่สำเร็จ": {
+    "th": "บันทึกว่าชำระไม่สำเร็จ",
+    "en": "Mark payment as failed"
+  },
+  "ปล่อยการจองสต็อก": {
+    "th": "ปล่อยการจองสต็อก",
+    "en": "Release the stock hold"
+  },
+  "ปล่อยการจองแล้ว": {
+    "th": "ปล่อยการจองแล้ว",
+    "en": "Stock hold released"
+  },
+  "รหัสกันการส่งซ้ำ": {
+    "th": "รหัสกันการส่งซ้ำ",
+    "en": "Duplicate-send code"
+  },
+  "กลับรายการสินค้า": {
+    "th": "กลับรายการสินค้า",
+    "en": "Back to products"
+  },
+  "ผู้ขาย": {
+    "th": "ผู้ขาย",
+    "en": "Seller"
+  },
+  "ภาษีมูลค่าเพิ่ม": {
+    "th": "ภาษีมูลค่าเพิ่ม",
+    "en": "VAT"
+  },
+  "ชื่อนี้เป็นส่วนหนึ่งของที่อยู่หมวด เปลี่ยนแล้วหมวดลูกจะตามชื่อใหม่": {
+    "th": "ชื่อนี้เป็นส่วนหนึ่งของที่อยู่หมวด เปลี่ยนแล้วหมวดลูกจะตามชื่อใหม่",
+    "en": "This name is part of the category path. Child categories follow the new name"
+  },
+  "ลำดับที่แสดง": {
+    "th": "ลำดับที่แสดง",
+    "en": "Display order"
+  },
+  "การเรียงสินค้าเริ่มต้น": {
+    "th": "การเรียงสินค้าเริ่มต้น",
+    "en": "Default product order"
+  },
+  "เช่น คุณสมชาย": {
+    "th": "เช่น คุณสมชาย",
+    "en": "For example, Somchai"
+  },
+  "ข้อมูลผู้จัดจำหน่าย": {
+    "th": "ข้อมูลผู้จัดจำหน่าย",
+    "en": "Supplier details"
+  },
+  "ชื่อที่ทีมใช้เรียกมาก่อน": {
+    "th": "ชื่อที่ทีมใช้เรียกมาก่อน",
+    "en": "Start with the name your team uses"
+  },
+  "ช่องทางติดต่อ": {
+    "th": "ช่องทางติดต่อ",
+    "en": "Contact details"
+  },
+  "ไม่จำเป็นตอนบันทึกครั้งแรก": {
+    "th": "ไม่จำเป็นตอนบันทึกครั้งแรก",
+    "en": "Optional the first time you save"
+  },
+  "ตัวเลขอย่างเดียว ไม่ต้องใส่ขีด": {
+    "th": "ตัวเลขอย่างเดียว ไม่ต้องใส่ขีด",
+    "en": "Digits only, no hyphens"
+  },
+  "ใช้ส่งเอกสาร": {
+    "th": "ใช้ส่งเอกสาร",
+    "en": "Used to send documents"
+  },
+  "ไม่พบผู้จัดจำหน่าย หรือโหลดข้อมูลไม่สำเร็จ": {
+    "th": "ไม่พบผู้จัดจำหน่าย หรือโหลดข้อมูลไม่สำเร็จ",
+    "en": "Supplier not found, or the details did not load"
+  },
+  "ออเดอร์นี้จะถูกทำเครื่องหมายว่าชำระเงินไม่สำเร็จ ลูกค้าต้องชำระใหม่": {
+    "th": "ออเดอร์นี้จะถูกทำเครื่องหมายว่าชำระเงินไม่สำเร็จ ลูกค้าต้องชำระใหม่",
+    "en": "This order is marked as unpaid. The customer has to pay again."
+  },
+  "สินค้าที่จองไว้จะกลับเข้าสต็อก และอาจไม่มีของพอสำหรับออเดอร์นี้": {
+    "th": "สินค้าที่จองไว้จะกลับเข้าสต็อก และอาจไม่มีของพอสำหรับออเดอร์นี้",
+    "en": "The held stock goes back on the shelf, and this order may no longer have enough to ship."
+  },
+  "สร้าง \"{0}\"": {
+    "th": "สร้าง \"{0}\"",
+    "en": "Create \"{0}\""
+  },
+  "+ สร้างใหม่": {
+    "th": "+ สร้างใหม่",
+    "en": "+ Create new"
+  },
+  "ขอให้ผู้ดูแลเพิ่มรายการนี้": {
+    "th": "ขอให้ผู้ดูแลเพิ่มรายการนี้",
+    "en": "Ask an admin to add this"
+  },
+  "ค้นหาแล้วเลือก": {
+    "th": "ค้นหาแล้วเลือก",
+    "en": "Search and choose"
+  },
+  "ไม่พบในรายการ": {
+    "th": "ไม่พบในรายการ",
+    "en": "Nothing matches"
+  },
+  "บันทึกรายการใหม่": {
+    "th": "บันทึกรายการใหม่",
+    "en": "Save new item"
+  },
+  "ชื่อรายการ": {
+    "th": "ชื่อรายการ",
+    "en": "Name"
+  },
+  "สร้างหมวดไม่สำเร็จ": {
+    "th": "สร้างหมวดไม่สำเร็จ",
+    "en": "The category was not created"
+  },
+  "ปิดการขาย": {
+    "th": "ปิดการขาย",
+    "en": "Not for sale"
+  },
+  "ไม่มี (หมวดชั้นบนสุด)": {
+    "th": "ไม่มี (หมวดชั้นบนสุด)",
+    "en": "None (top level)"
+  },
+  "ชนิดของกลุ่ม": {
+    "th": "ชนิดของกลุ่ม",
+    "en": "Kind of group"
+  },
+  "ผู้มาเยือน": {
+    "th": "ผู้มาเยือน",
+    "en": "Guest"
+  },
+  "พนักงาน": {
+    "th": "พนักงาน",
+    "en": "Staff"
+  },
+  "มีบริษัท": {
+    "th": "มีบริษัท",
+    "en": "Has a company"
+  },
+  "กลุ่มที่ไม่รวม": {
+    "th": "กลุ่มที่ไม่รวม",
+    "en": "Groups to leave out"
+  },
+  "เลือกจากชื่อกลุ่ม ไม่ต้องวางรหัส": {
+    "th": "เลือกจากชื่อกลุ่ม ไม่ต้องวางรหัส",
+    "en": "Choose the group by name"
+  },
+  "ค้นจากชื่อ รายการที่โหลดมา 100 รายการแรก": {
+    "th": "ค้นจากชื่อ รายการที่โหลดมา 100 รายการแรก",
+    "en": "Search by name. The first 100 are loaded"
+  },
+  "ค้นจากรหัสหรือชื่อ รายการที่โหลดมา 100 รายการแรก": {
+    "th": "ค้นจากรหัสหรือชื่อ รายการที่โหลดมา 100 รายการแรก",
+    "en": "Search by code or name. The first 100 are loaded"
+  },
+  "เลือกลูกค้าจากรายการ": {
+    "th": "เลือกลูกค้าจากรายการ",
+    "en": "Choose a customer from the list"
+  },
+  "บันทึกกลุ่มลูกค้าไม่สำเร็จ": {
+    "th": "บันทึกกลุ่มลูกค้าไม่สำเร็จ",
+    "en": "The customer group was not saved"
+  },
+  "พิมพ์อย่างน้อย 2 ตัวอักษร": {
+    "th": "พิมพ์อย่างน้อย 2 ตัวอักษร",
+    "en": "Type at least 2 characters"
+  },
+  "ไม่พบบริษัทที่ตรงกับคำค้น": {
+    "th": "ไม่พบบริษัทที่ตรงกับคำค้น",
+    "en": "No company matches that search"
+  },
+  "ไม่พบสินค้าที่ตรงกับคำค้น": {
+    "th": "ไม่พบสินค้าที่ตรงกับคำค้น",
+    "en": "No product matches that search"
+  },
+  "ช่วยเหลือ": {
+    "th": "ช่วยเหลือ",
+    "en": "Help"
+  },
+  "เก็บโจทย์แล้ว": {
+    "th": "เก็บโจทย์แล้ว",
+    "en": "Topic archived"
+  },
+  "ร้านอาหารบ้านสวน": {
+    "th": "ร้านอาหารบ้านสวน",
+    "en": "Baan Suan restaurant"
+  },
+  "แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสสินค้าเอง": {
+    "th": "แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสสินค้าเอง",
+    "en": "Showing the first 100 products. If it is not listed, enter the product UUID."
+  },
+  "รอการตั้งค่า": {
+    "th": "รอการตั้งค่า",
+    "en": "Waiting for configuration"
+  },
+  "กำลังรัน": {
+    "th": "กำลังรัน",
+    "en": "Running"
+  },
+  "ได้ผลบางส่วน": {
+    "th": "ได้ผลบางส่วน",
+    "en": "Partial results"
+  },
+  "กำลังสรุป": {
+    "th": "กำลังสรุป",
+    "en": "Summarising"
+  },
+  "ยังไม่ได้ตั้งค่า AI": {
+    "th": "ยังไม่ได้ตั้งค่า AI",
+    "en": "AI is not configured"
+  },
+  "AI ใช้งานไม่ได้ตอนนี้": {
+    "th": "AI ใช้งานไม่ได้ตอนนี้",
+    "en": "AI is unavailable right now"
+  },
+  "หลักฐานไม่พอ": {
+    "th": "หลักฐานไม่พอ",
+    "en": "Not enough evidence"
+  },
+  "สร้างกลุ่มลูกค้าด้วยเงื่อนไขที่อ่านได้ ระบบล็อกรายชื่อเมื่อบันทึกกลุ่ม": {
+    "th": "สร้างกลุ่มลูกค้าด้วยเงื่อนไขที่อ่านได้ ระบบล็อกรายชื่อเมื่อบันทึกกลุ่ม",
+    "en": "Build a customer group with clear conditions. Saving the group freezes its members."
+  },
+  "เพิ่มเงื่อนไขอย่างน้อยหนึ่งข้อ แล้วประมาณจำนวนลูกค้าก่อนบันทึก": {
+    "th": "เพิ่มเงื่อนไขอย่างน้อยหนึ่งข้อ แล้วประมาณจำนวนลูกค้าก่อนบันทึก",
+    "en": "Add at least one condition, then estimate the customer count before saving."
+  },
+  "กดบันทึกกลุ่มลูกค้า ระบบจะจำรายชื่อตอนนี้ไว้": {
+    "th": "กดบันทึกกลุ่มลูกค้า ระบบจะจำรายชื่อตอนนี้ไว้",
+    "en": "Save the customer group to freeze its current members."
+  },
+  "แก้ชื่อหรือคำอธิบายของกลุ่มลูกค้า กลุ่มเก่าที่ยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดหน้านี้": {
+    "th": "แก้ชื่อหรือคำอธิบายของกลุ่มลูกค้า กลุ่มเก่าที่ยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดหน้านี้",
+    "en": "Edit the group name or description. Opening this page freezes older groups whose members are not yet frozen."
+  },
+  "กดบันทึกชื่อ คำอธิบาย หรือสถานะ เงื่อนไขของกลุ่มที่ล็อกแล้วแก้ไม่ได้": {
+    "th": "กดบันทึกชื่อ คำอธิบาย หรือสถานะ เงื่อนไขของกลุ่มที่ล็อกแล้วแก้ไม่ได้",
+    "en": "Save the name, description or status. Conditions of a frozen group cannot be changed."
+  },
+  "รายการกลุ่มลูกค้า กลุ่มเก่าที่ไม่ใช่กลุ่มสดและยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดรายการ": {
+    "th": "รายการกลุ่มลูกค้า กลุ่มเก่าที่ไม่ใช่กลุ่มสดและยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดรายการ",
+    "en": "Customer groups. Opening this list freezes older non-live groups whose members are not yet frozen."
   }
 }

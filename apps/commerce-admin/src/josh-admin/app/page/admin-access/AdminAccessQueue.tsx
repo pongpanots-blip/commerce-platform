@@ -206,7 +206,7 @@ export default function AdminAccessQueue() {
 
   if (adminRole !== 'platform_admin') {
     return (
-      <div className="p-6">
+      <div className="cp-management-page">
         <AdminListHeader
           title={__uiText("คำขอ Admin")}
           subtitle={__uiText("เฉพาะ platform_admin เท่านั้นที่เข้าถึงหน้านี้ได้")}
@@ -218,7 +218,7 @@ export default function AdminAccessQueue() {
   }
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("คำขอ Admin")}
         subtitle={__uiText("ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ")}

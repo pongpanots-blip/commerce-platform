@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   Alert, Button, DetailSection, Empty, ErrorText, KeyValueGrid, Loading, Page, PageHeader, Panel, StatusChip, TBody, TD, TH, THead, TR,
-  Table, fmt,
+  Table, confirmAction, fmt,
 } from '@cp/ui';
 import { ordersApi, OrderFull, session } from '../../lib/api';
 import { useAsync } from '../hooks';
@@ -41,37 +41,58 @@ export function OrderDetail() {
   const held = d?.reservations.some((r) => r.status === 'held');
   const readOnly = session.claims()?.role === 'business_analyst';
 
+  async function confirmThen(key: 'fail' | 'release') {
+    if (!o || !d) return;
+    if (key === 'fail') {
+      const ok = await confirmAction({
+        title: 'บันทึกว่าชำระไม่สำเร็จ',
+        body: 'ออเดอร์นี้จะถูกทำเครื่องหมายว่าชำระเงินไม่สำเร็จ ลูกค้าต้องชำระใหม่',
+        confirmLabel: 'บันทึกว่าชำระไม่สำเร็จ',
+        danger: true,
+      });
+      if (ok && d.payment) void run('fail', 'บันทึกว่าชำระไม่สำเร็จ', () => ordersApi.failPay(d.payment!.id));
+      return;
+    }
+    const ok = await confirmAction({
+      title: 'ปล่อยการจองสต็อก',
+      body: 'สินค้าที่จองไว้จะกลับเข้าสต็อก และอาจไม่มีของพอสำหรับออเดอร์นี้',
+      confirmLabel: 'ปล่อยการจองสต็อก',
+      danger: true,
+    });
+    if (ok) void run('release', 'ปล่อยการจองแล้ว', () => ordersApi.releaseReservations(o.id));
+  }
+
   return (
     <Page>
       <PageHeader
-        back={{ to: '/orders', label: 'Orders' }}
-        title={o ? o.code ?? __uiText("Order {0}…", {"0": o.id.slice(0, 8)}) : __uiText("Order")}
+        back={{ to: '/orders', label: 'ออเดอร์' }}
+        title={o ? o.code ?? __uiText("ออเดอร์ {0}", {"0": o.id.slice(0, 8)}) : __uiText("ออเดอร์")}
         badge={o && <StatusChip status={o.status} />}
         subtitle={__uiText("Checkout, payment and inventory holds for this order.")}
         actions={
           o && (
             <>
               {!readOnly && o.status === 'draft' && (
-                <Button variant="primary" icon="shopping_cart_checkout" disabled={!!busy} onClick={() => run('checkout', 'Checked out', () => ordersApi.checkout(o.id))}>
-                  {busy === 'checkout' ? '…' : __uiText("Checkout")}
+                <Button variant="primary" icon="shopping_cart_checkout" disabled={!!busy} onClick={() => run('checkout', 'ยืนยันออเดอร์แล้ว', () => ordersApi.checkout(o.id))}>
+                  {busy === 'checkout' ? '…' : __uiText("ยืนยันออเดอร์")}
                 </Button>
               )}
               {!readOnly && o.status === 'pending_payment' && d?.payment?.status === 'pending' && (
                 <>
-                  <Button variant="primary" icon="paid" disabled={!!busy} onClick={() => run('pay', 'Marked paid', () => ordersApi.pay(d.payment!.id))}>
-                    {busy === 'pay' ? '…' : __uiText("Mark paid")}
+                  <Button variant="primary" icon="paid" disabled={!!busy} onClick={() => run('pay', 'บันทึกว่าชำระแล้ว', () => ordersApi.pay(d.payment!.id))}>
+                    {busy === 'pay' ? '…' : __uiText("บันทึกว่าชำระแล้ว")}
                   </Button>
-                  <Button variant="danger-ghost" icon="money_off" disabled={!!busy} onClick={() => run('fail', 'Marked failed', () => ordersApi.failPay(d.payment!.id))}>
-                    {busy === 'fail' ? '…' : __uiText("Mark failed")}
+                  <Button variant="danger-ghost" icon="money_off" disabled={!!busy} onClick={() => void confirmThen('fail')}>
+                    {busy === 'fail' ? '…' : __uiText("บันทึกว่าชำระไม่สำเร็จ")}
                   </Button>
                 </>
               )}
               {!readOnly && held && (
-                <Button icon="lock_open" disabled={!!busy} onClick={() => run('release', 'Holds released', () => ordersApi.releaseReservations(o.id))}>
-                  {busy === 'release' ? '…' : __uiText("Release holds")}
+                <Button icon="lock_open" disabled={!!busy} onClick={() => void confirmThen('release')}>
+                  {busy === 'release' ? '…' : __uiText("ปล่อยการจองสต็อก")}
                 </Button>
               )}
-              <Button icon="refresh" onClick={detail.reload}>{__uiText("Refresh")}</Button>
+              <Button icon="refresh" onClick={detail.reload}>{__uiText("รีเฟรช")}</Button>
             </>
           )
         }
@@ -87,12 +108,12 @@ export function OrderDetail() {
           <Panel className="p-4">
             <KeyValueGrid
               items={[
-                { label: 'Order ID', value: o.id, mono: true },
-                { label: 'Customer', value: <Link className="font-mono text-[11px] text-primary hover:underline" to={`/customers/${o.customerId}`}>{o.customerId}</Link> },
-                { label: 'Total', value: <span className="font-semibold">{money(o.currency, o.total)}</span> },
-                { label: 'Created', value: fmt.when(o.createdAt) },
-                { label: 'Payment', value: d.payment ? <StatusChip status={d.payment.status} /> : '—' },
-                { label: 'Idempotency key', value: o.idempotencyKey ?? '—', mono: true },
+                { label: 'รหัสออเดอร์', value: o.id, copy: true },
+                { label: 'ลูกค้า', value: <Link className="font-mono text-[11px] text-primary hover:underline" to={`/customers/${o.customerId}`}>{o.customerId}</Link> },
+                { label: 'ยอดรวม', value: <span className="font-semibold">{money(o.currency, o.total)}</span> },
+                { label: 'สร้างเมื่อ', value: fmt.when(o.createdAt) },
+                { label: 'การชำระเงิน', value: d.payment ? <StatusChip status={d.payment.status} /> : '—' },
+                { label: 'รหัสกันการส่งซ้ำ', value: o.idempotencyKey ?? '—', copy: true },
               ]}
             />
           </Panel>

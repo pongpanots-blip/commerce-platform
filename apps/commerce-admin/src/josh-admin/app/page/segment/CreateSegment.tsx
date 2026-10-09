@@ -20,7 +20,7 @@ import {
 } from './segment-rule.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const CreateSegment = () => {
   __useUiLocale();
   const navigate = useNavigate();
@@ -56,9 +56,13 @@ const CreateSegment = () => {
   };
 
   const handleSubmit = async () => {
-    if (!form.slug.trim() || !form.name.trim()) {
-      alert(__uiText("กรุณากรอกชื่อ Segment"));
-      return;
+    if (!form.name.trim()) {
+      alert(__uiText("กรอกชื่อกลุ่มลูกค้า เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน"));
+      return false;
+    }
+    if (!form.slug.trim()) {
+      alert(__uiText("กรอกรหัสอ้างอิง เป็นตัวพิมพ์เล็กและขีด เช่น vip-customers"));
+      return false;
     }
 
     // A legacy `cuisine_parent` type never gets created again — the cuisine card always
@@ -69,7 +73,7 @@ const CreateSegment = () => {
     const ruleError = validateRuleForm(effectiveRuleType, ruleForm);
     if (ruleError) {
       alert(ruleError);
-      return;
+      return false;
     }
 
     setSaving(true);
@@ -84,30 +88,41 @@ const CreateSegment = () => {
       });
 
       if (response.status >= 200 && response.status < 300) {
+        toast('บันทึกกลุ่มลูกค้าแล้ว', { label: 'เปิดรายการกลุ่มลูกค้า', href: returnDestination });
         navigate(returnDestination);
+        return true;
       }
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่ม User Segment")}
-      subtitle={__uiText("สร้างกลุ่มลูกค้าใหม่ด้วย rule ที่กำหนดเอง")}
+      title={__uiText("สร้างกลุ่มลูกค้า")}
+      subtitle={__uiText("ตั้งชื่อกลุ่ม แล้วเลือกเงื่อนไขว่าใครอยู่ในกลุ่ม")}
       backPath={returnDestination}
       saving={saving}
+      saveLabel="บันทึกกลุ่มลูกค้า"
+      steps={['ตั้งชื่อกลุ่ม', 'เลือกเงื่อนไข', 'บันทึกกลุ่มลูกค้า']}
       onSave={handleSubmit}
     >
       <Input
-        label={__uiText("ชื่อ Segment *")}
+        label={__uiText("ชื่อกลุ่มลูกค้า")}
+        required
+        hint={__uiText("ใช้ชื่อที่ทีมเรียกจริง")}
+        placeholder={__uiText("เช่น ลูกค้าที่ไม่ได้สั่ง 30 วัน")}
         value={form.name}
         onChange={(event) => setForm({ ...form, name: event.target.value })}
       />
       <Input
-        label={__uiText("คำอธิบาย (ไม่บังคับ)")}
+        label={__uiText("คำอธิบาย")}
+        hint={__uiText("ไม่จำเป็น เว้นว่างได้")}
+        placeholder={__uiText("เช่น ใช้กับคูปองเรียกกลับ")}
         value={form.description}
         onChange={(event) => setForm({ ...form, description: event.target.value })}
       />
@@ -124,7 +139,8 @@ const CreateSegment = () => {
           {__uiText("ตั้งค่าขั้นสูง")}</summary>
         <div className="mt-3 space-y-4">
           <Input
-            label={__uiText("Slug (ตัวระบุ URL)")}
+            label={__uiText("รหัสอ้างอิง")}
+            hint={__uiText("สร้างจากชื่อให้อัตโนมัติ แก้ได้ถ้าต้องการ")}
             value={form.slug}
             onChange={(event) => {
               setSlugTouched(true);
@@ -141,7 +157,7 @@ const CreateSegment = () => {
               checked={form.is_active}
               onChange={(event) => setForm({ ...form, is_active: event.target.checked })}
             />
-            {__uiText("เปิดใช้งาน Segment นี้ (Active)")}</label>
+            {__uiText("เปิดใช้กลุ่มนี้")}</label>
         </div>
       </details>
 

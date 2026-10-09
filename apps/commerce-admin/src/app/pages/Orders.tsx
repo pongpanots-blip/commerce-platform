@@ -56,13 +56,19 @@ export function Orders() {
             unitPrice: Number(l.unitPrice),
           })),
       };
+      if (!customerId) {
+        setFormError(__uiMessage("เลือกลูกค้าจากรายการ"));
+        setSubmitting(false);
+        return false;
+      }
       if (!payload.lines.length) {
         setFormError(__uiMessage("กรุณาเพิ่มสินค้าอย่างน้อย 1 รายการ"));
         setSubmitting(false);
-        return;
+        return false;
       }
       const created = await api.post<OrderRow>('/orders', payload);
       setCustomerId('');
+      setManualCustomer(false);
       setLines([{ ...emptyLine }]);
       setCreating(false);
       if (page !== 1) setPage(1);
@@ -70,6 +76,7 @@ export function Orders() {
       navigate(`/orders/${created.id}`);
     } catch (err) {
       setFormError(err instanceof Error ? err.message : String(err));
+      return false;
     } finally {
       setSubmitting(false);
     }
@@ -102,15 +109,19 @@ export function Orders() {
         <ErrorText error={customers.error ?? products.error} />
         <Field label={__uiText("ลูกค้า")} hint={__uiText("แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสลูกค้าเอง")}>
           <Select required value={manualCustomer ? 'manual' : customerId} onChange={event => { setManualCustomer(event.target.value === 'manual'); setCustomerId(event.target.value === 'manual' ? '' : event.target.value); }}>
-            <option value="">{__uiText("เลือกลูกค้า")}</option>{customers.data?.items.map(customer => <option key={customer.id} value={customer.id}>{customer.name}{customer.code ? ` · ${customer.code}` : ''}</option>)}<option value="manual">{__uiText("ระบุรหัสลูกค้าเอง")}</option>
+            <option value="">{__uiText("เลือกลูกค้า")}</option>
+            {[...(customers.data?.items ?? [])].sort((a, b) => a.name.localeCompare(b.name, 'th')).map(customer => <option key={customer.id} value={customer.id}>{customer.name}{customer.code ? ` · ${customer.code}` : ''}</option>)}
+            <option value="manual">{__uiText("ระบุรหัสลูกค้าเอง")}</option>
           </Select>
         </Field>
         {manualCustomer && <Field label={__uiText("รหัสลูกค้า")}><Input required value={customerId} onChange={event => setCustomerId(event.target.value)} placeholder={__uiText("รหัส UUID ของลูกค้า")} /></Field>}
         {lines.map((l, i) => (
           <div key={i} className="col-span-full grid grid-cols-2 items-end gap-3 rounded-lg border border-secondary-container p-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_40px]">
-            <Field label={__uiText("สินค้า {0}", {"0": i + 1})} className="col-span-2 md:col-span-1">
+            <Field label={__uiText("สินค้า {0}", {"0": i + 1})} hint={__uiText("แสดง 100 รายการแรก หากไม่พบรายการ ให้เลือกระบุรหัสสินค้าเอง")} className="col-span-2 md:col-span-1">
               <Select value={l.manual ? 'manual' : l.productId} onChange={event => updateLine(i, { manual: event.target.value === 'manual', productId: event.target.value === 'manual' ? '' : event.target.value })}>
-                <option value="">{__uiText("เลือกสินค้า")}</option>{products.data?.items.map(product => <option key={product.id} value={product.id}>{product.sku} · {product.name}</option>)}<option value="manual">{__uiText("ระบุรหัสสินค้าเอง")}</option>
+                <option value="">{__uiText("เลือกสินค้า")}</option>
+                {[...(products.data?.items ?? [])].sort((a, b) => a.sku.localeCompare(b.sku, 'th') || a.name.localeCompare(b.name, 'th')).map(product => <option key={product.id} value={product.id}>{product.sku} · {product.name}</option>)}
+                <option value="manual">{__uiText("ระบุรหัสสินค้าเอง")}</option>
               </Select>
               {l.manual && <Input aria-label={__uiText("รหัสสินค้า {0}", {"0": i + 1})} required value={l.productId} onChange={event => updateLine(i, { productId: event.target.value })} placeholder={__uiText("รหัส UUID ของสินค้า")} />}
             </Field>

@@ -1,6 +1,7 @@
+@layer theme, base, josh-reset, components, utilities;
 @import 'tailwindcss';
 @import '../../../libs/ui/theme.css';
 @source '../../../libs/ui/src';
-/* josh's copied pages are styled by josh's own Tailwind v3 theme (see vite.config.mts) */
+/* Scoped legacy utilities remain available; their reset stays below shared UI utilities. */
 @source not './josh-admin';
 @source not './app/pages/workflow-editor/josh';

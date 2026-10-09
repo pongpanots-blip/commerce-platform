@@ -4,7 +4,7 @@ import { Table, TableColumn, Input, Button } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface BrandRow {
   id: string;
   brand_code: string;
@@ -88,9 +88,8 @@ const BrandList = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-5 p-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">{__uiText("Brand Management")}</h2>
+    <div className="cp-management-page flex flex-col gap-5">
+      <PageHeader title={__uiText("Brand Management")} actions={
         <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"
@@ -98,7 +97,7 @@ const BrandList = () => {
             onChange={(e) => setOnlyMissingName(e.target.checked)}
           />
           {__uiText("แสดงเฉพาะที่ยังไม่มีชื่อ")}</label>
-      </div>
+      } />
       <Table columns={columns} data={brands} idKey="id" />
     </div>
   );

@@ -164,6 +164,7 @@ const CouponDetail = () => {
   // เปิด → ปิด เคยต้องยืนยันทันทีตอนสลับสวิตช์ — ตอนนี้พับคำเตือนไปรวมกับ save-confirm dialog
   // แทน (ดู saveConfirmOpen ด้านล่าง) กันไม่ให้แอดมินต้องยืนยัน 2 รอบสำหรับการกดคนละครั้ง
   const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
+  const [savedRevision, setSavedRevision] = useState(0);
   const [backConfirmOpen, setBackConfirmOpen] = useState(false);
   // Guards against two synchronous save-confirm clicks both entering handleSubmit — `busy`
   // (state) isn't enough on its own since state updates aren't visible until the next render,
@@ -546,10 +547,11 @@ const CouponDetail = () => {
     const validationError = validateCouponFormForSave() ?? validateChainAndCodeLock();
     if (validationError) {
       setPageError(validationError);
-      return;
+      return false;
     }
     setPageError('');
     setSaveConfirmOpen(true);
+    return false;
   };
 
   /** Mirrors CreateCoupon's handleSubmit: coupon core -> image -> redemption rules -> audience
@@ -661,6 +663,7 @@ const CouponDetail = () => {
         setAudience((current) => ({ ...current, recipientText: '', recipientFile: null }));
         // Save can import recipients / generate from segment — refresh the entitlement table too.
         await Promise.all([loadCoupon(), loadEntitlements()]);
+        setSavedRevision(revision => revision + 1);
       } finally {
         setBusy(false);
       }
@@ -670,15 +673,15 @@ const CouponDetail = () => {
   };
 
   if (loading && !coupon) {
-    return <div className="p-6">{__uiText("กำลังโหลด…")}</div>;
+    return <div className="cp-management-page">{__uiText("กำลังโหลด…")}</div>;
   }
 
   if (!coupon) {
     if (notFound) {
-      return <div className="p-6">{__uiText("ไม่พบคูปอง")}</div>;
+      return <div className="cp-management-page">{__uiText("ไม่พบคูปอง")}</div>;
     }
     return (
-      <div className="p-6 space-y-3">
+      <div className="cp-management-page space-y-3">
         <p className="text-red-600">{loadError || __uiText("โหลดคูปองไม่สำเร็จ")}</p>
         <ActionButton
           variant="secondary"
@@ -834,6 +837,7 @@ const CouponDetail = () => {
         </>
       }
       onSave={handleSaveClick}
+      savedRevision={savedRevision}
       onBack={() => setBackConfirmOpen(true)}
     >
       <CouponConfirmDialog

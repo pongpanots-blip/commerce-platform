@@ -1,6 +1,6 @@
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useState } from 'react';
-import { Alert, Button, ErrorText, Field, Hint, Icon, Input, Loading, Page, PageHeader, Panel, PanelHead, Select } from '@cp/ui';
+import { Alert, Button, ErrorText, Field, Hint, Icon, Input, Loading, MasterDataSelect, Page, PageHeader, Panel, PanelHead, Select } from '@cp/ui';
 import { stockApi, StockWarehouse } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -49,6 +49,7 @@ export function StockMoves() {
       setForm({ ...form, quantity: '', note: '' });
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+      return false;
     } finally {
       setBusy(false);
     }
@@ -74,19 +75,23 @@ export function StockMoves() {
         <PanelHead title={__uiText("บันทึก{0}", {"0": task.title})} icon={task.icon} sub={task.hint} />
         <form onSubmit={submit}>
           <fieldset disabled={busy} className="grid min-w-0 gap-4 p-4 md:grid-cols-2 md:p-5">
-          <Field label={__uiText("SKU")} hint={__uiText("รหัสสินค้าที่ต้องการบันทึก")}><Input value={form.sku} onChange={set('sku')} required maxLength={64} /></Field>
+          <Field label={__uiText("สินค้า")} hint={__uiText("รหัสสินค้าที่ต้องการบันทึก")}><Input value={form.sku} onChange={set('sku')} required maxLength={64} placeholder="BREAD-001" /></Field>
           <Field label={tab === 'transfer' ? __uiText("จากคลัง") : __uiText("คลัง")}>
-            <Select value={form.warehouse} onChange={set('warehouse')} required>
-              <option value="">{__uiText("เลือกคลัง")}</option>
-              {own.map((w) => <option key={w.code} value={w.code}>{w.code} — {w.name}{w.sellable ? '' : __uiText(" (ไม่นับเป็นยอดขายได้)")}</option>)}
-            </Select>
+            <MasterDataSelect
+              required
+              options={own.map((w) => ({ value: w.code, label: `${w.code} — ${w.name}${w.sellable ? '' : __uiText(" (ไม่นับเป็นยอดขายได้)")}` }))}
+              value={form.warehouse}
+              onChange={(next) => set('warehouse')({ target: { value: String(next) } })}
+            />
           </Field>
           {tab === 'transfer' && (
             <Field label={__uiText("ไปคลัง")}>
-              <Select value={form.to} onChange={set('to')} required>
-                <option value="">{__uiText("เลือกคลัง")}</option>
-                {own.filter((w) => w.code !== form.warehouse).map((w) => <option key={w.code} value={w.code}>{w.code} — {w.name}</option>)}
-              </Select>
+              <MasterDataSelect
+                required
+                options={own.filter((w) => w.code !== form.warehouse).map((w) => ({ value: w.code, label: `${w.code} — ${w.name}` }))}
+                value={form.to}
+                onChange={(next) => set('to')({ target: { value: String(next) } })}
+              />
             </Field>
           )}
           {tab === 'adjust' && (

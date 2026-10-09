@@ -92,7 +92,7 @@ const BotWorkflows = () => {
   ];
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   const filteredWorkflows = workflows.filter(w => {
@@ -101,7 +101,7 @@ const BotWorkflows = () => {
   });
 
   return (
-    <div className="flex flex-col gap-5 p-4">
+    <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
         title={__uiText("Bot Workflows")}
         createLabel={__uiText("เพิ่ม Workflow")}

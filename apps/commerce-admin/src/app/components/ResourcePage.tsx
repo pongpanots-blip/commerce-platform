@@ -1,6 +1,6 @@
 // ui-caption-migration: literal captions only
 import { useState } from 'react';
-import { Alert, Button, ButtonLink, Empty, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Pager, Select, Textarea, TBody, TD, TH, THead, TR, Table } from '@cp/ui';
+import { Alert, Button, ButtonLink, EmptyState, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Pager, Select, Textarea, TBody, TD, TH, THead, TR, Table, toast } from '@cp/ui';
 import { api, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { CurrentPageFilters, useCurrentPageFilter } from './CurrentPageFilters';
@@ -29,6 +29,7 @@ interface Props<T> {
   columns: Column<T>[];
   fields: Field[];
   createLabel: string;
+  saveLabel?: string;
   readOnly?: boolean;
   searchText: (row: T) => string;
   searchPlaceholder: string;
@@ -36,7 +37,7 @@ interface Props<T> {
 
 export function ResourcePage<T extends { id: string; status: string }>(props: Props<T>) {
   __useUiLocale();
-  const { title, subtitle, endpoint, columns, fields, createLabel, readOnly } = props;
+  const { title, subtitle, endpoint, columns, fields, createLabel, saveLabel = createLabel, readOnly } = props;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [creating, setCreating] = useState(false);
@@ -47,10 +48,17 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
   );
 
   const [form, setForm] = useState<Record<string, string>>({});
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
   async function handleSubmit() {
+    const nextErrors: Record<string, string> = {};
+    for (const f of fields) {
+      if (f.required && !form[f.name]?.trim()) nextErrors[f.name] = __uiMessage('กรอก{0} ตัวอย่าง: {1}', { 0: f.label, 1: f.placeholder ? __uiText(f.placeholder) : f.label });
+    }
+    setFieldErrors(nextErrors);
+    if (Object.keys(nextErrors).length) return false;
     setSubmitting(true);
     setFormError(null);
     try {
@@ -60,12 +68,15 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
       }
       const saved = await api.post<T>(endpoint, payload);
       setForm({});
+      setFieldErrors({});
       setCreating(false);
       setCreated(saved.id);
+      toast(__uiMessage('บันทึกแล้ว'), { label: __uiText('เปิดรายการที่เพิ่งบันทึก'), href: `${endpoint}/${saved.id}` });
       if (page !== 1) setPage(1);
       else reload();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : String(err));
+      return false;
     } finally {
       setSubmitting(false);
     }
@@ -88,25 +99,24 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
         icon="add_circle"
         cols={2}
         error={formError}
-        submitLabel={createLabel}
+        submitLabel={saveLabel}
         busy={submitting}
         onSubmit={handleSubmit}
         onCancel={() => setCreating(false)}
       >
         {fields.map((f) => (
-          <Field key={f.name} label={f.label} hint={f.hint} className={f.type === 'textarea' ? 'md:col-span-2' : undefined}>
+          <Field key={f.name} label={f.label} required={f.required} error={fieldErrors[f.name]} hint={f.hint ?? (f.placeholder ? __uiText('ตัวอย่าง: {0}', { 0: __uiText(f.placeholder) }) : undefined)} className={f.type === 'textarea' ? 'md:col-span-2' : undefined}>
             {f.options ? (
               <Select value={form[f.name] ?? ''} onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}>
-                <option value="">—</option>
+                <option value="">{__uiText('เลือก')}</option>
                 {f.options.map((o) => (
                   <option key={o} value={o}>{o}</option>
                 ))}
               </Select>
-            ) : f.type === 'textarea' ? <Textarea rows={3} placeholder={f.placeholder} value={form[f.name] ?? ''} onChange={event => setForm({ ...form, [f.name]: event.target.value })} /> : (
+            ) : f.type === 'textarea' ? <Textarea rows={3} placeholder={f.placeholder ? __uiText(f.placeholder) : undefined} value={form[f.name] ?? ''} onChange={event => setForm({ ...form, [f.name]: event.target.value })} /> : (
               <Input
                 type={f.type ?? 'text'}
-                required={f.required}
-                placeholder={f.placeholder}
+                placeholder={f.placeholder ? __uiText(f.placeholder) : undefined}
                 value={form[f.name] ?? ''}
                 onChange={(e) => setForm({ ...form, [f.name]: e.target.value })}
               />
@@ -122,7 +132,11 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
         {loading && !data ? (
           <Loading />
         ) : error && !data ? null : !data?.items.length ? (
-          <Empty>{readOnly ? __uiText("ยังไม่มีรายการ") : <>{__uiText("ยังไม่มีรายการ เริ่มต้นด้วยปุ่ม “")}{createLabel}{__uiText("” ด้านบน")}</>}</Empty>
+          <EmptyState
+            title={__uiText('ยังไม่มีรายการ')}
+            description={readOnly ? __uiText('เมื่อมีข้อมูล รายการจะแสดงที่นี่') : __uiText('เริ่มด้วยการเพิ่มรายการแรก')}
+            action={!readOnly && <Button variant="primary" icon="add" onClick={() => { setCreating(true); setCreated(null); }}>{createLabel}</Button>}
+          />
         ) : (
           <>
             {filter.visible.length ? <Table>
@@ -140,7 +154,7 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
                   </TR>
                 ))}
               </TBody>
-            </Table> : <Empty icon="search_off">{__uiText("ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป")}</Empty>}
+            </Table> : <EmptyState icon="search_off" title={__uiText('ไม่พบรายการในหน้านี้')} description={__uiText('ล้างตัวกรองเพื่อดูรายการทั้งหมดในหน้านี้ หรือเปิดหน้าถัดไป')} action={<Button icon="filter_alt_off" onClick={filter.clear}>{__uiText('ล้างตัวกรอง')}</Button>} />}
             <Pager page={page} pageSize={pageSize} total={total} onPage={setPage} />
           </>
         )}

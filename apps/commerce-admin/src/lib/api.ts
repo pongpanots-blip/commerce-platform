@@ -288,11 +288,13 @@ export const joshStaffApi = {
 export const customersApi = {
   get: (id: string) => api.get<Customer>(`/customers/${id}`),
   update: (id: string, data: Partial<Customer>) => api.patch<Customer>(`/customers/${id}`, data),
+  create: (data: { name: string; code?: string | null; email?: string | null; phone?: string | null }) => api.post<Customer>('/customers', data),
 };
 
 export const productsApi = {
   get: (id: string) => api.get<Product>(`/products/${id}`),
   update: (id: string, data: Partial<Product>) => api.patch<Product>(`/products/${id}`, data),
+  create: (data: { sku: string; name: string; description?: string | null }) => api.post<Product>('/products', data),
 };
 
 // ---- Marketing research + web scraping (moved from josh) ----

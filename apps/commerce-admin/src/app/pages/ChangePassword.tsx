@@ -19,9 +19,9 @@ export function ChangePassword({ forced, onDone, onSignOut }: { forced?: boolean
 
   async function save() {
     setError(null);
-    if (form.next.length < MIN) return setError(__uiMessage("รหัสผ่านใหม่อย่างน้อย {0} ตัวอักษร", {"0": MIN}));
-    if (form.next !== form.again) return setError(__uiMessage("รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน"));
-    if (form.next === form.current) return setError(__uiMessage("รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม"));
+    if (form.next.length < MIN) { setError(__uiMessage("รหัสผ่านใหม่อย่างน้อย {0} ตัวอักษร", {"0": MIN})); return false; }
+    if (form.next !== form.again) { setError(__uiMessage("รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน")); return false; }
+    if (form.next === form.current) { setError(__uiMessage("รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม")); return false; }
     setBusy(true);
     try {
       await staffApi.changeOwnPassword(form.current, form.next);
@@ -30,6 +30,7 @@ export function ChangePassword({ forced, onDone, onSignOut }: { forced?: boolean
       onDone?.();
     } catch (e) {
       setError(/current password is wrong/.test(String(e)) ? __uiMessage("รหัสผ่านปัจจุบันไม่ถูกต้อง") : e instanceof Error ? e.message : String(e));
+      return false;
     } finally {
       setBusy(false);
     }

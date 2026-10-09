@@ -46,27 +46,31 @@ const EditBotIntentRule = () => {
   const handleSubmit = async () => {
     if (!id || !form.pattern) {
       alert(__uiText("กรุณากรอก Pattern"));
-      return;
+      return false;
     }
     setSaving(true);
     try {
       await updateBotIntentRule(id, form);
       navigate(ADMIN_ROUTES.botIntentRules);
+      return true;
     } catch {
       alert(__uiText("เกิดข้อผิดพลาดในการบันทึก"));
+      return false;
     } finally {
       setSaving(false);
     }
+    return false;
   };
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
-  if (loadError) return <LoadError title={__uiText('แก้ไข Intent Rule')} error={loadError} onRetry={() => setReload(value => value + 1)} />;
+  if (loadError) return <LoadError title={__uiText('แก้ไขกติกาที่บอทใช้ตอบ')} error={loadError} onRetry={() => setReload(value => value + 1)} />;
 
   return (
     <AdminInsertLayout
-      title={__uiText("แก้ไข Intent Rule")}
+      title={__uiText("แก้ไขกติกาที่บอทใช้ตอบ")}
+      saveLabel="บันทึกกติกา"
       backPath={ADMIN_ROUTES.botIntentRules}
       saving={saving}
       onSave={handleSubmit}

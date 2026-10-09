@@ -76,7 +76,7 @@ export default function MarketingLinksPage() {
   const disabled = loading || !ref.trim();
 
   return (
-    <div className="p-6">
+    <div className="cp-management-page">
       <AdminListHeader
         title={__uiText("Marketing Links")}
         subtitle={__uiText("สร้างลิงก์เดียวสำหรับยิง ads — มือถือเด้งเข้าแอป (deferred deep link), desktop เปิดเว็บ, พร้อม UTM")}

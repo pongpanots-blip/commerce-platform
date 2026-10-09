@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 .josh-tw { font-family: 'Noto Sans Thai', ui-sans-serif, system-ui, sans-serif; color: #041a3d; }
-.josh-tw *, .josh-tw ::before, .josh-tw ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
+@layer josh-reset {
+  .josh-tw *, .josh-tw ::before, .josh-tw ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: var(--color-secondary-container); }
+}
 
 /* The migrated management screens share the workspace's readable, locally hosted theme. */
 .josh-tw { color: var(--color-on-surface); font-family: var(--font-body); font-size: 14px; line-height: 1.6; }
@@ -13,11 +15,11 @@
 .josh-tw button:focus-visible, .josh-tw a:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
 
 .cp-task-content > div { max-width: 100%; }
+.cp-management-page, .cp-page-panel { width: 100%; min-width: 0; }
 .cp-task-content h1 { font-family: var(--font-headline); letter-spacing: -.02em; line-height: 1.35; overflow-wrap: anywhere; }
 .cp-task-content h2, .cp-task-content h3 { scroll-margin-top: 96px; }
 .cp-task-content section + section { margin-top: 20px; }
 .cp-task-content :is(input, select, textarea):focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 @media (max-width: 640px) {
-  .cp-task-content > .p-6 { padding: 0; }
   .cp-task-content .cp-editor-layout { padding-bottom: 8px; }
 }

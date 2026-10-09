@@ -1,6 +1,5 @@
 // @ts-nocheck — copied unchanged from josh web-admin, which has the same type errors in this file (josh type debt, not a commerce change).
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
-import { getUiLocale as __dateLocale } from '@cp/ui';
 import { getProductById } from '@josh/shared-api';
 import { ADMIN_PRODUCT_READ } from '../../config/admin-product-read';
 import { Button } from '@josh/shared-ui-web';
@@ -26,7 +25,7 @@ import { nutritionForDisplay } from './product-nutrition.helpers';
 import { normalizeProductStatus, productStatusBadge } from './product-status.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { fmt, uiText as __uiText, useUiLocale as __useUiLocale } from "@cp/ui";
 function MediaPreview({ item }: { item: ProductMediaItem }) {
   __useUiLocale();
   const [failed, setFailed] = useState(false);
@@ -86,11 +85,11 @@ const ProductDetail = () => {
 
   if (loadError) return <LoadError title={__uiText('รายละเอียดสินค้า')} error={loadError} onRetry={() => setReload(value => value + 1)} />;
   if (loading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   if (!product) {
-    return <div className="p-6 text-sm text-red-500">{__uiText("ไม่พบข้อมูลสินค้า")}</div>;
+    return <div className="cp-management-page text-sm text-red-500">{__uiText("ไม่พบข้อมูลสินค้า")}</div>;
   }
 
   const translations = (product.translations as Array<Record<string, string>>) ?? [];
@@ -113,11 +112,11 @@ const ProductDetail = () => {
     if (raw == null || raw === '') return '-';
     const date = new Date(String(raw));
     if (Number.isNaN(date.getTime())) return String(raw);
-    return date.toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'));
+    return fmt.when(date);
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <div className="cp-management-page">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <button
@@ -130,7 +129,16 @@ const ProductDetail = () => {
             {String(product.product_name ?? th?.product_name ?? 'รายละเอียดสินค้า')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            {__uiText("SKU: ")}{String(product.product_inventory_sku ?? '-')}
+            {__uiText("รหัสสินค้า")} {String(product.product_inventory_sku ?? '—')}
+            {product.product_inventory_sku ? (
+              <button
+                type="button"
+                className="ml-2 text-xs text-gray-400 hover:text-gray-700"
+                onClick={() => { void navigator.clipboard?.writeText(String(product.product_inventory_sku)); }}
+              >
+                {__uiText("คัดลอก")}
+              </button>
+            ) : null}
           </p>
         </div>
         <Button
@@ -148,7 +156,7 @@ const ProductDetail = () => {
           />
           {promotionSummary && (
             <InfoRow
-              label={__uiText("Promotion Mechanic")}
+              label={__uiText("โปรโมชัน")}
               value={promotionSummary}
             />
           )}
@@ -157,8 +165,8 @@ const ProductDetail = () => {
             value={`${Number(product.product_inventory_quantity ?? 0).toLocaleString()} ชิ้น`}
           />
           <InfoRow label={__uiText("แบรนด์")} value={String(product.brand_name ?? '-')} />
-          <InfoRow label={__uiText("Marketed By")} value={String(product.marketed_by ?? '-')} />
-          <InfoRow label={__uiText("VAT Type")} value={String(product.vat_type ?? '-')} />
+          <InfoRow label={__uiText("ผู้ขาย")} value={String(product.marketed_by ?? '')} />
+          <InfoRow label={__uiText("ภาษีมูลค่าเพิ่ม")} value={String(product.vat_type ?? '')} />
           <InfoRow label={__uiText("หมวดหมู่")} value={String(product.category_names_path ?? '-')} />
           <InfoRow
             label={__uiText("อุณหภูมิเก็บรักษา")}
@@ -320,23 +328,11 @@ const ProductDetail = () => {
   );
 };
 
-function InfoRow({
-  label,
-  value,
-  wide,
-}: {
-  label: string;
-  value: string;
-  wide?: boolean;
-}) {
+function InfoRow({ label, value, wide }: { label: string; value: string; wide?: boolean }) {
   return (
-    <div
-      className={`rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 ${wide ? 'md:col-span-2' : ''}`}
-    >
+    <div className={`rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 ${wide ? 'md:col-span-2' : ''}`}>
       <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-medium text-gray-900 mt-1 whitespace-pre-wrap">
-        {value || '-'}
-      </p>
+      <p className="text-sm font-medium text-gray-900 mt-1 whitespace-pre-wrap">{value || '—'}</p>
     </div>
   );
 }

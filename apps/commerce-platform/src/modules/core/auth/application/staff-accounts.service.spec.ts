@@ -45,6 +45,18 @@ describe('StaffAccountsService', () => {
     await expect(svc.create({ email: 'dev@partner.test', role: 'admin' }, me)).rejects.toBeInstanceOf(ConflictException);
   });
 
+  it('self-register: @jagota.co.th only, starts disabled + read-only until an admin opens it; an email in use is a 409', async () => {
+    await expect(svc.register('x@gmail.com', 'long-enough-pw')).rejects.toBeInstanceOf(BadRequestException);
+    await expect(svc.register('x@jagota.co.th.evil.com', 'long-enough-pw')).rejects.toBeInstanceOf(BadRequestException);
+    await expect(svc.register('x@jagota.co.th', 'short')).rejects.toBeInstanceOf(BadRequestException);
+    await expect(svc.register(' New@Jagota.co.th ', 'long-enough-pw', ' New ')).resolves.toEqual({ email: 'new@jagota.co.th', status: 'disabled' });
+    const saved = rows.find((r) => r.email === 'new@jagota.co.th')!;
+    expect(saved).toMatchObject({ role: 'business_analyst', status: 'disabled', name: 'New', mustChangePassword: false });
+    expect(await bcrypt.compare('long-enough-pw', saved.passwordHash!)).toBe(true);
+    expect(JSON.stringify(audit.insert.mock.calls)).not.toContain('long-enough-pw');
+    await expect(svc.register('boss@jagota.co.th', 'long-enough-pw')).rejects.toBeInstanceOf(ConflictException);
+  });
+
   it.each(['sale', 'sale_manager', ' SALES_MANAGER '])('creates and updates canonical roles for %s', async role => {
     const canonical = role === 'sale' ? 'sale' : 'sales_manager';
     const { account } = await svc.create({ email: 'sale@example.test', role }, me);

@@ -20,6 +20,11 @@ export async function login(email: string, password: string): Promise<{ role: st
   return { role: res.role };
 }
 
+/** Self-registration (@jagota.co.th only); the account stays disabled until an admin opens it. */
+export function registerStaff(email: string, password: string): Promise<{ email: string; status: string }> {
+  return request('/admin/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) });
+}
+
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   // A 401 is refreshed once and retried in authedFetch; one that survives it has already ended the session.
   const res = await authedFetch(path, init, init?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }); // FormData sets its own multipart boundary

@@ -24886,5 +24886,25 @@
   "คืนลำดับเดิม": {
     "th": "คืนลำดับเดิม",
     "en": "Restore original order"
+  },
+  "ใช้อีเมล @jagota.co.th เท่านั้น": {
+    "th": "ใช้อีเมล @jagota.co.th เท่านั้น",
+    "en": "Only @jagota.co.th email addresses"
+  },
+  "สมัครแล้ว — รอผู้ดูแลระบบเปิดบัญชีก่อนจึงจะเข้าสู่ระบบได้": {
+    "th": "สมัครแล้ว — รอผู้ดูแลระบบเปิดบัญชีก่อนจึงจะเข้าสู่ระบบได้",
+    "en": "Registered — you can sign in once an admin activates your account"
+  },
+  "สมัครบัญชีทีมงาน": {
+    "th": "สมัครบัญชีทีมงาน",
+    "en": "Staff sign-up"
+  },
+  "มีบัญชีแล้ว?": {
+    "th": "มีบัญชีแล้ว?",
+    "en": "Already have an account?"
+  },
+  "สมัครด้วยอีเมล @jagota.co.th": {
+    "th": "สมัครด้วยอีเมล @jagota.co.th",
+    "en": "Sign up with a @jagota.co.th email"
   }
 }

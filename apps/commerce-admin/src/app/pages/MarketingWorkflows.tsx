@@ -5,6 +5,7 @@ import { Fragment, useState } from 'react';
 import { Alert, Button, Checkbox, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, TogglePill, fmt, ButtonLink } from '@cp/ui';
 import { WorkflowRow, workflowsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { MarketingTestersPanel } from './MarketingTestersPanel';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -185,6 +186,8 @@ export function MarketingWorkflows() {
           )}
         </Panel>
       )}
+
+      <MarketingTestersPanel />
     </Page>
   );
 }

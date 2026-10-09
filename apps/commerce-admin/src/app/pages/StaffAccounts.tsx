@@ -118,7 +118,7 @@ export function StaffAccounts() {
       )}
 
       <Panel className="overflow-hidden">
-        <PanelHead icon="group" title={__uiText("บัญชีทั้งหมด")} sub={list.data && __uiText("{0} ใช้งาน · {1} ทั้งหมด",{'0':rows.filter((a) => a.status === 'active').length,'1':rows.length})} />
+        <PanelHead icon="group" title={__uiText("บัญชีทั้งหมด")} sub={list.data && !list.loading && !list.error && __uiText("{0} ใช้งาน · {1} ทั้งหมด",{'0':rows.filter((a) => a.status === 'active').length,'1':rows.length})} />
         {list.loading && !list.data ? (
           <Loading variant="table" />
         ) : list.error && !list.data ? null : rows.length ? (

@@ -137,6 +137,15 @@ it('staff malformed response never presents a password handover or a saved accou
   await render(<StaffAccounts />,'/settings/staff/new'); await input('email','person@example.com'); await submit();
   expect(container.querySelector('output')!.textContent).toBe('/settings/staff/new'); expect(text()).toContain('Save outcome is unconfirmed');
 });
+it('staff counts disappear during refresh/failure and return only from the successful authoritative list', async () => {
+  const account = { id:'staff-other',email:'other@example.invalid',role:'marketing',status:'active',name:null,createdAt:'2026-10-09T03:00:00Z',mustChangePassword:true } as const;
+  const refresh = deferred<Awaited<ReturnType<typeof staffApi.list>>>();
+  vi.mocked(staffApi.list).mockResolvedValueOnce([account]).mockReturnValueOnce(refresh.promise).mockResolvedValueOnce([account,{...account,id:'staff-disabled',status:'disabled'}]);
+  await render(<StaffAccounts />,'/settings/staff'); expect(text()).toContain('1 active · 1 total');
+  await act(async()=>button('Refresh').click()); expect(text()).not.toContain('1 active · 1 total');
+  await act(async()=>refresh.reject(new Error('Account read failed'))); expect(text()).not.toContain('1 active · 1 total'); expect(text()).not.toContain('0 active · 0 total');
+  await act(async()=>button('Try again').click()); expect(text()).toContain('1 active · 2 total');
+});
 it('integration secret reaches only the API, is excluded from drafts and clears after browser navigation', async () => {
   vi.mocked(api.get).mockResolvedValue([]); vi.mocked(api.post).mockRejectedValueOnce(Object.assign(new Error('Invalid slug'), {status:422}));
   await render(<Integrations />,'/integrations/new'); await input('name','Shop'); await input('signingSecret','private-fixture-secret'); await submit();

@@ -29,7 +29,7 @@
     "Stock: inline business rejection, retained values, lost-response reload recovery, read-before-explicit-retry",
     "Product creation: action URL, keyboard inline validation/focus, unchanged payload and confirmed-id navigation",
     "Customer creation: Thai phone, native email error, optional blanks omitted, existing modal layout",
-    "Staff: create URL, one-time password after receipt, no secret in draft storage",
+    "Staff: create URL, one-time password after receipt, authoritative refreshed account count, no secret in draft storage",
     "Integration: reload recovers nonsecret values only, exact create payload and persisted success",
     "sale: /products/new denied before feature API reads/writes",
     "cs: /customers/new denied before feature API reads/writes",

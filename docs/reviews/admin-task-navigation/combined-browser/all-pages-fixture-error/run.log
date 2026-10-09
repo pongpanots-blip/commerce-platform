@@ -1,0 +1,76 @@
+Checked 50 route/locale/viewport views
+Checked 100 route/locale/viewport views
+Checked 150 route/locale/viewport views
+Checked 200 route/locale/viewport views
+Checked 250 route/locale/viewport views
+Checked 300 route/locale/viewport views
+Checked 350 route/locale/viewport views
+Checked 400 route/locale/viewport views
+Checked 450 route/locale/viewport views
+Checked 500 route/locale/viewport views
+Checked 550 route/locale/viewport views
+Checked 600 route/locale/viewport views
+Checked 650 route/locale/viewport views
+Checked 700 route/locale/viewport views
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: No browser errors
++ actual - expected
+
++ [
++   {
++     locale: 'th',
++     message: "Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
++     viewport: 'desktop'
++   },
++   {
++     locale: 'th',
++     message: "Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
++     viewport: 'phone'
++   },
++   {
++     locale: 'en',
++     message: "Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
++     viewport: 'desktop'
++   },
++   {
++     locale: 'en',
++     message: "Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
++     viewport: 'phone'
++   }
++ ]
+- []
+
+    at file:///workspace/commerce-platform/.e2e-out/combined-page-review/generated-page-review.mjs:1250:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    {
+      locale: 'th',
+      viewport: 'desktop',
+      message: "Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    },
+    {
+      locale: 'th',
+      viewport: 'phone',
+      message: "Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    },
+    {
+      locale: 'en',
+      viewport: 'desktop',
+      message: "Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    },
+    {
+      locale: 'en',
+      viewport: 'phone',
+      message: "Failed to read the 'sessionStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
+    }
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

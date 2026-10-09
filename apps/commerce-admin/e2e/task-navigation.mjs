@@ -17,7 +17,7 @@ const aliases = ['/josh/kyc', '/josh/credit_terms', '/josh/admin_access', '/josh
 const gate = () => { let release; const promise = new Promise(resolve => { release = resolve; }); return { promise, release }; };
 async function open(role, locale = 'en', path = '/home', options = {}) {
   const context = await browser.newContext({ reducedMotion: 'reduce', ...options });
-  const state = { samples: [{ id: sampleId, sku: 'FLOUR-01', quantity: 2, status: 'pending', company_name: 'Harbor Kitchen', created_at: '2026-10-09T03:00:00Z' }], requests: [], writes: [], pending: true };
+  const state = { samples: [{ id: sampleId, sku: 'FLOUR-01', quantity: 2, status: 'pending', company_name: 'Harbor Kitchen', created_at: '2026-10-09T03:00:00Z' }], staff: [], requests: [], writes: [], pending: true };
   const claims = Buffer.from(JSON.stringify({ sub: 'task-ui-fixture', email: 'task-ui@example.invalid', role, exp: 4102444800 })).toString('base64url');
   await context.addInitScript(({ claims, locale }) => {
     if (!sessionStorage.getItem('task-fixture-started')) {
@@ -75,9 +75,11 @@ async function open(role, locale = 'en', path = '/home', options = {}) {
       return answer({id:'fixture-created-integration',status:'active',...body});
     }
     if (path === '/admin/staff') {
-      if (request.method() === 'GET') return answer([]);
+      if (request.method() === 'GET') return answer(state.staff);
       state.writes.push({path,body});if (state.createGate) await state.createGate.promise;
-      return answer({account:{id:'fixture-created-staff',status:'active',...body},temporaryPassword:'one-time-fixture-password'});
+      const account={id:'fixture-created-staff',name:null,status:'active',mustChangePassword:true,createdAt:'2026-10-09T03:00:00Z',...body};
+      state.staff.push(account);
+      return answer({account,temporaryPassword:'one-time-fixture-password'});
     }
     if (path === '/josh/admin-call') {
       if (body.method === 'GET' && body.path === '/cs-admin/sample-requests') {
@@ -234,7 +236,7 @@ try {
     const { context, page, state } = await open('merchandising', 'en', '/product-master-queue');
     await page.getByRole('checkbox', { name: 'Select FLOUR-01', exact: true }).check();
     await page.getByRole('button', { name: /Approve/ }).click();
-    await page.getByText('Approved 1 records', { exact: true }).waitFor();
+    await page.getByText('Approved 1 products', { exact: true }).waitFor();
     assert.equal(state.writes.length, 1); assert.deepEqual(state.writes[0].body, { skus: ['FLOUR-01'] });
     await page.getByText('No pending approvals', { exact: true }).waitFor();
     await screenshot(page, 'queue-success-en');
@@ -298,7 +300,8 @@ try {
   {
     const {context,page,state}=await open('admin','en','/settings/staff/new');await page.locator('[name=email]').fill('new@example.invalid');state.createGate=gate();await page.locator('[name=email]').press('Enter');
     assert.equal(await page.getByText('one-time-fixture-password',{exact:true}).count(),0);state.createGate.release();await page.waitForURL('**/settings/staff');await page.getByText('one-time-fixture-password',{exact:true}).waitFor();
-    assert.equal(await page.evaluate(()=>JSON.stringify(sessionStorage).includes('one-time-fixture-password')),false);await screenshot(page,'staff-success-en');checks.push('Staff: create URL, one-time password after receipt, no secret in draft storage');await context.close();
+    await page.getByText('1 active · 1 total',{exact:true}).waitFor();
+    assert.equal(await page.evaluate(()=>JSON.stringify(sessionStorage).includes('one-time-fixture-password')),false);await screenshot(page,'staff-success-en');checks.push('Staff: create URL, one-time password after receipt, authoritative refreshed account count, no secret in draft storage');await context.close();
   }
   {
     const {context,page,state}=await open('admin','en','/integrations/new');await page.locator('[name=name]').fill('Store fixture');await page.locator('[name=signingSecret]').fill('private-fixture-secret');

@@ -1,5 +1,5 @@
 {
-  "base": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "base": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
   "canonicalFeatureHomes": {
     "/josh/kyc": "/j/kyc",
     "/josh/credit_terms": "/j/credit-terms",
@@ -3747,5 +3747,8 @@
         ]
       }
     ]
-  }
+  },
+  "originalBase": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "branch": "redesign/admin-task-navigation-upstream",
+  "mappingUnchangedByUpstreamReconciliation": true
 }

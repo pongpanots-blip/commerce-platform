@@ -5,9 +5,12 @@ behavior changes were explicitly authorized on 2026-10-09 at 06:52:14 UTC ("อ�
 layout, theme and styles remain the visual reference. The 07:26 UTC instruction adds fluid responsive
 layout requirements. The earlier archived task-directory implementation is not restored.
 
-Branch: `redesign/admin-task-navigation`. Actual base: `69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9`.
-Expected `e4346b7687c196ba4a1a8ca276e74448b90c3317` is ten commits ahead, zero behind; no reset or
-integration occurred. Reconcile its newer tables, login and backend changes before merging elsewhere.
+Current branch: `redesign/admin-task-navigation-upstream`, based on exact requested upstream
+`e4346b7687c196ba4a1a8ca276e74448b90c3317`. Initial base was
+`69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9`. The original task was preserved as local snapshot
+`30e1f788d12665b1e5b9b785ae70dadbe8561ff1`; cherry-pick `dbf5fe6` integrates it onto upstream,
+retaining the newer tables, login/registration and backend changes. Two shared table/copy conflicts
+were resolved explicitly. No reset or remote operation beyond fetching the exact missing SHA occurred.
 No AGENTS.md or local SKILL.md was found in the checkout or available `.agents` / `.codex` directories.
 
 ## Implemented feature mapping
@@ -71,9 +74,12 @@ merge response contract remains unverified and must be confirmed before producti
 
 This is a navigation consolidation plus implemented CS, stock, product/customer creation, staff,
 integration and product-master queue slice. The remaining legacy workflows still need business-specific
-migration and usability checks. The 175-route Stitch inventory is provenance evidence, not a fresh
-all-page visual/state/device validation. SalesAssignment/MyWinback provenance remains uncertain;
-their source files are unchanged. Browser APIs use intercepted fixtures; external persistence,
+migration and usability checks. The 175-route Stitch inventory is provenance evidence; the current 205-record route/family inventory
+and fresh fixture-layout visits record bounded source/render review separately. Neither establishes
+all-state visual or live workflow acceptance. SalesAssignment/MyWinback provenance remains uncertain;
+their source files are unchanged. The inherited shop catalog bulk actions still default missing receipt counts to zero and lack the
+operational queue’s unknown-outcome recovery. Other unchanged legacy mutations require separate
+receipt acceptance. Browser APIs use intercepted fixtures; external persistence,
 exactly-once writes, screen-reader behavior and Safari/Firefox are not verified.
 
 See the [current review and evidence](../reviews/admin-task-navigation/README.md) for actual final

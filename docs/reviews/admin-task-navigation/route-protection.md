@@ -1,5 +1,7 @@
 # Stitch provenance and authorized behavior scope
 
+Current base: `e4346b7687c196ba4a1a8ca276e74448b90c3317`. This is historical reference provenance; current route precedence and per-page review are in [every-page-inventory.md](every-page-inventory.md).
+
 All 175 original surfaces have Stitch references: 170 fresh exports and five composed/shared patterns. `/home` is an explicit derivative. Three later routes in SalesAssignment/MyWinback have uncertain provenance; their source files remain unchanged.
 
 The user explicitly approved navigation/routing/behavior changes while retaining the existing Stitch visual language (06:52:14 UTC, “อนุญาติ”), and fluid responsive layout behavior (07:26 UTC). This inventory does not authorize wholesale restyling and does not claim fresh validation of every route/device/state/language. New action URLs inherit the existing component styles.

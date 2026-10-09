@@ -1,16 +1,22 @@
 {
+  "base": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
+  "branch": "redesign/admin-task-navigation-upstream",
   "report": {
-    "path": "docs/reviews/admin-task-navigation/deliverables/Commerce-admin-navigation-and-action-flows-2026-10-09.md",
-    "sha256": "be9582ad0d3f5a4c03aedebc24b30ead1ee4832687cd2c4fe574b4f52e69dd64"
+    "path": "docs/reviews/admin-task-navigation/deliverables/Commerce-admin-reconciled-navigation-and-route-review-2026-10-09.md",
+    "sha256": "b218e9597819725e41c4e4e1d846e46490dbba22ebcd68880f209f254571081a"
   },
   "evidence": {
-    "path": "docs/reviews/admin-task-navigation/deliverables/Commerce-admin-navigation-and-action-flows-evidence-2026-10-09.zip",
-    "bytes": 1257154,
-    "sha256": "53745c918311102093f35d49b586dd7d3ea879fa6002a3f80efe2a431c558949"
+    "path": "docs/reviews/admin-task-navigation/deliverables/Commerce-admin-reconciled-navigation-evidence-2026-10-09.zip",
+    "bytes": 7088807,
+    "sha256": "de8dcce1a0bf4b5d5c0a210a20ae6a76c378b38e69ca57e3d3d7c50c7bf60ee6",
+    "entries": 157,
+    "crcAndManifestSha256Verified": true
   },
   "patch": {
-    "path": "docs/reviews/admin-task-navigation/deliverables/current-implementation.patch",
-    "sha256": "c53df1a4cb599ed9885d1e976a1b2808914751f51379d5a373ed256ae21e4362"
+    "path": "docs/reviews/admin-task-navigation/deliverables/reconciled-implementation.patch",
+    "sha256": "fe4324c964ffcb0b45b942f56244aa806c13e74d087fb545b8440354e2a1a5ab",
+    "replayExitCode": 0
   },
-  "librarySavedFiles": 0
+  "librarySavedFiles": 0,
+  "validatedSourceFingerprintSha256": "43b6b37fdbbc716428bbb0be85176a278a297a64e1b38048a25ed61be3048d02"
 }

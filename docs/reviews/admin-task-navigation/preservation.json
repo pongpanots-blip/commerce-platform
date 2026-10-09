@@ -1,6 +1,6 @@
 {
-  "base": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
-  "method": "Byte comparison of inventoried source files and theme against HEAD. Changed sources are explicitly enumerated; class/default parity has separate component tests. This is not pixel equivalence evidence.",
+  "base": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
+  "method": "Exact comparison of inventoried protected leaf source and explicit shared visual dependencies against imported upstream; source equality is not pixel-equivalence or all-state evidence. Changed dependencies, routing and helpers are separately enumerated by source patch and every-page inventory.",
   "unchangedProtectedSources": [
     {
       "path": "apps/commerce-admin/src/app/pages/AiConnectors.tsx",
@@ -109,13 +109,13 @@
     },
     {
       "path": "apps/commerce-admin/src/app/pages/Login.tsx",
-      "baseSha256": "dc9b821bc8c8b557d342c8d60b87ca736c023c63b8b8d7fb60b925ddcfc198cb",
-      "currentSha256": "dc9b821bc8c8b557d342c8d60b87ca736c023c63b8b8d7fb60b925ddcfc198cb"
+      "baseSha256": "55c0f7722029eefe0046203cee01c869f1b63314636714a7023bde9e408d0dac",
+      "currentSha256": "55c0f7722029eefe0046203cee01c869f1b63314636714a7023bde9e408d0dac"
     },
     {
       "path": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
-      "baseSha256": "c1b8754625ed569ed690333ca96b44e2aa1416c7f5b87e8ac03a897f1b90df0a",
-      "currentSha256": "c1b8754625ed569ed690333ca96b44e2aa1416c7f5b87e8ac03a897f1b90df0a"
+      "baseSha256": "1f1d3ceb6544170c81534eec34270179a9a33dd90386c4d4b2b3f4517532b7c0",
+      "currentSha256": "1f1d3ceb6544170c81534eec34270179a9a33dd90386c4d4b2b3f4517532b7c0"
     },
     {
       "path": "apps/commerce-admin/src/app/pages/MarketingAnalyst.tsx",
@@ -319,8 +319,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
-      "baseSha256": "a5e92661b97d5582410c4195ac7d5b77cdb1f8779d54f6aba18dbf748dd7db3b",
-      "currentSha256": "a5e92661b97d5582410c4195ac7d5b77cdb1f8779d54f6aba18dbf748dd7db3b"
+      "baseSha256": "ee5a90f67d2e082b92e005bf2725e1362da490947740ed176d315edc5c878706",
+      "currentSha256": "ee5a90f67d2e082b92e005bf2725e1362da490947740ed176d315edc5c878706"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/CS/SampleRequestsAdmin.tsx",
@@ -329,8 +329,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
-      "baseSha256": "e4f7fac28d68cac21d3c7e9d63824e48449e638f334fe576fd43c7c35f80f880",
-      "currentSha256": "e4f7fac28d68cac21d3c7e9d63824e48449e638f334fe576fd43c7c35f80f880"
+      "baseSha256": "a5d3323d7489717e58761163ec066778010c31495493fac7277432dec6edaf8a",
+      "currentSha256": "a5d3323d7489717e58761163ec066778010c31495493fac7277432dec6edaf8a"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditBacksAdmin.tsx",
@@ -399,8 +399,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx",
-      "baseSha256": "e312fb5866fb3d69c66f1afa1622fb74a3bd29ac2fdc87d05442929feffc450f",
-      "currentSha256": "e312fb5866fb3d69c66f1afa1622fb74a3bd29ac2fdc87d05442929feffc450f"
+      "baseSha256": "f715604dda493f168ed89d4b711b69ba946f5416e9b6e8f43e3d758793556ce0",
+      "currentSha256": "f715604dda493f168ed89d4b711b69ba946f5416e9b6e8f43e3d758793556ce0"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx",
@@ -434,8 +434,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
-      "baseSha256": "8343eb7984af66db5a86db76b76b664bb27b84d1f1589dc81720f19e76f6aaef",
-      "currentSha256": "8343eb7984af66db5a86db76b76b664bb27b84d1f1589dc81720f19e76f6aaef"
+      "baseSha256": "78d6727863cb2b34900875d1c28f627b14fc0b26867897035bfe80785eda8570",
+      "currentSha256": "78d6727863cb2b34900875d1c28f627b14fc0b26867897035bfe80785eda8570"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx",
@@ -454,13 +454,13 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
-      "baseSha256": "925a966b87f0eba5768c954b74dc3eec3dd72504ff90aa5e3e6cd079d04b618d",
-      "currentSha256": "925a966b87f0eba5768c954b74dc3eec3dd72504ff90aa5e3e6cd079d04b618d"
+      "baseSha256": "8723616fa5326716ebcd8ccbe2c025a48db3da9bbe3270f49dcdbb93f5909cde",
+      "currentSha256": "8723616fa5326716ebcd8ccbe2c025a48db3da9bbe3270f49dcdbb93f5909cde"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
-      "baseSha256": "35cdad28585d2ffa45761864ddcbc8d23c01a13e1fc0379c158329dee2808c33",
-      "currentSha256": "35cdad28585d2ffa45761864ddcbc8d23c01a13e1fc0379c158329dee2808c33"
+      "baseSha256": "207c4a42cd2388fb786db6136161590ebac27c069c5b98eef03c78ad1df666cb",
+      "currentSha256": "207c4a42cd2388fb786db6136161590ebac27c069c5b98eef03c78ad1df666cb"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
@@ -474,8 +474,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
-      "baseSha256": "e23873bd6e04111559533448b9147d77a8f896d56acc909b1bab797dad7d55d0",
-      "currentSha256": "e23873bd6e04111559533448b9147d77a8f896d56acc909b1bab797dad7d55d0"
+      "baseSha256": "fb4b99124c7387a4c7e988206771536085fc3e254b6ea1e22f5b4aa555bdf80e",
+      "currentSha256": "fb4b99124c7387a4c7e988206771536085fc3e254b6ea1e22f5b4aa555bdf80e"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingJourneyFunnel.tsx",
@@ -494,8 +494,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
-      "baseSha256": "892eab0303eb783440adecc6e8dc5658feeb76fa282a27179332676ce8598269",
-      "currentSha256": "892eab0303eb783440adecc6e8dc5658feeb76fa282a27179332676ce8598269"
+      "baseSha256": "f3cefa2c3495ecccd52c1d218992732e417c6524cb4d567bf42cfbb436e89d89",
+      "currentSha256": "f3cefa2c3495ecccd52c1d218992732e417c6524cb4d567bf42cfbb436e89d89"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx",
@@ -509,8 +509,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
-      "baseSha256": "b3c714a0051e8398fb2c697a1d052edee82abd38e1c6033fee3d7fb6b22a8af8",
-      "currentSha256": "b3c714a0051e8398fb2c697a1d052edee82abd38e1c6033fee3d7fb6b22a8af8"
+      "baseSha256": "c29269d57c3a4aed9f420e583dd8ae147436324aae28acd7059ff992011889b2",
+      "currentSha256": "c29269d57c3a4aed9f420e583dd8ae147436324aae28acd7059ff992011889b2"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapedCatalogPage.tsx",
@@ -519,8 +519,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
-      "baseSha256": "274247896956afea9d4c499ee9d7a156aecf15e06ccc891ca36b6315fc51519e",
-      "currentSha256": "274247896956afea9d4c499ee9d7a156aecf15e06ccc891ca36b6315fc51519e"
+      "baseSha256": "5054a2e1cd7918863eff2f85cc5fd2e2d4981cdf5ad5b3c5ed231c08a33bdd14",
+      "currentSha256": "5054a2e1cd7918863eff2f85cc5fd2e2d4981cdf5ad5b3c5ed231c08a33bdd14"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx",
@@ -544,8 +544,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx",
-      "baseSha256": "3ef373860bbc5b1694e9679f47bf6cb7cdc47a43ddeffc76f4cf63523bcb38d8",
-      "currentSha256": "3ef373860bbc5b1694e9679f47bf6cb7cdc47a43ddeffc76f4cf63523bcb38d8"
+      "baseSha256": "0a06b92bde8f2f61fdc408be68c7217624a9163a28752b90b07186f7e8a27a36",
+      "currentSha256": "0a06b92bde8f2f61fdc408be68c7217624a9163a28752b90b07186f7e8a27a36"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/orders/OrderImport.tsx",
@@ -569,13 +569,13 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
-      "baseSha256": "530827838812babb35a1b8d256f2dee2793c3786f4d80da0f37f89c883497df2",
-      "currentSha256": "530827838812babb35a1b8d256f2dee2793c3786f4d80da0f37f89c883497df2"
+      "baseSha256": "f3f8aa96079fc1ebc88b2bfdaf2dcb88a56d8b4f7927904210f24b6987ea93c7",
+      "currentSha256": "f3f8aa96079fc1ebc88b2bfdaf2dcb88a56d8b4f7927904210f24b6987ea93c7"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
-      "baseSha256": "a4d24360116a8ade1a8a0171b2966653013c476b149aa241bf1514520cafd48d",
-      "currentSha256": "a4d24360116a8ade1a8a0171b2966653013c476b149aa241bf1514520cafd48d"
+      "baseSha256": "4011d2b8412c02301e3fc3f487fbd93e33a7dbf0caaf4753a614b78c61c00a2b",
+      "currentSha256": "4011d2b8412c02301e3fc3f487fbd93e33a7dbf0caaf4753a614b78c61c00a2b"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/product/CreateProduct.tsx",
@@ -589,8 +589,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
-      "baseSha256": "5365972048074b25c98bc402edeb5e825432264c62a82e5e1859259841cf7ce5",
-      "currentSha256": "5365972048074b25c98bc402edeb5e825432264c62a82e5e1859259841cf7ce5"
+      "baseSha256": "c411db55aa4b89525f30c1545b0f88688cd8984e2ec1b94d40a62c4b7cfd7936",
+      "currentSha256": "c411db55aa4b89525f30c1545b0f88688cd8984e2ec1b94d40a62c4b7cfd7936"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/product/ProductVideoUpload.tsx",
@@ -649,8 +649,8 @@
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx",
-      "baseSha256": "f7a2f69b1b7414a45a5bac1723d85f9acddbd4368224e6bae9ba94f5f00a112f",
-      "currentSha256": "f7a2f69b1b7414a45a5bac1723d85f9acddbd4368224e6bae9ba94f5f00a112f"
+      "baseSha256": "a7d57444ba3ec2391dd9438dd27989429e50514195a658cd8bf255ae6ff1466a",
+      "currentSha256": "a7d57444ba3ec2391dd9438dd27989429e50514195a658cd8bf255ae6ff1466a"
     },
     {
       "path": "apps/commerce-admin/src/josh-admin/app/page/user/Alluser.tsx",
@@ -691,6 +691,26 @@
       "path": "apps/commerce-portal/src/app/pages/Webhooks.tsx",
       "baseSha256": "06c38a7398af5d0a43ed29f0f7fddf13ac6cfcf9be1b9d8b4297e5e1db248afb",
       "currentSha256": "06c38a7398af5d0a43ed29f0f7fddf13ac6cfcf9be1b9d8b4297e5e1db248afb"
+    },
+    {
+      "path": "libs/ui/src/data-table.tsx",
+      "baseSha256": "6af2c9de3d7756f34152a2fd8859fc29686e98345e004165882c1ceb54e152ed",
+      "currentSha256": "6af2c9de3d7756f34152a2fd8859fc29686e98345e004165882c1ceb54e152ed"
+    },
+    {
+      "path": "libs/ui/src/usability.tsx",
+      "baseSha256": "0e2ba3f97ee306f61156757bc9ae377fdeb95401a066601bfcdb8c09f3227b8c",
+      "currentSha256": "0e2ba3f97ee306f61156757bc9ae377fdeb95401a066601bfcdb8c09f3227b8c"
+    },
+    {
+      "path": "libs/ui/table.css",
+      "baseSha256": "aca39da9eec3677d70a7cd0efb217366df05cb3af6f1fb6eda33fd70770c533d",
+      "currentSha256": "aca39da9eec3677d70a7cd0efb217366df05cb3af6f1fb6eda33fd70770c533d"
+    },
+    {
+      "path": "libs/ui/theme.css",
+      "baseSha256": "40be4bea9fbff875c33577e5e842511b26fe28601e1d6ce107a6204df9b2426b",
+      "currentSha256": "40be4bea9fbff875c33577e5e842511b26fe28601e1d6ce107a6204df9b2426b"
     }
   ],
   "approvedBehaviorChangedSources": [
@@ -712,7 +732,7 @@
     {
       "path": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
       "baseSha256": "0396bfac70ebe40ba54d4e335643f3add8881cd8791db77dd122c2a3395275f7",
-      "currentSha256": "82465070ec6c4ee3afed6aa809fe81fc7eac8b575dbb5cce5e72c8cc08dc091e"
+      "currentSha256": "bb1487735cbca698fac28f6925aeb7c4efeb556b79cf135b9d5a6e5264d03ced"
     },
     {
       "path": "apps/commerce-admin/src/app/pages/StockMoves.tsx",
@@ -725,6 +745,7 @@
       "currentSha256": "07de0a25da8564ba68c96b2f02e2e116f7ba9dba3f1e633a4f28afd9838e6c03"
     }
   ],
+  "upstreamChangedPathsPreservation": "upstream-reconciliation.json:57/59 byte-identical; two reconciled shared files retain both changes",
   "archiveRuntimeReferences": [],
-  "historicalPreservation": "historical-opt-in-preservation.json records the earlier opt-in-only phase, not the current slice."
+  "historicalPreservation": "historical-opt-in-preservation.json applies only to the earlier opt-in phase."
 }

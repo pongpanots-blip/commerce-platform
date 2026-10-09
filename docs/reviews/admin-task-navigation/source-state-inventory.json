@@ -1772,5 +1772,6 @@
       "observedSourceTokens": [],
       "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
     }
-  ]
+  ],
+  "historicalPhase": "Pre-integration source-token inventory; superseded by full combined route/source AST review in every-page-inventory.json. Do not infer current visual correctness from these tokens."
 }

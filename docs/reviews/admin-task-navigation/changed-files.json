@@ -1,40 +1,171 @@
 {
-  "tracked": [
-    "apps/commerce-admin/src/app/app.tsx",
-    "apps/commerce-admin/src/app/components/ResourcePage.tsx",
-    "apps/commerce-admin/src/app/hooks.ts",
-    "apps/commerce-admin/src/app/navigation.legacy.ts",
-    "apps/commerce-admin/src/app/navigation.spec.ts",
-    "apps/commerce-admin/src/app/navigation.ts",
-    "apps/commerce-admin/src/app/pages/CsDesk.tsx",
-    "apps/commerce-admin/src/app/pages/Integrations.tsx",
-    "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
-    "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
-    "apps/commerce-admin/src/app/pages/StockMoves.tsx",
-    "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
-    "libs/ui/src/forms.tsx",
-    "libs/ui/src/index.tsx",
-    "libs/ui/src/locales/ui-messages.json"
-  ],
-  "addedSourceAndTests": [
+  "base": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
+  "branch": "redesign/admin-task-navigation-upstream",
+  "integrationCommit": "dbf5fe61c0d1a3070cc33329e908e1c7d4e443f4",
+  "preservedOriginalSnapshot": "30e1f788d12665b1e5b9b785ae70dadbe8561ff1",
+  "changesAgainstUpstream": [
+    "apps/commerce-admin/e2e/all-page-review.mjs",
     "apps/commerce-admin/e2e/fixtures/task-form-validation.html",
     "apps/commerce-admin/e2e/fixtures/task-form-validation.tsx",
+    "apps/commerce-admin/e2e/route-design-inventory.cjs",
     "apps/commerce-admin/e2e/task-form-components.mjs",
     "apps/commerce-admin/e2e/task-navigation.mjs",
     "apps/commerce-admin/src/app/FeatureActions.tsx",
     "apps/commerce-admin/src/app/TaskRoute.tsx",
+    "apps/commerce-admin/src/app/app.tsx",
+    "apps/commerce-admin/src/app/components/ResourcePage.tsx",
     "apps/commerce-admin/src/app/features.ts",
     "apps/commerce-admin/src/app/hooks.spec.tsx",
+    "apps/commerce-admin/src/app/hooks.ts",
+    "apps/commerce-admin/src/app/navigation.legacy.ts",
+    "apps/commerce-admin/src/app/navigation.spec.ts",
+    "apps/commerce-admin/src/app/navigation.ts",
     "apps/commerce-admin/src/app/pages/ActionFlows.spec.tsx",
     "apps/commerce-admin/src/app/pages/CsDesk.spec.tsx",
+    "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+    "apps/commerce-admin/src/app/pages/Integrations.tsx",
     "apps/commerce-admin/src/app/pages/ProductMasterQueue.spec.tsx",
+    "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+    "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
+    "apps/commerce-admin/src/app/pages/StockMoves.tsx",
     "apps/commerce-admin/src/app/task-forms.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
     "apps/commerce-admin/src/task-form.spec.tsx",
+    "libs/ui/src/forms.tsx",
+    "libs/ui/src/index.tsx",
+    "libs/ui/src/locales/ui-messages.json",
     "libs/ui/src/task-form.tsx"
   ],
-  "initialWorktree": "clean; all changes belong to this task",
+  "sourceHashes": [
+    {
+      "path": "apps/commerce-admin/e2e/all-page-review.mjs",
+      "sha256": "f36f2691a76969ce021ae2aaf45f6de3e52e45e4cf97f342eaac69833dcd2cbf"
+    },
+    {
+      "path": "apps/commerce-admin/e2e/fixtures/task-form-validation.html",
+      "sha256": "2c3c524fe84fea0d5a4f663c666670096e86fe926f28edac5bb6692446d17718"
+    },
+    {
+      "path": "apps/commerce-admin/e2e/fixtures/task-form-validation.tsx",
+      "sha256": "0fca162edbf08aeae0cfcd59032ad312e19a65b86d5b4b92adea5418cce7d873"
+    },
+    {
+      "path": "apps/commerce-admin/e2e/route-design-inventory.cjs",
+      "sha256": "3790ab53f6cd8ee28a90fbf767784137fb504cb054aabd8b26a3ad25ef5591d3"
+    },
+    {
+      "path": "apps/commerce-admin/e2e/task-form-components.mjs",
+      "sha256": "c6e8eef09291a0bca5d8e86ee01963081625d75d2e62459bac03c7e9aad3006d"
+    },
+    {
+      "path": "apps/commerce-admin/e2e/task-navigation.mjs",
+      "sha256": "50416f15c5d869811061adf74eb174c7b566d5b5869918a05930050c6f11e39c"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/FeatureActions.tsx",
+      "sha256": "cd3f867bbf3cdb83ff7264fefaf32d2a866b81f36692f5ef64235eae86d4b7c4"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/TaskRoute.tsx",
+      "sha256": "48c48d99e96457929fb4c0dfea90d2ddf172522d803d0585b92a0106ecc9b3fb"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/app.tsx",
+      "sha256": "9a95b47a8287ccd347bd3ca6ba74cde92f007d7a5b68c75c11c1cd0f5c48a899"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/components/ResourcePage.tsx",
+      "sha256": "9e285e0b52081051c8ed6d1596284b34ab6ef93eb91eb145c2b6fb1e7de04c51"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/features.ts",
+      "sha256": "bf8cd718c628068a61ad9eb497b6fc1ca1ff9bb0d9a9a7b6826c6946b5184fc1"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/hooks.spec.tsx",
+      "sha256": "bec4226c5245bdbc6cb168a0c36ed1c2415101de737736754894a8478a4411c4"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/hooks.ts",
+      "sha256": "760cfe22b885ff135d0fb7cd034c338e46a327d1215aebc6ec765b5661291cee"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/navigation.legacy.ts",
+      "sha256": "3fe7bf384d06b1f4d11e8e7afb7458f861faa8ad91e5f68d47414cd91703ba55"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/navigation.spec.ts",
+      "sha256": "ad2a14e45c3cc9fd900e46e869e5f87f59c5ab62ff487098a6e9bafb10c480c3"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/navigation.ts",
+      "sha256": "aaa0fcf9cc45ae389b18ae3dfb9e5b0673c8b21c01ea1d11d883dcea516d7e1b"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ActionFlows.spec.tsx",
+      "sha256": "b0220c43631467f407b85ea8c884929abe245f7218e529fbb54819f8ae19f04d"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/CsDesk.spec.tsx",
+      "sha256": "0e2a7fcdc44432837b30a0b12db6d8cfa761098eea4c6fd5e25062dfee2f04b0"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+      "sha256": "ae75155af8c011ba836680785e6eeb00ffb6dfd3789127842c4862f4af73ade3"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Integrations.tsx",
+      "sha256": "ceb635985b6a83bbfcf78c4d870aaf716562c0c4420cebb867a5dabd9eff1ffa"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ProductMasterQueue.spec.tsx",
+      "sha256": "6c5f37afa41324d49589188c24ec0a4554f147d2b76e1653a299ab6655707f21"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+      "sha256": "4c6265a14b9a5fd34592825e0c38c9feefd4ca8fe31eddaa921f9bc0bcae30b8"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
+      "sha256": "bb1487735cbca698fac28f6925aeb7c4efeb556b79cf135b9d5a6e5264d03ced"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/StockMoves.tsx",
+      "sha256": "b13a2bde670d022d0a066dc7d44cf64a796606a1bd1c5176757d26cd19ddb69f"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/task-forms.tsx",
+      "sha256": "72fb6054fea647c4a5c6f06fd23d7e2975ee85bbc33cb577ce5ab7d4bb6413ba"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+      "sha256": "07de0a25da8564ba68c96b2f02e2e116f7ba9dba3f1e633a4f28afd9838e6c03"
+    },
+    {
+      "path": "apps/commerce-admin/src/task-form.spec.tsx",
+      "sha256": "1e5351591084e7b1ee15553832fc6088f824b1458e0271432dbd3c3c7572aa17"
+    },
+    {
+      "path": "libs/ui/src/forms.tsx",
+      "sha256": "d7b1d0b90e399135c24209ee7b29eb826f91eb0a606084674116aef21f36efa7"
+    },
+    {
+      "path": "libs/ui/src/index.tsx",
+      "sha256": "cdb081bc0d45b73299454177fc4c4cd67b826e4f7fe3d9414a0a890ffe29b0fc"
+    },
+    {
+      "path": "libs/ui/src/locales/ui-messages.json",
+      "sha256": "687bd86a284397ddc59619c61d2d179acd0a0a8cfd94d8f83f088a6d9bb7decc"
+    },
+    {
+      "path": "libs/ui/src/task-form.tsx",
+      "sha256": "271e176f4b9c2e4225f3c031ac03071acae4c1d2607615859adbe616281d8906"
+    }
+  ],
+  "sourceFingerprintSha256": "43b6b37fdbbc716428bbb0be85176a278a297a64e1b38048a25ed61be3048d02",
+  "initialWorktree": "clean; unrelated original work absent",
   "backendSourceChanges": false,
   "portalSourceChanges": false,
   "themeCssChanges": false,
-  "uncommitted": true
+  "finalEvidenceCommit": "Reported in the final handoff; these source hashes identify the exact validated tree."
 }

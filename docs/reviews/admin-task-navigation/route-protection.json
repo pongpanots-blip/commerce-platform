@@ -1,5 +1,5 @@
 {
-  "base": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "base": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
   "expectedBase": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
   "inventoryEvidence": "docs/design/stitch/full-ui-bilingual/inventory.json + coverage.json + screens.json + reused-patterns.json",
   "counts": {
@@ -2777,7 +2777,8 @@
         "failure": "not rerun",
         "createEditDetail": "not rerun"
       },
-      "sourceChangedThisSlice": false
+      "sourceChangedThisSlice": false,
+      "currentBehavior": "Exact outer route redirects to /cs/samples before the preserved nested historical SampleRequestsAdmin component can mount."
     },
     {
       "app": "admin",
@@ -4560,5 +4561,7 @@
     "meaning": "Routing, navigation and behavior changes allowed; preserve Stitch layout, theme and styles. Necessary fluid responsive behavior authorized at 07:26 UTC.",
     "wholesaleVisualRestyling": false
   },
-  "browserEvidence": "Current mocked browser results cover listed slice only; other dimensions remain not rerun. No full-app visual validation claim."
+  "browserEvidence": "Current mocked browser results cover listed slice only; other dimensions remain not rerun. No full-app visual validation claim.",
+  "originalBase": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "interpretation": "Historical Stitch provenance records plus inherited action URLs. Current route precedence, source and browser review are in every-page-inventory.json; this provenance file does not imply every historical component is still mounted."
 }

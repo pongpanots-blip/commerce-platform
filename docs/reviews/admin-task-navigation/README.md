@@ -1,11 +1,15 @@
-# Commerce-admin navigation and action-flow review
+# Commerce-admin combined-tree navigation and design review
 
-Implemented in the existing application on `redesign/admin-task-navigation`; changes are uncommitted.
-The initial checkout was clean. Actual base is `69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9`, whereas
-requested `e4346b7687c196ba4a1a8ca276e74448b90c3317` is ten commits ahead, zero behind with actual
-HEAD as merge base. [Read-only comparison](base-comparison.json) records this mismatch. No reset,
-upstream integration, push, PR, merge, deployment or production data changes occurred. Reconcile newer
-upstream table/UI, login and backend changes before further integration.
+Implemented in the existing application on `redesign/admin-task-navigation-upstream`, based on exact
+requested `e4346b7687c196ba4a1a8ca276e74448b90c3317`. The original checkout was clean at
+`69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9`. Before integration all task changes were preserved in
+local commit `30e1f788d12665b1e5b9b785ae70dadbe8561ff1` on `redesign/admin-task-navigation`.
+The target object was absent locally, so the exact SHA was fetched from the existing origin. A new
+branch at that target received the snapshot through cherry-pick `dbf5fe6`, with two manually resolved
+content conflicts. No destructive reset, remote push, PR, merge, deployment or production changes occurred.
+[Reconciliation evidence](upstream-reconciliation.json) lists the ten reviewed commits and resolutions.
+57 of 59 upstream-changed files are byte-identical; the other two preserve upstream table behavior and
+all upstream translation changes while adding the authorized redesign behavior.
 
 ## Current authorized scope
 
@@ -19,8 +23,8 @@ All 175 inventoried surfaces have references: 170 fresh exports and five compose
 `/home` explicitly derives from Stitch's dashboard. SalesAssignment and MyWinback contain three later
 routes with uncertain provenance and their source files remain unchanged. The [191-record route matrix](route-protection.md)
 includes these records plus 12 new action URLs inheriting existing components. It is provenance evidence,
-not a fresh all-page state/device/language validation. [Source hashes](preservation.json) compare 144
-unique inventoried source/theme files: 138 unchanged, six approved behavior changes. Router, shared
+not a fresh all-page state/device/language validation. [Source hashes](preservation.json) compare 148
+unique inventoried sources and explicit shared visual dependencies: 142 unchanged, six approved behavior changes. Router, shared
 components, helpers and ResourcePage are additionally changed and visible in the full patch; wrapper-file
 identity does not mean their rendered dependencies are unchanged.
 
@@ -28,6 +32,25 @@ The first broad visual slice was archived and undone at the earlier scope change
 patch, source tarball, historical checks and screenshots remain outside runtime. The current slice
 selectively implements authorized behavior with original visual structures; no archive is imported.
 `historical-opt-in-*` evidence also describes an earlier phase, not the current consumer migrations.
+
+## Every-page inventory and review limits
+
+The [complete current inventory](every-page-inventory.md) and [machine-readable evidence](every-page-inventory.json)
+enumerate 205 routes/families/concrete expansions from 183 router patterns. The automated source review
+reads routed leaf/direct dependencies through TypeScript ASTs, records layouts/controls/feedback/API calls,
+and compares exact hashes to the expected upstream. Family summaries were inspected as part of this
+read-only audit. 174 records preserve their rendered source, 23 have changed behavior with family-level
+tests, three retain uncertain visual provenance, and five are routing-only aliases/catchalls.
+These classifications are bounded evidence: source equality does not establish pixel equivalence or
+all-state visual correctness, and family-level tests do not exercise every possible URL/record/state.
+The fresh local page sweep records 724 actual Thai/English desktop/phone visits across 181 page/action records, with zero layout issues and page errors.
+The first sweep’s four sandboxed-frame fixture-injection errors are preserved as failed historical evidence;
+top-level fixture scoping was corrected before the complete clean rerun.
+
+An exact outer sample alias outranks the older nested sample page; the inventory records that shadowed
+route rather than claiming the older sample component is mounted. Public login/register modes, routing
+containers, conditional tables, all legacy mutation rules, assistive technology and live service contracts
+remain explicitly distinct from the fixture layout and action-flow evidence.
 
 ## Implemented changes
 
@@ -66,18 +89,21 @@ not prove that a lost write failed. Backend idempotency is unchanged.
 ## Verification
 
 Final receipts, exact commands and captured logs are in [current-checks.json](current-checks.json).
-Heavy jobs were serialized, with one test worker.
+Heavy jobs were serialized, with one test worker. Evidence-local `.gitattributes` preserves raw patch context markers and exact Vite output; application source retains normal whitespace checks. The initial staged artifact check flagged those raw evidence spaces, and the final staged check passes with these narrow evidence rules.
 
 | Check | Current result |
 | --- | --- |
-| Admin Vitest | 16 files, 267 tests passed |
-| Backend business/relay/role regression suites | 3 suites, 42 tests passed; no database connection |
+| Admin Vitest | 17 files, 272 tests passed |
+| Portal Vitest | Three files, 34 tests passed |
+| Backend business/relay/role regression suites | Six suites, 60 tests passed; includes upstream staff registration/auth and category-upload regressions; no database connection |
 | Admin/Portal TypeScript and builds | Both passed; existing chunk warnings retained |
 | Real-app Chromium runner | 46 scenarios passed, nine screenshots; intercepted local API fixtures |
 | Shared component Chromium runner | Six scenarios passed, three screenshots; test-only fixture |
-| Independent read-only review | No remaining identified source defect after fixes; no independent rerun of tests/builds |
+| Complete fixture-layout sweep | 724 views across 181 page/action records; zero layout issues and page errors; eight staff views rerun after the final count-refresh fix |
+| Upstream catalog/brand/supplier workflows | 54 fixture checks passed on the combined build |
+| Independent read-only review | No blocking reconciliation defect; inherited receipt/recovery gaps documented; no independent test rerun |
 | Whitespace/archive boundary/source hashes | Passed; preservation evidence and 18 archived source hashes checked |
-| Source patch replay | Passed against affected files reconstructed from HEAD in a temporary directory |
+| Source patch replay | Combined patch checked against the exact upstream base in a temporary directory |
 
 Tests cover route/deep-link/query/hash/back/forward behavior, roles and denied pre-read actions,
 duplicate clicks, loading/read failure/retry, native/client/explicit server errors, invalid receipts,
@@ -106,13 +132,21 @@ Screen-reader behavior, Safari/Firefox, actual service/database persistence, and
 visual/state/device checks have not been run. Full reload/lost responses do not have exactly-once
 write guarantees; operator reconciliation remains necessary.
 
+An inherited upstream shop-catalog gap remains: bulk approval/rejection in AllProduct.tsx shows green
+success on HTTP resolution and defaults missing receipt counts to zero. Its unchanged workflow is
+not covered by the redesigned operational queue’s receipt/unknown-outcome guarantees. The five
+backoffice live-action consumers also retain their existing implementations and still need their own
+receipt/recovery acceptance; their capabilities and permissions were preserved.
+
 The live upstream account-merge response contract could not be verified from local server code or
 an authorized read-only upstream lookup (404). The adapter conservatively requires explicit
 `merged: true`; confirm the documented live receipt and adjust its adapter/test before production
-acceptance. Do not infer success from any arbitrary response. Reconcile the branch with the newer
-expected snapshot, especially its table and auth changes, without overwriting that work. Expand the
-same patterns after those integration and service-contract checks. No backend/performance changes or
+acceptance. Do not infer success from any arbitrary response. The newer
+expected snapshot is now reconciled and its table/auth changes retained. Expand the same patterns
+only after feature-specific service-contract and workflow acceptance checks. No backend/performance changes or
 benchmark loads were added; the separate integration benchmark remains independent.
+
+The [current reconciled source patch](deliverables/reconciled-implementation.patch) replays cleanly against the exact upstream in a temporary directory. [Changed-source hashes](changed-files.json) identify the validated tree. Older deliverable names and non-combined logs are historical pre-integration evidence; [the latest manifest](deliverables/latest-deliverables.json) selects the current report and bundle.
 
 ## Library delivery
 
@@ -127,4 +161,4 @@ batch and precise failure; the current local package supersedes that earlier opt
 The [Library SKILL.md](skill://plugin_connector_1p_1b8ff8edfc1481918b252c8277e23125/library/SKILL.md)
 required “Use the bundled prepared-upload helper below” for the multiple-file operation. The coordinating
 parent requested no further Library attempts. Local report, source patch, genuine screenshots and
-machine-readable evidence remain in `deliverables/` for review.
+machine-readable evidence remain in `deliverables/` for review. Secure recovery requires a fresh authorized Library batch-save session in this execution environment and explicit renewed delivery authorization, using the required bundled helper. The current no-retry instruction remains in effect.

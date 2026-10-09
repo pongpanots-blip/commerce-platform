@@ -1,0 +1,14 @@
+{
+  "upstreamHarness": "apps/commerce-admin/e2e/table-redesign-review.mjs",
+  "upstreamSha256": "99df0697f1ba899818616f996281549b07732558b8b1e8b11db7f81ffb971073",
+  "derivedSha256": "a8073b6566278d3987092b7be45c9f52f435edccfdffb95a568b1557b210dcf9",
+  "changes": [
+    "Complete current page inventory",
+    "Serial locale/viewport loops; one page/context at a time",
+    "Valid sample decision parameter",
+    "Accurate portal route count",
+    "Fixture identity injected only into top-level app frame",
+    "Page errors retain their active route"
+  ],
+  "apiMode": "All API and external requests intercepted local fixtures; no live service writes"
+}

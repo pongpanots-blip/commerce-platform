@@ -29,8 +29,9 @@
   "exactSanitizedError": "library upload failed: hosted apps tools/list request failed with HTTP status 401",
   "savePhase": "initial-read-only-discovery",
   "automaticApprovalRejection": false,
-  "currentArtifacts": "Final local artifacts supersede this earlier opt-in batch; no new Library attempt authorized/requested.",
-  "currentLocalReport": "/workspace/commerce-platform/docs/reviews/admin-task-navigation/deliverables/Commerce-admin-navigation-and-action-flows-2026-10-09.md",
-  "currentLocalEvidenceZip": "/workspace/commerce-platform/docs/reviews/admin-task-navigation/deliverables/Commerce-admin-navigation-and-action-flows-evidence-2026-10-09.zip",
-  "retryAttempted": false
+  "currentArtifacts": "The reconciled combined-tree report and evidence bundle supersede earlier phases. No new Library attempt authorized or performed.",
+  "currentLocalReport": "/workspace/commerce-platform/docs/reviews/admin-task-navigation/deliverables/Commerce-admin-reconciled-navigation-and-route-review-2026-10-09.md",
+  "currentLocalEvidenceZip": "/workspace/commerce-platform/docs/reviews/admin-task-navigation/deliverables/Commerce-admin-reconciled-navigation-evidence-2026-10-09.zip",
+  "retryAttempted": false,
+  "secureRecoveryNeed": "A fresh authorized Library batch-save session must be provided in this same execution environment, then the required bundled prepared-upload helper can be run under explicit renewed delivery authorization. Do not reuse tokens from other tasks or substitute upload routes. Current instruction prohibits retries; all artifacts stay local."
 }

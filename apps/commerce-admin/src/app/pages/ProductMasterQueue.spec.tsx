@@ -46,7 +46,7 @@ it('locks approval and rejection together and reports the persisted backend coun
   expect(productMastersApi.reject).not.toHaveBeenCalled();
   expect(container.querySelector('[role="status"]')).toBeNull();
   await act(async () => request.resolve({ approved: 0 }));
-  expect(container.textContent).toContain('Approved 0 records');
+  expect(container.textContent).toContain('Approved 0 products');
   expect(container.querySelector('input[type="checkbox"]')!.getAttribute('aria-label')).toBe('Select SKU-1');
   expect(approve().disabled).toBe(true);
 });
@@ -76,7 +76,7 @@ it('does not treat failed refresh as an empty queue or allow writes against stal
   vi.mocked(productMastersApi.pending).mockResolvedValueOnce(page).mockRejectedValueOnce(new Error('Refresh failed')).mockResolvedValueOnce({ ...page, items: [], total: 0 });
   await render(); await select();
   await act(async () => approve().click());
-  expect(container.textContent).toContain('Approved 1 records');
+  expect(container.textContent).toContain('Approved 1 products');
   expect(container.querySelector('[role="alert"]')).not.toBeNull();
   expect(container.querySelector('table')).toBeNull();
   expect(approve().disabled).toBe(true);
@@ -88,7 +88,7 @@ it('does not treat failed refresh as an empty queue or allow writes against stal
 it.each([null, {}, {approved:-1}, {approved:1.5}, {status:false,approved:1}, {rejected:1}, {approved:2}])('rejects unconfirmed approval receipt %j without clearing selected SKUs', async value => {
   vi.mocked(productMastersApi.approve).mockResolvedValueOnce(value as never);
   await render(); await select(); await act(async () => approve().click());
-  expect(container.textContent).not.toContain('Approved 1 records');
+  expect(container.textContent).not.toContain('Approved 1 products');
   expect(container.querySelector<HTMLInputElement>('input[type="checkbox"]')!.checked).toBe(true);
   expect(container.querySelector('[role="alert"]')).not.toBeNull();
 });

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { DELIVERY_JOB_OPTIONS, QUEUES } from '../../../../config/redis.config';
 import { WebhookSubscription } from '../infrastructure/webhook-subscription.entity';
 import { DeliveryStatus, WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
+import { PORTAL_EVENT_TYPES } from '../../../../portal/webhooks/event-catalog';
 
 /** CRUD for outbound webhook subscriptions + read access to the delivery log. */
 @Injectable()
@@ -42,16 +43,22 @@ export class WebhookSubscriptionService {
     await this.subs.softDelete(id);
   }
 
-  /** Active subscriptions that want this event type (explicit match or "*"). */
+  /**
+   * Active subscriptions that want this event type (explicit match or "*").
+   * Portal subscriptions (accountId set) only ever receive the portal catalog's
+   * event types, so their "*" means "every portal event"; anything else goes to
+   * admin-created subscriptions (accountId null) only.
+   */
   matching(eventType: string): Promise<WebhookSubscription[]> {
-    return this.subs
+    const qb = this.subs
       .createQueryBuilder('s')
       .where('s.active = :active', { active: true })
       .andWhere(
         `(s.event_types @> CAST(:one AS jsonb) OR s.event_types @> CAST(:all AS jsonb))`,
         { one: JSON.stringify([eventType]), all: JSON.stringify(['*']) },
-      )
-      .getMany();
+      );
+    if (!PORTAL_EVENT_TYPES.has(eventType)) qb.andWhere('s.account_id IS NULL');
+    return qb.getMany();
   }
 
   listDeliveries(limit = 100, status?: DeliveryStatus): Promise<WebhookDelivery[]> {

@@ -7,6 +7,7 @@ import { createHmac } from 'crypto';
 import { WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
 import { WebhookSubscription } from '../infrastructure/webhook-subscription.entity';
 import { DELIVERY_MAX_ATTEMPTS, deliveryBackoff, QUEUES } from '../../../../config/redis.config';
+import { PORTAL_EVENT_TYPES } from '../../../../portal/webhooks/event-catalog';
 
 const REQUEST_TIMEOUT_MS = 10_000;
 
@@ -44,6 +45,15 @@ export class WebhookDeliveryWorker extends WorkerHost {
       return;
     }
     const sub = await this.subs.findOne({ where: { id: delivery.subscriptionId } });
+
+    // Deliveries queued before a catalog change (including manual retries) must
+    // respect the current portal allowlist before any payload leaves the app.
+    if (sub?.accountId && !PORTAL_EVENT_TYPES.has(delivery.eventType)) {
+      delivery.status = 'failed';
+      delivery.error = 'Event type is not available to portal webhooks';
+      await this.deliveries.save(delivery);
+      throw new UnrecoverableError(delivery.error);
+    }
 
     const body = JSON.stringify(delivery.payload);
     const headers: Record<string, string> = {

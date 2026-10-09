@@ -1,23 +1,17 @@
 /**
- * Catalog prices for admin screens. Product responses are priced like the shop: a promotion
- * mechanic lowers `selling_unit_price` / `ordering_price`, a customer or contract price nulls
- * `selling_unit_price`. Anything an admin edits, saves back or lists as "the price" must read the
- * `base_*` fields (always the catalog value) — never the shop-priced ones.
+ * Catalog price for admin screens. Product responses are priced like the shop: a promotion
+ * mechanic or a customer / contract price moves `selling_price`. Anything an admin edits, saves
+ * back or lists as "the price" must read `base_selling_price` (always the catalog value) — never
+ * the shop-priced one.
  */
 type PricedProduct = {
   base_selling_price?: number | string | null;
-  selling_unit_price?: number | string | null;
-  base_ordering_price?: number | string | null;
-  ordering_price?: number | string | null;
+  selling_price?: number | string | null;
 };
 
-/** Catalog rate per selling unit (ERP SELLING_UNIT_PRICE). */
+/** Catalog red price per order unit (docs/pricing-total-model.md). */
 export const catalogSellingPrice = (p: PricedProduct) =>
-  p.base_selling_price ?? p.selling_unit_price;
-
-/** Catalog box / order-unit price (ERP PRICE). */
-export const catalogOrderingPrice = (p: PricedProduct) =>
-  p.base_ordering_price ?? p.ordering_price;
+  p.base_selling_price ?? p.selling_price;
 
 /**
  * `promotion_rules` for the save payload — only when the admin actually edited the tier rows.

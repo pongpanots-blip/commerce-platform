@@ -32818,5 +32818,25 @@
   "โลโก้ (png / jpg / webp ไม่เกิน 2 MB)": {
     "th": "โลโก้ (png / jpg / webp ไม่เกิน 2 MB)",
     "en": "Logo (png / jpg / webp, up to 2 MB)"
+  },
+  "ราคาโปร (ราคารวมต่อหน่วยสั่ง)": {
+    "th": "ราคาโปร (ราคารวมต่อหน่วยสั่ง)",
+    "en": "Promo Price (total per order unit)"
+  },
+  "ราคาขาย / {0} (฿)": {
+    "th": "ราคาขาย / {0} (฿)",
+    "en": "Selling Price / {0} (฿)"
+  },
+  "ราคาเฉลี่ยต่อหน่วย (฿)": {
+    "th": "ราคาเฉลี่ยต่อหน่วย (฿)",
+    "en": "Average Price per Unit (฿)"
+  },
+  "ราคาขาย ÷ ขนาดแพ็ก ที่หน้าร้านแสดงให้เทียบความคุ้ม คำนวณเอง แก้ไม่ได้": {
+    "th": "ราคาขาย ÷ ขนาดแพ็ก ที่หน้าร้านแสดงให้เทียบความคุ้ม คำนวณเอง แก้ไม่ได้",
+    "en": "Selling price ÷ pack size, shown in the shop to compare value. Calculated, not editable"
+  },
+  "จำนวนขั้นต่ำแต่ละขั้นต้องไม่ทับกัน ราคาโปรเป็นราคารวมต่อหน่วยสั่ง ไม่เปลี่ยนราคาขายปกติ · ปล่อยว่างทั้งหมดถ้าไม่ใช้ราคาตามจำนวน": {
+    "th": "จำนวนขั้นต่ำแต่ละขั้นต้องไม่ทับกัน ราคาโปรเป็นราคารวมต่อหน่วยสั่ง ไม่เปลี่ยนราคาขายปกติ · ปล่อยว่างทั้งหมดถ้าไม่ใช้ราคาตามจำนวน",
+    "en": "Each tier's minimum quantity must not overlap. A promo price is the total per order unit and does not change the regular price · leave all empty for no quantity pricing"
   }
 }

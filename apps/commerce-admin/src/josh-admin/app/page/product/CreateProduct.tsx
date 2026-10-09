@@ -128,7 +128,7 @@ export default function InsertProductForm() {
       data.append(key, (formData as Record<string, string>)[key]);
     });
 
-    data.append('selling_unit_price', sellingPrice.trim());
+    data.append('selling_price', sellingPrice.trim());
     data.append('selling_unit', sellingUnit.trim() || 'ชิ้น');
     if (stockQty.trim()) {
       data.append('product_inventory_quantity', stockQty.trim());
@@ -241,7 +241,7 @@ export default function InsertProductForm() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <Input
-              label={__uiText("ราคาขาย")}
+              label={__uiText("ราคาขาย / หน่วยสั่ง (฿)")}
               required
               hint={__uiText("ราคาต่อหน่วยที่ลูกค้าจ่าย เช่น 45")}
               type="number"

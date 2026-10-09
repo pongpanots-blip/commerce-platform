@@ -126,11 +126,11 @@ export default function AllProduct() {
     return result.sort((a, b) => {
       const av =
         sortKey === 'price'
-          ? Number(catalogSellingPrice(a) ?? a.selling_unit_price ?? 0)
+          ? Number(catalogSellingPrice(a) ?? 0)
           : Number(a.product_inventory_quantity ?? 0);
       const bv =
         sortKey === 'price'
-          ? Number(catalogSellingPrice(b) ?? b.selling_unit_price ?? 0)
+          ? Number(catalogSellingPrice(b) ?? 0)
           : Number(b.product_inventory_quantity ?? 0);
       return (av - bv) * (sortOrder === 'ASC' ? 1 : -1);
     });
@@ -273,14 +273,14 @@ export default function AllProduct() {
   const price = (row: any) => (
     <div className="cp-catalog-price">
       <strong>
-        {formatBaht(catalogSellingPrice(row) ?? row.selling_unit_price)}
+        {formatBaht(catalogSellingPrice(row))}
       </strong>
-      {(row.erp_pending_payload?.selling_unit_price != null ||
-        row.erp_pending_payload?.ordering_price != null) && (
+      {/* Pending payloads saved before Josh's price-field rename use `ordering_price`; newer ones `price`. */}
+      {(row.erp_pending_payload?.price ?? row.erp_pending_payload?.ordering_price) != null && (
         <small>
           {uiText('ระบบหลักเสนอ')}{' '}
           {formatBaht(
-            row.erp_pending_payload.selling_unit_price ??
+            row.erp_pending_payload.price ??
               row.erp_pending_payload.ordering_price,
           )}
         </small>

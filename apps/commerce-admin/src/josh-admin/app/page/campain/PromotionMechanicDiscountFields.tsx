@@ -63,7 +63,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
       {form.valueType === 'special_price' && (
         <div className="sm:w-1/2 sm:pr-2">
           <Input
-            label={__uiText("ราคาโปร (ต่อหน่วย)")}
+            label={__uiText("ราคาโปร (ราคารวมต่อหน่วยสั่ง)")}
             required
             type="number"
             min={0}
@@ -113,7 +113,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
                 onChange={(event) => updateTier(row.id, { maxQty: event.target.value })}
               />
               <Input
-                label={__uiText("ราคาโปร (ต่อหน่วย)")}
+                label={__uiText("ราคาโปร (ราคารวมต่อหน่วยสั่ง)")}
                 required
                 type="number"
                 min={0}

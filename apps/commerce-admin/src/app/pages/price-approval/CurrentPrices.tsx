@@ -72,11 +72,13 @@ export const manualPriceReviewUrl = (sku: string) =>
 export { manualPatchFromForm } from "./manual-price-journal";
 const outcome = (id: string) => home + "/requests/" + id;
 const keys = ["sellingUnitPrice", "orderingPrice", "moq"] as const;
+// Josh prices off ERP PRICE (orderingPrice) only and no longer stores the per-selling-unit rate, so the rate is display-only.
+const editKeys = ["orderingPrice", "moq"] as const;
 const label = (k: (typeof keys)[number]) =>
   k === "sellingUnitPrice"
-    ? text("ราคาต่อหน่วยขาย", "Price per selling unit")
+    ? text("ราคาต่อหน่วยขาย (เรท ร้านไม่ใช้)", "Price per selling unit (rate, not used by the shop)")
     : k === "orderingPrice"
-      ? text("ราคาต่อหน่วยสั่ง", "Price per ordering unit")
+      ? text("ราคาต่อหน่วยสั่ง (ERP PRICE ร้านใช้เป็นราคาขาย)", "Price per ordering unit (ERP PRICE, the shop selling price)")
       : text("จำนวนขั้นต่ำ", "Minimum order quantity");
 const sourceLabel = (s: string) =>
   s === "staff"
@@ -425,7 +427,7 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
       ),
     stale =
       !!form && !!source.data && form.item.version !== source.data.item.version;
-  useUnsavedChanges(!!form && keys.some((k) => form.fields[k].mode !== "keep"));
+  useUnsavedChanges(!!form && editKeys.some((k) => form.fields[k].mode !== "keep"));
   useEffect(() => {
     if (Object.keys(fieldErrors).length)
       formElement.current
@@ -532,7 +534,7 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
             item={source.data.item}
             historical={source.data.ownership !== "commerce"}
           />
-          {keys.some((key) => form.fields[key].mode !== "keep") && (
+          {editKeys.some((key) => form.fields[key].mode !== "keep") && (
             <Chip tone="muted">
               {text(
                 "ฉบับแก้ในเครื่อง — ยังไม่ส่ง",
@@ -571,8 +573,8 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
             onSubmit={review}
             noValidate
           >
-            <div className="grid gap-4 md:grid-cols-3">
-              {keys.map((k) => (
+            <div className="grid gap-4 md:grid-cols-2">
+              {editKeys.map((k) => (
                 <Panel key={k}>
                   <div className="p-4 space-y-3">
                     <TaskSelect

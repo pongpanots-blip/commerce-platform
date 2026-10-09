@@ -20,7 +20,6 @@ import { DragDropUpload, Input } from '@josh/shared-ui-web';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  catalogOrderingPrice,
   catalogSellingPrice,
   editedPromotionRules,
   saveErrorMessage,
@@ -51,6 +50,7 @@ import PromotionQuantityRuleFields from '../campain/PromotionQuantityRuleFields'
 import {
   EMPTY_PROMOTION_MECHANIC_FORM,
   formToPromotionRules,
+  hasAnyPromotionPrice,
   parsePromotionRows,
   rulesToForm,
   validatePromotionMechanicForm,
@@ -97,7 +97,6 @@ const EditProduct = () => {
     product_inventory_sku: '',
     product_status: '1',
     product_inventory_quantity: '',
-    selling_unit_price: '',
     selling_unit: 'ชิ้น',
     brand_name: '',
     brand_code: '',
@@ -119,8 +118,11 @@ const EditProduct = () => {
   });
 
   const [brandOptions, setBrandOptions] = useState<{ value: string; label: string }[]>([]);
-  // ERP PRICE (ราคากล่อง/หน่วยสั่ง) — read-only ที่นี่ เจ้าของค่าคือ ERP ไม่ใช่ admin
-  const [orderingPrice, setOrderingPrice] = useState<string>('');
+  // Read-only here: Josh's selling_price is the sell-unit total from ERP PRICE (commerce owns it via product.price.snapshot
+  // orderingPrice), and the avg is derived from it. Josh no longer stores a per-selling-unit rate to edit.
+  const [sellingPrice, setSellingPrice] = useState<string>('');
+  const [avgPrice, setAvgPrice] = useState<string>('');
+  const [orderTakingUnit, setOrderTakingUnit] = useState<string>('');
 
   useEffect(() => {
     getBrands()
@@ -170,10 +172,6 @@ const EditProduct = () => {
           product_inventory_sku: data.product_inventory_sku ?? '',
           product_status: String(data.product_status ?? 1),
           product_inventory_quantity: String(data.product_inventory_quantity ?? ''),
-          // The detail payload is priced like the shop (a promotion mechanic lowers
-          // selling_unit_price, a customer/contract price nulls it) — base_selling_price
-          // is always the catalog price, the only one an edit form may load and save back.
-          selling_unit_price: String(catalogSellingPrice(data) ?? ''),
           selling_unit: String(data.selling_unit ?? data.product_unit ?? 'ชิ้น'),
           brand_name: data.brand_name ?? '',
           brand_code: data.brand_code ?? '',
@@ -195,7 +193,8 @@ const EditProduct = () => {
         });
         const loadedTierForm = rulesToForm(
           data.promotion_rules ?? data.tier_prices,
-          Number(catalogSellingPrice(data) ?? 0),
+          // No price default — a tier price is its own sell-unit total, not the catalog one.
+          undefined,
           String(data.selling_unit ?? data.product_unit ?? 'ชิ้น'),
         );
         initialRulesRef.current = JSON.stringify(formToPromotionRules(loadedTierForm));
@@ -203,10 +202,11 @@ const EditProduct = () => {
         setRulesLockedBy(lock);
         // The form's default row is not the mechanic's: only tiers the product response carries are.
         setMechanicHasTiers(parsePromotionRows(data.promotion_rules ?? data.tier_prices).length > 0);
-        // ERP PRICE = the catalog box. `ordering_price` on the payload is priced like the shop
-        // (a promotion / special price moves it); `base_ordering_price` is always the catalog one.
-        const catalogOrdering = catalogOrderingPrice(data);
-        setOrderingPrice(catalogOrdering == null ? '' : String(catalogOrdering));
+        // The detail payload is priced like the shop; base_selling_price is always the catalog price.
+        const catalogSelling = catalogSellingPrice(data);
+        setSellingPrice(catalogSelling == null ? '' : String(catalogSelling));
+        setAvgPrice(data.avg_price_max == null ? '' : `${data.avg_price_max} / ${data.avg_price_unit ?? ''}`);
+        setOrderTakingUnit(String(data.order_taking_unit ?? ''));
         setExistingMedia(sortProductMedia(data.media ?? []));
         setSelectedCuisineIds(cuisines.map((row) => row.id));
       })
@@ -315,17 +315,15 @@ const EditProduct = () => {
     }
 
     const graphic = session.claims()?.role === 'graphic';
-    if (!graphic && !form.selling_unit_price.trim()) {
-      alert(__uiText("กรุณาระบุราคาขาย"));
-      return false;
-    }
 
     if (totalImageCount > MAX_IMAGES) {
       alert(__uiText("รูปภาพได้สูงสุด {0} รูป", {"0": MAX_IMAGES}));
       return false;
     }
 
-    const tierError = graphic || rulesLockedBy ? null : validatePromotionMechanicForm(tierForm);
+    // Tier pricing is optional — validate only when a price was typed into a rule row.
+    const tierError =
+      graphic || rulesLockedBy || !hasAnyPromotionPrice(tierForm) ? null : validatePromotionMechanicForm(tierForm);
     if (tierError) {
       alert(tierError);
       return false;
@@ -470,20 +468,15 @@ const EditProduct = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
-          label={__uiText("ราคาต่อหน่วยขาย (฿) *")}
-          hint={__uiText("ราคาต่อหน่วยขายจากระบบหลัก ไม่ใช่ราคากล่องที่ลูกค้าจ่าย")}
-          type="number"
-          value={form.selling_unit_price}
-          onChange={(e) => handleInput('selling_unit_price', e.target.value)}
+          label={__uiText("ราคาขาย / {0} (฿)", {"0": orderTakingUnit || __uiText("หน่วยสั่ง")})}
+          hint={__uiText("ราคาที่ลูกค้าจ่ายจริง แก้ได้ที่ระบบหลัก (ERP) เท่านั้น")}
+          value={sellingPrice}
+          disabled
         />
         <Input
-          label={__uiText("ราคากล่อง / หน่วยสั่ง (฿)")}
-          hint={
-            orderingPrice
-              ? __uiText("ราคาที่ลูกค้าจ่ายจริง แก้ได้ที่ระบบหลัก (ERP) เท่านั้น")
-              : __uiText("ยังไม่มีราคาจากระบบหลัก และคำนวณจากขนาดแพ็กไม่ได้")
-          }
-          value={orderingPrice}
+          label={__uiText("ราคาเฉลี่ยต่อหน่วย (฿)")}
+          hint={__uiText("ราคาขาย ÷ ขนาดแพ็ก ที่หน้าร้านแสดงให้เทียบความคุ้ม คำนวณเอง แก้ไม่ได้")}
+          value={avgPrice}
           disabled
         />
         <Input
@@ -498,7 +491,7 @@ const EditProduct = () => {
         <h3 className="mb-2 text-sm font-semibold text-gray-800">
           {__uiText("ราคาตามจำนวนซื้อ")}</h3>
         <p className="mb-3 text-xs text-gray-500">
-          {__uiText("จำนวนขั้นต่ำแต่ละขั้นต้องไม่ทับกัน เป็นราคาโปรของสินค้านี้ ไม่เปลี่ยนราคาขายปกติ (แก้ราคาปกติที่ช่อง “ราคาต่อหน่วยขาย”)")}</p>
+          {__uiText("จำนวนขั้นต่ำแต่ละขั้นต้องไม่ทับกัน ราคาโปรเป็นราคารวมต่อหน่วยสั่ง ไม่เปลี่ยนราคาขายปกติ · ปล่อยว่างทั้งหมดถ้าไม่ใช้ราคาตามจำนวน")}</p>
         {rulesLockedBy ? (
           <PromotionRulesLockedNotice
             lockedBy={rulesLockedBy}

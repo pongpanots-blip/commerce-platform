@@ -91,6 +91,17 @@ export function rulesToForm(
   };
 }
 
+/**
+ * Whether the admin has actually typed a price into any tier row. An
+ * untouched row's `promotionPrice` is `''`, but `Number('')` is `0`, not
+ * `NaN` — so `formToPromotionRules` alone can't tell "blank" from "priced at
+ * zero". Callers that only want to send/validate rules the admin meant to
+ * set (e.g. an optional tier-pricing block) should gate on this first.
+ */
+export function hasAnyPromotionPrice(form: PromotionMechanicForm): boolean {
+  return form.rules.some((rule) => rule.promotionPrice.trim() !== '');
+}
+
 export function formToPromotionRules(form: PromotionMechanicForm): PromotionRuleRow[] {
   const unitLabel = form.unitLabel.trim() || 'ชิ้น';
 

@@ -105,7 +105,7 @@ const ProductDetail = () => {
     promotionRows.length > 0
       ? formatPromotionSummary(promotionRows)
       : null;
-  // Catalog price — the payload is priced like the shop (promotion / special price move selling_unit_price).
+  // Catalog price — the payload is priced like the shop (promotion / special price move selling_price).
   const basePrice = Number(catalogSellingPrice(product) ?? 0);
   const nutrition = nutritionForDisplay(product.nutrition);
   const sku = product.product_inventory_sku ? String(product.product_inventory_sku) : '';
@@ -146,7 +146,7 @@ const ProductDetail = () => {
             items={[
               {
                 label: __uiText("ราคาขาย"),
-                value: `${fmt.baht(basePrice)}/${String(product.selling_unit ?? product.product_unit ?? __uiText('ชิ้น'))}`,
+                value: `${fmt.baht(basePrice)}/${String(product.order_taking_unit ?? product.selling_unit ?? product.product_unit ?? __uiText('ชิ้น'))}`,
               },
               ...(promotionSummary ? [{ label: __uiText("โปรโมชัน"), value: promotionSummary }] : []),
               {

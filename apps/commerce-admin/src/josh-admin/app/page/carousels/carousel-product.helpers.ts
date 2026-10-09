@@ -28,10 +28,10 @@ export function normalizeSearchProduct(
   const id = String(raw.product_inventory_id ?? raw.product_id ?? '');
   const sku = String(raw.product_inventory_sku ?? raw.sku ?? '');
   const name = String(raw.product_name ?? raw.name ?? sku);
-  // Admin picker: the catalog price (base_*), not the shop-priced selling_unit_price
+  // Admin picker: the catalog price (base_selling_price), not the shop-priced selling_price
   // (a promotion mechanic lowers it, a customer price nulls it).
   const price = Number(
-    raw.base_selling_price ?? raw.selling_unit_price ?? raw.price ?? 0,
+    raw.base_selling_price ?? raw.selling_price ?? raw.price ?? 0,
   );
   const media = raw.media as
     | Array<{ media_type?: string; source?: string; url?: string }>

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { JoshReplica } from './josh-replica';
+import { containsPattern } from '../../../../shared-kernel/helpers/like.helper';
 import { ownsPrices } from '../../../commerce/product-prices/product-prices.service';
 import { ownsProductMaster } from '../../../commerce/product-masters/product-masters.service';
 import { ownsProductContent } from '../../../commerce/product-contents/product-contents.service';
@@ -54,8 +55,8 @@ export function productWhere(f: ProductFilters, d: Dialect = REPLICA): { where: 
   const w: string[] = [];
   const search = f.search?.trim().slice(0, 100);
   if (search) {
-    const s = add(`%${search}%`);
-    w.push(`(p.product_inventory_sku ILIKE ${s} OR ${d.nameTh} ILIKE ${s} OR ${d.nameEn} ILIKE ${s})`);
+    const s = add(containsPattern(search));
+    w.push(`(p.product_inventory_sku ILIKE ${s} ESCAPE '\\' OR ${d.nameTh} ILIKE ${s} ESCAPE '\\' OR ${d.nameEn} ILIKE ${s} ESCAPE '\\')`);
   }
   if (f.status) w.push(`p.product_status = ${add(f.status.slice(0, 20))}`);
   if (f.issue) {
@@ -66,7 +67,7 @@ export function productWhere(f: ProductFilters, d: Dialect = REPLICA): { where: 
     if (!/^[0-9a-f-]{36}$/i.test(f.categoryId)) throw new BadRequestException('categoryId must be a uuid');
     w.push(`p.category_id = ${add(f.categoryId)}`);
   }
-  if (f.brand?.trim()) w.push(`p.brand_name ILIKE ${add(`%${f.brand.trim().slice(0, 100)}%`)}`);
+  if (f.brand?.trim()) w.push(`p.brand_name ILIKE ${add(containsPattern(f.brand.trim().slice(0, 100)))} ESCAPE '\\'`);
   if (f.orderTaking === 'Y' || f.orderTaking === 'N') w.push(`COALESCE(p.order_taking_flag, 'N') = ${add(f.orderTaking)}`);
   return { where: w.length ? `WHERE ${w.join(' AND ')}` : '', params };
 }

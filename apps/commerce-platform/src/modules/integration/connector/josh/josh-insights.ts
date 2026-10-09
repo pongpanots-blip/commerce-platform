@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { JoshReplica } from './josh-replica';
+import { containsPattern } from '../../../../shared-kernel/helpers/like.helper';
 import { rankingDiff } from './bestsellers-offload.job';
 
 /** josh's SETTLED_ORDER_STATUSES (money taken) — the same set its purchases dashboard counts. */
@@ -171,7 +172,7 @@ const ORDER_TARGETGROUP_SQL = `
   SELECT cust_code, total_skus_ordered, ot_skus_ordered, ot_skus_with_active_period, max_shipments_per_week, delivery_weekdays,
          count(*) OVER ()::int AS total
     FROM customer_order_targetgroup_summary
-   WHERE max_shipments_per_week >= $1 AND ($2::text IS NULL OR cust_code ILIKE $2)
+   WHERE max_shipments_per_week >= $1 AND ($2::text IS NULL OR cust_code ILIKE $2 ESCAPE '\\')
    ORDER BY max_shipments_per_week DESC, ot_skus_ordered DESC, cust_code
    LIMIT $3 OFFSET $4`;
 
@@ -287,7 +288,7 @@ export class JoshInsights {
   async orderTargetgroup(o: { minShipmentsPerWeek?: number; custCode?: string; limit?: number; offset?: number }) {
     const limit = Math.min(Math.max(o.limit ?? 100, 1), 1000);
     const rows = await this.replica.query(ORDER_TARGETGROUP_SQL,
-      [o.minShipmentsPerWeek ?? 0, o.custCode ? `%${o.custCode}%` : null, limit, Math.max(o.offset ?? 0, 0)]);
+      [o.minShipmentsPerWeek ?? 0, o.custCode ? containsPattern(o.custCode) : null, limit, Math.max(o.offset ?? 0, 0)]);
     return { total: rows[0]?.total ?? 0, items: rows.map(({ total: _t, ...r }: Record<string, unknown>) => r) };
   }
 

@@ -9,6 +9,7 @@ import {
   normalizeCustomerCode,
   normalizeRegisterNumber,
 } from './winback.helpers';
+import { JoshMatchSignalKey } from './josh-match.helpers';
 
 const EMPTY_MATCH: MatchResult = { josh_user_id: null, josh_company_id: null, matchCount: 0 };
 
@@ -93,5 +94,82 @@ export class MatchingService {
       josh_company_id: companyId,
       matchCount: 1,
     };
+  }
+}
+
+/** One hit of one signal: account → Josh customer (user and/or company). */
+export type JoshMatchHit = {
+  account_id: string;
+  key: JoshMatchSignalKey;
+  user_id: string | null;
+  company_id: string | null;
+};
+
+/**
+ * Company-name key, the same expression on both sides so they normalise identically:
+ * lower-case, legal-form words dropped (บริษัท … จำกัด (มหาชน), Co., Ltd.), spaces and punctuation dropped.
+ */
+const NAME_KEY = (col: string) =>
+  `regexp_replace(regexp_replace(lower(${col}), '(บริษัท|จำกัด|มหาชน|ห้างหุ้นส่วน|หจก)|\\m(co|ltd|limited|company|inc|corp)\\M', '', 'g'), '[[:space:][:punct:]]', '', 'g')`;
+
+/**
+ * Batch evidence for `JoshMatchService`: every Josh customer each account's customer code,
+ * tax / registration / ID-card number, e-mail (account + contacts) or company name points at.
+ * Customers only — staff rows of the `josh_users` view are never candidates.
+ */
+@Injectable()
+export class JoshMatchLookup {
+  constructor(@InjectRepository(User) private readonly users: Repository<User>) {}
+
+  async hits(accountIds: string[]): Promise<JoshMatchHit[]> {
+    if (!accountIds.length) return [];
+    const q = (sql: string) => this.users.manager.query(sql, [accountIds]) as Promise<Omit<JoshMatchHit, 'key'>[]>;
+    const [byCode, byTax, byEmail, byName] = await Promise.all([
+      q(`SELECT a.id AS account_id, jc.id AS user_id, NULLIF(jc.data->>'company_id', '') AS company_id
+         FROM winback_account a
+         JOIN josh_customers jc ON jc.deleted_at IS NULL
+          AND UPPER(TRIM(a.customer_code)) IN (UPPER(TRIM(jc.data->>'custcode')), UPPER(TRIM(jc.data->>'legacy_custcode')))
+         WHERE a.id = ANY($1::uuid[])`),
+      q(`WITH t AS (
+           SELECT DISTINCT a.id, regexp_replace(v, '\\D', '', 'g') AS tax
+           FROM winback_account a, unnest(ARRAY[a.company_registration_num, a.register_number, a.id_card_number]) v
+           WHERE a.id = ANY($1::uuid[]) AND v IS NOT NULL)
+         SELECT t.id AS account_id, c.id::text AS company_id, jc.id AS user_id
+         FROM t
+         JOIN josh_companies c ON regexp_replace(c.register_number, '\\D', '', 'g') = t.tax
+         LEFT JOIN josh_customers jc ON jc.deleted_at IS NULL AND jc.data->>'company_id' = c.id::text
+         WHERE length(t.tax) >= 10`),
+      q(`WITH e AS (
+           SELECT id AS account_id, LOWER(TRIM(email)) AS email FROM winback_account WHERE id = ANY($1::uuid[]) AND email IS NOT NULL
+           UNION
+           SELECT account_id, LOWER(TRIM(email)) FROM winback_contact WHERE account_id = ANY($1::uuid[]) AND email IS NOT NULL)
+         SELECT e.account_id, jc.id AS user_id, NULLIF(jc.data->>'company_id', '') AS company_id
+         FROM e JOIN josh_customers jc ON jc.deleted_at IS NULL AND LOWER(TRIM(jc.data->>'email')) = e.email
+         WHERE e.email LIKE '%_@_%'`),
+      q(`WITH n AS (
+           SELECT DISTINCT a.id, ${NAME_KEY('v')} AS k
+           FROM winback_account a, unnest(ARRAY[a.company_name, a.restaurant_name, a.display_name]) v
+           WHERE a.id = ANY($1::uuid[]) AND v IS NOT NULL),
+         c AS (SELECT id, ${NAME_KEY('name')} AS k FROM josh_companies WHERE name IS NOT NULL)
+         SELECT DISTINCT n.id AS account_id, c.id::text AS company_id, NULL::uuid AS user_id
+         FROM n JOIN c ON c.k = n.k
+         WHERE length(n.k) >= 3`),
+    ]);
+    const tag = (rows: Omit<JoshMatchHit, 'key'>[], key: JoshMatchSignalKey) => rows.map((r) => ({ ...r, key }));
+    return [
+      ...tag(byCode, 'customer_code'),
+      ...tag(byTax, 'register_number'),
+      ...tag(byEmail, 'email'),
+      ...tag(byName, 'company_name'),
+    ];
+  }
+
+  async companyNames(ids: string[]): Promise<Map<string, string | null>> {
+    if (!ids.length) return new Map();
+    const rows: { id: string; name: string | null }[] = await this.users.manager.query(
+      `SELECT id::text AS id, name FROM josh_companies WHERE id::text = ANY($1::text[])`,
+      [ids],
+    );
+    return new Map(rows.map((r) => [r.id, r.name]));
   }
 }

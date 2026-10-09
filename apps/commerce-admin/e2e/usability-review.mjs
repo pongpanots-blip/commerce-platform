@@ -167,8 +167,10 @@ try {
       const next = await fixture(base, locale);
       await open(next.page, base, '/orders');
       if (build === 'after') {
-        const help = next.page.getByRole('button', { name: text(locale, 'วิธีใช้'), exact: true });
-        if (await help.count()) await help.click();
+        const help = next.page.getByRole('button', { name: text(locale, 'ช่วยเหลือ'), exact: true });
+        assert.equal(await help.getAttribute('aria-expanded'), 'false');
+        await help.click();
+        assert.equal(await help.getAttribute('aria-expanded'), 'true');
       }
       await shot(next.page, build, locale, 'help');
       if (build === 'after') {

@@ -9,6 +9,10 @@ import { wrapWinbackResponse } from './winback-response.interceptor';
 import { PoolQueryDto } from './dto/pool-query.dto';
 import { ScorecardQueryDto } from './dto/scorecard-query.dto';
 import { LeadSignalsQueryDto } from './dto/lead-signals-query.dto';
+import { AnalyticsQueryDto } from './dto/analytics-query.dto';
+import { AnalyticsService } from './analytics.service';
+import { JoshMatchService } from './josh-match.service';
+import { EnrichMatchQueryDto } from './dto/enrich-match-query.dto';
 
 const pipe = new ValidationPipe({ transform: true, whitelist: true });
 
@@ -21,7 +25,7 @@ const pipe = new ValidationPipe({ transform: true, whitelist: true });
 @Controller('reports/winback')
 @StaffRoles('sales_manager', 'business_analyst')
 export class WinbackReportsController {
-  constructor(private readonly winback: WinbackReports, private readonly identity: SalesRepIdentity, private readonly opportunities: OpportunityService, private readonly poolService: WinbackService) {}
+  constructor(private readonly winback: WinbackReports, private readonly identity: SalesRepIdentity, private readonly opportunities: OpportunityService, private readonly poolService: WinbackService, private readonly analytics: AnalyticsService, private readonly joshMatch: JoshMatchService) {}
 
   private async answer(fn: () => Promise<unknown>) {
     if (!this.winback.available) throw new ServiceUnavailableException('josh\'s read replica is not connected on this server (JOSH_DATABASE_URL) — set WINBACK_REPORTS_SOURCE=copies to read commerce\'s winback tables.');
@@ -47,6 +51,18 @@ export class WinbackReportsController {
   @Get('my/pool') @StaffRoles('sale')
   async myPool(@Req() req: StaffRequest, @Query(pipe) q: PoolQueryDto) {
     return wrapWinbackResponse(await this.poolService.findPool(q, await this.saleActor(req), true));
+  }
+
+  /** Field visits: rep GPS at check-in/out against the customer's pin, per visit and per rep (commerce tables). */
+  @Get('gps-visits')
+  async gpsVisits(@Query(pipe) q: AnalyticsQueryDto) {
+    return wrapWinbackResponse(await this.analytics.getVisitGps({ id: '', isManager: true }, q.from, q.to, q.sales_user_id));
+  }
+
+  /** Leads captured from enriched Market Explorer places: does each match a Josh customer (counts per status + a page). */
+  @Get('enrich-match')
+  async enrichMatch(@Query(pipe) q: EnrichMatchQueryDto) {
+    return wrapWinbackResponse(await this.joshMatch.enrichReport(q));
   }
 
   @Get('overview') overview() { return this.answer(() => this.winback.overview()); }

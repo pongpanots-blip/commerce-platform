@@ -11,7 +11,7 @@ import type { PromotionValue } from './promotion-value';
 @Entity('product_inventory')
 export class ProductInventory {
   @PrimaryColumn('uuid') product_inventory_id: string;
-  @Column({ type: 'numeric', precision: 12, scale: 2, nullable: true }) selling_unit_price: number;
+  @Column({ type: 'numeric', precision: 12, scale: 2, nullable: true }) selling_price: number | null;
 }
 
 @Entity('private_price')

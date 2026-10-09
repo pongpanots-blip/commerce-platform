@@ -2,8 +2,7 @@ import { compareLine, JoshOrderLine } from './price-shadow';
 
 const line = (over: Partial<JoshOrderLine> = {}): JoshOrderLine => ({
   id: 'oi-1', order_number: 'JOSH-1', sku: '1007310', product_inventory_id: 'inv-1', quantity: 2, unit_price: 450,
-  price_source: 'customer_sku', promotion_mechanic_id: null, company_id: 'co-1', branch_id: 'br-1', ordered_at: new Date('2026-10-01T03:00:00Z'),
-  packaging_type: null, selling_unit: 'PC', selling_unit_price: 500, ordering_price: null, pack_size: null, units_per_box: null, weight_per_unit: null, ...over,
+  price_source: 'customer_sku', promotion_mechanic_id: null, company_id: 'co-1', branch_id: 'br-1', ordered_at: new Date('2026-10-01T03:00:00Z'), ...over,
 });
 const resolved = (over: Record<string, unknown> = {}) => ({ price: 450, base_price: 500, source: 'customer_sku', promotion_mechanic_id: null, endDate: null, ...over }) as never;
 
@@ -26,9 +25,9 @@ describe('compareLine', () => {
     expect(compareLine(line({ price_source: null }), resolved({ source: 'base' })).diffs).toEqual([]);
   });
 
-  it('a weight-priced approx box is compared per order unit (josh pack-order-price fixture: 720/kg × 24 kg box)', () => {
-    const approx = line({ packaging_type: 'Approx', selling_unit: 'KG', selling_unit_price: 720, ordering_price: 17280, pack_size: '7 - 12 KG X 2 PC',
-      unit_price: 17280, price_source: 'base' });
-    expect(compareLine(approx, resolved({ price: 720, source: 'base' }))).toEqual({ unitPrice: 17280, diffs: [] });
+  it('an approx box is compared on the resolved sell-unit total, no per-kg scaling (josh total-price model)', () => {
+    const approx = line({ unit_price: 17280, price_source: 'base' });
+    expect(compareLine(approx, resolved({ price: 17280, source: 'base' }))).toEqual({ unitPrice: 17280, diffs: [] });
+    expect(compareLine(approx, resolved({ price: 720, source: 'base' })).diffs).toEqual(['price']);
   });
 });

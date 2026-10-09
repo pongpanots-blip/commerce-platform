@@ -2,7 +2,6 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
-import { resolveApproxOrderUnitPrice } from '../jagota/pack-order-price.helper';
 import { JoshReplica } from '../josh-replica';
 import { PriceShadowCheck } from './price-shadow-check.entity';
 import { resolveSkuPrice, ResolvedSkuPrice } from './pricing.resolver';
@@ -15,18 +14,15 @@ export interface JoshOrderLine {
   id: string; order_number: string | null; sku: string | null; product_inventory_id: string;
   quantity: number; unit_price: number; price_source: string | null; promotion_mechanic_id: string | null;
   company_id: string | null; branch_id: string | null; ordered_at: Date;
-  packaging_type: string | null; selling_unit: string | null; selling_unit_price: number | null; ordering_price: number | null;
-  pack_size: string | null; units_per_box: string | null; weight_per_unit: string | null;
 }
 
 /**
- * The unit price (inc. VAT) josh stores on the order line for a resolved price — josh
- * `currentLinePricing`: a weight-priced approx box is priced per order unit, anything else at the
- * resolved price. Then which of price / source / mechanic differ from what josh stored.
+ * The unit price (inc. VAT) josh stores on the order line for a resolved price: since josh's total-price model the
+ * resolved price IS the sell-unit total (base = selling_price, every stored promo / special price a total), so the line
+ * stores it as is. Then which of price / source / mechanic differ from what josh stored.
  */
 export function compareLine(line: JoshOrderLine, resolved: ResolvedSkuPrice) {
-  const approx = resolveApproxOrderUnitPrice({ ...line, resolved_per_kg: resolved.price });
-  const unitPrice = roundOrderUnitPrice(approx.orderUnitPrice ?? resolved.price);
+  const unitPrice = roundOrderUnitPrice(resolved.price);
   const diffs: string[] = [];
   if (Math.abs(unitPrice - Number(line.unit_price)) >= 0.005) diffs.push('price');
   // Lines from before josh recorded price_source carry null — nothing to compare.
@@ -70,9 +66,7 @@ export class PriceShadow {
   private lines(where: string, params: unknown[]) {
     return this.replica.query<JoshOrderLine>(`SELECT oi.id::text AS id, o.order_number, pi.product_inventory_sku AS sku, oi.product_inventory_id,
         oi.product_quantity AS quantity, oi.product_price::float AS unit_price, oi.price_source, oi.promotion_mechanic_id,
-        o.company_id, o.branch_id, o.create_date AS ordered_at,
-        pi.packaging_type, pi.selling_unit, pi.selling_unit_price::float AS selling_unit_price, pi.ordering_price::float AS ordering_price,
-        pi.pack_size, pi.units_per_box, pi.weight_per_unit
+        o.company_id, o.branch_id, o.create_date AS ordered_at
       FROM order_items oi JOIN orders o ON o.orders_id = oi.order_id
       LEFT JOIN product_inventory pi ON pi.product_inventory_id = oi.product_inventory_id
       ${where}`, params);

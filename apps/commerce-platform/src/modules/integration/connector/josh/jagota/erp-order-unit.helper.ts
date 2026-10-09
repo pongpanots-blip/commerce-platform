@@ -1,4 +1,4 @@
-import { resolvePackTotalQty } from './pack-order-price.helper';
+import { resolvePackTotalQty } from '../../../../../shared-kernel/helpers/pack-order-price.helper';
 
 /**
  * Which unit Josh sends as `P_UNIT` (order create / quotation create).

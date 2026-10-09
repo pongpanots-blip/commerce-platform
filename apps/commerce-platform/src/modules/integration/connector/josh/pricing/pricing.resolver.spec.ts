@@ -67,7 +67,7 @@ function mechanicSkuItemRow(opts: {
 describe('pricing.resolver company private_price', () => {
   const inventory = {
     product_inventory_id: 'inv-1',
-    selling_unit_price: 1000,
+    selling_price: 1000,
   };
 
   it('resolveSkuPrice prefers customer_sku (private_price) over contract', async () => {
@@ -127,8 +127,8 @@ describe('pricing.resolver company private_price', () => {
     const dataSource = makeRepoMap({
       ProductInventory: {
         find: jest.fn().mockResolvedValue([
-          { product_inventory_id: 'inv-1', selling_unit_price: 100 },
-          { product_inventory_id: 'inv-2', selling_unit_price: 100 },
+          { product_inventory_id: 'inv-1', selling_price: 100 },
+          { product_inventory_id: 'inv-2', selling_price: 100 },
         ]),
       },
       PromotionMechanicSkuItem: emptyMechanicSkuItems(),
@@ -166,13 +166,42 @@ describe('pricing.resolver company private_price', () => {
     expect(map.get('inv-2')?.price).toBe(100);
   });
 
+  it('a ฿0 quantity rule or a % off a SKU with no selling_price never prices the SKU at 0', async () => {
+    const dataSource = makeRepoMap({
+      ProductInventory: {
+        find: jest.fn().mockResolvedValue([
+          { product_inventory_id: 'inv-1', selling_price: 4775 },
+          { product_inventory_id: 'inv-2', selling_price: null },
+        ]),
+      },
+      PromotionMechanicSkuItem: qbResult([
+        mechanicSkuItemRow({
+          productInventoryId: 'inv-2',
+          value: { type: 'percentage', percent: 20 },
+          startDate: new Date('2020-01-01'),
+          endDate: new Date('2099-01-01'),
+        }),
+      ]),
+      PromotionQuantityRule: {
+        find: jest.fn().mockResolvedValue([
+          { product_inventory_id: 'inv-1', min_qty: 1, max_qty: null, promotion_price: 0, is_active: true, sort_order: 0 },
+        ]),
+      },
+    });
+
+    const map = await resolveSkuPricesBatch(dataSource as any, { productInventoryIds: ['inv-1', 'inv-2'] });
+
+    expect(map.get('inv-1')).toMatchObject({ price: 4775, source: 'base' });
+    expect(map.get('inv-2')).toMatchObject({ price: 0, source: 'base' });
+  });
+
   it('resolveSkuPricesBatch falls back to the shared quantity when quantityById has no entry', async () => {
     const dataSource = makeRepoMap({
       ProductInventory: {
         find: jest
           .fn()
           .mockResolvedValue([
-            { product_inventory_id: 'inv-1', selling_unit_price: 100 },
+            { product_inventory_id: 'inv-1', selling_price: 100 },
           ]),
       },
       PromotionMechanicSkuItem: emptyMechanicSkuItems(),
@@ -410,7 +439,7 @@ describe('pricing.resolver active mechanic SKU PromotionValue', () => {
   const at = new Date('2026-06-15T12:00:00.000Z');
   const inventory = {
     product_inventory_id: 'inv-1',
-    selling_unit_price: 100,
+    selling_price: 100,
   };
 
   it('resolves percentage 10% on base 100 to unit price 90', async () => {
@@ -438,7 +467,6 @@ describe('pricing.resolver active mechanic SKU PromotionValue', () => {
 
     expect(resolved).toMatchObject({
       price: 90,
-      base_price: 100,
       source: 'promotion_mechanic',
     });
   });
@@ -483,7 +511,6 @@ describe('pricing.resolver active mechanic SKU PromotionValue', () => {
 
     expect(resolved).toMatchObject({
       price: expectedUnit,
-      base_price: 100,
       source: 'promotion_mechanic',
     });
     // buy2 get1 free @ qty3 → one free unit → (300-100)/3
@@ -693,7 +720,7 @@ describe('pricing.resolver active mechanic SKU PromotionValue', () => {
 // every other price layer so a cap never counts a customer/contract price.
 describe('pricing.resolver promotion_mechanic_id', () => {
   const at = new Date('2026-06-15T12:00:00.000Z');
-  const inventory = { product_inventory_id: 'inv-1', selling_unit_price: 100 };
+  const inventory = { product_inventory_id: 'inv-1', selling_price: 100 };
   const noRules = { find: jest.fn().mockResolvedValue([]) };
 
   it('names the winning mechanic for a mechanic-priced SKU (single + batch)', async () => {
@@ -846,7 +873,7 @@ describe('pricing.resolver company-targeted mechanic', () => {
   const at = new Date('2026-06-15T12:00:00.000Z');
   const ACME = 'co-acme';
   const GLOBEX = 'co-globex';
-  const inventory = { product_inventory_id: 'inv-1', selling_unit_price: 100 };
+  const inventory = { product_inventory_id: 'inv-1', selling_price: 100 };
   const noRules = { find: jest.fn().mockResolvedValue([]) };
   const window = { startDate: new Date('2026-01-01'), endDate: new Date('2026-12-31') };
 

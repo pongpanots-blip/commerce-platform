@@ -156,35 +156,6 @@ export function firstTierPrice(tiers: PriceTier[], fallback = 0): number {
   );
 }
 
-export function resolvePromotionRulesInput(options: {
-  promotion_rules?: unknown;
-  tier_prices?: unknown;
-  selling_unit_price?: number;
-  unit_label?: string;
-}): PromotionQuantityRuleRow[] {
-  const parsed = parsePromotionQuantityRules(
-    options.promotion_rules ?? options.tier_prices,
-  );
-  if (parsed.length > 0) return parsed;
-
-  const selling = Number(options.selling_unit_price ?? 0);
-  return buildDefaultPromotionRuleFromPrice(selling, options.unit_label);
-}
-
-/** @deprecated use resolvePromotionRulesInput */
-export function resolveTierPricesInput(options: {
-  tier_prices?: unknown;
-  selling_unit_price?: number;
-  unit_label?: string;
-}): PriceTier[] {
-  return resolvePromotionRulesInput(options).map((rule) => ({
-    min_qty: rule.min_qty,
-    max_qty: rule.max_qty,
-    price: rule.promotion_price,
-    unit_label: rule.unit_label,
-  }));
-}
-
 export function parsePromotionRulesFromDto(raw: unknown): PromotionQuantityRuleRow[] {
   if (raw == null || raw === '') return [];
 

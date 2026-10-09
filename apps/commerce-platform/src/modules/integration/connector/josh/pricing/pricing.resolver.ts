@@ -1,4 +1,5 @@
-// Copied from josh apps/backend/src/shared/{helpers,types} (origin/main d84d692b). Only imports changed:
+// Copied from josh apps/backend/src/shared/pricing/pricing.resolver.ts (refactor/pricing-total-price-model 714f4427, the
+// total-price model: base = selling_price, every stored promo/special price is the sell-unit total). Only imports changed:
 // josh entities → slim copies in ./josh-pricing-tables, date helper → ../jagota/date-only.helper.
 import { DataSource, In } from 'typeorm';
 import { BranchContractPrice, PrivatePrice, ProductBranchSpecial, ProductInventory, PromotionQuantityRule } from './josh-pricing-tables';
@@ -12,22 +13,12 @@ import {
 } from './pricing.types';
 /** josh response-cache.helper CATALOG_CACHE_VERSION_KEY (only the cache helpers below use it; commerce never calls them). */
 const CATALOG_CACHE_VERSION_KEY = 'catalog:ver';
-
-export { isActiveDateRange } from '../jagota/date-only.helper';
-
-export type PriceSource =
-  | 'customer_sku'
-  /** @deprecated Kept for stale cart Redis payloads; resolver no longer emits this. */
-  | 'branch_special'
-  | 'contract_sku'
-  | 'promotion'
-  | 'promotion_mechanic'
-  | 'base';
+/** josh shared/pricing/price-source.ts ResolvedSource (only the type is needed here). */
+export type ResolvedSource = 'customer_sku' | 'contract_sku' | 'promotion' | 'promotion_mechanic' | 'base';
 
 export type ResolvedSkuPrice = {
   price: number;
-  base_price: number;
-  source: PriceSource;
+  source: ResolvedSource;
   private_price_id?: string;
   contract_price_id?: string;
   /** @deprecated Prefer private_price_id; kept for stale payloads. */
@@ -71,9 +62,11 @@ async function loadPromotionQuantityRules(
 }
 
 /**
- * Unit price from an active SKU mechanic PromotionValue.
- * - tiered → finalPrice from resolvePromotionValue
+ * Sell-unit total from an active SKU mechanic PromotionValue, off the catalog
+ * `selling_price` (docs/pricing-total-model.md §ราคาพิเศษ / โปร).
+ * - tiered → finalPrice from resolvePromotionValue (tier prices are sell-unit totals)
  * - percentage / bogo / fixed → (base*qty - discountAmount) / qty
+ * null = the mechanic does not price this SKU (see `promoTotal`).
  */
 function unitPriceFromPromotionValue(
   value: PromotionValue,
@@ -82,15 +75,23 @@ function unitPriceFromPromotionValue(
 ): number | null {
   const resolved = resolvePromotionValue(value, { basePrice, quantity });
   if (resolved.finalPrice != null) {
-    return resolved.finalPrice;
+    return promoTotal(resolved.finalPrice);
   }
   if (resolved.discountAmount == null) {
     return null;
   }
   if (quantity <= 0) {
-    return basePrice;
+    return promoTotal(basePrice);
   }
-  return (basePrice * quantity - resolved.discountAmount) / quantity;
+  return promoTotal((basePrice * quantity - resolved.discountAmount) / quantity);
+}
+
+/**
+ * A promotion never sells a SKU for ฿0 or less: a 0 tier/rule price, or a % off a
+ * SKU with no `selling_price`, leaves the SKU at its catalog price instead.
+ */
+function promoTotal(price: number): number | null {
+  return price > 0 ? price : null;
 }
 
 async function findActivePrivatePrice(
@@ -146,6 +147,12 @@ const SKU_PRICE_CACHE_TTL_SEC = 60;
  * customer-specific prices are visible immediately, not after the TTL.
  */
 const GLOBAL_PRICE_VERSION_KEY = 'price:ver:all';
+
+/**
+ * Per-SKU listing price entry (`resolveSkuPricesBatchCached`). Replaces the whole-id-set
+ * `price:batch:v3:*` entries, which simply expire (60 s) and are never read again.
+ */
+const SKU_PRICE_ENTRY_PREFIX = 'price:sku:v2';
 
 /**
  * Call after any customer-specific price write (private_price,
@@ -211,7 +218,7 @@ export async function resolveSkuPriceCached(
       redisClient.get(skuPriceVersionKey(inv)),
       redisClient.get(GLOBAL_PRICE_VERSION_KEY),
     ]);
-    key = `price:resolve:v3:${gver ?? '0'}:${inv}:${ver ?? '0'}:${options.companyId ?? ''}:${options.branchId ?? ''}:${options.quantity ?? 1}`;
+    key = `price:resolve:v4:${gver ?? '0'}:${inv}:${ver ?? '0'}:${options.companyId ?? ''}:${options.branchId ?? ''}:${options.quantity ?? 1}`;
     const cached = await redisClient.get(key);
     if (cached) return JSON.parse(cached) as ResolvedSkuPrice;
   } catch {
@@ -231,12 +238,21 @@ export async function resolveSkuPriceCached(
 }
 
 /**
- * resolveSkuPricesBatch with the same version-keyed cache as
- * resolveSkuPriceCached: the key embeds every SKU's `price:ver` counter, so a
- * price write on ANY SKU in the page invalidates the whole entry. Listing
- * pages repeat the same 12-SKU set per (company, branch), so the hit rate is
- * high. Bypasses for `at` / `quantityById` / `promotionRulesByProduct`
- * (cart-shaped calls stay fresh).
+ * Batch price lookup for listings (search, PLP, carousel, cuisine, my-products) with a
+ * **per-SKU** Redis entry instead of one entry per exact id-set.
+ *
+ * Why per SKU: the old key held the whole sorted id list, so a new search term, a
+ * different page or another listing that shared most products still missed and
+ * re-priced everything — worst for logged-in users, whose (company, branch) scope
+ * gives every scope its own cold start. Now each SKU's price is reused across every
+ * listing for the same (company, branch, quantity) for 60 s, and only the missing
+ * SKUs are priced.
+ *
+ * Results are identical to `resolveSkuPricesBatch`: every SKU's price is computed
+ * from rows of that SKU only (base, private, contract, branch special, mechanic,
+ * quantity rules), so pricing a subset gives the same value per SKU. The returned
+ * Map has the same keys in the same order. Keys still carry the global and per-SKU
+ * price versions, so invalidation works exactly as before.
  */
 export async function resolveSkuPricesBatchCached(
   dataSource: DataSource,
@@ -251,43 +267,65 @@ export async function resolveSkuPricesBatchCached(
   ) {
     return resolveSkuPricesBatch(dataSource, options);
   }
-  const ids = [
-    ...new Set(
-      options.productInventoryIds.filter(Boolean).map((id) => id.toLowerCase()),
-    ),
-  ].sort();
-  if (ids.length === 0) return new Map();
+  // Same id list resolveSkuPricesBatch builds (order + casing) — it is the Map's key order.
+  const uniqueIds = [...new Set(options.productInventoryIds.filter(Boolean))];
+  if (uniqueIds.length === 0) return new Map();
 
-  let key: string | null = null;
+  let keyById: Map<string, string> | null = null;
+  const cachedById = new Map<string, ResolvedSkuPrice>();
   try {
     // node-redis pipelines same-tick commands — N GETs = 1 round trip.
+    const lowerIds = uniqueIds.map((id) => id.toLowerCase());
     const [gver, ...vers] = await Promise.all([
       redisClient.get(GLOBAL_PRICE_VERSION_KEY),
-      ...ids.map((id) => redisClient.get(skuPriceVersionKey(id))),
+      ...lowerIds.map((id) => redisClient.get(skuPriceVersionKey(id))),
     ]);
-    key =
-      `price:batch:v3:${gver ?? '0'}:${options.companyId ?? ''}:${options.branchId ?? ''}:` +
-      `${options.quantity ?? 1}:` +
-      ids.map((id, i) => `${id}.${vers[i] ?? '0'}`).join(',');
-    const cached = await redisClient.get(key);
-    if (cached) {
-      return new Map(
-        Object.entries(JSON.parse(cached) as Record<string, ResolvedSkuPrice>),
-      );
-    }
+    const prefix =
+      `${SKU_PRICE_ENTRY_PREFIX}:${gver ?? '0'}:${options.companyId ?? ''}:${options.branchId ?? ''}:` +
+      `${options.quantity ?? 1}:`;
+    keyById = new Map(
+      uniqueIds.map((id, i) => [id, `${prefix}${lowerIds[i]}.${vers[i] ?? '0'}`]),
+    );
+    const cached = await Promise.all(
+      uniqueIds.map((id) => redisClient.get(keyById!.get(id)!)),
+    );
+    uniqueIds.forEach((id, i) => {
+      const raw = cached[i];
+      if (raw) cachedById.set(id, JSON.parse(raw) as ResolvedSkuPrice);
+    });
   } catch {
-    key = null;
+    keyById = null;
+    cachedById.clear();
   }
 
-  const result = await resolveSkuPricesBatch(dataSource, options);
-  if (key) {
+  const missingIds = uniqueIds.filter((id) => !cachedById.has(id));
+  const computed =
+    missingIds.length > 0
+      ? await resolveSkuPricesBatch(dataSource, {
+          ...options,
+          productInventoryIds: missingIds,
+        })
+      : new Map<string, ResolvedSkuPrice>();
+
+  if (keyById && computed.size > 0) {
     try {
-      await redisClient.set(key, JSON.stringify(Object.fromEntries(result)), {
-        EX: SKU_PRICE_CACHE_TTL_SEC,
-      });
+      await Promise.all(
+        [...computed].map(([id, price]) => {
+          const key = keyById!.get(id);
+          return key
+            ? redisClient.set(key, JSON.stringify(price), { EX: SKU_PRICE_CACHE_TTL_SEC })
+            : undefined;
+        }),
+      );
     } catch {
       // Best-effort cache write.
     }
+  }
+
+  const result = new Map<string, ResolvedSkuPrice>();
+  for (const id of uniqueIds) {
+    const price = cachedById.get(id) ?? computed.get(id);
+    if (price) result.set(id, price);
   }
   return result;
 }
@@ -315,10 +353,10 @@ export async function resolveSkuPrice(
 
   const inventory = await dataSource.getRepository(ProductInventory).findOne({
     where: { product_inventory_id: options.productInventoryId },
-    select: ['product_inventory_id', 'selling_unit_price'],
+    select: ['product_inventory_id', 'selling_price'],
   });
 
-  const basePrice = Number(inventory?.selling_unit_price ?? 0);
+  const basePrice = Number(inventory?.selling_price ?? 0);
 
   const companyId = options.companyId ?? null;
 
@@ -333,7 +371,6 @@ export async function resolveSkuPrice(
     if (activePrivate) {
       return {
         price: Number(activePrivate.private_selling_price),
-        base_price: basePrice,
         source: 'customer_sku',
         private_price_id: activePrivate.id,
         promotion_mechanic_id: null,
@@ -360,7 +397,6 @@ export async function resolveSkuPrice(
     if (activeContract) {
       return {
         price: Number(activeContract.contract_price),
-        base_price: basePrice,
         source: 'contract_sku',
         contract_price_id: activeContract.id,
         promotion_mechanic_id: null,
@@ -386,7 +422,6 @@ export async function resolveSkuPrice(
     if (activePromotion) {
       return {
         price: Number(activePromotion.special_price),
-        base_price: basePrice,
         source: 'promotion',
         promotion_id: activePromotion.id,
         promotion_mechanic_id: null,
@@ -413,7 +448,6 @@ export async function resolveSkuPrice(
       if (unitPrice != null) {
         return {
           price: unitPrice,
-          base_price: basePrice,
           source: 'promotion_mechanic',
           promotion_mechanic_id: mechanic.mechanicId,
           endDate: null,
@@ -425,7 +459,6 @@ export async function resolveSkuPrice(
     // undated promotion_quantity_rules mirror after a campaign expires.
     return {
       price: basePrice,
-      base_price: basePrice,
       source: 'base',
       promotion_mechanic_id: null,
       endDate: null,
@@ -439,20 +472,20 @@ export async function resolveSkuPrice(
   );
 
   if (rules.length > 0) {
-    const promotionPrice = resolvePromotionPrice(rules, quantity, basePrice);
-    return {
-      price: promotionPrice,
-      base_price: basePrice,
-      source: 'promotion_mechanic',
-      // legacy promotion_quantity_rules row — no mechanic behind it
-      promotion_mechanic_id: null,
-      endDate: null,
-    };
+    const promotionPrice = promoTotal(resolvePromotionPrice(rules, quantity, basePrice));
+    if (promotionPrice != null) {
+      return {
+        price: promotionPrice,
+        source: 'promotion_mechanic',
+        // legacy promotion_quantity_rules row — no mechanic behind it
+        promotion_mechanic_id: null,
+        endDate: null,
+      };
+    }
   }
 
   return {
     price: basePrice,
-    base_price: basePrice,
     source: 'base',
     promotion_mechanic_id: null,
     endDate: null,
@@ -469,8 +502,7 @@ function applyActiveRows<
   rows: T[],
   at: Date,
   result: Map<string, ResolvedSkuPrice>,
-  toResolved: (row: T, basePrice: number) => ResolvedSkuPrice,
-  basePriceById: Map<string, number>,
+  toResolved: (row: T) => ResolvedSkuPrice,
 ): void {
   const seen = new Set<string>();
 
@@ -484,8 +516,7 @@ function applyActiveRows<
     }
 
     seen.add(productId);
-    const basePrice = basePriceById.get(productId) ?? 0;
-    result.set(productId, toResolved(row, basePrice));
+    result.set(productId, toResolved(row));
   }
 }
 
@@ -520,14 +551,14 @@ export async function resolveSkuPricesBatch(
 
   const inventories = await dataSource.getRepository(ProductInventory).find({
     where: { product_inventory_id: In(uniqueIds) },
-    select: ['product_inventory_id', 'selling_unit_price'],
+    select: ['product_inventory_id', 'selling_price'],
   });
 
   const basePriceById = new Map<string, number>();
   for (const inventory of inventories) {
     basePriceById.set(
       inventory.product_inventory_id,
-      Number(inventory.selling_unit_price ?? 0),
+      Number(inventory.selling_price ?? 0),
     );
   }
 
@@ -535,7 +566,6 @@ export async function resolveSkuPricesBatch(
     const basePrice = basePriceById.get(id) ?? 0;
     result.set(id, {
       price: basePrice,
-      base_price: basePrice,
       source: 'base',
       promotion_mechanic_id: null,
       endDate: null,
@@ -557,15 +587,13 @@ export async function resolveSkuPricesBatch(
       privatePrices,
       at,
       result,
-      (row, basePrice) => ({
+      (row) => ({
         price: Number(row.private_selling_price),
-        base_price: basePrice,
         source: 'customer_sku',
         private_price_id: row.id,
         promotion_mechanic_id: null,
         endDate: formatGregorianDateOnly(row.end_date),
       }),
-      basePriceById,
     );
   }
 
@@ -591,30 +619,26 @@ export async function resolveSkuPricesBatch(
       contracts,
       at,
       result,
-      (row, basePrice) => ({
+      (row) => ({
         price: Number(row.contract_price),
-        base_price: basePrice,
         source: 'contract_sku',
         contract_price_id: row.id,
         promotion_mechanic_id: null,
         endDate: formatGregorianDateOnly(row.end_date),
       }),
-      basePriceById,
     );
 
     applyActiveRows(
       promotions,
       at,
       result,
-      (row, basePrice) => ({
+      (row) => ({
         price: Number(row.special_price),
-        base_price: basePrice,
         source: 'promotion',
         promotion_id: row.id,
         promotion_mechanic_id: null,
         endDate: null,
       }),
-      basePriceById,
     );
   }
 
@@ -638,7 +662,6 @@ export async function resolveSkuPricesBatch(
     if (unitPrice == null) continue;
     result.set(id, {
       price: unitPrice,
-      base_price: basePrice,
       source: 'promotion_mechanic',
       promotion_mechanic_id: mechanic.mechanicId,
       endDate: null,
@@ -689,13 +712,12 @@ export async function resolveSkuPricesBatch(
     if (rules.length === 0) continue;
 
     const basePrice = basePriceById.get(id) ?? 0;
+    const promotionPrice = promoTotal(
+      resolvePromotionPrice(rules, options.quantityById?.get(id) ?? quantity, basePrice),
+    );
+    if (promotionPrice == null) continue;
     result.set(id, {
-      price: resolvePromotionPrice(
-        rules,
-        options.quantityById?.get(id) ?? quantity,
-        basePrice,
-      ),
-      base_price: basePrice,
+      price: promotionPrice,
       source: 'promotion_mechanic',
       // legacy promotion_quantity_rules row — no mechanic behind it
       promotion_mechanic_id: null,

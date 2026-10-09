@@ -1,0 +1,170 @@
+{
+  "updatedAt": "2026-10-09T16:38:02.717814+00:00",
+  "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
+  "designGuidance": {
+    "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
+    "interaction": [
+      "One dominant next action per step.",
+      "Require only necessary inputs; display safe defaults.",
+      "Reveal advanced options progressively.",
+      "Explain inline errors and recovery in context.",
+      "Show loading, persisted success and the next useful action.",
+      "Use canonical feature homes with action URLs, not additional duplicate menus.",
+      "Validate keyboard and mobile task completion, empty data and unavailable source guidance."
+    ],
+    "visualReference": "Reviewed Stitch specification; no locally inspected reference pixels and no pixel-perfect claim.",
+    "protectedRoute": "/j/marketing/welcome-lead-email"
+  },
+  "queue": [
+    {
+      "priority": 1,
+      "task": "Finish promotion rehearsal and order-risk review",
+      "status": "Admin-only guided promotion draft/recovery and read-only order/finding UI implemented; locally verified with native services and owned PostgreSQL. Cost, stock-unit, freshness, capacity and milestone gaps remain explicit; production migration/deployment excluded.",
+      "dependencies": [
+        "Existing rehearsal/order-review MVP",
+        "Authoritative cost and compatible stock selling-unit mapping remain missing",
+        "Local draft migration only; production application excluded"
+      ],
+      "acceptance": [
+        "Preview never activates campaigns or applies prices.",
+        "Save success follows committed draft plus durable request receipt.",
+        "Same key/body replays, different body conflicts; version preconditions protect concurrent editors.",
+        "Interrupted writes recover by request ID before retry.",
+        "Unknown freshness/cost/capacity remains incomplete; no fabricated profit.",
+        "Order source identity/version/lag/partial evidence remains honest."
+      ]
+    },
+    {
+      "priority": 2,
+      "task": "Role-based Today work inbox",
+      "status": "Queued; role-home API and marketing summary integration are verified locally.",
+      "dependencies": [
+        "Source-backed role home API",
+        "Existing authorized queues and owner/freshness definitions"
+      ],
+      "acceptance": [
+        "Every item has a reason, source age or unknown freshness, owner or unassigned, and existing feature/action deep link.",
+        "Completed badges reflect persisted actions, never menu counts.",
+        "No broader data or role access."
+      ]
+    },
+    {
+      "priority": 3,
+      "task": "MER compare, manual observations, matching and promotion planning",
+      "status": "Queued; current MER competitor permission remains unresolved",
+      "dependencies": [
+        "Existing competitor review/manual capture services",
+        "Outstanding ACL decision",
+        "Evidence history, currency/tax/tier/freshness rules"
+      ],
+      "acceptance": [
+        "One canonical comparison entry with navigable matrix/manual-entry/planning actions.",
+        "Unknown/stale/substitute observations do not produce comparable ranking or savings.",
+        "Preserve approved identity mappings until material identity changes.",
+        "Do not remove unique or differently scoped actions."
+      ]
+    },
+    {
+      "priority": 3,
+      "task": "Pack-and-price planning",
+      "status": "Queued; supersedes all physical repack scope",
+      "dependencies": [
+        "Own canonical SKU and selected competitor offer IDs",
+        "Existing comparator permission decision",
+        "Versioned scenario persistence",
+        "Authoritative effective product cost if available"
+      ],
+      "acceptance": [
+        "Separate planning page using reviewed design system; no stock-transformation/lot/reversal execution.",
+        "Offer source, date, currency, tax, region/tier, pack/UOM, mapping confidence and freshness are visible.",
+        "Six 500g items normalize to 3kg; related packs may compare without same SKU; substitutes stay separate.",
+        "No count-to-weight without net quantity or weight-to-volume without verified conversion.",
+        "Missing FX, tax or delivery basis excludes claims that need it.",
+        "Alternative own packs and proposed prices retain evidence and assumptions.",
+        "Packaging/labor/waste assumptions are explicitly entered; competitor prices never become costs.",
+        "Missing required cost/basis gives null margin plus a reason; hypothetical assumptions are labeled.",
+        "Versioned drafts only; never apply canonical price or stock."
+      ]
+    },
+    {
+      "priority": 3,
+      "task": "Profit, cost and objective planning",
+      "status": "Queued; source data and ownership definitions unresolved",
+      "dependencies": [
+        "Compatible net sales and effective COGS",
+        "Objective owner/period/scope rules",
+        "Current monthly GMV target stays distinct"
+      ],
+      "acceptance": [
+        "GP = compatible net sales minus COGS; margin uses net sales, markup uses cost.",
+        "Aggregate margin uses aggregate revenue/cost, not mean percentages.",
+        "Unknown actuals show null and no attainment; net profit requires expenses."
+      ]
+    },
+    {
+      "priority": 4,
+      "task": "Sales reorder and follow-up workspace",
+      "status": "Queued",
+      "dependencies": [
+        "Existing assigned-company identity mapping",
+        "Prior orders and authorized inventory",
+        "Reviewable draft persistence"
+      ],
+      "acceptance": [
+        "Own assigned customers only; no user-selected team override.",
+        "Reorders use current source availability/prices, with unresolved items visible.",
+        "Follow-ups remain reviewable drafts; no live customer messages."
+      ]
+    },
+    {
+      "priority": 5,
+      "task": "Marketing readiness and BA variance drilldown",
+      "status": "Queued",
+      "dependencies": [
+        "Stock/age/cost coverage definitions",
+        "Attribution/spend currently unavailable",
+        "Existing reports and assignment permissions"
+      ],
+      "acceptance": [
+        "Show campaign blockers and evidence, not invented ROAS or profit.",
+        "BA variance drills into actual underlying records and authorized assignment routes.",
+        "No campaign activation or ACL expansion."
+      ]
+    },
+    {
+      "priority": 6,
+      "task": "OCR purchase order to reviewed cart",
+      "status": "Queued after matching readiness",
+      "dependencies": [
+        "Reliable product matching and human review",
+        "Customer scope, UOM, price and cart contracts"
+      ],
+      "acceptance": [
+        "Low-confidence OCR/matches require review.",
+        "A reviewed draft cart precedes any existing order action.",
+        "No automatic order submission or price activation."
+      ]
+    }
+  ],
+  "approvedEnterpriseAnalyticsFoundation": {
+    "status": "Approved staged work; current verification handoff comes first. No foundation implementation files edited yet.",
+    "nextBoundedSlice": [
+      "Read-only repository audit of instrumentation, identity sources, consent/sensitive payloads, accepted-order authority and login/logout/branch-switch/assisted-order behavior; cite code and mark inaccessible GTM configuration unverified.",
+      "Versioned schemas and synthetic fixtures for branch_selected, checkout_started and order_accepted; account_application_approved only if an actual transition exists. Preserve event-time identity without shared-device identity merging.",
+      "Branch-scoped typed AND/OR/NOT segment validator, compiler and read-only parameterized execution on owned local fixtures; three-valued unknown handling, fixed evaluation time and bounded windows/query/timeout.",
+      "Two plain-language synthetic previews: approved eligible branches at least seven days old with no accepted orders only when history is complete, and repeat buyers with at least three accepted orders in ninety days and none in fourteen days.",
+      "Boundary, deduplication, identity/tenant isolation, attempted-versus-accepted, late/incomplete history, missing-trait, time-expiry and SQL-injection tests with hand-calculated membership; integration checklist."
+    ],
+    "excluded": [
+      "New tracking destinations",
+      "Production GTM changes",
+      "Audience or campaign activation",
+      "Paid APIs",
+      "New consent or role grants",
+      "Production migrations/data extraction",
+      "Push/deployment",
+      "Protected welcome changes"
+    ],
+    "notCompletionClaim": "This is an analytics foundation with synthetic previews, not a completed analytics platform."
+  }
+}

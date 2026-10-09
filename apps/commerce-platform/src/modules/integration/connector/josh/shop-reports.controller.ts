@@ -12,6 +12,7 @@ import { JoshOrders, OrderFilters } from './josh-orders';
 import { CompanyFilters, JoshCustomers } from './josh-customers';
 import { JoshPrices } from './josh-prices';
 import { CS_CUSTOMER_LIMIT, CS_PRODUCT_LIMIT, csCustomerDetailView, csCustomerSearch, csCustomerSearchView, csProductSearch, csProductSearchView } from './cs-desk-search';
+import { HomeSource, roleHomeSummary } from './role-home-summary';
 
 interface PeriodQuery { period?: string; fromDate?: string; toDate?: string; salesUserId?: string }
 
@@ -73,6 +74,23 @@ export class ShopReportsController {
 
   private restaurantsReady() {
     if (!this.restaurants.available) throw new ServiceUnavailableException(`${NO_REPLICA.reason} Set RESTAURANTS_SOURCE=copies to read commerce's copy.`);
+  }
+
+  /** Aggregate only readers already authorized for this role. No caller-selected user, role or wider scope. */
+  @Get('home') @StaffRoles('marketing', 'merchandising', 'sale', 'sales_manager', 'business_analyst')
+  async home(@Query() q: PeriodQuery, @Req() req: StaffRequest) {
+    if (Object.keys(q).some(key => !['period', 'fromDate', 'toDate'].includes(key))) throw new BadRequestException('Unknown home query parameter');
+    const r = range(q), role = req.staff.role;
+    const readers: Array<[HomeSource, () => unknown]> = [];
+    if (['admin', 'merchandising', 'marketing'].includes(role)) readers.push(['catalog', () => this.productSummary()]);
+    if (['admin', 'sale', 'sales_manager', 'business_analyst'].includes(role)) {
+      readers.push(['sales', () => this.sales(q, req)], ['orders', () => this.orderSummary({}, req)]);
+    }
+    if (role === 'marketing') readers.push(['traffic', () => this.traffic(q)], ['push', () => this.pushOverview()]);
+    const sources: Partial<Record<HomeSource, unknown>> = {}, failed: HomeSource[] = [];
+    // Independent failures retain useful evidence. Never return query errors, URLs or customer payloads.
+    await Promise.all(readers.map(async ([key, read]) => { try { sources[key] = await read(); } catch { failed.push(key); } }));
+    return roleHomeSummary(role, r.current.label, sources, failed.sort(), new Date().toISOString());
   }
 
   @Get('sales') @StaffRoles(...SHOP, 'sale')

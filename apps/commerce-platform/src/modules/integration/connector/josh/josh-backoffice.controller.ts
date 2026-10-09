@@ -21,6 +21,10 @@ export class JoshBackofficeController {
 
   @Get('backoffice') views() { return this.backoffice.views(); }
 
+  /** Admin-only under the existing StaffAuthGuard default; no payment mutation endpoint. */
+  @Get('payment-transactions/:id')
+  paymentDetail(@Param('id') id: string) { return this.backoffice.paymentDetail(id); }
+
   @Get('backoffice/:view')
   list(@Param('view') view: string, @Query('search') search?: string, @Query('status') status?: string, @Query('page') p?: string) {
     if (!this.backoffice.available) throw joshOnly('backoffice');

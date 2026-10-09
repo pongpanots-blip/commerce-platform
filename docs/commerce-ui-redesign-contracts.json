@@ -1,0 +1,1321 @@
+{
+  "updatedAt": "2026-10-09T15:19:30.085008+00:00",
+  "implementedSlice": [
+    "Scoped fluid commerce workspace shell",
+    "Task-section indexes and short sidebar using existing permissions",
+    "Role homes with existing source-backed reads or explicit unavailability",
+    "Read-only payments list/detail action URLs",
+    "Reusable skeleton/error/retry/empty/authoritative-status patterns"
+  ],
+  "featureMapping": [
+    {
+      "role": "admin",
+      "featureGroups": [
+        {
+          "title": "Home",
+          "features": [
+            {
+              "to": "/home",
+              "label": "หน้าแรก",
+              "more": false
+            },
+            {
+              "to": "/",
+              "label": "แดชบอร์ด",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "สินค้าและสต็อก",
+          "features": [
+            {
+              "to": "/j/allproducts",
+              "label": "สินค้าบนร้านค้า",
+              "more": false
+            },
+            {
+              "to": "/products",
+              "label": "ค้นหาสินค้าตามรหัส",
+              "more": false
+            },
+            {
+              "to": "/j/categories",
+              "label": "จัดการหมวดหมู่",
+              "more": false
+            },
+            {
+              "to": "/j/brands",
+              "label": "แบรนด์",
+              "more": false
+            },
+            {
+              "to": "/j/product/bulk-image-upload",
+              "label": "อัปโหลดรูปสินค้า",
+              "more": false
+            },
+            {
+              "to": "/j/suppliers",
+              "label": "ซัพพลายเออร์",
+              "more": false
+            },
+            {
+              "to": "/product-prices",
+              "label": "ราคาสินค้า",
+              "more": true
+            },
+            {
+              "to": "/product-master-queue",
+              "label": "อนุมัติข้อมูลสินค้าที่เปลี่ยน",
+              "more": true
+            },
+            {
+              "to": "/stock-moves",
+              "label": "รับเข้า ปรับ และโอนสต็อก",
+              "more": true
+            },
+            {
+              "to": "/erp/inventory-warehouse",
+              "label": "สต็อกแต่ละคลัง",
+              "more": true
+            },
+            {
+              "to": "/j/product/video-upload",
+              "label": "อัปโหลดวิดีโอสินค้า",
+              "more": true
+            },
+            {
+              "to": "/prices/staff",
+              "label": "ราคาเฉพาะลูกค้าและราคาสัญญา",
+              "more": true
+            },
+            {
+              "to": "/order-periods",
+              "label": "รอบสั่งซื้อจากซัพพลายเออร์",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "ออเดอร์และการชำระเงิน",
+          "features": [
+            {
+              "to": "/j/order",
+              "label": "คำสั่งซื้อ",
+              "more": false
+            },
+            {
+              "to": "/j/shipments",
+              "label": "การจัดส่งสินค้า",
+              "more": false
+            },
+            {
+              "to": "/j/payment-transactions",
+              "label": "รายการชำระเงิน",
+              "more": false
+            },
+            {
+              "to": "/j/invoices",
+              "label": "ใบแจ้งหนี้ค้างชำระ",
+              "more": false
+            },
+            {
+              "to": "/j/billing",
+              "label": "วางบิล",
+              "more": false
+            },
+            {
+              "to": "/j/credit-terms",
+              "label": "ใบสมัครเครดิต",
+              "more": false
+            },
+            {
+              "to": "/j/credit-notes",
+              "label": "ใบลดหนี้",
+              "more": true
+            },
+            {
+              "to": "/j/credit-backs",
+              "label": "คืนเครดิตให้ลูกค้า",
+              "more": true
+            },
+            {
+              "to": "/j/refunds",
+              "label": "คืนสินค้าและคืนเงิน",
+              "more": true
+            },
+            {
+              "to": "/j/cs/delivery-schedule",
+              "label": "ตารางรอบส่ง",
+              "more": true
+            },
+            {
+              "to": "/j/batch-sticker",
+              "label": "พิมพ์สติกเกอร์",
+              "more": true
+            },
+            {
+              "to": "/orders",
+              "label": "ชำระเงินและการจองของออเดอร์",
+              "more": true
+            },
+            {
+              "to": "/reservations",
+              "label": "การจองสต็อกตอนชำระเงิน",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "ลูกค้าและบริการ",
+          "features": [
+            {
+              "to": "/j/company",
+              "label": "บริษัทลูกค้า",
+              "more": false
+            },
+            {
+              "to": "/j/allusers",
+              "label": "ผู้ใช้ของลูกค้า",
+              "more": false
+            },
+            {
+              "to": "/cs",
+              "label": "งานบริการลูกค้า",
+              "more": false
+            },
+            {
+              "to": "/livechat",
+              "label": "แชตกับลูกค้า",
+              "more": false
+            },
+            {
+              "to": "/j/price-requests",
+              "label": "คำขอราคา",
+              "more": false
+            },
+            {
+              "to": "/j/kyc",
+              "label": "ตรวจสอบตัวตนลูกค้า",
+              "more": false
+            },
+            {
+              "to": "/reports/winback",
+              "label": "ติดตามลูกค้าเก่า",
+              "more": true
+            },
+            {
+              "to": "/reports/winback/opportunities",
+              "label": "โอกาสของทีม",
+              "more": true
+            },
+            {
+              "to": "/cs/sales-assignment",
+              "label": "มอบหมายพนักงานขาย",
+              "more": true
+            },
+            {
+              "to": "/reports/winback/my",
+              "label": "โอกาสและลีดของฉัน",
+              "more": true
+            },
+            {
+              "to": "/j/active-offers",
+              "label": "ข้อเสนอราคาที่ใช้งาน",
+              "more": true
+            },
+            {
+              "to": "/j/membership-tiers",
+              "label": "ระดับสมาชิก",
+              "more": true
+            },
+            {
+              "to": "/j/cs/cart-move-categories",
+              "label": "หมวดที่ย้ายของในตะกร้าได้",
+              "more": true
+            },
+            {
+              "to": "/customers",
+              "label": "ข้อมูลติดต่อลูกค้า",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "การตลาด",
+          "features": [
+            {
+              "to": "/marketing/growth",
+              "label": "วางแผนการเติบโต",
+              "more": false
+            },
+            {
+              "to": "/j/promotions/campaigns",
+              "label": "แคมเปญโปรโมชัน",
+              "more": false
+            },
+            {
+              "to": "/j/coupons",
+              "label": "คูปองส่วนลด",
+              "more": false
+            },
+            {
+              "to": "/j/promotions-mechanic",
+              "label": "กติกาส่วนลด",
+              "more": false
+            },
+            {
+              "to": "/j/promotion-product-sets",
+              "label": "ชุดสินค้าโปรโมชัน",
+              "more": false
+            },
+            {
+              "to": "/j/promotion-pages",
+              "label": "หน้าโปรโมชัน",
+              "more": false
+            },
+            {
+              "to": "/j/segments",
+              "label": "กลุ่มลูกค้าสำหรับแคมเปญ",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/push-campaigns",
+              "label": "ส่งแจ้งเตือนถึงลูกค้า",
+              "more": true
+            },
+            {
+              "to": "/marketing/workflows",
+              "label": "ข้อความอัตโนมัติ",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/competitor-prices",
+              "label": "เทียบราคาคู่แข่ง",
+              "more": true
+            },
+            {
+              "to": "/marketing/growth/plans",
+              "label": "แผนและปฏิทิน",
+              "more": true
+            },
+            {
+              "to": "/marketing/analyst",
+              "label": "ผู้ช่วยวิเคราะห์การตลาด",
+              "more": true
+            },
+            {
+              "to": "/marketing/research",
+              "label": "งานวิจัยตลาด",
+              "more": true
+            },
+            {
+              "to": "/marketing/restaurants",
+              "label": "ค้นหาตลาดร้านอาหาร",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/notify-templates",
+              "label": "แม่แบบข้อความ",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/welcome-lead-email",
+              "label": "อีเมลต้อนรับลีด",
+              "more": true
+            },
+            {
+              "to": "/j/smart-links",
+              "label": "ลิงก์ติดตามผล",
+              "more": true
+            },
+            {
+              "to": "/j/marketing-links",
+              "label": "สร้างลิงก์การตลาด",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/scraped-catalog",
+              "label": "สินค้าจากเว็บคู่แข่ง",
+              "more": true
+            },
+            {
+              "to": "/j/bot/intent-rules",
+              "label": "แชตบอต: เข้าใจคำถาม",
+              "more": true
+            },
+            {
+              "to": "/j/bot/workflows",
+              "label": "แชตบอต: ลำดับการตอบ",
+              "more": true
+            },
+            {
+              "to": "/j/bot/templates",
+              "label": "แชตบอต: ข้อความสำเร็จรูป",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "รายงานและข้อมูล",
+          "features": [
+            {
+              "to": "/reports/sales",
+              "label": "รายงานยอดขาย",
+              "more": false
+            },
+            {
+              "to": "/reports/orders",
+              "label": "รายงานออเดอร์",
+              "more": false
+            },
+            {
+              "to": "/reports/products",
+              "label": "รายงานสินค้า",
+              "more": false
+            },
+            {
+              "to": "/reports/customers",
+              "label": "รายงานลูกค้าและบริษัท",
+              "more": false
+            },
+            {
+              "to": "/reports/prices",
+              "label": "รายงานราคาขาย",
+              "more": false
+            },
+            {
+              "to": "/reports/order-targetgroup",
+              "label": "กลุ่มลูกค้าเป้าหมาย",
+              "more": false
+            },
+            {
+              "to": "/reports/traffic",
+              "label": "การเข้าชมร้านค้า",
+              "more": true
+            },
+            {
+              "to": "/reports/health",
+              "label": "สุขภาพระบบ",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าและทีมงาน",
+          "features": [
+            {
+              "to": "/josh/internal_docs",
+              "label": "เอกสารภายใน",
+              "more": false
+            },
+            {
+              "to": "/settings/staff",
+              "label": "บัญชีทีมงาน",
+              "more": false
+            },
+            {
+              "to": "/settings/josh-staff",
+              "label": "บัญชีทีมงานร้านค้า",
+              "more": false
+            },
+            {
+              "to": "/j/admin-access",
+              "label": "คำขอใช้งานหลังร้าน",
+              "more": false
+            },
+            {
+              "to": "/account/password",
+              "label": "เปลี่ยนรหัสผ่าน",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+          "features": [
+            {
+              "to": "/integrations",
+              "label": "ระบบที่เชื่อมต่อ",
+              "more": false
+            },
+            {
+              "to": "/erp/webhook-dead-letter",
+              "label": "รายการส่งไม่สำเร็จ",
+              "more": false
+            },
+            {
+              "to": "/sync-jobs",
+              "label": "งานซิงก์ข้อมูล",
+              "more": false
+            },
+            {
+              "to": "/webhooks",
+              "label": "เหตุการณ์ขาเข้า",
+              "more": false
+            },
+            {
+              "to": "/subscriptions",
+              "label": "การส่งเหตุการณ์ขาออก",
+              "more": false
+            },
+            {
+              "to": "/erp/inbound-log",
+              "label": "บันทึกข้อมูลจากระบบหลัก (ERP)",
+              "more": false
+            },
+            {
+              "to": "/erp-ingest",
+              "label": "ข้อมูลที่รับจากระบบหลัก (ERP)",
+              "more": true
+            },
+            {
+              "to": "/josh-api-logs",
+              "label": "บันทึกการเรียกใช้ระบบร้านค้า",
+              "more": true
+            },
+            {
+              "to": "/erp/josh-logs",
+              "label": "บันทึกการเรียกระบบหลัก (ERP)",
+              "more": true
+            },
+            {
+              "to": "/erp/webhook-platforms",
+              "label": "ระบบปลายทางที่รับข้อมูล",
+              "more": true
+            },
+            {
+              "to": "/ai/connectors",
+              "label": "เชื่อมต่อผู้ช่วย AI",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/settings",
+              "label": "ตั้งค่าการตลาด",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/queue",
+              "label": "คิวงานการตลาด",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/offers-check",
+              "label": "ตรวจข้อเสนอ",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/journey-funnel",
+              "label": "เส้นทางของลูกค้า",
+              "more": true
+            },
+            {
+              "to": "/j/cs/notification-catalog",
+              "label": "ประเภทการแจ้งเตือนทั้งหมด",
+              "more": true
+            },
+            {
+              "to": "/j/cs/notification-log",
+              "label": "ประวัติการแจ้งเตือน",
+              "more": true
+            },
+            {
+              "to": "/j/cs/notification-stats",
+              "label": "สถิติการส่งแจ้งเตือน",
+              "more": true
+            },
+            {
+              "to": "/j/cs/product-notify-funnel",
+              "label": "ผลการแจ้งเตือนสินค้า",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/scraping-sources",
+              "label": "ตั้งค่าเว็บคู่แข่งที่เก็บข้อมูล",
+              "more": true
+            },
+            {
+              "to": "/erp/simulator",
+              "label": "ทดสอบเชื่อมต่อระบบหลัก (ERP)",
+              "more": true
+            },
+            {
+              "to": "/j/erp/webhook-simulator",
+              "label": "ทดสอบส่งข้อมูลระบบหลักไปร้านค้า",
+              "more": true
+            },
+            {
+              "to": "/erp-stock",
+              "label": "สต็อกจำลองสำหรับทดสอบ",
+              "more": true
+            },
+            {
+              "to": "/j/kbank/testing-console",
+              "label": "ทดสอบชำระเงิน KBank",
+              "more": true
+            },
+            {
+              "to": "/j/jagota/payment-testing",
+              "label": "ทดสอบชำระเงิน Jagota",
+              "more": true
+            },
+            {
+              "to": "/erp/jagota-shadow",
+              "label": "ทดลองส่งออเดอร์เข้าระบบหลัก (ERP)",
+              "more": true
+            },
+            {
+              "to": "/reports/price-shadow",
+              "label": "เทียบราคาที่คำนวณใหม่",
+              "more": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "marketing",
+      "featureGroups": [
+        {
+          "title": "Home",
+          "features": [
+            {
+              "to": "/home",
+              "label": "หน้าแรก",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "สินค้าและสต็อก",
+          "features": [
+            {
+              "to": "/j/allproducts",
+              "label": "สินค้าบนร้านค้า",
+              "more": false
+            },
+            {
+              "to": "/j/brands",
+              "label": "แบรนด์",
+              "more": false
+            },
+            {
+              "to": "/j/product/bulk-image-upload",
+              "label": "อัปโหลดรูปสินค้า",
+              "more": false
+            },
+            {
+              "to": "/j/suppliers",
+              "label": "ซัพพลายเออร์",
+              "more": false
+            },
+            {
+              "to": "/j/product/video-upload",
+              "label": "อัปโหลดวิดีโอสินค้า",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "การตลาด",
+          "features": [
+            {
+              "to": "/marketing/growth",
+              "label": "วางแผนการเติบโต",
+              "more": false
+            },
+            {
+              "to": "/j/promotions/campaigns",
+              "label": "แคมเปญโปรโมชัน",
+              "more": false
+            },
+            {
+              "to": "/j/coupons",
+              "label": "คูปองส่วนลด",
+              "more": false
+            },
+            {
+              "to": "/j/promotions-mechanic",
+              "label": "กติกาส่วนลด",
+              "more": false
+            },
+            {
+              "to": "/j/promotion-product-sets",
+              "label": "ชุดสินค้าโปรโมชัน",
+              "more": false
+            },
+            {
+              "to": "/j/promotion-pages",
+              "label": "หน้าโปรโมชัน",
+              "more": false
+            },
+            {
+              "to": "/j/segments",
+              "label": "กลุ่มลูกค้าสำหรับแคมเปญ",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/push-campaigns",
+              "label": "ส่งแจ้งเตือนถึงลูกค้า",
+              "more": true
+            },
+            {
+              "to": "/marketing/workflows",
+              "label": "ข้อความอัตโนมัติ",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/competitor-prices",
+              "label": "เทียบราคาคู่แข่ง",
+              "more": true
+            },
+            {
+              "to": "/marketing/growth/plans",
+              "label": "แผนและปฏิทิน",
+              "more": true
+            },
+            {
+              "to": "/marketing/analyst",
+              "label": "ผู้ช่วยวิเคราะห์การตลาด",
+              "more": true
+            },
+            {
+              "to": "/marketing/research",
+              "label": "งานวิจัยตลาด",
+              "more": true
+            },
+            {
+              "to": "/marketing/restaurants",
+              "label": "ค้นหาตลาดร้านอาหาร",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/notify-templates",
+              "label": "แม่แบบข้อความ",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/welcome-lead-email",
+              "label": "อีเมลต้อนรับลีด",
+              "more": true
+            },
+            {
+              "to": "/j/smart-links",
+              "label": "ลิงก์ติดตามผล",
+              "more": true
+            },
+            {
+              "to": "/j/marketing-links",
+              "label": "สร้างลิงก์การตลาด",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/scraped-catalog",
+              "label": "สินค้าจากเว็บคู่แข่ง",
+              "more": true
+            },
+            {
+              "to": "/j/bot/intent-rules",
+              "label": "แชตบอต: เข้าใจคำถาม",
+              "more": true
+            },
+            {
+              "to": "/j/bot/workflows",
+              "label": "แชตบอต: ลำดับการตอบ",
+              "more": true
+            },
+            {
+              "to": "/j/bot/templates",
+              "label": "แชตบอต: ข้อความสำเร็จรูป",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "รายงานและข้อมูล",
+          "features": [
+            {
+              "to": "/reports/products",
+              "label": "รายงานสินค้า",
+              "more": false
+            },
+            {
+              "to": "/reports/traffic",
+              "label": "การเข้าชมร้านค้า",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าและทีมงาน",
+          "features": [
+            {
+              "to": "/account/password",
+              "label": "เปลี่ยนรหัสผ่าน",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+          "features": [
+            {
+              "to": "/ai/connectors",
+              "label": "เชื่อมต่อผู้ช่วย AI",
+              "more": false
+            },
+            {
+              "to": "/j/marketing/settings",
+              "label": "ตั้งค่าการตลาด",
+              "more": false
+            },
+            {
+              "to": "/j/marketing/queue",
+              "label": "คิวงานการตลาด",
+              "more": false
+            },
+            {
+              "to": "/j/marketing/offers-check",
+              "label": "ตรวจข้อเสนอ",
+              "more": false
+            },
+            {
+              "to": "/j/cs/notification-catalog",
+              "label": "ประเภทการแจ้งเตือนทั้งหมด",
+              "more": false
+            },
+            {
+              "to": "/j/cs/notification-log",
+              "label": "ประวัติการแจ้งเตือน",
+              "more": false
+            },
+            {
+              "to": "/j/cs/notification-stats",
+              "label": "สถิติการส่งแจ้งเตือน",
+              "more": true
+            },
+            {
+              "to": "/j/cs/product-notify-funnel",
+              "label": "ผลการแจ้งเตือนสินค้า",
+              "more": true
+            },
+            {
+              "to": "/j/marketing/scraping-sources",
+              "label": "ตั้งค่าเว็บคู่แข่งที่เก็บข้อมูล",
+              "more": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "merchandising",
+      "featureGroups": [
+        {
+          "title": "Home",
+          "features": [
+            {
+              "to": "/home",
+              "label": "หน้าแรก",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "สินค้าและสต็อก",
+          "features": [
+            {
+              "to": "/j/allproducts",
+              "label": "สินค้าบนร้านค้า",
+              "more": false
+            },
+            {
+              "to": "/products",
+              "label": "ค้นหาสินค้าตามรหัส",
+              "more": false
+            },
+            {
+              "to": "/j/categories",
+              "label": "จัดการหมวดหมู่",
+              "more": false
+            },
+            {
+              "to": "/j/brands",
+              "label": "แบรนด์",
+              "more": false
+            },
+            {
+              "to": "/j/product/bulk-image-upload",
+              "label": "อัปโหลดรูปสินค้า",
+              "more": false
+            },
+            {
+              "to": "/j/suppliers",
+              "label": "ซัพพลายเออร์",
+              "more": false
+            },
+            {
+              "to": "/product-prices",
+              "label": "ราคาสินค้า",
+              "more": true
+            },
+            {
+              "to": "/product-master-queue",
+              "label": "อนุมัติข้อมูลสินค้าที่เปลี่ยน",
+              "more": true
+            },
+            {
+              "to": "/stock-moves",
+              "label": "รับเข้า ปรับ และโอนสต็อก",
+              "more": true
+            },
+            {
+              "to": "/erp/inventory-warehouse",
+              "label": "สต็อกแต่ละคลัง",
+              "more": true
+            },
+            {
+              "to": "/j/product/video-upload",
+              "label": "อัปโหลดวิดีโอสินค้า",
+              "more": true
+            },
+            {
+              "to": "/prices/staff",
+              "label": "ราคาเฉพาะลูกค้าและราคาสัญญา",
+              "more": true
+            },
+            {
+              "to": "/order-periods",
+              "label": "รอบสั่งซื้อจากซัพพลายเออร์",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "การตลาด",
+          "features": [
+            {
+              "to": "/j/promotions-mechanic",
+              "label": "กติกาส่วนลด",
+              "more": false
+            },
+            {
+              "to": "/j/promotion-product-sets",
+              "label": "ชุดสินค้าโปรโมชัน",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "รายงานและข้อมูล",
+          "features": [
+            {
+              "to": "/reports/products",
+              "label": "รายงานสินค้า",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าและทีมงาน",
+          "features": [
+            {
+              "to": "/account/password",
+              "label": "เปลี่ยนรหัสผ่าน",
+              "more": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "cs",
+      "featureGroups": [
+        {
+          "title": "Home",
+          "features": [
+            {
+              "to": "/home",
+              "label": "หน้าแรก",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ออเดอร์และการชำระเงิน",
+          "features": [
+            {
+              "to": "/j/order",
+              "label": "คำสั่งซื้อ",
+              "more": false
+            },
+            {
+              "to": "/j/shipments",
+              "label": "การจัดส่งสินค้า",
+              "more": false
+            },
+            {
+              "to": "/j/credit-notes",
+              "label": "ใบลดหนี้",
+              "more": false
+            },
+            {
+              "to": "/j/credit-backs",
+              "label": "คืนเครดิตให้ลูกค้า",
+              "more": false
+            },
+            {
+              "to": "/j/cs/delivery-schedule",
+              "label": "ตารางรอบส่ง",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ลูกค้าและบริการ",
+          "features": [
+            {
+              "to": "/cs",
+              "label": "งานบริการลูกค้า",
+              "more": false
+            },
+            {
+              "to": "/j/cs/cart-move-categories",
+              "label": "หมวดที่ย้ายของในตะกร้าได้",
+              "more": true
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าและทีมงาน",
+          "features": [
+            {
+              "to": "/account/password",
+              "label": "เปลี่ยนรหัสผ่าน",
+              "more": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "sale",
+      "featureGroups": [
+        {
+          "title": "Home",
+          "features": [
+            {
+              "to": "/home",
+              "label": "หน้าแรก",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "สินค้าและสต็อก",
+          "features": [
+            {
+              "to": "/products",
+              "label": "ค้นหาสินค้าตามรหัส",
+              "more": false
+            },
+            {
+              "to": "/erp/inventory-warehouse",
+              "label": "สต็อกแต่ละคลัง",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ลูกค้าและบริการ",
+          "features": [
+            {
+              "to": "/reports/winback/my",
+              "label": "โอกาสและลีดของฉัน",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "รายงานและข้อมูล",
+          "features": [
+            {
+              "to": "/reports/sales",
+              "label": "ยอดขายของฉัน",
+              "more": false
+            },
+            {
+              "to": "/reports/orders",
+              "label": "ออเดอร์ของฉัน",
+              "more": false
+            },
+            {
+              "to": "/reports/customers",
+              "label": "ลูกค้าของฉัน",
+              "more": false
+            },
+            {
+              "to": "/reports/prices",
+              "label": "รายงานราคาขาย",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าและทีมงาน",
+          "features": [
+            {
+              "to": "/account/password",
+              "label": "เปลี่ยนรหัสผ่าน",
+              "more": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "sales_manager",
+      "featureGroups": [
+        {
+          "title": "Home",
+          "features": [
+            {
+              "to": "/home",
+              "label": "หน้าแรก",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ลูกค้าและบริการ",
+          "features": [
+            {
+              "to": "/reports/winback",
+              "label": "ติดตามลูกค้าเก่า",
+              "more": false
+            },
+            {
+              "to": "/reports/winback/opportunities",
+              "label": "โอกาสของทีม",
+              "more": false
+            },
+            {
+              "to": "/cs/sales-assignment",
+              "label": "มอบหมายพนักงานขาย",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "รายงานและข้อมูล",
+          "features": [
+            {
+              "to": "/reports/sales",
+              "label": "ยอดขายทีมและผลงานรายเซลส์",
+              "more": false
+            },
+            {
+              "to": "/reports/orders",
+              "label": "รายงานออเดอร์",
+              "more": false
+            },
+            {
+              "to": "/reports/customers",
+              "label": "รายงานลูกค้าและบริษัท",
+              "more": false
+            },
+            {
+              "to": "/reports/prices",
+              "label": "รายงานราคาขาย",
+              "more": false
+            },
+            {
+              "to": "/reports/order-targetgroup",
+              "label": "กลุ่มลูกค้าเป้าหมาย",
+              "more": false
+            },
+            {
+              "to": "/reports/health",
+              "label": "สุขภาพระบบ",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าและทีมงาน",
+          "features": [
+            {
+              "to": "/account/password",
+              "label": "เปลี่ยนรหัสผ่าน",
+              "more": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "business_analyst",
+      "featureGroups": [
+        {
+          "title": "Home",
+          "features": [
+            {
+              "to": "/home",
+              "label": "หน้าแรก",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "สินค้าและสต็อก",
+          "features": [
+            {
+              "to": "/erp/inventory-warehouse",
+              "label": "สต็อกแต่ละคลัง",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ออเดอร์และการชำระเงิน",
+          "features": [
+            {
+              "to": "/orders",
+              "label": "ชำระเงินและการจองของออเดอร์",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ลูกค้าและบริการ",
+          "features": [
+            {
+              "to": "/reports/winback",
+              "label": "ติดตามลูกค้าเก่า",
+              "more": false
+            },
+            {
+              "to": "/reports/winback/opportunities",
+              "label": "โอกาสของทีม",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "การตลาด",
+          "features": [
+            {
+              "to": "/marketing/growth",
+              "label": "วางแผนการเติบโต",
+              "more": false
+            },
+            {
+              "to": "/j/marketing/competitor-prices",
+              "label": "เทียบราคาคู่แข่ง",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "รายงานและข้อมูล",
+          "features": [
+            {
+              "to": "/reports/sales",
+              "label": "รายงานยอดขาย",
+              "more": false
+            },
+            {
+              "to": "/reports/orders",
+              "label": "รายงานออเดอร์",
+              "more": false
+            },
+            {
+              "to": "/reports/customers",
+              "label": "รายงานลูกค้าและบริษัท",
+              "more": false
+            },
+            {
+              "to": "/reports/prices",
+              "label": "รายงานราคาขาย",
+              "more": false
+            },
+            {
+              "to": "/reports/order-targetgroup",
+              "label": "กลุ่มลูกค้าเป้าหมาย",
+              "more": false
+            },
+            {
+              "to": "/reports/health",
+              "label": "สุขภาพระบบ",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าและทีมงาน",
+          "features": [
+            {
+              "to": "/account/password",
+              "label": "เปลี่ยนรหัสผ่าน",
+              "more": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "graphic",
+      "featureGroups": [
+        {
+          "title": "Home",
+          "features": [
+            {
+              "to": "/home",
+              "label": "หน้าแรก",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "สินค้าและสต็อก",
+          "features": [
+            {
+              "to": "/j/allproducts",
+              "label": "สินค้าบนร้านค้า",
+              "more": false
+            },
+            {
+              "to": "/products",
+              "label": "ค้นหาสินค้าตามรหัส",
+              "more": false
+            },
+            {
+              "to": "/j/brands",
+              "label": "แบรนด์",
+              "more": false
+            },
+            {
+              "to": "/j/product/bulk-image-upload",
+              "label": "อัปโหลดรูปสินค้า",
+              "more": false
+            }
+          ]
+        },
+        {
+          "title": "ตั้งค่าและทีมงาน",
+          "features": [
+            {
+              "to": "/account/password",
+              "label": "เปลี่ยนรหัสผ่าน",
+              "more": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "remainingBreadth": "181 audited route patterns; the shared shell reaches eligible routes, but every feature family has not been individually redesigned.",
+  "preserve": "Old deep links, useful workflows, permissions and live action capabilities; protected welcome is excluded from new shell CSS.",
+  "knownDuplicate": "CS sample requests use canonical /cs/samples with the old /j/cs/sample-requests deep link preserved. Different order/payment/credit scopes remain distinct.",
+  "verificationStatus": "220 frontend tests in 11 files passed; both type checks and latest production build passed. Fresh final browser run passed all 85 views, including 20 protected welcome comparisons; no screenshots or pixel comparison. See /workspace/commerce-ui-audit-20261009/commerce-batch-final-verification.json."
+}

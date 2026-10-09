@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { JoshReplica } from './josh-replica';
 import { maskEmail, maskPersonName, maskPhone } from './winback/pii.helper';
 
@@ -192,6 +192,22 @@ export class JoshBackoffice {
     const v = BACKOFFICE_VIEWS[key];
     if (!v) throw new NotFoundException(`unknown list "${key}" — one of: ${Object.keys(BACKOFFICE_VIEWS).join(', ')}`);
     return v;
+  }
+
+  /** Stable, read-only payment identity lookup. Replica freshness is not settlement evidence. */
+  async paymentDetail(id: string) {
+    if (!/^[A-Za-z0-9_-]{1,100}$/.test(id)) throw new BadRequestException('invalid payment identifier');
+    if (!this.available) throw new ServiceUnavailableException('Payment replica is unavailable.');
+    const v = BACKOFFICE_VIEWS.payments;
+    const select = v.columns.map(col => `${col.sql} AS "${col.key}"`).join(', ');
+    let rows: Record<string, unknown>[];
+    try {
+      rows = await this.replica.query<Record<string, unknown>>(`SELECT ${select}, t.order_id AS "order_id" FROM ${v.from} WHERE t.id::text = $1 LIMIT 1`, [id]);
+    } catch {
+      throw new ServiceUnavailableException('Payment replica read failed.');
+    }
+    if (!rows.length) throw new NotFoundException('Payment record not found in the replica.');
+    return { source: 'josh_replica', freshness: 'unavailable', capturedAt: new Date().toISOString(), record: { ...maskRow(v, rows[0]), customer_name: rows[0].company_name } };
   }
 
   async list(key: string, f: { search?: string; status?: string }, page = 1, limit = 50) {

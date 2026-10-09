@@ -28,4 +28,16 @@ describe('JoshPushCampaigns PUSH_CAMPAIGNS_SOURCE (stage 5, S5-12)', () => {
     expect((replica.query.mock.calls[0] as unknown as [string])[0]).toContain('FROM push_campaigns ORDER BY');
     expect(db.query).not.toHaveBeenCalled();
   });
+  it('reports counter coverage without changing legacy totals or executing writes', async () => {
+    process.env.PUSH_CAMPAIGNS_SOURCE = 'copies';
+    const { db, push } = make([{ stats: { sent: 0 } }, { stats: { sent: 3 } }, { stats: null }, { stats: { sent: -1 } }]);
+    const overview = await push.overview();
+    expect(overview).toMatchObject({ campaigns: 4, totalSent: 2, sendCounterCoverage: { scope: 'latest_200_campaigns', observed: 2, records: 4 } });
+    expect((db.query.mock.calls[0] as unknown as [string])[0]).toMatch(/^SELECT [\s\S]* LIMIT 200$/);
+  });
+  it('distinguishes a verified empty selection from absent or malformed counters', async () => {
+    process.env.PUSH_CAMPAIGNS_SOURCE = 'copies';
+    expect((await make().push.overview()).sendCounterCoverage).toEqual({ scope: 'latest_200_campaigns', observed: 0, records: 0 });
+    expect((await make([{ stats: {} }, { stats: { sent: '1' } }, { stats: { sent: 0.5 } }]).push.overview()).sendCounterCoverage).toEqual({ scope: 'latest_200_campaigns', observed: 0, records: 3 });
+  });
 });

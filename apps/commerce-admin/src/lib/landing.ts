@@ -1,7 +1,7 @@
 // Where a staff member lands after sign-in, and which deep links they may be sent to. Pure (unit-tested).
 // One source each: the per-role page list is navigation.ts ROLE_ACCESS (the sidebar uses it too), the role
 // homes are role-home.ts ROLE_HOME.
-import { ROLE_ACCESS, workspaceTarget } from '../app/navigation';
+import { ROLE_ACCESS, workspaceTarget, sectionNavFor, SECTIONS } from '../app/navigation';
 import { normalizeRole, ROLE_HOME } from './role-home';
 
 export { ROLE_HOME as ROLE_LANDING } from './role-home';
@@ -47,6 +47,8 @@ export function isRouteAllowed(roleRaw: string | null | undefined, path: string)
   if (pathname === '/login') return false;
   if (role === 'admin') return true;
   if (pathname === '/') return false;
+  const task = /^\/tasks\/([^/]+)$/.exec(pathname);
+  if (task) return SECTIONS.some(section => section.id === task[1] && !!sectionNavFor(role, section.id));
   // old workspace overview pages redirect to the replacing section: allowed when the role has a page there
   const workspace = /^\/workspaces\/([^/]+)$/.exec(pathname);
   if (workspace) return workspaceTarget(role, workspace[1]) !== null;

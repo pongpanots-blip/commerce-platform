@@ -6,6 +6,11 @@ export type PromotionQuantityRuleRow = {
   badge_text?: string;
 };
 
+/** Josh currentLinePricing stores the resolved (or approximate order) UNIT price at two decimals. */
+export function roundOrderUnitPrice(price: number): number {
+  return Math.round(price * 100) / 100;
+}
+
 /** @deprecated use PromotionQuantityRuleRow */
 export type PriceTier = {
   min_qty: number;

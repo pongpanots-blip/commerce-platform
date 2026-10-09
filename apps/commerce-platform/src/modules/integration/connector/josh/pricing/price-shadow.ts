@@ -7,6 +7,7 @@ import { resolveApproxOrderUnitPrice } from '../jagota/pack-order-price.helper';
 import { JoshReplica } from '../josh-replica';
 import { PriceShadowCheck } from './price-shadow-check.entity';
 import { resolveSkuPrice, ResolvedSkuPrice } from './pricing.resolver';
+import { roundOrderUnitPrice } from './pricing.types';
 
 const BATCH = 300;
 
@@ -25,7 +26,7 @@ export interface JoshOrderLine {
  */
 export function compareLine(line: JoshOrderLine, resolved: ResolvedSkuPrice) {
   const approx = resolveApproxOrderUnitPrice({ ...line, resolved_per_kg: resolved.price });
-  const unitPrice = Math.round((approx.orderUnitPrice ?? resolved.price) * 100) / 100;
+  const unitPrice = roundOrderUnitPrice(approx.orderUnitPrice ?? resolved.price);
   const diffs: string[] = [];
   if (Math.abs(unitPrice - Number(line.unit_price)) >= 0.005) diffs.push('price');
   // Lines from before josh recorded price_source carry null — nothing to compare.

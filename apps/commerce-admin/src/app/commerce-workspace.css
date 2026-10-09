@@ -1,0 +1,28 @@
+/* All overrides are opt-in. The welcome email route renders neither scope. */
+[data-commerce-shell="tasks"] {
+  --color-primary: #125b61;
+  --color-primary-container: #e0f0f1;
+  --color-background: #f5f7fa;
+}
+[data-commerce-workspace="fluid"] {
+  width: 100%;
+  min-width: 0;
+}
+[data-commerce-workspace="fluid"] [class~="max-w-[1240px]"] {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+[data-commerce-workspace="fluid"] :where(.grid > *, .flex > *) {
+  min-width: 0;
+}
+[data-commerce-workspace="fluid"] .commerce-inspector-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+@media (min-width: 1280px) {
+  [data-commerce-workspace="fluid"] .commerce-inspector-grid {
+    grid-template-columns: minmax(0, 2.4fr) minmax(16rem, 1fr);
+  }
+}

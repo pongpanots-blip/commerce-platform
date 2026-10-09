@@ -95,22 +95,22 @@ describe('commerce-admin sign-in gate', () => {
   it('the sidebar lists task sections, highlights the current page and explains it in a tooltip', async () => {
     sessionStorage.setItem('cp_admin_token', jwt('merchandising', 900));
     await render('/account/password');
-    const groups = [...container.querySelectorAll('aside nav button[aria-expanded]')].map((b) => b.textContent);
+    const groups = [...container.querySelectorAll('aside nav a')].map((b) => b.textContent);
     expect(groups.some((t) => t?.includes('สินค้าและสต็อก'))).toBe(true);
     expect(groups.some((t) => t?.includes('ตั้งค่าเพิ่มเติม'))).toBe(false);
     const current = container.querySelector('aside a[aria-current="page"]');
-    expect(current?.getAttribute('href')).toBe('/account/password');
-    expect(current?.getAttribute('title')).toBe('เปลี่ยนรหัสผ่านของคุณ');
+    expect(current?.getAttribute('href')).toBe('/tasks/settings');
+    expect(current?.getAttribute('title')).toContain('บัญชีทีมงาน');
   });
 
-  it('home page: big shortcuts to the role\'s main tasks, without calling the API', async () => {
+  it('home page uses permitted catalog reads and retains its canonical shortcuts', async () => {
     sessionStorage.setItem('cp_admin_token', jwt('merchandising', 900));
     const fetchMock = globalThis.fetch as unknown as { mock: { calls: unknown[][] } };
     await render('/home');
     const calls = fetchMock.mock.calls.map((c) => String(c[0]).slice(BASE.length)).filter((p) => p !== '/admin/auth/me');
-    expect(calls).toEqual([]);
-    expect(container.querySelector('main h1')?.textContent).toBe('วันนี้ต้องการทำอะไร');
-    const cards = [...container.querySelectorAll('main section a')].map((a) => a.getAttribute('href'));
+    expect(calls.sort()).toEqual(['/reports/products/summary', '/reports/products?page=1&limit=12'].sort());
+    expect(container.querySelector('main h1')?.textContent).toBe('สินค้า ราคา และสต็อก');
+    const cards = [...container.querySelectorAll('main section[aria-label="วันนี้ต้องการทำอะไร"] a')].map((a) => a.getAttribute('href'));
     expect(cards).toEqual(['/products', '/j/allproducts', '/product-prices', '/product-master-queue', '/stock-moves', '/j/categories']);
   });
 });

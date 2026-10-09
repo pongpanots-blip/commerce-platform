@@ -1,6 +1,7 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { Public } from '../../../../../shared-kernel/presentation/auth.decorators';
 import { StorefrontApiKeyGuard } from '../../../../../storefront/storefront-api-key.guard';
+import { TrustedStorefrontKey } from '../../../../../storefront/trusted-storefront-key';
 import type { ErpCreateOrderRequest } from './erp-order-request';
 import { JagotaGateway } from './jagota-gateway';
 import { JagotaSyncHistoryImport } from './jagota-sync-history';
@@ -10,6 +11,7 @@ import { joshOnly } from '../system-health';
 @Public()
 @Controller('v1/storefront/jagota')
 @UseGuards(StorefrontApiKeyGuard)
+@TrustedStorefrontKey()
 export class JagotaGatewayController {
   constructor(private readonly gateway: JagotaGateway) {}
 

@@ -1,0 +1,97 @@
+PASS: first-run keeps newest other tag
+PASS: normal run keeps current + previous
+PASS: running container image is kept
+PASS: running image ID keeps matching tag
+PASS: empty image list removes nothing
+PASS: running sha256 ID keeps matching tag
+PASS: multiple previous tags are all kept
+PASS: read_kv plain
+PASS: read_kv quoted
+PASS: read_kv missing file
+PASS: write_prev_tags updates only given non-empty keys
+PASS: write_prev_tags leaves no tmp file
+PASS: remove_keys drops only ADMIN_TAG
+PASS: remove_keys deletes empty file
+PASS: remove_keys on missing file is a no-op
+PASS: parse_keep collects all pins
+PASS: keep_tags_for admin
+PASS: parse_keep rejects unknown service
+PASS: F1 failed admin deploy exits 1
+PASS: F1 failed admin: no rmi
+PASS: F1 failed admin: pending ADMIN_TAG=6817a67
+PASS: F1 failed admin: prev file not created
+PASS: F1 failed admin: secret lines filtered from logs
+PASS: F1 failed admin: non-secret log line shown
+PASS: F1 healthy platform deploy exits 0
+PASS: F1 platform: admin pending entry untouched
+PASS: F1 platform: admin NOT promoted to prev
+PASS: F1 platform: prev PLATFORM_TAG=add97ee
+PASS: F1 platform: admin rollback 6817a67 kept
+PASS: F1 platform: admin current newA kept
+PASS: F1 platform: admin 947d385 removed (pending exists, not first run)
+PASS: F1 platform: platform newP + add97ee kept
+PASS: F1 platform: platform 947d385 removed
+PASS: F1 platform: portal first-run keeps 947d385
+PASS: F1 platform: portal old1/old2 removed
+PASS: F1 platform: no system prune / volume / rmi -f
+PASS: F1 second failed admin: pending still 6817a67
+PASS: F1 healthy admin after two failures exits 0
+PASS: F1 healthy admin: prev ADMIN_TAG=6817a67 (last known-good)
+PASS: F1 healthy admin: pending file gone (admin was its only entry)
+PASS: F1 healthy admin: failed newA removed, 6817a67 kept
+PASS: F2 failed portal exits 1
+PASS: F2 failed admin (portal still down) exits 1
+PASS: F2 pending has both entries
+PASS: F2 healthy admin retry (same tag) exits 0
+PASS: F2 admin promoted: prev ADMIN_TAG=6817a67
+PASS: F2 admin cleared from pending
+PASS: F2 portal pending entry left alone
+PASS: F2 portal: no prev entry written
+PASS: F2 portal rollback add97ee + current newQ kept
+PASS: F2 admin 6817a67 + newA kept
+PASS: F3 --keep retention-only exits 0
+PASS: F3 --keep: 947d385 kept for all three
+PASS: F3 --keep: newer decoy removed for all three
+PASS: F3 --keep: seeded prev for all three
+PASS: F3 --keep: no pull/up in retention-only
+PASS: F3 without --keep: CreatedAt fallback keeps decoy, drops 947d385
+PASS: F4 --keep unknown service exits 1
+PASS: F4 --keep invalid tag exits 1
+PASS: F4 --retention-only with positional exits 1
+PASS: F4 invalid invocations removed nothing
+PASS: F4 unhealthy retention-only exits 1, no rmi
+PASS: F4 --keep=... form exits 0
+PASS: F4 --keep never overwrites a recorded prev
+PASS: F4 recorded prev old1 and pin 947d385 both kept
+PASS: F4 admin old2 removed
+PASS: F5 skip cleanup: healthy admin succeeds
+PASS: F5 skip cleanup: no image/container/cache/volume pruning or image removal
+PASS: F5 skip cleanup: all old app images retained
+PASS: F5 skip cleanup: admin pull only
+PASS: F5 skip cleanup: no platform migration
+PASS: F5 skip cleanup: all three services health checked
+PASS: F5 skip cleanup: previous admin recorded
+PASS: F5 skip cleanup: other running tags unchanged
+PASS: F5 skip cleanup: unhealthy portal blocks success
+PASS: F5 skip cleanup: failure also invokes no destructive Docker command
+PASS: F5 skip cleanup: failed admin preserves pending rollback
+PASS: F5 skip cleanup: failed admin does not promote previous tag
+PASS: F5 conflicting modes rejected
+PASS: F5 conflicting modes touch no docker state
+PASS: F6 workflow skip input: admin deploy succeeds
+PASS: F6 workflow skip input: no destructive Docker command
+PASS: F6 workflow skip input: admin pull only
+PASS: F6 workflow skip input: no migration
+PASS: F6 workflow skip input: all three services health checked
+PASS: F7 preflight: healthy current stack accepted
+PASS: F7 preflight: all three current image identities recorded
+PASS: F7 preflight: only read-only Docker commands
+PASS: F7 preflight: no tag ledger changed
+PASS: F7 preflight: mismatched backend tag stops before deployment
+PASS: F7 preflight: unhealthy portal stops before deployment
+PASS: F7 preflight: unavailable rollback image stops before deployment
+PASS: F7 preflight: retargeted rollback tag stops before deployment
+PASS: F7 preflight: retargeted tag failure explains identity mismatch
+PASS: F7 preflight: retargeted tag check only uses read-only Docker commands
+----
+passed=95 failed=0

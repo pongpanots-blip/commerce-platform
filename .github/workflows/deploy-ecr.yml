@@ -55,6 +55,11 @@ on:
         required: false
         type: boolean
         default: false
+      skip_cleanup:
+        description: 'Preserve all EC2 images, stopped containers and build caches'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: deploy-ecr
@@ -136,6 +141,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: docker
+      - name: Verify existing target and rollback images
+        if: inputs.skip_cleanup == true
+        env:
+          DEPLOY_DIR: ${{ secrets.EC2_DEPLOY_DIR }}
+        run: bash docker/deploy-preflight.sh "$DEPLOY_DIR/docker"
       # Keep the EC2's compose/nginx/scripts in step with the repo (certbot/ certs live only on the box).
       - name: Sync docker/ files to the deploy dir
         run: |
@@ -147,6 +157,7 @@ jobs:
         env:
           TAG: ${{ needs.resolve.outputs.tag }}
           SERVICES: ${{ needs.resolve.outputs.services }}
+          SKIP_CLEANUP: ${{ inputs.skip_cleanup == true }}
           COMMERCE_DB_HOST: ${{ secrets.COMMERCE_DB_HOST }}
           COMMERCE_DB_USERNAME: ${{ secrets.COMMERCE_DB_USERNAME }}
           COMMERCE_DB_PASSWORD: ${{ secrets.COMMERCE_DB_PASSWORD }}
@@ -197,4 +208,8 @@ jobs:
           # The media key pair (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY, josh bucket only) is for the container and is
           # already in ./.env. Keep it out of this shell: the ECR credential helper would use it instead of the instance
           # role and the pull fails ("no basic auth credentials"). Compose still reads the keys from ./.env.
-          env -u AWS_ACCESS_KEY_ID -u AWS_SECRET_ACCESS_KEY ./ec2-deploy.sh "$TAG" $SVC_LIST
+          DEPLOY_ARGS=("$TAG")
+          if [[ "$SKIP_CLEANUP" == 'true' ]]; then DEPLOY_ARGS+=(--skip-cleanup); fi
+          read -r -a SERVICE_ARGS <<< "$SVC_LIST"
+          DEPLOY_ARGS+=("${SERVICE_ARGS[@]}")
+          env -u AWS_ACCESS_KEY_ID -u AWS_SECRET_ACCESS_KEY ./ec2-deploy.sh "${DEPLOY_ARGS[@]}"

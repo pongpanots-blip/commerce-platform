@@ -20,9 +20,9 @@ export class RenameAllSubcategories1796000000000 implements MigrationInterface {
   }
 
   private async rename(q: QueryRunner, from: string, to: string) {
-    // Raw UPDATE on postgres answers [rows, rowCount].
+    // Raw UPDATE on postgres answers [rows, rowCount]. $2 is cast once per use: untyped, postgres deduces varchar (column) vs text (||) and refuses.
     const [, renamed]: [unknown[], number] = await q.query(
-      `UPDATE product_categories c SET category_name_en = $2, category_path = p.category_path || ' > ' || $2, updated_at = now()
+      `UPDATE product_categories c SET category_name_en = $2::varchar, category_path = p.category_path || ' > ' || $2::varchar, updated_at = now()
        FROM product_categories p
        WHERE p.id = c.parent_id AND c.category_code LIKE '%-ALL' AND lower(trim(c.category_name_en)) = lower($1)`,
       [from, to],

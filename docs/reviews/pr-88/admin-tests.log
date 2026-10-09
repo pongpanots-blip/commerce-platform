@@ -1,0 +1,9 @@
+
+ RUN  v4.1.10 /workspace/scratch/pr88-finish/apps/commerce-admin
+
+
+ Test Files  11 passed (11)
+      Tests  167 passed (167)
+   Start at  01:59:46
+   Duration  10.21s (transform 8.19s, setup 0ms, import 12.55s, tests 1.76s, environment 2.86s)
+

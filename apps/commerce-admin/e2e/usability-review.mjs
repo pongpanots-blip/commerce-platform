@@ -107,7 +107,7 @@ async function shot(page, build, locale, name) {
     badge.style.cssText = 'position:fixed;right:8px;top:8px;z-index:99999;background:#fff;color:#222;border:1px solid #888;padding:4px 8px;font:12px sans-serif;pointer-events:none';
     document.body.appendChild(badge);
   }, { build, locale });
-  const file = `${build}-${locale}-${name}.png`;
+  const file = `${build}-${locale}-${name.replace(/:\w+/g, 'record')}.png`;
   await page.screenshot({ path: resolve(out, file) });
   assert.ok(statSync(resolve(out, file)).size > 10000, `Screenshot appears blank: ${file}`);
   screenshots.push(file);

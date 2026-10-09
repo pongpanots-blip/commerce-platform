@@ -24,6 +24,9 @@ export function normalizeSortOptions(options?: Array<{ key: string; label: strin
   return (options ?? []).map((opt, index) => ({ key: opt.key, label: opt.label, order: opt.order ?? index }));
 }
 
+/** Stage 4c flag: commerce writes the category tree and josh takes the snapshot. */
+export const ownsCategories = () => process.env.COMMERCE_OWNS_CATEGORIES === 'true';
+
 /** Josh web #549. Parent null, level 1, sort 0, code ALL. Josh's applyTree skips this id on delete; commerce still stores the row so parity and image edits have it. */
 export const ALL_CATEGORY_ID = '00000000-0000-4000-8000-000000000a11';
 

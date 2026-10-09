@@ -6,10 +6,8 @@ import { DataSource, EntityManager } from 'typeorm';
 import { putMediaObject } from '../../../shared-kernel/infrastructure/media-s3';
 import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
 import { BrandSnapshot, CategoryTreeSnapshot } from './category-tree.events';
-import { ALL_CATEGORY_ID, CATEGORY_COLUMNS, CategoryRow, isAllCategory, level1NumberedIds, normalizeSortOptions, presentCategory, toCatCode, toTitleCase, toTitleCasePath } from './category-rules';
+import { ALL_CATEGORY_ID, CATEGORY_COLUMNS, CategoryRow, isAllCategory, level1NumberedIds, normalizeSortOptions, ownsCategories, presentCategory, toCatCode, toTitleCase, toTitleCasePath } from './category-rules';
 import type { CreateCategoryDto, UpdateBrandDto, UpdateCategoryDto } from './product-categories.dto';
-
-export const ownsCategories = () => process.env.COMMERCE_OWNS_CATEGORIES === 'true';
 
 /** Same limits as product image upload (stage 4e): 5 MB, jpg / png / gif / webp. Multer allows 6 MB so this check can answer. */
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;

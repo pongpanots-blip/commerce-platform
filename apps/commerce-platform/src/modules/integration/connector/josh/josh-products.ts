@@ -6,7 +6,7 @@ import { ownsPrices } from '../../../commerce/product-prices/product-prices.serv
 import { ownsProductMaster } from '../../../commerce/product-masters/product-masters.service';
 import { ownsProductContent } from '../../../commerce/product-contents/product-contents.service';
 import { ownsProductImages } from '../../../commerce/product-images/product-images.service';
-import { ownsCategories } from '../../../commerce/product-categories/product-categories.service';
+import { ownsCategories } from '../../../commerce/product-categories/category-rules';
 
 /** What needs attention on a product. Each is one SQL condition on josh's product_inventory `p`. */
 export const PRODUCT_ISSUES = {

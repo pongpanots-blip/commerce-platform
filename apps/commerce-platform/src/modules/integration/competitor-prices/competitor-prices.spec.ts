@@ -10,7 +10,7 @@ const catalogPricePerKg = (p: JoshCatalogProduct, kg: number) => pricePerKgOf(to
 const product = {
   id: 'p-1', sku: 'TEST-MEAT', brandCode: 'B01', brandName: 'Brand', countryCodeSource: 'TH', storageTemperature: 'Chilled',
   packagingType: 'Tray', packSize: '1 KG', unitsPerBox: '10', weightPerUnit: '1', sellingUnit: 'PK', vatType: '0%',
-  sellingUnitPrice: '500.00',
+  orderTakingUnit: 'PK', orderingPrice: '500.00',
   translations: [
     { language_code: 'th', product_name: 'หมู', product_description: null, product_detail: 'สด' },
     { language_code: 'en', product_name: 'Pork', product_description: 'fresh', product_detail: null },
@@ -35,16 +35,16 @@ it('fingerprint matches what josh stored for the same product (verified matches 
   ])).digest('hex');
   expect(catalogFingerprint(product)).toBe(joshHash);
   // A price change alone does not invalidate a verified match; a pack change does.
-  expect(catalogFingerprint({ ...product, sellingUnitPrice: '450.00' } as JoshCatalogProduct)).toBe(joshHash);
+  expect(catalogFingerprint({ ...product, orderingPrice: '450.00' } as JoshCatalogProduct)).toBe(joshHash);
   expect(catalogFingerprint({ ...product, packSize: '2 KG' } as JoshCatalogProduct)).not.toBe(joshHash);
 });
 
-it('normalizes selling-unit prices and rejects ambiguous weights or unsafe source URLs', () => {
+it('prices our side per kg from selling_price (the copy ordering_price) and rejects ambiguous weights or unsafe source URLs', () => {
+  // packSize '1 KG' has no " X " pack grammar, so the confirmed weight divides the sell-unit price.
   expect(catalogPricePerKg(product, 5)).toBe(100);
-  expect(catalogPricePerKg({ ...product, sellingUnit: 'KG' } as JoshCatalogProduct, 5)).toBe(500);
-  expect(catalogPricePerKg({ ...product, sellingUnit: 'G', sellingUnitPrice: '0.10' } as JoshCatalogProduct, 5)).toBe(100);
-  expect(catalogPricePerKg({ ...product, sellingUnit: 'L' } as JoshCatalogProduct, 5)).toBeNull();
-  expect(catalogPricePerKg({ ...product, sellingUnitPrice: null } as JoshCatalogProduct, 5)).toBeNull();
+  expect(catalogPricePerKg({ ...product, orderTakingUnit: 'KG', packSize: '5 - 7 PC X 3 KG', orderingPrice: '7014.00' } as JoshCatalogProduct, 5)).toBe(2338);
+  expect(catalogPricePerKg({ ...product, orderTakingUnit: 'BT', packSize: '5 LT X 1 BT', orderingPrice: '795.00' } as JoshCatalogProduct, 5)).toBeNull();
+  expect(catalogPricePerKg({ ...product, orderingPrice: null } as JoshCatalogProduct, 5)).toBeNull();
   expect(catalogPricePerKg(product, 0)).toBeNull();
   expect(competitorSource('https://www.bigc.co.th/product/meat')).toBe('Big C');
   for (const url of ['http://www.bigc.co.th/product/meat', 'https://localhost/product', 'https://bigc.co.th.evil.test/product', 'https://user:password@www.bigc.co.th/product', 'https://www.bigc.co.th/']) {

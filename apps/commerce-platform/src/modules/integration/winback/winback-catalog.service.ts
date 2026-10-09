@@ -28,7 +28,8 @@ export class WinbackCatalogService {
       `SELECT p.id::text AS id, p.sku,
               (SELECT t->>'product_name' FROM jsonb_array_elements(p.translations) t WHERE t->>'language_code' = 'th' LIMIT 1) AS name_th,
               (SELECT t->>'product_name' FROM jsonb_array_elements(p.translations) t WHERE t->>'language_code' = 'en' LIMIT 1) AS name_en,
-              p.brand_name, p.category_name_th AS category_name, p.selling_unit, p.selling_unit_price, p.image_url
+              p.brand_name, p.category_name_th AS category_name, p.selling_unit, p.order_taking_unit, NULL::varchar AS sub_packing_unit,
+              p.pack_size, p.units_per_box, p.weight_per_unit, p.ordering_price AS selling_price, p.image_url
          FROM josh_catalog_products p
         WHERE ${where.join(' AND ')}
         ORDER BY p.sku

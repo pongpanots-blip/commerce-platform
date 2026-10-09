@@ -14,7 +14,9 @@ export function toInventoryShape(p: JoshCatalogProduct) {
     brand_code: p.brandCode, brand_name: p.brandName, country_code_source: p.countryCodeSource,
     storage_temperature: p.storageTemperature, packaging_type: p.packagingType, pack_size: p.packSize,
     units_per_box: p.unitsPerBox, weight_per_unit: p.weightPerUnit, selling_unit: p.sellingUnit, vat_type: p.vatType,
-    selling_unit_price: p.sellingUnitPrice, ordering_price: p.orderingPrice, order_taking_unit: p.orderTakingUnit,
+    // The wire name `ordering_price` carries josh's selling_price (the red price per sell unit); `selling_unit_price`
+    // is josh's avg price now and stale on SKUs without a newer snapshot, so nothing here prices off it.
+    selling_price: p.orderingPrice, order_taking_unit: p.orderTakingUnit,
     translations: p.translations ?? [],
     productCategory: { category_name_th: p.categoryNameTh, category_name_en: p.categoryNameEn },
     image_url: p.imageUrl, updated_at: p.joshUpdatedAt, synced_at: p.syncedAt, removed_at: p.removedAt,

@@ -10,6 +10,7 @@ import {
   WinbackStage,
 } from './winback.enums';
 import { provinceForDistrict, provinceQueryCode } from './winback-geography';
+import { resolveSellUnit } from '../../../shared-kernel/helpers/pack-order-price.helper';
 
 const MS_PER_DAY = 86_400_000;
 const BANGKOK_OFFSET_MS = 7 * 3_600_000;
@@ -349,11 +350,17 @@ export interface CatalogRow {
   brand_name: string | null;
   category_name: string | null;
   selling_unit: string | null;
-  selling_unit_price: number | string | null;
+  order_taking_unit: string | null;
+  sub_packing_unit: string | null;
+  pack_size: string | null;
+  units_per_box: string | null;
+  weight_per_unit: string | null;
+  /** josh's selling_price (the catalog copy's wire name `ordering_price`): the red price per sell unit. */
+  selling_price: number | string | null;
   image_url: string | null;
 }
 
-/** The one unit a product is sold in today (josh `selling_unit` / `selling_unit_price`). */
+/** The one unit a product is sold in today: its sell unit (`resolveSellUnit`) at `selling_price`. */
 export const CATALOG_SELLING_UNIT_ID = 'selling';
 
 export interface CatalogProduct {
@@ -368,6 +375,7 @@ export interface CatalogProduct {
 }
 
 export function toCatalogProduct(row: CatalogRow): CatalogProduct {
+  const sell = resolveSellUnit(row);
   return {
     id: row.id,
     sku: row.sku,
@@ -376,6 +384,6 @@ export function toCatalogProduct(row: CatalogRow): CatalogProduct {
     brand_name: row.brand_name,
     category_name: row.category_name,
     image_url: row.image_url,
-    units: [{ id: CATALOG_SELLING_UNIT_ID, label: row.selling_unit || 'หน่วย', unit_price: num(row.selling_unit_price) }],
+    units: [{ id: CATALOG_SELLING_UNIT_ID, label: sell.qty === 1 ? sell.unit || 'หน่วย' : `${sell.qty} ${sell.unit}`, unit_price: num(row.selling_price) }],
   };
 }

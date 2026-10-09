@@ -4,7 +4,8 @@ import { commerceClient as apiClient } from '../api-client/commerce-client';
 export type CompetitorCatalogProduct = {
   id: string; sku: string; name: string; brand: string | null; country: string | null;
   storage: string | null; packSize: string | null; sellingUnit: string | null;
-  sellingUnitPriceIncVat: number; updatedAt: string;
+  /** Our avg price (selling_price ÷ pack) per `avgPriceUnit`; null when the pack does not parse. */
+  avgPriceIncVat: number | null; avgPriceUnit: string | null; updatedAt: string;
 };
 export type CompetitorPriceInput = {
   catalogItemId?: string;

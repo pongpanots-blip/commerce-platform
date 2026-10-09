@@ -228,16 +228,17 @@ describe('appointment end', () => {
 });
 
 describe('catalog product', () => {
-  it('names from th → en → sku and exposes the selling unit with its price', () => {
+  it('names from th → en → sku and exposes the sell unit with its selling_price', () => {
     const row = {
       id: 'x', sku: 'RIB20', name_th: null, name_en: 'Ribeye', brand_name: null, category_name: null,
-      selling_unit: 'KG', selling_unit_price: '912.50', image_url: null,
+      selling_unit: 'KG', order_taking_unit: 'KG', sub_packing_unit: null, pack_size: '5 - 7 PC X 3 KG',
+      units_per_box: null, weight_per_unit: null, selling_price: '7014.00', image_url: null,
     };
     expect(toCatalogProduct(row)).toEqual({
       id: 'x', sku: 'RIB20', name: 'Ribeye', name_en: 'Ribeye', brand_name: null, category_name: null, image_url: null,
-      units: [{ id: 'selling', label: 'KG', unit_price: 912.5 }],
+      units: [{ id: 'selling', label: '3 KG', unit_price: 7014 }],
     });
-    expect(toCatalogProduct({ ...row, name_en: null, selling_unit: null, selling_unit_price: null })).toMatchObject({
+    expect(toCatalogProduct({ ...row, name_en: null, selling_unit: null, order_taking_unit: null, pack_size: null, selling_price: null })).toMatchObject({
       name: 'RIB20',
       units: [{ id: 'selling', label: 'หน่วย', unit_price: null }],
     });

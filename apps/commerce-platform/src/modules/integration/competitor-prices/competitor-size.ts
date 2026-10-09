@@ -1,7 +1,8 @@
-import { extractedWeightKg } from '../../platform/scraping/infrastructure/public-web.reader';
 import { InventoryShape, roundMoney } from './catalog-shape';
+import { computeAvgPrice } from '../../../shared-kernel/helpers/avg-price.helper';
+import { isWeightUnit, resolvePackTotalQty, resolveSellUnit } from '../../../shared-kernel/helpers/pack-order-price.helper';
 
-// Ported from josh apps/backend/src/app/competitor-prices/competitor-size.ts (origin/main 8a44dd00); keep in step.
+// Ported from josh apps/backend/src/app/competitor-prices/competitor-size.ts (origin/main 8a44dd00; ourPack from refactor/pricing-total-price-model 714f4427); keep in step.
 
 /** Comparison units. Everything is converted to one of these before two prices are compared. */
 export type BaseUnit = 'kg' | 'l' | 'piece';
@@ -44,19 +45,20 @@ export function itemPackSize(name: string, weightKg: number | null): PackSize | 
 }
 
 /**
- * How we sell this SKU, in comparison terms: unit, quantity of one selling unit, and our price per unit.
- * Per-kg SKUs compare at 1 kg. `rate` is null when the catalog has no single price per unit (Approx carton range).
+ * How we sell this SKU, in comparison terms: unit, quantity of one sell unit, and our price per unit (the shop's
+ * avg price of `selling_price`). Per-kg SKUs compare at one fixed-weight pack, else 1 kg. `rate` is null when the
+ * catalog has no single price per unit (Approx carton range).
  */
-export function ourPack(product: Pick<InventoryShape, 'selling_unit' | 'selling_unit_price' | 'weight_per_unit'>, pricePerKg: { min: number; max: number } | null) {
-  const sellingUnit = product.selling_unit?.trim().toUpperCase() || '';
-  const price = Number(product.selling_unit_price) || 0;
-  const text = product.weight_per_unit || '';
-  if (['KG', 'G', 'GM'].includes(sellingUnit)) return { unit: 'kg' as BaseUnit, qty: 1, rate: pricePerKg && pricePerKg.min === pricePerKg.max ? pricePerKg.min : null };
-  const kg = extractedWeightKg(text);
-  if (kg) return { unit: 'kg' as BaseUnit, qty: kg, rate: price > 0 ? price / kg : null };
-  const liters = extractedVolumeL(text);
-  if (liters) return { unit: 'l' as BaseUnit, qty: liters, rate: price > 0 ? price / liters : null };
-  return { unit: 'piece' as BaseUnit, qty: 1, rate: price > 0 ? price : null };
+export function ourPack(product: InventoryShape, pricePerKg: { min: number; max: number } | null) {
+  const avg = computeAvgPrice(product.selling_price, product);
+  if (avg.avgPriceUnit === 'KG') {
+    const pack = resolvePackTotalQty(product);
+    const fixedPackKg = pack && !isWeightUnit(resolveSellUnit(product).unit) && pack.unit === 'KG' && pack.min === pack.max ? pack.max : null;
+    return { unit: 'kg' as BaseUnit, qty: fixedPackKg ?? 1, rate: pricePerKg && pricePerKg.min === pricePerKg.max ? pricePerKg.min : null };
+  }
+  if (avg.avgPriceUnit === 'L') return { unit: 'l' as BaseUnit, qty: 1, rate: avg.avgPriceMax };
+  const price = Number(product.selling_price) || 0;
+  return { unit: 'piece' as BaseUnit, qty: 1, rate: avg.avgPriceMax ?? (price > 0 ? price : null) };
 }
 
 export type CompareTone = 'cheaper' | 'pricier' | 'close' | 'unknown';

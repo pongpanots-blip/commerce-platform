@@ -7,7 +7,8 @@ import { ScrapingService } from '../../platform/scraping/application/scraping.se
 import { extractedWeightKg, publicUrl, scrapingVersion, singlePrice } from '../../platform/scraping/infrastructure/public-web.reader';
 import { JoshCatalogProduct } from '../connector/josh/josh-catalog-product.entity';
 import { JoshCatalogSyncService } from '../connector/josh/josh-catalog-sync.service';
-import { resolveCatalogOrderingPrice, resolvePackTotalQty } from '../connector/josh/jagota/pack-order-price.helper';
+import { isWeightUnit, resolvePackTotalQty, resolveSellUnit } from '../../../shared-kernel/helpers/pack-order-price.helper';
+import { computeAvgPrice } from '../../../shared-kernel/helpers/avg-price.helper';
 import { CompetitorPrice } from './competitor-price.entity';
 import { CaptureCompetitorPriceDto, SaveCompetitorPriceDto } from './competitor-price.dto';
 import { InventoryShape, roundMoney, toInventoryShape } from './catalog-shape';
@@ -52,15 +53,17 @@ export function catalogFingerprint(product: InventoryShape): string {
   ])).digest('hex');
 }
 
+/**
+ * Our ฿/kg for a confirmed pair: the shop's avg price when it is per kg, else `selling_price` over the
+ * confirmed weight of one sell unit. Never a weight inferred from a name.
+ */
 export function catalogPricePerKg(product: InventoryShape, ourWeightKg: number): number | null {
-  const price = Number(product.selling_unit_price);
-  const unit = product.selling_unit?.trim().toUpperCase();
+  const price = Number(product.selling_price);
   if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(ourWeightKg) || ourWeightKg <= 0) return null;
-  if (unit === 'KG') return price;
-  if (unit === 'G' || unit === 'GM') return price * 1000;
-  // Confirmed weight is per selling unit, never per order unit or carton inferred from a name.
-  if (unit && ['PC', 'PK', 'BX', 'CT', 'CS', 'CA', 'EA', 'BT', 'BG', 'PA', 'PT'].includes(unit)) return price / ourWeightKg;
-  return null;
+  const avg = computeAvgPrice(price, product);
+  if (avg.avgPriceUnit === 'KG') return avg.avgPriceMax;
+  if (avg.avgPriceUnit === 'L' || isWeightUnit(resolveSellUnit(product).unit)) return null;
+  return price / ourWeightKg;
 }
 
 // Sizes and pack counts say nothing about what a product is; weight is compared separately.
@@ -167,41 +170,37 @@ const rangeText = (range: Range, format: (value: number) => string) => range.min
 
 /**
  * How our SKU is actually sold, in numbers and one Thai sentence, so a merchandiser never has to decode
- * selling_unit / pack_size / Approx: price per kg, what one order unit weighs (a range for Approx), and
- * what one order unit costs. Same price sources as the shop (selling_unit_price, resolveCatalogOrderingPrice).
+ * selling_unit / pack_size / Approx: what one sell unit costs (`selling_price`), what it weighs (a range for
+ * Approx) and the price per kg off that, the same formula as the shop's avg price (`computeAvgPrice`).
  */
 export function describeOurOffer(product: InventoryShape) {
   const approx = /^approx$/i.test(product.packaging_type?.trim() ?? '');
   const sellingUnit = product.selling_unit?.trim().toUpperCase() || '';
   const orderUnit = product.order_taking_unit?.trim().toUpperCase() || sellingUnit;
-  const price = Number(product.selling_unit_price) || 0;
-  const byWeight = ['KG', 'G', 'GM'].includes(sellingUnit);
+  const price = Number(product.selling_price) || 0;
+  const sell = resolveSellUnit(product);
+  const sellUnit = sell.unit.toUpperCase() || orderUnit;
+  const byWeight = isWeightUnit(sellUnit);
+  const sellText = sell.qty === 1 ? unitName(sellUnit) : `${kilos(sell.qty)} ${unitName(sellUnit)}`;
   const pack = resolvePackTotalQty(product);
   const packWeightKg: Range | null = pack && pack.unit === 'KG' && pack.max > 0 ? { min: pack.min, max: pack.max } : null;
+  const avg = computeAvgPrice(price, product);
   let pricePerKgIncVat: Range | null = null;
-  let orderUnitPriceIncVat: Range | null = null;
-  if (price > 0 && byWeight) {
-    const perKg = sellingUnit === 'KG' ? price : roundMoney(price * 1000);
-    pricePerKgIncVat = { min: perKg, max: perKg };
-    if (approx && packWeightKg) orderUnitPriceIncVat = { min: roundMoney(perKg * packWeightKg.min), max: roundMoney(perKg * packWeightKg.max) };
-    else {
-      const ordering = resolveCatalogOrderingPrice(product);
-      if (ordering) orderUnitPriceIncVat = { min: ordering, max: ordering };
-    }
-  } else if (price > 0) {
-    orderUnitPriceIncVat = { min: price, max: price };
+  if (avg.avgPriceUnit === 'KG' && avg.avgPriceMax != null) {
     // A box of 5.4–22.5 kg at one box price is ฿/kg in a range: the heaviest box is the cheapest per kg.
-    if (packWeightKg) pricePerKgIncVat = { min: roundMoney(price / packWeightKg.max), max: roundMoney(price / packWeightKg.min) };
+    pricePerKgIncVat = !byWeight && packWeightKg
+      ? { min: roundMoney(price / packWeightKg.max), max: roundMoney(price / packWeightKg.min) }
+      : { min: avg.avgPriceMax, max: avg.avgPriceMax };
   }
-  const packUnit = byWeight ? orderUnit : sellingUnit;
+  const orderUnitPriceIncVat: Range | null = price > 0 ? { min: price, max: price } : null;
   const variable = approx || (packWeightKg != null && packWeightKg.min !== packWeightKg.max);
   const parts = [
-    byWeight ? `ขายต่อ${unitName(sellingUnit)}${orderUnit && orderUnit !== sellingUnit ? ` สั่งเป็น${unitName(orderUnit)}` : ''}` : `ขายเป็น${unitName(sellingUnit)}`,
-    packWeightKg && packUnit !== 'KG' ? `1 ${unitName(packUnit)} ${variable ? '≈ ' : ''}${rangeText(packWeightKg, kilos)} กก.${approx ? ' (น้ำหนักไม่คงที่)' : ''}`
-      : !byWeight ? (product.pack_size ? `ขนาด ${product.pack_size}` : 'ไม่ระบุน้ำหนัก') : null,
+    byWeight ? `ขายต่อ${sellText}` : `ขายเป็น${unitName(sellUnit)}`,
+    byWeight ? null
+      : packWeightKg ? `1 ${unitName(sellUnit)} ${variable ? '≈ ' : ''}${rangeText(packWeightKg, kilos)} กก.${approx ? ' (น้ำหนักไม่คงที่)' : ''}`
+      : product.pack_size ? `ขนาด ${product.pack_size}` : 'ไม่ระบุน้ำหนัก',
     pricePerKgIncVat ? `${rangeText(pricePerKgIncVat, baht)}/กก.` : null,
-    // "ประมาณ" only when the price itself varies; an Approx item sold per pack at one pack price is exact.
-    orderUnitPriceIncVat && packUnit !== 'KG' ? `${orderUnitPriceIncVat.min !== orderUnitPriceIncVat.max ? 'ประมาณ ' : ''}${rangeText(orderUnitPriceIncVat, baht)} ต่อ${unitName(packUnit)}` : null,
+    price > 0 && !(byWeight && sell.qty === 1) ? `${baht(price)} ต่อ${sellText}` : null,
     price > 0 ? null : 'ยังไม่มีราคาในแค็ตตาล็อก',
   ].filter(Boolean);
   return { pricingType: (approx ? 'approx' : 'fixed') as 'approx' | 'fixed', sellingUnit, sellingUnitName: unitName(sellingUnit), orderUnit, orderUnitName: unitName(orderUnit),
@@ -221,6 +220,12 @@ export type OverviewPosition = 'we_cheaper' | 'we_pricier' | 'same' | 'no_data' 
 export type OverviewFilters = { site?: string; category?: string; position?: OverviewPosition | 'matched'; search?: string; page?: number };
 const OVERVIEW_PAGE_SIZE = 50;
 
+/** Our per-kg / per-L / per-piece price, the shop's avg price of `selling_price`. */
+function avgPriceView(product: InventoryShape) {
+  const avg = computeAvgPrice(product.selling_price, product);
+  return { avgPriceIncVat: avg.avgPriceMax, avgPriceUnit: avg.avgPriceUnit };
+}
+
 export function productView(product: InventoryShape) {
   return {
     id: product.product_inventory_id, sku: product.product_inventory_sku,
@@ -228,7 +233,7 @@ export function productView(product: InventoryShape) {
       ?? product.translations?.[0]?.product_name ?? product.product_inventory_sku,
     brand: product.brand_name, country: product.country_code_source,
     storage: product.storage_temperature, packSize: product.pack_size,
-    sellingUnit: product.selling_unit, sellingUnitPriceIncVat: Number(product.selling_unit_price),
+    sellingUnit: product.selling_unit, ...avgPriceView(product),
     updatedAt: product.updated_at, syncedAt: product.synced_at, removed: !!product.removed_at,
     // Additive planning evidence; the original fields and price semantics stay unchanged.
     weightPerUnit: product.weight_per_unit, unitsPerBox: product.units_per_box,

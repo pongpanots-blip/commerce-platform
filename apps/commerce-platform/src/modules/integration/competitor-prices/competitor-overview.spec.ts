@@ -4,7 +4,7 @@ import { toInventoryShape } from './catalog-shape';
 // Ported from josh competitor-overview.spec.ts (origin/main 8a44dd00): fixtures are commerce's catalog copy.
 const catalogFingerprint = (p: any) => fingerprintOf(toInventoryShape(p));
 
-const product = (sku: string, price: number) => ({ id: sku, sku, status: 'active', sellingUnit: 'KG', sellingUnitPrice: String(price),
+const product = (sku: string, price: number) => ({ id: sku, sku, status: 'active', sellingUnit: 'KG', orderTakingUnit: 'KG', orderingPrice: String(price),
   translations: [{ language_code: 'th', product_name: `สินค้า ${sku}` }], categoryNameTh: 'เนื้อสัตว์', categoryNameEn: 'Meat', removedAt: null }) as any;
 const pair = (id: string, p: any, site: string, packPrice: number | null, ready = true) => ({
   id, revision: 1, productId: p.id, product: p, ourWeightKg: 1, sourceUrl: `https://${site}/p/${id}`, scrapingSource: null,

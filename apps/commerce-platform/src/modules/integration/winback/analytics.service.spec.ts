@@ -16,6 +16,20 @@ function repo<T>(findResults: T[][] = []): jest.Mocked<Pick<Repository<T>, 'find
   };
 }
 
+/** Records every builder call; getMany resolves to the rows the SQL would return. */
+function queryBuilder<T>(rows: T[]) {
+  const calls: Array<[string, ...unknown[]]> = [];
+  const qb: Record<string, jest.Mock> = {};
+  for (const method of ['distinctOn', 'where', 'andWhere', 'orderBy', 'addOrderBy']) {
+    qb[method] = jest.fn((...args: unknown[]) => {
+      calls.push([method, ...args]);
+      return qb;
+    });
+  }
+  qb.getMany = jest.fn(async () => rows);
+  return { qb, calls };
+}
+
 describe('AnalyticsService team tracking', () => {
   it('scopes manager locations to the selected rep with visit_n and daily_k', async () => {
     const now = new Date();
@@ -45,7 +59,9 @@ describe('AnalyticsService team tracking', () => {
       activity_at: earlier,
       checkin_at: earlier,
     } as WinbackActivity;
-    const activities = repo<WinbackActivity>([[latest], [first, latest], [first, latest]]);
+    const activities = Object.assign(repo<WinbackActivity>([[first, latest], [first, latest]]), {
+      createQueryBuilder: jest.fn(() => queryBuilder([latest]).qb),
+    });
     const accounts = repo<WinbackAccount>([
       [{ id: 'acc1', display_name: 'ร้านหนึ่ง' } as WinbackAccount],
     ]);
@@ -77,6 +93,116 @@ describe('AnalyticsService team tracking', () => {
       ],
       repsWithoutLocation: [],
     });
+  });
+
+  it('fetches only the latest GPS location per rep in SQL and lists reps without one', async () => {
+    const users = repo<User>([
+      [
+        { id: 'u1', first_name: 'Ada', last_name: 'Sale' },
+        { id: 'u2', first_name: 'Bo', last_name: 'Sale' },
+        { id: 'u3', first_name: 'No', last_name: 'GPS' },
+      ] as User[],
+    ]);
+    const older = {
+      id: 'a1',
+      account_id: 'acc1',
+      sales_user_id: 'u1',
+      type: 'visit',
+      activity_at: new Date('2026-07-20T03:00:00Z'),
+      checkin_at: null,
+      lat: '13.7',
+      lng: '100.5',
+    } as unknown as WinbackActivity;
+    const newer = {
+      ...older,
+      id: 'b1',
+      account_id: 'acc2',
+      sales_user_id: 'u2',
+      activity_at: new Date('2026-07-21T03:00:00Z'),
+      lat: '13.8',
+      lng: '100.6',
+    } as unknown as WinbackActivity;
+    // DISTINCT ON returns rows ordered by sales_user_id: u1 first.
+    const { qb, calls } = queryBuilder([older, newer]);
+    const activities = Object.assign(repo<WinbackActivity>(), {
+      createQueryBuilder: jest.fn(() => qb),
+    });
+    const service = new AnalyticsService(
+      repo<WinbackSalesTarget>() as unknown as Repository<WinbackSalesTarget>,
+      activities as unknown as Repository<WinbackActivity>,
+      repo<WinbackAccount>() as unknown as Repository<WinbackAccount>,
+      users as unknown as Repository<User>,
+      repo<Order>() as unknown as Repository<Order>,
+      repo<WinbackStageHistory>() as unknown as Repository<WinbackStageHistory>,
+      {} as ReportService,
+      {} as WinbackService,
+    );
+
+    const out = await service.getTeamLocations({ id: 'manager', isManager: true });
+
+    expect(calls).toEqual([
+      ['distinctOn', ['act.sales_user_id']],
+      ['where', 'act.sales_user_id IN (:...ids)', { ids: ['u1', 'u2', 'u3'] }],
+      ['andWhere', 'act.status = :status', { status: 'done' }],
+      ['andWhere', 'act.lat IS NOT NULL'],
+      ['andWhere', 'act.lng IS NOT NULL'],
+      ['orderBy', 'act.sales_user_id'],
+      ['addOrderBy', 'act.activity_at', 'DESC'],
+      ['addOrderBy', 'act.id', 'DESC'],
+    ]);
+    // The unbounded "all GPS activities" find is gone; the remaining finds are
+    // the sequence lookups for the returned rows only.
+    for (const [options] of activities.find.mock.calls as any[]) {
+      expect(options.where).not.toHaveProperty('lat');
+    }
+    // Same contract shape, most recent location first.
+    expect(out.locations.map((l) => [l.sales_user_id, l.activity_id, l.lat, l.lng])).toEqual([
+      ['u2', 'b1', 13.8, 100.6],
+      ['u1', 'a1', 13.7, 100.5],
+    ]);
+    expect(Object.keys(out.locations[0]).sort()).toEqual([
+      'account_id', 'account_name', 'activity_at', 'activity_id', 'activity_type', 'checkin_at',
+      'daily_k', 'email', 'is_today', 'lat', 'lng', 'name', 'sales_user_id', 'visit_n',
+    ]);
+    expect(out.repsWithoutLocation).toEqual([
+      { sales_user_id: 'u3', name: 'No GPS', email: null },
+    ]);
+  });
+
+  it('scopes a sale to their own locations and skips the query when no rep is visible', async () => {
+    const { qb, calls } = queryBuilder<WinbackActivity>([]);
+    const activities = Object.assign(repo<WinbackActivity>(), {
+      createQueryBuilder: jest.fn(() => qb),
+    });
+    const build = () =>
+      new AnalyticsService(
+        repo<WinbackSalesTarget>() as unknown as Repository<WinbackSalesTarget>,
+        activities as unknown as Repository<WinbackActivity>,
+        repo<WinbackAccount>() as unknown as Repository<WinbackAccount>,
+        repo<User>([
+          [
+            { id: 'u1', first_name: 'Ada', last_name: 'Sale' },
+            { id: 'u2', first_name: 'Bo', last_name: 'Sale' },
+          ] as User[],
+        ]) as unknown as Repository<User>,
+        repo<Order>() as unknown as Repository<Order>,
+        repo<WinbackStageHistory>() as unknown as Repository<WinbackStageHistory>,
+        {} as ReportService,
+        {} as WinbackService,
+      );
+
+    await expect(build().getTeamLocations({ id: 'u2', isManager: false }, 'u1')).resolves.toEqual({
+      locations: [],
+      repsWithoutLocation: [{ sales_user_id: 'u2', name: 'Bo Sale', email: null }],
+    });
+    expect(calls[1]).toEqual(['where', 'act.sales_user_id IN (:...ids)', { ids: ['u2'] }]);
+
+    activities.createQueryBuilder.mockClear();
+    await expect(build().getTeamLocations({ id: 'manager', isManager: true }, 'unknown')).resolves.toEqual({
+      locations: [],
+      repsWithoutLocation: [],
+    });
+    expect(activities.createQueryBuilder).not.toHaveBeenCalled();
   });
 
   it('judges each visit against the customer pin and counts the extra checkout rows once', async () => {

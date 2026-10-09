@@ -22,6 +22,7 @@
     "category-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/category-parity.ts",
     "master-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/master-parity.ts",
     "promotion-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/promotion-parity.ts",
+    "promotion-rules-adopt-josh": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/promotion-rules-adopt-josh.ts",
     "image-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/image-parity.ts",
     "ordering-parity": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/ordering-parity.ts",
     "erp-product-check": "TS_NODE_PROJECT=apps/commerce-platform/tsconfig.app.json ts-node apps/commerce-platform/src/cli/erp-product-check.ts",

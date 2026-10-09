@@ -30,6 +30,17 @@ Commerce migrations: `1795300000000-ProductPromotionRules` and `1795310000000-Pr
 5. Smoke: edit an unlocked SKU, replace tiers, clear with `[]`, then assign a mechanic via the existing relay. Product tier edits must reject; remove mechanic and verify no old product tiers return. Verify storefront price cache refresh and duplicate/older deliveries do not revert the rules.
 6. Drain, backfill promotion rules again, and require parity zero. Local parity is eventually consistent; it is not proof until delivery backlogs are empty.
 
+## Tier prices become sell-unit totals (Josh `PromotionPricesAsSellUnitTotal1792500000000`, 2026-10-09)
+
+Josh now stores `promotion_price` as the TOTAL per sell unit, the same shape as `selling_price`: a box of 12 packs with a ฿156 rate per pack now stores ฿1,872. Staff type totals from here on (the admin labels say "ราคารวมต่อหน่วยสั่ง"). Josh's migration converts its own rows. Commerce's owned `rules` still hold rates, and a staff save would send them back as totals. Josh would then charge ฿156 for the box.
+
+1. Pause product tier edits in commerce-admin.
+2. Run Josh's migration and deploy Josh's backend.
+3. Backfill the `promotion-rules` group (see Backfill and shadow) and drain Josh's outbox, so `shadow_rules` holds Josh's totals.
+4. Run `npm run promotion-rules-adopt-josh`. It is a dry run and lists the SKUs whose rules differ from the shadow only by one factor per SKU. Check `adoptSample` and the `manual` rows.
+5. Run `npm run promotion-rules-adopt-josh -- --apply`. It copies the shadow into `rules` for those SKUs and publishes nothing, because Josh already holds the values. Resolve each `manual` row by hand, in the product form.
+6. Run `npm run promotion-parity` and require zero differences, then resume edits.
+
 ## Rollback
 
 Pause rule and mechanic edits; drain commerce snapshots while Josh's consumer flag remains on. Capture any failed deliveries and replay before proceeding. Turn commerce flag off first, then Josh flag off and restart both. Remove the subscription only after draining. Backfill both groups and verify local parity before reopening edits. Commerce retains versions/rows; signed Josh snapshots refresh the bootstrap while off. Re-enable using the same cutover sequence; never reset the commerce sequence or Josh applied-version ledger.

@@ -16,11 +16,11 @@ on:
         options: [check, import, parity, status]
         default: check
       scopes:
-        description: 'import scopes, in order (any import-from-josh scope except ordering / all)'
+        description: 'import scopes, in order (any import-from-josh scope except all; ordering only while COMMERCE_OWNS_ORDERING is off)'
         type: string
         default: 'research scraping competitor'
       parity:
-        description: 'parity CLIs to run after import / for action=parity (competitor segment price content category master image promotion)'
+        description: 'parity CLIs to run after import / for action=parity (competitor segment price content category master image promotion ordering)'
         type: string
         default: 'competitor'
       josh_host:
@@ -100,7 +100,10 @@ jobs:
         run: |
           set -euo pipefail
           for s in $SCOPES; do
-            case "$s" in research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|categories|masters|images) ;; *) echo "::error::scope $s not allowed here (ordering is skipped)"; exit 1;; esac
+            case "$s" in research|scraping|competitor|segments|sales-reps|erp-sales-history|prices|contents|categories|masters|images|ordering) ;; *) echo "::error::scope $s not allowed here"; exit 1;; esac
+            # ordering replaces commerce's rounds wholesale — after the switch it would overwrite commerce-owned data (runbook 4f)
+            if [ "$s" = ordering ] && [ "$(docker exec ${{ steps.c.outputs.id }} printenv COMMERCE_OWNS_ORDERING || true)" = true ]; then
+              echo "::error::COMMERCE_OWNS_ORDERING=true on commerce — import ordering only for rollback, by hand"; exit 1; fi
             echo "::group::import-from-josh $s"
             docker exec -i --env-file "$RUNNER_TEMP/josh-ro.env" ${{ steps.c.outputs.id }} node src/cli/import-from-josh.js "$s"
             echo "::endgroup::"
@@ -115,7 +118,7 @@ jobs:
           rc=0
           echo '### parity' >> "$GITHUB_STEP_SUMMARY"
           for p in $PARITY; do
-            case "$p" in competitor|segment|price|content|category|master|image|promotion) ;; *) echo "::error::unknown parity $p"; exit 1;; esac
+            case "$p" in competitor|segment|price|content|category|master|image|promotion|ordering) ;; *) echo "::error::unknown parity $p"; exit 1;; esac
             echo "::group::$p-parity"
             docker exec -i --env-file "$RUNNER_TEMP/josh-ro.env" ${{ steps.c.outputs.id }} node "src/cli/$p-parity.js" > "$RUNNER_TEMP/parity.txt" 2>&1; r=$?
             cut -c1-6000 "$RUNNER_TEMP/parity.txt"; echo "::endgroup::"

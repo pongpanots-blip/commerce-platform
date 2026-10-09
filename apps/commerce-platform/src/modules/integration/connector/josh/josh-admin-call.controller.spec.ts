@@ -21,6 +21,15 @@ describe('JoshAdminCallController', () => {
     await expect(c.call({ method: 'GET', path: '/admin/cart-move-allowed-categories/x' }, req('admin'))).rejects.toBeInstanceOf(ForbiddenException);
   });
 
+  it('marketing edits a banner by id; other banner sub-paths and other roles stay out', async () => {
+    const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
+    const c = new JoshAdminCallController(josh as never);
+    await c.call({ method: 'PATCH', path: '/banner/11111111-1111-4111-8111-111111111111' }, req('marketing'));
+    expect(josh.run).toHaveBeenCalledTimes(1);
+    await expect(c.call({ method: 'PATCH', path: '/banner/criteria' }, req('marketing'))).rejects.toBeInstanceOf(ForbiddenException);
+    await expect(c.call({ method: 'PATCH', path: '/banner/11111111-1111-4111-8111-111111111111' }, req('cs'))).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
   it('CS tools (delivery schedule, cart-move categories) are admin calls', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: [] })) };
     const c = new JoshAdminCallController(josh as never);

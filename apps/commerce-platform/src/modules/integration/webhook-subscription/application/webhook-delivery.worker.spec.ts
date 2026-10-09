@@ -1,7 +1,7 @@
 import { UnrecoverableError } from 'bullmq';
 import { WebhookDeliveryWorker } from './webhook-delivery.worker';
 
-function makeWorker(delivery: Record<string, unknown>, newerLive = false) {
+function makeWorker(delivery: Record<string, unknown>, newerLive = false, accountId: string | null = null) {
   const qb = {
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
@@ -12,7 +12,7 @@ function makeWorker(delivery: Record<string, unknown>, newerLive = false) {
     save: jest.fn(async (d) => d),
     createQueryBuilder: jest.fn().mockReturnValue(qb),
   };
-  const subs = { findOne: jest.fn().mockResolvedValue({ id: 's-1', secret: 'shh' }) };
+  const subs = { findOne: jest.fn().mockResolvedValue({ id: 's-1', secret: 'shh', accountId }) };
   return { worker: new WebhookDeliveryWorker(deliveries as never, subs as never), deliveries, qb };
 }
 
@@ -88,5 +88,27 @@ describe('WebhookDeliveryWorker', () => {
     await worker.handle('d-1');
     expect(deliveries.createQueryBuilder).not.toHaveBeenCalled();
     expect(d.status).toBe('success');
+  });
+
+  it.each(['customer.updated', 'erp.sale-order.created', 'staff.access'])('refuses a queued %s delivery to a portal account without sending or retrying', async (eventType) => {
+    global.fetch = jest.fn() as never;
+    const d = { ...base(), eventType, payload: { type: eventType, data: { email: 'customer@example.com' } } };
+    const { worker, deliveries } = makeWorker(d, false, 'portal-account');
+    await expect(worker.handle(d.id)).rejects.toBeInstanceOf(UnrecoverableError);
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(d.attempts).toBe(0);
+    expect(d.status).toBe('failed');
+    expect(deliveries.save).toHaveBeenCalledWith(expect.objectContaining({ error: 'Event type is not available to portal webhooks' }));
+  });
+
+  it('still delivers allowed portal events and admin-only customer events to an admin subscription', async () => {
+    respond(200);
+    const portal = { ...base(), eventType: 'order.created', payload: { type: 'order.created', data: { id: 'order-1' } } };
+    const admin = { ...base(), eventType: 'customer.updated', payload: { type: 'customer.updated', data: { id: 'customer-1' } } };
+    await makeWorker(portal, false, 'portal-account').worker.handle(portal.id);
+    await makeWorker(admin).worker.handle(admin.id);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(portal.status).toBe('success');
+    expect(admin.status).toBe('success');
   });
 });

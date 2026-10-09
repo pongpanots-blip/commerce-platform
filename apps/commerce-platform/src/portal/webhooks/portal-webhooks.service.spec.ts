@@ -1,4 +1,6 @@
+import { BadRequestException } from '@nestjs/common';
 import { PortalWebhooksService } from './portal-webhooks.service';
+import { EVENT_CATALOG, PORTAL_EVENT_TYPES } from './event-catalog';
 
 function makeService(rows: Record<string, unknown>[] = [], deliveries: Record<string, unknown>[] = []) {
   const repo = {
@@ -26,7 +28,24 @@ describe('PortalWebhooksService', () => {
       eventTypes: ['order.confirmed'], secret: 's' });
     expect((repo.save.mock.calls[0][0] as Record<string, unknown>).accountId).toBe('acc1');
     await expect(service.createForAccount('acc1', { name: 'x', targetUrl: 'https://x', eventTypes: ['nope.event'] }))
-      .rejects.toThrow('unknown event type');
+      .rejects.toThrow('not available to portal webhooks');
+  });
+
+  it('create/update reject customer, ERP sale-order and "*" event types with a 400', async () => {
+    const { service, repo } = makeService([{ id: 'w1', accountId: 'acc1', active: true, eventTypes: ['order.created'] }]);
+    for (const type of ['customer.updated', 'customer.created', 'erp.sale-order.created', '*']) {
+      await expect(service.createForAccount('acc1', { name: 'x', targetUrl: 'https://x.example.com', eventTypes: ['order.created', type] }))
+        .rejects.toBeInstanceOf(BadRequestException);
+      await expect(service.updateForAccount('w1', 'acc1', { eventTypes: [type] }))
+        .rejects.toThrow(`event type "${type}" is not available to portal webhooks`);
+    }
+    expect(repo.save).not.toHaveBeenCalled();
+  });
+
+  it('the portal catalog lists no customer or ERP sale-order events', () => {
+    const types = EVENT_CATALOG.map((e) => e.type);
+    expect(types.filter((t) => t.startsWith('customer.') || t.startsWith('erp.'))).toEqual([]);
+    expect([...PORTAL_EVENT_TYPES].sort()).toEqual([...types].sort());
   });
 
   it('list/update are account-scoped (404 crossing accounts)', async () => {

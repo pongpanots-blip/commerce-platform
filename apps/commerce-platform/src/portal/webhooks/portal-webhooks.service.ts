@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WebhookSubscription } from '../../modules/integration/webhook-subscription/infrastructure/webhook-subscription.entity';
 import { WebhookDelivery } from '../../modules/integration/webhook-subscription/infrastructure/webhook-delivery.entity';
-import { EVENT_CATALOG } from './event-catalog';
+import { EVENT_CATALOG, PORTAL_EVENT_TYPES } from './event-catalog';
 
 @Injectable()
 export class PortalWebhooksService {
@@ -87,10 +87,14 @@ export class PortalWebhooksService {
     }
   }
 
+  /** Portal subscriptions may only list catalog events ("*" is not accepted). */
   private assertKnown(types: string[]): void {
-    const known = new Set(EVENT_CATALOG.map((e) => e.type));
     for (const t of types) {
-      if (!known.has(t)) throw new BadRequestException(`unknown event type "${t}"`);
+      if (!PORTAL_EVENT_TYPES.has(t)) {
+        throw new BadRequestException(
+          `event type "${t}" is not available to portal webhooks; see GET /v1/portal/events`,
+        );
+      }
     }
   }
 

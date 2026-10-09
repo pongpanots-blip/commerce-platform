@@ -77,7 +77,7 @@ export function ProductPrices() {
         {pending.data?.items.length ? (
           <>
             <Table>
-              <THead><TR><TH /><TH>{__uiText("SKU")}</TH><TH kind="money">{__uiText("ราคาขาย")}</TH><TH kind="money">{__uiText("ราคาสั่ง")}</TH><TH kind="num">{__uiText("MOQ")}</TH><TH>{__uiText("ERP เปลี่ยนเมื่อ")}</TH></TR></THead>
+              <THead><TH /><TH>{__uiText("SKU")}</TH><TH kind="money">{__uiText("ราคาขาย")}</TH><TH kind="money">{__uiText("ราคาสั่ง")}</TH><TH kind="num">{__uiText("MOQ")}</TH><TH>{__uiText("ERP เปลี่ยนเมื่อ")}</TH></THead>
               <TBody>
                 {pending.data.items.map((r: PricePending) => (
                   <TR key={r.sku} selected={picked.has(r.sku)} onClick={() => toggle(r.sku)}>
@@ -114,7 +114,7 @@ export function ProductPrices() {
         {prices.data?.items.length ? (
           <>
             <Table>
-              <THead><TR><TH>{__uiText("SKU")}</TH><TH kind="money">{__uiText("ราคาขาย")}</TH><TH kind="money">{__uiText("ราคาสั่ง")}</TH><TH kind="num">{__uiText("MOQ")}</TH><TH>{__uiText("ที่มา")}</TH><TH>{__uiText("แก้ล่าสุด")}</TH><TH kind="actions" /></TR></THead>
+              <THead><TH>{__uiText("SKU")}</TH><TH kind="money">{__uiText("ราคาขาย")}</TH><TH kind="money">{__uiText("ราคาสั่ง")}</TH><TH kind="num">{__uiText("MOQ")}</TH><TH>{__uiText("ที่มา")}</TH><TH>{__uiText("แก้ล่าสุด")}</TH><TH kind="actions" /></THead>
               <TBody>
                 {prices.data.items.map((r: PriceRow) => (
                   <TR key={r.sku}>

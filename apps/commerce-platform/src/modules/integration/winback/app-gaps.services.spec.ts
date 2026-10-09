@@ -36,6 +36,62 @@ class FakeRepo<T extends { id?: string }> {
     const row = this.rows.find((r) => this.match(r, opts.where));
     return row ? { ...row } : null;
   });
+  /**
+   * Query builder for the `alias.col` / `alias.payload->>'key'` comparisons and orders the services use;
+   * filters and orders run before `limit`, like SQL. Every call is recorded in `calls` for order checks.
+   */
+  calls: string[] = [];
+  createQueryBuilder = jest.fn(() => {
+    const ref = /^\w+\.(\w+)(?:->>'(\w+)')?$/;
+    const read = (row: T, col: string, key?: string) => {
+      const v = (row as Record<string, unknown>)[col];
+      return key ? (v as Record<string, unknown> | null)?.[key] ?? null : v;
+    };
+    const filters: ((row: T) => boolean)[] = [];
+    const orders: { col: string; key?: string; dir: number; nullsLast: boolean }[] = [];
+    let max = Infinity;
+    const cond = (sql: string, params: Record<string, unknown> = {}) => {
+      this.calls.push(`where ${sql}`);
+      const m = /^(\w+\.\w+(?:->>'\w+')?)\s*(=|>=|<=)\s*:(\w+)$/.exec(sql);
+      if (!m) throw new Error(`FakeRepo qb: unsupported condition ${sql}`);
+      const [, col, key] = ref.exec(m[1])!;
+      const want = params[m[3]];
+      filters.push((row) => {
+        const v = read(row, col, key);
+        if (v === null || v === undefined) return false;
+        return m[2] === '=' ? v === want : m[2] === '>=' ? String(v) >= String(want) : String(v) <= String(want);
+      });
+      return qb;
+    };
+    const order = (sql: string, dir: 'ASC' | 'DESC' = 'ASC', nulls?: string) => {
+      this.calls.push(`order ${sql}`);
+      const [, col, key] = ref.exec(sql)!;
+      orders.push({ col, key, dir: dir === 'DESC' ? -1 : 1, nullsLast: nulls ? nulls === 'NULLS LAST' : dir === 'ASC' });
+      return qb;
+    };
+    const cmp = (a: T, b: T) => {
+      for (const o of orders) {
+        const x = read(a, o.col, o.key);
+        const y = read(b, o.col, o.key);
+        if (x === y) continue;
+        if (x === null || x === undefined) return o.nullsLast ? 1 : -1;
+        if (y === null || y === undefined) return o.nullsLast ? -1 : 1;
+        const xs = x instanceof Date ? x.getTime() : x;
+        const ys = y instanceof Date ? y.getTime() : y;
+        return (xs < ys ? -1 : xs > ys ? 1 : 0) * o.dir;
+      }
+      return 0;
+    };
+    const qb = {
+      where: cond,
+      andWhere: cond,
+      orderBy: order,
+      addOrderBy: order,
+      limit: (n: number) => { this.calls.push('limit'); max = n; return qb; },
+      getMany: async () => this.rows.filter((r) => filters.every((f) => f(r))).sort(cmp).slice(0, max).map((r) => ({ ...r })),
+    };
+    return qb;
+  });
   create = jest.fn((v: Partial<T>) => ({ ...v }) as T);
   save = jest.fn(async (v: T) => {
     const now = new Date();
@@ -125,6 +181,20 @@ describe('AppRecordsService', () => {
     expect(done).toMatchObject({ status: 'done', is_done: true, result: 'ok' });
     const reopened = await store.updateCoachingTask(MGR, String(task.id), { completed_at: null });
     expect(reopened).toMatchObject({ status: 'open', is_done: false });
+  });
+
+  it('coaching: over 500 tasks keeps the earliest due (ordered before the cap)', async () => {
+    const { store, records } = setup();
+    // 600 tasks inserted latest-due first, so an unordered take(500) would drop the earliest
+    for (let i = 599; i >= 0; i--) {
+      const due = new Date(Date.UTC(2026, 0, 1) + i * 3_600_000).toISOString();
+      records.rows.push({ id: `ct-${i}`, kind: 'coaching_task', sales_user_id: 'rep-1', account_id: 'acc-1', status: 'open', version: 1, payload: { due_at: due }, create_date: new Date(), update_date: new Date() });
+    }
+    const tasks = await store.listCoachingTasks(REP, {});
+    expect(tasks).toHaveLength(500);
+    expect(tasks[0]).toMatchObject({ id: 'ct-0', due_at: '2026-01-01T00:00:00.000Z' });
+    expect(tasks[499]).toMatchObject({ id: 'ct-499' });
+    expect(records.calls.slice(-4)).toEqual(["order r.payload->>'due_at'", 'order r.create_date', 'order r.id', 'limit']);
   });
 
   it('teams: manager only, members must be reps', async () => {
@@ -391,6 +461,23 @@ describe('CommercialService', () => {
     expect(await svc.listReports(REP, { sales_user_id: 'rep-2' })).toHaveLength(1); // forced to self
     expect(await svc.listReports(MGR, { status: 'approved' })).toHaveLength(0);
     expect(await svc.listReports(MGR, { from: '2026-10-09' })).toHaveLength(0);
+  });
+
+  it('daily reports: from/to filter before the 500 cap, newest day first', async () => {
+    const { svc, records } = commercial();
+    // 600 days of reports for rep-1, inserted oldest first (2025-01-01 onward)
+    const start = Date.UTC(2025, 0, 1);
+    for (let i = 0; i < 600; i++) {
+      const day = new Date(start + i * 86_400_000).toISOString().slice(0, 10);
+      records.rows.push({ id: `dr-${i}`, kind: 'daily_report', record_key: `rep-1|${day}`, sales_user_id: 'rep-1', status: 'submitted', version: 1, payload: { day }, create_date: new Date(start + i * 86_400_000), update_date: new Date() });
+    }
+    // The oldest week sits outside the newest 500 rows: it must still come back in full.
+    const old = await svc.listReports(MGR, { sales_user_id: 'rep-1', from: '2025-01-01', to: '2025-01-07' });
+    expect(old.map((r) => r.day)).toEqual(['2025-01-07', '2025-01-06', '2025-01-05', '2025-01-04', '2025-01-03', '2025-01-02', '2025-01-01']);
+    const all = await svc.listReports(MGR, {});
+    expect(all).toHaveLength(500);
+    expect(all[0].day).toBe('2026-08-23'); // the newest 500 days when no range is sent
+    expect(records.calls.indexOf('limit')).toBeGreaterThan(records.calls.lastIndexOf("where r.payload->>'day' <= :to"));
   });
 
   it('invoice evidence: one row per customer-day from the ERP history, scoped to the rep', async () => {

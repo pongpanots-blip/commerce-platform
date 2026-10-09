@@ -7,7 +7,7 @@ import { WinbackController } from './winback.controller';
 
 function createController() {
   const winback = {
-    findPool: jest.fn(), getCounts: jest.fn(),
+    findPool: jest.fn(), getCounts: jest.fn(), getAging: jest.fn(async () => []),
   };
   const sync = { syncFromJosh: jest.fn() };
   const imports = {};
@@ -60,6 +60,15 @@ describe('WinbackController contract snapshots', () => {
     controller.counts({ user: { sub: ' REP-1 ', role } });
     expect(winback.getCounts).toHaveBeenCalledWith({ id: 'rep-1', isManager: role !== 'sale' });
   });
+
+  it.each([['sale', { salesUserId: 'rep-1' }], ['manager', undefined], ['admin', undefined]])(
+    'scopes %s aging in the service query (own + unassigned for sales), not after the cap',
+    async (role, scope) => {
+      const { controller, winback } = createController();
+      await controller.aging({ user: { sub: ' REP-1 ', role } }, '5');
+      expect(winback.getAging).toHaveBeenCalledWith(5, scope);
+    },
+  );
 
   it('requires owner access before creating a lead from a restaurant place', async () => {
     const { controller, opportunities, leads } = createController();

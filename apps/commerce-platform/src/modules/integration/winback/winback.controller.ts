@@ -277,15 +277,9 @@ export class WinbackController {
   @Get('aging')
   aging(@Req() req: RequestWithUser, @Query('days') days?: string) {
     const c = this.claims(req);
-    if (!isWinbackManager(c.role)) {
-      // Sales: aging only for their own unworked leads
-      return this.winback.getAging(Number(days) || 3).then((rows) =>
-        rows.filter(
-          (r) => r.assigned_sales_user_id === c.sub || !r.assigned_sales_user_id,
-        ),
-      );
-    }
-    return this.winback.getAging(Number(days) || 3);
+    // Sales: only their own and unassigned unworked leads (filtered in the query, before the cap)
+    const scope = isWinbackManager(c.role) ? undefined : { salesUserId: normalizeId(c.sub) ?? '' };
+    return this.winback.getAging(Number(days) || 3, scope);
   }
 
   /**

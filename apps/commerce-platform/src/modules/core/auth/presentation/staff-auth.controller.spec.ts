@@ -21,7 +21,7 @@ const req = { headers: { 'user-agent': 'jest' }, ip: '127.0.0.1' };
 
 describe('auth controllers (refresh / logout)', () => {
   it('staff login, refresh and logout are public (an expired access token must not block them); me stays guarded', () => {
-    for (const h of ['login', 'refresh', 'logout']) expect(isPublic(StaffAuthController, h)).toBe(true);
+    for (const h of ['login', 'register', 'refresh', 'logout']) expect(isPublic(StaffAuthController, h)).toBe(true);
     expect(isPublic(StaffAuthController, 'me')).toBe(false);
     expect(isPublic(StaffAuthController, 'changePassword')).toBe(false);
     for (const h of ['login', 'register', 'refresh', 'logout']) expect(isPublic(PortalAuthController, h)).toBe(true);

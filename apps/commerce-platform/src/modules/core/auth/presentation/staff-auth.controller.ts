@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post, Req } from '@nestjs/common';
-import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { Throttle } from '../../../integration/winback/shared/throttle';
 import { PortalAuthService } from '../application/portal-auth.service';
 import { MIN_PASSWORD, StaffAccountsService } from '../application/staff-accounts.service';
 import { AllowPendingPassword, AllowReadOnlyWrite, AnyStaff, Public } from '../../../../shared-kernel/presentation/auth.decorators';
@@ -11,12 +12,18 @@ class StaffLoginDto {
   @IsString() @MinLength(1) password!: string;
 }
 
+class StaffRegisterDto {
+  @IsEmail() @MaxLength(191) email!: string;
+  @IsString() @MinLength(MIN_PASSWORD) @MaxLength(200) password!: string;
+  @IsOptional() @IsString() @MaxLength(191) name?: string | null;
+}
+
 class ChangePasswordDto {
   @IsString() @MinLength(1) currentPassword!: string;
   @IsString() @MinLength(MIN_PASSWORD) @MaxLength(200) newPassword!: string;
 }
 
-/** Sign-in for commerce-admin. Staff accounts are created with the create-staff CLI, never self-registered. */
+/** Sign-in for commerce-admin. Accounts come from the create-staff CLI, an admin, or self-registration (disabled until an admin opens it). */
 @Controller('admin/auth')
 export class StaffAuthController {
   constructor(private readonly auth: PortalAuthService, private readonly accounts: StaffAccountsService) {}
@@ -27,6 +34,15 @@ export class StaffAuthController {
   @HttpCode(200)
   login(@Body() dto: StaffLoginDto, @Req() req: Parameters<typeof clientMeta>[0]) {
     return this.auth.login(dto.email, dto.password, 'staff', clientMeta(req));
+  }
+
+  /** @jagota.co.th only; `{ email, status: 'disabled' }` — signing in works once an admin opens the account. */
+  @Public()
+  @Throttle({ default: { limit: 10, ttl: 15 * 60_000 } })
+  @Post('register')
+  @HttpCode(200)
+  register(@Body() dto: StaffRegisterDto) {
+    return this.accounts.register(dto.email, dto.password, dto.name);
   }
 
   /** Trade a staff refresh token for a new pair (the old one is spent). No access token needed — it may have expired. */

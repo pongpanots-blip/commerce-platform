@@ -73,6 +73,7 @@ const MarketingAnalyst = lazy(() => import('./pages/MarketingAnalyst'));
 const PromotionWorkspace = lazy(() => import('./pages/planning/PromotionWorkspace'));
 const OrderReviewWorkspace = lazy(() => import('./pages/planning/OrderReviewWorkspace'));
 const TodayInbox = lazy(() => import('./pages/today/TodayInbox'));
+const PackPlanningWorkspace = lazy(() => import('./pages/pack-price/PackPlanningWorkspace'));
 
 /** Route context and a single page-search entry point across every category. */
 function AdminTopBar({ role }: { role?: string }) {
@@ -187,6 +188,7 @@ export function App() {
             <Route path="/login" element={<LoginRedirect role={role} />} />
             <Route path="/home" element={<RoleHome role={role} />} />
             <Route path="/today" element={<Suspense fallback={<Loading variant="table" />}><TodayInbox role={role} /></Suspense>} />
+            <Route path="/planning/pack-prices/*" element={<Suspense fallback={<Loading variant="detail" />}><PackPlanningWorkspace role={role} /></Suspense>} />
             <Route path="/tasks/:sectionId" element={<TaskSection role={role} />} />
             <Route path="/planning/promotions/*" element={<Suspense fallback={<Loading variant="detail" />}><PromotionWorkspace role={role} /></Suspense>} />
             <Route path="/review/orders/*" element={<Suspense fallback={<Loading variant="detail" />}><OrderReviewWorkspace role={role} /></Suspense>} />

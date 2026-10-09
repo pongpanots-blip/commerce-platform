@@ -28,7 +28,7 @@ export class PromotionDraftsService {
         return { ...(previous.receipt as ReturnType<typeof receipt>), replayed: true };
       }
       if (id) {
-        const [current]: Row[] = await m.query('SELECT revision FROM commerce_promotion_drafts WHERE id=$1 AND actor_id=$2 FOR UPDATE', [id, actor]);
+        const [current]: Row[] = await m.query("SELECT revision FROM commerce_promotion_drafts WHERE id=$1 AND actor_id=$2 AND (scenario->>'kind') IS NULL FOR UPDATE", [id, actor]);
         if (!current) throw new NotFoundException('Draft not found');
         if (Number(current.revision) !== input.revision) throw new ConflictException('Draft changed. Reload before saving.');
       }
@@ -52,19 +52,19 @@ export class PromotionDraftsService {
   }
   async get(id: string, actor: string) {
     this.actor(actor); return this.available(async () => {
-      const [r]: Row[] = await this.db.query(`SELECT ${COLS} FROM commerce_promotion_drafts WHERE id=$1 AND actor_id=$2`, [id, actor]);
+      const [r]: Row[] = await this.db.query(`SELECT ${COLS} FROM commerce_promotion_drafts WHERE id=$1 AND actor_id=$2 AND (scenario->>'kind') IS NULL`, [id, actor]);
       if (!r) throw new NotFoundException('Draft not found'); return receipt(r);
     });
   }
   async request(id: string, actor: string) {
     this.actor(actor); return this.available(async () => {
-      const [r]: Row[] = await this.db.query('SELECT receipt FROM commerce_promotion_draft_requests WHERE actor_id=$1 AND request_id=$2', [actor, id]);
+      const [r]: Row[] = await this.db.query("SELECT receipt FROM commerce_promotion_draft_requests WHERE actor_id=$1 AND request_id=$2 AND (receipt->'scenario'->>'kind') IS NULL", [actor, id]);
       if (!r) throw new NotFoundException('Committed request not found'); return r.receipt;
     });
   }
   async list(actor: string, after?: string) {
     this.actor(actor); return this.available(async () => {
-      const rows: Row[] = await this.db.query(`SELECT ${COLS} FROM commerce_promotion_drafts WHERE actor_id=$1 AND ($2::uuid IS NULL OR id>$2::uuid) ORDER BY id LIMIT 21`, [actor, after ?? null]);
+      const rows: Row[] = await this.db.query(`SELECT ${COLS} FROM commerce_promotion_drafts WHERE actor_id=$1 AND (scenario->>'kind') IS NULL AND ($2::uuid IS NULL OR id>$2::uuid) ORDER BY id LIMIT 21`, [actor, after ?? null]);
       return { items: rows.slice(0, 20).map(receipt), next: rows.length > 20 ? String(rows[19].id) : null };
     });
   }

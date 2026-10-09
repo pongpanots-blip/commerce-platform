@@ -48,6 +48,7 @@ export function isRouteAllowed(roleRaw: string | null | undefined, path: string)
   if (role === 'admin') return true;
   // The inbox inherits the existing role-home page scope; its readers retain their own API permissions.
   if (pathname === '/today') return isRouteAllowed(role, '/home');
+  if (pathname === '/planning/pack-prices' || pathname.startsWith('/planning/pack-prices/')) return isRouteAllowed(role, '/j/marketing/competitor-prices');
   if (pathname === '/') return false;
   const task = /^\/tasks\/([^/]+)$/.exec(pathname);
   if (task) return SECTIONS.some(section => section.id === task[1] && !!sectionNavFor(role, section.id));

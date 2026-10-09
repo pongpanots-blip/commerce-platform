@@ -9,12 +9,14 @@ export function taskFeatureNavFor(role?: string): NavGroup[] {
     ...link, to: '/today', label: text('งานที่ทบทวนวันนี้', 'Today work inbox'), icon: 'checklist',
     description: text('เลือกสิ่งที่จะตรวจจากหลักฐานที่อ่านได้', 'Choose work from readable evidence.'), activeFor: [HOME.to],
   } : link) }));
-  if (normalizeRole(role) !== 'admin') return existing;
+  const normalized = normalizeRole(role);
   return existing.map(group => {
     const section = SECTIONS.find(s => s.title === group.group);
-    const link = section?.id === 'marketing' ? { to: '/planning/promotions', label: text('ทดลองและเก็บร่างโปรโมชัน', 'Rehearse and save promotion drafts'), icon: 'science', description: text('ตรวจส่วนลดและหลักฐานก่อนเก็บร่าง', 'Review discounts and evidence before saving a draft.') }
-      : section?.id === 'orders' ? { to: '/review/orders', label: text('ตรวจออเดอร์และหลักฐานส่งข้อมูล', 'Review orders and send evidence'), icon: 'fact_check', description: text('เทียบสองแหล่งและอ่านประเด็นที่ต้องตรวจ', 'Compare sources and inspect findings.') } : null;
-    return link ? { ...group, links: [...group.links, link] } : group;
+    const links = [...group.links];
+    if (section?.id === 'marketing' && ['admin', 'marketing', 'business_analyst'].includes(normalized)) links.push({ to: '/planning/pack-prices', label: text('วางแผนแพ็กและราคาขาย', 'Plan packs and sale prices'), icon: 'compare', description: text('เทียบหลายแพ็กที่บันทึกไว้แล้วเก็บทางเลือกเพื่อทบทวน', 'Compare recorded packs and retain sale options for review.') });
+    if (normalized === 'admin' && section?.id === 'marketing') links.push({ to: '/planning/promotions', label: text('ทดลองและเก็บร่างโปรโมชัน', 'Rehearse and save promotion drafts'), icon: 'science', description: text('ตรวจส่วนลดและหลักฐานก่อนเก็บร่าง', 'Review discounts and evidence before saving a draft.') });
+    if (normalized === 'admin' && section?.id === 'orders') links.push({ to: '/review/orders', label: text('ตรวจออเดอร์และหลักฐานส่งข้อมูล', 'Review orders and send evidence'), icon: 'fact_check', description: text('เทียบสองแหล่งและอ่านประเด็นที่ต้องตรวจ', 'Compare sources and inspect findings.') });
+    return { ...group, links };
   });
 }
 

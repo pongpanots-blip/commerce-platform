@@ -7,12 +7,15 @@ import { CompetitorMatchRejection, CompetitorMatchReview, CompetitorPrice } from
 import { CompetitorPricesController } from './competitor-prices.controller';
 import { CompetitorPricesService } from './competitor-prices.service';
 import { CompetitorReviewService } from './competitor-review.service';
+import { PackPlanningController } from '../pack-price-planning/pack-planning.controller';
+import { PackInputsService } from '../pack-price-planning/pack-inputs.service';
+import { PackDraftsService } from '../pack-price-planning/pack-drafts.service';
 
 /** Competitor price comparison (MER) + the josh catalog copy it compares against. Moved from josh. */
 @Module({
   imports: [TypeOrmModule.forFeature([CompetitorPrice, CompetitorMatchRejection, CompetitorMatchReview, JoshCatalogProduct]), ScrapingModule, JoshModule],
-  controllers: [CompetitorPricesController],
-  providers: [CompetitorPricesService, CompetitorReviewService],
+  controllers: [CompetitorPricesController, PackPlanningController],
+  providers: [CompetitorPricesService, CompetitorReviewService, PackInputsService, PackDraftsService],
   exports: [CompetitorPricesService],
 })
 export class CompetitorPricesModule {}

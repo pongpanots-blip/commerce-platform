@@ -8,7 +8,7 @@ describe('canonical task indexes', () => {
     const original = navFor(role).filter(group => group.group).flatMap(group => group.links.map(link => link.to));
     const indexes = taskSectionsFor(role);
     const destinations = indexes.flatMap(section => section.links.map(link => link.to));
-    expect(destinations.sort()).toEqual([...original, ...(role === 'admin' ? ['/planning/promotions', '/review/orders'] : [])].sort());
+    expect(destinations.sort()).toEqual([...original, ...(['admin', 'marketing', 'business_analyst'].includes(role) ? ['/planning/pack-prices'] : []), ...(role === 'admin' ? ['/planning/promotions', '/review/orders'] : [])].sort());
     expect(new Set(destinations).size).toBe(destinations.length);
     const sidebar = taskSidebarFor(role).flatMap(group => group.links);
     expect(new Set(sidebar.map(link => link.to)).size).toBe(sidebar.length);
@@ -42,5 +42,11 @@ describe('canonical task indexes', () => {
     expect(isProtectedWelcome('/j/marketing/welcome-lead-email')).toBe(true);
     expect(isProtectedWelcome('/j/marketing/welcome-lead-email/')).toBe(true);
     expect(isProtectedWelcome('/j/marketing/notify-templates')).toBe(false);
+  });
+  it.each(roles)('%s inherits only existing competitor permission for pack planning deep links', role => {
+    const allowed = ['admin', 'marketing', 'business_analyst'].includes(role);
+    expect(isRouteAllowed(role, '/planning/pack-prices/new/review')).toBe(allowed);
+    expect(taskFeatureNavFor(role).flatMap(g => g.links).filter(l => l.to === '/planning/pack-prices')).toHaveLength(allowed ? 1 : 0);
+    expect(resolvePostLoginPath(role, '/planning/pack-prices/new/observations')).toBe(allowed ? '/planning/pack-prices/new/observations' : '/home');
   });
 });

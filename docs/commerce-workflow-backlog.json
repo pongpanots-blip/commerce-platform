@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-09T17:04:22.924239+00:00",
+  "updatedAt": "2026-10-09T18:14:21.471667+00:00",
   "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
   "designGuidance": {
     "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
@@ -67,12 +67,12 @@
     {
       "priority": 3,
       "task": "Pack-and-price planning",
-      "status": "Queued; supersedes all physical repack scope",
+      "status": "Bounded guided comparison and private versioned draft/recovery implemented for existing competitor-authorized admin/marketing/BA readers; admin/marketing can save, BA remains GET-only and MER remains excluded. Native deterministic business/HTTP/PostgreSQL and built-app browser validation receipts are linked in the contracts. No physical repack or operational writes.",
       "dependencies": [
-        "Own canonical SKU and selected competitor offer IDs",
-        "Existing comparator permission decision",
-        "Versioned scenario persistence",
-        "Authoritative effective product cost if available"
+        "Existing read-only active catalog copy and recorded verified competitor pair evidence",
+        "MER permission remains unresolved; no grant",
+        "Existing private versioned draft/request tables; no new migration",
+        "Authoritative internal cost remains unavailable; actual margin/profit null"
       ],
       "acceptance": [
         "Separate planning page using reviewed design system; no stock-transformation/lot/reversal execution.",
@@ -84,6 +84,13 @@
         "Packaging/labor/waste assumptions are explicitly entered; competitor prices never become costs.",
         "Missing required cost/basis gives null margin plus a reason; hypothetical assumptions are labeled.",
         "Versioned drafts only; never apply canonical price or stock."
+      ],
+      "implementedContracts": "docs/commerce-pack-price-planning-contracts.json",
+      "remaining": [
+        "MER ACL decision",
+        "Authoritative internal cost/UOM/effective-date source",
+        "FX/tax/delivery scope and variable pack contracts where needed",
+        "Production readiness outside this slice"
       ]
     },
     {

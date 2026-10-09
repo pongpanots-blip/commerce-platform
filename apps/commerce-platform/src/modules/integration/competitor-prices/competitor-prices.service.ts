@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron } from '@nestjs/schedule';
 import { createHash } from 'node:crypto';
@@ -209,6 +209,12 @@ export function describeOurOffer(product: InventoryShape) {
 }
 
 const freshForHours = (row: Pair) => row.scrapingSource ? Math.max(24, row.scrapingSource.config.intervalHours + 24) : 24;
+const planningValidUntil = (row: Pair) => {
+  const observed = row.observedAt?.getTime(), hours = freshForHours(row);
+  if (observed == null || !Number.isFinite(observed) || !Number.isFinite(hours)) return null;
+  const value = new Date(observed + hours * 3600000);
+  return Number.isFinite(value.getTime()) ? value.toISOString() : null;
+};
 /** `no_data` = paired but not comparable yet (waiting for confirmation / price); `unmatched` = no competitor pair at all. */
 export type OverviewPosition = 'we_cheaper' | 'we_pricier' | 'same' | 'no_data' | 'unmatched';
 /** `matched` = every SKU that has at least one pair (any position except `unmatched`). */
@@ -224,6 +230,10 @@ export function productView(product: InventoryShape) {
     storage: product.storage_temperature, packSize: product.pack_size,
     sellingUnit: product.selling_unit, sellingUnitPriceIncVat: Number(product.selling_unit_price),
     updatedAt: product.updated_at, syncedAt: product.synced_at, removed: !!product.removed_at,
+    // Additive planning evidence; the original fields and price semantics stay unchanged.
+    weightPerUnit: product.weight_per_unit, unitsPerBox: product.units_per_box,
+    packagingType: product.packaging_type, vatType: product.vat_type,
+    originalPriceIncVat: product.selling_unit_price == null ? null : String(product.selling_unit_price),
   };
 }
 
@@ -243,8 +253,14 @@ export class CompetitorPricesService {
     return (await this.products.findBy({ status: 'active', removedAt: IsNull() })).map(toInventoryShape);
   }
 
-  async product(sku: string) {
+  async product(sku: string, readOnlyCopy = false) {
     const code = sku.trim();
+    if (readOnlyCopy) {
+      const copies = await this.products.find({ where: { sku: code, status: 'active', removedAt: IsNull() }, take: 2 });
+      if (!copies.length) throw new NotFoundException('SKU not found in the active catalog copy');
+      if (copies.length !== 1) throw new ConflictException('SKU identity is ambiguous');
+      return toInventoryShape(copies[0]);
+    }
     const copy = await this.products.findOneBy({ sku: code, removedAt: IsNull() });
     if (copy) return toInventoryShape(copy);
     // Only where a josh replica is configured (dev); in prod the copy is kept current by catalog.snapshot events.
@@ -260,7 +276,7 @@ export class CompetitorPricesService {
 
   catalogItem(id: string) { return this.scraping.item(id); }
 
-  async catalog(sku: string) { return productView(await this.product(sku)); }
+  async catalog(sku: string, readOnlyCopy = false) { return productView(await this.product(sku, readOnlyCopy)); }
 
   /**
    * Top 3 active Josh SKUs for a collected competitor item: similar name (TH or EN), then matching weight.
@@ -380,6 +396,19 @@ export class CompetitorPricesService {
       vatIncluded: row.vatIncluded, collectionAllowed: row.collectionAllowed, autoRefresh: row.autoRefresh,
       canRefresh: refreshReason == null, refreshReason, observedAt: row.observedAt,
       captureMethod: row.captureMethod, lastError: row.lastError,
+      // Original decimal values and dimensions, before legacy floating-point display normalization.
+      planningEvidence: {
+        originalPriceIncVat: row.priceIncVat == null ? null : String(row.priceIncVat),
+        unit: row.competitorUnit ?? 'kg',
+        min: row.competitorQtyMin == null ? (row.competitorUnit ?? 'kg') === 'kg' ? String(row.competitorWeightKg) : null : String(row.competitorQtyMin),
+        max: row.competitorQtyMax == null ? row.competitorQtyMin == null ? (row.competitorUnit ?? 'kg') === 'kg' ? String(row.competitorWeightKg) : null : String(row.competitorQtyMin) : String(row.competitorQtyMax),
+        count: row.competitorQtyMin == null ? 1 : row.competitorPackCount,
+        // The existing manual capture UI/contract explicitly records baht inclusive of VAT.
+        currency: row.captureMethod === 'manual' ? 'THB' : row.captureMethod === 'automatic' ? row.scrapingSource?.config.currency ?? null : null,
+        taxIncluded: row.vatIncluded && (row.captureMethod !== 'automatic' || !!row.scrapingSource?.config.vatIncluded),
+        sourceCurrent: row.captureMethod !== 'automatic' || !!row.scrapingSource && row.capturedSourceVersion === scrapingVersion(row.scrapingSource.config),
+        validUntil: planningValidUntil(row),
+      },
     };
   }
 

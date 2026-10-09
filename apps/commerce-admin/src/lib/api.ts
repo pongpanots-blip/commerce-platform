@@ -444,9 +444,15 @@ export interface McpConnection {
   firstSeenAt: string; liveSessions: number; canWrite: boolean; lastUsedAt: string | null; toolCalls: number;
 }
 export interface McpActivity { id: string; at: string; isWrite: boolean; tool: string; args: Record<string, unknown> | null; staffEmail: string; clientName: string }
+/** One change an AI made (or tried to make) through MCP, and who asked for it. */
+export interface McpChange {
+  id: string; at: string; tool: string; summary: string | null; entityType: string; entityId: string | null; adminUrl: string | null;
+  changes: { field: string; before: unknown; after: unknown }[]; error: string | null; staffUserId: string; staffEmail: string; clientName: string;
+}
 export const mcpApi = {
   connections: () => api.get<{ enabled: boolean; mcpUrl: string | null; role: string; connections: McpConnection[] }>('/mcp-connections'),
   activity: (limit = 50) => api.get<McpActivity[]>(`/mcp-connections/activity?limit=${limit}`),
+  changes: (limit = 100) => api.get<McpChange[]>(`/mcp-connections/changes?limit=${limit}`),
   revoke: (c: McpConnection) => api.post<{ revoked: number }>(`/mcp-connections/${encodeURIComponent(c.clientId)}/revoke`, { staffUserId: c.staffUserId }),
 };
 

@@ -1,0 +1,20 @@
+2026-10-09T10:13:09.7078228Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --filter=blob:none --depth=1 origin +873a9a443272c21242b6f364ffa2f9b478df90cc:refs/remotes/origin/release/admin-task-navigation-20261009
+2026-10-09T10:13:10.4447035Z  * [new ref]         873a9a443272c21242b6f364ffa2f9b478df90cc -> origin/release/admin-task-navigation-20261009
+2026-10-09T10:13:11.1364750Z 873a9a443272c21242b6f364ffa2f9b478df90cc
+2026-10-09T10:13:11.3444381Z verified current platform image: tag=020066e id=sha256:41d39259cb652d76a996a9503db1a93c399acf3732c98674d80b7e13e9856f33
+2026-10-09T10:13:11.4843518Z verified current admin image: tag=020066e id=sha256:8f0d71694d146a4a9b289ed0379c4c9b3c1d53d7f19941d3ded231d61bb7d56e
+2026-10-09T10:13:11.6129003Z verified current portal image: tag=020066e id=sha256:87841b61d6651d8bf1adc84bf034ad4f8492ac7d85c618bae7ca210800924fd6
+2026-10-09T10:13:11.6381935Z health check OK (attempt 1/90): platform admin portal
+2026-10-09T10:13:11.6384382Z verified production proxy target and locally available healthy rollback images; no state changed
+2026-10-09T10:13:11.6751693Z   TAG: 873a9a443272c21242b6f364ffa2f9b478df90cc
+2026-10-09T10:13:11.8211698Z  Image ***/commerce-admin:873a9a443272c21242b6f364ffa2f9b478df90cc Pulling 
+2026-10-09T10:13:12.2463837Z  Image ***/commerce-admin:873a9a443272c21242b6f364ffa2f9b478df90cc Pulled 
+2026-10-09T10:13:12.3480329Z  Container docker-platform-1 Running 
+2026-10-09T10:13:12.3481551Z  Container docker-redis-1 Running 
+2026-10-09T10:13:12.8437461Z  Container docker-admin-1 Recreated 
+2026-10-09T10:13:13.1863344Z  Container docker-admin-1 Started 
+2026-10-09T10:13:13.2992950Z  Container docker-nginx-1 Running 
+2026-10-09T10:13:13.2995416Z  Container docker-certbot-1 Running 
+2026-10-09T10:13:13.3302783Z health check OK (attempt 1/90): platform admin portal
+2026-10-09T10:13:13.3338180Z recording previous ADMIN_TAG=020066e (new=873a9a443272c21242b6f364ffa2f9b478df90cc)
+2026-10-09T10:13:13.3491176Z cleanup disabled: preserving all images, stopped containers and build caches

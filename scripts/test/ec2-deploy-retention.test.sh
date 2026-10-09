@@ -386,6 +386,8 @@ const workflow = require('yaml').parse(fs.readFileSync(process.argv[2], 'utf8'))
 const input = workflow.on.workflow_dispatch.inputs.skip_cleanup;
 assert.equal(input.type, 'boolean');
 assert.equal(input.default, false);
+assert.equal(workflow.on.workflow_dispatch.inputs.expected_admin_tag.type, 'string');
+assert.equal(workflow.jobs.deploy.steps.find(step => step.name === 'Verify existing target and rollback images').env.EXPECTED_ADMIN_TAG, '${{ inputs.expected_admin_tag }}');
 const step = workflow.jobs.deploy.steps.find(step => step.name === 'Pull + restart on this EC2');
 assert.equal(step.env.SKIP_CLEANUP, '${{ inputs.skip_cleanup == true }}');
 assert.equal(step.run.split('${{ secrets.EC2_DEPLOY_DIR }}').length, 2);
@@ -408,6 +410,7 @@ assert_eq "F6 workflow skip input: all three services health checked" "3" "$(gre
 preflight_run() {
   PREFLIGHT_RC=0
   env -i PATH="$STUB_BIN:$PATH" STUB_STATE="$STUB_STATE" ECR_REGISTRY=reg \
+    EXPECTED_ADMIN_TAG="${PREFLIGHT_EXPECTED_ADMIN_TAG:-}" \
     COMMERCE_HEALTH_ATTEMPTS=1 COMMERCE_HEALTH_SLEEP_SEC=0 \
     bash "$ROOT/docker/deploy-preflight.sh" "$FLOW_DIR/docker" > "$FLOW_ROOT/preflight-output" 2>&1 || PREFLIGHT_RC=$?
 }
@@ -420,6 +423,14 @@ assert_eq "F7 preflight: healthy current stack accepted" "0" "$PREFLIGHT_RC"
 assert_eq "F7 preflight: all three current image identities recorded" "3" "$(grep -c '^verified current ' "$FLOW_ROOT/preflight-output" || true)"
 assert_eq "F7 preflight: only read-only Docker commands" "0" "$(grep -vcE '^docker (compose .* ps|inspect|image inspect)|^curl ' "$STUB_STATE/log" || true)"
 assert_eq "F7 preflight: no tag ledger changed" "no" "$([[ -f "$FLOW_DIR/docker/.image-tags-prev" ]] && echo yes || echo no)"
+PREFLIGHT_EXPECTED_ADMIN_TAG=6817a67
+preflight_run
+assert_eq "F7 preflight: expected current admin tag accepted" "0" "$PREFLIGHT_RC"
+PREFLIGHT_EXPECTED_ADMIN_TAG=another-release
+preflight_run
+assert_eq "F7 preflight: another admin release stops before writes" "1" "$PREFLIGHT_RC"
+assert_eq "F7 preflight: concurrent release failure explains changed tag" "1" "$(grep -c 'admin tag changed since release preparation' "$FLOW_ROOT/preflight-output" || true)"
+PREFLIGHT_EXPECTED_ADMIN_TAG=''
 printf 'PLATFORM_TAG=different\n' >> "$FLOW_DIR/docker/.env"
 preflight_run
 assert_eq "F7 preflight: mismatched backend tag stops before deployment" "1" "$PREFLIGHT_RC"

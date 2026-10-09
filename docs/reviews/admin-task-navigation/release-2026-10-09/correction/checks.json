@@ -1,0 +1,65 @@
+{
+  "recordedAt": "2026-10-09T10:23:20.096422+00:00",
+  "parentReleaseCommit": "873a9a443272c21242b6f364ffa2f9b478df90cc",
+  "preservedActualPreviousProductionCommit": "020066e2c9030becf60cdd77d2fb12f94a68a5b1",
+  "scope": "Only2admin files imported from PR111. Backend/portal source/image unchanged in corrective release.3audit UI state lines improve retry/loading/empty. Expected-admin-tag guard stops an intervening release before host writes.",
+  "sourceHashes": {
+    "apps/commerce-admin/src/app/pages/AiConnectors.tsx": "ca2ba730ea3ca23119a2be650d447712e14a84be91e9b6f43afee22a92229aaf",
+    "apps/commerce-admin/src/lib/api.ts": "829bc26a2d522aad008f7cbdddd5cc16799c1404d615e425f01464ca5e0e285c",
+    ".github/workflows/deploy-ecr.yml": "31ef416b61de18605848c40c3151f4a20297bae6bd8842390b84937f5244c82b",
+    "docker/deploy-preflight.sh": "b4e3b10d470098d90b065a52f2efce655cb208172dc8779cece315521e0b42e3",
+    "scripts/test/ec2-deploy-retention.test.sh": "9e719420a811f783ed7bebe768dae3e3259eae375a31469302777dc60660e5ce",
+    "apps/commerce-admin/e2e/mcp-release-preservation.mjs": "76a42f51891ba7e4b87e4e70749632f6af66cc2dad7da177b383b91dfa9ce7e5"
+  },
+  "adminTests": 272,
+  "deploymentMockAssertions": 98,
+  "mcpFixtureScenarios": 4,
+  "actualScreenshots": 2,
+  "checks": [
+    {
+      "name": "admin-tests",
+      "exitCode": 0,
+      "log": "logs/admin-tests.log",
+      "sha256": "8234900de415a985697c8a5f3c3d56f4f824f6f64bbf5de0e95bb089c7cd8d9a"
+    },
+    {
+      "name": "admin-types",
+      "exitCode": 0,
+      "log": "logs/admin-types.log",
+      "sha256": "76162e465989f3f070a9de8db711fbf358e53b74d09ce1bbdb57c727e4c4a16d"
+    },
+    {
+      "name": "admin-build",
+      "exitCode": 0,
+      "log": "logs/admin-build.log",
+      "sha256": "8e6b4a2ac0631389019b988d1ede5524c90ce16f26135e6ea82307f913655165"
+    },
+    {
+      "name": "mcp-browser",
+      "exitCode": 0,
+      "log": "logs/mcp-browser.log",
+      "sha256": "c836f965c61def6b8d1eeae4ae7b49253ea02180749333538d6da7b0adc481d2"
+    },
+    {
+      "name": "expected-tag-and-cleanup",
+      "exitCode": 0,
+      "log": "logs/expected-tag-and-cleanup.log",
+      "sha256": "6c9978950cdc0134d71879af31340dce204a995e728ec0c58b8482f3e4642bb2"
+    }
+  ],
+  "independentReview": "No remaining source blocker.98isolated deployment assertions passed. PR111 preserved except3audit state lines; api.ts exact020066e.",
+  "limits": [
+    "Fixtures are not production persistence or backend account isolation proof",
+    "Guard requires skip_cleanup=true and detects changed deployed admin tag, not unreleased master advancement",
+    "No automatic rollback",
+    "Public GET verification previously returned403"
+  ],
+  "nextDispatch": {
+    "deploy_service": "admin",
+    "skip_cleanup": true,
+    "skip_deploy": false,
+    "expected_admin_tag": "873a9a443272c21242b6f364ffa2f9b478df90cc"
+  },
+  "workflowDispatched": false,
+  "productionHealthVerified": false
+}

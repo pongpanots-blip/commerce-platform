@@ -16,6 +16,9 @@ for svc in "${ALL_SERVICES[@]}"; do
   [[ -n "$id" && "$id" != *$'\n'* ]] || fail "expected one running $svc container"
   ref="$(docker inspect -f '{{.Config.Image}}' "$id")" || fail "cannot inspect $svc image reference"
   tag="$(commerce_deploy_read_kv .env "$(commerce_deploy_tag_var "$svc")")"
+  if [[ "$svc" == admin && -n "${EXPECTED_ADMIN_TAG:-}" && "$tag" != "${EXPECTED_ADMIN_TAG:-}" ]]; then
+    fail "admin tag changed since release preparation; expected ${EXPECTED_ADMIN_TAG}, found ${tag}"
+  fi
   [[ -n "$tag" && "$ref" == "${ECR_REGISTRY}/commerce-${svc}:${tag}" ]] || fail "$svc running image differs from configured tag or registry"
   image_id="$(docker inspect -f '{{.Image}}' "$id")" || fail "cannot inspect $svc image identity"
   [[ "$image_id" == sha256:* ]] || fail "$svc image identity is unavailable"

@@ -60,6 +60,10 @@ on:
         required: false
         type: boolean
         default: false
+      expected_admin_tag:
+        description: 'With skip_cleanup: stop before host writes if the current admin tag changed'
+        required: false
+        type: string
 
 concurrency:
   group: deploy-ecr
@@ -145,6 +149,7 @@ jobs:
         if: inputs.skip_cleanup == true
         env:
           DEPLOY_DIR: ${{ secrets.EC2_DEPLOY_DIR }}
+          EXPECTED_ADMIN_TAG: ${{ inputs.expected_admin_tag }}
         run: bash docker/deploy-preflight.sh "$DEPLOY_DIR/docker"
       # Keep the EC2's compose/nginx/scripts in step with the repo (certbot/ certs live only on the box).
       - name: Sync docker/ files to the deploy dir

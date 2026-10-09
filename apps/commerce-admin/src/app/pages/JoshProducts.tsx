@@ -176,7 +176,7 @@ export function JoshProducts() {
                       </TD>
                       <TD>{p.category_name_th ?? <Chip tone="warn">{__uiText("ไม่มีหมวด")}</Chip>}</TD>
                       <TD kind="money">
-                        {p.selling_unit_price ? fmt.baht(p.selling_unit_price) : <Chip tone="danger">{__uiText("ไม่มีราคา")}</Chip>}
+                        {p.selling_price ? fmt.baht(p.selling_price) : <Chip tone="danger">{__uiText("ไม่มีราคา")}</Chip>}
                       </TD>
                       <TD kind="num">
                         {p.order_taking_flag === 'Y' ? <Chip>{__uiText("สั่งจอง")}</Chip> : fmt.num(p.product_inventory_quantity)}

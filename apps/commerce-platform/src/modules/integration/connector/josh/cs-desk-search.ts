@@ -43,7 +43,7 @@ const CUSTOMER_ROW = ['id', 'name', 'erp_customer_code'] as const;
 const CUSTOMER_DETAIL = [...CUSTOMER_ROW, 'credit_limit', 'credit_used', 'credit_term_days'] as const;
 const CUSTOMER_USER = ['id', 'first_name', 'last_name', 'role', 'is_active'] as const;
 const CUSTOMER_BRANCH = ['id', 'name', 'is_default_delivery'] as const;
-const PRODUCT_ROW = ['product_inventory_id', 'product_inventory_sku', 'name_th', 'name_en', 'selling_unit_price', 'selling_unit'] as const;
+const PRODUCT_ROW = ['product_inventory_id', 'product_inventory_sku', 'name_th', 'name_en', 'selling_price', 'order_taking_unit', 'selling_unit'] as const;
 
 export function csCustomerSearchView(r: { items: Row[]; total: unknown }) {
   return { items: r.items.map((i) => pick(i, CUSTOMER_ROW)), total: r.total };

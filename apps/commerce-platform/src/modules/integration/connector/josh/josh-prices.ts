@@ -95,7 +95,7 @@ export class JoshPrices {
     const params: unknown[] = [branch.company_id, branchId];
     const products = await this.replica.query<{ id: string; sku: string; name: string; base: number }>(
       `SELECT p.product_inventory_id AS id, p.product_inventory_sku AS sku, COALESCE(th.product_name, p.product_inventory_sku) AS name,
-              COALESCE(p.selling_unit_price, 0)::float AS base
+              COALESCE(p.selling_price, 0)::float AS base
          FROM product_inventory p LEFT JOIN product_translation th ON th.product_inventory_id = p.product_inventory_id AND th.language_code = 'th'
         WHERE ${s ? `(p.product_inventory_sku ILIKE $3 ESCAPE '\\' OR th.product_name ILIKE $3 ESCAPE '\\')` : `(
               EXISTS (SELECT 1 FROM private_price x WHERE x.company_id = $1 AND x.product_inventory_id = p.product_inventory_id)

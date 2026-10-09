@@ -475,7 +475,7 @@ export class McpTools {
 
     server.registerTool('catalog_products', {
       title: 'Josh catalog lookup',
-      description: 'Our products (copy of the Josh catalog): josh product id, SKU, Thai/English name, first image, brand, unit and live selling price incl. VAT. Product sets take the SKUs.',
+      description: 'Our products (copy of the Josh catalog): josh product id, SKU, Thai/English name, first image, brand, order unit and the live selling price incl. VAT per order unit (the red price customers pay). Product sets take the SKUs.',
       inputSchema: {
         query: z.string().min(1).max(100).describe('SKU (exact or prefix) or product name'),
         limit: z.number().int().min(1).max(50).default(20),
@@ -488,8 +488,9 @@ export class McpTools {
         .where('p.removed_at IS NULL').andWhere(`p.translations::text ILIKE :q`, { q: `%${query.replace(/[%_]/g, '')}%` })
         .take(limit - bySku.length).getMany();
       const rows = [...bySku, ...byName.filter((p) => !bySku.some((s) => s.id === p.id))];
-      return json(rows.map((p) => ({ id: p.id, sku: p.sku, name: productName(p), imageUrl: p.imageUrl, brand: p.brandName, status: p.status, sellingUnit: p.sellingUnit,
-        sellingUnitPriceIncVat: p.sellingUnitPrice == null ? null : Number(p.sellingUnitPrice), packSize: p.packSize, updatedAt: p.joshUpdatedAt })));
+      return json(rows.map((p) => ({ id: p.id, sku: p.sku, name: productName(p), imageUrl: p.imageUrl, brand: p.brandName, status: p.status, orderUnit: p.orderTakingUnit ?? p.sellingUnit,
+        // The copy's `ordering_price` is josh's selling_price (wire name kept); `selling_unit_price` is no longer a price to quote.
+        sellingPriceIncVat: p.orderingPrice == null ? null : Number(p.orderingPrice), packSize: p.packSize, updatedAt: p.joshUpdatedAt })));
     });
   }
 

@@ -22,7 +22,7 @@ const branchRow = { id: 'b1', name: 'Main', type: 'restaurant', erp_branch_code:
 const userRow = { id: 'p1', first_name: 'Somchai', last_name: 'Customer', email: 'customer@example.test', mobile_phone: '0898765432', role: 'owner', is_active: true,
   onboarding_completed: true, last_app_login_at: null, created_at: '2026-01-01' };
 const productRow = { product_inventory_id: 'pi1', product_inventory_sku: '1001876', product_status: 'active', name_th: 'แซลมอน', name_en: 'Salmon', category_id: 'c1',
-  category_name_th: 'ปลา', category_path: 'fish', brand_code: 'B', brand_name: 'Brand', selling_unit_price: 250, ordering_price: 200, original_price: 180,
+  category_name_th: 'ปลา', category_path: 'fish', brand_code: 'B', brand_name: 'Brand', selling_price: 250, order_taking_unit: 'BX', original_price: 180,
   product_inventory_quantity: 7, low_stock_threshold: 1, moq: 1, selling_unit: 'kg', pack_size: '1kg', order_taking_flag: 'Y', sup_code: 'S1' };
 
 function setup() {
@@ -89,7 +89,7 @@ describe('cs desk search helpers', () => {
       branches: [{ id: 'b1', name: 'Main', is_default_delivery: true }],
     });
     expect(csProductSearchView({ items: [productRow], total: 1, page: 1, limit: 10 })).toEqual({
-      items: [{ product_inventory_id: 'pi1', product_inventory_sku: '1001876', name_th: 'แซลมอน', name_en: 'Salmon', selling_unit_price: 250, selling_unit: 'kg' }], total: 1, page: 1, limit: 10,
+      items: [{ product_inventory_id: 'pi1', product_inventory_sku: '1001876', name_th: 'แซลมอน', name_en: 'Salmon', selling_price: 250, order_taking_unit: 'BX', selling_unit: 'kg' }], total: 1, page: 1, limit: 10,
     });
   });
 });
@@ -125,7 +125,7 @@ describe('ShopReportsController as cs', () => {
   it('product search: what CsDesk sends works, forced active, capped at 10, projected', async () => {
     const { c, query } = setup();
     const r = await c.productList({ search: 'salmon', status: 'active', page: '1', limit: '10' }, cs);
-    expect(r).toEqual({ items: [{ product_inventory_id: 'pi1', product_inventory_sku: '1001876', name_th: 'แซลมอน', name_en: 'Salmon', selling_unit_price: 250, selling_unit: 'kg' }], total: 1, page: 1, limit: 10 });
+    expect(r).toEqual({ items: [{ product_inventory_id: 'pi1', product_inventory_sku: '1001876', name_th: 'แซลมอน', name_en: 'Salmon', selling_price: 250, order_taking_unit: 'BX', selling_unit: 'kg' }], total: 1, page: 1, limit: 10 });
     expect(query.mock.calls[0][1]).toEqual(['%salmon%', 'active', 10, 0]);
     await c.productList({ search: 'salmon' }, cs);
     expect(query.mock.calls[2][1]).toEqual(['%salmon%', 'active', 10, 0]);
@@ -207,7 +207,7 @@ describe('ShopReportsController, other roles unchanged on the three handlers', (
       const r = await c.productList({ status: 'inactive', limit: '200' }, as(role));
       expect(r).toBe(await list.mock.results[0].value);
       expect(list).toHaveBeenLastCalledWith({ status: 'inactive', limit: '200' }, 1, 200);
-      expect(r.items[0]).toHaveProperty('ordering_price');
+      expect(r.items[0]).toHaveProperty('original_price');
     }
   });
 

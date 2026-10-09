@@ -6,23 +6,26 @@ import { JoshCatalogProduct } from './josh-catalog-product.entity';
 import { JoshReplica } from './josh-replica';
 import { ScheduledCron } from '../../../../shared-kernel/infrastructure/scheduled-task';
 
+/** Same wire names as josh's catalog.snapshot: `selling_unit_price` = josh avg_price, `ordering_price` = josh selling_price. */
 const SELECT = `SELECT p.product_inventory_id AS id, p.product_inventory_sku AS sku, p.product_status AS status,
   p.brand_code, p.brand_name, p.country_code_source, p.storage_temperature, p.packaging_type, p.pack_size,
-  p.units_per_box, p.weight_per_unit, p.selling_unit, p.vat_type, p.selling_unit_price, p.updated_at,
+  p.units_per_box, p.weight_per_unit, p.selling_unit, p.vat_type, p.avg_price AS selling_unit_price, p.selling_price AS ordering_price,
+  p.order_taking_unit, p.updated_at,
   COALESCE((SELECT json_agg(json_build_object('language_code', t.language_code, 'product_name', t.product_name,
     'product_description', t.product_description, 'product_detail', t.product_detail) ORDER BY t.language_code)
     FROM product_translation t WHERE t.product_inventory_id = p.product_inventory_id), '[]'::json) AS translations
   FROM product_inventory p`;
 
 const COLUMNS = ['sku', 'status', 'brand_code', 'brand_name', 'country_code_source', 'storage_temperature', 'packaging_type',
-  'pack_size', 'units_per_box', 'weight_per_unit', 'selling_unit', 'vat_type', 'selling_unit_price', 'translations'];
+  'pack_size', 'units_per_box', 'weight_per_unit', 'selling_unit', 'vat_type', 'selling_unit_price', 'ordering_price', 'order_taking_unit', 'translations'];
 
 // Only rows that actually changed are rewritten (product fields bump josh's updated_at; translations are compared).
 const UPSERT = `INSERT INTO josh_catalog_products (id, ${COLUMNS.join(', ')}, josh_updated_at, removed_at, synced_at)
   SELECT r.id, ${COLUMNS.map((c) => `r.${c}`).join(', ')}, r.updated_at, NULL, now()
   FROM jsonb_to_recordset($1::jsonb) AS r(id uuid, sku varchar, status varchar, brand_code varchar, brand_name varchar,
     country_code_source varchar, storage_temperature varchar, packaging_type varchar, pack_size varchar, units_per_box varchar,
-    weight_per_unit varchar, selling_unit varchar, vat_type varchar, selling_unit_price numeric, translations jsonb, updated_at timestamptz)
+    weight_per_unit varchar, selling_unit varchar, vat_type varchar, selling_unit_price numeric, ordering_price numeric, order_taking_unit varchar,
+    translations jsonb, updated_at timestamptz)
   ON CONFLICT (id) DO UPDATE SET ${COLUMNS.map((c) => `${c} = EXCLUDED.${c}`).join(', ')},
     josh_updated_at = EXCLUDED.josh_updated_at, removed_at = NULL, synced_at = now()
   WHERE josh_catalog_products.josh_updated_at IS DISTINCT FROM EXCLUDED.josh_updated_at

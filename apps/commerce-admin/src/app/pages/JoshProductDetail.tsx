@@ -120,14 +120,6 @@ const EDIT_FIELDS: {
     get: (p) => p.storage_temperature,
   },
   {
-    key: "selling_unit_price",
-    get label() {
-      return __uiText("ราคาขาย (รวม VAT)");
-    },
-    get: (p) => p.selling_unit_price,
-    kind: "number",
-  },
-  {
     key: "original_price",
     get label() {
       return __uiText("ราคาตั้ง");
@@ -548,8 +540,7 @@ export function JoshProductDetail() {
             <DetailSection title={__uiText("ราคาและข้อมูลสินค้า")} icon="sell">
               <KeyValueGrid
                 items={[
-                  { label: __uiText("ราคาขาย"), value: fmt.baht(p.selling_unit_price) },
-                  { label: __uiText("ราคาสั่ง"), value: fmt.baht(p.ordering_price) },
+                  { label: __uiText("ราคาขาย"), value: `${fmt.baht(p.selling_price)}${p.order_taking_unit ? ` / ${p.order_taking_unit}` : ""}` },
                   { label: __uiText("ราคาตั้ง"), value: fmt.baht(p.original_price) },
                   { label: __uiText("สั่งขั้นต่ำ"), value: show(p.moq) },
                   { label: __uiText("รหัสซัพพลายเออร์"), value: show(p.sup_code), mono: true },

@@ -673,8 +673,9 @@ export const winbackApi = {
 export interface JoshProductRow {
   product_inventory_id: string; product_inventory_sku: string; product_status: string; name_th: string | null; name_en: string | null;
   category_id: string | null; category_name_th: string | null; category_path: string | null; brand_name: string | null;
-  selling_unit_price: number | null; ordering_price: number | null; original_price: number | null; product_inventory_quantity: number | null;
-  low_stock_threshold: number | null; moq: number | null; selling_unit: string | null; pack_size: string | null; order_taking_flag: string | null;
+  /** josh's selling_price: the red price per sell unit (incl. VAT). */
+  selling_price: number | null; original_price: number | null; product_inventory_quantity: number | null;
+  low_stock_threshold: number | null; moq: number | null; selling_unit: string | null; order_taking_unit: string | null; pack_size: string | null; order_taking_flag: string | null;
   sup_code: string | null; storage_temperature: string | null; country_code_source: string | null;
   erp_pending_source: string | null; erp_pending_at: string | null; updated_at: string; image_count: number; image_url: string | null;
 }
@@ -830,7 +831,7 @@ export const joshActionsApi = {
   setCouponActive: (id: string, isActive: boolean) => api.post<unknown>(`/josh/coupons/${id}/active`, { isActive }),
   approveProducts: (ids: string[]) => api.post<unknown>('/josh/products/approve', { ids }),
   rejectProducts: (ids: string[]) => api.post<unknown>('/josh/products/reject', { ids }),
-  /** josh field names (ProductService.update), e.g. product_name_th, selling_unit_price, category_id. */
+  /** josh field names (ProductService.update), e.g. product_name_th, category_id. */
   updateProduct: (id: string, fields: Record<string, unknown>) => api.post<unknown>(`/josh/products/${id}/update`, { fields }),
   createSupplier: (supplier: Record<string, string>) => api.post<unknown>('/josh/suppliers', { supplier }),
   updateSupplier: (id: string, supplier: Record<string, string>) => api.post<unknown>(`/josh/suppliers/${id}/update`, { supplier }),

@@ -13,7 +13,8 @@ export const PRODUCT_ISSUES = {
   pending_approval: 'p.erp_pending_at IS NOT NULL',
   no_image: `NOT EXISTS (SELECT 1 FROM product_media m WHERE m.product_inventory_id = p.product_inventory_id AND m.media_type::text = 'image')`,
   no_category: 'p.category_id IS NULL',
-  no_price: 'COALESCE(p.selling_unit_price, 0) <= 0',
+  // Same rule as josh's shop: a SKU without a positive selling_price (the red price per sell unit) is hidden.
+  no_price: 'COALESCE(p.selling_price, 0) <= 0',
   out_of_stock: `COALESCE(p.product_inventory_quantity, 0) <= 0 AND COALESCE(p.order_taking_flag, 'N') <> 'Y'`,
   low_stock: `p.product_inventory_quantity > 0 AND p.product_inventory_quantity <= COALESCE(p.low_stock_threshold, 10) AND COALESCE(p.order_taking_flag, 'N') <> 'Y'`,
 } as const;
@@ -23,7 +24,8 @@ export interface ProductFilters { search?: string; status?: string; issue?: stri
 
 /** ERP field in an approval-pending payload → the live value it would replace. */
 const PENDING_FIELDS: Record<string, string> = {
-  SELLING_UNIT_PRICE: 'selling_unit_price', ORDERING_PRICE: 'ordering_price', PRICE: 'original_price', MOQ: 'moq',
+  // josh prices off ERP PRICE (ORDERING_PRICE on older payloads) as selling_price; SELLING_UNIT_PRICE is no longer stored.
+  ORDERING_PRICE: 'selling_price', PRICE: 'selling_price', MOQ: 'moq',
   PRODUCT_NAME_T: 'name_th', PRODUCT_NAME_E: 'name_en', SELLING_UNIT: 'selling_unit', PACK_SIZE: 'pack_size',
   BRAND_NAME: 'brand_name', ORDER_TAKING: 'order_taking_flag', STATUS: 'product_status',
 };
@@ -35,8 +37,8 @@ const DETAIL_COLUMNS = `p.ingredients, p.allergens, p.expiration_info, p.usage_d
 
 const COLUMNS = `p.product_inventory_id, p.product_inventory_sku, p.product_status, th.product_name AS name_th, en.product_name AS name_en,
   p.category_id, c.category_name_th, c.category_path, p.brand_code, p.brand_name,
-  p.selling_unit_price::float AS selling_unit_price, p.ordering_price::float AS ordering_price, p.original_price::float AS original_price,
-  p.product_inventory_quantity, p.low_stock_threshold, p.moq, p.selling_unit, p.pack_size, p.order_taking_flag, p.sup_code,
+  p.selling_price::float AS selling_price, p.original_price::float AS original_price,
+  p.product_inventory_quantity, p.low_stock_threshold, p.moq, p.selling_unit, p.order_taking_unit, p.pack_size, p.order_taking_flag, p.sup_code,
   p.storage_temperature, p.country_code_source, p.erp_pending_source, p.erp_pending_at, p.updated_at,
   (SELECT count(*) FROM product_media m WHERE m.product_inventory_id = p.product_inventory_id AND m.media_type::text = 'image')::int AS image_count,
   (SELECT m.source FROM product_media m WHERE m.product_inventory_id = p.product_inventory_id AND m.media_type::text = 'image' ORDER BY m.sort_order LIMIT 1) AS image_url`;
@@ -92,12 +94,11 @@ function copyFrom() {
   const pendingSource = pending.length
     ? `CASE WHEN c.erp_pending_at IS NOT NULL THEN c.erp_pending_source WHEN GREATEST(${pending.join(', ')}) IS NOT NULL THEN 'commerce' END`
     : 'c.erp_pending_source';
-  const price = (col: string) => (prices ? `COALESCE(pr.${col}, c.${col})` : `c.${col}`);
   return `(SELECT c.id AS product_inventory_id, c.sku AS product_inventory_sku, c.status AS product_status, ${tr('th')} AS name_th, ${tr('en')} AS name_en,
       ${trDesc('th')} AS description_th, ${trDesc('en')} AS description_en,
       c.category_id, c.category_name_th, c.category_path, c.brand_code, c.brand_name,
-      ${price('selling_unit_price')}::float AS selling_unit_price, ${price('ordering_price')}::float AS ordering_price, c.original_price::float AS original_price,
-      c.product_inventory_quantity, c.low_stock_threshold, ${prices ? 'COALESCE(pr.moq, c.moq)' : 'c.moq'} AS moq, c.selling_unit, c.pack_size,
+      c.ordering_price::float AS selling_price, c.original_price::float AS original_price,
+      c.product_inventory_quantity, c.low_stock_threshold, ${prices ? 'COALESCE(pr.moq, c.moq)' : 'c.moq'} AS moq, c.selling_unit, c.order_taking_unit, c.pack_size,
       c.order_taking_flag, c.sup_code, c.storage_temperature, c.country_code_source, ${pendingSource} AS erp_pending_source, ${pendingAt} AS erp_pending_at,
       c.josh_updated_at AS updated_at, ${images ? 'COALESCE(jsonb_array_length(pi.images), c.image_count)' : 'c.image_count'} AS image_count,
       ${images ? `COALESCE(pi.images->>0, c.image_url)` : 'c.image_url'} AS image_url, c.vat_type
@@ -108,8 +109,8 @@ function copyFrom() {
     WHERE c.removed_at IS NULL) p`;
 }
 const COPY_COLUMNS = `p.product_inventory_id, p.product_inventory_sku, p.product_status, p.name_th, p.name_en, p.category_id, p.category_name_th, p.category_path,
-  p.brand_code, p.brand_name, p.selling_unit_price, p.ordering_price, p.original_price, p.product_inventory_quantity, p.low_stock_threshold, p.moq,
-  p.selling_unit, p.pack_size, p.order_taking_flag, p.sup_code, p.storage_temperature, p.country_code_source, p.erp_pending_source, p.erp_pending_at,
+  p.brand_code, p.brand_name, p.selling_price, p.original_price, p.product_inventory_quantity, p.low_stock_threshold, p.moq,
+  p.selling_unit, p.order_taking_unit, p.pack_size, p.order_taking_flag, p.sup_code, p.storage_temperature, p.country_code_source, p.erp_pending_source, p.erp_pending_at,
   p.updated_at, p.image_count, p.image_url`;
 /** The detail's content fields (DETAIL_COLUMNS) — commerce has them only where it owns content. */
 const CONTENT_KEYS = ['ingredients', 'allergens', 'expiration_info', 'usage_direction', 'best_paired_food', 'maximum_shelf_life', 'is_organic',
@@ -218,7 +219,7 @@ export class JoshProducts {
     const [content, gallery, pricePending, masterPending] = await Promise.all([
       ownsProductContent() ? one(`SELECT fields FROM product_contents WHERE product_inventory_sku = $1`) : undefined,
       ownsProductImages() ? one(`SELECT images FROM product_images WHERE product_inventory_sku = $1`) : undefined,
-      ownsPrices() ? one(`SELECT selling_unit_price::float AS selling_unit_price, ordering_price::float AS ordering_price, moq FROM product_price_pending WHERE product_inventory_sku = $1`) : undefined,
+      ownsPrices() ? one(`SELECT ordering_price::float AS selling_price, moq FROM product_price_pending WHERE product_inventory_sku = $1`) : undefined,
       ownsProductMaster() ? one(`SELECT patch FROM product_master_pending WHERE product_inventory_sku = $1`) : undefined,
     ]);
     const fields = (content?.fields ?? {}) as Record<string, unknown>;

@@ -220,7 +220,7 @@ function OrderOnBehalf() {
                   <div key={p.product_inventory_id} className="flex items-center gap-3 px-3 py-2 text-xs">
                     <span className="font-mono text-[11px] w-36 shrink-0">{p.product_inventory_sku}</span>
                     <span className="flex-1 min-w-0 truncate">{p.name_th ?? p.name_en}</span>
-                    <span className="text-on-surface-variant whitespace-nowrap">{fmt.baht(p.selling_unit_price)} / {p.selling_unit ?? '—'}</span>
+                    <span className="text-on-surface-variant whitespace-nowrap">{fmt.baht(p.selling_price)} / {p.order_taking_unit ?? p.selling_unit ?? '—'}</span>
                     <Button size="sm" icon="add" onClick={() => changeItems([...items.filter((i) => i.id !== p.product_inventory_id), { id: p.product_inventory_id, sku: p.product_inventory_sku, name: p.name_th ?? '', quantity: 1 }])}>{__uiText("เพิ่ม")}</Button>
                   </div>
                 ))}

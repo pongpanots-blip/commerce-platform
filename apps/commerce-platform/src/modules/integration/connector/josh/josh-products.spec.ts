@@ -29,13 +29,13 @@ describe('josh products (read-only catalog)', () => {
 
   it('shows each pending ERP field next to the live value', async () => {
     const replica = { query: jest.fn()
-      .mockResolvedValueOnce([{ product_inventory_id: 'p1', selling_unit_price: 250, name_th: 'แซลมอน',
-        erp_pending_payload: { SELLING_UNIT_PRICE: 275, PRODUCT_NAME_T: 'แซลมอน', SOMETHING_NEW: 1 } }])
+      .mockResolvedValueOnce([{ product_inventory_id: 'p1', selling_price: 250, name_th: 'แซลมอน',
+        erp_pending_payload: { PRICE: 275, PRODUCT_NAME_T: 'แซลมอน', SOMETHING_NEW: 1 } }])
       .mockResolvedValueOnce([]) };
     const d = await new JoshProducts(replica as never, {} as never).detail('1001876');
     expect(replica.query.mock.calls[0][0]).toContain('p.product_inventory_sku = $1');
     expect(d.pendingChanges).toEqual([
-      { field: 'SELLING_UNIT_PRICE', column: 'selling_unit_price', current: 250, pending: 275, changed: true },
+      { field: 'PRICE', column: 'selling_price', current: 250, pending: 275, changed: true },
       { field: 'PRODUCT_NAME_T', column: 'name_th', current: 'แซลมอน', pending: 'แซลมอน', changed: false },
       { field: 'SOMETHING_NEW', column: null, current: null, pending: 1, changed: null },
     ]);
@@ -77,7 +77,9 @@ describe('PRODUCTS_SOURCE=copies (stage 5, S5-4)', () => {
     const { db, products } = make([[{ total: 0 }], []]);
     await products.summary();
     const sql = (db.query.mock.calls[0] as unknown as [string])[0];
-    expect(sql).toContain('COALESCE(pr.selling_unit_price, c.selling_unit_price)');
+    expect(sql).toContain('COALESCE(pr.moq, c.moq)');
+    // The price shown is josh's own selling_price from the copy; commerce's ERP PRICE reaches it through product.price.snapshot.
+    expect(sql).toContain('c.ordering_price::float AS selling_price');
     expect(sql).toContain('COALESCE(c.erp_pending_at, GREATEST(pp.received_at, pm.received_at))');
     expect(sql).toContain('COALESCE(jsonb_array_length(pi.images), c.image_count)');
   });

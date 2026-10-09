@@ -154,9 +154,10 @@ async function copy(josh: DataSource, commerce: DataSource, plan: Plan, users: U
 /** Stage 4a: the price / MOQ part of josh's MER queue (erp_pending_payload) → product_price_pending (replaced). */
 async function importPendingPrices(josh: DataSource, commerce: DataSource) {
   const rows: Array<{ sku: string; sell: string | null; ord: string | null; moq: number | null; at: Date | null }> = await josh.query(
-    `SELECT product_inventory_sku AS sku, erp_pending_payload->>'selling_unit_price' AS sell, erp_pending_payload->>'ordering_price' AS ord,
+    // josh stages ERP PRICE as `price` (`ordering_price` on payloads staged before its rename); it no longer keeps the rate.
+    `SELECT product_inventory_sku AS sku, NULL AS sell, COALESCE(erp_pending_payload->>'price', erp_pending_payload->>'ordering_price') AS ord,
             (erp_pending_payload->>'moq')::int AS moq, erp_pending_at AS at
-       FROM product_inventory WHERE erp_pending_payload ?| array['selling_unit_price', 'ordering_price', 'moq']`);
+       FROM product_inventory WHERE erp_pending_payload ?| array['price', 'ordering_price', 'moq']`);
   await commerce.transaction(async (m) => {
     await m.query(`DELETE FROM product_price_pending`);
     for (const r of rows) {

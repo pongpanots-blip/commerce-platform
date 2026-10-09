@@ -1,4 +1,5 @@
-import { PortalAuthService } from './portal-auth.service';
+import { ForbiddenException } from '@nestjs/common';
+import { PortalAuthService, SELF_REGISTER_DISABLED_MESSAGE } from './portal-auth.service';
 
 function makeService(existing: unknown = null) {
   const users = {
@@ -17,7 +18,35 @@ function makeService(existing: unknown = null) {
 }
 
 describe('PortalAuthService', () => {
-  afterEach(() => { process.env.NODE_ENV = 'test'; delete process.env.PORTAL_JWT_SECRET; });
+  beforeEach(() => { process.env.PORTAL_SELF_REGISTER = 'true'; });
+  afterEach(() => { process.env.NODE_ENV = 'test'; delete process.env.PORTAL_JWT_SECRET; delete process.env.PORTAL_SELF_REGISTER; });
+
+  it.each([undefined, '', 'false', '0', 'yes'])('register is 403 and touches no row when PORTAL_SELF_REGISTER=%p', async (flag) => {
+    if (flag === undefined) delete process.env.PORTAL_SELF_REGISTER;
+    else process.env.PORTAL_SELF_REGISTER = flag;
+    const { service, users } = makeService({ id: 'u1', email: 'dev@example.com' });
+    const res = service.register('dev@example.com', 'secret123');
+    await expect(res).rejects.toBeInstanceOf(ForbiddenException);
+    await expect(res).rejects.toThrow(SELF_REGISTER_DISABLED_MESSAGE);
+    // no 409 for a known email either: the flag is checked before the lookup
+    expect(users.findOne).not.toHaveBeenCalled();
+    expect(users.save).not.toHaveBeenCalled();
+  });
+
+  it.each(['true', '1', ' TRUE '])('register is open when PORTAL_SELF_REGISTER=%p', async (flag) => {
+    process.env.PORTAL_SELF_REGISTER = flag;
+    const { service, users } = makeService();
+    await expect(service.register('dev@example.com', 'secret123')).resolves.toEqual({ accountId: 'u1', email: 'dev@example.com' });
+    expect(users.save).toHaveBeenCalledTimes(1);
+  });
+
+  it('login still works for an existing developer while self-registration is off', async () => {
+    delete process.env.PORTAL_SELF_REGISTER;
+    const bcrypt = await import('bcrypt');
+    const passwordHash = await bcrypt.hash('secret123', 10);
+    const { service } = makeService({ id: 'u1', email: 'dev@example.com', role: 'developer', passwordHash, status: 'active' });
+    await expect(service.login('dev@example.com', 'secret123')).resolves.toMatchObject({ accessToken: 'jwt-token', role: 'developer' });
+  });
 
   it('register hashes the password with bcrypt and stores role developer', async () => {
     const { service, users } = makeService();

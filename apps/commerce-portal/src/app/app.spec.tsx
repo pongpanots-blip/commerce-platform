@@ -74,6 +74,29 @@ describe('portal App sign-in gate', () => {
     expect([localStorage.getItem('portal_token'), localStorage.getItem('portal_refresh')]).toEqual([null, null]);
   });
 
+  it('/register shows the "contact us" copy when self-registration is off (403)', async () => {
+    const fallback = (fetch as unknown as ReturnType<typeof vi.fn>).getMockImplementation()!;
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => url.endsWith('/v1/portal/auth/register')
+      ? json(403, { statusCode: 403, message: 'Self-registration is disabled' })
+      : fallback(url, init)));
+    await render('/register');
+    const type = (input: HTMLInputElement, value: string) => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, value);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    await act(async () => {
+      type(container.querySelector('input[type="email"]')!, 'dev@example.com');
+      type(container.querySelector('input[type="password"]')!, 'secret123');
+    });
+    await act(async () => { container.querySelector('form')!.requestSubmit(); });
+    await settle();
+    // default locale is Thai: the catalogue copy, not ErrorText's generic "load failed"
+    expect(container.textContent).toContain('กรุณาติดต่อทีม Commerce Platform');
+    expect(container.textContent).not.toContain('โหลดข้อมูลไม่สำเร็จ');
+    expect(window.location.pathname).toBe('/register');
+    expect(localStorage.getItem('portal_token')).toBeNull();
+  });
+
   it('/login while signed in goes to the allowed deep link, or the landing page', async () => {
     localStorage.setItem('portal_token', FRESH);
     await render('/login?redirect=%2Fwebhooks');

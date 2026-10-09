@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { api, auth, getRefreshToken, getToken, keys, LOGOUT_TIMEOUT_MS, navigation, needsRestore, refreshSession, restoreSession } from './api';
+import { api, ApiError, auth, getRefreshToken, getToken, keys, LOGOUT_TIMEOUT_MS, navigation, needsRestore, refreshSession, restoreSession } from './api';
 
 /** Unsigned look-alike JWTs (test fixtures only — the client never verifies). */
 const b64 = (o: object) => btoa(JSON.stringify(o)).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
@@ -112,6 +112,17 @@ describe('portal auto sign-in', () => {
     await expect(restoreSession()).resolves.toBe(false);
     expect([getToken(), getRefreshToken()]).toEqual([null, null]);
     expect(auth.isAuthenticated()).toBe(false);
+  });
+});
+
+describe('portal register', () => {
+  it('a 403 (self-registration off) rejects with the status and does not try to sign in', async () => {
+    fetchMock.mockImplementationOnce(async () => json(403, { statusCode: 403, message: 'Self-registration is disabled' }));
+    const err = await auth.register('dev@example.com', 'secret123').catch((e) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect(err).toMatchObject({ status: 403, message: 'Self-registration is disabled' });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(getToken()).toBeNull();
   });
 });
 

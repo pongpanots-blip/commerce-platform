@@ -1,6 +1,7 @@
 // The sidebar as it was before the redesign (#80: 7 workspaces with overview pages, plus #83's sale pages), frozen so tests and
 // the PR's old → new mapping table can prove every old menu item still has a home. Not used by the app.
 import type { NavGroup, NavItem } from '@cp/ui';
+import { featureHome } from './features';
 import { NAV_ENTRIES, ROLE_ACCESS, SECTIONS, type SectionId } from './navigation';
 
 export const ORIGINAL_NAV: NavGroup[] = [
@@ -270,12 +271,12 @@ export function legacyNavFor(role: string): NavGroup[] {
 }
 
 /** Old menu item → new section (machine-readable; docs/admin-redesign/PR_BODY.md is generated from it). */
-export function legacyMapping(): { to: string; oldWorkspace: string; oldLabel: string; section: SectionId; sectionTitle: string; more: boolean; label: string; roles: string[] }[] {
+export function legacyMapping(): { to: string; canonicalTo: string; oldWorkspace: string; oldLabel: string; section: SectionId; sectionTitle: string; more: boolean; label: string; roles: string[] }[] {
   return LEGACY_ITEMS.map((old) => {
-    const entry = NAV_ENTRIES.find((e) => e.to === old.to);
+    const entry = NAV_ENTRIES.find((e) => e.to === featureHome(old.to));
     if (!entry) throw new Error(`no new home for ${old.to}`);
     return {
-      to: old.to, oldWorkspace: old.workspaceTitle, oldLabel: old.label,
+      to: old.to, canonicalTo: entry.to, oldWorkspace: old.workspaceTitle, oldLabel: old.label,
       section: entry.section, sectionTitle: SECTIONS.find((s) => s.id === entry.section)!.title, more: !!entry.more, label: entry.label,
       roles: ['admin', ...(ROLE_ACCESS[old.to] ?? [])],
     };

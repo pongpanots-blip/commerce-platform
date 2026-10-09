@@ -1,0 +1,16 @@
+{
+  "report": {
+    "path": "docs/reviews/admin-task-navigation/deliverables/Commerce-admin-navigation-and-action-flows-2026-10-09.md",
+    "sha256": "be9582ad0d3f5a4c03aedebc24b30ead1ee4832687cd2c4fe574b4f52e69dd64"
+  },
+  "evidence": {
+    "path": "docs/reviews/admin-task-navigation/deliverables/Commerce-admin-navigation-and-action-flows-evidence-2026-10-09.zip",
+    "bytes": 1257154,
+    "sha256": "53745c918311102093f35d49b586dd7d3ea879fa6002a3f80efe2a431c558949"
+  },
+  "patch": {
+    "path": "docs/reviews/admin-task-navigation/deliverables/current-implementation.patch",
+    "sha256": "c53df1a4cb599ed9885d1e976a1b2808914751f51379d5a373ed256ae21e4362"
+  },
+  "librarySavedFiles": 0
+}

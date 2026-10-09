@@ -2,8 +2,10 @@ import { SalesAssignment } from './pages/SalesAssignment';
 import { MyWinback } from './pages/MyWinback';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
+import { AppShell, CommandMenu, ErrorText, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
 import { navFor } from './navigation';
+import { FeatureActions } from './FeatureActions';
+import { TaskRoute } from './TaskRoute';
 import { Workspace } from './pages/Workspace';
 import { RoleHome } from './pages/RoleHome';
 import { AdminStats, api, logout, reportsApi, restoreSession, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
@@ -56,7 +58,7 @@ import { StaffPrices } from './pages/StaffPrices';
 import { MarketingWorkflows } from './pages/MarketingWorkflows';
 import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
 import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
-import { CsDesk } from './pages/CsDesk';
+import { CsDesk, SampleRequestsRedirect } from './pages/CsDesk';
 import { Livechat } from './pages/Livechat';
 import { GrowthWorkspace } from './pages/growth/Workspace';
 import { GrowthPlans } from './pages/growth/Plans';
@@ -91,7 +93,7 @@ function AdminTopBar({ role }: { role?: string }) {
       <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("ตอนนี้อยู่ที่")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "หน้าหลัก")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
       {role === 'admin' && <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>}
     </div>}
-    right={<><LanguageSelector /><CommandMenu />{role === 'admin' && <IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />}<IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
+    right={<><FeatureActions role={role} /><LanguageSelector /><CommandMenu />{role === 'admin' && <IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />}<IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
   />;
 }
 
@@ -115,10 +117,18 @@ export function App() {
   }, [auth]);
   // null = not checked yet; the API refuses everything else while true, so the app waits for the change
   const [mustChangePassword, setMustChangePassword] = useState<boolean | null>(null);
+  const [passwordCheckError, setPasswordCheckError] = useState<string | null>(null);
+  const [passwordCheckAttempt, setPasswordCheckAttempt] = useState(0);
   useEffect(() => {
-    if (!signedIn) return setMustChangePassword(null);
-    staffApi.me().then((me) => setMustChangePassword(!!me.mustChangePassword), () => setMustChangePassword(false));
-  }, [signedIn]);
+    setMustChangePassword(null);
+    setPasswordCheckError(null);
+    if (!signedIn) return;
+    let active = true;
+    staffApi.me().then((me) => { if (active) setMustChangePassword(previous => previous === true || !!me.mustChangePassword); }, (error) => {
+      if (active) setPasswordCheckError(error instanceof Error ? error.message : String(error));
+    });
+    return () => { active = false; };
+  }, [signedIn, passwordCheckAttempt]);
   useEffect(() => {
     const required = () => setMustChangePassword(true);
     window.addEventListener('cp-password-change-required', required);
@@ -149,7 +159,7 @@ export function App() {
     setAuth('out');
   }
 
-  if (mustChangePassword === null) return null;
+  if (mustChangePassword === null) return <div className="min-h-screen bg-background p-5">{passwordCheckError ? <ErrorText error={passwordCheckError} onRetry={() => setPasswordCheckAttempt(attempt => attempt + 1)} /> : <Loading variant="detail" />}</div>;
   if (mustChangePassword) return <BrowserRouter><ChangePassword forced onDone={() => setMustChangePassword(false)} onSignOut={signOut} /></BrowserRouter>;
 
   return (
@@ -158,6 +168,7 @@ export function App() {
       <AppShell
         sidebar={
           <Sidebar
+            showDestinationCounts={false}
             brand={{ title: __uiText('ระบบหลังบ้าน'), subtitle: 'สำหรับทีมงาน' }}
             env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? __uiText("Prod") : __uiText("Local dev")}</>}
             nav={nav}
@@ -173,7 +184,8 @@ export function App() {
             <Route path="/home" element={<RoleHome role={role} />} />
             {/* #80 workspace overview pages: old links open the replacing section */}
             <Route path="/workspaces/:workspaceId" element={<Workspace role={role} />} />
-            <Route path="/settings/staff" element={<StaffAccounts />} />
+            <Route path="/settings/staff" element={<TaskRoute role={role}><StaffAccounts /></TaskRoute>} />
+            <Route path="/settings/staff/new" element={<TaskRoute role={role}><StaffAccounts /></TaskRoute>} />
             <Route path="/settings/josh-staff" element={<JoshStaff />} />
             <Route path="/account/password" element={<ChangePassword />} />
             <Route path="/reports/orders" element={<JoshOrdersPage />} />
@@ -208,7 +220,12 @@ export function App() {
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
             <Route path="/marketing/workflows/:id/scheduled-runs" element={<WorkflowScheduledRuns />} />
             <Route path="/j/*" element={<JoshAdminApp />} />
-            <Route path="/cs" element={<CsDesk />} />
+            <Route path="/j/cs/sample-requests" element={<SampleRequestsRedirect role={role} />} />
+            <Route path="/cs" element={<CsDesk role={role} />} />
+            <Route path="/cs/orders/new" element={<CsDesk role={role} />} />
+            <Route path="/cs/samples" element={<CsDesk role={role} />} />
+            <Route path="/cs/samples/:id/:decision" element={<CsDesk role={role} />} />
+            <Route path="/cs/accounts/merge" element={<CsDesk role={role} />} />
             <Route path="/livechat" element={<Livechat />} />
             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
             <Route path="/marketing/research" element={<MarketingResearch />} />
@@ -224,17 +241,21 @@ export function App() {
             <Route path="/erp/inventory-warehouse" element={<InventoryPerWarehouse />} />
             <Route path="/erp/jagota-shadow" element={<JagotaShadow />} />
             <Route path="/erp/simulator" element={<ErpSimulator />} />
-            <Route path="/integrations" element={<Integrations />} />
+            <Route path="/integrations" element={<TaskRoute role={role}><Integrations /></TaskRoute>} />
+            <Route path="/integrations/new" element={<TaskRoute role={role}><Integrations /></TaskRoute>} />
             <Route path="/webhooks" element={<Webhooks />} />
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/sync-jobs" element={<SyncJobs />} />
-            <Route path="/customers" element={<Customers />} />
+            <Route path="/customers" element={<TaskRoute role={role}><Customers /></TaskRoute>} />
+            <Route path="/customers/new" element={<TaskRoute role={role}><Customers /></TaskRoute>} />
             <Route path="/customers/:id" element={<CustomerDetail />} />
-            <Route path="/products" element={<Products />} />
+            <Route path="/products" element={<TaskRoute role={role}><Products /></TaskRoute>} />
+            <Route path="/products/new" element={<TaskRoute role={role}><Products /></TaskRoute>} />
             <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="/stock-moves" element={<StockMoves />} />
+            <Route path="/stock-moves" element={<TaskRoute role={role}><StockMoves /></TaskRoute>} />
+            <Route path="/stock-moves/:task" element={<TaskRoute role={role}><StockMoves /></TaskRoute>} />
             <Route path="/product-prices" element={<ProductPrices />} />
-            <Route path="/product-master-queue" element={<ProductMasterQueue />} />
+            <Route path="/product-master-queue" element={<TaskRoute role={role}><ProductMasterQueue /></TaskRoute>} />
             <Route path="/order-periods" element={<SupplierOrderPeriods />} />
             <Route path="/inventory" element={<Navigate to="/stock-moves" replace />} />
             <Route path="/orders" element={<Orders />} />

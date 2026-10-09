@@ -1,0 +1,109 @@
+{
+  "recordedAt": "2026-10-09T08:12:38.805310+00:00",
+  "branch": "redesign/admin-task-navigation",
+  "base": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "heavyBuildAndBrowserJobsSerialized": true,
+  "testWorkers": 1,
+  "applicationVitest": {
+    "files": 16,
+    "tests": 267
+  },
+  "backendTests": {
+    "suites": 3,
+    "tests": 42
+  },
+  "applicationBrowserScenarios": 46,
+  "componentBrowserScenarios": 6,
+  "actualScreenshots": 12,
+  "browserAPIs": "intercepted local fixtures; no external persistence verified",
+  "results": [
+    {
+      "check": "admin-types",
+      "command": "npx tsc -p apps/commerce-admin/tsconfig.app.json --noEmit",
+      "exitCode": 0,
+      "log": "logs/admin-types.log",
+      "logSha256": "76162e465989f3f070a9de8db711fbf358e53b74d09ce1bbdb57c727e4c4a16d",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "portal-types",
+      "command": "npx tsc -p apps/commerce-portal/tsconfig.app.json --noEmit",
+      "exitCode": 0,
+      "log": "logs/portal-types.log",
+      "logSha256": "76162e465989f3f070a9de8db711fbf358e53b74d09ce1bbdb57c727e4c4a16d",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "admin-tests",
+      "command": "npx vitest run --config apps/commerce-admin/vite.config.mts --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "log": "logs/admin-tests.log",
+      "logSha256": "0ae6e6e80ff150d2c2f3fc915e9a492a3408a4129f3bab2f54945368d57d8954",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "backend-tests",
+      "command": "npx jest --config apps/commerce-platform/jest.config.cts --runInBand --runTestsByPath apps/commerce-platform/src/modules/commerce/inventory/application/inventory-ledger.service.spec.ts apps/commerce-platform/src/modules/integration/connector/josh/josh-admin-call.controller.spec.ts apps/commerce-platform/src/modules/core/auth/presentation/staff-role-access.spec.ts",
+      "exitCode": 0,
+      "log": "logs/backend-tests.log",
+      "logSha256": "7ce2617830454c407a15a66850535b410b60f4f27df5eee28616291d4a4633a7",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "admin-build",
+      "command": "NODE_OPTIONS=--max-old-space-size=4096 npx vite build --config apps/commerce-admin/vite.config.mts",
+      "exitCode": 0,
+      "log": "logs/admin-build.log",
+      "logSha256": "2dbcef56c06f3e8e51001e59e3a63cbbb8c59326e91289df1caee9272fe92591",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "portal-build",
+      "command": "NODE_OPTIONS=--max-old-space-size=4096 npx vite build --config apps/commerce-portal/vite.config.mts",
+      "exitCode": 0,
+      "log": "logs/portal-build.log",
+      "logSha256": "6583805c0385583d26efa0f3f292fb2fa2f696a18fcf33de4c3eac34e6b0b29c",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "app-browser",
+      "command": "ADMIN_URL=http://127.0.0.1:4408 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node apps/commerce-admin/e2e/task-navigation.mjs",
+      "exitCode": 0,
+      "log": "logs/app-browser.log",
+      "logSha256": "aa45177b259f8bf95d25553cb35e9c162825432da3e0d24871fae3553a6f4559",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "component-browser",
+      "command": "UI_FORM_BASE_URL=http://127.0.0.1:4407 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node apps/commerce-admin/e2e/task-form-components.mjs",
+      "exitCode": 0,
+      "log": "logs/component-browser.log",
+      "logSha256": "38ec813a980e11a8cb87b01522572cfd4b2775b5f106dca3849e93076d4db5bc",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "whitespace",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "log": "logs/whitespace.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "interpretation": "passed; see log and verification limits"
+    },
+    {
+      "check": "archive-runtime-boundary",
+      "command": "rg -n 'superseded-first-slice|admin-first-slice' apps libs tsconfig*.json",
+      "exitCode": 1,
+      "log": "logs/archive-runtime-boundary.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "interpretation": "rg exit 1 means no archive runtime references"
+    },
+    {
+      "check": "patch-replay-check",
+      "command": "git apply --check current-implementation.patch against affected HEAD files reconstructed in a temporary directory",
+      "exitCode": 0,
+      "log": "logs/patch-replay-check.log",
+      "logSha256": "6c9e0f22b7c08ccfe709a91ccc38024937ee5819c9fc8137c64e64d8e420b94b",
+      "interpretation": "passed; no staging, checkout reset or commit"
+    }
+  ]
+}

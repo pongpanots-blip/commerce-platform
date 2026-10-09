@@ -1,0 +1,3751 @@
+{
+  "base": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "canonicalFeatureHomes": {
+    "/josh/kyc": "/j/kyc",
+    "/josh/credit_terms": "/j/credit-terms",
+    "/josh/admin_access": "/j/admin-access",
+    "/josh/shipments": "/j/shipments",
+    "/josh/payments": "/j/payment-transactions",
+    "/josh/credit_notes": "/j/credit-notes",
+    "/josh/credit_backs": "/j/credit-backs",
+    "/josh/invoices": "/j/invoices",
+    "/josh/coupons": "/j/coupons",
+    "/josh/campaigns": "/j/promotions/campaigns",
+    "/josh/segments": "/j/segments",
+    "/josh/suppliers": "/j/suppliers",
+    "/j/cs/sample-requests": "/cs",
+    "/j/product/create": "/j/allproducts",
+    "/j/order/import": "/j/order"
+  },
+  "contextualActions": {
+    "/j/allproducts": [
+      {
+        "to": "/j/product/create",
+        "label": "เพิ่มสินค้า"
+      }
+    ],
+    "/j/order": [
+      {
+        "to": "/j/order/import",
+        "label": "นำเข้าออเดอร์"
+      }
+    ],
+    "/j/coupons": [
+      {
+        "to": "/josh/coupons",
+        "label": "เปิดหรือปิดคูปองจากข้อมูลสำรอง"
+      }
+    ],
+    "/j/suppliers": [
+      {
+        "to": "/josh/suppliers",
+        "label": "เพิ่มหรือแก้ซัพพลายเออร์จากข้อมูลสำรอง"
+      }
+    ],
+    "/j/credit-terms": [
+      {
+        "to": "/josh/credit_terms",
+        "label": "พิจารณาเครดิตจากข้อมูลสำรอง"
+      }
+    ],
+    "/j/admin-access": [
+      {
+        "to": "/josh/admin_access",
+        "label": "พิจารณาสิทธิ์จากข้อมูลสำรอง"
+      }
+    ],
+    "/j/kyc": [
+      {
+        "to": "/josh/kyc",
+        "label": "ดูข้อมูลสำรอง"
+      }
+    ],
+    "/j/shipments": [
+      {
+        "to": "/josh/shipments",
+        "label": "ดูข้อมูลสำรอง"
+      }
+    ],
+    "/j/payment-transactions": [
+      {
+        "to": "/josh/payments",
+        "label": "ดูข้อมูลสำรอง"
+      }
+    ],
+    "/j/credit-notes": [
+      {
+        "to": "/josh/credit_notes",
+        "label": "ดูข้อมูลสำรอง"
+      }
+    ],
+    "/j/credit-backs": [
+      {
+        "to": "/josh/credit_backs",
+        "label": "ดูข้อมูลสำรอง"
+      }
+    ],
+    "/j/invoices": [
+      {
+        "to": "/josh/invoices",
+        "label": "ดูข้อมูลสำรอง"
+      }
+    ],
+    "/j/promotions/campaigns": [
+      {
+        "to": "/josh/campaigns",
+        "label": "ดูข้อมูลสำรอง"
+      }
+    ],
+    "/j/segments": [
+      {
+        "to": "/josh/segments",
+        "label": "ดูข้อมูลสำรอง"
+      }
+    ]
+  },
+  "legacyMapping": [
+    {
+      "to": "/reports/sales",
+      "canonicalTo": "/reports/sales",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "รายงานยอดขาย",
+      "section": "reports",
+      "sectionTitle": "รายงานและข้อมูล",
+      "more": false,
+      "label": "รายงานยอดขาย",
+      "roles": [
+        "admin",
+        "sale",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/reports/products",
+      "canonicalTo": "/reports/products",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "รายงานสินค้า",
+      "section": "reports",
+      "sectionTitle": "รายงานและข้อมูล",
+      "more": false,
+      "label": "รายงานสินค้า",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/reports/orders",
+      "canonicalTo": "/reports/orders",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "รายงานออเดอร์",
+      "section": "reports",
+      "sectionTitle": "รายงานและข้อมูล",
+      "more": false,
+      "label": "รายงานออเดอร์",
+      "roles": [
+        "admin",
+        "sale",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/reports/customers",
+      "canonicalTo": "/reports/customers",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "รายงานลูกค้าและบริษัท",
+      "section": "reports",
+      "sectionTitle": "รายงานและข้อมูล",
+      "more": false,
+      "label": "รายงานลูกค้าและบริษัท",
+      "roles": [
+        "admin",
+        "sale",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/reports/prices",
+      "canonicalTo": "/reports/prices",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "รายงานราคาขาย",
+      "section": "reports",
+      "sectionTitle": "รายงานและข้อมูล",
+      "more": false,
+      "label": "รายงานราคาขาย",
+      "roles": [
+        "admin",
+        "sale",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/reports/price-shadow",
+      "canonicalTo": "/reports/price-shadow",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "ราคา: commerce คิดคู่กัน (ทดลอง)",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "เทียบราคาที่คำนวณใหม่",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/prices/staff",
+      "canonicalTo": "/prices/staff",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "ราคาลูกค้า / ราคาสัญญา (commerce)",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": true,
+      "label": "ราคาเฉพาะลูกค้าและราคาสัญญา",
+      "roles": [
+        "admin",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/reports/traffic",
+      "canonicalTo": "/reports/traffic",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "การเข้าชม",
+      "section": "reports",
+      "sectionTitle": "รายงานและข้อมูล",
+      "more": false,
+      "label": "การเข้าชมร้านค้า",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/reports/health",
+      "canonicalTo": "/reports/health",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "สุขภาพระบบ",
+      "section": "reports",
+      "sectionTitle": "รายงานและข้อมูล",
+      "more": false,
+      "label": "สุขภาพระบบ",
+      "roles": [
+        "admin",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/reports/order-targetgroup",
+      "canonicalTo": "/reports/order-targetgroup",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "กลุ่มลูกค้าเป้าหมาย",
+      "section": "reports",
+      "sectionTitle": "รายงานและข้อมูล",
+      "more": false,
+      "label": "กลุ่มลูกค้าเป้าหมาย",
+      "roles": [
+        "admin",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/reports/winback/opportunities",
+      "canonicalTo": "/reports/winback/opportunities",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "โอกาสของทีม",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "โอกาสของทีม",
+      "roles": [
+        "admin",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/reports/winback/my",
+      "canonicalTo": "/reports/winback/my",
+      "oldWorkspace": "รายงานและข้อมูล",
+      "oldLabel": "โอกาสและลีดของฉัน",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": true,
+      "label": "โอกาสและลีดของฉัน",
+      "roles": [
+        "admin",
+        "sale"
+      ]
+    },
+    {
+      "to": "/cs/sales-assignment",
+      "canonicalTo": "/cs/sales-assignment",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "มอบหมายพนักงานขาย",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "มอบหมายพนักงานขาย",
+      "roles": [
+        "admin",
+        "sales_manager"
+      ]
+    },
+    {
+      "to": "/reports/winback",
+      "canonicalTo": "/reports/winback",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "ติดตามลูกค้าเก่า",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "ติดตามลูกค้าเก่า",
+      "roles": [
+        "admin",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/josh/kyc",
+      "canonicalTo": "/j/kyc",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "ข้อมูลคำขอ KYC",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "ตรวจสอบตัวตนลูกค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/credit_terms",
+      "canonicalTo": "/j/credit-terms",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ขอเครดิต",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "ใบสมัครเครดิต",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/admin_access",
+      "canonicalTo": "/j/admin-access",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "คำขอเข้า admin",
+      "section": "settings",
+      "sectionTitle": "ตั้งค่าและทีมงาน",
+      "more": false,
+      "label": "คำขอใช้งานหลังร้าน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/shipments",
+      "canonicalTo": "/j/shipments",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ข้อมูลการจัดส่ง",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "การจัดส่งสินค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/payments",
+      "canonicalTo": "/j/payment-transactions",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ข้อมูลรายการชำระเงิน",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "รายการชำระเงิน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/credit_notes",
+      "canonicalTo": "/j/credit-notes",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ข้อมูลใบลดหนี้",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "ใบลดหนี้",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/credit_backs",
+      "canonicalTo": "/j/credit-backs",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ข้อมูลคืนเครดิต",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "คืนเครดิตให้ลูกค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/invoices",
+      "canonicalTo": "/j/invoices",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ใบแจ้งหนี้",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "ใบแจ้งหนี้ค้างชำระ",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/coupons",
+      "canonicalTo": "/j/coupons",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "ข้อมูลคูปอง",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "คูปองส่วนลด",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/campaigns",
+      "canonicalTo": "/j/promotions/campaigns",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "ข้อมูลแคมเปญ",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "แคมเปญโปรโมชัน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/segments",
+      "canonicalTo": "/j/segments",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "ข้อมูลกลุ่มลูกค้า",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "กลุ่มลูกค้าสำหรับแคมเปญ",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/suppliers",
+      "canonicalTo": "/j/suppliers",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "ข้อมูลซัพพลายเออร์",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "ซัพพลายเออร์",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh/internal_docs",
+      "canonicalTo": "/josh/internal_docs",
+      "oldWorkspace": "ตั้งค่าและทีมงาน",
+      "oldLabel": "เอกสารภายใน",
+      "section": "settings",
+      "sectionTitle": "ตั้งค่าและทีมงาน",
+      "more": false,
+      "label": "เอกสารภายใน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/josh-api-logs",
+      "canonicalTo": "/josh-api-logs",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "API log ของ josh",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "บันทึกการเรียกใช้ระบบร้านค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/marketing/analyst",
+      "canonicalTo": "/marketing/analyst",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "ผู้ช่วยวิเคราะห์การตลาด",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "ผู้ช่วยวิเคราะห์การตลาด",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/marketing/growth",
+      "canonicalTo": "/marketing/growth",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "วางแผนการเติบโต",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "วางแผนการเติบโต",
+      "roles": [
+        "admin",
+        "marketing",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/marketing/growth/plans",
+      "canonicalTo": "/marketing/growth/plans",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "แผนและปฏิทิน",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "แผนและปฏิทิน",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/marketing/research",
+      "canonicalTo": "/marketing/research",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "งานวิจัยตลาด",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "งานวิจัยตลาด",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/marketing/restaurants",
+      "canonicalTo": "/marketing/restaurants",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "ค้นหาตลาดร้านอาหาร",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "ค้นหาตลาดร้านอาหาร",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/marketing/workflows",
+      "canonicalTo": "/marketing/workflows",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "เวิร์กโฟลว์การตลาด",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "ข้อความอัตโนมัติ",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/coupons",
+      "canonicalTo": "/j/coupons",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "จัดการคูปอง",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "คูปองส่วนลด",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/promotion-product-sets",
+      "canonicalTo": "/j/promotion-product-sets",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Promotion product sets",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "ชุดสินค้าโปรโมชัน",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/j/promotions-mechanic",
+      "canonicalTo": "/j/promotions-mechanic",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Promotion mechanics",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "กติกาส่วนลด",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/j/promotion-pages",
+      "canonicalTo": "/j/promotion-pages",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Promotion pages",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "หน้าโปรโมชัน",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/promotions/campaigns",
+      "canonicalTo": "/j/promotions/campaigns",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "จัดการแคมเปญ",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "แคมเปญโปรโมชัน",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/segments",
+      "canonicalTo": "/j/segments",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "จัดการกลุ่มลูกค้า",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "กลุ่มลูกค้าสำหรับแคมเปญ",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/marketing/push-campaigns",
+      "canonicalTo": "/j/marketing/push-campaigns",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Push campaigns",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "ส่งแจ้งเตือนถึงลูกค้า",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/cs/notification-catalog",
+      "canonicalTo": "/j/cs/notification-catalog",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Notification catalog",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ประเภทการแจ้งเตือนทั้งหมด",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/cs/notification-log",
+      "canonicalTo": "/j/cs/notification-log",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Notification log",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ประวัติการแจ้งเตือน",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/cs/notification-stats",
+      "canonicalTo": "/j/cs/notification-stats",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Notification delivery stats",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "สถิติการส่งแจ้งเตือน",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/cs/product-notify-funnel",
+      "canonicalTo": "/j/cs/product-notify-funnel",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Product notify funnel",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ผลการแจ้งเตือนสินค้า",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/marketing/competitor-prices",
+      "canonicalTo": "/j/marketing/competitor-prices",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "เทียบราคาคู่แข่ง",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": false,
+      "label": "เทียบราคาคู่แข่ง",
+      "roles": [
+        "admin",
+        "marketing",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/j/marketing/scraping-sources",
+      "canonicalTo": "/j/marketing/scraping-sources",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "ตั้งค่าเก็บข้อมูลเว็บ",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ตั้งค่าเว็บคู่แข่งที่เก็บข้อมูล",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/marketing/scraped-catalog",
+      "canonicalTo": "/j/marketing/scraped-catalog",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "คลังข้อมูลเว็บคู่แข่ง",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "สินค้าจากเว็บคู่แข่ง",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/cs",
+      "canonicalTo": "/cs",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "งานบริการลูกค้า",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "งานบริการลูกค้า",
+      "roles": [
+        "admin",
+        "cs"
+      ]
+    },
+    {
+      "to": "/livechat",
+      "canonicalTo": "/livechat",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "แชตกับลูกค้า",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "แชตกับลูกค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/bot/intent-rules",
+      "canonicalTo": "/j/bot/intent-rules",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "Bot · intent rules",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "แชตบอต: เข้าใจคำถาม",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/bot/workflows",
+      "canonicalTo": "/j/bot/workflows",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "Bot · workflows",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "แชตบอต: ลำดับการตอบ",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/bot/templates",
+      "canonicalTo": "/j/bot/templates",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "Bot · templates",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "แชตบอต: ข้อความสำเร็จรูป",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/allproducts",
+      "canonicalTo": "/j/allproducts",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "จัดการสินค้า",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "สินค้าบนร้านค้า",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising",
+        "graphic"
+      ]
+    },
+    {
+      "to": "/j/product/create",
+      "canonicalTo": "/j/allproducts",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "เพิ่มสินค้า",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "สินค้าบนร้านค้า",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/j/product/video-upload",
+      "canonicalTo": "/j/product/video-upload",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "อัปโหลดวิดีโอสินค้า",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": true,
+      "label": "อัปโหลดวิดีโอสินค้า",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/j/product/bulk-image-upload",
+      "canonicalTo": "/j/product/bulk-image-upload",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "อัปโหลดรูปสินค้าหลายรายการ",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "อัปโหลดรูปสินค้า",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising",
+        "graphic"
+      ]
+    },
+    {
+      "to": "/j/suppliers",
+      "canonicalTo": "/j/suppliers",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "จัดการซัพพลายเออร์",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "ซัพพลายเออร์",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/j/brands",
+      "canonicalTo": "/j/brands",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "แบรนด์",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "แบรนด์",
+      "roles": [
+        "admin",
+        "marketing",
+        "merchandising",
+        "graphic"
+      ]
+    },
+    {
+      "to": "/j/categories",
+      "canonicalTo": "/j/categories",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "จัดการหมวดหมู่",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "จัดการหมวดหมู่",
+      "roles": [
+        "admin",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/j/allusers",
+      "canonicalTo": "/j/allusers",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "จัดการผู้ใช้",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "ผู้ใช้ของลูกค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/membership-tiers",
+      "canonicalTo": "/j/membership-tiers",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "ระดับสมาชิก",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": true,
+      "label": "ระดับสมาชิก",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/company",
+      "canonicalTo": "/j/company",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "จัดการบริษัท",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "บริษัทลูกค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/kyc",
+      "canonicalTo": "/j/kyc",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "ตรวจสอบตัวตนลูกค้า",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "ตรวจสอบตัวตนลูกค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/cs/sample-requests",
+      "canonicalTo": "/cs",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "Sample requests",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "งานบริการลูกค้า",
+      "roles": [
+        "admin",
+        "cs"
+      ]
+    },
+    {
+      "to": "/j/cs/delivery-schedule",
+      "canonicalTo": "/j/cs/delivery-schedule",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ตารางรอบส่ง",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "ตารางรอบส่ง",
+      "roles": [
+        "admin",
+        "cs"
+      ]
+    },
+    {
+      "to": "/j/cs/cart-move-categories",
+      "canonicalTo": "/j/cs/cart-move-categories",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "หมวดที่ย้ายของในตะกร้าได้",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": true,
+      "label": "หมวดที่ย้ายของในตะกร้าได้",
+      "roles": [
+        "admin",
+        "cs"
+      ]
+    },
+    {
+      "to": "/j/price-requests",
+      "canonicalTo": "/j/price-requests",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "คำขอราคา",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": false,
+      "label": "คำขอราคา",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/active-offers",
+      "canonicalTo": "/j/active-offers",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "ข้อเสนอราคาที่ใช้งาน",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": true,
+      "label": "ข้อเสนอราคาที่ใช้งาน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/admin-access",
+      "canonicalTo": "/j/admin-access",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "Admin access requests",
+      "section": "settings",
+      "sectionTitle": "ตั้งค่าและทีมงาน",
+      "more": false,
+      "label": "คำขอใช้งานหลังร้าน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/order",
+      "canonicalTo": "/j/order",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "จัดการออเดอร์",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "คำสั่งซื้อ",
+      "roles": [
+        "admin",
+        "cs"
+      ]
+    },
+    {
+      "to": "/j/shipments",
+      "canonicalTo": "/j/shipments",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "จัดการการจัดส่ง",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "การจัดส่งสินค้า",
+      "roles": [
+        "admin",
+        "cs"
+      ]
+    },
+    {
+      "to": "/j/payment-transactions",
+      "canonicalTo": "/j/payment-transactions",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "จัดการการชำระเงิน",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "รายการชำระเงิน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/order/import",
+      "canonicalTo": "/j/order",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "นำเข้าออเดอร์",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "คำสั่งซื้อ",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/batch-sticker",
+      "canonicalTo": "/j/batch-sticker",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "พิมพ์สติกเกอร์",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": true,
+      "label": "พิมพ์สติกเกอร์",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/kbank/testing-console",
+      "canonicalTo": "/j/kbank/testing-console",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "KBank testing console",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ทดสอบชำระเงิน KBank",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/invoices",
+      "canonicalTo": "/j/invoices",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ใบแจ้งหนี้ค้างชำระ",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "ใบแจ้งหนี้ค้างชำระ",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/credit-notes",
+      "canonicalTo": "/j/credit-notes",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "จัดการใบลดหนี้",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "ใบลดหนี้",
+      "roles": [
+        "admin",
+        "cs"
+      ]
+    },
+    {
+      "to": "/j/credit-backs",
+      "canonicalTo": "/j/credit-backs",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "จัดการคืนเครดิต",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "คืนเครดิตให้ลูกค้า",
+      "roles": [
+        "admin",
+        "cs"
+      ]
+    },
+    {
+      "to": "/j/credit-terms",
+      "canonicalTo": "/j/credit-terms",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ใบสมัครเครดิต",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "ใบสมัครเครดิต",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/billing",
+      "canonicalTo": "/j/billing",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "วางบิล",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "วางบิล",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/refunds",
+      "canonicalTo": "/j/refunds",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "คืนสินค้าและคืนเงิน",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": false,
+      "label": "คืนสินค้าและคืนเงิน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/jagota/payment-testing",
+      "canonicalTo": "/j/jagota/payment-testing",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "Jagota payment testing",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ทดสอบชำระเงิน Jagota",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/erp/webhook-simulator",
+      "canonicalTo": "/j/erp/webhook-simulator",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "ทดสอบเหตุการณ์ ERP ของร้านค้า",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ทดสอบส่งข้อมูลระบบหลักไปร้านค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/marketing/notify-templates",
+      "canonicalTo": "/j/marketing/notify-templates",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Template ข้อความ",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "แม่แบบข้อความ",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/smart-links",
+      "canonicalTo": "/j/smart-links",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Smart links",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "ลิงก์ติดตามผล",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/marketing-links",
+      "canonicalTo": "/j/marketing-links",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Marketing links",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "สร้างลิงก์การตลาด",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/marketing/welcome-lead-email",
+      "canonicalTo": "/j/marketing/welcome-lead-email",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "อีเมลต้อนรับลีด",
+      "section": "marketing",
+      "sectionTitle": "การตลาด",
+      "more": true,
+      "label": "อีเมลต้อนรับลีด",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/marketing/settings",
+      "canonicalTo": "/j/marketing/settings",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "ตั้งค่าการตลาด",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ตั้งค่าการตลาด",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/marketing/queue",
+      "canonicalTo": "/j/marketing/queue",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "คิวงานการตลาด",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "คิวงานการตลาด",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/j/marketing/journey-funnel",
+      "canonicalTo": "/j/marketing/journey-funnel",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "Journey funnel",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "เส้นทางของลูกค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/j/marketing/offers-check",
+      "canonicalTo": "/j/marketing/offers-check",
+      "oldWorkspace": "การตลาด",
+      "oldLabel": "ตรวจข้อเสนอ",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ตรวจข้อเสนอ",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/ai/connectors",
+      "canonicalTo": "/ai/connectors",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "การเชื่อมต่อ AI",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "เชื่อมต่อผู้ช่วย AI",
+      "roles": [
+        "admin",
+        "marketing"
+      ]
+    },
+    {
+      "to": "/erp/inbound-log",
+      "canonicalTo": "/erp/inbound-log",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "บันทึกข้อมูลขาเข้า",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "บันทึกข้อมูลจากระบบหลัก (ERP)",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/erp/josh-logs",
+      "canonicalTo": "/erp/josh-logs",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "ERP log ของ josh",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "บันทึกการเรียกระบบหลัก (ERP)",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/erp/webhook-dead-letter",
+      "canonicalTo": "/erp/webhook-dead-letter",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "รายการส่งไม่สำเร็จ",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "รายการส่งไม่สำเร็จ",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/erp/webhook-platforms",
+      "canonicalTo": "/erp/webhook-platforms",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "แพลตฟอร์มปลายทาง",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "ระบบปลายทางที่รับข้อมูล",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/erp/inventory-warehouse",
+      "canonicalTo": "/erp/inventory-warehouse",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "สต็อกแยกตามคลัง",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "สต็อกแต่ละคลัง",
+      "roles": [
+        "admin",
+        "sale",
+        "merchandising",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/erp/simulator",
+      "canonicalTo": "/erp/simulator",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "ทดสอบการเชื่อมต่อ ERP",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ทดสอบเชื่อมต่อระบบหลัก (ERP)",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/erp/jagota-shadow",
+      "canonicalTo": "/erp/jagota-shadow",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "ส่ง order ผ่าน commerce (ทดลอง)",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "ทดลองส่งออเดอร์เข้าระบบหลัก (ERP)",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/integrations",
+      "canonicalTo": "/integrations",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "การเชื่อมต่อ",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "ระบบที่เชื่อมต่อ",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/webhooks",
+      "canonicalTo": "/webhooks",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "เหตุการณ์ขาเข้า",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "เหตุการณ์ขาเข้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/subscriptions",
+      "canonicalTo": "/subscriptions",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "การส่งเหตุการณ์ขาออก",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "การส่งเหตุการณ์ขาออก",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/sync-jobs",
+      "canonicalTo": "/sync-jobs",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "งานซิงก์ข้อมูล",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "งานซิงก์ข้อมูล",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/erp-stock",
+      "canonicalTo": "/erp-stock",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "ERP stub stock",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": true,
+      "label": "สต็อกจำลองสำหรับทดสอบ",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/erp-ingest",
+      "canonicalTo": "/erp-ingest",
+      "oldWorkspace": "ระบบเชื่อมต่อ",
+      "oldLabel": "ERP ingest",
+      "section": "advanced",
+      "sectionTitle": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "more": false,
+      "label": "ข้อมูลที่รับจากระบบหลัก (ERP)",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/customers",
+      "canonicalTo": "/customers",
+      "oldWorkspace": "ลูกค้าและบริการ",
+      "oldLabel": "ลูกค้าแพลตฟอร์ม",
+      "section": "customers",
+      "sectionTitle": "ลูกค้าและบริการ",
+      "more": true,
+      "label": "ข้อมูลติดต่อลูกค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/products",
+      "canonicalTo": "/products",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "แคตตาล็อกแพลตฟอร์ม",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "ค้นหาสินค้าตามรหัส",
+      "roles": [
+        "admin",
+        "sale",
+        "merchandising",
+        "graphic"
+      ]
+    },
+    {
+      "to": "/stock-moves",
+      "canonicalTo": "/stock-moves",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "ความเคลื่อนไหวสต็อก",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "รับเข้า ปรับ และโอนสต็อก",
+      "roles": [
+        "admin",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/product-prices",
+      "canonicalTo": "/product-prices",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "ราคาสินค้า",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "ราคาสินค้า",
+      "roles": [
+        "admin",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/product-master-queue",
+      "canonicalTo": "/product-master-queue",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "คิวข้อมูลสินค้าจาก ERP",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": false,
+      "label": "อนุมัติข้อมูลสินค้าที่เปลี่ยน",
+      "roles": [
+        "admin",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/order-periods",
+      "canonicalTo": "/order-periods",
+      "oldWorkspace": "สินค้าและสต็อก",
+      "oldLabel": "รอบสั่งซื้อ supplier",
+      "section": "catalog",
+      "sectionTitle": "สินค้าและสต็อก",
+      "more": true,
+      "label": "รอบสั่งซื้อจากซัพพลายเออร์",
+      "roles": [
+        "admin",
+        "merchandising"
+      ]
+    },
+    {
+      "to": "/orders",
+      "canonicalTo": "/orders",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "ออเดอร์แพลตฟอร์ม",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": true,
+      "label": "ชำระเงินและการจองของออเดอร์",
+      "roles": [
+        "admin",
+        "business_analyst"
+      ]
+    },
+    {
+      "to": "/reservations",
+      "canonicalTo": "/reservations",
+      "oldWorkspace": "ออเดอร์และการเงิน",
+      "oldLabel": "การจองสินค้า",
+      "section": "orders",
+      "sectionTitle": "ออเดอร์และการชำระเงิน",
+      "more": true,
+      "label": "การจองสต็อกตอนชำระเงิน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/settings/staff",
+      "canonicalTo": "/settings/staff",
+      "oldWorkspace": "ตั้งค่าและทีมงาน",
+      "oldLabel": "บัญชีทีมงาน",
+      "section": "settings",
+      "sectionTitle": "ตั้งค่าและทีมงาน",
+      "more": false,
+      "label": "บัญชีทีมงาน",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/settings/josh-staff",
+      "canonicalTo": "/settings/josh-staff",
+      "oldWorkspace": "ตั้งค่าและทีมงาน",
+      "oldLabel": "บัญชีทีมงานร้านค้า",
+      "section": "settings",
+      "sectionTitle": "ตั้งค่าและทีมงาน",
+      "more": false,
+      "label": "บัญชีทีมงานร้านค้า",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "to": "/account/password",
+      "canonicalTo": "/account/password",
+      "oldWorkspace": "ตั้งค่าและทีมงาน",
+      "oldLabel": "เปลี่ยนรหัสผ่าน",
+      "section": "settings",
+      "sectionTitle": "ตั้งค่าและทีมงาน",
+      "more": false,
+      "label": "เปลี่ยนรหัสผ่าน",
+      "roles": [
+        "admin",
+        "sale",
+        "marketing",
+        "merchandising",
+        "cs",
+        "sales_manager",
+        "business_analyst",
+        "graphic"
+      ]
+    }
+  ],
+  "roleMenus": {
+    "admin": [
+      {
+        "links": [
+          {
+            "to": "/home",
+            "label": "หน้าแรก",
+            "end": true,
+            "icon": "dashboard",
+            "description": "งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้"
+          },
+          {
+            "to": "/",
+            "label": "แดชบอร์ด",
+            "end": true,
+            "icon": "space_dashboard",
+            "description": "งานที่ต้องติดตามและสถานะระบบวันนี้ในหน้าเดียว"
+          }
+        ]
+      },
+      {
+        "group": "สินค้าและสต็อก",
+        "icon": "inventory_2",
+        "links": [
+          {
+            "to": "/j/allproducts",
+            "label": "สินค้าบนร้านค้า",
+            "activeFor": [
+              "/j/product",
+              "/j/product/create"
+            ],
+            "description": "ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า",
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/products",
+            "label": "ค้นหาสินค้าตามรหัส",
+            "description": "สินค้าทุกรายการตามรหัสสินค้า และการอนุมัติสินค้าใหม่",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/categories",
+            "label": "จัดการหมวดหมู่",
+            "description": "จัดโครงสร้าง ลำดับ และรูปของหมวดหมู่บนร้านค้า",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/brands",
+            "label": "แบรนด์",
+            "description": "รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/product/bulk-image-upload",
+            "label": "อัปโหลดรูปสินค้า",
+            "end": true,
+            "description": "อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/suppliers",
+            "label": "ซัพพลายเออร์",
+            "activeFor": [
+              "/j/supplier",
+              "/josh/suppliers"
+            ],
+            "description": "ซัพพลายเออร์ที่ส่งสินค้าให้ร้านและข้อมูลติดต่อ",
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/product-prices",
+            "label": "ราคาสินค้า",
+            "description": "ราคาขาย ราคาสั่ง และจำนวนขั้นต่ำ ตรวจและอนุมัติราคาที่เปลี่ยน",
+            "activeFor": [],
+            "section": "catalog",
+            "more": true
+          },
+          {
+            "to": "/product-master-queue",
+            "label": "อนุมัติข้อมูลสินค้าที่เปลี่ยน",
+            "description": "ตรวจและอนุมัติข้อมูลสินค้าที่เปลี่ยน เช่น หน่วย แพ็ก แบรนด์ และ VAT",
+            "activeFor": [],
+            "section": "catalog",
+            "more": true
+          },
+          {
+            "to": "/stock-moves",
+            "label": "รับเข้า ปรับ และโอนสต็อก",
+            "description": "บันทึกการรับสินค้าเข้า ปรับยอด และโอนสินค้าระหว่างคลัง",
+            "activeFor": [],
+            "section": "catalog",
+            "more": true
+          },
+          {
+            "to": "/erp/inventory-warehouse",
+            "label": "สต็อกแต่ละคลัง",
+            "description": "ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง",
+            "activeFor": [],
+            "section": "catalog",
+            "more": true
+          },
+          {
+            "to": "/j/product/video-upload",
+            "label": "อัปโหลดวิดีโอสินค้า",
+            "end": true,
+            "more": true,
+            "description": "อัปโหลดวิดีโอประกอบหน้าสินค้า",
+            "activeFor": [],
+            "section": "catalog"
+          },
+          {
+            "to": "/prices/staff",
+            "label": "ราคาเฉพาะลูกค้าและราคาสัญญา",
+            "more": true,
+            "description": "ราคาเฉพาะของลูกค้าแต่ละรายและราคาตามสัญญา",
+            "activeFor": [],
+            "section": "catalog"
+          },
+          {
+            "to": "/order-periods",
+            "label": "รอบสั่งซื้อจากซัพพลายเออร์",
+            "more": true,
+            "description": "รอบสั่งซื้อสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับ",
+            "activeFor": [],
+            "section": "catalog"
+          }
+        ]
+      },
+      {
+        "group": "ออเดอร์และการชำระเงิน",
+        "icon": "receipt_long",
+        "links": [
+          {
+            "to": "/j/order",
+            "label": "คำสั่งซื้อ",
+            "description": "ค้นหาและติดตามคำสั่งซื้อ เปิดดูรายละเอียดและสถานะ",
+            "activeFor": [
+              "/j/order/import"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/shipments",
+            "label": "การจัดส่งสินค้า",
+            "description": "ติดตามการจัดส่งและอัปเดตสถานะพัสดุ",
+            "activeFor": [
+              "/josh/shipments"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/payment-transactions",
+            "label": "รายการชำระเงิน",
+            "description": "รายการชำระเงินของลูกค้าและสถานะการชำระ",
+            "activeFor": [
+              "/josh/payments"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/invoices",
+            "label": "ใบแจ้งหนี้ค้างชำระ",
+            "description": "ใบแจ้งหนี้ที่เลยกำหนดชำระ เพื่อติดตามกับลูกค้า",
+            "activeFor": [
+              "/josh/invoices"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/billing",
+            "label": "วางบิล",
+            "description": "ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ทั้งหมด",
+            "activeFor": [],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/credit-terms",
+            "label": "ใบสมัครเครดิต",
+            "description": "พิจารณาใบสมัครเครดิตเทอมของลูกค้า",
+            "activeFor": [
+              "/josh/credit_terms"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/credit-notes",
+            "label": "ใบลดหนี้",
+            "description": "ออกและติดตามใบลดหนี้",
+            "activeFor": [
+              "/josh/credit_notes"
+            ],
+            "section": "orders",
+            "more": true
+          },
+          {
+            "to": "/j/credit-backs",
+            "label": "คืนเครดิตให้ลูกค้า",
+            "description": "คืนเครดิตให้ลูกค้าและติดตามสถานะ",
+            "activeFor": [
+              "/josh/credit_backs"
+            ],
+            "section": "orders",
+            "more": true
+          },
+          {
+            "to": "/j/refunds",
+            "label": "คืนสินค้าและคืนเงิน",
+            "description": "คำขอคืนสินค้าและการคืนเงินของลูกค้า",
+            "activeFor": [],
+            "section": "orders",
+            "more": true
+          },
+          {
+            "to": "/j/cs/delivery-schedule",
+            "label": "ตารางรอบส่ง",
+            "description": "รอบจัดส่งและเกณฑ์การจัดส่ง",
+            "activeFor": [],
+            "section": "orders",
+            "more": true
+          },
+          {
+            "to": "/j/batch-sticker",
+            "label": "พิมพ์สติกเกอร์",
+            "more": true,
+            "description": "พิมพ์สติกเกอร์ติดกล่องให้หลายออเดอร์พร้อมกัน",
+            "activeFor": [],
+            "section": "orders"
+          },
+          {
+            "to": "/orders",
+            "label": "ชำระเงินและการจองของออเดอร์",
+            "more": true,
+            "description": "สถานะชำระเงินและการจองสินค้าของแต่ละคำสั่งซื้อ",
+            "activeFor": [],
+            "section": "orders"
+          },
+          {
+            "to": "/reservations",
+            "label": "การจองสต็อกตอนชำระเงิน",
+            "more": true,
+            "description": "สต็อกที่ถูกจองระหว่างชำระเงิน ทั้งที่จอง ยืนยัน ปล่อย และหมดอายุ",
+            "activeFor": [],
+            "section": "orders"
+          }
+        ]
+      },
+      {
+        "group": "ลูกค้าและบริการ",
+        "icon": "support_agent",
+        "links": [
+          {
+            "to": "/j/company",
+            "label": "บริษัทลูกค้า",
+            "description": "บริษัทลูกค้า ข้อมูลบริษัท เครดิตเทอม และสิทธิ์สั่งซื้อ",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/j/allusers",
+            "label": "ผู้ใช้ของลูกค้า",
+            "description": "ค้นหาบัญชีผู้ใช้ของลูกค้าและดูประวัติ",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/cs",
+            "label": "งานบริการลูกค้า",
+            "activeFor": [
+              "/j/cs/sample-requests",
+              "/j/cs/sample-requests"
+            ],
+            "description": "เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี",
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/livechat",
+            "label": "แชตกับลูกค้า",
+            "description": "อ่านและตอบแชตของลูกค้า",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/j/price-requests",
+            "label": "คำขอราคา",
+            "description": "คำขอราคาพิเศษจากลูกค้า",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/j/kyc",
+            "label": "ตรวจสอบตัวตนลูกค้า",
+            "description": "ตรวจเอกสารยืนยันตัวตนของลูกค้าที่รอพิจารณา",
+            "activeFor": [
+              "/josh/kyc"
+            ],
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/reports/winback",
+            "label": "ติดตามลูกค้าเก่า",
+            "description": "ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย",
+            "activeFor": [],
+            "section": "customers",
+            "more": true
+          },
+          {
+            "to": "/reports/winback/opportunities",
+            "label": "โอกาสของทีม",
+            "description": "โอกาสขายและลีดของทั้งทีม แยกตามพนักงานขาย",
+            "activeFor": [],
+            "section": "customers",
+            "more": true
+          },
+          {
+            "to": "/cs/sales-assignment",
+            "label": "มอบหมายพนักงานขาย",
+            "description": "กำหนดพนักงานขายที่ดูแลแต่ละบริษัทลูกค้า",
+            "activeFor": [],
+            "section": "customers",
+            "more": true
+          },
+          {
+            "to": "/reports/winback/my",
+            "label": "โอกาสและลีดของฉัน",
+            "more": true,
+            "description": "ลูกค้าที่ควรติดต่อกลับและลีดที่ได้รับมอบหมาย",
+            "activeFor": [],
+            "section": "customers"
+          },
+          {
+            "to": "/j/active-offers",
+            "label": "ข้อเสนอราคาที่ใช้งาน",
+            "more": true,
+            "description": "ราคาพิเศษเฉพาะลูกค้าที่ยังใช้งานอยู่",
+            "activeFor": [],
+            "section": "customers"
+          },
+          {
+            "to": "/j/membership-tiers",
+            "label": "ระดับสมาชิก",
+            "more": true,
+            "description": "กำหนดระดับสมาชิกและเงื่อนไขของแต่ละระดับ",
+            "activeFor": [],
+            "section": "customers"
+          },
+          {
+            "to": "/j/cs/cart-move-categories",
+            "label": "หมวดที่ย้ายของในตะกร้าได้",
+            "more": true,
+            "description": "หมวดสินค้าที่ย้ายข้ามรอบจัดส่งได้เพื่อปลดล็อกส่งฟรี",
+            "activeFor": [],
+            "section": "customers"
+          },
+          {
+            "to": "/customers",
+            "label": "ข้อมูลติดต่อลูกค้า",
+            "more": true,
+            "description": "ข้อมูลติดต่อและรายละเอียดของลูกค้า",
+            "activeFor": [],
+            "section": "customers"
+          }
+        ]
+      },
+      {
+        "group": "การตลาด",
+        "icon": "campaign",
+        "links": [
+          {
+            "to": "/marketing/growth",
+            "label": "วางแผนการเติบโต",
+            "end": true,
+            "activeFor": [
+              "/marketing/growth/results",
+              "/marketing/growth/companies"
+            ],
+            "description": "เริ่มจากข้อมูลลูกค้าและยอดขาย แล้ววางแผนแคมเปญที่ผ่านการตรวจทาน",
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotions/campaigns",
+            "label": "แคมเปญโปรโมชัน",
+            "description": "สร้างและติดตามแคมเปญโปรโมชัน",
+            "activeFor": [
+              "/josh/campaigns"
+            ],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/coupons",
+            "label": "คูปองส่วนลด",
+            "activeFor": [
+              "/j/coupon",
+              "/josh/coupons"
+            ],
+            "description": "สร้าง แก้ไข และติดตามการใช้คูปอง",
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotions-mechanic",
+            "label": "กติกาส่วนลด",
+            "description": "กติกาส่วนลด เช่น ซื้อครบลด หรือซื้อ X แถม Y",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotion-product-sets",
+            "label": "ชุดสินค้าโปรโมชัน",
+            "description": "ชุดสินค้าที่ใช้กับโปรโมชันและคูปอง",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotion-pages",
+            "label": "หน้าโปรโมชัน",
+            "description": "หน้าโปรโมชันบนร้านค้า",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/segments",
+            "label": "กลุ่มลูกค้าสำหรับแคมเปญ",
+            "description": "กำหนดกลุ่มลูกค้าเป้าหมายสำหรับแคมเปญและคูปอง",
+            "activeFor": [
+              "/josh/segments"
+            ],
+            "section": "marketing",
+            "more": true
+          },
+          {
+            "to": "/j/marketing/push-campaigns",
+            "label": "ส่งแจ้งเตือนถึงลูกค้า",
+            "description": "ส่งการแจ้งเตือนที่เด้งขึ้นบนเครื่องของลูกค้า",
+            "activeFor": [],
+            "section": "marketing",
+            "more": true
+          },
+          {
+            "to": "/marketing/workflows",
+            "label": "ข้อความอัตโนมัติ",
+            "description": "ข้อความที่ส่งอัตโนมัติตามพฤติกรรมลูกค้า",
+            "activeFor": [],
+            "section": "marketing",
+            "more": true
+          },
+          {
+            "to": "/j/marketing/competitor-prices",
+            "label": "เทียบราคาคู่แข่ง",
+            "description": "เทียบราคาสินค้าของเรากับเว็บคู่แข่ง",
+            "activeFor": [],
+            "section": "marketing",
+            "more": true
+          },
+          {
+            "to": "/marketing/growth/plans",
+            "label": "แผนและปฏิทิน",
+            "more": true,
+            "description": "แผนการตลาดที่บันทึกไว้และปฏิทินงาน",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/marketing/analyst",
+            "label": "ผู้ช่วยวิเคราะห์การตลาด",
+            "more": true,
+            "description": "ถามคำถามการตลาดกับผู้ช่วย AI จากข้อมูลในระบบ",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/marketing/research",
+            "label": "งานวิจัยตลาด",
+            "more": true,
+            "description": "รายงานวิจัยตลาดและหัวข้อที่ติดตาม",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/marketing/restaurants",
+            "label": "ค้นหาตลาดร้านอาหาร",
+            "more": true,
+            "description": "สำรวจร้านอาหารบนแผนที่เพื่อหาลูกค้าใหม่",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/marketing/notify-templates",
+            "label": "แม่แบบข้อความ",
+            "more": true,
+            "description": "แม่แบบข้อความแจ้งเตือน อีเมล และป๊อปอัป",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/marketing/welcome-lead-email",
+            "label": "อีเมลต้อนรับลีด",
+            "more": true,
+            "description": "อีเมลต้อนรับลูกค้าที่สนใจ (ลีด) รายใหม่",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/smart-links",
+            "label": "ลิงก์ติดตามผล",
+            "more": true,
+            "description": "ลิงก์ที่ติดตามผลได้ พาลูกค้าไปยังหน้าที่เลือก",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/marketing-links",
+            "label": "สร้างลิงก์การตลาด",
+            "more": true,
+            "description": "สร้างลิงก์การตลาดพร้อมแท็กติดตามแคมเปญ",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/marketing/scraped-catalog",
+            "label": "สินค้าจากเว็บคู่แข่ง",
+            "more": true,
+            "description": "สินค้าที่เก็บมาจากเว็บคู่แข่ง",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/bot/intent-rules",
+            "label": "แชตบอต: เข้าใจคำถาม",
+            "more": true,
+            "description": "กติกาที่ช่วยให้แชตบอตเข้าใจคำถามของลูกค้า",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/bot/workflows",
+            "label": "แชตบอต: ลำดับการตอบ",
+            "more": true,
+            "description": "ลำดับการตอบของแชตบอต",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/bot/templates",
+            "label": "แชตบอต: ข้อความสำเร็จรูป",
+            "more": true,
+            "description": "ข้อความสำเร็จรูปของแชตบอต",
+            "activeFor": [],
+            "section": "marketing"
+          }
+        ]
+      },
+      {
+        "group": "รายงานและข้อมูล",
+        "icon": "monitoring",
+        "links": [
+          {
+            "to": "/reports/sales",
+            "label": "รายงานยอดขาย",
+            "description": "ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/orders",
+            "label": "รายงานออเดอร์",
+            "description": "รายการและสรุปคำสั่งซื้อของร้าน",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/products",
+            "label": "รายงานสินค้า",
+            "description": "สินค้าขายดี ยอดขาย และสถานะสินค้า",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/customers",
+            "label": "รายงานลูกค้าและบริษัท",
+            "description": "ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/prices",
+            "label": "รายงานราคาขาย",
+            "description": "ราคาที่ลูกค้าแต่ละสาขาเห็น และใบเสนอราคา",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/order-targetgroup",
+            "label": "กลุ่มลูกค้าเป้าหมาย",
+            "description": "ออเดอร์แยกตามกลุ่มลูกค้าเป้าหมาย",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/traffic",
+            "label": "การเข้าชมร้านค้า",
+            "description": "การเข้าชมร้านค้าและพฤติกรรมการใช้งาน",
+            "activeFor": [],
+            "section": "reports",
+            "more": true
+          },
+          {
+            "to": "/reports/health",
+            "label": "สุขภาพระบบ",
+            "description": "ข้อผิดพลาดและปัญหาที่กระทบการขายตอนนี้",
+            "activeFor": [],
+            "section": "reports",
+            "more": true
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าและทีมงาน",
+        "icon": "settings",
+        "links": [
+          {
+            "to": "/josh/internal_docs",
+            "label": "เอกสารภายใน",
+            "description": "เพิ่ม อ่าน และลบเอกสารที่ใช้ภายในทีม",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          },
+          {
+            "to": "/settings/staff",
+            "label": "บัญชีทีมงาน",
+            "description": "เพิ่มทีมงาน กำหนดบทบาท และปิดบัญชี",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          },
+          {
+            "to": "/settings/josh-staff",
+            "label": "บัญชีทีมงานร้านค้า",
+            "description": "บัญชีทีมงานที่ใช้หลังร้านของร้านค้า",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          },
+          {
+            "to": "/j/admin-access",
+            "label": "คำขอใช้งานหลังร้าน",
+            "description": "คำขอใช้งานหลังร้านของร้านค้าที่รออนุมัติ",
+            "activeFor": [
+              "/josh/admin_access"
+            ],
+            "section": "settings",
+            "more": false
+          },
+          {
+            "to": "/account/password",
+            "label": "เปลี่ยนรหัสผ่าน",
+            "description": "เปลี่ยนรหัสผ่านของคุณ",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+        "icon": "hub",
+        "links": [
+          {
+            "to": "/integrations",
+            "label": "ระบบที่เชื่อมต่อ",
+            "description": "ระบบภายนอกที่เชื่อมกับเราและสถานะการเชื่อมต่อ",
+            "activeFor": [],
+            "section": "advanced",
+            "more": false
+          },
+          {
+            "to": "/erp/webhook-dead-letter",
+            "label": "รายการส่งไม่สำเร็จ",
+            "description": "ข้อมูลที่ส่งไม่สำเร็จ ตรวจสอบและส่งใหม่",
+            "activeFor": [],
+            "section": "advanced",
+            "more": false
+          },
+          {
+            "to": "/sync-jobs",
+            "label": "งานซิงก์ข้อมูล",
+            "description": "งานซิงก์ข้อมูลกับระบบภายนอกและผลลัพธ์",
+            "activeFor": [],
+            "section": "advanced",
+            "more": false
+          },
+          {
+            "to": "/webhooks",
+            "label": "เหตุการณ์ขาเข้า",
+            "description": "เหตุการณ์ที่ระบบภายนอกส่งเข้ามา",
+            "activeFor": [],
+            "section": "advanced",
+            "more": false
+          },
+          {
+            "to": "/subscriptions",
+            "label": "การส่งเหตุการณ์ขาออก",
+            "description": "ปลายทางที่รับเหตุการณ์จากระบบของเรา",
+            "activeFor": [],
+            "section": "advanced",
+            "more": false
+          },
+          {
+            "to": "/erp/inbound-log",
+            "label": "บันทึกข้อมูลจากระบบหลัก (ERP)",
+            "description": "บันทึกข้อมูลที่ระบบหลัก (ERP) ส่งเข้ามา",
+            "activeFor": [],
+            "section": "advanced",
+            "more": false
+          },
+          {
+            "to": "/erp-ingest",
+            "label": "ข้อมูลที่รับจากระบบหลัก (ERP)",
+            "description": "ข้อมูลสินค้า ราคา และสต็อกที่ระบบหลักของบริษัท (ERP) ส่งเข้ามา",
+            "activeFor": [],
+            "section": "advanced",
+            "more": true
+          },
+          {
+            "to": "/josh-api-logs",
+            "label": "บันทึกการเรียกใช้ระบบร้านค้า",
+            "description": "บันทึกทุกครั้งที่มีการเรียกใช้ระบบร้านค้า",
+            "activeFor": [],
+            "section": "advanced",
+            "more": true
+          },
+          {
+            "to": "/erp/josh-logs",
+            "label": "บันทึกการเรียกระบบหลัก (ERP)",
+            "description": "บันทึกการเรียกระบบหลัก (ERP) จากระบบร้านค้า",
+            "activeFor": [],
+            "section": "advanced",
+            "more": true
+          },
+          {
+            "to": "/erp/webhook-platforms",
+            "label": "ระบบปลายทางที่รับข้อมูล",
+            "description": "ระบบภายนอกที่รับข้อมูลที่เราส่งต่อ และการตั้งค่า",
+            "activeFor": [],
+            "section": "advanced",
+            "more": true
+          },
+          {
+            "to": "/ai/connectors",
+            "label": "เชื่อมต่อผู้ช่วย AI",
+            "more": true,
+            "description": "ให้ผู้ช่วย AI อ่านข้อมูลของเราแบบอ่านอย่างเดียว",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/settings",
+            "label": "ตั้งค่าการตลาด",
+            "more": true,
+            "description": "ค่าที่มีผลกับข้อความอัตโนมัติทั้งหมด",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/queue",
+            "label": "คิวงานการตลาด",
+            "more": true,
+            "description": "ข้อความการตลาดที่รอส่งและที่ส่งแล้ว",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/offers-check",
+            "label": "ตรวจข้อเสนอ",
+            "more": true,
+            "description": "ตรวจว่าอุปกรณ์หรือผู้ใช้จะเห็นข้อเสนอใดบนร้านค้า",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/journey-funnel",
+            "label": "เส้นทางของลูกค้า",
+            "more": true,
+            "description": "จำนวนลูกค้าที่ผ่านแต่ละขั้นของการใช้งาน",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/cs/notification-catalog",
+            "label": "ประเภทการแจ้งเตือนทั้งหมด",
+            "more": true,
+            "description": "การแจ้งเตือนทุกประเภทที่ระบบส่งได้ และการเปิดปิด",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/cs/notification-log",
+            "label": "ประวัติการแจ้งเตือน",
+            "more": true,
+            "description": "บันทึกการแจ้งเตือนที่ส่งถึงลูกค้า",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/cs/notification-stats",
+            "label": "สถิติการส่งแจ้งเตือน",
+            "more": true,
+            "description": "สถิติการส่งแจ้งเตือนที่สำเร็จและไม่สำเร็จ",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/cs/product-notify-funnel",
+            "label": "ผลการแจ้งเตือนสินค้า",
+            "more": true,
+            "description": "ผลของการแจ้งเตือนสินค้า ตั้งแต่ส่งจนถึงสั่งซื้อ",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/scraping-sources",
+            "label": "ตั้งค่าเว็บคู่แข่งที่เก็บข้อมูล",
+            "more": true,
+            "description": "เลือกเว็บคู่แข่งที่ระบบเก็บข้อมูล และการเก็บอัตโนมัติ",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/erp/simulator",
+            "label": "ทดสอบเชื่อมต่อระบบหลัก (ERP)",
+            "more": true,
+            "description": "จำลองข้อมูลจากระบบหลัก (ERP) เพื่อทดสอบการเชื่อมต่อ",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/erp/webhook-simulator",
+            "label": "ทดสอบส่งข้อมูลระบบหลักไปร้านค้า",
+            "more": true,
+            "description": "ส่งเหตุการณ์ทดสอบจากระบบหลัก (ERP) ไปยังระบบร้านค้า",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/erp-stock",
+            "label": "สต็อกจำลองสำหรับทดสอบ",
+            "more": true,
+            "description": "กำหนดสต็อกจำลองเพื่อทดสอบการขาย",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/kbank/testing-console",
+            "label": "ทดสอบชำระเงิน KBank",
+            "more": true,
+            "description": "ทดสอบการชำระเงินผ่าน KBank",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/jagota/payment-testing",
+            "label": "ทดสอบชำระเงิน Jagota",
+            "more": true,
+            "description": "ทดสอบการชำระเงินของ Jagota",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/erp/jagota-shadow",
+            "label": "ทดลองส่งออเดอร์เข้าระบบหลัก (ERP)",
+            "more": true,
+            "description": "ทดลองส่งคำสั่งซื้อเข้าระบบหลัก (ERP) ผ่านระบบใหม่ ก่อนเปิดใช้จริง",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/reports/price-shadow",
+            "label": "เทียบราคาที่คำนวณใหม่",
+            "more": true,
+            "description": "เทียบราคาที่ระบบใหม่คำนวณกับราคาที่ร้านค้าใช้อยู่",
+            "activeFor": [],
+            "section": "advanced"
+          }
+        ]
+      }
+    ],
+    "marketing": [
+      {
+        "links": [
+          {
+            "to": "/home",
+            "label": "หน้าแรก",
+            "end": true,
+            "icon": "dashboard",
+            "description": "งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้"
+          }
+        ]
+      },
+      {
+        "group": "สินค้าและสต็อก",
+        "icon": "inventory_2",
+        "links": [
+          {
+            "to": "/j/allproducts",
+            "label": "สินค้าบนร้านค้า",
+            "activeFor": [
+              "/j/product",
+              "/j/product/create"
+            ],
+            "description": "ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า",
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/brands",
+            "label": "แบรนด์",
+            "description": "รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/product/bulk-image-upload",
+            "label": "อัปโหลดรูปสินค้า",
+            "end": true,
+            "description": "อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/suppliers",
+            "label": "ซัพพลายเออร์",
+            "activeFor": [
+              "/j/supplier",
+              "/josh/suppliers"
+            ],
+            "description": "ซัพพลายเออร์ที่ส่งสินค้าให้ร้านและข้อมูลติดต่อ",
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/product/video-upload",
+            "label": "อัปโหลดวิดีโอสินค้า",
+            "end": true,
+            "more": true,
+            "description": "อัปโหลดวิดีโอประกอบหน้าสินค้า",
+            "activeFor": [],
+            "section": "catalog"
+          }
+        ]
+      },
+      {
+        "group": "การตลาด",
+        "icon": "campaign",
+        "links": [
+          {
+            "to": "/marketing/growth",
+            "label": "วางแผนการเติบโต",
+            "end": true,
+            "activeFor": [
+              "/marketing/growth/results",
+              "/marketing/growth/companies"
+            ],
+            "description": "เริ่มจากข้อมูลลูกค้าและยอดขาย แล้ววางแผนแคมเปญที่ผ่านการตรวจทาน",
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotions/campaigns",
+            "label": "แคมเปญโปรโมชัน",
+            "description": "สร้างและติดตามแคมเปญโปรโมชัน",
+            "activeFor": [
+              "/josh/campaigns"
+            ],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/coupons",
+            "label": "คูปองส่วนลด",
+            "activeFor": [
+              "/j/coupon",
+              "/josh/coupons"
+            ],
+            "description": "สร้าง แก้ไข และติดตามการใช้คูปอง",
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotions-mechanic",
+            "label": "กติกาส่วนลด",
+            "description": "กติกาส่วนลด เช่น ซื้อครบลด หรือซื้อ X แถม Y",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotion-product-sets",
+            "label": "ชุดสินค้าโปรโมชัน",
+            "description": "ชุดสินค้าที่ใช้กับโปรโมชันและคูปอง",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotion-pages",
+            "label": "หน้าโปรโมชัน",
+            "description": "หน้าโปรโมชันบนร้านค้า",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/segments",
+            "label": "กลุ่มลูกค้าสำหรับแคมเปญ",
+            "description": "กำหนดกลุ่มลูกค้าเป้าหมายสำหรับแคมเปญและคูปอง",
+            "activeFor": [
+              "/josh/segments"
+            ],
+            "section": "marketing",
+            "more": true
+          },
+          {
+            "to": "/j/marketing/push-campaigns",
+            "label": "ส่งแจ้งเตือนถึงลูกค้า",
+            "description": "ส่งการแจ้งเตือนที่เด้งขึ้นบนเครื่องของลูกค้า",
+            "activeFor": [],
+            "section": "marketing",
+            "more": true
+          },
+          {
+            "to": "/marketing/workflows",
+            "label": "ข้อความอัตโนมัติ",
+            "description": "ข้อความที่ส่งอัตโนมัติตามพฤติกรรมลูกค้า",
+            "activeFor": [],
+            "section": "marketing",
+            "more": true
+          },
+          {
+            "to": "/j/marketing/competitor-prices",
+            "label": "เทียบราคาคู่แข่ง",
+            "description": "เทียบราคาสินค้าของเรากับเว็บคู่แข่ง",
+            "activeFor": [],
+            "section": "marketing",
+            "more": true
+          },
+          {
+            "to": "/marketing/growth/plans",
+            "label": "แผนและปฏิทิน",
+            "more": true,
+            "description": "แผนการตลาดที่บันทึกไว้และปฏิทินงาน",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/marketing/analyst",
+            "label": "ผู้ช่วยวิเคราะห์การตลาด",
+            "more": true,
+            "description": "ถามคำถามการตลาดกับผู้ช่วย AI จากข้อมูลในระบบ",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/marketing/research",
+            "label": "งานวิจัยตลาด",
+            "more": true,
+            "description": "รายงานวิจัยตลาดและหัวข้อที่ติดตาม",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/marketing/restaurants",
+            "label": "ค้นหาตลาดร้านอาหาร",
+            "more": true,
+            "description": "สำรวจร้านอาหารบนแผนที่เพื่อหาลูกค้าใหม่",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/marketing/notify-templates",
+            "label": "แม่แบบข้อความ",
+            "more": true,
+            "description": "แม่แบบข้อความแจ้งเตือน อีเมล และป๊อปอัป",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/marketing/welcome-lead-email",
+            "label": "อีเมลต้อนรับลีด",
+            "more": true,
+            "description": "อีเมลต้อนรับลูกค้าที่สนใจ (ลีด) รายใหม่",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/smart-links",
+            "label": "ลิงก์ติดตามผล",
+            "more": true,
+            "description": "ลิงก์ที่ติดตามผลได้ พาลูกค้าไปยังหน้าที่เลือก",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/marketing-links",
+            "label": "สร้างลิงก์การตลาด",
+            "more": true,
+            "description": "สร้างลิงก์การตลาดพร้อมแท็กติดตามแคมเปญ",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/marketing/scraped-catalog",
+            "label": "สินค้าจากเว็บคู่แข่ง",
+            "more": true,
+            "description": "สินค้าที่เก็บมาจากเว็บคู่แข่ง",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/bot/intent-rules",
+            "label": "แชตบอต: เข้าใจคำถาม",
+            "more": true,
+            "description": "กติกาที่ช่วยให้แชตบอตเข้าใจคำถามของลูกค้า",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/bot/workflows",
+            "label": "แชตบอต: ลำดับการตอบ",
+            "more": true,
+            "description": "ลำดับการตอบของแชตบอต",
+            "activeFor": [],
+            "section": "marketing"
+          },
+          {
+            "to": "/j/bot/templates",
+            "label": "แชตบอต: ข้อความสำเร็จรูป",
+            "more": true,
+            "description": "ข้อความสำเร็จรูปของแชตบอต",
+            "activeFor": [],
+            "section": "marketing"
+          }
+        ]
+      },
+      {
+        "group": "รายงานและข้อมูล",
+        "icon": "monitoring",
+        "links": [
+          {
+            "to": "/reports/products",
+            "label": "รายงานสินค้า",
+            "description": "สินค้าขายดี ยอดขาย และสถานะสินค้า",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/traffic",
+            "label": "การเข้าชมร้านค้า",
+            "description": "การเข้าชมร้านค้าและพฤติกรรมการใช้งาน",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าและทีมงาน",
+        "icon": "settings",
+        "links": [
+          {
+            "to": "/account/password",
+            "label": "เปลี่ยนรหัสผ่าน",
+            "description": "เปลี่ยนรหัสผ่านของคุณ",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+        "icon": "hub",
+        "links": [
+          {
+            "to": "/ai/connectors",
+            "label": "เชื่อมต่อผู้ช่วย AI",
+            "more": false,
+            "description": "ให้ผู้ช่วย AI อ่านข้อมูลของเราแบบอ่านอย่างเดียว",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/settings",
+            "label": "ตั้งค่าการตลาด",
+            "more": false,
+            "description": "ค่าที่มีผลกับข้อความอัตโนมัติทั้งหมด",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/queue",
+            "label": "คิวงานการตลาด",
+            "more": false,
+            "description": "ข้อความการตลาดที่รอส่งและที่ส่งแล้ว",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/offers-check",
+            "label": "ตรวจข้อเสนอ",
+            "more": false,
+            "description": "ตรวจว่าอุปกรณ์หรือผู้ใช้จะเห็นข้อเสนอใดบนร้านค้า",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/cs/notification-catalog",
+            "label": "ประเภทการแจ้งเตือนทั้งหมด",
+            "more": false,
+            "description": "การแจ้งเตือนทุกประเภทที่ระบบส่งได้ และการเปิดปิด",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/cs/notification-log",
+            "label": "ประวัติการแจ้งเตือน",
+            "more": false,
+            "description": "บันทึกการแจ้งเตือนที่ส่งถึงลูกค้า",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/cs/notification-stats",
+            "label": "สถิติการส่งแจ้งเตือน",
+            "more": true,
+            "description": "สถิติการส่งแจ้งเตือนที่สำเร็จและไม่สำเร็จ",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/cs/product-notify-funnel",
+            "label": "ผลการแจ้งเตือนสินค้า",
+            "more": true,
+            "description": "ผลของการแจ้งเตือนสินค้า ตั้งแต่ส่งจนถึงสั่งซื้อ",
+            "activeFor": [],
+            "section": "advanced"
+          },
+          {
+            "to": "/j/marketing/scraping-sources",
+            "label": "ตั้งค่าเว็บคู่แข่งที่เก็บข้อมูล",
+            "more": true,
+            "description": "เลือกเว็บคู่แข่งที่ระบบเก็บข้อมูล และการเก็บอัตโนมัติ",
+            "activeFor": [],
+            "section": "advanced"
+          }
+        ]
+      }
+    ],
+    "merchandising": [
+      {
+        "links": [
+          {
+            "to": "/home",
+            "label": "หน้าแรก",
+            "end": true,
+            "icon": "dashboard",
+            "description": "งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้"
+          }
+        ]
+      },
+      {
+        "group": "สินค้าและสต็อก",
+        "icon": "inventory_2",
+        "links": [
+          {
+            "to": "/j/allproducts",
+            "label": "สินค้าบนร้านค้า",
+            "activeFor": [
+              "/j/product",
+              "/j/product/create"
+            ],
+            "description": "ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า",
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/products",
+            "label": "ค้นหาสินค้าตามรหัส",
+            "description": "สินค้าทุกรายการตามรหัสสินค้า และการอนุมัติสินค้าใหม่",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/categories",
+            "label": "จัดการหมวดหมู่",
+            "description": "จัดโครงสร้าง ลำดับ และรูปของหมวดหมู่บนร้านค้า",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/brands",
+            "label": "แบรนด์",
+            "description": "รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/product/bulk-image-upload",
+            "label": "อัปโหลดรูปสินค้า",
+            "end": true,
+            "description": "อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/suppliers",
+            "label": "ซัพพลายเออร์",
+            "activeFor": [
+              "/j/supplier",
+              "/josh/suppliers"
+            ],
+            "description": "ซัพพลายเออร์ที่ส่งสินค้าให้ร้านและข้อมูลติดต่อ",
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/product-prices",
+            "label": "ราคาสินค้า",
+            "description": "ราคาขาย ราคาสั่ง และจำนวนขั้นต่ำ ตรวจและอนุมัติราคาที่เปลี่ยน",
+            "activeFor": [],
+            "section": "catalog",
+            "more": true
+          },
+          {
+            "to": "/product-master-queue",
+            "label": "อนุมัติข้อมูลสินค้าที่เปลี่ยน",
+            "description": "ตรวจและอนุมัติข้อมูลสินค้าที่เปลี่ยน เช่น หน่วย แพ็ก แบรนด์ และ VAT",
+            "activeFor": [],
+            "section": "catalog",
+            "more": true
+          },
+          {
+            "to": "/stock-moves",
+            "label": "รับเข้า ปรับ และโอนสต็อก",
+            "description": "บันทึกการรับสินค้าเข้า ปรับยอด และโอนสินค้าระหว่างคลัง",
+            "activeFor": [],
+            "section": "catalog",
+            "more": true
+          },
+          {
+            "to": "/erp/inventory-warehouse",
+            "label": "สต็อกแต่ละคลัง",
+            "description": "ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง",
+            "activeFor": [],
+            "section": "catalog",
+            "more": true
+          },
+          {
+            "to": "/j/product/video-upload",
+            "label": "อัปโหลดวิดีโอสินค้า",
+            "end": true,
+            "more": true,
+            "description": "อัปโหลดวิดีโอประกอบหน้าสินค้า",
+            "activeFor": [],
+            "section": "catalog"
+          },
+          {
+            "to": "/prices/staff",
+            "label": "ราคาเฉพาะลูกค้าและราคาสัญญา",
+            "more": true,
+            "description": "ราคาเฉพาะของลูกค้าแต่ละรายและราคาตามสัญญา",
+            "activeFor": [],
+            "section": "catalog"
+          },
+          {
+            "to": "/order-periods",
+            "label": "รอบสั่งซื้อจากซัพพลายเออร์",
+            "more": true,
+            "description": "รอบสั่งซื้อสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับ",
+            "activeFor": [],
+            "section": "catalog"
+          }
+        ]
+      },
+      {
+        "group": "การตลาด",
+        "icon": "campaign",
+        "links": [
+          {
+            "to": "/j/promotions-mechanic",
+            "label": "กติกาส่วนลด",
+            "description": "กติกาส่วนลด เช่น ซื้อครบลด หรือซื้อ X แถม Y",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/promotion-product-sets",
+            "label": "ชุดสินค้าโปรโมชัน",
+            "description": "ชุดสินค้าที่ใช้กับโปรโมชันและคูปอง",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "รายงานและข้อมูล",
+        "icon": "monitoring",
+        "links": [
+          {
+            "to": "/reports/products",
+            "label": "รายงานสินค้า",
+            "description": "สินค้าขายดี ยอดขาย และสถานะสินค้า",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าและทีมงาน",
+        "icon": "settings",
+        "links": [
+          {
+            "to": "/account/password",
+            "label": "เปลี่ยนรหัสผ่าน",
+            "description": "เปลี่ยนรหัสผ่านของคุณ",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          }
+        ]
+      }
+    ],
+    "cs": [
+      {
+        "links": [
+          {
+            "to": "/home",
+            "label": "หน้าแรก",
+            "end": true,
+            "icon": "dashboard",
+            "description": "งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้"
+          }
+        ]
+      },
+      {
+        "group": "ออเดอร์และการชำระเงิน",
+        "icon": "receipt_long",
+        "links": [
+          {
+            "to": "/j/order",
+            "label": "คำสั่งซื้อ",
+            "description": "ค้นหาและติดตามคำสั่งซื้อ เปิดดูรายละเอียดและสถานะ",
+            "activeFor": [
+              "/j/order/import"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/shipments",
+            "label": "การจัดส่งสินค้า",
+            "description": "ติดตามการจัดส่งและอัปเดตสถานะพัสดุ",
+            "activeFor": [
+              "/josh/shipments"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/credit-notes",
+            "label": "ใบลดหนี้",
+            "description": "ออกและติดตามใบลดหนี้",
+            "activeFor": [
+              "/josh/credit_notes"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/credit-backs",
+            "label": "คืนเครดิตให้ลูกค้า",
+            "description": "คืนเครดิตให้ลูกค้าและติดตามสถานะ",
+            "activeFor": [
+              "/josh/credit_backs"
+            ],
+            "section": "orders",
+            "more": false
+          },
+          {
+            "to": "/j/cs/delivery-schedule",
+            "label": "ตารางรอบส่ง",
+            "description": "รอบจัดส่งและเกณฑ์การจัดส่ง",
+            "activeFor": [],
+            "section": "orders",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ลูกค้าและบริการ",
+        "icon": "support_agent",
+        "links": [
+          {
+            "to": "/cs",
+            "label": "งานบริการลูกค้า",
+            "activeFor": [
+              "/j/cs/sample-requests",
+              "/j/cs/sample-requests"
+            ],
+            "description": "เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี",
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/j/cs/cart-move-categories",
+            "label": "หมวดที่ย้ายของในตะกร้าได้",
+            "more": true,
+            "description": "หมวดสินค้าที่ย้ายข้ามรอบจัดส่งได้เพื่อปลดล็อกส่งฟรี",
+            "activeFor": [],
+            "section": "customers"
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าและทีมงาน",
+        "icon": "settings",
+        "links": [
+          {
+            "to": "/account/password",
+            "label": "เปลี่ยนรหัสผ่าน",
+            "description": "เปลี่ยนรหัสผ่านของคุณ",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          }
+        ]
+      }
+    ],
+    "sales_manager": [
+      {
+        "links": [
+          {
+            "to": "/home",
+            "label": "หน้าแรก",
+            "end": true,
+            "icon": "dashboard",
+            "description": "งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้"
+          }
+        ]
+      },
+      {
+        "group": "ลูกค้าและบริการ",
+        "icon": "support_agent",
+        "links": [
+          {
+            "to": "/reports/winback",
+            "label": "ติดตามลูกค้าเก่า",
+            "description": "ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/reports/winback/opportunities",
+            "label": "โอกาสของทีม",
+            "description": "โอกาสขายและลีดของทั้งทีม แยกตามพนักงานขาย",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/cs/sales-assignment",
+            "label": "มอบหมายพนักงานขาย",
+            "description": "กำหนดพนักงานขายที่ดูแลแต่ละบริษัทลูกค้า",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "รายงานและข้อมูล",
+        "icon": "monitoring",
+        "links": [
+          {
+            "to": "/reports/sales",
+            "label": "ยอดขายทีมและผลงานรายเซลส์",
+            "description": "ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/orders",
+            "label": "รายงานออเดอร์",
+            "description": "รายการและสรุปคำสั่งซื้อของร้าน",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/customers",
+            "label": "รายงานลูกค้าและบริษัท",
+            "description": "ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/prices",
+            "label": "รายงานราคาขาย",
+            "description": "ราคาที่ลูกค้าแต่ละสาขาเห็น และใบเสนอราคา",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/order-targetgroup",
+            "label": "กลุ่มลูกค้าเป้าหมาย",
+            "description": "ออเดอร์แยกตามกลุ่มลูกค้าเป้าหมาย",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/health",
+            "label": "สุขภาพระบบ",
+            "description": "ข้อผิดพลาดและปัญหาที่กระทบการขายตอนนี้",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าและทีมงาน",
+        "icon": "settings",
+        "links": [
+          {
+            "to": "/account/password",
+            "label": "เปลี่ยนรหัสผ่าน",
+            "description": "เปลี่ยนรหัสผ่านของคุณ",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          }
+        ]
+      }
+    ],
+    "business_analyst": [
+      {
+        "links": [
+          {
+            "to": "/home",
+            "label": "หน้าแรก",
+            "end": true,
+            "icon": "dashboard",
+            "description": "งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้"
+          }
+        ]
+      },
+      {
+        "group": "สินค้าและสต็อก",
+        "icon": "inventory_2",
+        "links": [
+          {
+            "to": "/erp/inventory-warehouse",
+            "label": "สต็อกแต่ละคลัง",
+            "description": "ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ออเดอร์และการชำระเงิน",
+        "icon": "receipt_long",
+        "links": [
+          {
+            "to": "/orders",
+            "label": "ชำระเงินและการจองของออเดอร์",
+            "more": false,
+            "description": "สถานะชำระเงินและการจองสินค้าของแต่ละคำสั่งซื้อ",
+            "activeFor": [],
+            "section": "orders"
+          }
+        ]
+      },
+      {
+        "group": "ลูกค้าและบริการ",
+        "icon": "support_agent",
+        "links": [
+          {
+            "to": "/reports/winback",
+            "label": "ติดตามลูกค้าเก่า",
+            "description": "ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          },
+          {
+            "to": "/reports/winback/opportunities",
+            "label": "โอกาสของทีม",
+            "description": "โอกาสขายและลีดของทั้งทีม แยกตามพนักงานขาย",
+            "activeFor": [],
+            "section": "customers",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "การตลาด",
+        "icon": "campaign",
+        "links": [
+          {
+            "to": "/marketing/growth",
+            "label": "วางแผนการเติบโต",
+            "end": true,
+            "activeFor": [
+              "/marketing/growth/results",
+              "/marketing/growth/companies"
+            ],
+            "description": "เริ่มจากข้อมูลลูกค้าและยอดขาย แล้ววางแผนแคมเปญที่ผ่านการตรวจทาน",
+            "section": "marketing",
+            "more": false
+          },
+          {
+            "to": "/j/marketing/competitor-prices",
+            "label": "เทียบราคาคู่แข่ง",
+            "description": "เทียบราคาสินค้าของเรากับเว็บคู่แข่ง",
+            "activeFor": [],
+            "section": "marketing",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "รายงานและข้อมูล",
+        "icon": "monitoring",
+        "links": [
+          {
+            "to": "/reports/sales",
+            "label": "รายงานยอดขาย",
+            "description": "ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/orders",
+            "label": "รายงานออเดอร์",
+            "description": "รายการและสรุปคำสั่งซื้อของร้าน",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/customers",
+            "label": "รายงานลูกค้าและบริษัท",
+            "description": "ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/prices",
+            "label": "รายงานราคาขาย",
+            "description": "ราคาที่ลูกค้าแต่ละสาขาเห็น และใบเสนอราคา",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/order-targetgroup",
+            "label": "กลุ่มลูกค้าเป้าหมาย",
+            "description": "ออเดอร์แยกตามกลุ่มลูกค้าเป้าหมาย",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/health",
+            "label": "สุขภาพระบบ",
+            "description": "ข้อผิดพลาดและปัญหาที่กระทบการขายตอนนี้",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าและทีมงาน",
+        "icon": "settings",
+        "links": [
+          {
+            "to": "/account/password",
+            "label": "เปลี่ยนรหัสผ่าน",
+            "description": "เปลี่ยนรหัสผ่านของคุณ",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          }
+        ]
+      }
+    ],
+    "graphic": [
+      {
+        "links": [
+          {
+            "to": "/home",
+            "label": "หน้าแรก",
+            "end": true,
+            "icon": "dashboard",
+            "description": "งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้"
+          }
+        ]
+      },
+      {
+        "group": "สินค้าและสต็อก",
+        "icon": "inventory_2",
+        "links": [
+          {
+            "to": "/j/allproducts",
+            "label": "สินค้าบนร้านค้า",
+            "activeFor": [
+              "/j/product",
+              "/j/product/create"
+            ],
+            "description": "ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า",
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/products",
+            "label": "ค้นหาสินค้าตามรหัส",
+            "description": "สินค้าทุกรายการตามรหัสสินค้า และการอนุมัติสินค้าใหม่",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/brands",
+            "label": "แบรนด์",
+            "description": "รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/j/product/bulk-image-upload",
+            "label": "อัปโหลดรูปสินค้า",
+            "end": true,
+            "description": "อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าและทีมงาน",
+        "icon": "settings",
+        "links": [
+          {
+            "to": "/account/password",
+            "label": "เปลี่ยนรหัสผ่าน",
+            "description": "เปลี่ยนรหัสผ่านของคุณ",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          }
+        ]
+      }
+    ],
+    "sale": [
+      {
+        "links": [
+          {
+            "to": "/home",
+            "label": "หน้าแรก",
+            "end": true,
+            "icon": "dashboard",
+            "description": "งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้"
+          }
+        ]
+      },
+      {
+        "group": "สินค้าและสต็อก",
+        "icon": "inventory_2",
+        "links": [
+          {
+            "to": "/products",
+            "label": "ค้นหาสินค้าตามรหัส",
+            "description": "สินค้าทุกรายการตามรหัสสินค้า และการอนุมัติสินค้าใหม่",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          },
+          {
+            "to": "/erp/inventory-warehouse",
+            "label": "สต็อกแต่ละคลัง",
+            "description": "ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง",
+            "activeFor": [],
+            "section": "catalog",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ลูกค้าและบริการ",
+        "icon": "support_agent",
+        "links": [
+          {
+            "to": "/reports/winback/my",
+            "label": "โอกาสและลีดของฉัน",
+            "more": false,
+            "description": "ลูกค้าที่ควรติดต่อกลับและลีดที่ได้รับมอบหมาย",
+            "activeFor": [],
+            "section": "customers"
+          }
+        ]
+      },
+      {
+        "group": "รายงานและข้อมูล",
+        "icon": "monitoring",
+        "links": [
+          {
+            "to": "/reports/sales",
+            "label": "ยอดขายของฉัน",
+            "description": "ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/orders",
+            "label": "ออเดอร์ของฉัน",
+            "description": "รายการและสรุปคำสั่งซื้อของร้าน",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/customers",
+            "label": "ลูกค้าของฉัน",
+            "description": "ลูกค้าและบริษัท ยอดซื้อ และการสั่งซื้อล่าสุด",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          },
+          {
+            "to": "/reports/prices",
+            "label": "รายงานราคาขาย",
+            "description": "ราคาที่ลูกค้าแต่ละสาขาเห็น และใบเสนอราคา",
+            "activeFor": [],
+            "section": "reports",
+            "more": false
+          }
+        ]
+      },
+      {
+        "group": "ตั้งค่าและทีมงาน",
+        "icon": "settings",
+        "links": [
+          {
+            "to": "/account/password",
+            "label": "เปลี่ยนรหัสผ่าน",
+            "description": "เปลี่ยนรหัสผ่านของคุณ",
+            "activeFor": [],
+            "section": "settings",
+            "more": false
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -24906,5 +24906,297 @@
   "สมัครด้วยอีเมล @jagota.co.th": {
     "th": "สมัครด้วยอีเมล @jagota.co.th",
     "en": "Sign up with a @jagota.co.th email"
+  },
+  "เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี": {
+    "th": "เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี",
+    "en": "Choose an order, sample request, or account task"
+  },
+  "เพิ่ม อ่าน และลบเอกสารที่ใช้ภายในทีม": {
+    "th": "เพิ่ม อ่าน และลบเอกสารที่ใช้ภายในทีม",
+    "en": "Add, read, and delete documents used by your team"
+  },
+  "เปิดหรือปิดคูปองจากข้อมูลสำรอง": {
+    "th": "เปิดหรือปิดคูปองจากข้อมูลสำรอง",
+    "en": "Activate or deactivate a coupon using saved records"
+  },
+  "เพิ่มหรือแก้ซัพพลายเออร์จากข้อมูลสำรอง": {
+    "th": "เพิ่มหรือแก้ซัพพลายเออร์จากข้อมูลสำรอง",
+    "en": "Add or edit suppliers using saved records"
+  },
+  "พิจารณาเครดิตจากข้อมูลสำรอง": {
+    "th": "พิจารณาเครดิตจากข้อมูลสำรอง",
+    "en": "Review credit applications using saved records"
+  },
+  "พิจารณาสิทธิ์จากข้อมูลสำรอง": {
+    "th": "พิจารณาสิทธิ์จากข้อมูลสำรอง",
+    "en": "Review access requests using saved records"
+  },
+  "ดูข้อมูลสำรอง": {
+    "th": "ดูข้อมูลสำรอง",
+    "en": "View saved records"
+  },
+  "เลือกลูกค้าและสินค้า ตรวจราคา แล้วสั่งซื้อ": {
+    "th": "เลือกลูกค้าและสินค้า ตรวจราคา แล้วสั่งซื้อ",
+    "en": "Choose a customer and products, check the quote, then place the order"
+  },
+  "ตรวจคำขอ อนุมัติ และบันทึกการส่งสินค้า": {
+    "th": "ตรวจคำขอ อนุมัติ และบันทึกการส่งสินค้า",
+    "en": "Review requests, approve them, and record fulfilled samples"
+  },
+  "ย้ายข้อมูลจากบัญชีซ้ำเข้าบัญชีหลัก": {
+    "th": "ย้ายข้อมูลจากบัญชีซ้ำเข้าบัญชีหลัก",
+    "en": "Move duplicate account data into the primary account"
+  },
+  "เลือกงานที่ต้องการทำ แต่ละงานมีหน้าของตัวเอง": {
+    "th": "เลือกงานที่ต้องการทำ แต่ละงานมีหน้าของตัวเอง",
+    "en": "Choose a task to open its own page"
+  },
+  "คุณไม่มีสิทธิ์ทำงานนี้": {
+    "th": "คุณไม่มีสิทธิ์ทำงานนี้",
+    "en": "You do not have permission for this task"
+  },
+  "สร้างคำสั่งซื้อแล้ว": {
+    "th": "สร้างคำสั่งซื้อแล้ว",
+    "en": "Order created"
+  },
+  "ตรวจคำขอสินค้าตัวอย่าง": {
+    "th": "ตรวจคำขอสินค้าตัวอย่าง",
+    "en": "Review sample request"
+  },
+  "ตัวกรองสถานะไม่ถูกต้อง": {
+    "th": "ตัวกรองสถานะไม่ถูกต้อง",
+    "en": "The status filter is invalid"
+  },
+  "บันทึกสถานะคำขอแล้ว": {
+    "th": "บันทึกสถานะคำขอแล้ว",
+    "en": "Request status saved"
+  },
+  "สถานะในรายการนี้": {
+    "th": "สถานะในรายการนี้",
+    "en": "Statuses in this list"
+  },
+  "ยืนยันและบันทึก": {
+    "th": "ยืนยันและบันทึก",
+    "en": "Confirm and save"
+  },
+  "ตรวจข้อมูลแล้ว พร้อมบันทึกสถานะ": {
+    "th": "ตรวจข้อมูลแล้ว พร้อมบันทึกสถานะ",
+    "en": "I checked the details and am ready to save the status"
+  },
+  "คำขอนี้เปลี่ยนสถานะแล้ว หรือทำงานนี้ไม่ได้": {
+    "th": "คำขอนี้เปลี่ยนสถานะแล้ว หรือทำงานนี้ไม่ได้",
+    "en": "This request has changed status or this action is unavailable"
+  },
+  "ไม่พบคำขอนี้": {
+    "th": "ไม่พบคำขอนี้",
+    "en": "Request not found"
+  },
+  "ไม่มีคำขอที่ตรงกับตัวกรองนี้": {
+    "th": "ไม่มีคำขอที่ตรงกับตัวกรองนี้",
+    "en": "No requests match this filter"
+  },
+  "ไม่อนุมัติแล้ว {0} รายการ": {
+    "th": "ไม่อนุมัติแล้ว {0} รายการ",
+    "en": "Rejected {0} records"
+  },
+  "รอพิจารณา": {
+    "th": "รอพิจารณา",
+    "en": "Pending review"
+  },
+  "กลับหน้ารายการ": {
+    "th": "กลับหน้ารายการ",
+    "en": "Back to list"
+  },
+  "ค้นหาบริษัทแล้วเลือกผู้ใช้และสาขา": {
+    "th": "ค้นหาบริษัทแล้วเลือกผู้ใช้และสาขา",
+    "en": "Find a company, then choose its user and delivery branch"
+  },
+  "เพิ่มสินค้าและจำนวน แล้วกดคิดราคา": {
+    "th": "เพิ่มสินค้าและจำนวน แล้วกดคิดราคา",
+    "en": "Add products and quantities, then request a quote"
+  },
+  "ตรวจราคาและวิธีชำระเงิน แล้วกดสั่งซื้อ": {
+    "th": "ตรวจราคาและวิธีชำระเงิน แล้วกดสั่งซื้อ",
+    "en": "Check the quote and payment method, then place the order"
+  },
+  "เลือกสถานะเพื่อกรองคำขอ": {
+    "th": "เลือกสถานะเพื่อกรองคำขอ",
+    "en": "Choose a status to filter requests"
+  },
+  "เปิดงานที่ต้องการทำจากคำขอ": {
+    "th": "เปิดงานที่ต้องการทำจากคำขอ",
+    "en": "Open an action from a request"
+  },
+  "ตรวจข้อมูลแล้วกดยืนยันและบันทึก": {
+    "th": "ตรวจข้อมูลแล้วกดยืนยันและบันทึก",
+    "en": "Review the details, then confirm and save"
+  },
+  "ตรวจลูกค้า สินค้า และจำนวน": {
+    "th": "ตรวจลูกค้า สินค้า และจำนวน",
+    "en": "Check the customer, product, and quantity"
+  },
+  "ใส่หมายเหตุถ้าต้องการ": {
+    "th": "ใส่หมายเหตุถ้าต้องการ",
+    "en": "Add a note if needed"
+  },
+  "ตรวจรหัสบัญชีหลักและบัญชีซ้ำ": {
+    "th": "ตรวจรหัสบัญชีหลักและบัญชีซ้ำ",
+    "en": "Check the primary and duplicate account IDs"
+  },
+  "ตรวจว่าทั้งสองบัญชีต่างกัน": {
+    "th": "ตรวจว่าทั้งสองบัญชีต่างกัน",
+    "en": "Confirm these are two different accounts"
+  },
+  "ยืนยันการรวมบัญชี ย้อนกลับไม่ได้": {
+    "th": "ยืนยันการรวมบัญชี ย้อนกลับไม่ได้",
+    "en": "Confirm the account merge; this cannot be undone"
+  },
+  "ไม่อนุมัติแล้ว": {
+    "th": "ไม่อนุมัติแล้ว",
+    "en": "Rejected"
+  },
+  "บันทึกการส่ง": {
+    "th": "บันทึกการส่ง",
+    "en": "Record fulfillment"
+  },
+  "แก้ไขข้อมูล {0} ช่องที่ระบุด้านล่าง": {
+    "th": "แก้ไขข้อมูล {0} ช่องที่ระบุด้านล่าง",
+    "en": "Correct the {0} fields marked below"
+  },
+  "รอข้อมูลที่จำเป็นโหลดเสร็จ แล้วลองอีกครั้ง": {
+    "th": "รอข้อมูลที่จำเป็นโหลดเสร็จ แล้วลองอีกครั้ง",
+    "en": "Wait for the required data to load, then try again"
+  },
+  "บันทึกไม่ได้ ลองอีกครั้ง ข้อมูลของคุณยังอยู่": {
+    "th": "บันทึกไม่ได้ ลองอีกครั้ง ข้อมูลของคุณยังอยู่",
+    "en": "Could not save. Try again; your values are still here"
+  },
+  "ยังยืนยันผลการบันทึกไม่ได้ ตรวจรายการก่อนลองอีกครั้ง": {
+    "th": "ยังยืนยันผลการบันทึกไม่ได้ ตรวจรายการก่อนลองอีกครั้ง",
+    "en": "Save outcome is unconfirmed. Check the current records before trying again"
+  },
+  "ยังยืนยันผลการบันทึกไม่ได้": {
+    "th": "ยังยืนยันผลการบันทึกไม่ได้",
+    "en": "Save outcome is unconfirmed"
+  },
+  "คำขอก่อนหน้าอาจบันทึกแล้ว ตรวจข้อมูลล่าสุดก่อนลองอีกครั้งเพื่อป้องกันรายการซ้ำ": {
+    "th": "คำขอก่อนหน้าอาจบันทึกแล้ว ตรวจข้อมูลล่าสุดก่อนลองอีกครั้งเพื่อป้องกันรายการซ้ำ",
+    "en": "The previous request may have saved. Check current data before trying again to avoid duplicates"
+  },
+  "ตรวจข้อมูลล่าสุด": {
+    "th": "ตรวจข้อมูลล่าสุด",
+    "en": "Check current data"
+  },
+  "ตรวจแล้วและต้องการลองใหม่": {
+    "th": "ตรวจแล้วและต้องการลองใหม่",
+    "en": "I checked and want to retry"
+  },
+  "กรอกรหัสสินค้า 1–64 ตัวอักษร": {
+    "th": "กรอกรหัสสินค้า 1–64 ตัวอักษร",
+    "en": "Enter a SKU of 1–64 characters"
+  },
+  "เลือกคลังที่แพลตฟอร์มดูแล": {
+    "th": "เลือกคลังที่แพลตฟอร์มดูแล",
+    "en": "Choose a platform-owned warehouse"
+  },
+  "เลือกคลังปลายทางที่ต่างจากต้นทาง": {
+    "th": "เลือกคลังปลายทางที่ต่างจากต้นทาง",
+    "en": "Choose a destination different from the source warehouse"
+  },
+  "เลือกเหตุผลที่รองรับ": {
+    "th": "เลือกเหตุผลที่รองรับ",
+    "en": "Choose a supported reason"
+  },
+  "กรอกจำนวนเต็มระหว่าง {0} ถึง {1}": {
+    "th": "กรอกจำนวนเต็มระหว่าง {0} ถึง {1}",
+    "en": "Enter a whole number between {0} and {1}"
+  },
+  "หมายเหตุไม่เกิน 200 ตัวอักษร": {
+    "th": "หมายเหตุไม่เกิน 200 ตัวอักษร",
+    "en": "Keep the note within 200 characters"
+  },
+  "ไม่พบ SKU นี้ในผลค้นหาล่าสุด ตรวจรายการก่อนลองใหม่": {
+    "th": "ไม่พบ SKU นี้ในผลค้นหาล่าสุด ตรวจรายการก่อนลองใหม่",
+    "en": "This SKU was not found in the latest search. Check the records before retrying"
+  },
+  "กู้คืนข้อมูลที่ยังไม่บันทึกแล้ว ตรวจข้อมูลก่อนบันทึก": {
+    "th": "กู้คืนข้อมูลที่ยังไม่บันทึกแล้ว ตรวจข้อมูลก่อนบันทึก",
+    "en": "Your unsaved draft was restored. Check it before saving"
+  },
+  "เลือกค่าที่รองรับ": {
+    "th": "เลือกค่าที่รองรับ",
+    "en": "Choose a supported value"
+  },
+  "โหลดรายการล่าสุดแล้ว {0} รายการ ตรวจชื่อหรือรหัสและหน้าถัดไปก่อนลองใหม่": {
+    "th": "โหลดรายการล่าสุดแล้ว {0} รายการ ตรวจชื่อหรือรหัสและหน้าถัดไปก่อนลองใหม่",
+    "en": "Loaded {0} current records. Check names or codes and subsequent pages before retrying"
+  },
+  "พบบัญชี {0} แล้ว หากไม่มีรหัสผ่านชั่วคราว ให้ปิดแบบฟอร์มและใช้รีเซ็ตรหัสผ่าน": {
+    "th": "พบบัญชี {0} แล้ว หากไม่มีรหัสผ่านชั่วคราว ให้ปิดแบบฟอร์มและใช้รีเซ็ตรหัสผ่าน",
+    "en": "Account {0} exists. If you do not have its temporary password, close this form and use Reset password"
+  },
+  "ไม่พบบัญชีที่ใช้อีเมลนี้ในรายการล่าสุด ตรวจอีเมลก่อนลองใหม่": {
+    "th": "ไม่พบบัญชีที่ใช้อีเมลนี้ในรายการล่าสุด ตรวจอีเมลก่อนลองใหม่",
+    "en": "No account with this email was found in the current list. Check the email before retrying"
+  },
+  "กรอกอีเมล เช่น name@example.com": {
+    "th": "กรอกอีเมล เช่น name@example.com",
+    "en": "Enter an email, such as name@example.com"
+  },
+  "เลือกสิทธิ์ที่รองรับ": {
+    "th": "เลือกสิทธิ์ที่รองรับ",
+    "en": "Choose a supported role"
+  },
+  "พบการเชื่อมต่อที่ชื่อและประเภทตรงกัน {0} รายการ ตรวจ Webhook URL ก่อนลองใหม่": {
+    "th": "พบการเชื่อมต่อที่ชื่อและประเภทตรงกัน {0} รายการ ตรวจ Webhook URL ก่อนลองใหม่",
+    "en": "Found {0} integrations with this name and type. Check their Webhook URLs before retrying"
+  },
+  "Signing secret ไม่ถูกเก็บในแบบร่าง กรุณากรอกใหม่หากจำเป็น": {
+    "th": "Signing secret ไม่ถูกเก็บในแบบร่าง กรุณากรอกใหม่หากจำเป็น",
+    "en": "Signing secrets are excluded from drafts. Enter it again if needed"
+  },
+  "กรอกข้อมูลที่จำเป็น": {
+    "th": "กรอกข้อมูลที่จำเป็น",
+    "en": "Enter the required value"
+  },
+  "คุณไม่มีสิทธิ์เปิดหน้านี้": {
+    "th": "คุณไม่มีสิทธิ์เปิดหน้านี้",
+    "en": "You do not have permission to open this page"
+  },
+  "คำขอก่อนหน้ายังทำงานอยู่ รอผลก่อนตรวจและลองใหม่": {
+    "th": "คำขอก่อนหน้ายังทำงานอยู่ รอผลก่อนตรวจและลองใหม่",
+    "en": "The previous request is still running. Wait for it before checking and retrying"
+  },
+  "ตรวจข้อมูลก่อนบันทึก": {
+    "th": "ตรวจข้อมูลก่อนบันทึก",
+    "en": "Check the details before saving"
+  },
+  "ยกเลิกการบันทึกแล้ว": {
+    "th": "ยกเลิกการบันทึกแล้ว",
+    "en": "Save cancelled"
+  },
+  "พบออเดอร์ {0} รายการในผลค้นหาล่าสุด ตรวจออเดอร์และหน้าถัดไปก่อนลองใหม่": {
+    "th": "พบออเดอร์ {0} รายการในผลค้นหาล่าสุด ตรวจออเดอร์และหน้าถัดไปก่อนลองใหม่",
+    "en": "Found {0} orders in the latest search. Check these and subsequent pages before retrying"
+  },
+  "โหลดบริษัทล่าสุดแล้ว ตรวจรายละเอียดผู้ใช้ของทั้งสองบัญชีในรายงานลูกค้าก่อนลองใหม่": {
+    "th": "โหลดบริษัทล่าสุดแล้ว ตรวจรายละเอียดผู้ใช้ของทั้งสองบัญชีในรายงานลูกค้าก่อนลองใหม่",
+    "en": "Loaded current companies. Check both user accounts in customer report details before retrying"
+  },
+  "กรอก user id แบบ UUID": {
+    "th": "กรอก user id แบบ UUID",
+    "en": "Enter a user ID in UUID format"
+  },
+  "สร้างบัญชีแล้ว": {
+    "th": "สร้างบัญชีแล้ว",
+    "en": "Account created"
+  },
+  "รีเซ็ตรหัสผ่านแล้ว": {
+    "th": "รีเซ็ตรหัสผ่านแล้ว",
+    "en": "Password reset"
+  },
+  "สถานะล่าสุด: {0}": {
+    "th": "สถานะล่าสุด: {0}",
+    "en": "Current status: {0}"
   }
 }

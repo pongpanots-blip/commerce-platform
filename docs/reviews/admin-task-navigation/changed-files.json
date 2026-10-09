@@ -1,0 +1,40 @@
+{
+  "tracked": [
+    "apps/commerce-admin/src/app/app.tsx",
+    "apps/commerce-admin/src/app/components/ResourcePage.tsx",
+    "apps/commerce-admin/src/app/hooks.ts",
+    "apps/commerce-admin/src/app/navigation.legacy.ts",
+    "apps/commerce-admin/src/app/navigation.spec.ts",
+    "apps/commerce-admin/src/app/navigation.ts",
+    "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+    "apps/commerce-admin/src/app/pages/Integrations.tsx",
+    "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+    "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
+    "apps/commerce-admin/src/app/pages/StockMoves.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+    "libs/ui/src/forms.tsx",
+    "libs/ui/src/index.tsx",
+    "libs/ui/src/locales/ui-messages.json"
+  ],
+  "addedSourceAndTests": [
+    "apps/commerce-admin/e2e/fixtures/task-form-validation.html",
+    "apps/commerce-admin/e2e/fixtures/task-form-validation.tsx",
+    "apps/commerce-admin/e2e/task-form-components.mjs",
+    "apps/commerce-admin/e2e/task-navigation.mjs",
+    "apps/commerce-admin/src/app/FeatureActions.tsx",
+    "apps/commerce-admin/src/app/TaskRoute.tsx",
+    "apps/commerce-admin/src/app/features.ts",
+    "apps/commerce-admin/src/app/hooks.spec.tsx",
+    "apps/commerce-admin/src/app/pages/ActionFlows.spec.tsx",
+    "apps/commerce-admin/src/app/pages/CsDesk.spec.tsx",
+    "apps/commerce-admin/src/app/pages/ProductMasterQueue.spec.tsx",
+    "apps/commerce-admin/src/app/task-forms.tsx",
+    "apps/commerce-admin/src/task-form.spec.tsx",
+    "libs/ui/src/task-form.tsx"
+  ],
+  "initialWorktree": "clean; all changes belong to this task",
+  "backendSourceChanges": false,
+  "portalSourceChanges": false,
+  "themeCssChanges": false,
+  "uncommitted": true
+}

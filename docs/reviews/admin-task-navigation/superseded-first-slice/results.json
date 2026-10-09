@@ -1,0 +1,36 @@
+{
+  "apiMode": "intercepted fixtures; no external persistence tested",
+  "browser": "153.0.8010.0",
+  "checks": [
+    "admin th: canonical menu, role tasks, keyboard and layout",
+    "admin en: canonical menu, role tasks, keyboard and layout",
+    "marketing th: canonical menu, role tasks, keyboard and layout",
+    "marketing en: canonical menu, role tasks, keyboard and layout",
+    "merchandising th: canonical menu, role tasks, keyboard and layout",
+    "merchandising en: canonical menu, role tasks, keyboard and layout",
+    "cs th: canonical menu, role tasks, keyboard and layout",
+    "cs en: canonical menu, role tasks, keyboard and layout",
+    "sales_manager th: canonical menu, role tasks, keyboard and layout",
+    "sales_manager en: canonical menu, role tasks, keyboard and layout",
+    "business_analyst th: canonical menu, role tasks, keyboard and layout",
+    "business_analyst en: canonical menu, role tasks, keyboard and layout",
+    "graphic th: canonical menu, role tasks, keyboard and layout",
+    "graphic en: canonical menu, role tasks, keyboard and layout",
+    "sale th: canonical menu, role tasks, keyboard and layout",
+    "sale en: canonical menu, role tasks, keyboard and layout",
+    "Identity/password check: accessible startup skeleton, failed read blocks content, retry restores task home",
+    "Samples: alias/query/reload/back/forward, interrupted note, failed save, retry, duplicate-submit guard and authoritative status",
+    "Samples: loading skeleton, reduced motion, 403/retry and expired session login",
+    "Thai phone: scroll containment, mobile menu opens and closes after navigation",
+    "On-behalf order: customer/branch selection, quote, unchanged payload, locked checkout and success after response",
+    "Product master queue: persisted-result count, selected payload and empty after refresh",
+    "Direct admin-only task denied to CS; saved-record alias highlights canonical coupons"
+  ],
+  "screenshots": [
+    "samples-en.png",
+    "sample-success-en.png",
+    "samples-phone-th.png",
+    "queue-success-en.png"
+  ],
+  "errors": []
+}

@@ -1,0 +1,1776 @@
+{
+  "method": "All175 inventoried sources read again after approved behavior slice; static token presence only, not visual correctness or reachability.",
+  "routes": [
+    {
+      "app": "admin",
+      "path": "/",
+      "source": "apps/commerce-admin/src/app/pages/Dashboard.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/settings/staff",
+      "source": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload",
+        "TaskPanelForm",
+        "TaskInput",
+        "InterruptedAction"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/settings/josh-staff",
+      "source": "apps/commerce-admin/src/app/pages/JoshStaff.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/account/password",
+      "source": "apps/commerce-admin/src/app/pages/ChangePassword.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/orders",
+      "source": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/orders/:id",
+      "source": "apps/commerce-admin/src/app/pages/JoshOrderDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh-api-logs",
+      "source": "apps/commerce-admin/src/app/pages/JoshApiLogs.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/price-shadow",
+      "source": "apps/commerce-admin/src/app/pages/PriceShadow.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/prices/staff",
+      "source": "apps/commerce-admin/src/app/pages/StaffPrices.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/customers",
+      "source": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/customers/:id",
+      "source": "apps/commerce-admin/src/app/pages/JoshCustomerDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/prices",
+      "source": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/products",
+      "source": "apps/commerce-admin/src/app/pages/JoshProducts.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/products/:id",
+      "source": "apps/commerce-admin/src/app/pages/JoshProductDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/sales",
+      "source": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/traffic",
+      "source": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/health",
+      "source": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/winback",
+      "source": "apps/commerce-admin/src/app/pages/Winback.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reports/order-targetgroup",
+      "source": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows",
+      "source": "apps/commerce-admin/src/app/pages/MarketingWorkflows.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/analyst",
+      "source": "apps/commerce-admin/src/app/pages/MarketingAnalyst.tsx",
+      "observedSourceTokens": [
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth",
+      "source": "apps/commerce-admin/src/app/pages/growth/Workspace.tsx",
+      "observedSourceTokens": [
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/plans",
+      "source": "apps/commerce-admin/src/app/pages/growth/Plans.tsx",
+      "observedSourceTokens": [
+        "Empty"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/plans/new",
+      "source": "apps/commerce-admin/src/app/pages/growth/Plan.tsx",
+      "observedSourceTokens": [
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/plans/:id",
+      "source": "apps/commerce-admin/src/app/pages/growth/Plan.tsx",
+      "observedSourceTokens": [
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/results/:workflowId",
+      "source": "apps/commerce-admin/src/app/pages/growth/Results.tsx",
+      "observedSourceTokens": [
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/companies/:companyId",
+      "source": "apps/commerce-admin/src/app/pages/growth/Results.tsx",
+      "observedSourceTokens": [
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows/new",
+      "source": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows/:id/edit",
+      "source": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows/:id/enrollments",
+      "source": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows/:id/scheduled-runs",
+      "source": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/cs",
+      "source": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload",
+        "TaskPanelForm",
+        "TaskInput",
+        "InterruptedAction"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/livechat",
+      "source": "apps/commerce-admin/src/app/pages/Livechat.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/restaurants",
+      "source": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/research",
+      "source": "apps/commerce-admin/src/app/pages/MarketingResearch.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/ai/connectors",
+      "source": "apps/commerce-admin/src/app/pages/AiConnectors.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp/josh-logs",
+      "source": "apps/commerce-admin/src/app/pages/JoshErpLogs.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp/inbound-log",
+      "source": "apps/commerce-admin/src/app/pages/InboundLog.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp/webhook-dead-letter",
+      "source": "apps/commerce-admin/src/app/pages/WebhookDeadLetter.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp/webhook-platforms",
+      "source": "apps/commerce-admin/src/app/pages/WebhookPlatforms.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp/inventory-warehouse",
+      "source": "apps/commerce-admin/src/app/pages/InventoryPerWarehouse.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp/jagota-shadow",
+      "source": "apps/commerce-admin/src/app/pages/JagotaShadow.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp/simulator",
+      "source": "apps/commerce-admin/src/app/pages/ErpSimulator.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/integrations",
+      "source": "apps/commerce-admin/src/app/pages/Integrations.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload",
+        "TaskPanelForm",
+        "TaskInput",
+        "InterruptedAction"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/webhooks",
+      "source": "apps/commerce-admin/src/app/pages/Webhooks.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/subscriptions",
+      "source": "apps/commerce-admin/src/app/pages/Subscriptions.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/sync-jobs",
+      "source": "apps/commerce-admin/src/app/pages/SyncJobs.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/customers",
+      "source": "apps/commerce-admin/src/app/pages/Customers.tsx",
+      "observedSourceTokens": [
+        "StatusChip"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/customers/:id",
+      "source": "apps/commerce-admin/src/app/pages/CustomerDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/products",
+      "source": "apps/commerce-admin/src/app/pages/Products.tsx",
+      "observedSourceTokens": [
+        "StatusChip"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/products/:id",
+      "source": "apps/commerce-admin/src/app/pages/ProductDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/stock-moves",
+      "source": "apps/commerce-admin/src/app/pages/StockMoves.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "reload",
+        "TaskInput",
+        "TaskForm",
+        "InterruptedAction"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/product-prices",
+      "source": "apps/commerce-admin/src/app/pages/ProductPrices.tsx",
+      "observedSourceTokens": [
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/product-master-queue",
+      "source": "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload",
+        "InterruptedAction"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/order-periods",
+      "source": "apps/commerce-admin/src/app/pages/SupplierOrderPeriods.tsx",
+      "observedSourceTokens": [
+        "ErrorText",
+        "Empty"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/orders",
+      "source": "apps/commerce-admin/src/app/pages/Orders.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/orders/:id",
+      "source": "apps/commerce-admin/src/app/pages/OrderDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/reservations",
+      "source": "apps/commerce-admin/src/app/pages/Reservations.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp-stock",
+      "source": "apps/commerce-admin/src/app/pages/ErpStock.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/erp-ingest",
+      "source": "apps/commerce-admin/src/app/pages/ErpIngest.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/batch-sticker",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/batch-sticker/BatchSticker.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing-links",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingLinksPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/queue",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/journey-funnel",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingJourneyFunnel.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/notify-templates",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingNotifyTemplates.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/settings",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingSettingsPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/competitor-prices",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/scraping-sources",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/scraped-catalog",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapedCatalogPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/welcome-lead-email",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/WelcomeLeadEmailPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/offers-check",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/smart-links",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinksPage.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/smart-links/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkEdit.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/smart-links/analytics",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/smart-links/analytics/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/smart-links/edit/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkEdit.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/order",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/order/import",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/orders/OrderImport.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/order/:ordersId",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/shipments",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/orders/Shipments.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/shipments/:shipmentId",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/orders/ShipmentDetail.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/payment-transactions",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/orders/PaymentTransactions.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/allusers",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/user/Alluser.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/allusers/:userId",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/user/UserDetail.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/membership-tiers",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/brands",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/kbank/testing-console",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/invoices",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/InvoicesOverdue.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/credit-notes",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditNotesAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/credit-backs",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditBacksAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/credit-terms",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/CreditTermsAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/kyc",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/kyc/KycQueue.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotion-pages",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageLibrary.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotion-pages/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageEditorPage.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotion-pages/:id/edit",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageEditorPage.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/intent-rules",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/BotIntentRules.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/intent-rules/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotIntentRule.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/intent-rules/edit/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotIntentRule.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/workflows",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/BotWorkflows.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/workflows/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotWorkflow.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/workflows/edit/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotWorkflow.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/templates",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/BotTemplates.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/templates/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotTemplate.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/templates/edit/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotTemplate.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/push-campaigns",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/company",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/company/Company.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/company/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/CreateCompanyAdmin.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/company/edit/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/refunds",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/segments",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentList.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/segments/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/segment/CreateSegment.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/segments/edit/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/segment/EditSegment.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/segments/builder",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/segments/builder/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "Empty",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/sample-requests",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/SampleRequestsAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/delivery-schedule",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/DeliveryScheduleAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/cart-move-categories",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/CartMoveCategoriesAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/allproducts",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/product/CreateProduct.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/video-upload",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/product/ProductVideoUpload.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/bulk-image-upload",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/edit/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/product/EditProduct.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/suppliers",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/supplier/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/supplier/CreateSupplier.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/supplier/edit/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/supplier/EditSupplier.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/price-requests",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/PriceRequestsAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/active-offers",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/ActiveOffersAdmin.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/coupons",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponList.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/coupon/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/coupon/CreateCoupon.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/coupon/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotion-product-sets",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetList.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotion-product-sets/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetForm.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotion-product-sets/:id/edit",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetForm.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions-mechanic",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionMechanic.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions-mechanic/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/campain/MechanicEditorPage.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions-mechanic/:id/edit",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/campain/MechanicEditorPage.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions/campaigns",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignList.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions/campaigns/create",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/campaign/CreateCampaign.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions/campaigns/:id",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/notification-log",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationLog.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/notification-stats",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryStats.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/notification-catalog",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationCatalog.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/product-notify-funnel",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/ProductNotifyFunnel.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/jagota/payment-testing",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/erp/webhook-simulator",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/billing",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/CS/Billing.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/j/admin-access",
+      "source": "apps/commerce-admin/src/josh-admin/app/page/admin-access/AdminAccessQueue.tsx",
+      "observedSourceTokens": [
+        "Loading"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "portal",
+      "path": "/login",
+      "source": "apps/commerce-portal/src/app/pages/Login.tsx",
+      "observedSourceTokens": [
+        "ErrorText"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "portal",
+      "path": "/register",
+      "source": "apps/commerce-portal/src/app/pages/Register.tsx",
+      "observedSourceTokens": [
+        "ErrorText"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "portal",
+      "path": "/",
+      "source": "apps/commerce-portal/src/app/pages/Dashboard.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "portal",
+      "path": "/keys",
+      "source": "apps/commerce-portal/src/app/pages/ApiKeys.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "portal",
+      "path": "/webhooks",
+      "source": "apps/commerce-portal/src/app/pages/Webhooks.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "portal",
+      "path": "/docs",
+      "source": "apps/commerce-portal/src/app/pages/Docs.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/workspaces/catalog",
+      "source": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/suppliers",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/workspaces/orders",
+      "source": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/credit_terms",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/shipments",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/payments",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/credit_notes",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/credit_backs",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/invoices",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/workspaces/customers",
+      "source": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/kyc",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/admin_access",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/workspaces/marketing",
+      "source": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/coupons",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/campaigns",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/segments",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/workspaces/reports",
+      "source": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/workspaces/connections",
+      "source": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/workspaces/settings",
+      "source": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/josh/internal_docs",
+      "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "observedSourceTokens": [
+        "Loading",
+        "ErrorText",
+        "Empty",
+        "StatusChip",
+        "reload"
+      ],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    },
+    {
+      "app": "admin",
+      "path": "/login",
+      "source": "apps/commerce-admin/src/app/pages/Login.tsx",
+      "observedSourceTokens": [],
+      "interpretation": "Static source evidence only; see current tests/browser record for actual checked behavior. Other states and dimensions remain unverified."
+    }
+  ]
+}

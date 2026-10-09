@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Public } from '../../../shared-kernel/presentation/auth.decorators';
 import { StorefrontApiKeyGuard } from '../../../storefront/storefront-api-key.guard';
+import { TrustedStorefrontKey } from '../../../storefront/trusted-storefront-key';
 import { WinbackAccount } from './entities/winback-account.entity';
 import { winbackOwnedByCommerce } from './shared/winback.config';
 
@@ -14,6 +15,7 @@ import { winbackOwnedByCommerce } from './shared/winback.config';
 @Public()
 @Controller('v1/storefront/winback')
 @UseGuards(StorefrontApiKeyGuard)
+@TrustedStorefrontKey()
 export class WinbackLoginController {
   constructor(@InjectRepository(WinbackAccount) private readonly accounts: Repository<WinbackAccount>) {}
 

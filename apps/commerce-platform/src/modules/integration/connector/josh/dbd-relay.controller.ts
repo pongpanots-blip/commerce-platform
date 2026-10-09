@@ -4,6 +4,7 @@ import type { Response } from 'express';
 import { Repository } from 'typeorm';
 import { Public } from '../../../../shared-kernel/presentation/auth.decorators';
 import { StorefrontApiKeyGuard } from '../../../../storefront/storefront-api-key.guard';
+import { TrustedStorefrontKey } from '../../../../storefront/trusted-storefront-key';
 import { DbdLookup } from './dbd-lookup.entity';
 
 /** josh gives DBD 2 s in total; leave it time to go direct if DBD is slow here. */
@@ -19,6 +20,7 @@ const FRESH_MS = 24 * 3600_000;
 @Public()
 @Controller('v1/storefront/dbd')
 @UseGuards(StorefrontApiKeyGuard)
+@TrustedStorefrontKey()
 export class DbdRelayController {
   private readonly logger = new Logger(DbdRelayController.name);
 

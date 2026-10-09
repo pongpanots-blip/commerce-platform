@@ -1,6 +1,7 @@
 import { Controller, Get, HttpCode, HttpStatus, Logger, Param, ParseUUIDPipe, Post, ServiceUnavailableException, UseGuards } from '@nestjs/common';
 import { Public } from '../../../../../shared-kernel/presentation/auth.decorators';
 import { StorefrontApiKeyGuard } from '../../../../../storefront/storefront-api-key.guard';
+import { TrustedStorefrontKey } from '../../../../../storefront/trusted-storefront-key';
 import { JoshOrderCopyService } from './josh-order-copy';
 import { joshOnly } from '../system-health';
 
@@ -8,6 +9,7 @@ import { joshOnly } from '../system-health';
 @Public()
 @Controller('v1/storefront/josh-orders')
 @UseGuards(StorefrontApiKeyGuard)
+@TrustedStorefrontKey()
 export class JoshOrderPlacedController {
   private readonly logger = new Logger(JoshOrderPlacedController.name);
   constructor(private readonly copies: JoshOrderCopyService) {}

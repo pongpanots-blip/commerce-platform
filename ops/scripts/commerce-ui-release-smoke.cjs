@@ -2,8 +2,8 @@
 const assert = require('node:assert/strict');
 const { createHash } = require('node:crypto');
 const expected = {
-  admin: 'cca7d536f05b142a86b7270ad64405be014f5d2e63152f42c686d3fa2774ff1d',
-  portal: '5fd7ee0414c0df462fbf192242dea6da4b2eab4ec0f85e7cfa2aa2d1d7a4552c',
+  admin: '282be38fab1866472c18b0cb8034979f424b27d227bcc751441b68279834eb94',
+  portal: 'b7e089f8826c00609737abc089d756dd43b1e80c5f64aacc7691ca2912521676',
 };
 (async () => {
   for (const [service, expectedCss] of Object.entries(expected)) {

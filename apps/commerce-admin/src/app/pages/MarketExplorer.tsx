@@ -1,4 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useEffect, useRef, useState } from 'react';
@@ -115,7 +116,7 @@ export function MarketExplorer() {
           {active.length > 0 && <div className="market-applied">{active.map(([key, value]) => <span key={key}>{FILTER_LABELS[key]}: {value === true ? __uiText("ใช่") : String(value)}</span>)}</div>}
           {loading && <div role="status" className="market-loading">{__uiText("กำลังค้นหาร้านอาหาร…")}</div>}
           {!loading && error && <div className="market-empty"><Icon name="cloud_off" size={32} /><h3>{__uiText("ยังโหลดรายชื่อไม่ได้")}</h3><p>{__uiText("ลองรีเฟรชเพื่ออ่านข้อมูลอีกครั้ง")}</p><Button onClick={reload}>{__uiText("ลองอีกครั้ง")}</Button></div>}
-          {!error && data && <div className="market-table-wrap"><table className="market-table"><thead><tr><th scope="col">{__uiText("ร้าน / พื้นที่")}</th><th scope="col">{__uiText("คะแนนและรีวิว")}</th><th scope="col">{__uiText("ช่วงราคา")}</th><th scope="col">{__uiText("คนเยอะวันนี้")}</th><th scope="col">{__uiText("สถานะฝ่ายขาย")}</th><th scope="col"><span className="sr-only">{__uiText("รายละเอียด")}</span></th></tr></thead><tbody>
+          {!error && data && <div className="market-table-wrap"><TableViewport><table className="cp-data-table market-table"><thead><tr><th scope="col">{__uiText("ร้าน / พื้นที่")}</th><th scope="col">{__uiText("คะแนนและรีวิว")}</th><th scope="col">{__uiText("ช่วงราคา")}</th><th scope="col">{__uiText("คนเยอะวันนี้")}</th><th scope="col">{__uiText("สถานะฝ่ายขาย")}</th><th scope="col"><span className="sr-only">{__uiText("รายละเอียด")}</span></th></tr></thead><tbody>
             {data.items.map(r => <tr key={r.id}>
               <td><button className="market-name" onClick={() => setSelected(r)} disabled={loading}>{r.name || __uiText("ยังไม่มีชื่อร้าน")}</button>{r.nameTh && r.nameEn && r.nameEn !== r.name && <span className="market-subname">{r.nameEn}</span>}<div className="market-location"><Icon name="location_on" size={14} /> {r.district || __uiText("ยังไม่ระบุเขต")}<span>·</span>{categoryLabel(r.category)}</div></td>
               <td>{r.rating !== null ? <strong className="market-rating"><Icon name="star" size={15} /> {r.rating.toFixed(1)}</strong> : <span className="market-muted">{__uiText("ยังไม่มีคะแนน")}</span>}<span className="market-subname">{r.reviewCount !== null ? __uiText("{0} รีวิว", {"0": fmt.num(r.reviewCount)}) : __uiText("ยังไม่มีรีวิว")}</span></td>
@@ -124,7 +125,7 @@ export function MarketExplorer() {
               <td><span className={`market-sales ${r.winbackAccountId ? 'is-linked' : ''}`}>{r.winbackAccountId ? __uiText("มีในรายชื่อแล้ว") : __uiText("ยังไม่มีในรายชื่อ")}</span>{r.winbackCustomerCode && <span className="market-subname">{r.winbackCustomerCode}</span>}</td>
               <td><button className="market-open" aria-label={__uiText("ดูรายละเอียด {0}", {"0": r.name})} onClick={() => setSelected(r)} disabled={loading}><Icon name="arrow_forward" size={18} /></button></td>
             </tr>)}
-          </tbody></table></div>}
+          </tbody></table></TableViewport></div>}
           {!loading && !error && data?.items.length === 0 && <div className="market-empty"><Icon name="storefront" size={32} /><h3>{__uiText("ไม่พบร้านตามเงื่อนไข")}</h3><p>{__uiText("ลองลดคะแนนขั้นต่ำ หรือเลือกพื้นที่อื่น")}</p><Button onClick={() => apply({})}>{__uiText("ดูร้านทั้งหมด")}</Button></div>}
           {!error && !!data?.items.length && <div className="market-pagination"><Pager page={page} pageSize={LIMIT} total={total} onPage={next => { if (!loading) setPage(next); }} /></div>}
         </section>

@@ -1,39 +1,78 @@
-import React from 'react';
-import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
+import React, { useEffect, useRef } from 'react';
+import {
+  PaginationControls,
+  TableEmpty,
+  TableViewport,
+  uiText,
+  useUiLocale,
+} from '@cp/ui';
+import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai';
 
-// ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export interface TableColumn<T> {
   key: string;
   label: string;
   sortable?: boolean;
+  align?: 'left' | 'right' | 'center';
+  className?: string;
   render?: (value: any, row: T) => React.ReactNode;
 }
 
+type MobileSelection = {
+  selected: boolean;
+  onSelect?: () => void;
+  disabled: boolean;
+};
 interface TableProps<T> {
   columns: TableColumn<T>[];
   data: T[];
   sortKey?: string;
   sortOrder?: 'ASC' | 'DESC';
   onSort?: (key: string) => void;
-
-  // สำหรับระบบ Pagination (ไม่ส่ง onPageChange = ซ่อนแถบ pagination)
   currentPage?: number;
   totalPages?: number;
   totalItems?: number;
   pageSize?: number;
   onPageChange?: (page: number) => void;
-
-  // สำหรับระบบเลือกแถว (Checkbox)
   selectedIds?: number[] | string[];
   onSelectRow?: (id: any) => void;
   onSelectAll?: () => void;
+  isRowSelectable?: (row: T) => boolean;
   idKey?: keyof T;
-
-  // จำกัดความสูงของพื้นที่แถว (thead+tbody) แล้วให้ scroll ในตัว โดย pagination bar ยังอยู่นิ่งด้านล่าง
-  // เสมอ — ไม่ส่ง = พฤติกรรมเดิมทุกประการ (ไม่ scroll, ไม่ sticky header)
-  // ตัวอย่าง: bodyMaxHeightClassName="max-h-[28rem]"
   bodyMaxHeightClassName?: string;
+  loading?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: React.ReactNode;
+  renderMobileRow?: (row: T, selection: MobileSelection) => React.ReactNode;
+}
+
+function Checkbox({
+  checked,
+  mixed,
+  onChange,
+  label,
+  disabled,
+}: {
+  checked: boolean;
+  mixed?: boolean;
+  onChange: () => void;
+  label: string;
+  disabled?: boolean;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (ref.current) ref.current.indeterminate = !!mixed;
+  }, [mixed]);
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      aria-label={label}
+      aria-checked={mixed ? 'mixed' : checked}
+      disabled={disabled}
+    />
+  );
 }
 
 export function Table<T>({
@@ -50,173 +89,240 @@ export function Table<T>({
   selectedIds = [],
   onSelectRow,
   onSelectAll,
+  isRowSelectable,
   idKey = 'id' as keyof T,
   bodyMaxHeightClassName,
+  loading = false,
+  emptyTitle = 'ยังไม่มีรายการ',
+  emptyDescription,
+  renderMobileRow,
 }: TableProps<T>) {
-  __useUiLocale();
-  const pageSelectId = React.useId();
-
+  useUiLocale();
   const safeData = Array.isArray(data) ? data : [];
-  const enablePagination = typeof onPageChange === 'function';
-  const safeTotalItems = totalItems ?? safeData.length;
-  const safePageSize = pageSize ?? (safeData.length || 10);
-  const computedTotalPages = Math.max(1, Math.ceil(safeTotalItems / safePageSize));
-  const safeTotalPages = Math.max(1, totalPages ?? computedTotalPages);
-  const safeCurrentPage = Math.min(Math.max(1, currentPage), safeTotalPages);
-
-  const isAllSelected = safeData.length > 0 && safeData.every(row =>
-    (selectedIds as any[]).includes(row[idKey])
+  const selectable = safeData.filter(
+    (row) => !isRowSelectable || isRowSelectable(row),
   );
-
+  const selected = (id: unknown) => (selectedIds as unknown[]).includes(id);
+  const allSelected =
+    selectable.length > 0 && selectable.every((row) => selected(row[idKey]));
+  const someSelected =
+    !allSelected && selectable.some((row) => selected(row[idKey]));
   const hasCheckbox = !!(onSelectAll || onSelectRow);
-  const totalColumnsCount = (columns?.length || 0) + (hasCheckbox ? 1 : 0);
-
+  const count = Number(totalItems ?? safeData.length);
+  const safeTotal = Number.isFinite(count) && count >= 0 ? count : 0;
+  const computedPages = Math.max(
+    1,
+    Math.ceil(safeTotal / (pageSize || safeData.length || 10)),
+  );
+  const suppliedPages = Number(totalPages);
+  const pages = Math.max(
+    1,
+    Math.ceil(
+      Number.isFinite(suppliedPages) && suppliedPages > 0
+        ? suppliedPages
+        : computedPages,
+    ),
+  );
+  const page = Math.min(
+    Math.max(1, Number.isFinite(currentPage) ? Math.floor(currentPage) : 1),
+    pages,
+  );
+  const colSpan = Math.max(1, columns.length + (hasCheckbox ? 1 : 0));
+  const align = (col: TableColumn<T>) =>
+    col.align === 'right'
+      ? 'text-right'
+      : col.align === 'center'
+        ? 'text-center'
+        : 'text-left';
+  const selectAll = onSelectAll && (
+    <Checkbox
+      checked={allSelected}
+      mixed={someSelected}
+      onChange={onSelectAll}
+      label={uiText('เลือกทั้งหมดในหน้านี้')}
+      disabled={loading || selectable.length === 0}
+    />
+  );
   return (
-    <div className="bg-surface-container-lowest rounded-xl border border-secondary-container overflow-hidden">
-      <div
-        className={`overflow-x-auto ${bodyMaxHeightClassName ? `${bodyMaxHeightClassName} overflow-y-auto` : ''}`}
-      >
-        <table className="w-full text-left border-collapse min-w-[540px]">
-          <thead
-            className={`bg-surface-container-low border-b border-secondary-container text-xs font-semibold text-on-surface-variant ${bodyMaxHeightClassName ? 'sticky top-0 z-10' : ''}`}
-          >
-            <tr>
-              {hasCheckbox && (
-                <th className="p-4 w-12 text-center">
-                  {onSelectAll && (
-                    <input
-                      type="checkbox"
-                      checked={isAllSelected}
-                      onChange={onSelectAll}
-                      aria-label={__uiText("เลือกทั้งหมด")}
-                      className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
-                    />
-                  )}
-                </th>
-              )}
-              {(columns || []).map((col) => (
-                <th
-                  key={col.key}
-                  className="px-4 py-3"
-                  scope="col"
-                  aria-sort={col.sortable && sortKey === col.key ? (sortOrder === 'ASC' ? 'ascending' : 'descending') : undefined}
-                >
-                  {col.sortable && onSort ? <button type="button" className="flex min-h-8 items-center gap-1 rounded-md text-left hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" onClick={() => onSort(col.key)}>
-                    {__uiText(col.label)}
-                    {col.sortable && sortKey === col.key && (
-                      <span className="text-primary">{sortOrder === 'ASC' ? <AiOutlineArrowUp/> : <AiOutlineArrowDown/>}</span>
-                    )}
-                    {col.sortable && sortKey !== col.key && (
-                      <span className="text-gray-300 flex"><AiOutlineArrowUp/><AiOutlineArrowDown/></span>
-                    )}
-                  </button> : __uiText(col.label)}
-                </th>
+    <div className="cp-record-table" aria-busy={loading || undefined}>
+      {loading && (
+        <span role="status" className="sr-only">
+          {uiText('กำลังโหลดรายการ…')}
+        </span>
+      )}
+      {renderMobileRow && (
+        <div className="cp-table-mobile-only">
+          {hasCheckbox && onSelectAll && (
+            <div className="cp-mobile-select-all">
+              <label>
+                {selectAll}
+                <span>{uiText('เลือกทั้งหมดในหน้านี้')}</span>
+              </label>
+              <span>
+                {safeTotal.toLocaleString()} {uiText('รายการ')}
+              </span>
+            </div>
+          )}
+          {loading ? (
+            <div className="cp-table-empty">
+              <div className="cp-table-skeleton w-full" />
+              {uiText('กำลังโหลดรายการ…')}
+            </div>
+          ) : safeData.length === 0 ? (
+            <TableEmpty title={emptyTitle}>{emptyDescription}</TableEmpty>
+          ) : (
+            <div className="cp-mobile-records">
+              {safeData.map((row, i) => (
+                <div key={row[idKey] != null ? String(row[idKey]) : i}>
+                  {renderMobileRow(row, {
+                    selected: selected(row[idKey]),
+                    onSelect: onSelectRow
+                      ? () => onSelectRow(row[idKey])
+                      : undefined,
+                    disabled:
+                      loading || !!(isRowSelectable && !isRowSelectable(row)),
+                  })}
+                </div>
               ))}
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-secondary-container text-sm text-on-surface">
-            {safeData.length === 0 ? (
+            </div>
+          )}
+        </div>
+      )}
+      <div className={renderMobileRow ? 'cp-table-desktop-only' : undefined}>
+        <TableViewport className={bodyMaxHeightClassName}>
+          <table className="cp-data-table">
+            <thead
+              className={
+                bodyMaxHeightClassName ? 'sticky top-0 z-10' : undefined
+              }
+            >
               <tr>
-                <td colSpan={totalColumnsCount} className="p-8 text-center text-gray-400">
-                  {__uiText("ไม่พบข้อมูลในระบบ")}</td>
+                {hasCheckbox && (
+                  <th scope="col" className="w-12 text-center">
+                    {selectAll}
+                  </th>
+                )}
+                {columns.map((col) => (
+                  <th
+                    key={col.key}
+                    scope="col"
+                    className={`${align(col)} ${col.className ?? ''}`}
+                    aria-sort={
+                      col.sortable && sortKey === col.key
+                        ? sortOrder === 'ASC'
+                          ? 'ascending'
+                          : 'descending'
+                        : undefined
+                    }
+                  >
+                    {col.sortable && onSort ? (
+                      <button
+                        type="button"
+                        className="cp-table-sort"
+                        disabled={loading}
+                        onClick={() => onSort(col.key)}
+                      >
+                        {uiText(col.label)}
+                        {sortKey === col.key ? (
+                          sortOrder === 'ASC' ? (
+                            <AiOutlineArrowUp />
+                          ) : (
+                            <AiOutlineArrowDown />
+                          )
+                        ) : (
+                          <span
+                            className="cp-table-sort-neutral"
+                            aria-hidden="true"
+                          >
+                            ↕
+                          </span>
+                        )}
+                      </button>
+                    ) : (
+                      uiText(col.label)
+                    )}
+                  </th>
+                ))}
               </tr>
-            ) : (
-              safeData.map((row, rowIndex) => {
-                const rowId = row[idKey];
-                const isSelected = (selectedIds as any[]).includes(rowId);
-
-                return (
+            </thead>
+            <tbody>
+              {loading ? (
+                Array.from({ length: 4 }, (_, n) => (
+                  <tr key={n} aria-hidden="true">
+                    {Array.from({ length: colSpan }, (_, i) => (
+                      <td key={i}>
+                        <div className="cp-table-skeleton" />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : safeData.length === 0 ? (
+                <tr>
+                  <td colSpan={colSpan}>
+                    <TableEmpty title={emptyTitle}>
+                      {emptyDescription}
+                    </TableEmpty>
+                  </td>
+                </tr>
+              ) : (
+                safeData.map((row, i) => (
                   <tr
-                    key={rowId ? String(rowId) : rowIndex}
-                    className={`hover:bg-gray-50/70 transition-colors ${isSelected ? 'bg-primary/5' : ''}`}
+                    key={row[idKey] != null ? String(row[idKey]) : i}
+                    data-selected={selected(row[idKey]) || undefined}
                   >
                     {hasCheckbox && (
-                      <td className="p-4 text-center">
+                      <td className="text-center">
                         {onSelectRow && (
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => onSelectRow(rowId)}
-                            aria-label={__uiText("เลือกแถว {0}", {"0": rowId})}
-                            className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                          <Checkbox
+                            checked={selected(row[idKey])}
+                            onChange={() => onSelectRow(row[idKey])}
+                            label={uiText('เลือกแถว {0}', { 0: row[idKey] })}
+                            disabled={
+                              loading ||
+                              !!(isRowSelectable && !isRowSelectable(row))
+                            }
                           />
                         )}
                       </td>
                     )}
-                    {(columns || []).map((col) => {
-                      const cellValue = (row as any)[col.key];
-                      return (
-                        <td key={col.key} className="p-4 align-middle">
-                          {col.render ? col.render(cellValue, row) : cellValue ?? '-'}
-                        </td>
-                      );
-                    })}
+                    {columns.map((col) => (
+                      <td
+                        key={col.key}
+                        className={`${align(col)} ${col.className ?? ''}`}
+                      >
+                        {col.render
+                          ? col.render((row as any)[col.key], row)
+                          : ((row as any)[col.key] ?? '—')}
+                      </td>
+                    ))}
                   </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                ))
+              )}
+            </tbody>
+          </table>
+        </TableViewport>
       </div>
-
-      {enablePagination && (
-        <div className="bg-white px-4 py-3.5 border-t border-gray-200 flex flex-col sm:flex-row gap-3 items-center justify-between text-sm">
-          <div className="text-gray-500 flex flex-wrap items-center gap-2">
+      {onPageChange && (
+        <div className="cp-table-footer">
+          <div className="cp-table-footer-summary">
+            <span>{uiText('หน้า {0} จาก {1}', { 0: page, 1: pages })}</span>
+            <span aria-hidden="true">·</span>
             <span>
-              {__uiText("หน้า ")}<span className="font-semibold text-gray-700">{safeCurrentPage}</span> {__uiText(" จาก")}{' '}
-              <span className="font-semibold text-gray-700">{safeTotalPages}</span> {__uiText(" หน้า")}</span>
-            <span className="text-gray-300">|</span>
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-medium">
-              {__uiText("ทั้งหมด ")}{safeTotalItems.toLocaleString()} {__uiText(" รายการ")}</span>
-            {pageSize ? (
-              <>
-                <span className="text-gray-300">|</span>
-                <span className="text-xs text-gray-500">{pageSize} {__uiText(" รายการ/หน้า")}</span>
-              </>
-            ) : null}
-          </div>
-
-          <div className="flex items-center gap-3">
-            {safeTotalPages > 1 && (
-              <div className="flex items-center gap-1.5 text-gray-600">
-                <label htmlFor={pageSelectId} className="text-xs font-medium">
-                  {__uiText("ไปที่หน้า:")}</label>
-                <select
-                  id={pageSelectId}
-                  value={safeCurrentPage}
-                  onChange={(e) => onPageChange?.(Number(e.target.value))}
-                  className="min-h-10 bg-white border border-gray-200 rounded-lg text-sm px-2 py-1 text-gray-700 focus-visible:outline-2 focus-visible:outline-primary cursor-pointer font-medium"
-                >
-                  {Array.from({ length: safeTotalPages }, (_, index) => {
-                    const pageNum = index + 1;
-                    return (
-                      <option key={pageNum} value={pageNum}>
-                        {pageNum}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
+              {uiText('ทั้งหมด')} <strong>{safeTotal.toLocaleString()}</strong>{' '}
+              {uiText('รายการ')}
+            </span>
+            {pageSize && (
+              <span>
+                · {pageSize} {uiText('รายการ/หน้า')}
+              </span>
             )}
-
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => onPageChange?.(safeCurrentPage - 1)}
-                disabled={safeCurrentPage <= 1}
-                className="min-h-10 px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 font-medium hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-              >
-                {__uiText("ก่อนหน้า")}</button>
-              <button
-                type="button"
-                onClick={() => onPageChange?.(safeCurrentPage + 1)}
-                disabled={safeCurrentPage >= safeTotalPages}
-                className="min-h-10 px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 font-medium hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-              >
-                {__uiText("ถัดไป")}</button>
-            </div>
           </div>
+          <PaginationControls
+            page={page}
+            pages={pages}
+            onPage={onPageChange}
+            disabled={loading}
+          />
         </div>
       )}
     </div>

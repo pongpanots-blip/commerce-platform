@@ -1,4 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { bulkUploadProductImages } from '@josh/shared-api';
@@ -579,7 +580,7 @@ const BulkImageUploadPage = () => {
               <div className="bg-blue-50 border border-gray-200 rounded-lg p-3.5 text-xs text-gray-700">
                 <h3 className="text-xs font-bold text-gray-900 mb-1.5">
                   {__uiText("ตั้งชื่อไฟล์ตามรูปแบบ ")}<code className="font-mono bg-white border border-gray-200 rounded px-1">{__uiText("sku_ลำดับ.นามสกุล")}</code> {__uiText(" — ระบบใช้ชื่อไฟล์จับคู่สินค้า")}</h3>
-                <table className="mt-1">
+                <TableViewport><table className="cp-data-table mt-1">
                   <tbody>
                     <tr>
                       <td className="pr-3 py-0.5 font-mono text-xs">{__uiText("JG001_1.jpg")}</td>
@@ -605,7 +606,7 @@ const BulkImageUploadPage = () => {
                       </td>
                     </tr>
                   </tbody>
-                </table>
+                </table></TableViewport>
                 <div className="mt-1.5 text-gray-500">
                   {__uiText("ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่ SKU ไม่ได้จะถูกข้ามและแจ้งให้ทราบ")}{mode === 'replace' && __uiText(" · โหมดแทนที่: ลำดับในชื่อไฟล์คือรูปที่จะถูกทับ ถ้าลำดับนั้นยังว่างจะเพิ่มให้แทน")}
                 </div>
@@ -708,7 +709,7 @@ const BulkImageUploadPage = () => {
               <div className="h-full bg-blue-600 rounded-full transition-[width]" style={{ width: `${progressPct}%` }} />
             </div>
 
-            <table className="w-full text-sm mt-2">
+            <TableViewport><table className="cp-data-table w-full text-sm mt-2">
               <tbody>
                 {readyRows.slice(0, visibleCount).map((row) => (
                   <tr key={row.key} className="border-b border-gray-50">
@@ -744,7 +745,7 @@ const BulkImageUploadPage = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></TableViewport>
             {readyRows.length > visibleCount && (
               <button
                 type="button"
@@ -820,7 +821,7 @@ const BulkImageUploadPage = () => {
             {failedRows.length > 0 && (
               <>
                 <div className="text-sm font-bold text-red-700 mt-2">{__uiText("ไม่สำเร็จ (")}{failedRows.length})</div>
-                <table className="w-full text-sm">
+                <TableViewport><table className="cp-data-table w-full text-sm">
                   <tbody>
                     {failedRows.slice(0, visibleCount).map((row) => (
                       <tr key={row.key} className="border-b border-gray-50 bg-red-50">
@@ -844,7 +845,7 @@ const BulkImageUploadPage = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></TableViewport>
                 {failedRows.length > visibleCount && (
                   <button
                     type="button"
@@ -873,7 +874,7 @@ const BulkImageUploadPage = () => {
             {!allFailed && doneRows.length > 0 && (
               <>
                 <div className="text-sm font-bold text-green-700 mt-2">{__uiText("สำเร็จ (")}{doneRows.length})</div>
-                <table className="w-full text-sm">
+                <TableViewport><table className="cp-data-table w-full text-sm">
                   <tbody>
                     {doneRows.slice(0, visibleCount).map((row) => (
                       <tr key={row.key} className="border-b border-gray-50">
@@ -898,7 +899,7 @@ const BulkImageUploadPage = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></TableViewport>
                 {doneRows.length > visibleCount && (
                   <button
                     type="button"

@@ -1,4 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-render-cache-locale: refresh memoized UI labels when the language changes
 import { getUiLocale as __getUiLocale } from '@cp/ui';
@@ -386,14 +387,14 @@ export default function PushCampaignsPage() {
             ) : campaigns.length === 0 ? (
               <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มีแคมเปญ")}</p>
             ) : (
-              <table className="w-full text-left text-sm">
+              <TableViewport><table className="cp-data-table w-full text-left text-sm">
                 <thead className="bg-gray-50 text-xs text-gray-500">
                   <tr>
-                    <th className="px-4 py-2">{__uiText("Notification")}</th>
-                    <th className="px-4 py-2">{__uiText("Audience")}</th>
-                    <th className="px-4 py-2">{__uiText("Sent")}</th>
-                    <th className="px-4 py-2">{__uiText("Status")}</th>
-                    <th className="px-4 py-2" />
+                    <th className="px-4 py-2" scope="col">{__uiText("Notification")}</th>
+                    <th className="px-4 py-2" scope="col">{__uiText("Audience")}</th>
+                    <th className="px-4 py-2" scope="col">{__uiText("Sent")}</th>
+                    <th className="px-4 py-2" scope="col">{__uiText("Status")}</th>
+                    <th className="px-4 py-2" scope="col" />
                   </tr>
                 </thead>
                 <tbody>
@@ -434,7 +435,7 @@ export default function PushCampaignsPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></TableViewport>
             )}
           </div>
         </div>
@@ -816,14 +817,14 @@ export default function PushCampaignsPage() {
                 {delivery.recentDeliveries.length === 0 ? (
                   <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มี delivery log")}</p>
                 ) : (
-                  <table className="w-full text-left text-sm">
+                  <TableViewport><table className="cp-data-table w-full text-left text-sm">
                     <thead className="bg-gray-50 text-xs text-gray-500">
                       <tr>
-                        <th className="px-4 py-2">{__uiText("User")}</th>
-                        <th className="px-4 py-2">{__uiText("Channel")}</th>
-                        <th className="px-4 py-2">{__uiText("Status")}</th>
-                        <th className="px-4 py-2">{__uiText("Reason")}</th>
-                        <th className="px-4 py-2">{__uiText("Sent")}</th>
+                        <th className="px-4 py-2" scope="col">{__uiText("User")}</th>
+                        <th className="px-4 py-2" scope="col">{__uiText("Channel")}</th>
+                        <th className="px-4 py-2" scope="col">{__uiText("Status")}</th>
+                        <th className="px-4 py-2" scope="col">{__uiText("Reason")}</th>
+                        <th className="px-4 py-2" scope="col">{__uiText("Sent")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -841,7 +842,7 @@ export default function PushCampaignsPage() {
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </table></TableViewport>
                 )}
               </div>
             </>

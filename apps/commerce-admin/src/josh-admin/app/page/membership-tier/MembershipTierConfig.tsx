@@ -1,4 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
+import { TableViewport } from '@cp/ui';
 import {
   createTier,
   deleteTier,
@@ -364,17 +365,17 @@ export function MembershipTierConfig() {
         <div className="text-sm text-gray-400">{__uiText("กำลังโหลด...")}</div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left">
+          <TableViewport className="overflow-x-auto">
+            <table className="cp-data-table w-full border-collapse text-left">
               <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
                 <tr>
-                  <th className="w-16 p-4">{__uiText("ลำดับ")}</th>
-                  <th className="p-4">{__uiText("ชื่อ")}</th>
-                  <th className="p-4">{__uiText("Slug")}</th>
-                  <th className="p-4">{__uiText("สี")}</th>
-                  <th className="p-4">{__uiText("ยอดใช้จ่ายขั้นต่ำ")}</th>
-                  <th className="p-4">{__uiText("สถานะ")}</th>
-                  <th className="p-4">{__uiText("จัดการ")}</th>
+                  <th className="w-16 p-4" scope="col">{__uiText("ลำดับ")}</th>
+                  <th className="p-4" scope="col">{__uiText("ชื่อ")}</th>
+                  <th className="p-4" scope="col">{__uiText("Slug")}</th>
+                  <th className="p-4" scope="col">{__uiText("สี")}</th>
+                  <th className="p-4" scope="col">{__uiText("ยอดใช้จ่ายขั้นต่ำ")}</th>
+                  <th className="p-4" scope="col">{__uiText("สถานะ")}</th>
+                  <th className="p-4" scope="col">{__uiText("จัดการ")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
@@ -490,7 +491,7 @@ export function MembershipTierConfig() {
                 )}
               </tbody>
             </table>
-          </div>
+          </TableViewport>
         </div>
       )}
     </div>

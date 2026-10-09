@@ -1,3 +1,4 @@
+import { TableViewport } from '@cp/ui';
 import React from 'react'
 import { FlowBranch } from '@josh/shared-api'
 import { Select } from '@josh/shared-ui-web'
@@ -44,13 +45,13 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
   return (
     <div className={styles.container}>
       <h4>{__uiText("Branches")}</h4>
-      <table className={styles.table}>
+      <TableViewport><table className={'cp-data-table ' + (styles.table ?? '')}>
         <thead>
           <tr>
-            <th>{__uiText("ประเภทการจับคู่")}</th>
-            <th>{__uiText("ค่า")}</th>
-            <th>{__uiText("ขั้นตอนถัดไป")}</th>
-            <th></th>
+            <th scope="col">{__uiText("ประเภทการจับคู่")}</th>
+            <th scope="col">{__uiText("ค่า")}</th>
+            <th scope="col">{__uiText("ขั้นตอนถัดไป")}</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
@@ -101,7 +102,7 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></TableViewport>
       <button className={styles.addBtn} onClick={addBranch}>
         {__uiText("+ Add Branch")}</button>
     </div>

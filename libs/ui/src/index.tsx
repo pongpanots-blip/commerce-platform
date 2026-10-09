@@ -22,6 +22,7 @@ import {
 } from 'react';
 import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ICONS } from './icons';
+import { PaginationControls, TableViewport } from './data-table';
 import { LanguageSelector } from './i18n';
 import { PageChrome, PageHelpLink, fieldExample, fieldHint } from './usability';
 import { blankFieldMessage, confirmLeaveIfDirty, scrollToFirstInvalid, useUnsavedChanges } from './forms';
@@ -763,9 +764,9 @@ export function Delta({ pct }: { pct: number | null | undefined }) {
 /** Scrollable table shell with Stitch styling; children are <thead>/<tbody>. */
 export function Table({ children, maxHeight, className }: { children: ReactNode; maxHeight?: string; className?: string }) {
   return (
-    <div className={cx('overflow-x-auto', maxHeight && 'overflow-y-auto', className)} style={maxHeight ? { maxHeight } : undefined}>
-      <table className="w-full border-collapse text-left text-[13px]">{children}</table>
-    </div>
+    <TableViewport className={className} style={maxHeight ? { maxHeight } : undefined}>
+      <table className="cp-data-table">{children}</table>
+    </TableViewport>
   );
 }
 
@@ -780,7 +781,7 @@ export function THead({ children }: { children: ReactNode }) {
 export function TH({ children, right, kind, className }: { children?: ReactNode; right?: boolean; kind?: TdKind; className?: string }) {
   __useUiLocale();
   const alignRight = right || kind === 'num' || kind === 'money' || kind === 'actions';
-  return <th className={cx('px-3 font-semibold whitespace-nowrap', alignRight && 'text-right', className)}>{typeof children === 'string' ? __uiText(children) : children}</th>;
+  return <th scope="col" className={cx('px-3 font-semibold whitespace-nowrap', alignRight && 'text-right', className)}>{typeof children === 'string' ? __uiText(children) : children}</th>;
 }
 
 export function TBody({ children }: { children: ReactNode }) {
@@ -791,6 +792,7 @@ export function TR({ children, onClick, selected, muted, className }: { children
   return (
     <tr
       onClick={onClick}
+      data-selected={selected || undefined}
       className={cx(
         'h-12 transition-colors duration-100',
         selected ? 'bg-primary-container/30' : 'hover:bg-surface-container-low',
@@ -844,7 +846,7 @@ export function RowLink({ to, state, mono = true, children }: { to: string; stat
 export function Stack2({ top, bottom, maxW = 230 }: { top: ReactNode; bottom?: ReactNode; maxW?: number }) {
   return (
     <div className="min-w-0">
-      <div className="font-medium text-on-surface truncate" style={{ maxWidth: maxW }}>{top}</div>
+      <div className="font-medium text-on-surface truncate" title={typeof top === 'string' ? top : undefined} style={{ maxWidth: maxW }}>{top}</div>
       {bottom && <div className="text-[10px] text-on-surface-variant truncate" style={{ maxWidth: maxW }}>{bottom}</div>}
     </div>
   );
@@ -882,19 +884,6 @@ export function TableMessage({ colSpan, children }: { colSpan: number; children:
 
 // ---------------------------------------------------------------- pager
 
-function pageList(page: number, pages: number): (number | '…')[] {
-  if (pages <= 7) return Array.from({ length: pages }, (_, i) => i + 1);
-  const set = new Set([1, 2, page - 1, page, page + 1, pages - 1, pages].filter((p) => p >= 1 && p <= pages));
-  const out: (number | '…')[] = [];
-  let prev = 0;
-  for (const p of [...set].sort((a, b) => a - b)) {
-    if (p - prev > 1) out.push('…');
-    out.push(p);
-    prev = p;
-  }
-  return out;
-}
-
 /** Table footer: "แสดง a–b จาก n รายการ" + page size + numbered pages. `page` is 1-based. */
 export function Pager({
   page,
@@ -915,13 +904,12 @@ export function Pager({
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(total, page * pageSize);
-  const nav = 'w-7 h-7 flex items-center justify-center rounded border border-secondary-container hover:bg-surface-container-low disabled:opacity-40 disabled:pointer-events-none transition-colors';
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-secondary-container text-xs text-on-surface-variant">
+    <div className="cp-table-footer">
       <div>
         {__uiText("แสดง ")}<span className="font-mono text-on-surface font-semibold tabular-nums">{from.toLocaleString()}–{to.toLocaleString()}</span> {__uiText(" จาก")}{' '}
         <span className="font-mono text-on-surface font-semibold tabular-nums">{total.toLocaleString()}</span> {__uiText(" รายการ")}</div>
-      <div className="flex items-center gap-4">
+      <div className="flex min-w-0 max-w-full flex-wrap items-center gap-3">
         {onPageSize && (
           <label className="flex items-center gap-1.5">
             <span className="text-[11px]">{__uiText("แถวต่อหน้า:")}</span>
@@ -936,32 +924,7 @@ export function Pager({
             </select>
           </label>
         )}
-        <div className="flex items-center gap-1 font-mono">
-          <button type="button" className={nav} disabled={page <= 1} onClick={() => onPage(page - 1)} aria-label={__uiText("ก่อนหน้า")}>
-            <Icon name="chevron_left" size={15} />
-          </button>
-          {pageList(page, pages).map((p, i) =>
-            p === '…' ? (
-              <span key={`e${i}`} className="px-1 text-outline">…</span>
-            ) : (
-              <button
-                key={p}
-                type="button"
-                onClick={() => onPage(p)}
-                aria-current={p === page ? 'page' : undefined}
-                className={cx(
-                  'w-7 h-7 flex items-center justify-center rounded text-xs transition-colors',
-                  p === page ? 'bg-primary text-on-primary font-semibold' : 'hover:bg-surface-container-low text-on-surface font-medium',
-                )}
-              >
-                {p}
-              </button>
-            ),
-          )}
-          <button type="button" className={nav} disabled={page >= pages} onClick={() => onPage(page + 1)} aria-label={__uiText("ถัดไป")}>
-            <Icon name="chevron_right" size={15} />
-          </button>
-        </div>
+        <PaginationControls page={page} pages={pages} onPage={onPage} />
       </div>
     </div>
   );
@@ -1433,6 +1396,7 @@ export const fmt = {
 export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
 export { TaskPageFrame } from './TaskPageFrame';
 export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, PageHelpLink, enablePageGuides, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
+export { TableViewport, TableEmpty, PaginationControls } from './data-table';
 export { FormSection, FormActions, DetailHeader, CopyableId, MasterDataSelect, findMasterMatch, masterKey, useUnsavedChanges, confirmLeaveIfDirty, scrollToFirstInvalid, blankFieldMessage } from './forms';
 export { pageGuide } from './page-guides';
 export type { PageGuide } from './page-guides';

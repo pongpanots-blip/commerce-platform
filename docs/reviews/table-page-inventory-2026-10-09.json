@@ -1,0 +1,2571 @@
+{
+  "generatedOn": "2026-10-09",
+  "method": "TypeScript JSX and local import graph; application sources only",
+  "elements": 156,
+  "files": [
+    {
+      "file": "apps/commerce-admin/src/app/pages/Dashboard.tsx",
+      "tables": [
+        {
+          "line": 168,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
+      "tables": [
+        {
+          "line": 97,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/settings/staff"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshStaff.tsx",
+      "tables": [
+        {
+          "line": 63,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/settings/josh-staff"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+      "tables": [
+        {
+          "line": 158,
+          "tag": "Table"
+        },
+        {
+          "line": 305,
+          "tag": "Table"
+        },
+        {
+          "line": 415,
+          "tag": "Table"
+        },
+        {
+          "line": 455,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/orders",
+        "admin:/reports/customers",
+        "admin:/reports/prices"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshOrderDetail.tsx",
+      "tables": [
+        {
+          "line": 77,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/orders/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "tables": [
+        {
+          "line": 91,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/josh/:view"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshApiLogs.tsx",
+      "tables": [
+        {
+          "line": 67,
+          "tag": "Table"
+        },
+        {
+          "line": 90,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/josh-api-logs"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/PriceShadow.tsx",
+      "tables": [
+        {
+          "line": 104,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/price-shadow"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/StaffPrices.tsx",
+      "tables": [
+        {
+          "line": 183,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/prices/staff"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshCustomerDetail.tsx",
+      "tables": [
+        {
+          "line": 129,
+          "tag": "Table"
+        },
+        {
+          "line": 171,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/customers/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshProducts.tsx",
+      "tables": [
+        {
+          "line": 138,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/products"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshProductDetail.tsx",
+      "tables": [
+        {
+          "line": 211,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/products/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/MyWinback.tsx",
+      "tables": [
+        {
+          "line": 39,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/winback/opportunities",
+        "admin:/reports/winback/my"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+      "tables": [
+        {
+          "line": 75,
+          "tag": "Table"
+        },
+        {
+          "line": 146,
+          "tag": "Table"
+        },
+        {
+          "line": 265,
+          "tag": "Table"
+        },
+        {
+          "line": 371,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/sales",
+        "admin:/reports/traffic",
+        "admin:/reports/health"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/Winback.tsx",
+      "tables": [
+        {
+          "line": 84,
+          "tag": "Table"
+        },
+        {
+          "line": 125,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/winback"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+      "tables": [
+        {
+          "line": 119,
+          "tag": "table"
+        },
+        {
+          "line": 218,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reports/order-targetgroup",
+        "admin:/marketing/restaurants"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/MarketingWorkflows.tsx",
+      "tables": [
+        {
+          "line": 67,
+          "tag": "Table"
+        },
+        {
+          "line": 130,
+          "tag": "Table"
+        },
+        {
+          "line": 151,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/marketing/workflows"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/growth/Workspace.tsx",
+      "tables": [
+        {
+          "line": 57,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/marketing/growth"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/growth/Plans.tsx",
+      "tables": [
+        {
+          "line": 62,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/marketing/growth/plans"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/growth/Plan.tsx",
+      "tables": [
+        {
+          "line": 187,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/marketing/growth/plans/new",
+        "admin:/marketing/growth/plans/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/growth/Results.tsx",
+      "tables": [
+        {
+          "line": 38,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/marketing/growth/results/:workflowId",
+        "admin:/marketing/growth/companies/:companyId"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEnrollments.tsx",
+      "tables": [
+        {
+          "line": 167,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/marketing/workflows/new",
+        "admin:/marketing/workflows/:id/edit",
+        "admin:/marketing/workflows/:id/enrollments",
+        "admin:/marketing/workflows/:id/scheduled-runs"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowScheduledRuns.tsx",
+      "tables": [
+        {
+          "line": 164,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/marketing/workflows/new",
+        "admin:/marketing/workflows/:id/edit",
+        "admin:/marketing/workflows/:id/enrollments",
+        "admin:/marketing/workflows/:id/scheduled-runs"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+      "tables": [
+        {
+          "line": 166,
+          "tag": "Table"
+        },
+        {
+          "line": 238,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/cs"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/Livechat.tsx",
+      "tables": [
+        {
+          "line": 39,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/livechat"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/MarketingResearch.tsx",
+      "tables": [
+        {
+          "line": 148,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/marketing/research"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/AiConnectors.tsx",
+      "tables": [
+        {
+          "line": 97,
+          "tag": "Table"
+        },
+        {
+          "line": 153,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/ai/connectors"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JoshErpLogs.tsx",
+      "tables": [
+        {
+          "line": 56,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp/josh-logs"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/InboundLog.tsx",
+      "tables": [
+        {
+          "line": 71,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp/inbound-log"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/WebhookDeadLetter.tsx",
+      "tables": [
+        {
+          "line": 50,
+          "tag": "Table"
+        },
+        {
+          "line": 96,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp/webhook-dead-letter"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/WebhookPlatforms.tsx",
+      "tables": [
+        {
+          "line": 140,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp/webhook-platforms"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/InventoryPerWarehouse.tsx",
+      "tables": [
+        {
+          "line": 74,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp/inventory-warehouse"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/JagotaShadow.tsx",
+      "tables": [
+        {
+          "line": 106,
+          "tag": "Table"
+        },
+        {
+          "line": 142,
+          "tag": "Table"
+        },
+        {
+          "line": 246,
+          "tag": "Table"
+        },
+        {
+          "line": 377,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp/jagota-shadow"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/ErpSimulator.tsx",
+      "tables": [
+        {
+          "line": 199,
+          "tag": "Table"
+        },
+        {
+          "line": 374,
+          "tag": "Table"
+        },
+        {
+          "line": 415,
+          "tag": "Table"
+        },
+        {
+          "line": 471,
+          "tag": "Table"
+        },
+        {
+          "line": 496,
+          "tag": "Table"
+        },
+        {
+          "line": 517,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp/simulator"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/Integrations.tsx",
+      "tables": [
+        {
+          "line": 103,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/integrations"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/Webhooks.tsx",
+      "tables": [
+        {
+          "line": 34,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/webhooks"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/Subscriptions.tsx",
+      "tables": [
+        {
+          "line": 118,
+          "tag": "Table"
+        },
+        {
+          "line": 154,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/subscriptions"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/SyncJobs.tsx",
+      "tables": [
+        {
+          "line": 74,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/sync-jobs"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/components/ResourcePage.tsx",
+      "tables": [
+        {
+          "line": 142,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/customers",
+        "admin:/products"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/CustomerDetail.tsx",
+      "tables": [
+        {
+          "line": 104,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/customers/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/ProductDetail.tsx",
+      "tables": [
+        {
+          "line": 112,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/products/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/ProductPrices.tsx",
+      "tables": [
+        {
+          "line": 79,
+          "tag": "Table"
+        },
+        {
+          "line": 116,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/product-prices"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+      "tables": [
+        {
+          "line": 71,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/product-master-queue"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/SupplierOrderPeriods.tsx",
+      "tables": [
+        {
+          "line": 54,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/order-periods"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/Orders.tsx",
+      "tables": [
+        {
+          "line": 160,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/orders"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/OrderDetail.tsx",
+      "tables": [
+        {
+          "line": 125,
+          "tag": "Table"
+        },
+        {
+          "line": 150,
+          "tag": "Table"
+        },
+        {
+          "line": 200,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/orders/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/Reservations.tsx",
+      "tables": [
+        {
+          "line": 73,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/reservations"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/ErpStock.tsx",
+      "tables": [
+        {
+          "line": 73,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp-stock"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/app/pages/ErpIngest.tsx",
+      "tables": [
+        {
+          "line": 72,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/erp-ingest"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx",
+      "tables": [
+        {
+          "line": 313,
+          "tag": "Table"
+        },
+        {
+          "line": 322,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/marketing/queue"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingJourneyFunnel.tsx",
+      "tables": [
+        {
+          "line": 223,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/marketing/journey-funnel"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+      "tables": [
+        {
+          "line": 280,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/marketing/competitor-prices"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
+      "tables": [
+        {
+          "line": 177,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/marketing/competitor-prices",
+        "admin:/j/marketing/scraping-sources",
+        "admin:/j/marketing/scraped-catalog"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorReviewGrid.tsx",
+      "tables": [
+        {
+          "line": 169,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/marketing/competitor-prices"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorAddSite.tsx",
+      "tables": [
+        {
+          "line": 91,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/marketing/competitor-prices"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
+      "tables": [
+        {
+          "line": 166,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/marketing/offers-check"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinksPage.tsx",
+      "tables": [
+        {
+          "line": 165,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/smart-links"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx",
+      "tables": [
+        {
+          "line": 44,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/smart-links/analytics",
+        "admin:/j/smart-links/analytics/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+      "tables": [
+        {
+          "line": 322,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/order"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+      "tables": [
+        {
+          "line": 541,
+          "tag": "Table"
+        },
+        {
+          "line": 559,
+          "tag": "table"
+        },
+        {
+          "line": 661,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/order/:ordersId"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/orders/Shipments.tsx",
+      "tables": [
+        {
+          "line": 565,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/shipments"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/orders/PaymentTransactions.tsx",
+      "tables": [
+        {
+          "line": 384,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/payment-transactions"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/user/Alluser.tsx",
+      "tables": [
+        {
+          "line": 417,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/allusers"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/user/UserDetail.tsx",
+      "tables": [
+        {
+          "line": 360,
+          "tag": "Table"
+        },
+        {
+          "line": 395,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/allusers/:userId"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/user/BranchPricingPanel.tsx",
+      "tables": [
+        {
+          "line": 303,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/allusers/:userId"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/CsPlaceOrderPanel.tsx",
+      "tables": [
+        {
+          "line": 519,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/allusers/:userId"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx",
+      "tables": [
+        {
+          "line": 369,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/membership-tiers"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx",
+      "tables": [
+        {
+          "line": 175,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/brands"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
+      "tables": [
+        {
+          "line": 461,
+          "tag": "Table"
+        },
+        {
+          "line": 596,
+          "tag": "Table"
+        },
+        {
+          "line": 599,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/kbank/testing-console"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/InvoicesOverdue.tsx",
+      "tables": [
+        {
+          "line": 50,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/invoices"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditNotesAdmin.tsx",
+      "tables": [
+        {
+          "line": 164,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/credit-notes"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditBacksAdmin.tsx",
+      "tables": [
+        {
+          "line": 163,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/credit-backs"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/CreditTermsAdmin.tsx",
+      "tables": [
+        {
+          "line": 129,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/credit-terms"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/kyc/KycQueue.tsx",
+      "tables": [
+        {
+          "line": 190,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/kyc"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageLibrary.tsx",
+      "tables": [
+        {
+          "line": 214,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/promotion-pages"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/bot/BotIntentRules.tsx",
+      "tables": [
+        {
+          "line": 84,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/bot/intent-rules"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/bot/BotWorkflows.tsx",
+      "tables": [
+        {
+          "line": 124,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/bot/workflows"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/components/bot/BranchEditor.tsx",
+      "tables": [
+        {
+          "line": 48,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/bot/workflows/edit/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/bot/BotTemplates.tsx",
+      "tables": [
+        {
+          "line": 84,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/bot/templates"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+      "tables": [
+        {
+          "line": 390,
+          "tag": "table"
+        },
+        {
+          "line": 820,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/marketing/push-campaigns"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/company/Company.tsx",
+      "tables": [
+        {
+          "line": 125,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/company"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
+      "tables": [
+        {
+          "line": 44,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/company/edit/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/company/CompanySpecialPricingPanel.tsx",
+      "tables": [
+        {
+          "line": 323,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/company/edit/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
+      "tables": [
+        {
+          "line": 313,
+          "tag": "table"
+        },
+        {
+          "line": 394,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/refunds"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentList.tsx",
+      "tables": [
+        {
+          "line": 243,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/segments"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/segment/builder/MembersPanel.tsx",
+      "tables": [
+        {
+          "line": 97,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/segments/builder",
+        "admin:/j/segments/builder/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/SampleRequestsAdmin.tsx",
+      "tables": [
+        {
+          "line": 77,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/cs/sample-requests"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/DeliveryScheduleAdmin.tsx",
+      "tables": [
+        {
+          "line": 75,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/cs/delivery-schedule"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
+      "tables": [
+        {
+          "line": 571,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/allproducts"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionQuantityRuleFields.tsx",
+      "tables": [
+        {
+          "line": 87,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/product/create",
+        "admin:/j/product/edit/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
+      "tables": [
+        {
+          "line": 583,
+          "tag": "table"
+        },
+        {
+          "line": 712,
+          "tag": "table"
+        },
+        {
+          "line": 824,
+          "tag": "table"
+        },
+        {
+          "line": 877,
+          "tag": "table"
+        },
+        {
+          "line": 948,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/product/bulk-image-upload"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/product/PromotionRulesLockedNotice.tsx",
+      "tables": [
+        {
+          "line": 36,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/product/edit/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+      "tables": [
+        {
+          "line": 212,
+          "tag": "table"
+        },
+        {
+          "line": 279,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/product/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/product/ProductCustomerPricingSection.tsx",
+      "tables": [
+        {
+          "line": 93,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/product/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx",
+      "tables": [
+        {
+          "line": 103,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/suppliers"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/PriceRequestsAdmin.tsx",
+      "tables": [
+        {
+          "line": 80,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/price-requests"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/ActiveOffersAdmin.tsx",
+      "tables": [
+        {
+          "line": 52,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/active-offers"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponList.tsx",
+      "tables": [
+        {
+          "line": 179,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/coupons"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx",
+      "tables": [
+        {
+          "line": 1034,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/coupon/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetList.tsx",
+      "tables": [
+        {
+          "line": 163,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/promotion-product-sets"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionMechanic.tsx",
+      "tables": [
+        {
+          "line": 229,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/promotions-mechanic"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignList.tsx",
+      "tables": [
+        {
+          "line": 167,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/promotions/campaigns"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx",
+      "tables": [
+        {
+          "line": 310,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/promotions/campaigns/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignCouponsSection.tsx",
+      "tables": [
+        {
+          "line": 165,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/promotions/campaigns/:id"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationLog.tsx",
+      "tables": [
+        {
+          "line": 164,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/cs/notification-log"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryStats.tsx",
+      "tables": [
+        {
+          "line": 230,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/cs/notification-stats"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryLogTab.tsx",
+      "tables": [
+        {
+          "line": 229,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/cs/notification-stats"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/ProductNotifyFunnel.tsx",
+      "tables": [
+        {
+          "line": 249,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/cs/product-notify-funnel"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
+      "tables": [
+        {
+          "line": 80,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/jagota/payment-testing"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+      "tables": [
+        {
+          "line": 582,
+          "tag": "table"
+        }
+      ],
+      "routes": [
+        "admin:/j/erp/webhook-simulator"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/CS/Billing.tsx",
+      "tables": [
+        {
+          "line": 297,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/billing"
+      ]
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/app/page/admin-access/AdminAccessQueue.tsx",
+      "tables": [
+        {
+          "line": 240,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "admin:/j/admin-access"
+      ]
+    },
+    {
+      "file": "apps/commerce-portal/src/app/pages/Dashboard.tsx",
+      "tables": [
+        {
+          "line": 214,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "portal:/"
+      ]
+    },
+    {
+      "file": "apps/commerce-portal/src/app/pages/ApiKeys.tsx",
+      "tables": [
+        {
+          "line": 144,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "portal:/keys"
+      ]
+    },
+    {
+      "file": "apps/commerce-portal/src/app/pages/Webhooks.tsx",
+      "tables": [
+        {
+          "line": 163,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "portal:/webhooks"
+      ]
+    },
+    {
+      "file": "apps/commerce-portal/src/app/pages/Docs.tsx",
+      "tables": [
+        {
+          "line": 60,
+          "tag": "Table"
+        }
+      ],
+      "routes": [
+        "portal:/docs"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "app": "admin",
+      "path": "/",
+      "componentFile": "apps/commerce-admin/src/app/pages/Dashboard.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/Dashboard.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/settings/staff",
+      "componentFile": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/StaffAccounts.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/settings/josh-staff",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshStaff.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshStaff.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/orders",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshCommerce.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/orders/:id",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshOrderDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshOrderDetail.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/josh/:view",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/josh-api-logs",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshApiLogs.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshApiLogs.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/price-shadow",
+      "componentFile": "apps/commerce-admin/src/app/pages/PriceShadow.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/PriceShadow.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/prices/staff",
+      "componentFile": "apps/commerce-admin/src/app/pages/StaffPrices.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/StaffPrices.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/customers",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshCommerce.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/customers/:id",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshCustomerDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshCustomerDetail.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/prices",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshCommerce.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/products",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshProducts.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshProducts.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/products/:id",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshProductDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshProductDetail.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/winback/opportunities",
+      "componentFile": "apps/commerce-admin/src/app/pages/MyWinback.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/MyWinback.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/winback/my",
+      "componentFile": "apps/commerce-admin/src/app/pages/MyWinback.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/MyWinback.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/sales",
+      "componentFile": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ShopReports.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/traffic",
+      "componentFile": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ShopReports.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/health",
+      "componentFile": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ShopReports.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/winback",
+      "componentFile": "apps/commerce-admin/src/app/pages/Winback.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/Winback.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reports/order-targetgroup",
+      "componentFile": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/MarketExplorer.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows",
+      "componentFile": "apps/commerce-admin/src/app/pages/MarketingWorkflows.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/MarketingWorkflows.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth",
+      "componentFile": "apps/commerce-admin/src/app/pages/growth/Workspace.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/growth/Workspace.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/plans",
+      "componentFile": "apps/commerce-admin/src/app/pages/growth/Plans.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/growth/Plans.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/plans/new",
+      "componentFile": "apps/commerce-admin/src/app/pages/growth/Plan.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/growth/Plan.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/plans/:id",
+      "componentFile": "apps/commerce-admin/src/app/pages/growth/Plan.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/growth/Plan.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/results/:workflowId",
+      "componentFile": "apps/commerce-admin/src/app/pages/growth/Results.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/growth/Results.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/growth/companies/:companyId",
+      "componentFile": "apps/commerce-admin/src/app/pages/growth/Results.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/growth/Results.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows/new",
+      "componentFile": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEnrollments.tsx",
+        "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowScheduledRuns.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows/:id/edit",
+      "componentFile": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEnrollments.tsx",
+        "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowScheduledRuns.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows/:id/enrollments",
+      "componentFile": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEnrollments.tsx",
+        "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowScheduledRuns.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/workflows/:id/scheduled-runs",
+      "componentFile": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowEnrollments.tsx",
+        "apps/commerce-admin/src/app/pages/workflow-editor/josh/MarketingWorkflowScheduledRuns.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/cs",
+      "componentFile": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/CsDesk.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/livechat",
+      "componentFile": "apps/commerce-admin/src/app/pages/Livechat.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/Livechat.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/restaurants",
+      "componentFile": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/MarketExplorer.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/marketing/research",
+      "componentFile": "apps/commerce-admin/src/app/pages/MarketingResearch.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/MarketingResearch.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/ai/connectors",
+      "componentFile": "apps/commerce-admin/src/app/pages/AiConnectors.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/AiConnectors.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp/josh-logs",
+      "componentFile": "apps/commerce-admin/src/app/pages/JoshErpLogs.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JoshErpLogs.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp/inbound-log",
+      "componentFile": "apps/commerce-admin/src/app/pages/InboundLog.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/InboundLog.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp/webhook-dead-letter",
+      "componentFile": "apps/commerce-admin/src/app/pages/WebhookDeadLetter.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/WebhookDeadLetter.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp/webhook-platforms",
+      "componentFile": "apps/commerce-admin/src/app/pages/WebhookPlatforms.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/WebhookPlatforms.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp/inventory-warehouse",
+      "componentFile": "apps/commerce-admin/src/app/pages/InventoryPerWarehouse.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/InventoryPerWarehouse.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp/jagota-shadow",
+      "componentFile": "apps/commerce-admin/src/app/pages/JagotaShadow.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/JagotaShadow.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp/simulator",
+      "componentFile": "apps/commerce-admin/src/app/pages/ErpSimulator.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ErpSimulator.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/integrations",
+      "componentFile": "apps/commerce-admin/src/app/pages/Integrations.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/Integrations.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/webhooks",
+      "componentFile": "apps/commerce-admin/src/app/pages/Webhooks.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/Webhooks.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/subscriptions",
+      "componentFile": "apps/commerce-admin/src/app/pages/Subscriptions.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/Subscriptions.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/sync-jobs",
+      "componentFile": "apps/commerce-admin/src/app/pages/SyncJobs.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/SyncJobs.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/customers",
+      "componentFile": "apps/commerce-admin/src/app/pages/Customers.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/components/ResourcePage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/customers/:id",
+      "componentFile": "apps/commerce-admin/src/app/pages/CustomerDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/CustomerDetail.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/products",
+      "componentFile": "apps/commerce-admin/src/app/pages/Products.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/components/ResourcePage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/products/:id",
+      "componentFile": "apps/commerce-admin/src/app/pages/ProductDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ProductDetail.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/product-prices",
+      "componentFile": "apps/commerce-admin/src/app/pages/ProductPrices.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ProductPrices.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/product-master-queue",
+      "componentFile": "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/order-periods",
+      "componentFile": "apps/commerce-admin/src/app/pages/SupplierOrderPeriods.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/SupplierOrderPeriods.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/orders",
+      "componentFile": "apps/commerce-admin/src/app/pages/Orders.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/Orders.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/orders/:id",
+      "componentFile": "apps/commerce-admin/src/app/pages/OrderDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/OrderDetail.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/reservations",
+      "componentFile": "apps/commerce-admin/src/app/pages/Reservations.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/Reservations.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp-stock",
+      "componentFile": "apps/commerce-admin/src/app/pages/ErpStock.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ErpStock.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/erp-ingest",
+      "componentFile": "apps/commerce-admin/src/app/pages/ErpIngest.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/app/pages/ErpIngest.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/queue",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/journey-funnel",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingJourneyFunnel.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingJourneyFunnel.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/competitor-prices",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorReviewGrid.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorAddSite.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/scraping-sources",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/scraped-catalog",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapedCatalogPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/offers-check",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/smart-links",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinksPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinksPage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/smart-links/analytics",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/smart-links/analytics/:id",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/order",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/Order.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/order/:ordersId",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/shipments",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/orders/Shipments.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/orders/Shipments.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/payment-transactions",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/orders/PaymentTransactions.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/orders/PaymentTransactions.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/allusers",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/user/Alluser.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/user/Alluser.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/allusers/:userId",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/user/UserDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/user/UserDetail.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/user/BranchPricingPanel.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/CS/CsPlaceOrderPanel.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/membership-tiers",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/brands",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/kbank/testing-console",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/invoices",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/InvoicesOverdue.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/InvoicesOverdue.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/credit-notes",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditNotesAdmin.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditNotesAdmin.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/credit-backs",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditBacksAdmin.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditBacksAdmin.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/credit-terms",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/CreditTermsAdmin.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/CreditTermsAdmin.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/kyc",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/kyc/KycQueue.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/kyc/KycQueue.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotion-pages",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageLibrary.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageLibrary.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/intent-rules",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/bot/BotIntentRules.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/bot/BotIntentRules.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/workflows",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/bot/BotWorkflows.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/bot/BotWorkflows.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/workflows/edit/:id",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotWorkflow.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/components/bot/BranchEditor.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/bot/templates",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/bot/BotTemplates.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/bot/BotTemplates.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/marketing/push-campaigns",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/company",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/company/Company.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/company/Company.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/company/edit/:id",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/company/CompanySpecialPricingPanel.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/refunds",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/segments",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentList.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentList.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/segments/builder",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/segment/builder/MembersPanel.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/segments/builder/:id",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/segment/builder/MembersPanel.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/sample-requests",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/SampleRequestsAdmin.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/SampleRequestsAdmin.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/delivery-schedule",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/DeliveryScheduleAdmin.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/DeliveryScheduleAdmin.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/allproducts",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/create",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/product/CreateProduct.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionQuantityRuleFields.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/bulk-image-upload",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/edit/:id",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/product/EditProduct.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/product/PromotionRulesLockedNotice.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionQuantityRuleFields.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/:id",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/product/ProductCustomerPricingSection.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/suppliers",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/price-requests",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/PriceRequestsAdmin.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/PriceRequestsAdmin.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/active-offers",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/ActiveOffersAdmin.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/ActiveOffersAdmin.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/coupons",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponList.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponList.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/coupon/:id",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotion-product-sets",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetList.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetList.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions-mechanic",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionMechanic.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionMechanic.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions/campaigns",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignList.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignList.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/promotions/campaigns/:id",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignCouponsSection.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/notification-log",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationLog.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationLog.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/notification-stats",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryStats.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryStats.tsx",
+        "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryLogTab.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/cs/product-notify-funnel",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/ProductNotifyFunnel.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/ProductNotifyFunnel.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/jagota/payment-testing",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/erp/webhook-simulator",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/billing",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/CS/Billing.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/CS/Billing.tsx"
+      ]
+    },
+    {
+      "app": "admin",
+      "path": "/j/admin-access",
+      "componentFile": "apps/commerce-admin/src/josh-admin/app/page/admin-access/AdminAccessQueue.tsx",
+      "tableFiles": [
+        "apps/commerce-admin/src/josh-admin/app/page/admin-access/AdminAccessQueue.tsx"
+      ]
+    },
+    {
+      "app": "portal",
+      "path": "/",
+      "componentFile": "apps/commerce-portal/src/app/pages/Dashboard.tsx",
+      "tableFiles": [
+        "apps/commerce-portal/src/app/pages/Dashboard.tsx"
+      ]
+    },
+    {
+      "app": "portal",
+      "path": "/keys",
+      "componentFile": "apps/commerce-portal/src/app/pages/ApiKeys.tsx",
+      "tableFiles": [
+        "apps/commerce-portal/src/app/pages/ApiKeys.tsx"
+      ]
+    },
+    {
+      "app": "portal",
+      "path": "/webhooks",
+      "componentFile": "apps/commerce-portal/src/app/pages/Webhooks.tsx",
+      "tableFiles": [
+        "apps/commerce-portal/src/app/pages/Webhooks.tsx"
+      ]
+    },
+    {
+      "app": "portal",
+      "path": "/docs",
+      "componentFile": "apps/commerce-portal/src/app/pages/Docs.tsx",
+      "tableFiles": [
+        "apps/commerce-portal/src/app/pages/Docs.tsx"
+      ]
+    }
+  ]
+}

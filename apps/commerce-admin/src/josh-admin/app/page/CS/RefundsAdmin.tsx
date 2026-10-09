@@ -1,4 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { createRefund, getOrderById, getRefunds, updateRefund } from '@josh/shared-api';
@@ -308,15 +309,15 @@ export default function RefundsAdmin() {
         </div>
 
         {orderItems.length > 0 && (
-          <div className="mt-3 overflow-x-auto rounded-lg border border-gray-100">
-            <table className="w-full text-sm">
+          <TableViewport className="mt-3 overflow-x-auto rounded-lg border border-gray-100">
+            <table className="cp-data-table w-full text-sm">
               <thead className="bg-gray-50 text-left text-xs text-gray-500">
                 <tr>
-                  <th className="px-2 py-2" />
-                  <th className="px-2 py-2">{__uiText("SKU")}</th>
-                  <th className="px-2 py-2">{__uiText("สินค้า")}</th>
-                  <th className="px-2 py-2">{__uiText("จำนวนคืน")}</th>
-                  <th className="px-2 py-2">{__uiText("ยอดเงินคืน")}</th>
+                  <th className="px-2 py-2" scope="col" />
+                  <th className="px-2 py-2" scope="col">{__uiText("SKU")}</th>
+                  <th className="px-2 py-2" scope="col">{__uiText("สินค้า")}</th>
+                  <th className="px-2 py-2" scope="col">{__uiText("จำนวนคืน")}</th>
+                  <th className="px-2 py-2" scope="col">{__uiText("ยอดเงินคืน")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -374,7 +375,7 @@ export default function RefundsAdmin() {
                 })}
               </tbody>
             </table>
-          </div>
+          </TableViewport>
         )}
 
         <button

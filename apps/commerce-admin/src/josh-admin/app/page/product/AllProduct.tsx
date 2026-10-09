@@ -1,48 +1,46 @@
-// ui-metadata-migration: static labels and UI notices only
-import { approveProducts, getAdminProducts, rejectErpPending } from '@josh/shared-api';
-import { Button, Input, Select, Table, TableColumn } from '@josh/shared-ui-web';
-import React, { useState } from 'react';
-import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import {
-  AiOutlineEye,
-  AiOutlineEdit,
-  AiOutlineCheckCircle,
-  AiOutlineCloseCircle,
-  AiOutlineFilter,
-} from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
+  approveProducts,
+  getAdminProducts,
+  rejectErpPending,
+} from '@josh/shared-api';
+import { Table, TableColumn } from '@josh/shared-ui-web';
+import {
+  Button,
+  ButtonLink,
+  Chip,
+  Icon,
+  PageHeader,
+  confirmAction,
+  uiText,
+  useUiLocale,
+} from '@cp/ui';
+import { useEffect, useMemo, useState } from 'react';
+import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { session } from '../../../../lib/auth';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
-import AdminListHeader from '../../components/AdminListHeader';
 import { catalogSellingPrice } from './catalog-price';
-import { PRODUCT_STATUS_OPTIONS, normalizeProductStatus, productStatusBadge } from './product-status.helpers';
+import {
+  PRODUCT_STATUS_OPTIONS,
+  normalizeProductStatus,
+} from './product-status.helpers';
 import { resolveMediaUrl } from './product-media.helpers';
 
-// ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const LIMIT = 10;
-
 type ProductStatusFilter = 'active' | 'inactive' | 'draft' | 'all';
+const hasErpPending = (row: any) => row?.erp_pending_payload != null;
+const approvable = (row: any) =>
+  normalizeProductStatus(row.product_status) === 'draft' || hasErpPending(row);
 
-function formatBaht(value: unknown): string {
-  const num = Number(value);
-  if (!Number.isFinite(num) || num <= 0) return '—';
-  return `฿${num.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-}
-
-function hasErpPending(row: any): boolean {
-  return row?.erp_pending_payload != null;
-}
-
-/** `media[]` from the list endpoint is already sorted; backend swaps in `_thumb.webp` when one exists (see docs/product-image-frontend.md). */
-function ProductThumb({ media }: { media?: { source?: string; media_type?: string }[] }) {
+function ProductThumb({
+  media,
+}: {
+  media?: { source?: string; media_type?: string }[];
+}) {
   const [failed, setFailed] = useState(false);
-  const source = media?.filter((m) => m.media_type === 'image')[0]?.source;
+  const source = media?.find((m) => m.media_type === 'image')?.source;
   const url = source ? resolveMediaUrl(source) : '';
-
-  if (!url || failed) {
-    return <div className="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200" />;
-  }
-  return (
+  return url && !failed ? (
     <img
       src={url}
       alt=""
@@ -50,442 +48,620 @@ function ProductThumb({ media }: { media?: { source?: string; media_type?: strin
       height={48}
       loading="lazy"
       decoding="async"
-      className="w-12 h-12 rounded-lg object-cover bg-gray-100 border border-gray-200"
+      className="cp-catalog-thumb"
       onError={() => setFailed(true)}
     />
+  ) : (
+    <span
+      className="cp-catalog-thumb cp-catalog-thumb-empty"
+      aria-hidden="true"
+    >
+      <Icon name="inventory_2" size={22} />
+    </span>
   );
 }
 
-const AllProduct = () => {
-  __useUiLocale();
-  const navigate = useNavigate();
-  const [sortKey, setSortKey] = useState('product_inventory_id');
+export default function AllProduct() {
+  const locale = useUiLocale();
+  const role = session.claims()?.role;
+  const canManage = ['admin', 'marketing', 'merchandising'].includes(
+    role ?? '',
+  );
+  const canOpen = role !== 'graphic';
+  const [sortKey, setSortKey] = useState('');
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [filter, setFilter] = useState('');
   const [status, setStatus] = useState<ProductStatusFilter>('active');
-  const [selectAllMatching, setSelectAllMatching] = useState(false);
-  const [approvedMessage, setApprovedMessage] = useState('');
-  const [approveError, setApproveError] = useState('');
-
-  const effectiveFilter = !filter || filter.length > 3 ? filter : '';
-
-  const { data: apiResponse, isLoading, isError, refetch } = useQuery({
-    queryKey: ['admin-products', currentPage, LIMIT, effectiveFilter, status],
+  const [allDrafts, setAllDrafts] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    tone: 'ok' | 'danger';
+    text: string;
+  } | null>(null);
+  const search = filter.trim().length >= 4 ? filter.trim() : '';
+  const resetSelection = () => {
+    setSelectedIds([]);
+    setAllDrafts(false);
+  };
+  const resetView = () => {
+    setPage(1);
+    resetSelection();
+    setFeedback(null);
+  };
+  const { data, isFetching, isError, refetch } = useQuery({
+    queryKey: ['admin-products', page, LIMIT, search, status],
     queryFn: async () => {
-      const response: any = await getAdminProducts({
-        page: currentPage,
+      const response = await getAdminProducts({
+        page,
         limit: LIMIT,
-        search: effectiveFilter,
+        search,
         status,
       });
-      const backendPayload = response.data;
+      const payload = response.data;
       return {
-        data: backendPayload.data || [],
-        totalCount: backendPayload.totalCount || 0,
-        page: backendPayload.page || currentPage,
-        limit: backendPayload.limit || LIMIT,
+        rows: Array.isArray(payload.data) ? payload.data : [],
+        total: Number(payload.totalCount) || 0,
+        page: Number(payload.page) || page,
       };
     },
     placeholderData: keepPreviousData,
   });
-
-  const approveMutation = useMutation({
-    mutationFn: (body: { ids?: string[]; all?: boolean }) => approveProducts(body),
-    onMutate: () => {
-      setApprovedMessage('');
-      setApproveError('');
-    },
+  const formatBaht = (value: unknown) =>
+    Number.isFinite(Number(value)) && Number(value) > 0
+      ? new Intl.NumberFormat(locale === 'th' ? 'th-TH' : 'en-GB', {
+          style: 'currency',
+          currency: 'THB',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(Number(value))
+      : uiText('รอระบุราคา');
+  const rows = useMemo(() => {
+    const result = [...(data?.rows ?? [])];
+    if (!sortKey) return result;
+    return result.sort((a, b) => {
+      const av =
+        sortKey === 'price'
+          ? Number(catalogSellingPrice(a) ?? a.selling_unit_price ?? 0)
+          : Number(a.product_inventory_quantity ?? 0);
+      const bv =
+        sortKey === 'price'
+          ? Number(catalogSellingPrice(b) ?? b.selling_unit_price ?? 0)
+          : Number(b.product_inventory_quantity ?? 0);
+      return (av - bv) * (sortOrder === 'ASC' ? 1 : -1);
+    });
+  }, [data?.rows, sortKey, sortOrder]);
+  const approve = useMutation({
+    mutationFn: (body: { ids?: string[]; all?: boolean }) =>
+      approveProducts(body),
+    onMutate: () => setFeedback(null),
     onSuccess: (response: any) => {
-      const approved = response?.data?.data?.approved ?? 0;
-      setApprovedMessage(`อนุมัติแล้ว ${approved} รายการ`);
-      setSelectedIds([]);
-      setSelectAllMatching(false);
-      refetch();
+      setFeedback({
+        tone: 'ok',
+        text: uiText('อนุมัติแล้ว {0} รายการ', {
+          0: response?.data?.data?.approved ?? 0,
+        }),
+      });
+      resetSelection();
+      void refetch();
     },
-    onError: () => {
-      setApproveError(__uiMessage("อนุมัติสินค้าไม่สำเร็จ"));
-    },
+    onError: () =>
+      setFeedback({ tone: 'danger', text: uiText('อนุมัติสินค้าไม่สำเร็จ') }),
   });
-
-  const rejectMutation = useMutation({
-    mutationFn: (body: { ids?: string[]; all?: boolean }) => rejectErpPending(body),
-    onMutate: () => {
-      setApprovedMessage('');
-      setApproveError('');
-    },
+  const reject = useMutation({
+    mutationFn: (body: { ids: string[] }) => rejectErpPending(body),
+    onMutate: () => setFeedback(null),
     onSuccess: (response: any) => {
-      const rejected = response?.data?.data?.rejected ?? 0;
-      setApprovedMessage(`ปฏิเสธการอัปเดตจาก ERP แล้ว ${rejected} รายการ`);
-      setSelectedIds([]);
-      setSelectAllMatching(false);
-      refetch();
+      setFeedback({
+        tone: 'ok',
+        text: uiText('ปฏิเสธการอัปเดตจาก ERP แล้ว {0} รายการ', {
+          0: response?.data?.data?.rejected ?? 0,
+        }),
+      });
+      resetSelection();
+      void refetch();
     },
-    onError: () => {
-      setApproveError(__uiMessage("ปฏิเสธการอัปเดตจาก ERP ไม่สำเร็จ"));
-    },
+    onError: () =>
+      setFeedback({
+        tone: 'danger',
+        text: uiText('ปฏิเสธการอัปเดตจาก ERP ไม่สำเร็จ'),
+      }),
   });
-
-  const actionPending = approveMutation.isPending || rejectMutation.isPending;
-
-  const clearApproveFeedback = () => {
-    setApprovedMessage('');
-    setApproveError('');
-  };
-
-  const handleSort = (key: string) => {
-    if (sortKey === key) {
-      setSortOrder(sortOrder === 'ASC' ? 'DESC' : 'ASC');
-    } else {
-      setSortKey(key);
-      setSortOrder('ASC');
+  const busy = isFetching || approve.isPending || reject.isPending;
+  const total = data?.total ?? 0;
+  useEffect(() => {
+    const lastPage = Math.max(1, Math.ceil(total / LIMIT));
+    if (data && !isFetching && page > lastPage) {
+      setPage(lastPage);
+      setSelectedIds([]);
+      setAllDrafts(false);
     }
-  };
-
-  const resetSelection = () => {
-    setSelectedIds([]);
-    setSelectAllMatching(false);
-  };
-
-  const handleStatusChange = (value: string) => {
-    setStatus(value as ProductStatusFilter);
-    setCurrentPage(1);
-    resetSelection();
-    clearApproveFeedback();
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    resetSelection();
-    clearApproveFeedback();
-  };
-
-  const handleSelectRow = (id: string) => {
-    setSelectAllMatching(false);
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+  }, [data, isFetching, page, total]);
+  const selectedPendingIds = rows
+    .filter(
+      (row) =>
+        selectedIds.includes(row.product_inventory_id) && hasErpPending(row),
+    )
+    .map((row) => row.product_inventory_id);
+  const toggleRow = (id: string) => {
+    setAllDrafts(false);
+    setSelectedIds((previous) =>
+      previous.includes(id)
+        ? previous.filter((value) => value !== id)
+        : [...previous, id],
     );
   };
-
-  const handleSelectAll = () => {
-    const productList = apiResponse?.data || [];
-    if (productList.length === 0) return;
-
-    const allIds = productList.map((o: any) => o.product_inventory_id);
-    const isAllSelected = productList.every((row: any) =>
-      selectedIds.includes(row.product_inventory_id),
+  const selectable = rows.filter(approvable);
+  const allPageSelected =
+    selectable.length > 0 &&
+    selectable.every((row) => selectedIds.includes(row.product_inventory_id));
+  const togglePage = () => {
+    setAllDrafts(false);
+    setSelectedIds(
+      allPageSelected ? [] : selectable.map((row) => row.product_inventory_id),
     );
-
-    setSelectAllMatching(false);
-    setSelectedIds(isAllSelected ? [] : allIds);
   };
-
-  const totalCount = Number(apiResponse?.totalCount || 0);
-  const pageData = apiResponse?.data || [];
-  const allPageRowsSelected =
-    pageData.length > 0 &&
-    pageData.every((row: any) => selectedIds.includes(row.product_inventory_id));
-  const showSelectAllMatchingNotice =
-    status === 'draft' && allPageRowsSelected && totalCount > pageData.length && !selectAllMatching;
-
+  const rejectRows = async (ids: string[]) => {
+    if (
+      await confirmAction({
+        title: uiText('ปฏิเสธการอัปเดตจาก ERP'),
+        body: uiText('ปฏิเสธการอัปเดตจาก ERP สำหรับ {0} รายการ?', {
+          0: ids.length,
+        }),
+        confirmLabel: uiText('ปฏิเสธ'),
+        danger: true,
+      })
+    )
+      reject.mutate({ ids });
+  };
+  const productStatus = (row: any) => {
+    const value = normalizeProductStatus(row.product_status);
+    return (
+      <div className="cp-catalog-status">
+        <Chip
+          tone={
+            value === 'active' ? 'ok' : value === 'draft' ? 'warn' : 'muted'
+          }
+        >
+          {uiText(
+            value === 'active'
+              ? 'ใช้งาน'
+              : value === 'draft'
+                ? 'รออนุมัติ'
+                : 'ไม่ได้ใช้งาน',
+          )}
+        </Chip>
+        {hasErpPending(row) && (
+          <Chip tone="warn">{uiText('รออนุมัติ ERP')}</Chip>
+        )}
+      </div>
+    );
+  };
+  const productInfo = (row: any) => (
+    <div className="cp-catalog-product">
+      <ProductThumb media={row.media} />
+      <div className="cp-catalog-product-copy">
+        {canOpen ? (
+          <Link
+            className="cp-catalog-name"
+            to={ADMIN_ROUTES.productDetail(row.product_inventory_id)}
+            title={row.product_name}
+          >
+            {row.product_name || uiText('ไม่มีชื่อสินค้า')}
+          </Link>
+        ) : (
+          <span className="cp-catalog-name" title={row.product_name}>
+            {row.product_name || uiText('ไม่มีชื่อสินค้า')}
+          </span>
+        )}
+        <span className="cp-catalog-sku">
+          {row.product_inventory_sku || row.sku || '—'}
+        </span>
+        <span className="cp-catalog-category">
+          {(locale === 'en'
+            ? (row.category_name_en ?? row.category_name_th)
+            : (row.category_name_th ?? row.category_name_en)) ||
+            uiText('ไม่มีหมวดหมู่')}
+        </span>
+      </div>
+    </div>
+  );
+  const price = (row: any) => (
+    <div className="cp-catalog-price">
+      <strong>
+        {formatBaht(catalogSellingPrice(row) ?? row.selling_unit_price)}
+      </strong>
+      {(row.erp_pending_payload?.selling_unit_price != null ||
+        row.erp_pending_payload?.ordering_price != null) && (
+        <small>
+          {uiText('ERP →')}{' '}
+          {formatBaht(
+            row.erp_pending_payload.selling_unit_price ??
+              row.erp_pending_payload.ordering_price,
+          )}
+        </small>
+      )}
+    </div>
+  );
+  const stock = (row: any) => (
+    <span
+      className={
+        Number(row.product_inventory_quantity) > 0
+          ? 'cp-catalog-stock'
+          : 'cp-catalog-stock cp-catalog-stock-empty'
+      }
+    >
+      {(Number(row.product_inventory_quantity) || 0).toLocaleString()}{' '}
+      <small>{uiText('ชิ้น')}</small>
+    </span>
+  );
+  const actions = (row: any) => (
+    <div className="cp-catalog-actions">
+      {canOpen && (
+        <ButtonLink
+          to={ADMIN_ROUTES.productDetail(row.product_inventory_id)}
+          variant="ghost"
+          icon="visibility"
+        >
+          {uiText('ดูรายละเอียด')}
+        </ButtonLink>
+      )}
+      {canManage && (
+        <ButtonLink
+          to={ADMIN_ROUTES.productEdit(row.product_inventory_id)}
+          variant="ghost"
+          icon="edit"
+        >
+          {uiText('แก้ไข')}
+        </ButtonLink>
+      )}
+      {canManage && approvable(row) && (
+        <Button
+          size="sm"
+          variant="secondary"
+          icon="check"
+          disabled={busy}
+          aria-label={uiText(
+            hasErpPending(row) ? 'อนุมัติการอัปเดตจาก ERP' : 'อนุมัติสินค้า',
+          )}
+          title={uiText('อนุมัติสินค้า')}
+          onClick={() => approve.mutate({ ids: [row.product_inventory_id] })}
+        >
+          <span className="cp-catalog-action-label">{uiText('อนุมัติ')}</span>
+        </Button>
+      )}
+      {canManage && hasErpPending(row) && (
+        <Button
+          size="sm"
+          variant="danger-ghost"
+          icon="close"
+          disabled={busy}
+          aria-label={uiText('ปฏิเสธการอัปเดตจาก ERP')}
+          title={uiText('ปฏิเสธการอัปเดตจาก ERP')}
+          onClick={() => void rejectRows([row.product_inventory_id])}
+        />
+      )}
+    </div>
+  );
   const columns: TableColumn<any>[] = [
     {
-      key: 'media',
-      label: __uiText("รูป"),
-      render: (value: any) => <ProductThumb media={value} />,
-    },
-    {
       key: 'product_name',
-      label: __uiText("ชื่อสินค้า"),
-      render: (value: any) => {
-        return (
-          <span className="font-semibold text-gray-800 truncate max-w-[200px] block">
-            {value ?? __uiText("ไม่มีชื่อสินค้า")}
-          </span>
-        );
-      },
+      label: uiText('สินค้า'),
+      className: 'cp-catalog-product-column',
+      render: (_, row) => productInfo(row),
     },
     {
-      key: 'category_name_th',
-      label: __uiText("หมวดหมู่"),
-      render: (_value: any, row: any) => {
-        const categoryName = row.category_name_th ?? row.category_name_en ?? null;
-        return (
-          <span
-            className={`font-medium ${!categoryName ? 'text-gray-400 italic' : 'text-gray-700'}`}
-          >
-            {categoryName ?? __uiText("ไม่มีหมวดหมู่")}
-          </span>
-        );
-      },
-    },
-    {
-      key: 'product_inventory_quantity',
-      label: __uiText("จำนวนสต็อก"),
-      render: (value: any) => {
-        const totalStock = Number(value) || 0;
-
-        return (
-          <span
-            className={`font-semibold ${totalStock === 0 ? 'text-red-500' : 'text-gray-700'}`}
-          >
-            {totalStock.toLocaleString()} {__uiText(" ชิ้น")}</span>
-        );
-      },
-    },
-    {
-      key: 'selling_unit_price',
-      label: __uiText("ราคาขายเริ่มต้น"),
+      key: 'price',
+      label: uiText('ราคาขายเริ่มต้น'),
+      align: 'right',
       sortable: true,
-      render: (value: any, row: any) => {
-        const pending = row.erp_pending_payload;
-        const pendingSell = pending?.selling_unit_price;
-        const pendingOrder = pending?.ordering_price;
-        const hasPendingPrice = pendingSell != null || pendingOrder != null;
-        // Catalog price — the list is priced like the shop, so a promotion would lower `value`.
-        const catalogPrice = catalogSellingPrice(row) ?? value;
-
-        return (
-          <div className="flex flex-col gap-0.5">
-            <span className="font-bold text-gray-900">
-              {Number(catalogPrice) > 0 ? formatBaht(catalogPrice) : __uiText("⏳ รอระบุราคา")}
-            </span>
-            {hasPendingPrice && (
-              <span className="text-xs font-medium text-amber-700">
-                {__uiText("ERP →")}{' '}
-                {pendingSell != null
-                  ? formatBaht(pendingSell)
-                  : formatBaht(pendingOrder)}
-                {row.erp_pending_source ? ` (${row.erp_pending_source})` : ''}
-              </span>
-            )}
-          </div>
-        );
-      },
+      render: (_, row) => price(row),
+    },
+    {
+      key: 'stock',
+      label: uiText('จำนวนสต็อก'),
+      align: 'right',
+      sortable: true,
+      render: (_, row) => stock(row),
     },
     {
       key: 'product_status',
-      label: __uiText("สถานะ"),
-      render: (value: any, row: any) => {
-        const badge = productStatusBadge(normalizeProductStatus(value));
-        const pending = hasErpPending(row);
-
-        return (
-          <div className="flex flex-col gap-1">
-            <span
-              className={`px-2.5 py-1 text-xs font-bold rounded-full border ${badge.className}`}
-            >
-              {badge.label}
-            </span>
-            {pending && (
-              <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full border border-amber-200 bg-amber-50 text-amber-800 w-fit">
-                {__uiText("รออนุมัติ ERP")}</span>
-            )}
-          </div>
-        );
-      },
+      label: uiText('สถานะ'),
+      render: (_, row) => productStatus(row),
     },
     {
       key: 'actions',
-      label: __uiText("เครื่องมือ"),
-      render: (_, row) => {
-        const productId = row.product_inventory_id;
-        const isDraft = normalizeProductStatus(row.product_status) === 'draft';
-        const pending = hasErpPending(row);
-        const canApprove = isDraft || pending;
-
-        return (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => productId && navigate(ADMIN_ROUTES.productDetail(productId))}
-              className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-              title={__uiText("ดูรายละเอียด")}
-            >
-              <AiOutlineEye size={18} />
-            </button>
-
-            <button
-              onClick={() => productId && navigate(ADMIN_ROUTES.productEdit(productId))}
-              className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-              title={__uiText("แก้ไขรายละเอียด")}
-            >
-              <AiOutlineEdit size={18} />
-            </button>
-
-            {canApprove && (
-              <button
-                onClick={() =>
-                  productId && approveMutation.mutate({ ids: [productId] })
-                }
-                disabled={actionPending}
-                className="p-1.5 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-30"
-                title={pending ? __uiText("อนุมัติการอัปเดตจาก ERP") : __uiText("อนุมัติสินค้า")}
-              >
-                <AiOutlineCheckCircle size={18} />
-              </button>
-            )}
-
-            {pending && (
-              <button
-                onClick={() => {
-                  if (!productId) return;
-                  if (!window.confirm(__uiText("ปฏิเสธการอัปเดตจาก ERP สำหรับสินค้านี้?"))) return;
-                  rejectMutation.mutate({ ids: [productId] });
-                }}
-                disabled={actionPending}
-                className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-30"
-                title={__uiText("ปฏิเสธการอัปเดตจาก ERP")}
-              >
-                <AiOutlineCloseCircle size={18} />
-              </button>
-            )}
-          </div>
-        );
-      },
+      label: uiText('จัดการ'),
+      render: (_, row) => actions(row),
     },
   ];
-
   return (
-    <div className="cp-management-page flex flex-col gap-4">
-      <AdminListHeader
-        title={__uiText("Product List")}
-        subtitle={__uiText("รายการสินค้าทั้งหมด")}
-        createLabel={__uiText("เพิ่มสินค้า")}
-        createPath={ADMIN_ROUTES.productCreate}
+    <div className="cp-management-page cp-catalog-page">
+      <PageHeader
+        title={uiText('สินค้าบนร้านค้า')}
+        subtitle={uiText('ดูข้อมูล ราคา และสต็อก พร้อมตรวจรายการที่รออนุมัติ')}
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              icon="refresh"
+              disabled={busy}
+              onClick={() => {
+                resetSelection();
+                void refetch();
+              }}
+            >
+              {uiText('รีเฟรช')}
+            </Button>
+            {canManage ? (
+              <ButtonLink
+                to={ADMIN_ROUTES.productCreate}
+                variant="primary"
+                icon="add"
+              >
+                {uiText('เพิ่มสินค้า')}
+              </ButtonLink>
+            ) : (
+              role === 'graphic' && (
+                <ButtonLink
+                  to="/j/product/bulk-image-upload"
+                  variant="primary"
+                  icon="image"
+                >
+                  {uiText('อัปโหลดรูปสินค้า')}
+                </ButtonLink>
+              )
+            )}
+          </>
+        }
       />
-      <div className="flex flex-wrap items-end gap-4">
-        <Input
-          label={__uiText("ค้นหาสินค้า")}
-          placeholder={__uiText("ค้นหาด้วยชื่อสินค้า")}
-          onChange={(e) => {
-            setFilter(e.target.value);
-            setSelectAllMatching(false);
-            clearApproveFeedback();
-          }}
-        />
-        <div className="flex items-center gap-2">
-          <AiOutlineFilter size={24} />
-          <div className="w-48">
-            <Select
-              label={__uiText("สถานะสินค้า")}
-              data={PRODUCT_STATUS_OPTIONS}
-              value={status}
-              onChange={(e) => handleStatusChange(e.target.value)}
-            />
+      <div className="cp-catalog-toolbar">
+        <div className="cp-catalog-filter-top">
+          <div className="cp-catalog-search">
+            <label htmlFor="catalog-search">{uiText('ค้นหาสินค้า')}</label>
+            <div>
+              <Icon name="search" size={18} />
+              <input
+                id="catalog-search"
+                type="search"
+                value={filter}
+                placeholder={uiText('ค้นหาด้วยชื่อสินค้า')}
+                onChange={(event) => {
+                  setFilter(event.target.value);
+                  resetView();
+                }}
+              />
+            </div>
+          </div>
+          <div className="cp-catalog-result-count" aria-live="polite">
+            {isFetching ? (
+              uiText('กำลังโหลดรายการ…')
+            ) : isError ? (
+              '—'
+            ) : (
+              <>
+                <strong>{total.toLocaleString()}</strong>{' '}
+                {uiText('รายการที่ตรงกับตัวกรอง')}
+              </>
+            )}
           </div>
         </div>
+        {filter.trim().length > 0 && filter.trim().length < 4 && (
+          <p className="cp-catalog-search-hint">
+            {uiText('พิมพ์อย่างน้อย 4 ตัวอักษรเพื่อค้นหา')}
+          </p>
+        )}
+        <div
+          className="cp-catalog-tabs"
+          role="group"
+          aria-label={uiText('สถานะสินค้า')}
+        >
+          {PRODUCT_STATUS_OPTIONS.map((option) => (
+            <button
+              type="button"
+              key={option.value}
+              aria-pressed={status === option.value}
+              onClick={() => {
+                setStatus(option.value as ProductStatusFilter);
+                resetView();
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <label className="cp-catalog-mobile-sort">
+          <span>{uiText('เรียงรายการในหน้านี้')}</span>
+          <select
+            value={sortKey ? `${sortKey}:${sortOrder}` : ''}
+            onChange={(event) => {
+              const [key, order] = event.target.value.split(':');
+              setSortKey(key);
+              setSortOrder(order === 'DESC' ? 'DESC' : 'ASC');
+              resetSelection();
+            }}
+          >
+            <option value="">{uiText('ลำดับเดิม')}</option>
+            <option value="price:ASC">{uiText('ราคา: ต่ำไปสูง')}</option>
+            <option value="price:DESC">{uiText('ราคา: สูงไปต่ำ')}</option>
+            <option value="stock:ASC">{uiText('สต็อก: น้อยไปมาก')}</option>
+            <option value="stock:DESC">{uiText('สต็อก: มากไปน้อย')}</option>
+          </select>
+        </label>
       </div>
-
-      {approvedMessage && (
-        <div className="px-4 py-2 text-sm text-emerald-700 bg-emerald-50 rounded-lg">
-          {approvedMessage}
+      {feedback && (
+        <div
+          role={feedback.tone === 'danger' ? 'alert' : 'status'}
+          className={`cp-catalog-feedback cp-catalog-feedback-${feedback.tone}`}
+        >
+          <Icon name={feedback.tone === 'danger' ? 'error' : 'check_circle'} />
+          {feedback.text}
         </div>
       )}
-      {approveError && (
-        <div className="rounded-lg bg-rose-50 px-4 py-2 text-sm text-rose-700">
-          {(typeof (approveError) === 'string' ? __uiText(approveError) : approveError)}
-        </div>
-      )}
-
-      {status === 'draft' && selectedIds.length > 0 && (
-        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-gray-200 bg-white p-3">
-          {selectAllMatching ? (
-            <>
-              <Button
-                text={__uiText("อนุมัติทั้งหมด ({0})", {"0": totalCount})}
-                icon={<AiOutlineCheckCircle size={18} />}
-                disabled={actionPending}
-                onClick={() => {
-                  if (!window.confirm(__uiText("ยืนยันอนุมัติสินค้าทั้งหมด {0} รายการ?", {"0": totalCount}))) return;
-                  approveMutation.mutate({ all: true });
-                }}
-              />
-              <Button
-                text={__uiText("ปฏิเสธ pending ทั้งหมด")}
-                icon={<AiOutlineCloseCircle size={18} />}
-                disabled={actionPending}
-                onClick={() => {
-                  if (
-                    !window.confirm(
-                      __uiText("ปฏิเสธการอัปเดตจาก ERP ที่ค้างทั้งหมด (สถานะสินค้าไม่เปลี่ยน)?"),
-                    )
-                  ) {
-                    return;
-                  }
-                  rejectMutation.mutate({ all: true });
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <Button
-                text={__uiText("อนุมัติที่เลือก ({0})", {"0": selectedIds.length})}
-                icon={<AiOutlineCheckCircle size={18} />}
-                disabled={actionPending}
-                onClick={() => approveMutation.mutate({ ids: selectedIds })}
-              />
-              <Button
-                text={__uiText("ปฏิเสธ pending ที่เลือก")}
-                icon={<AiOutlineCloseCircle size={18} />}
-                disabled={actionPending}
-                onClick={() => {
-                  if (
-                    !window.confirm(
-                      __uiText("ปฏิเสธการอัปเดตจาก ERP สำหรับ {0} รายการ?", {"0": selectedIds.length}),
-                    )
-                  ) {
-                    return;
-                  }
-                  rejectMutation.mutate({ ids: selectedIds });
-                }}
-              />
-            </>
+      {selectedIds.length > 0 && (
+        <div className="cp-catalog-bulk">
+          <span>
+            <strong>{allDrafts ? total : selectedIds.length}</strong>{' '}
+            {uiText('รายการที่เลือก')}
+          </span>
+          <Button
+            variant="primary"
+            icon="check"
+            disabled={busy}
+            onClick={async () => {
+              if (allDrafts) {
+                if (
+                  await confirmAction({
+                    title: uiText('อนุมัติสินค้า'),
+                    body: uiText(
+                      'ยืนยันอนุมัติสินค้ารออนุมัติทั้งหมด {0} รายการ?',
+                      { 0: total },
+                    ),
+                    confirmLabel: uiText('อนุมัติทั้งหมด'),
+                  })
+                )
+                  approve.mutate({ all: true });
+              } else approve.mutate({ ids: selectedIds });
+            }}
+          >
+            {uiText('อนุมัติที่เลือก ({0})', {
+              0: allDrafts ? total : selectedIds.length,
+            })}
+          </Button>
+          {!allDrafts && selectedPendingIds.length > 0 && (
+            <Button
+              variant="danger-ghost"
+              disabled={busy}
+              onClick={() => void rejectRows(selectedPendingIds)}
+            >
+              {uiText('ปฏิเสธข้อมูล ERP ที่เลือก')}
+            </Button>
           )}
-
-          {showSelectAllMatchingNotice && (
-            <span className="text-sm text-gray-600">
-              {__uiText("เลือกแล้ว ")}{selectedIds.length} {__uiText(" รายการในหน้านี้ —")}{' '}
+          <Button variant="ghost" disabled={busy} onClick={resetSelection}>
+            {uiText('ล้างการเลือก')}
+          </Button>
+          {status === 'draft' &&
+            !search &&
+            !allDrafts &&
+            allPageSelected &&
+            total > rows.length && (
               <button
                 type="button"
-                className="font-semibold text-primary hover:underline"
-                onClick={() => setSelectAllMatching(true)}
+                className="cp-catalog-select-global"
+                disabled={busy}
+                onClick={() => setAllDrafts(true)}
               >
-                {__uiText("เลือกทั้งหมด ")}{totalCount} {__uiText(" รายการ")}</button>
-            </span>
+                {uiText('เลือกสินค้ารออนุมัติทั้งหมด {0} รายการ', { 0: total })}
+              </button>
+            )}
+        </div>
+      )}
+      {isError ? (
+        <div role="alert" className="cp-catalog-error">
+          <Icon name="error" size={24} />
+          <div>
+            <strong>{uiText('โหลดข้อมูลไม่สำเร็จ')}</strong>
+            <p>{uiText('ลองรีเฟรชอีกครั้งเพื่อโหลดรายการสินค้า')}</p>
+          </div>
+          <Button onClick={() => void refetch()} icon="refresh">
+            {uiText('ลองใหม่')}
+          </Button>
+        </div>
+      ) : (
+        <Table
+          columns={columns}
+          data={rows}
+          loading={isFetching}
+          idKey="product_inventory_id"
+          currentPage={data?.page ?? page}
+          totalPages={Math.ceil(total / LIMIT) || 1}
+          totalItems={total}
+          pageSize={LIMIT}
+          onPageChange={(next) => {
+            setPage(next);
+            resetSelection();
+            setFeedback(null);
+          }}
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          onSort={(key) => {
+            setSortKey(key);
+            setSortOrder(
+              key === sortKey && sortOrder === 'ASC' ? 'DESC' : 'ASC',
+            );
+            resetSelection();
+          }}
+          selectedIds={selectedIds}
+          onSelectRow={canManage ? toggleRow : undefined}
+          onSelectAll={canManage ? togglePage : undefined}
+          isRowSelectable={approvable}
+          emptyTitle={
+            search ? 'ไม่พบสินค้าที่ค้นหา' : 'ยังไม่มีสินค้าในสถานะนี้'
+          }
+          emptyDescription={
+            <>
+              {uiText('เปลี่ยนตัวกรองหรือค้นหาด้วยชื่อสินค้าอื่น')}
+              {filter && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setFilter('');
+                    resetView();
+                  }}
+                >
+                  {uiText('ล้างการค้นหา')}
+                </Button>
+              )}
+            </>
+          }
+          renderMobileRow={(row, selection) => (
+            <article
+              className={`cp-catalog-mobile-card ${selection.selected ? 'cp-catalog-mobile-selected' : ''}`}
+            >
+              <div className="cp-catalog-mobile-top">
+                {canManage && (
+                  <input
+                    type="checkbox"
+                    checked={selection.selected}
+                    disabled={selection.disabled}
+                    onChange={selection.onSelect}
+                    aria-label={uiText('เลือกแถว {0}', {
+                      0: row.product_inventory_id,
+                    })}
+                  />
+                )}
+                {productInfo(row)}
+              </div>
+              <div className="cp-catalog-mobile-values">
+                <div>
+                  <span>{uiText('ราคาขายเริ่มต้น')}</span>
+                  {price(row)}
+                </div>
+                <div>
+                  <span>{uiText('จำนวนสต็อก')}</span>
+                  {stock(row)}
+                </div>
+              </div>
+              {productStatus(row)}
+              {actions(row)}
+            </article>
           )}
-        </div>
+        />
       )}
-
-      {isError && (
-        <div className="flex items-center justify-between rounded-lg bg-rose-50 px-4 py-2 text-sm text-rose-700">
-          <span>{__uiText("โหลดข้อมูลไม่สำเร็จ")}</span>
-          <button onClick={() => refetch()} className="font-semibold underline">
-            {__uiText("ลองใหม่")}</button>
-        </div>
-      )}
-      {isLoading && (
-        <div className="px-4 py-2 text-sm text-gray-500">{__uiText("กำลังโหลด…")}</div>
-      )}
-      <Table
-        columns={columns}
-        data={pageData}
-        idKey="product_inventory_id"
-        sortKey={sortKey}
-        sortOrder={sortOrder}
-        onSort={handleSort}
-        totalItems={totalCount}
-        currentPage={Number(apiResponse?.page || 1)}
-        totalPages={Math.ceil(totalCount / Number(apiResponse?.limit || 10)) || 1}
-        onPageChange={handlePageChange}
-        selectedIds={selectedIds}
-        onSelectRow={handleSelectRow}
-        onSelectAll={handleSelectAll}
-      />
+      <p className="cp-catalog-scope">
+        {uiText('การเรียงราคาและสต็อกใช้กับรายการในหน้าปัจจุบัน')}
+        {sortKey && (
+          <button
+            type="button"
+            onClick={() => {
+              setSortKey('');
+              resetSelection();
+            }}
+          >
+            {uiText('คืนลำดับเดิม')}
+          </button>
+        )}
+      </p>
     </div>
   );
-};
-
-export default AllProduct;
-
-// ui-notice-migration: UI notices and field errors; editable content and payload fields remain data
+}

@@ -80,8 +80,8 @@ export function EmptyState({
 /** Search and filters in one bar above a list. */
 export function FilterBar({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
   return (
-    <div className="space-y-2 border-b border-secondary-container p-4 md:px-5">
-      <div className="flex flex-wrap items-end gap-3">{children}</div>
+    <div className="cp-filter-bar space-y-2 border-b border-secondary-container p-4 md:px-5">
+      <div className="cp-filter-bar-controls flex flex-wrap items-end gap-3">{children}</div>
       {hint && <HelpText>{hint}</HelpText>}
     </div>
   );

@@ -1,5 +1,6 @@
 // @ts-nocheck — copied unchanged from josh web-admin, which has the same type errors in this file (josh type debt, not a commerce change).
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getProductById } from '@josh/shared-api';
 import { ADMIN_PRODUCT_READ } from '../../config/admin-product-read';
 import { Button } from '@josh/shared-ui-web';
@@ -208,11 +209,11 @@ const ProductDetail = () => {
             <p className="text-xs text-gray-400 mb-3">
               {__uiText("แก้ไขได้ที่เมนู Promotion Mechanic เท่านั้น")}</p>
             <div className="overflow-hidden rounded-xl border border-gray-100">
-              <table className="min-w-full text-sm">
+              <TableViewport><table className="cp-data-table min-w-full text-sm">
                 <thead className="bg-gray-50 text-left text-xs text-gray-500">
                   <tr>
-                    <th className="px-4 py-2">{__uiText("ซื้อขั้นต่ำ")}</th>
-                    <th className="px-4 py-2">{__uiText("ราคาโปร")}</th>
+                    <th className="px-4 py-2" scope="col">{__uiText("ซื้อขั้นต่ำ")}</th>
+                    <th className="px-4 py-2" scope="col">{__uiText("ราคาโปร")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -227,7 +228,7 @@ const ProductDetail = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></TableViewport>
             </div>
           </section>
         )}
@@ -275,12 +276,12 @@ const ProductDetail = () => {
                 <p className="text-xs text-gray-500 mb-3">{nutrition.basis}</p>
               )}
               <div className="overflow-hidden rounded-xl border border-gray-100">
-                <table className="min-w-full text-sm">
+                <TableViewport><table className="cp-data-table min-w-full text-sm">
                   <thead className="bg-gray-50 text-left text-xs text-gray-500">
                     <tr>
-                      <th className="px-4 py-2">{__uiText("สารอาหาร")}</th>
-                      <th className="px-4 py-2">{__uiText("ค่า")}</th>
-                      <th className="px-4 py-2">{__uiText("หน่วย")}</th>
+                      <th className="px-4 py-2" scope="col">{__uiText("สารอาหาร")}</th>
+                      <th className="px-4 py-2" scope="col">{__uiText("ค่า")}</th>
+                      <th className="px-4 py-2" scope="col">{__uiText("หน่วย")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -292,7 +293,7 @@ const ProductDetail = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></TableViewport>
               </div>
             </>
           ) : (

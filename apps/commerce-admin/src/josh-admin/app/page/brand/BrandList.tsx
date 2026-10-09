@@ -1,10 +1,10 @@
-// ui-metadata-migration: static labels and UI notices only
 import { getBrands, updateBrand } from '@josh/shared-api';
-import { Table, TableColumn, Input, Button } from '@josh/shared-ui-web';
-import React, { useEffect, useState } from 'react';
+import { Table, TableColumn, Input } from '@josh/shared-ui-web';
+import { Button, ErrorText, PageHeader, uiText, useUiLocale } from '@cp/ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { session } from '../../../../lib/auth';
 
-// ui-copy-migration: only literal UI copy and notification templates
-import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 interface BrandRow {
   id: string;
   brand_code: string;
@@ -12,95 +12,174 @@ interface BrandRow {
   brand_name_en: string | null;
 }
 
-const BrandList = () => {
-  __useUiLocale();
-  const [brands, setBrands] = useState<BrandRow[]>([]);
+export default function BrandList() {
+  useUiLocale();
+  const canEdit = ['admin', 'marketing', 'merchandising'].includes(
+    session.claims()?.role ?? '',
+  );
   const [onlyMissingName, setOnlyMissingName] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTh, setEditTh] = useState('');
   const [editEn, setEditEn] = useState('');
-
-  const loadData = async (missingName: boolean) => {
-    try {
-      const response: any = await getBrands(missingName);
-      setBrands(response?.data?.data ?? []);
-    } catch (error: any) {
-      console.error('load brands error:', error.message);
-    }
-  };
-
-  useEffect(() => {
-    loadData(onlyMissingName);
-  }, [onlyMissingName]);
-
+  const {
+    data = [],
+    isFetching,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ['admin-brands', onlyMissingName],
+    queryFn: async (): Promise<BrandRow[]> =>
+      (await getBrands(onlyMissingName)).data?.data ?? [],
+  });
+  const save = useMutation({
+    mutationFn: ({ id, th, en }: { id: string; th: string; en: string }) =>
+      updateBrand(id, { brand_name_th: th, brand_name_en: en }),
+    onSuccess: () => {
+      setEditingId(null);
+      void refetch();
+    },
+  });
+  const busy = isFetching || save.isPending;
   const startEdit = (row: BrandRow) => {
+    save.reset();
     setEditingId(row.id);
     setEditTh(row.brand_name_th ?? '');
     setEditEn(row.brand_name_en ?? '');
   };
-
-  const saveEdit = async () => {
-    if (!editingId) return;
-    await updateBrand(editingId, { brand_name_th: editTh, brand_name_en: editEn });
-    setEditingId(null);
-    loadData(onlyMissingName);
-  };
-
   const columns: TableColumn<BrandRow>[] = [
-    { key: 'brand_code', label: __uiText("โค้ด") },
+    { key: 'brand_code', label: uiText('โค้ด') },
     {
       key: 'brand_name_th',
-      label: __uiText("ชื่อไทย"),
-      render: (value: string | null, row) =>
+      label: uiText('ชื่อไทย'),
+      render: (value, row) =>
         editingId === row.id ? (
-          <Input value={editTh} onChange={(e: any) => setEditTh(e.target.value)} />
+          <Input
+            aria-label={uiText('ชื่อไทย')}
+            disabled={save.isPending}
+            value={editTh}
+            onChange={(event) => setEditTh(event.target.value)}
+          />
         ) : (
-          value || <span className="text-gray-400">{__uiText("ยังไม่มีชื่อ")}</span>
+          value || (
+            <span className="text-gray-400">{uiText('ยังไม่มีชื่อ')}</span>
+          )
         ),
     },
     {
       key: 'brand_name_en',
-      label: __uiText("ชื่ออังกฤษ"),
-      render: (value: string | null, row) =>
+      label: uiText('ชื่ออังกฤษ'),
+      render: (value, row) =>
         editingId === row.id ? (
-          <Input value={editEn} onChange={(e: any) => setEditEn(e.target.value)} />
+          <Input
+            aria-label={uiText('ชื่ออังกฤษ')}
+            disabled={save.isPending}
+            value={editEn}
+            onChange={(event) => setEditEn(event.target.value)}
+          />
         ) : (
-          value || <span className="text-gray-400">-</span>
+          value || '—'
         ),
     },
-    {
-      key: 'actions',
-      label: __uiText("จัดการ"),
-      render: (_, row) =>
-        editingId === row.id ? (
-          <div className="flex gap-2">
-            <Button onClick={saveEdit}>{__uiText("บันทึก")}</Button>
-            <Button onClick={() => setEditingId(null)}>{__uiText("ยกเลิก")}</Button>
-          </div>
-        ) : (
-          <button
-            onClick={() => startEdit(row)}
-            className="text-sm text-primary hover:underline"
-          >
-            {__uiText("แก้ไข")}</button>
-        ),
-    },
+    ...(canEdit
+      ? [
+          {
+            key: 'actions',
+            label: uiText('จัดการ'),
+            render: (_: unknown, row: BrandRow) => (
+              <div className="flex flex-wrap gap-2">
+                {editingId === row.id ? (
+                  <>
+                    <Button
+                      size="sm"
+                      disabled={busy}
+                      onClick={() =>
+                        save.mutate({ id: row.id, th: editTh, en: editEn })
+                      }
+                    >
+                      {uiText('บันทึก')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={save.isPending}
+                      onClick={() => {
+                        setEditingId(null);
+                        save.reset();
+                      }}
+                    >
+                      {uiText('ยกเลิก')}
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    size="sm"
+                    icon="edit"
+                    variant="ghost"
+                    disabled={busy}
+                    onClick={() => startEdit(row)}
+                  >
+                    {uiText('แก้ไข')}
+                  </Button>
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
-
   return (
     <div className="cp-management-page flex flex-col gap-5">
-      <PageHeader title={__uiText("Brand Management")} actions={
-        <label className="flex items-center gap-2 text-sm">
+      <PageHeader
+        title={uiText('Brand Management')}
+        subtitle={uiText('ตรวจชื่อแบรนด์ภาษาไทยและอังกฤษ แก้ไขได้จากรายการ')}
+        actions={
+          <Button
+            icon="refresh"
+            variant="secondary"
+            disabled={busy}
+            onClick={() => void refetch()}
+          >
+            {uiText('รีเฟรช')}
+          </Button>
+        }
+      />
+      <div className="cp-list-filter">
+        <label>
           <input
             type="checkbox"
             checked={onlyMissingName}
-            onChange={(e) => setOnlyMissingName(e.target.checked)}
+            disabled={save.isPending}
+            onChange={(event) => {
+              setOnlyMissingName(event.target.checked);
+              setEditingId(null);
+              save.reset();
+            }}
           />
-          {__uiText("แสดงเฉพาะที่ยังไม่มีชื่อ")}</label>
-      } />
-      <Table columns={columns} data={brands} idKey="id" />
+          {uiText('แสดงเฉพาะที่ยังไม่มีชื่อ')}
+        </label>
+        <span>
+          {data.length.toLocaleString()} {uiText('รายการ')}
+        </span>
+      </div>
+      {save.isError && (
+        <ErrorText error="บันทึกไม่สำเร็จ ข้อมูลที่แก้ไขยังอยู่ ลองบันทึกอีกครั้ง" />
+      )}
+      {isError ? (
+        <div className="cp-list-error" role="alert">
+          <span>{uiText('โหลดข้อมูลไม่สำเร็จ')}</span>
+          <Button icon="refresh" onClick={() => void refetch()}>
+            {uiText('ลองใหม่')}
+          </Button>
+        </div>
+      ) : (
+        <Table
+          columns={columns}
+          data={data}
+          loading={isFetching}
+          idKey="id"
+          emptyTitle="ยังไม่มีแบรนด์ในรายการนี้"
+        />
+      )}
     </div>
   );
-};
-
-export default BrandList;
+}

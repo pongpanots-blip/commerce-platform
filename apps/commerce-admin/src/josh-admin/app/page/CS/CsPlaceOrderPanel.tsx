@@ -1,4 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
+import { TableViewport } from '@cp/ui';
 import {
   getOrderPaymentQr,
   getProducts,
@@ -514,16 +515,16 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
       </div>
 
       {lines.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-gray-100">
-          <table className="min-w-full text-sm">
+        <TableViewport className="overflow-x-auto rounded-lg border border-gray-100">
+          <table className="cp-data-table min-w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs text-gray-500">
               <tr>
-                <th className="px-3 py-2">{__uiText("SKU")}</th>
-                <th className="px-3 py-2">{__uiText("สินค้า")}</th>
-                <th className="px-3 py-2">{__uiText("ราคา/หน่วย")}</th>
-                <th className="px-3 py-2">{__uiText("จำนวน")}</th>
-                <th className="px-3 py-2">{__uiText("รวม")}</th>
-                <th className="px-3 py-2" />
+                <th className="px-3 py-2" scope="col">{__uiText("SKU")}</th>
+                <th className="px-3 py-2" scope="col">{__uiText("สินค้า")}</th>
+                <th className="px-3 py-2" scope="col">{__uiText("ราคา/หน่วย")}</th>
+                <th className="px-3 py-2" scope="col">{__uiText("จำนวน")}</th>
+                <th className="px-3 py-2" scope="col">{__uiText("รวม")}</th>
+                <th className="px-3 py-2" scope="col" />
               </tr>
             </thead>
             <tbody>
@@ -577,7 +578,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
               })}
             </tbody>
           </table>
-        </div>
+        </TableViewport>
       )}
 
       {quoteError && <p className="text-sm text-red-600">{(typeof (quoteError) === 'string' ? __uiText(quoteError) : quoteError)}</p>}

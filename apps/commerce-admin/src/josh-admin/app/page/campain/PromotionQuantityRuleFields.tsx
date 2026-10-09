@@ -1,3 +1,4 @@
+import { TableViewport } from '@cp/ui';
 import { Input } from '@josh/shared-ui-web';
 import React from 'react';
 import {
@@ -83,14 +84,14 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <table className="min-w-full text-sm">
+        <TableViewport><table className="cp-data-table min-w-full text-sm">
           <thead className="bg-gray-50 text-left text-xs text-gray-500">
             <tr>
-              <th className="px-4 py-2 font-medium">#</th>
-              <th className="px-4 py-2 font-medium">{__uiText("ซื้อขั้นต่ำ")}</th>
-              <th className="px-4 py-2 font-medium">{__uiText("ราคา/หน่วย (฿)")}</th>
-              <th className="px-4 py-2 font-medium">{__uiText("ป้ายโปร")}</th>
-              <th className="px-4 py-2 font-medium w-16" />
+              <th className="px-4 py-2 font-medium" scope="col">#</th>
+              <th className="px-4 py-2 font-medium" scope="col">{__uiText("ซื้อขั้นต่ำ")}</th>
+              <th className="px-4 py-2 font-medium" scope="col">{__uiText("ราคา/หน่วย (฿)")}</th>
+              <th className="px-4 py-2 font-medium" scope="col">{__uiText("ป้ายโปร")}</th>
+              <th className="px-4 py-2 font-medium w-16" scope="col" />
             </tr>
           </thead>
           <tbody>
@@ -140,7 +141,7 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></TableViewport>
       </div>
     </div>
   );

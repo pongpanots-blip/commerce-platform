@@ -1,4 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, Fragment, useCallback, useEffect, useState } from 'react';
@@ -276,9 +277,9 @@ export default function CompetitorPricesPage() {
         <select aria-label={__uiText("หมวดสินค้า")} className={buttonClass} value={filters.category ?? ''} onChange={e => filter({ category: e.target.value || undefined })}><option value="">{__uiText("ทุกหมวด")}</option>{overview?.categories.map(category => <option key={category} value={category}>{category}</option>)}</select>
         <button className={buttonClass} disabled={busy}>{__uiText("ค้นหา")}</button>
       </form>
-      <div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead className="border-y border-gray-100 bg-gray-50 text-xs text-gray-500"><tr>
-        <th className="p-3 font-medium">{__uiText("สินค้าของเรา")}</th><th className="whitespace-nowrap p-3 text-right font-medium">{__uiText("ราคาเรา/กก.")}</th>
-        {overview?.sites.map(site => <th key={site} className="whitespace-nowrap p-3 text-right font-medium">{site}</th>)}<th className="whitespace-nowrap p-3 text-right font-medium">{__uiText("ถูกสุดในตลาด")}</th><th className="p-3" /></tr></thead>
+      <TableViewport className="overflow-x-auto"><table className="cp-data-table w-full text-left text-sm"><thead className="border-y border-gray-100 bg-gray-50 text-xs text-gray-500"><tr>
+        <th className="p-3 font-medium" scope="col">{__uiText("สินค้าของเรา")}</th><th className="whitespace-nowrap p-3 text-right font-medium" scope="col">{__uiText("ราคาเรา/กก.")}</th>
+        {overview?.sites.map(site => <th key={site} className="whitespace-nowrap p-3 text-right font-medium" scope="col">{site}</th>)}<th className="whitespace-nowrap p-3 text-right font-medium" scope="col">{__uiText("ถูกสุดในตลาด")}</th><th className="p-3" scope="col" /></tr></thead>
         <tbody>{overview?.rows.map(row => <Fragment key={row.sku}><tr className={`cursor-pointer border-b border-gray-100 align-top hover:bg-gray-50 ${openSku === row.sku ? 'bg-gray-50' : ''}`} onClick={() => toggle(row.sku)}>
           <td className="min-w-64 max-w-md p-3"><p className="font-medium">{row.name}{row.ourOffer.pricingType === 'approx' && <span className="ml-2 rounded bg-amber-50 px-1.5 py-0.5 text-xs font-normal text-amber-800" title={__uiText("น้ำหนักต่อหน่วยไม่คงที่ ราคาจริงคิดตามน้ำหนักที่ส่ง")}>{__uiText("Approx")}</span>}</p>
             <p className="mt-0.5 text-xs text-gray-500">{row.sku}{row.category ? ` · ${row.category}` : ''}</p>
@@ -298,7 +299,7 @@ export default function CompetitorPricesPage() {
             {openSku === row.sku ? __uiText("ปิด") : row.position === 'unmatched' ? __uiText("จับคู่") : row.pendingPairs ? __uiText("ยืนยัน") : __uiText("ดู / เพิ่มเว็บ")}</button></td>
         </tr>
         {openSku === row.sku && <tr><td colSpan={overview.sites.length + 4} className="border-b border-gray-200 p-0">{skuPanel(row)}</td></tr>}
-        </Fragment>)}</tbody></table></div>
+        </Fragment>)}</tbody></table></TableViewport>
       {loading ? <p role="status" className="p-8 text-center text-gray-500">{__uiText("กำลังโหลด…")}</p> : !overview?.rows.length && <p className="p-8 text-center text-gray-500">{__uiText("ไม่พบ SKU ที่ตรงตัวกรอง")}</p>}
       {pages > 1 && <div className="flex items-center justify-center gap-3 border-t border-gray-100 p-3 text-sm">
         <button className={buttonClass} disabled={busy || page <= 1} onClick={() => filter({ page: page - 1 })}>{__uiText("ก่อนหน้า")}</button>

@@ -1,3 +1,4 @@
+import { TableViewport } from '@cp/ui';
 import { getCompanyById, updateCompany, type CompanyDetail } from '@josh/shared-api';
 import { Input } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
@@ -40,15 +41,15 @@ function UserTable({
 
   return (
     <div className="overflow-hidden rounded-lg border border-gray-100">
-      <table className="min-w-full text-sm">
+      <TableViewport><table className="cp-data-table min-w-full text-sm">
         <thead className="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
           <tr>
-            <th className="px-3 py-2 font-semibold">{__uiText("ชื่อ")}</th>
-            <th className="px-3 py-2 font-semibold">{__uiText("อีเมล")}</th>
-            <th className="px-3 py-2 font-semibold">{__uiText("เบอร์โทร")}</th>
-            <th className="px-3 py-2 font-semibold">{__uiText("บทบาท")}</th>
-            <th className="px-3 py-2 font-semibold">{__uiText("ตำแหน่ง")}</th>
-            <th className="px-3 py-2 font-semibold" />
+            <th className="px-3 py-2 font-semibold" scope="col">{__uiText("ชื่อ")}</th>
+            <th className="px-3 py-2 font-semibold" scope="col">{__uiText("อีเมล")}</th>
+            <th className="px-3 py-2 font-semibold" scope="col">{__uiText("เบอร์โทร")}</th>
+            <th className="px-3 py-2 font-semibold" scope="col">{__uiText("บทบาท")}</th>
+            <th className="px-3 py-2 font-semibold" scope="col">{__uiText("ตำแหน่ง")}</th>
+            <th className="px-3 py-2 font-semibold" scope="col" />
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -78,7 +79,7 @@ function UserTable({
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></TableViewport>
     </div>
   );
 }

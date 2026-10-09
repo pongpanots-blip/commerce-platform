@@ -1,4 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useId, useState } from 'react';
@@ -161,16 +162,16 @@ export default function MarketingOfferCheckPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-            <table className="min-w-full text-left text-sm">
+          <TableViewport className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+            <table className="cp-data-table min-w-full text-left text-sm">
               <thead className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
                 <tr>
-                  <th className="px-3 py-2 font-medium">{__uiText("Status")}</th>
-                  <th className="px-3 py-2 font-medium">{__uiText("Title")}</th>
-                  <th className="px-3 py-2 font-medium">{__uiText("Workflow")}</th>
-                  <th className="px-3 py-2 font-medium">{__uiText("Created")}</th>
-                  <th className="px-3 py-2 font-medium">{__uiText("Updated")}</th>
-                  <th className="px-3 py-2 font-medium" />
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Status")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Title")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Workflow")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Created")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Updated")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col" />
                 </tr>
               </thead>
               <tbody>
@@ -226,7 +227,7 @@ export default function MarketingOfferCheckPage() {
                 )}
               </tbody>
             </table>
-          </div>
+          </TableViewport>
         </div>
       ) : null}
     </div>

@@ -1,4 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
+import { TableViewport } from '@cp/ui';
 import { useCallback, useEffect, useState } from 'react';
 import {
   finishCompetitorReview, getCompetitorReviewGrid, searchCompetitorReview, setCompetitorReviewCell,
@@ -165,8 +166,8 @@ export function CompetitorReviewGrid({ onChanged }: { onChanged: () => void }) {
     {!grid.rows.length ? <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center"><p className="font-semibold">{show === 'todo' ? __uiText("ตรวจหมวด{0}ครบแล้ว", {"0": grid.category}) : __uiText("ยังไม่มี SKU ที่ตรวจแล้ว")}</p>
       <p className="mt-1 text-sm text-gray-500">{show === 'todo' ? __uiText("เลือกหมวดอื่นด้านบน หรือดูผลเทียบราคาในขั้นที่ 3") : __uiText("กลับไปที่ “ยังไม่ได้ตรวจ”")}</p></div>
       : !grid.sites.length ? <p className="text-sm text-gray-500">{__uiText("ยังไม่มีเว็บคู่แข่ง — เพิ่มเว็บในขั้นที่ 1 ก่อน")}</p>
-      : <div className="overflow-x-auto rounded-xl border border-gray-200"><table className="w-full min-w-[960px] text-left text-sm">
-        <thead className="bg-gray-50 text-xs text-gray-500"><tr><th className="w-56 p-3 font-medium">{__uiText("SKU ของเรา")}</th>{grid.sites.map(site => <th key={site} className="p-3 font-medium">{site}</th>)}</tr></thead>
+      : <TableViewport className="overflow-x-auto rounded-xl border border-gray-200"><table className="cp-data-table w-full min-w-[960px] text-left text-sm">
+        <thead className="bg-gray-50 text-xs text-gray-500"><tr><th className="w-56 p-3 font-medium" scope="col">{__uiText("SKU ของเรา")}</th>{grid.sites.map(site => <th key={site} className="p-3 font-medium" scope="col">{site}</th>)}</tr></thead>
         <tbody>{grid.rows.map(row => <tr key={row.sku} className="border-t border-gray-100 align-top">
           <td className="p-3"><Thumb src={row.image} size="mb-1 h-14 w-14" /><p className="font-semibold">{row.name}</p><p className="text-xs text-gray-500">{row.sku}</p>
             <p className="text-xs text-gray-600">{row.ourPricePerUnit != null ? __uiText("฿{0}/{1}", {"0": row.ourPricePerUnit.toLocaleString('th-TH', { maximumFractionDigits: 2 }), "1": row.ourUnitLabel}) : row.offerSummary}</p>
@@ -207,7 +208,7 @@ export function CompetitorReviewGrid({ onChanged }: { onChanged: () => void }) {
                 onSave={size => void save(row.sku, cell.site, { sku: row.sku, on: true, size, ...(cell.state === 'paired' ? { pairId: cell.pairId ?? undefined } : { itemId: cell.itemId ?? undefined }) })} />}
             </td>;
           })}
-        </tr>)}</tbody></table></div>}
+        </tr>)}</tbody></table></TableViewport>}
     {!!grid.rows.length && <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-gray-600">{__uiText("ชุดที่ ")}{page} {__uiText(" จาก ")}{batches} {__uiText(" · ช่องที่ไม่ติ๊ก = ไม่ใช่ (ระบบจะไม่เสนอซ้ำ)")}{show === 'todo' ? __uiText(" · กดชุดถัดไป = ตัวที่ติ๊กไว้บันทึก และแถวในชุดนี้นับว่าตรวจแล้ว") : ''}</p>
       <button className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50" disabled={!!busy || (show === 'done' && page >= batches)} onClick={() => void nextBatch()}>

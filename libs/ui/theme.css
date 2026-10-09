@@ -1,3 +1,4 @@
+@import './table.css';
 @font-face {
   font-family: 'Noto Sans Thai'; font-style: normal; font-weight: 100 900; font-display: swap;
   src: url('./fonts/noto-sans-thai-thai-wght-normal.woff2') format('woff2');

@@ -1,4 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 import {
   JagotaPendingPayment,
@@ -76,14 +77,14 @@ export default function JagotaPaymentTesting() {
           <p className="text-sm text-gray-400">{__uiText("ไม่มีรายการที่ยังไม่จ่าย")}</p>
         ) : (
           <div className="overflow-hidden rounded-lg border">
-            <table className="w-full text-sm">
+            <TableViewport><table className="cp-data-table w-full text-sm">
               <thead className="bg-gray-50 text-left text-gray-500">
                 <tr>
-                  <th className="px-3 py-2 font-medium">{__uiText("REF_TOKEN")}</th>
-                  <th className="px-3 py-2 font-medium">{__uiText("Order ID")}</th>
-                  <th className="px-3 py-2 font-medium">{__uiText("ยอด")}</th>
-                  <th className="px-3 py-2 font-medium">{__uiText("สร้างเมื่อ")}</th>
-                  <th className="px-3 py-2 font-medium" />
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("REF_TOKEN")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Order ID")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("ยอด")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("สร้างเมื่อ")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col" />
                 </tr>
               </thead>
               <tbody>
@@ -110,7 +111,7 @@ export default function JagotaPaymentTesting() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></TableViewport>
           </div>
         )}
       </div>

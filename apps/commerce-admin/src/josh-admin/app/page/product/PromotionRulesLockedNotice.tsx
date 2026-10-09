@@ -1,3 +1,4 @@
+import { TableViewport } from '@cp/ui';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
@@ -32,11 +33,11 @@ export function PromotionRulesLockedNotice({
           <Link to={editHref} className="inline-block text-sm font-medium text-blue-700 underline">
             {__uiText("แก้ที่โปรโมชัน “")}{lockedBy.mechanic_name}”
           </Link>
-          <table className="min-w-full text-sm text-gray-600">
+          <TableViewport><table className="cp-data-table min-w-full text-sm text-gray-600">
             <thead className="text-left text-xs text-gray-500">
               <tr>
-                <th className="px-2 py-1 font-medium">{__uiText("ซื้อขั้นต่ำ")}</th>
-                <th className="px-2 py-1 font-medium">{__uiText("ราคา/หน่วย (฿)")}</th>
+                <th className="px-2 py-1 font-medium" scope="col">{__uiText("ซื้อขั้นต่ำ")}</th>
+                <th className="px-2 py-1 font-medium" scope="col">{__uiText("ราคา/หน่วย (฿)")}</th>
               </tr>
             </thead>
             <tbody>
@@ -47,7 +48,7 @@ export function PromotionRulesLockedNotice({
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></TableViewport>
         </>
       ) : (
         <Link to={editHref} className="inline-block text-sm font-medium text-blue-700 underline">

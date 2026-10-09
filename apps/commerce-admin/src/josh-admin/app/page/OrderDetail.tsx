@@ -1,4 +1,5 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
+import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import {
@@ -554,15 +555,15 @@ const OrderDetail = () => {
         <div className="mt-3">
           <p className="mb-2 text-xs text-gray-500">
             {__uiText("เลือกรายการสินค้าที่ต้องการคืนเงิน (แก้ไขจำนวน/ยอดเงินได้)")}</p>
-          <div className="overflow-x-auto rounded-lg border border-gray-100">
-            <table className="w-full text-sm">
+          <TableViewport className="overflow-x-auto rounded-lg border border-gray-100">
+            <table className="cp-data-table w-full text-sm">
               <thead className="bg-gray-50 text-left text-xs text-gray-500">
                 <tr>
-                  <th className="px-2 py-2" />
-                  <th className="px-2 py-2">{__uiText("SKU")}</th>
-                  <th className="px-2 py-2">{__uiText("สินค้า")}</th>
-                  <th className="px-2 py-2">{__uiText("จำนวนคืน")}</th>
-                  <th className="px-2 py-2">{__uiText("ยอดเงินคืน")}</th>
+                  <th className="px-2 py-2" scope="col" />
+                  <th className="px-2 py-2" scope="col">{__uiText("SKU")}</th>
+                  <th className="px-2 py-2" scope="col">{__uiText("สินค้า")}</th>
+                  <th className="px-2 py-2" scope="col">{__uiText("จำนวนคืน")}</th>
+                  <th className="px-2 py-2" scope="col">{__uiText("ยอดเงินคืน")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -620,7 +621,7 @@ const OrderDetail = () => {
                 })}
               </tbody>
             </table>
-          </div>
+          </TableViewport>
           <div className="mt-3 grid max-w-xl gap-2 sm:grid-cols-2">
             <Input
               label={__uiText("เหตุผลการคืนเงิน *")}

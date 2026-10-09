@@ -1,4 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
+import { TableViewport } from '@cp/ui';
 import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
@@ -87,13 +88,13 @@ export function CompetitorAddSite({ onDone }: { onDone: () => void }) {
           {[...discovery.warnings, ...discovery.scannedPages.map(page => page.error).filter(Boolean)].map((text, i) => <p key={i}>{text}</p>)}
           <p className="text-gray-600">{__uiText("ลองใช้ลิงก์หน้าค้นหาหรือหน้าหมวดสินค้าที่มีหลายตัว หรือใช้ “ตั้งค่าแบบละเอียด”")}</p></div>
         : <>
-          <div className="overflow-x-auto rounded-lg border border-gray-100"><table className="w-full min-w-[520px] text-left text-sm">
-            <thead className="bg-gray-50 text-xs text-gray-500"><tr><th className="p-2 font-medium">{__uiText("รูป")}</th><th className="p-2 font-medium">{__uiText("ชื่อสินค้า")}</th><th className="p-2 text-right font-medium">{__uiText("ราคา")}</th><th className="p-2 text-right font-medium">{__uiText("น้ำหนัก / ขนาด")}</th></tr></thead>
+          <TableViewport className="overflow-x-auto rounded-lg border border-gray-100"><table className="cp-data-table w-full min-w-[520px] text-left text-sm">
+            <thead className="bg-gray-50 text-xs text-gray-500"><tr><th className="p-2 font-medium" scope="col">{__uiText("รูป")}</th><th className="p-2 font-medium" scope="col">{__uiText("ชื่อสินค้า")}</th><th className="p-2 text-right font-medium" scope="col">{__uiText("ราคา")}</th><th className="p-2 text-right font-medium" scope="col">{__uiText("น้ำหนัก / ขนาด")}</th></tr></thead>
             <tbody>{discovery.preview?.items.slice(0, 8).map(item => <tr key={item.url} className="border-t border-gray-100">
               <td className="p-2">{item.fields.image ? <img src={item.fields.image} alt="" loading="lazy" className="h-10 w-10 rounded object-cover" /> : <span className="block h-10 w-10 rounded bg-gray-100" />}</td>
               <td className="p-2">{item.name}</td>
               <td className="p-2 text-right tabular-nums">{item.price != null ? __uiText("฿{0}", {"0": item.price.toLocaleString('th-TH')}) : item.fields.price || '—'}</td>
-              <td className={`p-2 text-right ${item.fields.weight ? '' : 'text-amber-700'}`}>{item.fields.weight || __uiText("ไม่ระบุ")}</td></tr>)}</tbody></table></div>
+              <td className={`p-2 text-right ${item.fields.weight ? '' : 'text-amber-700'}`}>{item.fields.weight || __uiText("ไม่ระบุ")}</td></tr>)}</tbody></table></TableViewport>
           <p className="text-xs text-gray-500">{__uiText("น้ำหนักที่ไม่ระบุ ใส่ได้ทีหลังตอนตรวจคู่ (ขั้นที่ 2)")}</p>
           {discovery.warnings.map((text, i) => <p key={i} className="text-sm text-amber-700">{text}</p>)}
           {hasPrice && <fieldset className="space-y-1 text-sm"><legend className="mb-1 font-semibold">{__uiText("ราคาบนเว็บนี้รวม VAT แล้วหรือยัง?")}</legend>

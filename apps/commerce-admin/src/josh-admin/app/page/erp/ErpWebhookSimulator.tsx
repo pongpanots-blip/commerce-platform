@@ -1,4 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
+import { TableViewport } from '@cp/ui';
 import {
   getErpTestingShipment,
   getOrders,
@@ -578,13 +579,13 @@ export default function ErpWebhookSimulator() {
                     <h4 className="mb-2 text-xs font-semibold uppercase text-gray-500">
                       {__uiText("SKU บน shipment นี้ — ตั้งจำนวนที่ ERP invoice จริง")}</h4>
                     <div className="overflow-hidden rounded-lg border">
-                      <table className="w-full text-sm">
+                      <TableViewport><table className="cp-data-table w-full text-sm">
                         <thead className="bg-gray-50 text-left text-xs text-gray-500">
                           <tr>
-                            <th className="px-3 py-2 font-medium">{__uiText("Product")}</th>
-                            <th className="px-3 py-2 text-right font-medium">{__uiText("สั่ง")}</th>
-                            <th className="px-3 py-2 text-right font-medium">{__uiText("ราคา (ex VAT)")}</th>
-                            <th className="px-3 py-2 text-right font-medium">
+                            <th className="px-3 py-2 font-medium" scope="col">{__uiText("Product")}</th>
+                            <th className="px-3 py-2 text-right font-medium" scope="col">{__uiText("สั่ง")}</th>
+                            <th className="px-3 py-2 text-right font-medium" scope="col">{__uiText("ราคา (ex VAT)")}</th>
+                            <th className="px-3 py-2 text-right font-medium" scope="col">
                               {__uiText("Invoice qty")}<span className="text-alert"> *</span>
                             </th>
                           </tr>
@@ -626,7 +627,7 @@ export default function ErpWebhookSimulator() {
                             );
                           })}
                         </tbody>
-                      </table>
+                      </table></TableViewport>
                     </div>
                     {creditPreview > 0 && (
                       <p className="mt-2 rounded-md bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">

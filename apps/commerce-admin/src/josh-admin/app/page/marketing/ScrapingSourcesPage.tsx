@@ -1,4 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
+import { TableViewport } from '@cp/ui';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
@@ -171,13 +172,13 @@ export default function ScrapingSourcesPage() {
           <div className="flex flex-wrap gap-2">{discovery.fields.map(field => <label key={field.key} className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm">
             <input type="checkbox" checked={picked(field.key)} disabled={field.required} onChange={e => selectField(field.key, e.target.checked)} />{field.label}</label>)}
             {!discovery.fields.some(field => field.key === 'price') && <span className="rounded-lg bg-amber-50 px-3 py-1.5 text-sm text-amber-800">{__uiText("✗ ไม่พบราคา")}</span>}</div></fieldset>
-        {!!discovery.preview?.items.length && <div className="overflow-x-auto rounded-lg border border-gray-200">
+        {!!discovery.preview?.items.length && <TableViewport className="overflow-x-auto rounded-lg border border-gray-200">
           <p className="bg-gray-50 px-3 py-2 text-xs text-gray-500">{__uiText("ตัวอย่าง ")}{Math.min(discovery.preview.items.length, 5)} {__uiText(" จาก ")}{discovery.preview.found} {__uiText(" รายการในหน้าแรก ")}<a className="text-primary underline" href={discovery.preview.url} target="_blank" rel="noopener noreferrer">{discovery.preview.url}</a></p>
-          <table className="w-full text-left text-sm"><thead className="text-xs text-gray-500"><tr>{columns.map(field => <th key={field.key} className="px-3 py-2 font-medium">{field.label}</th>)}</tr></thead>
+          <table className="cp-data-table w-full text-left text-sm"><thead className="text-xs text-gray-500"><tr>{columns.map(field => <th key={field.key} className="px-3 py-2 font-medium" scope="col">{field.label}</th>)}</tr></thead>
             <tbody>{discovery.preview.items.slice(0, 5).map((item, index) => <tr key={index} className="border-t border-gray-100 align-top">{columns.map(field => <td key={field.key} className="max-w-xs break-words px-3 py-2">
               {field.key === 'name' || field.key === 'title' ? <a className="text-primary underline" href={item.url} target="_blank" rel="noopener noreferrer">{item.name}</a>
                 : field.key === 'image' && item.fields.image ? <img src={item.fields.image} alt={item.name} loading="lazy" className="h-12 w-12 rounded object-cover" />
-                : field.key === 'price' && item.price != null ? `${item.price.toLocaleString()} ${item.currency}` : (item.fields[field.key] || '—').slice(0, 120)}</td>)}</tr>)}</tbody></table></div>}
+                : field.key === 'price' && item.price != null ? `${item.price.toLocaleString()} ${item.currency}` : (item.fields[field.key] || '—').slice(0, 120)}</td>)}</tr>)}</tbody></table></TableViewport>}
         <section aria-label={__uiText("จำนวนหน้า")} className="space-y-2 rounded-lg bg-gray-50 p-3 text-sm">
           {discovery.paging?.works
             ? <p>{__uiText("✓ เลื่อนหน้าเองได้ — ")}{discovery.paging.pages.map(page => `หน้า ${page.page} พบ ${page.found} รายการ${page.page > 1 ? ` (ใหม่ ${page.fresh})` : ''}`).join(' · ')}{discovery.paging.totalPages ? __uiText(" · เว็บแจ้งทั้งหมด {0} หน้า", {"0": discovery.paging.totalPages.toLocaleString()}) : ''}</p>

@@ -14,17 +14,18 @@ import { OrderingService, ownsOrdering } from '../../../commerce/ordering/orderi
 import { splitLogistics } from '../../../commerce/ordering/logistics-fields';
 import type { WinbackStaffActions } from '../../winback/winback-staff-actions';
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
-import { JoshActions } from './josh-actions';
+import { JoshActionActor, JoshActions } from './josh-actions';
 import { JoshCatalogSyncService } from './josh-catalog-sync.service';
 
 /** In CONTENT_FIELDS, but a price / stock setting. Graphic must not write them. */
 const GRAPHIC_COMMERCIAL = ['buying_price', 'low_stock_threshold', 'reorder_quantity'] as const;
 /** Name, description and marketing copy. Not price, cost, stock, reorder or status. */
-const GRAPHIC_COPY = new Set([
+export const PRODUCT_COPY_FIELDS = [
   'product_name_th', 'product_name_en', 'product_description_th', 'product_description_en',
   'ingredients', 'allergens', 'expiration_info', 'usage_direction', 'best_paired_food',
   'storage_temperature', 'maximum_shelf_life', 'is_organic', 'product_short_code',
-]);
+] as const;
+const GRAPHIC_COPY = new Set<string>(PRODUCT_COPY_FIELDS);
 
 /**
  * commerce-admin buttons that ask josh to act (winback, push campaigns, credit applications, admin
@@ -151,35 +152,10 @@ export class JoshActionsController {
     return result;
   }
 
-  /** Graphic: names, descriptions and marketing copy. Cost, stock thresholds and reorder are content keys for merchandising, not here. */
-  private async editContentOnly(id: string, fields: Record<string, unknown> | undefined, req: StaffRequest) {
-    const raw = plain(fields);
-    for (const key of GRAPHIC_COMMERCIAL) delete raw[key];
-    const kept = Object.fromEntries(Object.entries(splitContent(raw).content).filter(([key]) => GRAPHIC_COPY.has(key)));
-    if (!Object.keys(kept).length) throw new ForbiddenException('graphic edits product content only');
-    const sku = await this.skuOf(id);
-    if (ownsProductContent()) return { content: await this.modules.get(ProductContentsService, { strict: false }).edit(sku, kept, req.staff.userId) };
-    return { product: await this.relayUpdate(id, kept, req) };
-  }
-
-  private async relayUpdate(id: string, fields: Record<string, unknown>, req: StaffRequest) {
-    const result = await this.josh.run('products', 'update', { id, fields }, this.as(req), 'admin');
-    await this.catalog.syncId(id).catch(() => undefined); // the cron catches up if the replica lags
-    return result;
-  }
-
-  /** The product's SKU from the catalog copy; a product not copied yet (just created, copy lags) is pulled from josh once. */
-  private async skuOf(id: string): Promise<string> {
-    const db = this.modules.get(DataSource, { strict: false });
-    const find = async () => (await db.query(`SELECT sku FROM josh_catalog_products WHERE id = $1`, [id]))[0]?.sku as string | undefined;
-    let sku = await find();
-    if (!sku) {
-      await this.catalog.syncId(id).catch(() => undefined);
-      sku = await find();
-    }
-    if (!sku) throw new NotFoundException('ไม่พบสินค้าในสำเนาแค็ตตาล็อก');
-    return sku;
-  }
+  private get deps(): ProductEditDeps { return { josh: this.josh, catalog: this.catalog, modules: this.modules }; }
+  private editContentOnly(id: string, fields: Record<string, unknown> | undefined, req: StaffRequest) { return editProductCopy(this.deps, id, fields, this.as(req), 'admin'); }
+  private relayUpdate(id: string, fields: Record<string, unknown>, req: StaffRequest) { return relayProductUpdate(this.deps, id, fields, this.as(req), 'admin'); }
+  private skuOf(id: string) { return productSku(this.deps, id); }
 
   /**
    * Create a product (COMMERCE_OWNS_CATALOG): josh's ProductService.create with the create form's
@@ -259,3 +235,44 @@ export class JoshActionsController {
 }
 
 const plain = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
+
+export type ProductEditDeps = { josh: JoshActions; catalog: JoshCatalogSyncService; modules: ModuleRef };
+
+/** The copy fields of `fields` (validated by splitContent, 400 on a bad value) and the keys that were dropped. */
+export function productCopyFields(fields: unknown): { kept: Record<string, unknown>; dropped: string[] } {
+  const raw = { ...plain(fields) };
+  for (const key of GRAPHIC_COMMERCIAL) delete raw[key];
+  const kept = Object.fromEntries(Object.entries(splitContent(raw).content).filter(([key]) => GRAPHIC_COPY.has(key)));
+  return { kept, dropped: Object.keys(plain(fields)).filter((key) => !(key in kept)) };
+}
+
+/**
+ * Names, descriptions and marketing copy only — graphic in commerce-admin, AI through MCP. Cost, stock thresholds
+ * and reorder are content keys for merchandising, not here.
+ */
+export async function editProductCopy(deps: ProductEditDeps, id: string, fields: unknown, actor: JoshActionActor, via: string) {
+  const { kept } = productCopyFields(fields);
+  if (!Object.keys(kept).length) throw new ForbiddenException('only product copy (names, descriptions, marketing text) can be edited here');
+  const sku = await productSku(deps, id);
+  if (ownsProductContent()) return { content: await deps.modules.get(ProductContentsService, { strict: false }).edit(sku, kept, actor.userId) };
+  return { product: await relayProductUpdate(deps, id, kept, actor, via) };
+}
+
+async function relayProductUpdate(deps: ProductEditDeps, id: string, fields: Record<string, unknown>, actor: JoshActionActor, via: string) {
+  const result = await deps.josh.run('products', 'update', { id, fields }, actor, via);
+  await deps.catalog.syncId(id).catch(() => undefined); // the cron catches up if the replica lags
+  return result;
+}
+
+/** The product's SKU from the catalog copy; a product not copied yet (just created, copy lags) is pulled from josh once. */
+async function productSku(deps: ProductEditDeps, id: string): Promise<string> {
+  const db = deps.modules.get(DataSource, { strict: false });
+  const find = async () => (await db.query(`SELECT sku FROM josh_catalog_products WHERE id = $1`, [id]))[0]?.sku as string | undefined;
+  let sku = await find();
+  if (!sku) {
+    await deps.catalog.syncId(id).catch(() => undefined);
+    sku = await find();
+  }
+  if (!sku) throw new NotFoundException('ไม่พบสินค้าในสำเนาแค็ตตาล็อก');
+  return sku;
+}

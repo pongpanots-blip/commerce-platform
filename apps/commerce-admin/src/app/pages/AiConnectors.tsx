@@ -17,8 +17,14 @@ const TOOL_LABEL: Record<string, string> = {
   get research_create_topic(){return __uiText("สร้างโจทย์ research");}, get research_request_run(){return __uiText("สั่งรัน research");}, get competitor_record_price(){return __uiText("บันทึกราคาคู่แข่ง");},
   get webhook_retry_delivery(){return __uiText("ส่ง event ซ้ำ");}, get erp_replay_ingest(){return __uiText("replay ข้อมูล ERP");},
   get scraping_update_source(){return __uiText("ตั้งค่าเก็บข้อมูลเว็บ");}, get scraping_run(){return __uiText("สั่งเริ่ม/หยุดเก็บข้อมูลเว็บ");}, get stock_adjust(){return __uiText("ปรับสต็อก");},
+  get marketing_list(){return __uiText("รายการ setup การตลาด");}, get marketing_fields(){return __uiText("ดู field ที่ต้องกรอก");}, get marketing_save(){return __uiText("สร้าง/แก้ setup การตลาด");},
+  get marketing_workflow_pause(){return __uiText("หยุด workflow");}, get product_content_save(){return __uiText("แก้ชื่อ/คำอธิบายสินค้า");},
+  get growth_plan_save(){return __uiText("บันทึกแผน Growth");}, get growth_plan_tasks(){return __uiText("แก้งานในแผน Growth");}, get growth_plan_action(){return __uiText("ส่งตรวจ/อนุมัติ/ส่งออกแผน Growth");}, get market_analyse(){return __uiText("วิเคราะห์ตลาด");},
 };
-const WRITE_TOOLS = new Set(['research_create_topic', 'research_request_run', 'competitor_record_price', 'webhook_retry_delivery', 'erp_replay_ingest', 'scraping_update_source', 'scraping_run', 'stock_adjust']);
+const WRITE_TOOLS = new Set(['research_create_topic', 'research_request_run', 'competitor_record_price', 'webhook_retry_delivery', 'erp_replay_ingest', 'scraping_update_source', 'scraping_run', 'stock_adjust',
+  'marketing_save', 'marketing_workflow_pause', 'product_content_save', 'growth_plan_save', 'growth_plan_tasks', 'growth_plan_action', 'market_analyse']);
+/** Short text for one changed value in the change log. */
+const show = (v: unknown) => { const s = v == null ? '—' : typeof v === 'string' ? v : JSON.stringify(v); return s.length > 60 ? `${s.slice(0, 60)}…` : s; };
 const STEPS = [
   { app: 'Claude (claude.ai / Desktop)', how: 'Settings → Connectors → Add custom connector → วาง URL → Connect' },
   { app: 'ChatGPT', how: 'Settings → Connectors (เปิด developer mode) → Create → วาง URL, Authentication = OAuth' },
@@ -30,6 +36,7 @@ export function AiConnectors() {
   __useUiLocale();
   const info = useAsync(() => mcpApi.connections(), []);
   const activity = useAsync(() => mcpApi.activity(50), []);
+  const changes = useAsync(() => mcpApi.changes(100), []);
   const [busy, setBusy] = useState<string | null>(null);
   const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
   const admin = info.data?.role === 'admin';
@@ -50,7 +57,7 @@ export function AiConnectors() {
       <PageHeader
         title={__uiText("AI connectors (MCP)")}
         subtitle={__uiText("ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของ commerce ได้")}
-        actions={<Button icon="refresh" onClick={() => { info.reload(); activity.reload(); }}>{__uiText("Refresh")}</Button>}
+        actions={<Button icon="refresh" onClick={() => { info.reload(); activity.reload(); changes.reload(); }}>{__uiText("Refresh")}</Button>}
       />
 
       {note && <Alert tone={note.ok ? 'ok' : 'danger'}>{note.text}</Alert>}
@@ -134,6 +141,64 @@ export function AiConnectors() {
                       <Button variant="danger-ghost" size="sm" disabled={busy === c.clientId + c.staffUserId} onClick={() => revoke(c)}>
                         {__uiText("ยกเลิก")}</Button>
                     )}
+                  </TD>
+                </TR>
+              ))}
+            </TBody>
+          </Table>
+        )}
+      </Panel>
+
+      <Panel>
+        <PanelHead title={__uiText("AI สร้าง / แก้ไขอะไรไปบ้าง")} sub={__uiText("ใครสั่ง ผ่าน AI ไหน เปลี่ยนอะไร — ล่าสุด 100 รายการ รวมครั้งที่ไม่สำเร็จ")} />
+        <ErrorText error={changes.error} />
+        {changes.loading ? (
+          <Loading />
+        ) : !changes.data?.length ? (
+          <Empty>{__uiText("AI ยังไม่ได้สร้างหรือแก้ไขอะไร")}</Empty>
+        ) : (
+          <Table>
+            <THead>
+              <TH>{__uiText("เวลา")}</TH>
+              <TH>{__uiText("ใครสั่ง")}</TH>
+              <TH>{__uiText("สิ่งที่ทำ")}</TH>
+              <TH>{__uiText("เปลี่ยนอะไร")}</TH>
+              <TH>{__uiText("ผล")}</TH>
+            </THead>
+            <TBody>
+              {changes.data.map((c) => (
+                <TR key={c.id}>
+                  <TD kind="time">{fmt.when(c.at)}</TD>
+                  <TD>
+                    <div className="font-medium">{c.staffEmail}</div>
+                    <div className="text-[11px] text-on-surface-variant">{__uiText("ผ่าน {0}", { "0": c.clientName })}</div>
+                  </TD>
+                  <TD>
+                    <div>{TOOL_LABEL[c.tool] ?? c.tool}</div>
+                    {c.summary && <div className="text-[11px] text-on-surface-variant">{c.summary}</div>}
+                    {c.adminUrl && <a href={c.adminUrl} className="text-[11px] text-primary underline">{__uiText("เปิดดูใน admin")}</a>}
+                  </TD>
+                  <TD className="text-[11px]">
+                    {c.changes.length ? (
+                      <ul className="space-y-0.5">
+                        {c.changes.slice(0, 8).map((ch) => (
+                          <li key={ch.field} className="break-words">
+                            <span className="font-semibold">{ch.field}</span>{': '}
+                            <span className="text-on-surface-variant" title={JSON.stringify(ch.before)}>{show(ch.before)}</span>{' → '}
+                            <span title={JSON.stringify(ch.after)}>{show(ch.after)}</span>
+                          </li>
+                        ))}
+                        {c.changes.length > 8 && <li className="text-on-surface-variant">{__uiText("และอีก {0} field", { "0": String(c.changes.length - 8) })}</li>}
+                      </ul>
+                    ) : '—'}
+                  </TD>
+                  <TD>
+                    {c.error ? (
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fdecea] text-[#b3261e]" title={c.error}>{__uiText("ไม่สำเร็จ")}</span>
+                    ) : (
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">{__uiText("สำเร็จ")}</span>
+                    )}
+                    {c.error && <div className="text-[10px] text-on-surface-variant max-w-[220px] break-words">{show(c.error)}</div>}
                   </TD>
                 </TR>
               ))}

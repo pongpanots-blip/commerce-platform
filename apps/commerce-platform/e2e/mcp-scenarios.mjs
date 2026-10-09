@@ -101,8 +101,8 @@ check('authorization code is single use', reuse.status === 400);
 const mkt = await mcp(t1.json.access_token);
 const mktTools = (await mkt.listTools()).tools;
 const names = mktTools.map((t) => t.name).sort();
-const MARKETING_TOOLS = 'catalog_products,competitor_prices,growth_plans,growth_results,growth_workspace,josh_products,josh_promotions,market_analysis_reports,marketing_list,marketing_workflows,push_campaigns,research_report,research_topics,restaurant_places,scraped_catalog_search,scraping_sources,segment_preview,shop_traffic';
-check('marketing sees the 18 read-only marketing tools only', names.join() === MARKETING_TOOLS, names.join());
+const MARKETING_TOOLS = 'catalog_products,competitor_prices,growth_plans,growth_results,growth_workspace,josh_products,josh_promotions,market_analysis_reports,marketing_fields,marketing_list,marketing_workflows,push_campaigns,research_report,research_topics,restaurant_places,scraped_catalog_search,scraping_sources,segment_preview,shop_traffic';
+check('marketing sees the 19 read-only marketing tools only', names.join() === MARKETING_TOOLS, names.join());
 check('every tool is marked read-only', mktTools.every((t) => t.annotations?.readOnlyHint === true && t.annotations?.destructiveHint === false));
 const cp = await callJson(mkt, 'competitor_prices', { filter: 'all', limit: 5 });
 check('competitor_prices answers', typeof cp.total === 'number', JSON.stringify(cp).slice(0, 160));
@@ -192,7 +192,7 @@ if (process.env.MCP_SKU) {
   const pd = await text(w, 'competitor_record_price', { pairId, priceIncVat: 500, confirmCode: pp.confirmCode });
   check('competitor_record_price confirm saves it (250/kg)', pd.status === 'done' && pd.result?.competitorPerKg === 250, JSON.stringify(pd).slice(0, 140));
 }
-check('marketing write tools include scraping settings, not stock_adjust', ['scraping_update_source', 'scraping_run'].every((n) => wNames.some((t) => t.name === n)) && !wNames.some((t) => t.name === 'stock_adjust'));
+check('marketing write tools include scraping settings, not stock_adjust or product_content_save', ['scraping_update_source', 'scraping_run'].every((n) => wNames.some((t) => t.name === n)) && !wNames.some((t) => ['stock_adjust', 'product_content_save'].includes(t.name)));
 if (process.env.MCP_SOURCE_ID) {
   const sid = process.env.MCP_SOURCE_ID;
   const up = await text(w, 'scraping_update_source', { sourceId: sid, intervalHours: 24 });
@@ -224,7 +224,7 @@ if (process.env.MCP_FAILED_INGEST) {
   const id = await text(aw, 'erp_replay_ingest', { recordId: process.env.MCP_FAILED_INGEST, confirmCode: ip.confirmCode });
   check('erp_replay_ingest: preview shows the failed record, confirm re-applies it', ip.willDo?.status === 'failed' && id.status === 'done', JSON.stringify(id).slice(0, 160));
 }
-check('admin write tools include stock_adjust', awNames.includes('stock_adjust'));
+check('admin write tools include stock_adjust and product_content_save', awNames.includes('stock_adjust') && awNames.includes('product_content_save'));
 if (process.env.MCP_STOCK_SKU) {
   const base = { sku: process.env.MCP_STOCK_SKU, reason: 'COUNT' };
   const erpWh = await aw.callTool({ name: 'stock_adjust', arguments: { ...base, warehouseCode: process.env.MCP_ERP_WH, mode: 'set', quantity: 1 } });

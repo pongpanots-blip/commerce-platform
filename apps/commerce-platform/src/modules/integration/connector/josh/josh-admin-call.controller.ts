@@ -32,7 +32,7 @@ const AREAS: { path: RegExp; roles: StaffRole[]; methods?: string[] }[] = [
   { path: /^\/(campaigns|user-segments)(\/|$)/, roles: M },
   { path: /^\/(marketing-workflows|marketing-notify-templates|marketing-trigger-presets|marketing-settings)(\/|$)/, roles: M },
   { path: /^\/admin\/bot\//, roles: M },
-  { path: /^\/(banner|popup-definitions)$/, roles: M },
+  { path: new RegExp(`^/(banner(/${ID})?|popup-definitions)$`), roles: M }, // /banner/:id: MCP banner edits (josh's relay must allow it too)
   { path: /^\/(product-category|brands|cuisine)(\/|$)/, roles: MER },
   { path: /^\/(marketing-notify-templates|marketing-settings|smart-links|marketing-offers|marketing\/deeplink)(\/|$)/, roles: M },
   { path: /^\/(membership-tiers|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, roles: ADMIN },

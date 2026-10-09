@@ -33,10 +33,11 @@
 | `scraped_catalog_search` | marketing, admin | สินค้าและราคาที่เก็บจากเว็บคู่แข่ง |
 | `scraping_sources` | marketing, admin | เว็บที่ตั้งให้เก็บ สถานะ และรอบล่าสุด |
 | `research_topics` / `research_report` | marketing, admin | โจทย์ research และรายงานล่าสุดพร้อมหลักฐาน |
-| `catalog_products` | marketing, admin | แค็ตตาล็อก josh (จากสำเนาใน commerce) ทั้ง SKU ชื่อ และราคาขาย |
+| `catalog_products` | marketing, admin | แค็ตตาล็อก josh (จากสำเนาใน commerce) ทั้ง product id, SKU, ชื่อ, รูปแรก และราคาขาย (product set ใช้ SKU) |
 | `josh_products` | marketing, admin | ตรวจสถานะสินค้า สินค้าที่ซ่อนหรือข้อมูลไม่ครบ ก่อนเลือก SKU ไปเสนอแคมเปญ |
 | `shop_traffic` | marketing, admin | session/event funnel และคำค้น รวมคำค้นที่ไม่พบสินค้า เพื่อหาขั้นตอนที่ควรปรับและความต้องการที่ควรตรวจต่อ |
-| `marketing_list` / `segment_preview` | marketing, admin | อ่าน coupon/segment/campaign/product set/promotion page ที่มี และลองนับกลุ่มก่อนบันทึก segment |
+| `marketing_list` / `segment_preview` | marketing, admin | อ่าน coupon, segment, campaign, product set, promotion page, banner (HERO = carousel หน้าแรก), notify template, smart link และอีเมลต้อนรับ lead ที่มีอยู่ และลองนับกลุ่มก่อนบันทึก segment |
+| `marketing_fields` | marketing, admin | JSON schema ของ `data` ที่ `marketing_save` รับในแต่ละ kind (field ที่ต้องมี, enum, ขีดจำกัด), สร้างแล้วปิดไว้ไหม และการแก้เป็นแบบส่งบางส่วนหรือแทนทั้งก้อน |
 | `marketing_workflows` / `josh_promotions` / `push_campaigns` | marketing, admin | อ่าน workflow โปรโมชัน และผลส่งแคมเปญเดิม เพื่อปรับจากสิ่งที่มีและตรวจข้อผิดพลาดก่อนสร้างเพิ่ม |
 | `restaurant_places` | marketing, admin | กรองชื่อ เขต ประเภท ช่วงคะแนน/จำนวนรีวิว ราคา บริการ สถานะ enrichment และช่วงเวลาที่คนเยอะวันนี้ (เวลาไทย) พร้อมจำนวนแยกประเภท/พื้นที่; ส่ง `id` จากรายการเพื่ออ่านรายละเอียด เวลาเปิด บริการ แหล่งข้อมูล และวันที่ enrichment; จำนวนโต๊ะเป็นค่าประมาณจากรีวิว |
 | `growth_workspace` | marketing, admin | โอกาสจากยอดที่รับชำระจริง ตะกร้าค้าง รอบซื้อ และ workflow ที่ล้มเหลว พร้อมหลักฐาน ช่วงเวลา และข้อจำกัดของการเปิดส่ง |
@@ -66,7 +67,8 @@
 | `growth_plan_save` | marketing, admin | `id` UUID โดยไม่ส่ง `version` สร้างร่างแบบ idempotent; ส่งเวอร์ชันล่าสุดเพื่อแก้แผนของตนหรือ admin พร้อม plan ตาม schema เดิม การแก้เนื้อหารีเซ็ต approval และ `analysisId` เชื่อมหลักฐานจากรายงานที่มีสิทธิ์อ่าน |
 | `growth_plan_tasks` | marketing, admin | เปลี่ยนงานทั้งหมดด้วย `id`, `update: { version, tasks }`; เพิ่มเวอร์ชันโดยเก็บเนื้อหาที่อนุมัติไว้ |
 | `growth_plan_action` | marketing, admin | `submit` ส่งตรวจ, `export` สร้าง workflow draft ที่ยังหยุดอยู่จากเนื้อหาที่อนุมัติ; admin เพิ่ม `approve` และ `reconcile` โดย `workflowId` ใช้เฉพาะ reconcile ผลส่งออกที่ยังยืนยันไม่ได้ |
-| `marketing_save` / `marketing_workflow_pause` | marketing, admin | สร้าง/แก้ setup ที่ยังปิดอยู่ หรือหยุด workflow เดิม; ไม่เปิดส่งจาก MCP |
+| `marketing_save` / `marketing_workflow_pause` | marketing, admin | สร้าง/แก้ workflow, promotion, coupon, segment, campaign, product set, promotion page, banner/carousel, notify template, smart link, push campaign draft และแก้อีเมลต้อนรับ lead (มีอันเดียว ไม่ส่ง id) หรือหยุด workflow เดิม รายละเอียดดูหัวข้อ `marketing_save` ด้านล่าง |
+| `product_content_save` | admin | แก้ชื่อ คำอธิบาย และข้อความการตลาดของสินค้า (field ชุดเดียวกับที่ graphic แก้ได้ใน commerce-admin) ราคา ต้นทุน สต็อก สถานะ SKU และ master จาก ERP แก้ไม่ได้ แก้แล้วขึ้นหน้าร้านทันที |
 | `research_create_topic` | marketing, admin | สร้างโจทย์ research |
 | `research_request_run` | marketing, admin | สั่งรันโจทย์ (ของตัวเอง ส่วน admin รันของทุกคนได้) |
 | `competitor_record_price` | marketing, admin | บันทึกราคาคู่แข่งที่ผู้ใช้เห็นจากหน้าเว็บ **ยืนยันคู่สินค้าให้ไม่ได้** ยังต้องให้คนทำ |
@@ -77,6 +79,39 @@
 | `stock_adjust` | admin | ปรับสต็อกแบบ `set` (ยอดที่นับได้) หรือ `add` (+รับเข้า / −เสียหาย) **ได้เฉพาะคลังที่ commerce เป็นเจ้าของสต็อก** (`stock_source = 'commerce'`) คลังของ ERP ปฏิเสธตั้งแต่ขั้นขอดู ให้ไปปรับใน ERP แทน ยอดหลังปรับต้องเป็นจำนวนเต็ม ไม่ติดลบ และไม่น้อยกว่ายอดที่ถูกจองไว้ ทุกครั้งบันทึกเป็น movement ใน ledger |
 
 ทุกครั้งที่แก้จริงจะบันทึกใน `audit_logs` เป็น `action = 'mcp.write'` และหน้า AI connectors แสดงว่าแต่ละ connection แก้ไขได้หรือไม่
+
+### `marketing_save`
+
+- **ตรวจ field ก่อน:** แต่ละ kind มี schema ตาม DTO ของ josh (`apps/commerce-platform/src/mcp/mcp.marketing-kinds.ts`) ถ้า field ผิด ขาด หรือเกิน ระบบจะปฏิเสธตั้งแต่ก่อนขอดู พร้อมบอกว่า field ไหนผิดและคืน schema ให้ AI แก้ ส่วน workflow, promotion และ push campaign ยังไม่มี schema ตายตัว ให้ AI คัดลอกรูปจากของที่มีอยู่
+- **ขอดู:** แสดงค่าก่อนแก้ (`before`), field ที่จะเปลี่ยน (`changes`) และลิงก์หน้า commerce-admin ที่ใช้ตรวจ (`checkIn`) ถ้าของนั้นเปิดใช้อยู่ จะเตือนว่าลูกค้าเห็นทันทีที่บันทึก
+- **ของใหม่ปิดไว้เสมอ:**
+  - campaign: josh ตัด `is_active` ทิ้งตอนสร้าง ระบบจึงสั่งปิดซ้ำทันทีหลังสร้าง
+  - banner: ส่งเป็นชื่อ field แบบที่ form multipart ของ josh อ่าน (`nameBanner`, `linkWeb`, `'false'`)
+- **ข้อจำกัดของบางประเภท:**
+  - banner ต้องใช้ URL รูปที่อัปโหลดไว้แล้ว (เช่นรูปของหน้าโปร) เพราะ MCP อัปโหลดไฟล์ไม่ได้
+  - product set: การแก้คือแทนทั้งก้อน ต้องส่ง `skus`, `categoryIds` และ `brandIds` ครบทุกครั้ง
+  - notify template: แก้แล้ว workflow ที่ใช้ template นี้เปลี่ยนตามทันที josh เก็บ revision ไว้ให้ restore
+  - อีเมลต้อนรับ lead: มีอันเดียวและใช้งานอยู่ตลอด แก้แล้ว lead ใหม่ได้อีเมลใหม่ทันที เปลี่ยนรูปต้องทำใน commerce-admin
+- **ผลลัพธ์:** คืน `openInAdmin` เป็นลิงก์ไปของที่สร้างหรือแก้ เพื่อให้คนเข้าไปตรวจแล้วกดเปิดใช้เอง
+
+### Log ว่าใครสร้าง/แก้อะไร
+
+ทุกครั้งที่ AI แก้ข้อมูล รวมครั้งที่ josh ปฏิเสธ จะบันทึกหนึ่งแถว `mcp.write` ใน `audit_logs`:
+
+| เก็บอะไร | ที่ไหน |
+|---|---|
+| ใครสั่ง (staff ที่ login เข้า AI) | `actor_id`, `context.email` |
+| ผ่าน AI ไหน | `context.clientId` |
+| แก้อะไร | `entity_type` (เช่น `josh.coupon`, `josh.product`) และ `entity_id` |
+| ค่าก่อนและค่าที่ส่ง | `before`, `after` |
+| field ที่เปลี่ยน | `context.changes` |
+| ลิงก์ admin และสรุป | `context.adminUrl`, `context.summary` |
+| เหตุผลที่ไม่สำเร็จ | `context.error` |
+
+ดูได้ที่ commerce-admin › AI connectors › **AI สร้าง / แก้ไขอะไรไปบ้าง** (`GET /api/mcp-connections/changes`): marketing เห็นของตัวเอง admin เห็นของทุกคน
+
+- **audit ของ josh:** การเรียก josh แต่ละครั้งยังถูกบันทึกเป็น `josh.<target>.<action>` พร้อม `via = 'mcp'` เหมือนเดิม
+- **ประวัติการแก้ไขในหน้า josh:** josh บันทึก `actor_email` เป็น staff คนนั้น แต่ไม่ได้บอกว่าแก้ผ่าน AI และเก็บแค่ 5 ประเภท (campaign, promotion mechanic, coupon, promotion page, product set) จึงต้องดูจากหน้า AI connectors ประกอบ
 
 ## จากคำถามตลาดไปสู่แผนผ่าน MCP
 
@@ -150,5 +185,7 @@ npx jest --config apps/commerce-platform/jest.config.cts --runInBand \
 ชุดทดสอบในหน่วยความจำใช้ MCP SDK จริง ตรวจ validation, scope/role, preview เต็ม, argument binding/one-use, การส่งต่อ approval/export/reconcile และ analyst client ที่ไม่มีเครื่องมือเขียน ไม่ยืนยัน provider, ข้อมูล replica หรือ tagging ในระบบจริง
 
 ## ทำทีหลัง
+
+- **banner/carousel ต้องแก้ josh ก่อน:** ตอนนี้ `RELAY_ROUTES` ของ josh (`apps/backend/src/app/erp/commerce-admin-relay.controller.ts`) ยอมให้ `/banner` ผ่านได้แค่ GET การสร้างหรือแก้ banner ผ่าน MCP จึงได้ 403 จาก josh จนกว่าจะเพิ่ม `POST /banner` และ `PATCH /banner/{id}` (ฝั่ง commerce เปิดไว้แล้ว)
 
 - ตอนนี้ยังไม่มีคลังไหนเป็น `stock_source = 'commerce'` พอ MER clean inventory เสร็จแล้วเปลี่ยนคลังเป็นของ commerce, `stock_adjust` ก็ใช้ได้ทันที และยอดใหม่ส่งไปให้ josh เองเป็น `inventory.qty.changed` (`source: "commerce"`, ดู `docs/event-contract.md`)

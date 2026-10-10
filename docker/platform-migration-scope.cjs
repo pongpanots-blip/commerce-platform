@@ -44,7 +44,9 @@ function validateTarget(policy, env) {
   if (env.MIGRATION_SCOPE_COMMIT !== policy.sourceCommit) fail('UNREVIEWED_APPLICATION_COMMIT');
   if (env.MIGRATION_SCOPE_IMAGE_TAG !== policy.imageTag) fail('UNREVIEWED_IMAGE_TAG');
   for (const service of ['admin', 'portal', 'platform']) {
-    if (!policy.deployedTags[service].includes(env[`MIGRATION_SCOPE_${service.toUpperCase()}_TAG`])) fail('DEPLOYED_TAG_CHANGED');
+    // The release's own platform image is reviewed by definition: the post-deploy check runs with it already live.
+    const allowed = service === 'platform' ? [...policy.deployedTags.platform, policy.imageTag] : policy.deployedTags[service];
+    if (!allowed.includes(env[`MIGRATION_SCOPE_${service.toUpperCase()}_TAG`])) fail('DEPLOYED_TAG_CHANGED');
   }
 }
 

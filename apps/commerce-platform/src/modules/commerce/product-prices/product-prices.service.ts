@@ -105,14 +105,17 @@ export class ProductPricesService {
 
   /** Staff edit (commerce-admin price page, or the product form's price fields). */
   async edit(sku: string, patch: PricePatch, staffId: string) {
+    return this.db.transaction(m => this.editWithin(m, sku, patch, staffId));
+  }
+
+  /** Same native edit, inside the reviewed editor's transaction with its durable receipt. */
+  async editWithin(m: EntityManager, sku: string, patch: PricePatch, staffId: string) {
     this.assertOwned();
     if (!COLS.some(([k]) => patch[k] !== undefined)) throw new BadRequestException('ไม่มีราคาให้แก้');
-    return this.db.transaction(async (m) => {
       const [known] = await m.query(`SELECT 1 FROM product_prices WHERE product_inventory_sku = $1
         UNION ALL SELECT 1 FROM josh_catalog_products WHERE sku = $1 LIMIT 1`, [sku]);
       if (!known) throw new NotFoundException(`ไม่พบสินค้า SKU ${sku}`);
       return this.write(m, sku, patch, 'staff', staffId);
-    });
   }
 
   /** Upsert the given fields (null clears, undefined keeps) and publish the resulting row. */

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-10T05:06:41.400975+00:00",
+  "updatedAt": "2026-10-10T06:00:20.028834+00:00",
   "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
   "designGuidance": {
     "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
@@ -205,6 +205,23 @@
         "Cancellation/back navigation does not dispatch; a late response cannot redirect a newer navigation. Already dispatched operations are reconciled through their original request."
       ],
       "validationEvidence": "/workspace/commerce-ui-audit-20261009/assignment-verification.json"
+    },
+    {
+      "priority": 7,
+      "task": "Review incoming ERP prices",
+      "status": "Bounded canonical existing-admin/MER review, approval/rejection and durable native outcomes implemented. Exact original ownership, value and snapshot semantics retained; local acceptance only. Product-master approval and current-price manual editor recovery remain outside this slice.",
+      "contract": "docs/commerce-price-approval-contracts.json",
+      "acceptance": [
+        "Exact current and proposed raw fields and scope before explicit decision.",
+        "Changed evidence blocks the entire batch; native price/outbox/audit receipt commit atomically.",
+        "Duplicates and interrupted flows recover the immutable actor-private receipt before a confirmed exact retry.",
+        "Completion counts reflect native committed outcomes; downstream delivery remains unverified."
+      ],
+      "remaining": [
+        "Product-master approval slice",
+        "Native manual price editor review/recovery",
+        "Production storage, schema coordination, retention and downstream delivery readiness"
+      ]
     }
   ],
   "approvedEnterpriseAnalyticsFoundation": {
@@ -230,8 +247,11 @@
   },
   "capturedAt": "2026-10-10T01:16:03.479738+00:00",
   "cancelledScope": {
-    "task": "OCR purchase orders into cart",
-    "status": "Cancelled explicitly by user. Removed from future implementation queue; no OCR-to-cart work or unrelated deletion."
+    "tasks": [
+      "All remaining CS/credit implementation and investigation",
+      "OCR purchase orders into cart"
+    ],
+    "status": "Explicitly cancelled by user. Accepted sales assignment and existing code retained. No further CS/credit or OCR-to-cart slice; no unrelated deletion."
   },
   "financialSourceCoverage": {
     "contracts": "docs/commerce-financial-analysis-contracts.json",

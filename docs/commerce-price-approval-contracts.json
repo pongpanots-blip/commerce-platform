@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-10T06:00:20.028834+00:00",
+  "acceptedParent": "31485013ff2809e6f2575c443c03c248d7700c8b",
+  "scope": "One bounded ERP price approval/rejection flow in the existing application. Development only; not the entire commerce redesign. No production access, migrations, deployment, upstream collection, role expansion or automatic approval.",
+  "auditMapping": [
+    {
+      "feature": "Incoming ERP price/MOQ decisions",
+      "originalEntry": "/product-prices",
+      "canonicalEntry": "/product-prices",
+      "originalController": "ProductPricesController",
+      "authority": "admin and merchandising; COMMERCE_OWNS_PRICES required for decisions",
+      "change": "Queue -> single SKU evidence or page-selected batch -> checked review -> durable request outcome. One canonical navigation destination."
+    },
+    {
+      "feature": "Current base price/manual editing",
+      "originalEntry": "/product-prices",
+      "retainedEntry": "/product-prices/current",
+      "authority": "Original ProductPricesController/edit and ownership gate",
+      "change": "Extracted existing editor intact. Differently scoped manual edits are retained; this flow does not give them reviewed version/idempotency guarantees."
+    },
+    {
+      "feature": "ERP product-master queue",
+      "entry": "/product-master-queue",
+      "authority": "Original admin/merchandising and COMMERCE_OWNS_PRODUCT_MASTER",
+      "change": "Audited but unchanged. Native field merge and pack-size derived-field behavior preserved. Separate future approval slice."
+    },
+    {
+      "feature": "New product/draft publication",
+      "entry": "Existing Josh product approval routes",
+      "change": "Retained; different scope and authority, not a duplicate of prices or master patches."
+    }
+  ],
+  "routes": {
+    "queue": "/product-prices?search=...&page=...&limit=...",
+    "current": "/product-prices/current",
+    "singleEvidence": "/product-prices/pending/:skuToken",
+    "singleReview": "/product-prices/pending/:skuToken/review?decision=approve|reject",
+    "selectedReview": "/product-prices/review?decision=approve|reject",
+    "outcome": "/product-prices/requests/:requestId",
+    "skuToken": "Canonical codepoint hex token preserves native slash/backslash/dot/Thai/percent SKUs without weakening existing encoded path checks. Native API SKU remains exact. SKU length matches native varchar(64) Unicode characters, including supplementary characters; 65 is rejected.",
+    "navigation": "Existing product-prices entry retained; no additional sidebar/command destination. Old /product-prices deep link preserved."
+  },
+  "apiCompatibility": {
+    "original": "GET product-prices, GET pending, POST pending/approve and pending/reject {skus}, PATCH :sku are retained. Original native max500 count/missing-row semantics remain.",
+    "new": [
+      "GET /product-prices/workspace/pending",
+      "GET /product-prices/workspace/items/:sku",
+      "POST /product-prices/workspace/review (validation only)",
+      "POST /product-prices/workspace/actions",
+      "GET /product-prices/workspace/requests/:id (actor private)"
+    ],
+    "roles": "Same @StaffRoles(merchandising) class scope as original, with existing implicit admin authority. No BA, marketing, CS, sale or manager expansion. Actual request actor comes from StaffAuthGuard.",
+    "scope": "The UI selects 1–100 distinct SKUs returned on its current page. The API validates an explicit 1–100 set and exact native versions. No all-filtered decision or user supplied prices; UUIDs normalize to lowercase."
+  },
+  "businessRules": {
+    "values": "Native stored decimal strings/MOQ shown as current / ERP proposal / after decision. Null ERP field means unchanged; zero is applied. No inferred currency/VAT/UOM/FX/customer-contract pricing or recommendation.",
+    "approval": "Reuses native approveWithin and original ProductPriceSnapshot/EventEmitterBus/outbox in the same transaction as current-price updates, queue deletion and durable receipt.",
+    "rejection": "Reuses native rejectWithin, removes pending proposals and leaves current price unchanged; no snapshot. Adds actor-private audited before/after outcome.",
+    "atomic": "All selected reviewed decisions commit together. Missing, stale, invalid native patch, count mismatch, outbox failure or receipt failure rolls back all. No assumed partial success. Original APIs retain their native behavior.",
+    "locks": "Sorted pending row prelocks for both original and reviewed decision writers; same per-SKU advisory locks for native writes, including absent-current creation. Reviewed flow rechecks pending/current fingerprints under locks.",
+    "versions": "Hash of exact pending/current evidence, native timestamps and xmin detects replacement, zero/null edits and same-value ABA. No mutable old review silently refreshed into approval.",
+    "replay": "Actor/request/body immutable hash; same request returns original receipt even if new pending ERP data arrives or ownership is switched. Different packet or cross-kind request ID conflicts."
+  },
+  "confirmationAndRecovery": {
+    "confirmation": "Unchecked explicit consequences checkbox each review mount/back-forward. Synchronous duplicate-click lock. Detail/review do not decide. All-null proposal approval blocked while original rejection remains available.",
+    "journal": "Verified immutable owner-specific per-request localStorage keys before dispatch, max30 unresolved jobs; independent tabs cannot overwrite unrelated jobs. Corrupt key does not hide other valid requests. Private reviewed evidence is also roundtrip checked.",
+    "interrupted": "Late POST or receipt GET cannot redirect newer navigation or erase the only discoverable request. Intent cleared only after verified receipt is rendered. Uppercase UUID URLs reconcile canonical request.",
+    "outcomes": "Success badges count native committed receipt items only. HTTP errors, partial-shaped receipts, current equality or menu counts cannot prove completion. Snapshot queued does not prove shop delivery.",
+    "retry": "Authoritative actor-private 404 plus matching original local intent requires fresh explicit exact-packet retry. Read outage permits read retry only. Known stale conflict cannot resend; explicit dismissal is available only after absent committed receipt."
+  },
+  "interface": "Shared @cp/ui CommercePage, task input, buttons, checkbox, native keyboard controls, loading skeletons, error/retry, filtered/empty guidance, source scope and fluid mobile Thai/English. No protected welcome or global design changes.",
+  "storage": "Existing commerce_promotion_drafts and commerce_promotion_draft_requests partitioned by product_price_approval kind. No table or application migration. Other private draft lists exclude this kind; cross-kind IDs do not overwrite. Local owned fixture namespaces only in verification.",
+  "validationEvidenceRoot": "/workspace/commerce-price-approval-20261010",
+  "validationProvenance": "Final source automated suites, native owned PostgreSQL, typecheck and all three builds are recorded with worker/heap/memory receipts. Browser results use final actual app with synthetic identity transport and native controller/services/SQL; real StaffAuthGuard ACL separately exercised in selected HTTP tests. Do not count preliminary failures as passed final acceptance.",
+  "remaining": [
+    "Product-master patch approval and new-product/draft publication remain original pages; no full-app completion claim.",
+    "Manual current-price editor remains original live editing API and original non-idempotent recovery behavior; it is not covered by new reviewed decision guarantees.",
+    "Production storage availability/permissions, schema/version coordination with native writers, journal retention/index/query budgets and deployed authenticated E2E remain unverified.",
+    "Native snapshot outbox delivery, relay operation and actual shop price convergence remain unverified; local outbox persistence proves queueing only.",
+    "Currency/VAT/UOM completeness and customer-specific contract pricing are outside the ERP queue contract.",
+    "Other non-CS design breadth remains separately queued; this checkpoint stops before another feature slice."
+  ],
+  "cancelledScope": "All remaining CS/credit work and OCR-to-cart are explicitly cancelled. Accepted sales assignments and existing CS/credit code remain intact; no further investigation or deletion.",
+  "externalReview": "Independent source-only helper review inspected recovery, route identity, batching and permissions. It did not execute tests/build/browser or access production. Actual Claude/Cursor handoff is unrun; no credentials copied."
+}

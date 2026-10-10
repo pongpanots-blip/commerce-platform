@@ -276,7 +276,7 @@ export function App() {
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/stock-moves" element={<TaskRoute role={role}><StockMoves /></TaskRoute>} />
             <Route path="/stock-moves/:task" element={<TaskRoute role={role}><StockMoves /></TaskRoute>} />
-            <Route path="/product-prices" element={<ProductPrices />} />
+            <Route path="/product-prices/*" element={<TaskRoute role={role}><ProductPrices role={role} /></TaskRoute>} />
             <Route path="/product-master-queue" element={<TaskRoute role={role}><ProductMasterQueue /></TaskRoute>} />
             <Route path="/order-periods" element={<SupplierOrderPeriods />} />
             <Route path="/inventory" element={<Navigate to="/stock-moves" replace />} />

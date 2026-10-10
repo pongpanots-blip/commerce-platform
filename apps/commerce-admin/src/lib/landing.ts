@@ -52,7 +52,10 @@ export function isRouteAllowed(roleRaw: string | null | undefined, path: string)
   if(pathname==='/planning/marketing-readiness'||pathname.startsWith('/planning/marketing-readiness/'))return role==='marketing';
   if(pathname==='/analysis/financial'||pathname.startsWith('/analysis/financial/'))return ['sales_manager','business_analyst'].includes(role);
   if (pathname === '/planning/profit-goals' || pathname.startsWith('/planning/profit-goals/')) return isRouteAllowed(role, '/reports/winback');
-  if (pathname === '/planning/pack-prices' || pathname.startsWith('/planning/pack-prices/')) return isRouteAllowed(role, '/j/marketing/competitor-prices');
+  if (pathname === '/planning/pack-prices' || pathname.startsWith('/planning/pack-prices/')) return ['marketing', 'business_analyst'].includes(role);
+  // The content task has its own reader and the existing MER / graphic product-update authority.
+  // This does not grant graphic access to the broader copied product detail or full edit form.
+  if (/^\/j\/product\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/content(?:\/|$)/i.test(pathname)) return ['merchandising', 'graphic'].includes(role);
   if (pathname === '/') return false;
   const task = /^\/tasks\/([^/]+)$/.exec(pathname);
   if (task) return SECTIONS.some(section => section.id === task[1] && !!sectionNavFor(role, section.id));

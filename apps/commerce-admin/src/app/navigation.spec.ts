@@ -105,14 +105,15 @@ describe('sidebar per role', () => {
 });
 
 describe('old menu → new menu', () => {
-  it('every old menu item has a new home, nothing new appears and the redesign widened no role', () => {
+  it('every old menu item has a home and only the reviewed role additions appear', () => {
     const mapping = legacyMapping();
     expect(mapping.map((m) => m.to).sort()).toEqual(LEGACY_ITEMS.map((e) => e.to).sort());
     for (const item of mapping) expect(NAV_ENTRIES.some(entry => entry.to === item.canonicalTo), item.to).toBe(true);
     for (const role of NON_ADMIN) {
       const before = legacyNavFor(role).flatMap((g) => g.links.map((l) => l.to)).filter((to) => !to.startsWith('/workspaces/'));
       const narrowed = role === 'marketing' ? ['/j/marketing/journey-funnel'] : [];
-      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual([...new Set(before.filter((to) => !narrowed.includes(to)).map(featureHome))].sort());
+      const reviewedAdditions = role === 'merchandising' ? ['/j/marketing/competitor-prices'] : role === 'business_analyst' ? ['/analysis/customer-behavior'] : [];
+      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual([...new Set([...before.filter((to) => !narrowed.includes(to)).map(featureHome), ...reviewedAdditions])].sort());
     }
   });
 
@@ -152,6 +153,10 @@ describe('routes', () => {
   it.each([
     ['/j/product/edit/7', '/j/allproducts'],
     ['/j/product/7', '/j/allproducts'],
+    ['/j/product/11111111-1111-4111-8111-111111111111/content', '/j/allproducts'],
+    ['/j/product/11111111-1111-4111-8111-111111111111/content/edit', '/j/allproducts'],
+    ['/j/product/11111111-1111-4111-8111-111111111111/content/review', '/j/allproducts'],
+    ['/j/product/11111111-1111-4111-8111-111111111111/content/requests/22222222-2222-4222-8222-222222222222', '/j/allproducts'],
     ['/j/product/create', '/j/allproducts'],
     ['/j/coupon/create', '/j/coupons'],
     ['/j/coupon/abc', '/j/coupons'],

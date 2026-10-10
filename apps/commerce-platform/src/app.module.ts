@@ -53,12 +53,14 @@ import { SearchModule } from './modules/platform/search/search.module';
 import { ScrapingModule } from './modules/platform/scraping/scraping.module';
 import { MarketingResearchModule } from './modules/platform/marketing-research/marketing-research.module';
 import { GrowthModule } from './modules/integration/growth/growth.module';
+import { GuidedAnalysisModule } from './modules/integration/guided-analysis/guided-analysis.module';
 import { WinbackModule } from './modules/integration/winback/winback.module';
 import { CompetitorPricesModule } from './modules/integration/competitor-prices/competitor-prices.module';
 import { CustomersModule } from './modules/integration/customers/customers.module';
 import { SegmentsModule } from './modules/integration/segments/segments.module';
 import { MarketingWorkflowModule } from './modules/integration/marketing-workflow/marketing-workflow.module';
 import { ProductPricesModule } from './modules/commerce/product-prices/product-prices.module';
+import { ProductEvidenceModule } from './modules/commerce/product-evidence/product-evidence.module';
 import { ProductContentsModule } from './modules/commerce/product-contents/product-contents.module';
 import { ProductCategoriesModule } from './modules/commerce/product-categories/product-categories.module';
 import { ProductMastersModule } from './modules/commerce/product-masters/product-masters.module';
@@ -123,10 +125,12 @@ import { McpModule } from './mcp/mcp.module';
     ScrapingModule,
     MarketingResearchModule,
     GrowthModule,
+    GuidedAnalysisModule,
     WinbackModule,
     CompetitorPricesModule,
     CustomersModule,
     ProductPricesModule,
+    ProductEvidenceModule,
     ProductContentsModule,
     ProductCategoriesModule,
     ProductMastersModule,

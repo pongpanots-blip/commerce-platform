@@ -9,8 +9,43 @@ import {
 
 export const COMPARISON_HOME = "/j/marketing/competitor-prices";
 export const COMPARISON_API = "/competitor-prices/workspace";
+export const canReadComparison = (role: string) =>
+  ["admin", "marketing", "business_analyst", "merchandising"].includes(role);
+/** Full source-management and planning authority stays with the original roles. */
 export const canChangeComparison = (role: string) =>
   ["admin", "marketing"].includes(role);
+export const COMPARISON_OPERATIONS = [
+  "reassign",
+  "review",
+  "settings",
+  "refresh",
+  "create",
+  "pack",
+  "verify",
+  "capture",
+  "remove",
+] as const;
+export type ComparisonOperation = (typeof COMPARISON_OPERATIONS)[number];
+/** Reference observations and match evidence never grant selling-price authority. */
+export function canPerformComparison(role: string, operation: string) {
+  if (!COMPARISON_OPERATIONS.some((value) => value === operation)) return false;
+  return (
+    canChangeComparison(role) ||
+    (role === "merchandising" && ["capture", "verify"].includes(operation))
+  );
+}
+/** Validate every operation, including retained packets from before a role change. */
+export function canApplyComparisonPacket(
+  role: string,
+  packet: Pick<ComparisonPacket, "commands">,
+) {
+  return (
+    packet.commands.length > 0 &&
+    packet.commands.every((command) =>
+      canPerformComparison(role, command.operation),
+    )
+  );
+}
 export const comparisonUuid = z.uuid().transform((v) => v.toLowerCase());
 const decimal = z
   .string()

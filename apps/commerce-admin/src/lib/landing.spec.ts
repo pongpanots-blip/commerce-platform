@@ -54,6 +54,20 @@ describe('role landing (commerce-admin)', () => {
 });
 
 describe('deep links', () => {
+  it('content inspect, edit, review and outcome links retain the existing product-update roles', () => {
+    const base = '/j/product/11111111-1111-4111-8111-111111111111/content';
+    for (const role of STAFF_ROLES) {
+      for (const suffix of ['', '/edit', '/review', '/requests/22222222-2222-4222-8222-222222222222']) {
+        const path = base + suffix;
+        const allowed = ['admin', 'merchandising', 'graphic'].includes(role);
+        expect(isRouteAllowed(role, path), `${role} ${path}`).toBe(allowed);
+        expect(resolvePostLoginPath(role, path)).toBe(allowed ? path : landingFor(role));
+      }
+    }
+    expect(isRouteAllowed('graphic', '/j/product/11111111-1111-4111-8111-111111111111')).toBe(false);
+    expect(isRouteAllowed('graphic', '/j/product/edit/11111111-1111-4111-8111-111111111111')).toBe(false);
+    expect(isRouteAllowed('graphic', '/j/product/not-a-product-id/content')).toBe(false);
+  });
   it.each([
     ['merchandising', '/products/123?tab=prices', '/products/123?tab=prices'],
     ['merchandising', '/stock-moves', '/stock-moves'],

@@ -31,7 +31,9 @@ import {
 } from './PromotionRulesLockedNotice';
 import AdminInsertLayout from '../../components/AdminInsertLayout';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
-import { session } from '../../../../lib/api';
+import { productPricesApi, session } from '../../../../lib/api';
+import { commerceText } from '../../../../app/commerce-copy';
+import { productContentAuthority, REVIEWED_PRODUCT_CONTENT_FIELDS } from '../../../libs/shared-api/lib/products/product-content-edit-policy';
 import {
   getTranslation,
   ProductMediaItem,
@@ -56,7 +58,7 @@ import {
 } from '../campain/promotion-mechanic.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { MasterDataSelect, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { ButtonLink, Loading, MasterDataSelect, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const MAX_IMAGES = 3;
 const NUTRITION_FORM_KEYS = new Set(['nutrition_basis', 'nutrition_items']);
 
@@ -65,6 +67,7 @@ const EditProduct = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [contentOwned, setContentOwned] = useState(false);
   const [loadError, setLoadError] = useState<unknown>(null);
   const [reload, setReload] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -147,14 +150,16 @@ const EditProduct = () => {
     Promise.all([
       getProductById(id, ADMIN_PRODUCT_READ),
       getProductCuisines(id),
+      productPricesApi.ownership(),
       // Admin-only endpoint (the public detail must not carry a mechanic name). A failure leaves the
       // tiers editable — the backend still answers 400 to promotion_rules for a mechanic-owned SKU.
       getProductPromotionLock(id).catch(() => null),
     ])
-      .then(([response, cuisines, lock]) => {
+      .then(([response, cuisines, currentOwnership, lock]) => {
         if (!active) return;
         const data = response.data;
         if (!data) { setLoadError(__uiMessage('ไม่พบสินค้านี้')); return; }
+        setContentOwned(productContentAuthority(currentOwnership));
 
         const translations = data.translations ?? [];
         const th = getTranslation(translations, 'th');
@@ -304,7 +309,7 @@ const EditProduct = () => {
 
   const handleSubmit = async () => {
     if (!id) return false;
-    if (!form.product_inventory_sku || !form.product_name_th || !form.product_name_en) {
+    if (!form.product_inventory_sku || (!contentOwned && (!form.product_name_th || !form.product_name_en))) {
       alert(__uiText("กรุณากรอก SKU และชื่อสินค้าทั้ง 2 ภาษา"));
       return false;
     }
@@ -329,6 +334,7 @@ const EditProduct = () => {
     const payload = new FormData();
     Object.entries(form).forEach(([key, value]) => {
       if (NUTRITION_FORM_KEYS.has(key)) return;
+      if (contentOwned && REVIEWED_PRODUCT_CONTENT_FIELDS.has(key)) return;
       payload.append(key, String(value ?? ''));
     });
     const nutrition = {
@@ -393,7 +399,7 @@ const EditProduct = () => {
 
   if (loadError) return <LoadError title={__uiText('แก้ไขสินค้า')} error={loadError} onRetry={() => { setLoadError(null); setLoading(true); setReload(value => value + 1); }} />;
   if (loading) {
-    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <Loading variant="form" />;
   }
 
   return (
@@ -551,6 +557,10 @@ const EditProduct = () => {
         )}
       </div>
 
+      {contentOwned ? <div className="cp-card">
+        <p>{commerceText('ชื่อ คำอธิบาย ส่วนประกอบ และสารก่อภูมิแพ้ ดูและแก้ไขได้ในงานเนื้อหาสินค้า', 'Inspect and edit names, descriptions, ingredients and allergens in the product content task.')}</p>
+        <ButtonLink to={id ? ADMIN_ROUTES.productContent(id) : ADMIN_ROUTES.products} icon="edit_note">{commerceText('แก้ไขเนื้อหาสินค้า', 'Edit product content')}</ButtonLink>
+      </div> : <>
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-700">{__uiText("ภาษาไทย")}</h3>
         <Input
@@ -578,8 +588,10 @@ const EditProduct = () => {
           onChange={(e) => handleInput('product_description_en', e.target.value)}
         />
       </div>
+      </>}
 
       <ProductDetailFormFields
+        contentManagedSeparately={contentOwned}
         values={{
           ingredients: form.ingredients,
           allergens: form.allergens,

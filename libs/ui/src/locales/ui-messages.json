@@ -25646,5 +25646,13 @@
   "ยังไม่มี — กดสร้าง workflow ใหม่": {
     "th": "ยังไม่มี — กดสร้าง workflow ใหม่",
     "en": "None yet — create a new workflow"
+  },
+  "เลือกเงื่อนไขกลุ่มลูกค้า ตรวจหลักฐาน และดูข้อจำกัดของข้อมูล": {
+    "th": "เลือกเงื่อนไขกลุ่มลูกค้า ตรวจหลักฐาน และดูข้อจำกัดของข้อมูล",
+    "en": "Choose customer criteria, inspect evidence and review data limits"
+  },
+  "วิเคราะห์พฤติกรรมลูกค้า": {
+    "th": "วิเคราะห์พฤติกรรมลูกค้า",
+    "en": "Analyze customer behavior"
   }
 }

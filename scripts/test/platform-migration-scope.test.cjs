@@ -74,6 +74,11 @@ test('frozen source, image tag and all sibling tags must match', () => {
     ['MIGRATION_SCOPE_ADMIN_TAG','DEPLOYED_TAG_CHANGED'], ['MIGRATION_SCOPE_PORTAL_TAG','DEPLOYED_TAG_CHANGED'], ['MIGRATION_SCOPE_PLATFORM_TAG','DEPLOYED_TAG_CHANGED']])
     assert.throws(() => gate.validateTarget(policy, { ...target(), [key]: 'different' }), { code });
 });
+test('after deploy the release\'s own platform tag is accepted without listing it; siblings still are not', () => {
+  const release = { ...policy, deployedTags: { ...policy.deployedTags, platform: policy.deployedTags.platform.filter(t => t !== policy.imageTag) } };
+  gate.validateTarget(release, { ...target(), MIGRATION_SCOPE_PLATFORM_TAG: policy.imageTag });
+  assert.throws(() => gate.validateTarget(release, { ...target(), MIGRATION_SCOPE_ADMIN_TAG: policy.imageTag + 'x' }), { code: 'DEPLOYED_TAG_CHANGED' });
+});
 test('unsafe initialization options cannot start a connection', async () => {
   for (const patch of [{ synchronize: true }, { migrationsRun: true }, { dropSchema: true }, { type: 'mysql' }]) {
     const db = database({ options: { type: 'postgres', ...patch } });

@@ -242,3 +242,14 @@ export function PaginationControls({
     </nav>
   );
 }
+
+/** Download rows as an Excel-friendly CSV (UTF-8 BOM, every cell quoted). `columns` picks and orders the fields. */
+export function downloadCsv<T extends Record<string, unknown>>(rows: T[], columns: { key: string; label?: string }[], filename: string) {
+  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = [columns.map((c) => esc(c.label ?? c.key)).join(','), ...rows.map((r) => columns.map((c) => esc(r[c.key])).join(','))];
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' }));
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}

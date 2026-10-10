@@ -43,6 +43,7 @@
     "Authoritative effective cost/COGS, selling-unit stock mapping, capacity, upstream freshness and customer checkout priority/stacking assembly remain missing; this is an incomplete proposal tool, not a profit guarantee or activation flow.",
     "Order source change times, complete shipment/business deadlines and additional authoritative milestones remain unavailable; review findings require humans and do not repair orders.",
     "The draft migration is not applied to production. Production migration/deployment/integration are outside this authorization.",
-    "Today inbox, MER comparison/ACL resolution, pack-and-price planning, profit tools, sales/readiness/OCR and BA integration remain separate queue items. No additional queue work was started in this slice."
-  ]
+    "Today inbox, MER comparison/ACL resolution, pack-and-price planning, profit tools, sales/readiness and BA integration remain separate queue items. No additional queue work was started in this slice."
+  ],
+  "scopeCancellation": "OCR purchase orders into cart was cancelled explicitly by the user and is absent from the current future queue. See commerce-workflow-backlog.json; existing code is unchanged."
 }

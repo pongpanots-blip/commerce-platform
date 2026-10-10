@@ -58,6 +58,7 @@
     "No authoritative unified assignment or due-date contract. Unknown assignment/freshness remains visible; no persistent inbox actions are supported.",
     "CS sees returned sample requests rather than an aggregate service-workload total. Graphic queue aggregates remain unavailable. Sales summary does not provide individual due-today tasks.",
     "The inbox is a bounded read of existing sources, not a complete workload registry. Missing work cannot establish no work, and summary signals require inspection in their canonical feature.",
-    "Today does not change the previously documented promotion cost/stock/capacity/freshness gaps or order milestone gaps. MER comparison/ACL, pack-and-price, profit, sales/readiness/OCR and BA live integration remain queued. No further slice starts automatically."
-  ]
+    "Today does not change the previously documented promotion cost/stock/capacity/freshness gaps or order milestone gaps. MER comparison/ACL, pack-and-price, profit, sales/readiness and BA live integration remain queued. No further slice starts automatically."
+  ],
+  "scopeCancellation": "OCR purchase orders into cart was cancelled explicitly by the user and is absent from the current future queue. See commerce-workflow-backlog.json; existing code is unchanged."
 }

@@ -11,8 +11,7 @@
       "Pack-and-price planning and durable evidence selection",
       "Competitor observation history/basis extensions",
       "Objectives definitions and persistence",
-      "Sales reviewed reorder/follow-up drafts",
-      "OCR matching-to-cart review"
+      "Sales reviewed reorder/follow-up drafts"
     ],
     "upstreamData": [
       "Authoritative effective COGS/cost history",
@@ -108,5 +107,6 @@
     "productionMigrations": 0,
     "productionReadsOrWrites": 0
   },
-  "proposalUiHandoff": "docs/commerce-proposal-ui-contracts.json"
+  "proposalUiHandoff": "docs/commerce-proposal-ui-contracts.json",
+  "scopeCancellation": "OCR purchase orders into cart was cancelled explicitly by the user. No OCR-to-cart contract or implementation is queued. Current bounded financial work is documented in commerce-financial-analysis-contracts.json."
 }

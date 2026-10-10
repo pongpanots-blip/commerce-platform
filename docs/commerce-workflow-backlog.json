@@ -134,7 +134,7 @@
     {
       "priority": 5,
       "task": "Marketing readiness and BA variance drilldown",
-      "status": "Bounded single-SKU Marketing readiness evidence and private brief implemented under original catalog roles. Known recorded blockers plus unverified freshness/ATP/stock age/cost/spend/attribution visible; no readiness-to-activate or ROAS claim. BA financial variance/source integration remains queued.",
+      "status": "Accepted Marketing single-SKU readiness/private brief remains unchanged. Bounded BA recorded financial coverage/variance and source-record drilldown implemented, GET-only admin/manager/BA. Accounting net sales/COGS/expenses/completeness remain unavailable; no actual profit/ROAS/attainment, assignment or outbound actions.",
       "dependencies": [
         "Stock/age/cost coverage definitions",
         "Attribution/spend currently unavailable",
@@ -142,7 +142,7 @@
       ],
       "acceptance": [
         "Show campaign blockers and evidence, not invented ROAS or profit.",
-        "BA variance drills into actual underlying records and authorized assignment routes.",
+        "BA recorded variance links eligible source order/refund records and explicit coverage reasons; no causal explanation or assignment action without established evidence/access.",
         "No campaign activation or ACL expansion."
       ],
       "implementedContracts": "docs/commerce-commercial-work-contracts.json",
@@ -150,21 +150,7 @@
         "Multi-product campaign readiness and time/budget rules",
         "Confirmed inventory/stock-age/effective-cost/attribution/spend contracts",
         "Existing live campaign orchestration remains outside this pass",
-        "BA authoritative net revenue ex VAT, effective COGS/expenses and record-level variance source contracts remain the next priority; preserve GET-only."
-      ]
-    },
-    {
-      "priority": 6,
-      "task": "OCR purchase order to reviewed cart",
-      "status": "Queued after matching readiness",
-      "dependencies": [
-        "Reliable product matching and human review",
-        "Customer scope, UOM, price and cart contracts"
-      ],
-      "acceptance": [
-        "Low-confidence OCR/matches require review.",
-        "A reviewed draft cart precedes any existing order action.",
-        "No automatic order submission or price activation."
+        "Confirm BA accounting net revenue ex VAT/linked return recognition, effective COGS/UOM/currency, expenses and completeness watermarks before actual profit/target variance. Recorded header/refund coverage/variance is implemented; preserve GET-only."
       ]
     }
   ],
@@ -188,5 +174,14 @@
       "Protected welcome changes"
     ],
     "notCompletionClaim": "This is an analytics foundation with synthetic previews, not a completed analytics platform."
+  },
+  "capturedAt": "2026-10-10T01:16:03.479738+00:00",
+  "cancelledScope": {
+    "task": "OCR purchase orders into cart",
+    "status": "Cancelled explicitly by user. Removed from future implementation queue; no OCR-to-cart work or unrelated deletion."
+  },
+  "financialSourceCoverage": {
+    "contracts": "docs/commerce-financial-analysis-contracts.json",
+    "state": "Bounded recorded source coverage/variance implemented; actual accounting/goal integration pending required source contracts."
   }
 }

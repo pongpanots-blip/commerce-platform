@@ -8,7 +8,7 @@ describe('canonical task indexes', () => {
     const original = navFor(role).filter(group => group.group).flatMap(group => group.links.filter(link => role !== 'admin' || link.to !== '/reports/winback/my').map(link => link.to));
     const indexes = taskSectionsFor(role);
     const destinations = indexes.flatMap(section => section.links.map(link => link.to));
-    expect(destinations.sort()).toEqual([...original, ...(['admin','sale','sales_manager'].includes(role)?['/planning/sales-work']:[]), ...(['admin','marketing'].includes(role)?['/planning/marketing-readiness']:[]), ...(['admin', 'sales_manager', 'business_analyst'].includes(role) ? ['/planning/profit-goals'] : []), ...(['admin', 'marketing', 'business_analyst'].includes(role) ? ['/planning/pack-prices'] : []), ...(role === 'admin' ? ['/planning/promotions', '/review/orders'] : [])].sort());
+    expect(destinations.sort()).toEqual([...original, ...(['admin','sale','sales_manager'].includes(role)?['/planning/sales-work']:[]), ...(['admin','marketing'].includes(role)?['/planning/marketing-readiness']:[]), ...(['admin', 'sales_manager', 'business_analyst'].includes(role) ? ['/planning/profit-goals','/analysis/financial'] : []), ...(['admin', 'marketing', 'business_analyst'].includes(role) ? ['/planning/pack-prices'] : []), ...(role === 'admin' ? ['/planning/promotions', '/review/orders'] : [])].sort());
     expect(new Set(destinations).size).toBe(destinations.length);
     const sidebar = taskSidebarFor(role).flatMap(group => group.links);
     expect(new Set(sidebar.map(link => link.to)).size).toBe(sidebar.length);
@@ -61,3 +61,5 @@ describe('canonical task indexes', () => {
 });
 
 it.each(roles)('%s has one canonical commercial task home and preserves action deep links',role=>{for(const [home,allowed] of [['/planning/sales-work',['admin','sale','sales_manager']],['/planning/marketing-readiness',['admin','marketing']]] as const){expect(taskFeatureNavFor(role).flatMap(g=>g.links).filter(l=>l.to===home)).toHaveLength(allowed.includes(role as never)?1:0);expect(isRouteAllowed(role,home+'/new/review')).toBe(allowed.includes(role as never));expect(isRouteAllowed(role,home+'/requests/00000000-0000-4000-8000-000000000099')).toBe(allowed.includes(role as never));}});
+
+it.each(roles)('%s has one scoped financial entry with navigable period/evidence URLs',role=>{const allowed=['admin','sales_manager','business_analyst'].includes(role);expect(taskFeatureNavFor(role).flatMap(g=>g.links).filter(l=>l.to==='/analysis/financial')).toHaveLength(allowed?1:0);for(const action of ['period','coverage','variance','months/2026-09/orders/00000000-0000-4000-8000-000000000001'])expect(isRouteAllowed(role,'/analysis/financial/'+action+'?month=2026-09&compare=2026-08&timezone=UTC')).toBe(allowed);});

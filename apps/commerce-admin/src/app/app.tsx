@@ -75,6 +75,7 @@ const OrderReviewWorkspace = lazy(() => import('./pages/planning/OrderReviewWork
 const TodayInbox = lazy(() => import('./pages/today/TodayInbox'));
 const SalesWorkWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlanningWorkspace').then(m=>({default:m.SalesWorkWorkspace})));
 const MarketingReadinessWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlanningWorkspace').then(m=>({default:m.MarketingReadinessWorkspace})));
+const FinancialAnalysisWorkspace=lazy(()=>import('./pages/financial-analysis/FinancialAnalysisWorkspace'));
 const GoalPlanningWorkspace = lazy(() => import('./pages/financial-goals/GoalPlanningWorkspace'));
 const PackPlanningWorkspace = lazy(() => import('./pages/pack-price/PackPlanningWorkspace'));
 
@@ -193,6 +194,7 @@ export function App() {
             <Route path="/today" element={<Suspense fallback={<Loading variant="table" />}><TodayInbox role={role} /></Suspense>} />
             <Route path="/planning/sales-work/*" element={<Suspense fallback={<Loading variant="detail" />}><SalesWorkWorkspace role={role}/></Suspense>}/>
             <Route path="/planning/marketing-readiness/*" element={<Suspense fallback={<Loading variant="detail" />}><MarketingReadinessWorkspace role={role}/></Suspense>}/>
+            <Route path="/analysis/financial/*" element={<Suspense fallback={<Loading variant="detail" />}><FinancialAnalysisWorkspace role={role}/></Suspense>}/>
             <Route path="/planning/profit-goals/*" element={<Suspense fallback={<Loading variant="detail" />}><GoalPlanningWorkspace role={role} /></Suspense>} />
             <Route path="/planning/pack-prices/*" element={<Suspense fallback={<Loading variant="detail" />}><PackPlanningWorkspace role={role} /></Suspense>} />
             <Route path="/tasks/:sectionId" element={<TaskSection role={role} />} />

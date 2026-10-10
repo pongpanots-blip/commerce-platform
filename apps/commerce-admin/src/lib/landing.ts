@@ -50,6 +50,7 @@ export function isRouteAllowed(roleRaw: string | null | undefined, path: string)
   if (pathname === '/today') return isRouteAllowed(role, '/home');
   if(pathname==='/planning/sales-work'||pathname.startsWith('/planning/sales-work/'))return ['sale','sales_manager'].includes(role);
   if(pathname==='/planning/marketing-readiness'||pathname.startsWith('/planning/marketing-readiness/'))return role==='marketing';
+  if(pathname==='/analysis/financial'||pathname.startsWith('/analysis/financial/'))return ['sales_manager','business_analyst'].includes(role);
   if (pathname === '/planning/profit-goals' || pathname.startsWith('/planning/profit-goals/')) return isRouteAllowed(role, '/reports/winback');
   if (pathname === '/planning/pack-prices' || pathname.startsWith('/planning/pack-prices/')) return isRouteAllowed(role, '/j/marketing/competitor-prices');
   if (pathname === '/') return false;

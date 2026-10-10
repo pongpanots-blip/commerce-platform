@@ -326,3 +326,13 @@ logic กราฟ (insert, ต่อ / ตัดเส้น, ลบ step แ�
 - **end-to-end (staging แล้ว prod):** workflow scheduled → split → Email (template ทดสอบ) / Webhook (request bin) →
   "รันทดสอบ" กับ tester ที่อีเมลคือ **pongpanot_s@jagota.co.th** · ตรวจว่าเมลมาถึง, webhook มาถึงพร้อม header ที่แทนค่า secret
   แล้ว, ผลขึ้นในแท็บผลลัพธ์
+
+## 10. Implementation notes (2026-10-10, ต่างจาก spec ข้างบน)
+
+- `marketing.grant_coupon` ส่งแค่ `{ userId, couponId }` — josh grant idempotent ต่อ coupon + user อยู่แล้ว และ controller กันซ้ำด้วย `x-delivery-id` จึงไม่มี idempotencyKey
+- ตอนรัน engine ตรวจแค่ scheme ของ URL — การตรวจ SSRF แบบ resolve DNS ทำตอนบันทึก/activate (URL ที่ไม่มีตัวแปร) และตอนส่ง (worker) เพื่อไม่ถือ row lock ระหว่างรอ DNS
+- Enrollments แสดงในแท็บ "ผลลัพธ์" ไม่แยกแท็บ
+- เพิ่มคอลัมน์ `is_test`, `skip_waits` (enrollment) และ `last_scheduled_key` (workflow) สำหรับรันทดสอบและ scheduled ที่ทำต่อหลัง crash
+- marketing webhook ใช้คิว/worker ของตัวเอง (`marketing-webhook`) แทน worker ของ subscription เดิม — worker เดิมข้ามแถว `kind = 'marketing'`; แถวยังอยู่ใน `webhook_deliveries` จึงขึ้นใน MCP `webhook_failures` ได้ (delivery monitor ไม่เห็นเพราะ join subscription)
+- josh: `CommerceErpEventsController` รับ service ใหม่แบบ `@Optional()` + `ownedMarketing()` (ไม่ได้ wire → 5xx ให้ commerce retry) เพราะ parameter ตัวท้ายเป็น optional ทั้งหมด
+- วางการ์ดบนการ์ดที่ทุกทางออกมีปลายทางแล้ว → แทรกที่ทางออกแรก (ปลายทางเดิมต่อท้าย step ใหม่) แทน popover ให้เลือกทางออก

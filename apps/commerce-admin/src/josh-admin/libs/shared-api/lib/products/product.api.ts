@@ -1,7 +1,8 @@
 import { Product } from '@josh/shared-models';
 import { apiClient, viaCommerceAction } from '../api-client/api-client';
 import { ownership } from '../api-client/commerce-client';
-import { productImagesApi, request, session } from '../../../../../lib/api';
+import { productImagesApi, productPricesApi, request, session } from '../../../../../lib/api';
+import { legacyProductFields, productContentAuthority } from './product-content-edit-policy';
 import { galleryWithout, graphicImageCalls, skuImageName } from './graphic-image-save';
 import type {
   FilterGroup,
@@ -213,7 +214,10 @@ export const createProduct = async (data: FormData): Promise<any> => {
 const GRAPHIC_DROP = ['buying_price', 'low_stock_threshold', 'reorder_quantity', 'selling_unit_price', 'product_status', 'original_price', 'ordering_price', 'product_inventory_quantity', 'promotion_rules'];
 
 export const updateProduct = async (id: string, data: FormData): Promise<any> => {
-  const { fields, images, removed } = splitProductForm(data);
+  const split = splitProductForm(data);
+  // Read the current authority at dispatch. A failed read must not assume Josh ownership.
+  const fields = legacyProductFields(split.fields, productContentAuthority(await productPricesApi.ownership()));
+  const { images, removed } = split;
   const sku = fields.product_inventory_sku;
   delete fields.product_inventory_sku; // identity from the ERP — read-only in commerce's form
   const graphic = session.claims()?.role === 'graphic';

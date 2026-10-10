@@ -273,7 +273,7 @@ async function screen(page, name) {
     ),
     "Page should fit viewport",
   );
-  await page.screenshot({ path: output + "/" + name + ".png", fullPage: true });
+  // Screenshot capture is disabled by the user's instruction. Keep layout assertions.
 }
 try {
   {
@@ -596,11 +596,7 @@ try {
     .at(-1);
   if (page && !page.isClosed()) {
     try {
-      await page.screenshot({
-        path: output + "/failure.png",
-        fullPage: true,
-        timeout: 5000,
-      });
+      // Preserve text diagnostics without generating screenshots.
       writeFileSync(output + "/failure-dom.html", await page.content());
       writeFileSync(
         output + "/failure-state.json",
@@ -623,6 +619,7 @@ try {
         fixtureMode: "intercepted-local-UI",
         productionRequests: 0,
         realBackendWrites: 0,
+        screenshotsCaptured: 0,
       },
       null,
       2,

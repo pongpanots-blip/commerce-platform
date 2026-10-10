@@ -19,6 +19,7 @@ export type ProductDetailFormValues = {
 };
 
 type Props = {
+  contentManagedSeparately?: boolean;
   values: ProductDetailFormValues;
   onChange: <K extends keyof ProductDetailFormValues>(
     name: K,
@@ -35,7 +36,7 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function ProductDetailFormFields({ values, onChange }: Props) {
+export function ProductDetailFormFields({ values, onChange, contentManagedSeparately = false }: Props) {
   __useUiLocale();
   const updateItem = (index: number, patch: Partial<NutritionItemRow>) => {
     onChange(
@@ -64,6 +65,7 @@ export function ProductDetailFormFields({ values, onChange }: Props) {
     <>
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-700">{__uiText("รายละเอียดสินค้า")}</h3>
+        {!contentManagedSeparately && <>
         <label className="block">
           <FieldLabel>{__uiText("ส่วนประกอบ")}</FieldLabel>
           <textarea
@@ -84,6 +86,7 @@ export function ProductDetailFormFields({ values, onChange }: Props) {
             placeholder={__uiText("สารก่อภูมิแพ้")}
           />
         </label>
+        </>}
         <label className="block">
           <FieldLabel>{__uiText("ข้อมูลวันหมดอายุ")}</FieldLabel>
           <textarea

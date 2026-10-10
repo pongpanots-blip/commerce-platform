@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom';
 import { session } from '../../../../lib/auth';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { catalogSellingPrice } from './catalog-price';
+import { commerceText } from '../../../../app/commerce-copy';
 import {
   PRODUCT_STATUS_OPTIONS,
   normalizeProductStatus,
@@ -68,6 +69,7 @@ export default function AllProduct() {
     role ?? '',
   );
   const canOpen = role !== 'graphic';
+  const canEditContent = ['admin', 'merchandising', 'graphic'].includes(role ?? '');
   const [sortKey, setSortKey] = useState('');
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('ASC');
   const [page, setPage] = useState(1);
@@ -297,6 +299,15 @@ export default function AllProduct() {
   );
   const actions = (row: any) => (
     <div className="cp-catalog-actions">
+      {canEditContent && (
+        <ButtonLink
+          to={ADMIN_ROUTES.productContent(row.product_inventory_id)}
+          variant="ghost"
+          icon="edit_note"
+        >
+          {commerceText('แก้ไขเนื้อหาสินค้า', 'Edit product content')}
+        </ButtonLink>
+      )}
       {canOpen && (
         <ButtonLink
           to={ADMIN_ROUTES.productDetail(row.product_inventory_id)}

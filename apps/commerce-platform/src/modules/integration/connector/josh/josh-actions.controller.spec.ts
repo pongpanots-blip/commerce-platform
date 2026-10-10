@@ -61,6 +61,30 @@ describe('JoshActionsController — back-office actions', () => {
     expect(josh.run).toHaveBeenLastCalledWith('products', 'update', { id: ID, fields: { product_description_en: 'sauce' } }, expect.anything(), 'admin');
   });
 
+  it('reviewed content dispatch uses server identity and bypasses every legacy mixed-domain writer', async () => {
+    const editor = { saveFromProductUpdate: jest.fn(async () => ({ outcome: 'saved' })) };
+    const get = jest.fn((cls: { name: string }) => {
+      if (cls.name === 'ProductContentEditorService') return editor;
+      throw new Error(`Unexpected legacy dependency: ${cls.name}`);
+    });
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get } as never, {} as never);
+    const body = { fields: { product_name_en: 'Sauce' }, contentEdit: { sku: 'SKU-1', version: 'v', requestId: ID } };
+    for (const role of ['admin', 'merchandising', 'graphic']) {
+      await expect(ctl.updateProduct(ID, body, { staff: { userId: `server-${role}`, role } } as never)).resolves.toEqual({ outcome: 'saved' });
+      expect(editor.saveFromProductUpdate).toHaveBeenLastCalledWith(ID, body, `server-${role}`);
+    }
+    expect(josh.run).not.toHaveBeenCalled();
+    expect(catalog.syncId).not.toHaveBeenCalled();
+  });
+
+  it('an invalid opt-in envelope cannot fall back to the legacy update path', async () => {
+    const editor = { saveFromProductUpdate: jest.fn(async () => { throw new Error('Invalid content edit'); }) };
+    const ctl = new JoshActionsController(josh as never, catalog as never, { get: () => editor } as never, {} as never);
+    await expect(ctl.updateProduct(ID, { fields: { selling_unit_price: 1 }, contentEdit: null }, req)).rejects.toThrow('Invalid content edit');
+    expect(josh.run).not.toHaveBeenCalled();
+    expect(catalog.syncId).not.toHaveBeenCalled();
+  });
+
   it('product update sends the fields to josh, then refreshes the catalog copy', async () => {
     await c.updateProduct(ID, { fields: { product_name_th: 'ซอส' } }, req);
     expect(josh.run).toHaveBeenCalledWith('products', 'update', { id: ID, fields: { product_name_th: 'ซอส' } }, { userId: 'staff-1', email: 'ba@jagota.co.th' }, 'admin');

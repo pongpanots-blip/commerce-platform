@@ -153,6 +153,10 @@ describe('routes', () => {
   it.each([
     ['/j/product/edit/7', '/j/allproducts'],
     ['/j/product/7', '/j/allproducts'],
+    ['/j/product/11111111-1111-4111-8111-111111111111/content', '/j/allproducts'],
+    ['/j/product/11111111-1111-4111-8111-111111111111/content/edit', '/j/allproducts'],
+    ['/j/product/11111111-1111-4111-8111-111111111111/content/review', '/j/allproducts'],
+    ['/j/product/11111111-1111-4111-8111-111111111111/content/requests/22222222-2222-4222-8222-222222222222', '/j/allproducts'],
     ['/j/product/create', '/j/allproducts'],
     ['/j/coupon/create', '/j/coupons'],
     ['/j/coupon/abc', '/j/coupons'],

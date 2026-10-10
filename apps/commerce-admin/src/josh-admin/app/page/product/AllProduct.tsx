@@ -3,7 +3,7 @@ import {
   getAdminProducts,
   rejectErpPending,
 } from '@josh/shared-api';
-import { Table, TableColumn } from '@josh/shared-ui-web';
+import { Table, TableColumn, TableViewBar, useTableViews } from '@josh/shared-ui-web';
 import {
   Button,
   ButtonLink,
@@ -386,6 +386,13 @@ export default function AllProduct() {
       render: (_, row) => actions(row),
     },
   ];
+  const views = useTableViews('j-allproducts', { filter, status, sortKey, sortOrder }, (v) => {
+    setFilter(v.filter ?? '');
+    setStatus(v.status ?? 'active');
+    setSortKey(v.sortKey ?? '');
+    setSortOrder(v.sortOrder ?? 'ASC');
+    resetView();
+  });
   return (
     <div className="cp-management-page cp-catalog-page">
       <PageHeader
@@ -426,6 +433,7 @@ export default function AllProduct() {
           </>
         }
       />
+      <TableViewBar views={views} columns={columns} />
       <div className="cp-catalog-toolbar">
         <div className="cp-catalog-filter-top">
           <div className="cp-catalog-search">
@@ -584,6 +592,7 @@ export default function AllProduct() {
           data={rows}
           loading={isFetching}
           idKey="product_inventory_id"
+          hiddenKeys={views.hidden}
           currentPage={data?.page ?? page}
           totalPages={Math.ceil(total / LIMIT) || 1}
           totalItems={total}

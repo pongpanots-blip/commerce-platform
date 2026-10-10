@@ -1,6 +1,6 @@
 {
-  "capturedAt": "2026-10-10T03:08:50.965Z",
-  "headAtStart": "0a4f929f5ea0d9a164ebbd44bbc8b6f45cf60a00",
+  "capturedAt": "2026-10-10T04:02:48.205596+00:00",
+  "headAtStart": "e5849b25e1ad9c2daaa89da086a6ec073612e325",
   "method": "TypeScript JSX Route literal inventory; wildcard workspaces expand action paths internally; not a tested-page count",
   "counts": {
     "raw": 195,
@@ -209,9 +209,9 @@
     },
     {
       "file": "apps/commerce-admin/src/app/app.tsx",
-      "path": "/cs/sales-assignment",
+      "path": "/cs/sales-assignment/*",
       "normalized": "/cs/sales-assignment",
-      "status": "retained route; page-level redesign not claimed",
+      "status": "bounded native assignment selection/review/request recovery implemented; internal action URLs documented in docs/commerce-sales-assignment-contracts.json",
       "line": 221
     },
     {

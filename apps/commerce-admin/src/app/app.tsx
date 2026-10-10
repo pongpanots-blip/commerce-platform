@@ -218,7 +218,7 @@ export function App() {
             <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />
             <Route path="/reports/products/:id" element={<JoshProductDetail />} />
-            <Route path="/cs/sales-assignment" element={<SalesAssignment />} />
+            <Route path="/cs/sales-assignment/*" element={<SalesAssignment role={role} />} />
             <Route path="/reports/winback/opportunities/*" element={<MyWinback role={role} />} />
             <Route path="/reports/winback/my/*" element={<MyWinback role={role} />} />
             <Route path="/reports/sales" element={<SalesReport />} />

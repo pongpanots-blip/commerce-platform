@@ -1,0 +1,105 @@
+{
+  "capturedAt": "2026-10-10T04:02:48.205596+00:00",
+  "acceptedParent": "e5849b25e1ad9c2daaa89da086a6ec073612e325",
+  "scope": "Bounded existing sales assignment UI and additive compatible backend. Development checkpoint only; not a whole-app redesign.",
+  "canonicalHome": "/cs/sales-assignment",
+  "instructions": "docs/design/stitch/task-ui-2026-10-08/DESIGN.md; shared @cp/ui task controls; protected welcome and accepted slices preserved.",
+  "featureMapping": [
+    {
+      "before": "/cs/sales-assignment: search, one-company local selection and immediate PATCH save",
+      "after": "/cs/sales-assignment and /assign: scoped native company search, explicit 1–20 company selection, eligible roster and local selection recovery"
+    },
+    {
+      "before": "Save without a separately navigable review",
+      "after": "/cs/sales-assignment/assign/review?companies=<ids>&owner=<id|clear>: current native owners, imported account scope and explicit confirmation before dispatch"
+    },
+    {
+      "before": "Any resolved HTTP save treated as assignment success",
+      "after": "/cs/sales-assignment/requests/:uuid: owner-private immutable committed receipt; only matched complete persistence produces success count"
+    },
+    {
+      "before": "PATCH /cs-admin/sales-assignment and GET /cs-admin/sales-reps",
+      "after": "Preserved payload/response, permission and original ownership/eligibility/business rules. Legacy single-company writer joins the shared company advisory lock. Existing legacy controls remain available."
+    }
+  ],
+  "api": {
+    "prefix": "/cs-admin/assignment-workspace",
+    "GET": [
+      "/companies?search=<query>",
+      "/requests/:uuid"
+    ],
+    "POST": [
+      "/review",
+      "/actions"
+    ],
+    "readModel": "Company names/IDs from original JoshCustomers narrow reader; current owner/version from Commerce company_sales_reps. Counts reflect nondeleted imported customer copies, with upstream freshness explicitly unverified.",
+    "saveModel": "Strict immutable request UUID + nullable new rep + unique company IDs/reviewed SHA256 versions; 1–20 companies; owner derived only from authenticated staff. UUIDs canonicalized before uniqueness and locking."
+  },
+  "permissions": {
+    "readReviewSave": [
+      "admin",
+      "sales_manager"
+    ],
+    "alias": "sale_manager normalizes through the original active DB StaffAuthGuard",
+    "denied": [
+      "sale",
+      "business_analyst",
+      "marketing",
+      "merchandising",
+      "cs",
+      "graphic"
+    ],
+    "ownership": "New review/save requires COMMERCE_OWNS_SALES_REPS exactly true. Committed original requests remain readable/replayable under original authorized roles after source/ownership changes.",
+    "eligibleOwner": "Original staffRosterSql sale/sales/manager rules, active Commerce roster and unlinked active internal Josh roster; null clears. No permission grants or roster expansion."
+  },
+  "invariants": [
+    "Company must exist in native assignment import or nondeleted customer copy, as in the original service. Original narrow replica confirms selected company identity.",
+    "Recorded same-owner companies remain visible with previous/new owner evidence during review and disable confirmation; the save independently rejects them rather than manufacturing completed assignments. An absent Commerce row is labeled explicitly and never presented as verified upstream unassigned ownership.",
+    "Every selected native version and customer-copy scope is revalidated under sorted company locks before any assignment.",
+    "Any invalid/stale member, unavailable source, event insert failure or receipt persistence failure rolls the entire batch back.",
+    "Native company assignments, original company.sales_rep transactional outbox events and durable receipt commit together. Outbox delivery is explicitly unverified.",
+    "Same actor/request/body returns original persisted receipt without repeating assignments/events. Different packet or cross-kind request collision conflicts.",
+    "Actor-private recovery does not infer save success from current owner equality, counters, generic responses or a missing receipt.",
+    "Immutable owner-scoped local recovery journal is verified before dispatch; storage failure prevents sending. Repeated clicks are synchronously locked.",
+    "Known absent receipt plus matching current review permits only explicitly confirmed original retry. Stale/ineligible evidence blocks retry. Known rejected requests can return to fresh selection after confirmed receipt absence.",
+    "Cancellation/back navigation does not dispatch; a late response cannot redirect a newer navigation. Already dispatched operations are reconciled through their original request."
+  ],
+  "interactionStates": [
+    "Accessible labels and explicit company scope, previous/new owner and imported customer count",
+    "Shared task controls, inline errors and selected-scope feedback",
+    "Skeleton/read failure/retry/empty/filter-empty states",
+    "Fluid mobile controls, wrapping identities and locale-aware Thai/English copy",
+    "Success count only from complete authoritative committed receipt; previous receipt is historical rather than current owner proof"
+  ],
+  "productionWritesExecuted": false,
+  "migrationExecuted": false,
+  "screenshotsCaptured": 0,
+  "externalReview": {
+    "claude": "Did not start on Dot: no installation; official installer returned 403. No proposal produced or integrated. No authentication attempted in this executor."
+  },
+  "remainingDependencies": [
+    "Production availability/permissions of existing company_sales_reps, customer copies, staff roster/link tables, outbox and private request storage remain unverified. No production connection or application migration was used.",
+    "Company identities and imported customer account counts depend on existing copies/read replica; upstream freshness is not established. A committed native receipt does not prove downstream Josh delivery.",
+    "Request journal uses existing private draft storage with a customer_assignment discriminator. Production retention, indexing and throughput budgets need approved follow-up.",
+    "Review intentionally caps at 20 selected companies. Full-catalog selection, bulk-all-filtered assignment, reassignment of separate winback opportunity owners, branch ownership, notifications and permissions changes are outside this slice.",
+    "Other legacy menus and pages remain in the route inventory. This checkpoint does not complete the overall navigation redesign."
+  ],
+  "verificationEvidence": "/workspace/commerce-ui-audit-20261009/assignment-verification.json",
+  "validation": {
+    "finalAutomatedChecks": 1041,
+    "frontendChecks": 479,
+    "backendChecks": 562,
+    "ownedSqlChecks": 71,
+    "newAssignmentSqlChecks": 22,
+    "builtBrowserChecksAndViews": 115,
+    "nativeAssignmentBrowserChecks": 30,
+    "retainedProtectedBrowserViews": 85,
+    "protectedWelcomeViews": 20,
+    "bothTypechecks": true,
+    "bothBuilds": true,
+    "productionAccess": false,
+    "applicationMigrations": false,
+    "screenshots": 0,
+    "authenticationBoundary": "Browser identity transport is synthetic; native SQL/domain/controller/outbox persistence is real in isolated owned namespaces. HTTP checks use original StaffAuthGuard with a synthetic active-user repository. Not production/full-real-auth E2E."
+  }
+}

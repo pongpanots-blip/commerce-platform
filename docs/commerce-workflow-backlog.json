@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-10T03:06:39.649663+00:00",
+  "updatedAt": "2026-10-10T04:14:50.365560+00:00",
   "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
   "designGuidance": {
     "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
@@ -182,6 +182,32 @@
         "Existing live campaign orchestration remains outside this pass",
         "Confirm BA accounting net revenue ex VAT/linked return recognition, effective COGS/UOM/currency, expenses and completeness watermarks before actual profit/target variance. Recorded header/refund coverage/variance is implemented; preserve GET-only."
       ]
+    },
+    {
+      "priority": 6,
+      "task": "Review and recover customer sales assignments",
+      "status": "Bounded /cs/sales-assignment selection/review/request recovery verified locally: native CAS, all-or-none assignments and original outbox persistence; 1,041 selected automated checks and 115 current-build browser checks/views passed. Production and whole-app scope remain excluded.",
+      "contract": "docs/commerce-sales-assignment-contracts.json",
+      "dependencies": [
+        "Production availability/permissions of existing company_sales_reps, customer copies, staff roster/link tables, outbox and private request storage remain unverified. No production connection or application migration was used.",
+        "Company identities and imported customer account counts depend on existing copies/read replica; upstream freshness is not established. A committed native receipt does not prove downstream Josh delivery.",
+        "Request journal uses existing private draft storage with a customer_assignment discriminator. Production retention, indexing and throughput budgets need approved follow-up.",
+        "Review intentionally caps at 20 selected companies. Full-catalog selection, bulk-all-filtered assignment, reassignment of separate winback opportunity owners, branch ownership, notifications and permissions changes are outside this slice.",
+        "Other legacy menus and pages remain in the route inventory. This checkpoint does not complete the overall navigation redesign."
+      ],
+      "acceptance": [
+        "Company must exist in native assignment import or nondeleted customer copy, as in the original service. Original narrow replica confirms selected company identity.",
+        "Recorded same-owner companies remain visible with previous/new owner evidence during review and disable confirmation; the save independently rejects them rather than manufacturing completed assignments. An absent Commerce row is labeled explicitly and never presented as verified upstream unassigned ownership.",
+        "Every selected native version and customer-copy scope is revalidated under sorted company locks before any assignment.",
+        "Any invalid/stale member, unavailable source, event insert failure or receipt persistence failure rolls the entire batch back.",
+        "Native company assignments, original company.sales_rep transactional outbox events and durable receipt commit together. Outbox delivery is explicitly unverified.",
+        "Same actor/request/body returns original persisted receipt without repeating assignments/events. Different packet or cross-kind request collision conflicts.",
+        "Actor-private recovery does not infer save success from current owner equality, counters, generic responses or a missing receipt.",
+        "Immutable owner-scoped local recovery journal is verified before dispatch; storage failure prevents sending. Repeated clicks are synchronously locked.",
+        "Known absent receipt plus matching current review permits only explicitly confirmed original retry. Stale/ineligible evidence blocks retry. Known rejected requests can return to fresh selection after confirmed receipt absence.",
+        "Cancellation/back navigation does not dispatch; a late response cannot redirect a newer navigation. Already dispatched operations are reconciled through their original request."
+      ],
+      "validationEvidence": "/workspace/commerce-ui-audit-20261009/assignment-verification.json"
     }
   ],
   "approvedEnterpriseAnalyticsFoundation": {

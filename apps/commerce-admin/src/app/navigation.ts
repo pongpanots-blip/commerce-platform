@@ -120,6 +120,7 @@ const NAV: Record<SectionId, NavEntry[]> = {
 
     { to: '/settings/staff', label: 'บัญชีทีมงาน', description: 'เพิ่มทีมงาน กำหนดบทบาท และปิดบัญชี' },
     { to: '/settings/josh-staff', label: 'บัญชีทีมงานร้านค้า', description: 'บัญชีทีมงานที่ใช้หลังร้านของร้านค้า' },
+    { to: '/settings/activity-log', label: 'ประวัติการเปลี่ยนแปลง', description: 'ใครแก้อะไรในระบบ และแก้เมื่อไหร่' },
     { to: '/j/admin-access', label: 'คำขอใช้งานหลังร้าน', description: 'คำขอใช้งานหลังร้านของร้านค้าที่รออนุมัติ' },
     { to: '/account/password', label: 'เปลี่ยนรหัสผ่าน', description: 'เปลี่ยนรหัสผ่านของคุณ' },
   ],

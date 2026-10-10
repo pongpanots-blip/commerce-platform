@@ -1,5 +1,6 @@
 import { JoshAdminCallController } from '../../../integration/connector/josh/josh-admin-call.controller';
 import { McpConnectionsController } from '../../../../mcp/mcp-connections.controller';
+import { AuditLogsController } from '../../audit/presentation/audit-logs.controller';
 import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
@@ -234,6 +235,10 @@ describe('sale / manager access matrix (real global guard, method overrides incl
     const handler = () => undefined;
     await deny('sale', handler, JoshAdminCallController, 'GET');
     await deny('sale', handler, McpConnectionsController, 'GET');
+  });
+  it('audit log is admin only (staff emails + raw request arguments)', async () => {
+    for (const role of STAFF_ROLES.filter((r) => r !== 'admin')) await deny(role, AuditLogsController.prototype.list, AuditLogsController, 'GET');
+    await allow('admin', AuditLogsController.prototype.list, AuditLogsController, 'GET');
   });
 });
 

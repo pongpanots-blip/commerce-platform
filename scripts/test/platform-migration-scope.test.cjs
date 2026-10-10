@@ -47,11 +47,11 @@ async function denied(db, code, mode = 'run') {
   assert.equal(db.events.includes('run-migrations'), false);
 }
 
-test('only the two approved names are pending in the 50-migration baseline', () => {
+test('only the approved names are pending in the applied baseline', () => {
   assert.deepEqual(gate.pendingNames(policy, baseline()), policy.approved);
 });
-test('an already applied approved migration leaves only its peer pending', () => {
-  assert.deepEqual(gate.pendingNames(policy, [...baseline(), row(policy.approved[0])]), [policy.approved[1]]);
+test('an already applied approved migration leaves only its peers pending', () => {
+  assert.deepEqual(gate.pendingNames(policy, [...baseline(), row(policy.approved[0])]), policy.approved.slice(1));
 });
 test('a fully applied ledger is idempotent', () => {
   assert.deepEqual(gate.pendingNames(policy, policy.migrations.map(row)), []);
@@ -101,14 +101,14 @@ test('applied table definitions must resolve to the expected schema and allow na
 });
 test('preflight performs metadata SELECTs inside READ ONLY and never runs migrations', async () => {
   const db = database(); const result = await gate.executeScope(db, policy, 'preflight');
-  assert.deepEqual(result.pending, policy.approved); assert.equal(result.appliedCount, 50);
+  assert.deepEqual(result.pending, policy.approved); assert.equal(result.appliedCount, policy.migrations.length - policy.approved.length);
   assert.equal(db.events.includes('run-migrations'), false); assert.equal(db.events.at(-1), 'destroy');
   assert.equal(db.events[2], 'SET TRANSACTION READ ONLY');
   assert.equal(db.events.some(e => /^(INSERT|DELETE|UPDATE)\b|FROM (warehouses|customers)\b/i.test(e)), false);
 });
 test('run bounds the actual executor and verifies the resulting ledger/grants', async () => {
   const db = database(); const result = await gate.executeScope(db, policy, 'run');
-  assert.deepEqual(result.executed, policy.approved); assert.equal(result.after.appliedCount, 52);
+  assert.deepEqual(result.executed, policy.approved); assert.equal(result.after.appliedCount, policy.migrations.length);
   assert.deepEqual(result.after.pending, []); assert.equal(db.events.at(-1), 'destroy');
 });
 test('unexpected/missing/duplicate migration classes in an image fail before execution', async () => {
@@ -205,7 +205,7 @@ test('direct deploy stops before files, pull, cleanup or restart when admission 
     fs.writeFileSync(path.join(dir,'platform-migration-scope.sh'),'#!/bin/bash\nexit 73\n');
     fs.writeFileSync(path.join(dir,'.env'),'PLATFORM_TAG=6790132\nADMIN_TAG=396e8d6\nPORTAL_TAG=020066e\n');
     const original=fs.readFileSync(path.join(dir,'.env'),'utf8');
-    const r=spawnSync('bash',[path.join(dir,'ec2-deploy.sh'),'396e8d6','--skip-cleanup','platform'],{cwd:dir,env:{...process.env,...target()},encoding:'utf8'});
+    const r=spawnSync('bash',[path.join(dir,'ec2-deploy.sh'),policy.imageTag,'--skip-cleanup','platform'],{cwd:dir,env:{...process.env,...target()},encoding:'utf8'});
     assert.equal(r.status,73);assert.equal(fs.readFileSync(path.join(dir,'.env'),'utf8'),original);
     assert.equal(fs.existsSync(path.join(dir,'platform-flags.env')),false);
     assert.equal(fs.existsSync(path.join(dir,'.image-tags-prev.pending')),false);
@@ -260,7 +260,7 @@ test('the reviewed migration release rejects a simultaneous sibling deployment',
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'cp-gate-siblings-'));
   try {
     fs.copyFileSync(path.join(root,'docker/ec2-deploy.sh'),path.join(dir,'ec2-deploy.sh'));
-    const r=spawnSync('bash',[path.join(dir,'ec2-deploy.sh'),'396e8d6','platform','admin'],{env:{...process.env,...target()},encoding:'utf8'});
+    const r=spawnSync('bash',[path.join(dir,'ec2-deploy.sh'),policy.imageTag,'platform','admin'],{env:{...process.env,...target()},encoding:'utf8'});
     assert.equal(r.status,1);assert.match(r.stderr,/platform-only deployment/);
     assert.equal(fs.existsSync(path.join(dir,'platform-flags.env')),false);
   } finally { fs.rmSync(dir,{recursive:true,force:true}); }
@@ -274,7 +274,7 @@ test('direct platform deployment clears Compose overrides before admission', () 
       '#!/bin/bash','[[ -z "${COMMERCE_DB_PASSWORD+x}" && -z "${CRON_MARKETING_RESEARCH_ENABLED+x}" && -z "${ADMIN_TAG+x}" ]] || exit 74',
       '[[ "$ECR_REGISTRY" == synthetic ]] || exit 75','exit 73','',
     ].join('\n'));
-    const r=spawnSync('bash',[path.join(dir,'ec2-deploy.sh'),'396e8d6','platform'],{env:{...process.env,...target(),
+    const r=spawnSync('bash',[path.join(dir,'ec2-deploy.sh'),policy.imageTag,'platform'],{env:{...process.env,...target(),
       ECR_REGISTRY:'synthetic',COMMERCE_DB_PASSWORD:'synthetic-override',CRON_MARKETING_RESEARCH_ENABLED:'true',ADMIN_TAG:'other'},encoding:'utf8'});
     assert.equal(r.status,73,r.stderr);
   } finally { fs.rmSync(dir,{recursive:true,force:true}); }
@@ -284,7 +284,7 @@ test('policy matches all migration names in the frozen application source', () =
   const names = fs.readdirSync(dir).filter(n => n.endsWith('.ts')).map(n =>
     fs.readFileSync(path.join(dir,n),'utf8').match(/export class (\w+) implements MigrationInterface/)[1]);
   assert.deepEqual([...names].sort(), [...policy.migrations].sort());
-  assert.deepEqual(policy.approved, ['CommercePromotionDrafts1796200000000','ProductErpExtras1796200000000']);
+  assert.deepEqual(policy.approved, ['CommerceMarketingWorkflows1796300000000']);
 });
 test('workflow gate precedes host/config mutations and build pins the application commit', () => {
   const workflow = fs.readFileSync(path.join(root,'.github/workflows/deploy-ecr.yml'),'utf8');

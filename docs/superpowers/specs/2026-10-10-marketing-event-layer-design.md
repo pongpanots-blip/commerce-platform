@@ -21,6 +21,9 @@ commerce เป็นเจ้าของข้อมูลพฤติกร�
 10. ตัวแปร `{{event.<key>}}` ใน notify / webhook
 11. หน้า admin "Events" + เก็บข้อมูลแบบไม่บวม (partition รายเดือน, อายุ 90 วัน, สรุปรายวัน)
 12. shop-web ส่ง event เข้า commerce (ส่งเข้า josh ต่อด้วยจนถึง phase 3) · contract สำหรับมือถือ
+13. Consent จากการสมัครสมาชิก (`pdpa_consent`) เป็นตัวเปิดให้ใช้ event (§5.1)
+14. ส่วนที่หยิบจาก `docs/ba-data-integration-next-steps-th.md` (§21): event เป็นข้อเท็จจริงที่ไม่แก้ย้อนหลัง, context ณ เวลาเกิด
+    (บริษัท / สาขา / actor), แยกหลักฐาน browser กับ server, วันเริ่มเก็บข้อมูล (coverage), source / environment / schemaVersion
 
 **ก้อนถัดไป (spec แยก):** 2) สถิติบน canvas · 3) polish editor (autosave, stop) · 4) content editor
 
@@ -45,9 +48,11 @@ archive ไป S3, ย้าย workflow ของ josh มา commerce (phase 3
 
 ```jsonc
 // request
-{ "deviceId": "uuid", "platform": "web" | "ios" | "android",
+{ "schemaVersion": 1, "deviceId": "uuid", "platform": "web" | "ios" | "android",
   "pushSubscriptionId": "uuid",            // ไม่บังคับ — OneSignal subscription id ของ device (ถ้าเปิดรับ push)
-  "events": [ { "eventId": "uuid", "name": "add_to_cart", "occurredAt": "ISO-8601", "attributes": { "product_id": "SKU-1", "price": 199.5 } } ] }
+  "events": [ { "eventId": "uuid", "name": "add_to_cart", "occurredAt": "ISO-8601 มี offset",
+                "context": { "companyId": "…", "branchId": "…", "actorKind": "customer" | "staff" | "anonymous" },  // ณ เวลาเกิด, ไม่บังคับ
+                "attributes": { "product_id": "SKU-1", "price": 199.5 } } ] }
 // response 200
 { "results": [ { "eventId": "uuid", "status": "accepted" | "duplicate" | "rejected", "reason": "unknown_event" } ] }
 ```
@@ -58,12 +63,15 @@ archive ไป S3, ย้าย workflow ของ josh มา commerce (phase 3
   - attribute: เก็บเฉพาะ key ที่ประกาศ (ที่ไม่ประกาศตัดทิ้งเงียบ), ชนิดต้องตรง → ไม่งั้น `bad_attribute_type`
     (date = ISO-8601 ที่ parse ได้ เก็บเป็น ISO UTC); ≤ 20 key และ JSON ≤ 2 KB → ไม่งั้น `too_large`
   - `occurredAt` ไม่เกินอนาคต 5 นาที (`in_future`) และไม่เก่ากว่า 7 วัน (`too_old`)
-  - `(eventId, occurredAt)` ซ้ำ → `duplicate` (`ON CONFLICT DO NOTHING`; client ส่งซ้ำด้วยค่าเดิมทั้งคู่)
+  - `(eventId, occurredAt)` ซ้ำ → `duplicate` (`ON CONFLICT DO NOTHING`; client ส่งซ้ำด้วยค่าเดิมทั้งคู่ — แถวเดิมไม่ถูกแก้)
+  - `context` เก็บตามที่ client แจ้ง ณ เวลาเกิด (ไม่เติมจาก active branch ปัจจุบันภายหลัง) · ถือเป็นค่าที่ client อ้าง ไม่ใช่สิทธิ์
+- server เติมเอง: `source` (`shop_browser` เมื่อ `platform = web`, `mobile_app` เมื่อ ios / android), `environment`
+  (`production` / `development` จาก `NODE_ENV`), `received_at` — client ส่งมาไม่ได้
 - Rate limit: `@Throttle` 120 request/นาที ต่อ IP + 60 event/นาที ต่อ `deviceId` (express-rate-limit memory store, key = deviceId)
   → `429` · ponytail: memory store ต่อ instance — เปลี่ยนเป็น Redis store ถ้ารัน commerce-platform มากกว่า 1 instance
 - CORS: เพิ่มโดเมน shop ใน `COMMERCE_CORS_ORIGINS` (มือถือไม่ติด CORS)
 - ในทรานแซกชันเดียว: upsert `marketing_devices` (§4; เขียนเฉพาะเมื่อ `push_subscription_id` / `platform` เปลี่ยน หรือ
-  `last_seen_at` เก่ากว่า 1 ชม.) + insert event ที่ผ่าน + ใส่ `user_id` จาก link (§5) · หลัง commit enqueue job
+  `last_seen_at` เก่ากว่า 1 ชม.) + insert event ที่ผ่าน + ใส่ `attributed_user_id` จาก link (§5) · หลัง commit enqueue job
   `marketing-event` (`{ eventIds }`) ไปทำ trigger / wait / goal (§6–9) — request ไม่รอ
 - ไม่ log ราย request · log เฉพาะ error และตัวเลขรวม (accepted / duplicate / rejected ตาม reason) ทุก 5 นาที
 
@@ -71,8 +79,9 @@ archive ไป S3, ย้าย workflow ของ josh มา commerce (phase 3
 
 | ตาราง | คอลัมน์ | index / หมายเหตุ |
 |---|---|---|
-| `marketing_event_definitions` | `name varchar(64) PK` (`^[a-z][a-z0-9_]{1,63}$`), `label`, `description`, `attributes jsonb` (`[{ key, type: 'string'\|'number'\|'boolean'\|'date', label }]`), `status` (`active`/`archived`), `created_at`, `updated_at` | seed: `view_item`, `view_category`, `search`, `add_to_cart`, `begin_checkout`, `purchase`, `login` (attribute ตาม `lib/analytics-events.ts` ของ shop-web) |
-| `marketing_events` | `id bigint` (identity), `event_id uuid`, `device_id uuid NOT NULL`, `user_id uuid NULL`, `platform varchar(10)`, `name varchar(64)`, `attributes jsonb`, `occurred_at timestamptz NOT NULL`, `received_at timestamptz default now()` | **`PARTITION BY RANGE (occurred_at)` รายเดือน** (§13) · `PK (id, occurred_at)` · `UNIQUE (event_id, occurred_at)` · `(user_id, name, occurred_at) WHERE user_id IS NOT NULL` · `(device_id, occurred_at)` |
+| `marketing_event_definitions` | `name varchar(64) PK` (`^[a-z][a-z0-9_]{1,63}$`), `label`, `description`, `attributes jsonb` (`[{ key, type: 'string'\|'number'\|'boolean'\|'date', label }]`), `evidence` (`browser` / `server`), `status` (`active`/`archived`), `created_at`, `updated_at` | seed (`evidence = browser`): `view_item`, `view_category`, `search`, `add_to_cart`, `begin_checkout`, `purchase`, `login` (attribute ตาม `lib/analytics-events.ts` ของ shop-web) |
+| `marketing_events` | **ข้อเท็จจริง (ไม่แก้หลัง insert):** `id bigint` (identity), `schema_version smallint`, `event_id uuid`, `device_id uuid NOT NULL`, `platform varchar(10)`, `source varchar(16)`, `environment varchar(16)`, `name varchar(64)`, `attributes jsonb`, `company_id varchar(100) NULL`, `branch_id varchar(100) NULL`, `actor_kind varchar(10) NULL`, `occurred_at timestamptz NOT NULL`, `received_at timestamptz default now()` · **การระบุตัว (อัปเดตได้):** `attributed_user_id uuid NULL`, `attribution varchar(16) NULL` (`device_link`) | **`PARTITION BY RANGE (occurred_at)` รายเดือน** (§13) · `PK (id, occurred_at)` · `UNIQUE (event_id, occurred_at)` · `(attributed_user_id, name, occurred_at) WHERE attributed_user_id IS NOT NULL` · `(device_id, occurred_at)` |
+| `marketing_event_coverage` | `platform varchar(10) PK`, `collecting_since timestamptz` | ตั้งตอน event แรกของ platform ถูกรับ (`INSERT … ON CONFLICT DO NOTHING`) · ใช้ตรวจ segment (§11) |
 | `marketing_devices` | `device_id uuid PK`, `platform varchar(10)`, `push_subscription_id uuid NULL`, `first_seen_at`, `last_seen_at` | ข้อมูลส่ง push ถึง guest (§10) |
 | `marketing_device_links` | `id bigserial PK`, `device_id uuid`, `user_id uuid`, `platform varchar(10)`, `linked_at timestamptz` | `UNIQUE (device_id, linked_at)` · `(user_id)` |
 | `marketing_event_daily` | `date date`, `name`, `platform`, `events int`, `users int`, `devices int` | `PK (date, name, platform)` เก็บถาวร |
@@ -90,19 +99,38 @@ archive ไป S3, ย้าย workflow ของ josh มา commerce (phase 3
 **commerce รับ `device.snapshot`** (ใน `josh-events.service.ts`, ทรานแซกชันเดียวกับ version guard เดิม):
 1. insert `marketing_device_links (device_id, user_id, platform, linked_at)` — ถ้า link ล่าสุดก่อนหน้า `linked_at` ของ device นี้เป็น user เดิมอยู่แล้ว → ไม่ insert
 2. หาช่วงที่ link นี้ครอบ: `start` = `linked_at` (ถ้าไม่มี link ก่อนหน้าของ device → `-∞`), `end` = `linked_at` ของ link ถัดไป (ไม่มี → `∞`)
-3. `UPDATE marketing_events SET user_id = :user WHERE device_id = :device AND occurred_at >= :start AND occurred_at < :end`
+3. `UPDATE marketing_events SET attributed_user_id = :user, attribution = 'device_link' WHERE device_id = :device AND occurred_at >= :start AND occurred_at < :end`
+   — แก้แค่คอลัมน์การระบุตัว ข้อเท็จจริงของ event (ชื่อ, attribute, context, เวลา) ไม่ถูกแตะ
 4. รับช่วง journey ของ guest: enrollment `pending` / `running` ที่ `device_id = :device AND user_id IS NULL` → `user_id = :user`
    (ถ้า user มี enrollment ของ workflow + `occurrence_key` เดียวกันอยู่แล้ว → ตัวของ guest จบเป็น `skipped: merged`)
 5. หลัง commit: enqueue `marketing-event` ของ event ที่ถูกเติม user และ `occurred_at ≥ now − 60 นาที`
    (trigger ทำซ้ำได้ปลอดภัยเพราะ `occurrence_key = event_id` และขั้น 4 ทำก่อน)
 
-**ตอน ingest:** `user_id` = user ของ link ล่าสุดที่ `linked_at ≤ occurred_at` · ไม่มี → user ของ link แรกของ device · ไม่มี link เลย → `NULL`
+**ตอน ingest:** `attributed_user_id` = user ของ link ล่าสุดที่ `linked_at ≤ occurred_at` · ไม่มี → user ของ link แรกของ device ·
+ไม่มี link เลย → `NULL` (guest)
+
+**พนักงาน:** link ที่ user เป็นพนักงาน (`role` ใน `josh_customers.data` ไม่ใช่ลูกค้า) หรือ event ที่ `actor_kind = staff` →
+ไม่ใส่ `attributed_user_id` (พนักงานที่สั่งแทนไม่ใช่ตัวลูกค้า) และไม่ trigger journey
 
 **กติกา (ตัวอย่าง device D: guest → login A → login B):** event ตอน guest และช่วง A → A · หลัง login B → B ·
 link มาถึงช้ากว่า event หรือมาไม่เรียงก็ได้ผลเดียวกัน เพราะคำนวณจากช่วงเวลาทุกครั้ง · ทุก event เก็บ `device_id` เสมอ
 (ดูได้ทั้ง device → user และ user → ทุก device)
 
 **ข้อจำกัดที่รับได้:** josh ไม่ unlink ตอน logout → event หลัง logout บน device ร่วมนับเป็นของคนล่าสุด
+
+### 5.1 Consent จากการสมัครสมาชิก
+
+ใช้ consent ที่ลูกค้ากดยอมรับตอนสมัคร (`pdpa_consent`, `pdpa_consented_at` ใน `josh_customers.data` จาก `customer.snapshot`
+— มีอยู่แล้ว ไม่ต้องแก้ josh)
+
+- user "ใช้ได้" = `pdpa_consent = true` ณ ตอนประเมิน (ตรวจทุกครั้งที่ trigger / segment / wait ใช้ event ของ user)
+- event ของ guest: **เก็บไว้แต่ยังไม่ใช้** กับ segment และ trigger แบบ user · เมื่อ device link กับ user ที่ใช้ได้ event เหล่านั้น
+  ถูกระบุตัวและนับเป็นของ user ตามปกติ · ถ้าไม่เคย link ก็หมดอายุตาม partition 90 วัน
+- journey ของ guest (§10) ใช้ event ของ device นั้นได้เฉพาะ device ที่เปิดรับ push เอง (`push_subscription_id` มีค่า) และ workflow
+  เปิด `includeGuests` — ต้องให้ DPO / ฝ่ายกฎหมายยืนยันว่าการอนุญาต push ของ OS เพียงพอ ก่อนเปิด `includeGuests` ใน workflow จริง
+- ถอน consent: `customer.snapshot` ที่ `pdpa_consent` เปลี่ยนเป็น false → ในทรานแซกชันเดียวกัน ลบ event ที่
+  `attributed_user_id` เป็น user นั้น, ลบ `marketing_device_links` ของ user, enrollment ที่ค้างจบเป็น `skipped: consent_withdrawn`
+- การส่งข้อความการตลาดยังเคารพ `marketing_consent` ฝั่ง josh ตอนส่งเหมือนเดิม
 
 ## 6. Filter ของ attribute (ใช้ร่วมกันทุกที่)
 
@@ -126,9 +154,9 @@ validator: key ต้องมีใน attribute ของ event ที่ trig
 
 - job `marketing-event` ต่อ event ที่ `occurred_at ≥ now − 60 นาที` (`TRIGGER_RECENT_MINUTES` เดิม): workflow ที่ `active`,
   `trigger_type = 'event'`, `eventName` ตรง, filters ผ่าน →
-  - event มี `user_id` → `engine.enroll(wf, { userId }, occurrenceKey = event_id)`
-  - ไม่มี `user_id` และ `includeGuests` → `engine.enroll(wf, { deviceId }, occurrenceKey = event_id)` (§10)
-  - ไม่มี `user_id` และไม่ `includeGuests` → ข้าม (link มาทีหลังภายใน 60 นาทีจะ enroll ให้ตาม §5)
+  - event มี `attributed_user_id` และ user ใช้ได้ตาม §5.1 → `engine.enroll(wf, { userId }, occurrenceKey = event_id)`
+  - ไม่มี `attributed_user_id` และ `includeGuests` → `engine.enroll(wf, { deviceId }, occurrenceKey = event_id)` (§10)
+  - ไม่มี `attributed_user_id` และไม่ `includeGuests` → ข้าม (link มาทีหลังภายใน 60 นาทีจะ enroll ให้ตาม §5)
   - `trigger_event = { eventId, name, attributes }`
 - gate เดิมทั้งหมด (schedule, cooldown, audience, holdout) · นับเฉพาะ event หลัง `activated_at` · cooldown ของ guest นับต่อ device
 
@@ -141,7 +169,7 @@ validator: key ต้องมีใน attribute ของ event ที่ trig
 - timeout รวม ≤ 30 วัน (`LIMITS.maxWaitMinutes`) · นับรวมกับ `maxWaitSteps` (3) เดียวกับ `wait`
 - ถึง step: `waiting_for = { stepId, eventName, filters, since: now }`, `resume_at = now + timeout`, park แบบ `wait` เดิม
 - job `marketing-event`: หา enrollment `running` ที่ `waiting_for->>'eventName' = name` และ
-  (`user_id = event.user_id` หรือ `user_id IS NULL AND device_id = event.device_id`) และ `occurred_at ≥ since` →
+  (`user_id = event.attributed_user_id` หรือ `user_id IS NULL AND device_id = event.device_id`) และ `occurred_at ≥ since` →
   filters ผ่าน (พร้อม `trigger_event.attributes`) → ล็อกแถว (`FOR UPDATE`), เช็กว่า `waiting_for.stepId` ยังเป็น step ปัจจุบัน →
   ล้าง `waiting_for`, `current_step_id = matchedNextId`, `queue.step` ทันที · action log `wait_event` (`meta: { matched: true, eventId }`)
 - ครบเวลา: sweep / delayed job เดิม → `walk()` เห็น `waiting_for` ยังอยู่ → ล้าง, เดิน `timeoutNextId` · log `{ matched: false }`
@@ -157,6 +185,8 @@ validator: key ต้องมีใน attribute ของ event ที่ trig
   `occurred_at ≥ started_at` แล้วประเมินด้วย `event-filter.ts` → ผ่านตัวใดตัวหนึ่ง → `skipped: goal_reached`
 - conversion: job `marketing-event` → enrollment ที่ goal ตรง, `started_at` อยู่ใน `conversion_window_days`, ยังไม่มี
   `converted_at` → ตั้ง `converted_at` (goal `order_placed` ใช้ทาง `order.snapshot` เดิม)
+- event ที่ `evidence = browser` (เช่น `purchase` จากหน้าเว็บ) ไม่ใช่หลักฐานว่ามีออเดอร์ — เลือกเป็น goal ได้แต่ editor เตือน
+  ให้ใช้ `order_placed` (จาก `order.snapshot` ฝั่ง server) เมื่อเป้าหมายคือการสั่งซื้อจริง
 
 ## 10. Journey ของ guest
 
@@ -184,10 +214,14 @@ leaf ใหม่ใน `segment-definition.compiler.ts`:
 ```
 
 - compile เป็น `(SELECT <count(*) | COALESCE(SUM((e.attributes->>$k)::numeric), 0)> FROM marketing_events e
-  WHERE e.user_id = <user id ของ query> AND e.name = $n AND e.occurred_at >= $n [AND e.occurred_at < $n] AND <filters>) <op> $n`
+  WHERE e.attributed_user_id = <user id ของ query> AND e.name = $n AND e.occurred_at >= $n [AND e.occurred_at < $n] AND <filters>) <op> $n`
   — ทุกค่าเป็น parameter, key ตรวจกับ catalog, number cast `::numeric`, date cast `::timestamptz`
 - `sum` ใช้ได้เฉพาะ attribute ชนิด number · `count` value 0–1000 (`eq 0` = "ไม่เคยทำ") · `sum` value เป็นตัวเลขใดก็ได้
 - `lastDays` 1–90 · `from`/`to` ต้องอยู่ใน 90 วันล่าสุด · filters ห้าม `fromTrigger`
+- **coverage:** ช่วงเวลาของ rule ต้องเริ่มไม่ก่อน `collecting_since` ของ platform แรกที่เก็บ (`marketing_event_coverage`) —
+  ไม่งั้นบันทึก / activate ไม่ได้ พร้อมข้อความ "เริ่มเก็บ event เมื่อ …" (ช่วงที่ยังไม่เก็บต้องไม่ถูกนับเป็นศูนย์) ·
+  ตัวสร้าง segment แสดงว่า platform ไหนส่ง event อยู่ (ตอนนี้เว็บอย่างเดียว — ลูกค้าที่ใช้แต่มือถือจะนับได้ 0 จนกว่ามือถือจะส่ง)
+- นับเฉพาะ event ที่ระบุตัวแล้วและ user ใช้ได้ตาม §5.1
 - ใช้ร่วม AND/OR กับ leaf อื่นได้ · ใช้ได้ทุกที่ที่ใช้ segment: node Audience, `segment.in`, scheduled, `userMatchesSegment`
 - ตัวสร้าง segment ใน admin: เพิ่มชนิด rule "Event" (เลือก event, นับครั้ง / ผลรวมของ attribute, ช่วงเวลา, เงื่อนไข attribute)
 
@@ -260,6 +294,8 @@ leaf ใหม่ใน `segment-definition.compiler.ts`:
 
 **shop-web** (`lib/analytics.ts`): `track()` ส่งเข้า commerce เพิ่ม (ยังส่ง josh ต่อ) ถ้ามี `NEXT_PUBLIC_COMMERCE_EVENTS_URL`
 - ใช้ device id ตัวเดียวกับที่ส่ง josh (`ensureDeviceId()`) · `eventId = crypto.randomUUID()`
+- `context`: `companyId` / `branchId` ของ active branch ตอนที่เกิด event, `actorKind` = `staff` เมื่อ login เป็นพนักงาน
+  (`customer` เมื่อเป็นลูกค้า, `anonymous` เมื่อยังไม่ login)
 - `pushSubscriptionId` = `OneSignal.User.PushSubscription.id` ถ้าเปิดรับ push (`lib/onesignal.ts`)
 - รวม event เป็น batch ทุก 2 วินาที หรือครบ 20 ตัว · ส่งด้วย `fetch(..., { keepalive: true })`, ตอนปิดหน้าใช้ `sendBeacon`
 - fire-and-forget: timeout 3 วินาที, ไม่ retry, error ไม่ขึ้นหน้าเว็บ · ส่งเฉพาะชื่อที่อยู่ใน seed catalog
@@ -274,7 +310,8 @@ batch / fire-and-forget แบบเดียวกัน
 |---|---|
 | commerce ล่ม / ช้า | client ทิ้ง event ช่วงนั้น · ร้านค้าทำงานปกติ |
 | ingest ปิด | `503 ingest_disabled` · client ทิ้งเงียบ |
-| event ไม่มี user | เก็บไว้ `user_id NULL` · trigger แบบ guest ถ้า workflow เปิด · เติม user ทีหลังตอน link (§5) |
+| event ไม่มี user | เก็บไว้ `attributed_user_id NULL` · ไม่ใช้กับ segment / trigger แบบ user · trigger แบบ guest ถ้า workflow เปิด · ระบุตัวทีหลังตอน link (§5) |
+| user ถอน consent (`pdpa_consent` เป็น false) | ลบ event ที่ระบุเป็นของ user + หยุด enrollment ที่ค้าง (§5.1) |
 | job `marketing-event` ล้ม | BullMQ retry · enroll ไม่ซ้ำ (unique ทั้งแบบ user และแบบ device) |
 | event แข่งกับ timeout ของ wait_event | ล็อกแถว ใครก่อนได้ไป (§8) |
 | guest login ระหว่าง journey | รับช่วงเป็นของ user ใน transaction ของ link (§5) |
@@ -301,6 +338,9 @@ batch / fire-and-forget แบบเดียวกัน
 - DB: ingest (accepted / duplicate / rejected แต่ละ reason), merge ตอน link, trigger enroll ครั้งเดียวต่อ event (user และ guest),
   guest → login รับช่วง, wait_event ทั้ง matched / timeout / แข่งกัน / `fromTrigger`, goal event, partition (สร้างล่วงหน้า,
   drop, default แล้วย้าย), rollup, เพดาน guest push, PDPA
+- DB (BA / consent): link ใหม่แก้แค่ `attributed_user_id` / `attribution` (ข้อเท็จจริงเดิมทุกคอลัมน์ไม่เปลี่ยน), พนักงานไม่ถูกระบุตัว,
+  user ที่ `pdpa_consent = false` ไม่ trigger / ไม่เข้า segment, ถอน consent ลบ event + หยุด enrollment, event ของ guest
+  ไม่เข้า segment จนกว่าจะ link, segment ที่ย้อนก่อน `collecting_since` ถูกปฏิเสธ, client ส่ง `source` / `receivedAt` มาเองไม่ได้
 - josh: trigger ของ `user_devices` ยิงตอน insert และตอน `user_id` เปลี่ยนเท่านั้น (save ซ้ำค่าเดิมไม่ยิง) ·
   `marketing.notify` แบบ device เรียก OneSignal ด้วย `include_subscription_ids`
 - shop-web: `track()` ส่งทั้งสองทาง, แนบ `pushSubscriptionId` เมื่อมี, commerce error / timeout ไม่ throw
@@ -317,3 +357,22 @@ batch / fire-and-forget แบบเดียวกัน
 4. deploy commerce-admin · รันทดสอบกับ tester ก่อน activate workflow จริง · ลอง guest journey กับ device ทดสอบก่อนเปิด
    `includeGuests` ใน workflow จริง
 5. ส่ง contract (§16) ให้ทีมมือถือ
+
+## 21. ความสัมพันธ์กับเอกสาร BA (`docs/ba-data-integration-next-steps-th.md`)
+
+ก้อนนี้เป็นงาน marketing — หยิบหลักของ BA มาใช้เพื่อให้ข้อมูลเชื่อถือได้ แต่ไม่ได้ทำ BA ให้ใช้ข้อมูลจริง
+
+| หลักของ BA | ที่ใช้ในก้อนนี้ |
+|---|---|
+| ไม่แก้ context ของ event ย้อนหลัง, device ไม่ใช่หลักฐานว่าเป็นคนเดียวกัน (§1) | ข้อเท็จจริงของ event ไม่แก้ · การระบุตัวแยกคอลัมน์ `attributed_user_id` + `attribution = device_link` (§4, §5) |
+| context ณ เวลาเกิด, แยก subject / actor (§1) | `company_id`, `branch_id`, `actor_kind` ต่อ event · พนักงานไม่ถูกนับเป็นลูกค้า (§5) |
+| browser purchase ไม่ใช่ออเดอร์ที่ยืนยัน (§3) | catalog มี `evidence` · goal การซื้อแนะนำ `order_placed` จาก server (§9) |
+| `eventId` / `occurredAt` / `receivedAt` / source / environment (§4) | ครบใน §3 — `source` / `environment` / `received_at` server เติมเอง |
+| "ไม่พบ" เป็นศูนย์ได้เมื่อข้อมูลครบทั้งช่วง (§4) | `marketing_event_coverage` + segment ห้ามย้อนก่อนวันเริ่มเก็บ (§11) |
+| consent ต้องชัด ไม่เปิดสิทธิ์จาก boolean เดียวเกินขอบเขต (§6) | ใช้ `pdpa_consent` ตอนสมัคร, ถอนแล้วลบ, guest เก็บแต่ไม่ใช้ (§5.1) |
+| payload ไม่ใส่ PII (§6) | catalog ปฏิเสธชื่อ attribute ที่เป็น PII (§14) |
+
+**ที่ BA ต้องการแต่ไม่อยู่ในก้อนนี้:** authenticated producer (ingest นี้รับจาก client ที่ไม่ยืนยันตัว จึงไม่ใช่หลักฐานระดับ
+`committed_confirmation`), tenant / branch grants ฝั่ง server, three-valued logic (`unknown`) ใน segment ของ marketing
+(ใช้การห้ามช่วงที่ไม่มีข้อมูลแทน), live provider ของหน้า BA · event ของก้อนนี้ใช้เป็นแหล่งข้อมูลให้ BA ได้ในอนาคตผ่าน adapter
+ที่ติดป้าย `source = shop_browser` / `mobile_app` และ `attribution = device_link` ตามจริง

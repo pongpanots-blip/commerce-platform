@@ -1,0 +1,11 @@
+
+Test Suites: 6 passed, 6 total
+Tests:       60 passed, 60 total
+Snapshots:   0 total
+Time:        9.744 s, estimated 11 s
+Ran all test suites within paths "apps/commerce-platform/src/modules/commerce/inventory/application/inventory-ledger.service.spec.ts", "apps/commerce-platform/src/modules/integration/connector/josh/josh-admin-call.controller.spec.ts", "apps/commerce-platform/src/modules/core/auth/presentation/staff-role-access.spec.ts", "apps/commerce-platform/src/modules/core/auth/application/staff-accounts.service.spec.ts", "apps/commerce-platform/src/modules/core/auth/presentation/staff-auth.controller.spec.ts", "apps/commerce-platform/src/modules/commerce/product-categories/product-categories.upload.spec.ts".
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

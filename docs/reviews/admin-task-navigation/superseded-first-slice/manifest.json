@@ -1,0 +1,96 @@
+{
+  "base": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "reason": "Latest user excludes all existing Stitch surfaces and indirect shared changes; preserve first slice as superseded evidence, not current implementation. Initial worktree was clean; all listed changes belong to this task.",
+  "files": [
+    {
+      "path": "apps/commerce-admin/src/app/app.tsx",
+      "sha256": "6d9a88bb1a8fa71afff78be7b75c6c511ec9710766d293a758871dbc8e6888a2",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/hooks.ts",
+      "sha256": "760cfe22b885ff135d0fb7cd034c338e46a327d1215aebc6ec765b5661291cee",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/navigation.legacy.ts",
+      "sha256": "3fe7bf384d06b1f4d11e8e7afb7458f861faa8ad91e5f68d47414cd91703ba55",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/navigation.spec.ts",
+      "sha256": "ccdce9e4eb43b347161dc27d1d971920f9d6a033303f4476d270a792bde7b297",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/navigation.ts",
+      "sha256": "b0b3de9c2b2f4fb1575fcd68e9006137e40439d0a1efa996c619c66a2c1630f3",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+      "sha256": "c5f0940e763479a553881dfc2f44faf18e3a0faaff2b6e027acf5b52f8731096",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+      "sha256": "148dfe8619f68772248e8435e6f8ebd41a0d9c0ce9c7bf8dafb013312a0fe41c",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+      "sha256": "07de0a25da8564ba68c96b2f02e2e116f7ba9dba3f1e633a4f28afd9838e6c03",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "docs/design/workspace-redesign.md",
+      "sha256": "71e49edbfdcdea12cdd90a51e2d3c610d2561311e4cd4859f5c1b1bb37de741f",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "libs/ui/src/index.tsx",
+      "sha256": "7cc45ccc2d4355176d0492860447adba2fc859735f926ca559d1cc13a3c2e1e2",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "libs/ui/src/locales/ui-messages.json",
+      "sha256": "a9f73252c2501c18c1a3770e5e3294fbb4437667b3f4009edbbf86e3d9f83bb9",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "libs/ui/src/page-guides.ts",
+      "sha256": "ac80698f371ce3c8ba0ea267feb76fc3c968615c0ec5cd7838d4da06ae0a2e30",
+      "action": "restore HEAD version"
+    },
+    {
+      "path": "apps/commerce-admin/e2e/task-navigation.mjs",
+      "sha256": "0efae42d219acafd19b7057d79782e111a27737558fa85bb0daacfd323d610bf",
+      "action": "remove own newly-added file after archiving"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/FeatureActions.tsx",
+      "sha256": "f03efd09ca6c5a6e5f5a84fdd90959aff35934abc7a799915521c83c4aab6143",
+      "action": "remove own newly-added file after archiving"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/features.ts",
+      "sha256": "bf8cd718c628068a61ad9eb497b6fc1ca1ff9bb0d9a9a7b6826c6946b5184fc1",
+      "action": "remove own newly-added file after archiving"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/hooks.spec.tsx",
+      "sha256": "bec4226c5245bdbc6cb168a0c36ed1c2415101de737736754894a8478a4411c4",
+      "action": "remove own newly-added file after archiving"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/CsDesk.spec.tsx",
+      "sha256": "802ac64c9123d3369220259c37a42126017ae083efca08aaa7690c1c43787cb7",
+      "action": "remove own newly-added file after archiving"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ProductMasterQueue.spec.tsx",
+      "sha256": "a6d00e24c88c3cdbe7e99a39ae722ae6391d575a9d7f491a3ef9513567e14a19",
+      "action": "remove own newly-added file after archiving"
+    }
+  ]
+}

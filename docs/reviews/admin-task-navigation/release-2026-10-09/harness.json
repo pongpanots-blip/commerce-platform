@@ -1,0 +1,29 @@
+{
+  "base": "7a6eae64dfa42477b2901464f8a68748d75d2f71",
+  "preservedPrevious": "ba7e4aa32265e5f44ed51fc0c2bb2693e95e3393",
+  "upstreamFilesPreserved": [
+    "apps/commerce-platform/src/cli/erp-product-check.spec.ts",
+    "apps/commerce-platform/src/cli/erp-product-check.ts",
+    "apps/commerce-platform/src/migrations/1796100000000-ProductErpChecks.ts",
+    "ops/scripts/erp-product-check.cjs",
+    "package.json"
+  ],
+  "sourceEquality": "All admin/portal/shared/docker/workflow sources match the previously reviewed tree byte-for-byte",
+  "harnesses": [
+    {
+      "source": "apps/commerce-admin/e2e/task-navigation.mjs",
+      "sourceSha256": "50416f15c5d869811061adf74eb174c7b566d5b5869918a05930050c6f11e39c",
+      "derived": ".e2e-out/release-admin-review/task-navigation.mjs",
+      "derivedSha256": "e79f1dfa2878099d95f2f8cb9ad9b9243637e13c2283c5fda4bf741f92475c0b",
+      "change": "Output directory only; original assertion/fixture logic unchanged"
+    },
+    {
+      "source": "apps/commerce-admin/e2e/task-form-components.mjs",
+      "sourceSha256": "c6e8eef09291a0bca5d8e86ee01963081625d75d2e62459bac03c7e9aad3006d",
+      "derived": ".e2e-out/release-admin-review/task-form-components.mjs",
+      "derivedSha256": "346136edd68fbbaa5ea666b7de3fd4c424391071eb2bf1614880b40e2d174e46",
+      "change": "Output directory only; original assertion/fixture logic unchanged"
+    }
+  ],
+  "apiMode": "Local intercepted fixtures; no real persistence"
+}

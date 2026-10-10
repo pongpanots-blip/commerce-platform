@@ -1,0 +1,4 @@
+# Preserve generated patch context markers and exact tool output in review evidence.
+# Application source retains the repository's normal whitespace checks.
+deliverables/*.patch -whitespace
+logs/*.log -whitespace

@@ -1,0 +1,4 @@
+Base: e4346b7687c196ba4a1a8ca276e74448b90c3317
+Command: git apply --check reconciled-implementation.patch
+Reconstructed affected base files in an isolated temporary directory.
+Exit code: 0

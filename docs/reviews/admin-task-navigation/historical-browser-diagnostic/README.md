@@ -1,0 +1,1 @@
+Historical failed browser capture: the permission guard blocked access, but its English explanation was hidden under generic error details. TaskRoute was corrected and the final 46-scenario run passed. This image is not current application evidence.

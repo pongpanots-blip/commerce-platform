@@ -1,0 +1,494 @@
+{
+  "repository_full_name": "pongpanots-blip/commerce-platform",
+  "base": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "head": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
+  "status": "ahead",
+  "ahead_by": 10,
+  "behind_by": 0,
+  "total_commits": 10,
+  "too_large": null,
+  "base_commit": {
+    "sha": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+    "url": "https://api.github.com/repos/pongpanots-blip/commerce-platform/commits/69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+    "html_url": "https://github.com/pongpanots-blip/commerce-platform/commit/69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9"
+  },
+  "merge_base_commit": {
+    "sha": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+    "url": "https://api.github.com/repos/pongpanots-blip/commerce-platform/commits/69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+    "html_url": "https://github.com/pongpanots-blip/commerce-platform/commit/69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9"
+  },
+  "files": [
+    {
+      "filename": "apps/commerce-admin/e2e/table-page-inventory.cjs",
+      "status": "added",
+      "additions": 189,
+      "deletions": 0,
+      "changes": 189,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/e2e/table-redesign-review.mjs",
+      "status": "added",
+      "additions": 1288,
+      "deletions": 0,
+      "changes": 1288,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/app/pages/Login.tsx",
+      "status": "modified",
+      "additions": 33,
+      "deletions": 9,
+      "changes": 42,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 2,
+      "changes": 5,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/components/bot/BranchEditor.tsx",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 6,
+      "changes": 13,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/CS/CsPlaceOrderPanel.tsx",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 9,
+      "changes": 19,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
+      "status": "modified",
+      "additions": 9,
+      "deletions": 8,
+      "changes": 17,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+      "status": "modified",
+      "additions": 9,
+      "deletions": 8,
+      "changes": 17,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx",
+      "status": "modified",
+      "additions": 145,
+      "deletions": 66,
+      "changes": 211,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionQuantityRuleFields.tsx",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 7,
+      "changes": 15,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
+      "status": "modified",
+      "additions": 9,
+      "deletions": 8,
+      "changes": 17,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 6,
+      "changes": 13,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
+      "status": "modified",
+      "additions": 8,
+      "deletions": 7,
+      "changes": 15,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorAddSite.tsx",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 3,
+      "changes": 7,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 4,
+      "changes": 9,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorReviewGrid.tsx",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 3,
+      "changes": 7,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 9,
+      "changes": 19,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+      "status": "modified",
+      "additions": 15,
+      "deletions": 14,
+      "changes": 29,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 3,
+      "changes": 7,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx",
+      "status": "modified",
+      "additions": 11,
+      "deletions": 10,
+      "changes": 21,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
+      "status": "modified",
+      "additions": 587,
+      "deletions": 411,
+      "changes": 998,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
+      "status": "modified",
+      "additions": 9,
+      "deletions": 8,
+      "changes": 17,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 9,
+      "changes": 19,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/product/PromotionRulesLockedNotice.tsx",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 4,
+      "changes": 9,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx",
+      "status": "modified",
+      "additions": 97,
+      "deletions": 66,
+      "changes": 163,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/josh-admin.css",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 3,
+      "changes": 3,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/josh-admin/libs/shared-ui-web/lib/Table/Table.tsx",
+      "status": "modified",
+      "additions": 262,
+      "deletions": 156,
+      "changes": 418,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/lib/api.ts",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 0,
+      "changes": 5,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-admin/src/table-navigation.spec.tsx",
+      "status": "added",
+      "additions": 158,
+      "deletions": 0,
+      "changes": 158,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/migrations/1796000000000-RenameAllSubcategories.ts",
+      "status": "added",
+      "additions": 42,
+      "deletions": 0,
+      "changes": 42,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/modules/commerce/product-categories/category-rules.ts",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 0,
+      "changes": 3,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/modules/commerce/product-categories/product-categories.service.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 3,
+      "changes": 4,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/modules/core/auth/application/staff-accounts.service.spec.ts",
+      "status": "modified",
+      "additions": 12,
+      "deletions": 0,
+      "changes": 12,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/modules/core/auth/application/staff-accounts.service.ts",
+      "status": "modified",
+      "additions": 18,
+      "deletions": 0,
+      "changes": 18,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/modules/core/auth/presentation/staff-auth.controller.spec.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/modules/core/auth/presentation/staff-auth.controller.ts",
+      "status": "modified",
+      "additions": 18,
+      "deletions": 2,
+      "changes": 20,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/modules/integration/connector/josh/josh-products.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "previous_filename": null
+    },
+    {
+      "filename": "apps/commerce-platform/src/modules/integration/segments/ownership.controller.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-page-inventory-2026-10-09.json",
+      "status": "added",
+      "additions": 2571,
+      "deletions": 0,
+      "changes": 2571,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/README.md",
+      "status": "added",
+      "additions": 60,
+      "deletions": 0,
+      "changes": 60,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-allproducts.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-product-record.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-suppliers.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/after-admin-en-phone-j-brands.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/after-admin-th-phone-j-allproducts.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/after-admin-th-phone-j-marketing-competitor-prices.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/after-admin-th-phone-j-product-create.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/after-portal-en-phone-keys.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/before-admin-en-desktop-j-allproducts.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/screenshots/before-admin-th-phone-j-allproducts.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0,
+      "changes": 0,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/table-redesign-all-results.json",
+      "status": "added",
+      "additions": 10153,
+      "deletions": 0,
+      "changes": 10153,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/table-redesign-embedded-results.json",
+      "status": "added",
+      "additions": 259,
+      "deletions": 0,
+      "changes": 259,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/reviews/table-redesign/table-redesign-workflows-results.json",
+      "status": "added",
+      "additions": 288,
+      "deletions": 0,
+      "changes": 288,
+      "previous_filename": null
+    },
+    {
+      "filename": "libs/ui/src/data-table.tsx",
+      "status": "added",
+      "additions": 244,
+      "deletions": 0,
+      "changes": 244,
+      "previous_filename": null
+    },
+    {
+      "filename": "libs/ui/src/index.tsx",
+      "status": "modified",
+      "additions": 11,
+      "deletions": 47,
+      "changes": 58,
+      "previous_filename": null
+    },
+    {
+      "filename": "libs/ui/src/locales/ui-messages.json",
+      "status": "modified",
+      "additions": 172,
+      "deletions": 0,
+      "changes": 172,
+      "previous_filename": null
+    },
+    {
+      "filename": "libs/ui/src/usability.tsx",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "previous_filename": null
+    },
+    {
+      "filename": "libs/ui/table.css",
+      "status": "added",
+      "additions": 140,
+      "deletions": 0,
+      "changes": 140,
+      "previous_filename": null
+    },
+    {
+      "filename": "libs/ui/theme.css",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "changes": 1,
+      "previous_filename": null
+    }
+  ]
+}

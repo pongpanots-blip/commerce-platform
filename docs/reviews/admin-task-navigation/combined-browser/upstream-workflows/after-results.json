@@ -1,0 +1,288 @@
+{
+  "inventory": {
+    "elements": 156,
+    "files": 116,
+    "adminRoutes": 118,
+    "portalRoutes": 4
+  },
+  "visits": [],
+  "errors": [],
+  "issues": [],
+  "checks": [
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Populated catalog, full mobile record and correct detail/edit destinations"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Desktop and mobile price sort changes visible records and can restore original order"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Status changes reset pagination and preserve server page/limit"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Approving the last page returns to a populated earlier page"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Cancelling all-draft approval sends no mutation"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Search clears selection and bulk approval uses visible IDs, not all drafts"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Approving the last draft records displays the genuine empty state"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "ERP rejection sends only the chosen record after confirmation"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Keyboard page jump rejects out-of-range values and navigates valid pages"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Refreshing disables selection and navigation while loading"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Catalog failure shows retry, and recovery restores data"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Brand save failure preserves edits; retry saves the same payload"
+    },
+    {
+      "locale": "th",
+      "viewport": "desktop",
+      "name": "Supplier delete cancellation sends no request; failure retains the row"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Populated catalog, full mobile record and correct detail/edit destinations"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Desktop and mobile price sort changes visible records and can restore original order"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Status changes reset pagination and preserve server page/limit"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Approving the last page returns to a populated earlier page"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Cancelling all-draft approval sends no mutation"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Search clears selection and bulk approval uses visible IDs, not all drafts"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Approving the last draft records displays the genuine empty state"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "ERP rejection sends only the chosen record after confirmation"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Keyboard page jump rejects out-of-range values and navigates valid pages"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Refreshing disables selection and navigation while loading"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Catalog failure shows retry, and recovery restores data"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Brand save failure preserves edits; retry saves the same payload"
+    },
+    {
+      "locale": "th",
+      "viewport": "phone",
+      "name": "Supplier delete cancellation sends no request; failure retains the row"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Populated catalog, full mobile record and correct detail/edit destinations"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Desktop and mobile price sort changes visible records and can restore original order"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Status changes reset pagination and preserve server page/limit"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Approving the last page returns to a populated earlier page"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Cancelling all-draft approval sends no mutation"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Search clears selection and bulk approval uses visible IDs, not all drafts"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Approving the last draft records displays the genuine empty state"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "ERP rejection sends only the chosen record after confirmation"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Keyboard page jump rejects out-of-range values and navigates valid pages"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Refreshing disables selection and navigation while loading"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Catalog failure shows retry, and recovery restores data"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Brand save failure preserves edits; retry saves the same payload"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Supplier delete cancellation sends no request; failure retains the row"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Populated catalog, full mobile record and correct detail/edit destinations"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Desktop and mobile price sort changes visible records and can restore original order"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Status changes reset pagination and preserve server page/limit"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Approving the last page returns to a populated earlier page"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Cancelling all-draft approval sends no mutation"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Search clears selection and bulk approval uses visible IDs, not all drafts"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Approving the last draft records displays the genuine empty state"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "ERP rejection sends only the chosen record after confirmation"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Keyboard page jump rejects out-of-range values and navigates valid pages"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Refreshing disables selection and navigation while loading"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Catalog failure shows retry, and recovery restores data"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Brand save failure preserves edits; retry saves the same payload"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone",
+      "name": "Supplier delete cancellation sends no request; failure retains the row"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "name": "Explicit confirmation approves all unfiltered drafts and sends the existing all:true contract"
+    },
+    {
+      "locale": "en",
+      "viewport": "phone-320",
+      "name": "Graphic role reads products/brands without forbidden write or detail actions; narrow screen stays contained"
+    }
+  ],
+  "unsupported": [
+    "GET /admin/stats",
+    "GET /reports/health"
+  ],
+  "productionRequests": 0
+}

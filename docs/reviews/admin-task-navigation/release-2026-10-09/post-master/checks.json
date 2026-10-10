@@ -1,0 +1,94 @@
+{
+  "recordedAt": "2026-10-09T10:03:07.670225+00:00",
+  "validatedAdminCodeCommit": "cc37d509f675c7baf23b879022392cda98a534dd",
+  "upstreamBase": "792434aa4a88888059b91a75ad26c359f803ecf5",
+  "adminTests": 272,
+  "deploymentMockAssertions": 95,
+  "browserActionScenarios": 46,
+  "sourceHashes": {
+    ".github/workflows/deploy-ecr.yml": "821d838158eaa7b608a729633f6fe56cadfdc99ca238af7f8285c94e0c185b0b",
+    "docker/ec2-deploy.sh": "52bf594cd3eb6ecd40e42607421b653504eebcad7b82217f85f1f9eb8171fdc5",
+    "docker/deploy-preflight.sh": "a55f93737e56d6ca5fea39f298cc7d14962a15ec93704a550d64824e24989b73",
+    "scripts/test/ec2-deploy-retention.test.sh": "1bda0d47b7e920e405211fbe5d8487108482a1a96db3c37aad7bc2ef354b60d0"
+  },
+  "checks": [
+    {
+      "name": "admin-tests",
+      "exitCode": 0,
+      "log": "logs/admin-tests.log",
+      "sha256": "a41664f4e1de0694eb4637a6ee60c41301ac44db98176061b7b3af660401e2e4"
+    },
+    {
+      "name": "admin-types",
+      "exitCode": 0,
+      "log": "logs/admin-types.log",
+      "sha256": "76162e465989f3f070a9de8db711fbf358e53b74d09ce1bbdb57c727e4c4a16d"
+    },
+    {
+      "name": "admin-build",
+      "exitCode": 0,
+      "log": "logs/admin-build.log",
+      "sha256": "3467bd08a58fe16dd739cdeb42d4540c7e746cc3035cddd489da932388340779"
+    },
+    {
+      "name": "action-browser",
+      "exitCode": 0,
+      "log": "logs/action-browser.log",
+      "sha256": "aa45177b259f8bf95d25553cb35e9c162825432da3e0d24871fae3553a6f4559"
+    },
+    {
+      "name": "skip-cleanup-tests",
+      "exitCode": 0,
+      "log": "logs/skip-cleanup-tests.log",
+      "sha256": "2758e4f1d9067de60ab10ab7d56ae043717c357d780704cee226f85b19ec9055"
+    },
+    {
+      "name": "header-browser",
+      "exitCode": 0,
+      "log": "logs/header-browser.log",
+      "sha256": "a9deaafea288d44d040b333783683b769c48bbd9cbf4852f0ccdebb095ae98b7",
+      "views": 8,
+      "paths": [
+        "/product-master-queue",
+        "/product-prices"
+      ],
+      "errors": 0,
+      "issues": 0
+    },
+    {
+      "name": "order-period-header-browser",
+      "exitCode": 0,
+      "log": "logs/order-period-header-browser.log",
+      "sha256": "2a42046e6cb2acc6ecb274a2902c34997a9d12e4f59166687f4dccdbf655ce2c",
+      "views": 4,
+      "paths": [
+        "/order-periods"
+      ],
+      "errors": 0,
+      "issues": 0
+    }
+  ],
+  "independentReview": {
+    "deployment": "95 assertions passed; no remaining blocker in authorized scope",
+    "reconciliation": "cc37d509 review found no defect; other three imported files exactly match master",
+    "limitations": [
+      "No real production execution",
+      "Manual rollback only",
+      "Platform/Redis dependency restarts explicitly authorized"
+    ]
+  },
+  "deployment": {
+    "workflowActive": true,
+    "runnerInventory": "HTTP403 Resource not accessible by integration; no alternate attempt",
+    "publicPreflight": "HTTP403 on unauthenticated /admin/ and /api; see public-before.json",
+    "workflowDispatched": false,
+    "productionHealthVerified": false,
+    "inputs": {
+      "deploy_service": "admin",
+      "skip_cleanup": true,
+      "skip_deploy": false
+    },
+    "previouslyDeniedRunMetadataEndpoint": "Not retried or accessed via alternate route"
+  },
+  "headerViews": 12
+}

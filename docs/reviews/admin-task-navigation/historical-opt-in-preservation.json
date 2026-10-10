@@ -1,0 +1,608 @@
+{
+  "base": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "protectedSourceFilesIdenticalToHead": [
+    {
+      "path": "apps/commerce-admin/src/app/app.tsx",
+      "sha256": "9492cfba899e226490cf75558b667a0296cc45464d3fb6adb33945f720326622"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/hooks.ts",
+      "sha256": "da6b52936cb5e1590b6a0e7f263c66423aa24f52a999c57fca2c661cd9da452c"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/navigation.legacy.ts",
+      "sha256": "a4e4282e28b7c5584fe65788f6783908a264c6fdfaab88ff905b6f57acbc6744"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/navigation.ts",
+      "sha256": "0c382efa7713e3a0756bfdc6a0720a1768bf69e2280b6e0e54a116a392e9a51e"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/AiConnectors.tsx",
+      "sha256": "45a872b2a61bd0edb5e471ad1c2f8b283136eb43ca7540100d521958347e8516"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ChangePassword.tsx",
+      "sha256": "77452a75ada4c042f4aefbca520d7b6509accfbacaa869bcd2b1cd43e5db5fd3"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+      "sha256": "0053f21655dcb356da49618cdc1bf3b797ddbe358ff92d6ab024bac6e824326a"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/CustomerDetail.tsx",
+      "sha256": "a40900c9ecdf828db2983d4909d1753eda1a7cb675ba8a9e04cc12a8b7b76284"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Customers.tsx",
+      "sha256": "d96e6e2d685dbfbb314babfd66b2cab505dc02e048b96d5e85e03a36bba8b036"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Dashboard.tsx",
+      "sha256": "b00c4ab448f5f0c381f1595ad2f613ef2e6f25f6953149161a19fa652f5b373a"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ErpIngest.tsx",
+      "sha256": "9f309c78ea74b8d4eeccbe4f77375d7016ad8f29aef54987641e2ba3f0c26642"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ErpSimulator.tsx",
+      "sha256": "235cc1110585b4955cf40bee3600910375a31e29e87af2532d6796e8333c9b83"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ErpStock.tsx",
+      "sha256": "95e504b75c36978b57319f02f4206a79be8ab401d4e5bd79e15af624f655f695"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/InboundLog.tsx",
+      "sha256": "25d0cb7b8d9991d8dfd2dac4bd1731b2c74e0be0413f5276656941f59d075c2d"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Integrations.tsx",
+      "sha256": "0dd1408e5a73c7454c2e405ebf25da75663fb4388084875314987e6e61815de8"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/InventoryPerWarehouse.tsx",
+      "sha256": "7c39bc8ad78f760ee3ce1007341b62b145c765062b4f77a4abda0481f4f1704f"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JagotaShadow.tsx",
+      "sha256": "6f6ee9086338abcdbeeeaca774315c8140788f7125d8e84c809c073612e598b0"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshApiLogs.tsx",
+      "sha256": "97f4935f1abe03a8f1b86ffa29b73e30c6c4db61533ebd5f6c5a188024e4b228"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx",
+      "sha256": "e1b66008a0f317cd9662b96ae894ff3429919407b54e09deb2a22da765aa5339"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx",
+      "sha256": "1e8a0cb85bc64753aaebd817d69f66798b811aa4a070659aa5bf96a07aaddeaa"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshCustomerDetail.tsx",
+      "sha256": "932051a952a87e80b61d28ea18726e2d34ec59887925b847b78ef7c93d8b9414"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshErpLogs.tsx",
+      "sha256": "b38b705aefdc5db2ba963ea99b3f2f694b210cd8a382bd18ec741782dee53ffc"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshOrderDetail.tsx",
+      "sha256": "49b58bff60b9ab7411c3d7cadfe6f5416b7701e3490e7f3817ea4f5ecd377fe9"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshProductDetail.tsx",
+      "sha256": "9aedf51c5c2608b200e86bd62f63419abf36d9da191d774b49f8eada5d6e0171"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshProducts.tsx",
+      "sha256": "2d14c8552a6c859422341c257ccebb751291acdcdc0bac08082b6ec20fac820c"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/JoshStaff.tsx",
+      "sha256": "c8fa1307c1897bd3862dd9c203725a9b23491e906cc990c600b7f97e95579dae"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Livechat.tsx",
+      "sha256": "76222fb492069a629fb146a7045c8465370b050ddcff2b86862a6bf10b65c897"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Login.tsx",
+      "sha256": "dc9b821bc8c8b557d342c8d60b87ca736c023c63b8b8d7fb60b925ddcfc198cb"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+      "sha256": "c1b8754625ed569ed690333ca96b44e2aa1416c7f5b87e8ac03a897f1b90df0a"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/MarketingAnalyst.tsx",
+      "sha256": "02bcad4cd0004a1dca13969f6b1a6c7b4a8e95e333f1c4b5334578c0a97cc83b"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/MarketingResearch.tsx",
+      "sha256": "822da3dfba14a96d47de960b7241e4d6cd346698b664a41f806e4fe9efe6e02e"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/MarketingWorkflows.tsx",
+      "sha256": "0275f9eaf7b05d4cb1d238ad35574cc0b7ff489a0264a8a2bc405138d356b2d4"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/OrderDetail.tsx",
+      "sha256": "aedfd9e61518173791e624fea4a06dc8d9bdb51c447acdc869128aae647280a5"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Orders.tsx",
+      "sha256": "38fe9eeb217da29e7964207b81adbc5837accc48975f8d657708915f883381b9"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/PriceShadow.tsx",
+      "sha256": "ecff4528441eb3921d7e1cb6e837eebd74c817a087b937e854fd43bb4911c27d"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ProductDetail.tsx",
+      "sha256": "68697d8a7838672514459670c6fbe3007653981fda04ec39c6b83b83bdaf6d6b"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx",
+      "sha256": "c73bcf25b3045b5627ed6b61853962dda3b353a413c92e76c649e08c701f3f93"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ProductPrices.tsx",
+      "sha256": "739b6950dbcc41da4a8830460f5c09d181bae213e8519c5c5f033ed7d014dc35"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Products.tsx",
+      "sha256": "1705de56b82c4f90b352585cae20c1240a5a6af8d734a63c47003fcbc8b5654e"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Reservations.tsx",
+      "sha256": "07077e4b121a428a400040e9ba7113eff1542facd5a5200c876bba251500183f"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/ShopReports.tsx",
+      "sha256": "220589cd41ddd3770573aa9fa558b6cbe701236df53557462eafaebd89ea5c41"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
+      "sha256": "0396bfac70ebe40ba54d4e335643f3add8881cd8791db77dd122c2a3395275f7"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/StaffPrices.tsx",
+      "sha256": "5f7b11f3e0b5d8f3cff210952b19d58f791d596c6b98b92b3e6b8d6e1ee55d3a"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/StockMoves.tsx",
+      "sha256": "bc95c780e0313e9d69a0cd055e6622ccd2a76d8b82aa29f4939f38c623f81830"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Subscriptions.tsx",
+      "sha256": "13c4d7f52a3c9ff7f0d7f0860a56deeb6689e3373ed40177e9d8b46a6f520df9"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/SupplierOrderPeriods.tsx",
+      "sha256": "7531dc4caf85726c76a46757d6dc6a842519bd1322382b20d6306aa7c7563b0d"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/SyncJobs.tsx",
+      "sha256": "0aee2f93cd5c2ae91bc68abbdcbbe1aed93438f61f8613da43afc84821b5ac14"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/WebhookDeadLetter.tsx",
+      "sha256": "12b723c1c5208bfe873b1506f366913fd293eb7204dfc1494ffd57ec3307c5a6"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/WebhookPlatforms.tsx",
+      "sha256": "84f5457830ab9e59d169982765ef209b7bfd39d5a5a5b6da356121d17ed4f45d"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Webhooks.tsx",
+      "sha256": "0ad0d5f348f26342086b0d4f51dabfe8defb442fc1596684a3f416dfd3466399"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Winback.tsx",
+      "sha256": "79958556bcaa26a0c01faee3863f917c7d1f104d0b261dd78705dd0237e03cae"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/Workspace.tsx",
+      "sha256": "24d5fa95fd780dfd80856e5fad17888fc3169e6d6cb5ca9135c45089d919fc30"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/growth/Plan.tsx",
+      "sha256": "d51a329a73d0f99e1f6589abfd439d4231292ff7a0cc492467d933fa593da8ed"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/growth/Plans.tsx",
+      "sha256": "84476fca0fd909cb8cc1bce1553798e033a5204f8eadf6a6af0770c02b576788"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/growth/Results.tsx",
+      "sha256": "d4aa042130f60e1fc45d678c190ee969919f866cb48050b75bf503e868c9a593"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/growth/Workspace.tsx",
+      "sha256": "484566c66efad1634dda5e61d01e0dd41556c99f70456d50ad57c7ab4cd2fe1c"
+    },
+    {
+      "path": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx",
+      "sha256": "88160ce2ee11f626e1329ab1848f726b0d078aa1acb5695d5af26c603a21404b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/ActiveOffersAdmin.tsx",
+      "sha256": "6c78256d1f4a9f7a959522cd3d0f9667ffc99247491da7d191e6a792f0a4535f"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/Billing.tsx",
+      "sha256": "83983c937c7c1a05b2c846f737e2659b9c4c5f6e9c5cfb5d71093833b3bc3b3b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/CartMoveCategoriesAdmin.tsx",
+      "sha256": "6121d3adec70d8a13f113daa3f39070eafa546a5efa52e404fcff47e414dce49"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/CreateCompanyAdmin.tsx",
+      "sha256": "ddd7f7938821e473d3abbc9daace393003054c7b14d3dcaaa44d5e08e1f2c20b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/CreditTermsAdmin.tsx",
+      "sha256": "d714117e86217d4f5f797d1382ebaf611f716f81a495cd5aeb87adaa457a21f7"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/DeliveryScheduleAdmin.tsx",
+      "sha256": "43945a411d0aaa0f1dce7606b68824b33214eb2b43c846c7e9698a0685d72cbb"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/InvoicesOverdue.tsx",
+      "sha256": "9464d5e0fc4a26f98fd72f84ac222c0d53ac1c8c08265b4baf608a4bd5fac97e"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationCatalog.tsx",
+      "sha256": "81bb680d6b6f2a8cc5294058a48789c7d934cb94b80357b878b8d87e84529fcf"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryStats.tsx",
+      "sha256": "2cd2fae1c2f0710de662981d56cb8c7f7342fe4489be6801f417f69f616550f1"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationLog.tsx",
+      "sha256": "d17270b292a5e15c34240beb954fdaacc94c237821372f24b9b39bada11612fe"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/PriceRequestsAdmin.tsx",
+      "sha256": "fba6e7d5066230796e78dc2349ca46c98b83594b2bd6522b7d6e5fa952dd6464"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/ProductNotifyFunnel.tsx",
+      "sha256": "809d391bfae8efdd924f6dc15f21144d057f975f1a9080cc41638ccabf56e018"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
+      "sha256": "a5e92661b97d5582410c4195ac7d5b77cdb1f8779d54f6aba18dbf748dd7db3b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/CS/SampleRequestsAdmin.tsx",
+      "sha256": "e5ae889950ef347b8636b4f6bf6abe83b22b084fa2a29567286b28abbab32811"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx",
+      "sha256": "f8aa2222768b5dadc89845ae767724d31c63f822e2ec94ea61e7e27a77e750b5"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+      "sha256": "e4f7fac28d68cac21d3c7e9d63824e48449e638f334fe576fd43c7c35f80f880"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditBacksAdmin.tsx",
+      "sha256": "61586cf45960e02da0863c87dc7c3f2f0ecfec2363279684be2df6e0139856c4"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditNotesAdmin.tsx",
+      "sha256": "b960ac2194de0f83d2635b4d928dc2044bf65321f39443e7f5bc145418421b06"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/admin-access/AdminAccessQueue.tsx",
+      "sha256": "fc0a14ebf1518728b7f868afe28b49183b4c99c88dc6b4f27071a9685daa42b9"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/batch-sticker/BatchSticker.tsx",
+      "sha256": "330d4f8f99d08c1fb8c9e65aaa9d78722e760b0205231ea4b174837804e195e7"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/BotIntentRules.tsx",
+      "sha256": "844169fa48c8678ed7117cbb0ee5b46e399581e132da7514084e95657447efa0"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/BotTemplates.tsx",
+      "sha256": "90bcb4d6f17b02ab76e608150f59ebf87214bd5bf6023f7432ad6852fee1980b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/BotWorkflows.tsx",
+      "sha256": "faa8dee34b89228205214f58258c43a9492f9af8ce0d3e1eb130bbd18f177a6f"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotIntentRule.tsx",
+      "sha256": "3774bf845f56d589fe3263aad4f70e9a8094221398469c99fc220bb8a2b1f4e0"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotTemplate.tsx",
+      "sha256": "fb8012de6c017fe96ea6c0d4bff417a89c10f9e2fa850bde00d5a215eca2c1e2"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotWorkflow.tsx",
+      "sha256": "005952fb8b4145e19abcfe09299272f08b9d22d2b68d0b2d6427ad43c448845b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotIntentRule.tsx",
+      "sha256": "84e8e9343b00f83e71249c80ec0cae34381bb760b7f8d97813817fb6c5413591"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotTemplate.tsx",
+      "sha256": "9f09b792f140e23e9d83f4b7945a27ccc709a1ece0bd116127b792a9f960fb62"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotWorkflow.tsx",
+      "sha256": "7b0e133a3e2506ad7b08e16dc04ef3833ce4d96fe3b360006a1747e1d47e3f7d"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx",
+      "sha256": "e312fb5866fb3d69c66f1afa1622fb74a3bd29ac2fdc87d05442929feffc450f"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx",
+      "sha256": "c156cf7abfcc191f379663acf171726947c6bc429aedb86a3d6a05de628a3138"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignList.tsx",
+      "sha256": "53cec479d470ba9101c93a568a89f1a28a745bc66c3658f289b6d7115ac69d91"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/campaign/CreateCampaign.tsx",
+      "sha256": "75ac207d1038ec3a4f63a2201e37b0a2e507838e6587d3e16115fa511729acf3"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/campain/MechanicEditorPage.tsx",
+      "sha256": "2c9f400d7add7722e4f1638b718c23c7997bedb9b599f8408b139640273dac2f"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionMechanic.tsx",
+      "sha256": "555bbd865920fef5b75d142b6210d7e678aa9a53079d61ddb458c53dd5ed56d1"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/company/Company.tsx",
+      "sha256": "3dd59402b8fb6f742a25abb8e8c5a6314f3857f396603ec7126e781ed85811fb"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
+      "sha256": "8343eb7984af66db5a86db76b76b664bb27b84d1f1589dc81720f19e76f6aaef"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx",
+      "sha256": "62b7c540b9bcaaafe78cfae9c55a1d076fd1fa5a3d1bdb61a071401509bbf138"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponList.tsx",
+      "sha256": "bd9eaa6c28c2c6f08b3d4e25ce5ae0834d0ff480ccaf11db5a6c263e026f789c"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/coupon/CreateCoupon.tsx",
+      "sha256": "3afc0cd9ef230ae1af76b6267cd49c4b1e40580e2bb33119dea08d0f189ce351"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+      "sha256": "925a966b87f0eba5768c954b74dc3eec3dd72504ff90aa5e3e6cd079d04b618d"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
+      "sha256": "35cdad28585d2ffa45761864ddcbc8d23c01a13e1fc0379c158329dee2808c33"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx",
+      "sha256": "be12bac4cdf87b27822b445b1ebedfb2a34120d8b6c59d45d67232950cd63907"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/kyc/KycQueue.tsx",
+      "sha256": "a2705cf15e4087b2ba13162c327052ddc34756edd52d12431a816d60e19b8cf3"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+      "sha256": "e23873bd6e04111559533448b9147d77a8f896d56acc909b1bab797dad7d55d0"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingJourneyFunnel.tsx",
+      "sha256": "e0b3f379784830a6b1ff4c5ef07f19a74a0f455d601aef56c72a9811930f5102"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingLinksPage.tsx",
+      "sha256": "4e23b7bdb9a86ed19bc1a112fe035ac2c25e35a1c971e55fc95f3989222c147a"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingNotifyTemplates.tsx",
+      "sha256": "51a31de9582613e0b8c12a56f06c8d3fc06ce558144657cb14b056bac766604f"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
+      "sha256": "892eab0303eb783440adecc6e8dc5658feeb76fa282a27179332676ce8598269"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx",
+      "sha256": "19a600bb0b1f92271de06896ef835d363074dae0a0bf62b751dba425ca6ed622"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingSettingsPage.tsx",
+      "sha256": "50e38568fbdbaef2a13dd1ad8293e4db0939f9a4f12c00535ef8a910ad4dfa2f"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+      "sha256": "b3c714a0051e8398fb2c697a1d052edee82abd38e1c6033fee3d7fb6b22a8af8"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapedCatalogPage.tsx",
+      "sha256": "4015fddb68ef8376cef65ab70535add10533988471ed591e4db77e8cb444eec3"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
+      "sha256": "274247896956afea9d4c499ee9d7a156aecf15e06ccc891ca36b6315fc51519e"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx",
+      "sha256": "659d1d71f60d984d9df3641c6861721a9ed55add06cc9909f4528ee1aec68bac"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkEdit.tsx",
+      "sha256": "0a55cd867a8124b79c387d5db2262d804d2b4b88a286c1f1f0d2a2a4d3882ca7"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinksPage.tsx",
+      "sha256": "81bde17bc8f2928cf3c4d28cc1685d5b6b8bad30a2cafb4c1cc9a07c5063a710"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/marketing/WelcomeLeadEmailPage.tsx",
+      "sha256": "4e00376d0c949a9a37080b128d68dd6186b33ed239bb96b0bc999629e1c7604b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx",
+      "sha256": "3ef373860bbc5b1694e9679f47bf6cb7cdc47a43ddeffc76f4cf63523bcb38d8"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/orders/OrderImport.tsx",
+      "sha256": "c1af8d42f487cc6520d60d27913397f5769c1c9a87daa8e4e904b84dc4eb19b7"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/orders/PaymentTransactions.tsx",
+      "sha256": "97c4d11a102a1c25f914a29328c5fd389c1c471346ca7055563523e8fb8edef0"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/orders/ShipmentDetail.tsx",
+      "sha256": "c8be62bcf362a213d023b84a7c5e1d681f24758a75d257c749d14a79de44c0eb"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/orders/Shipments.tsx",
+      "sha256": "8685fac8b1ce3caea924c58e7c3af6770d28385ee1eb0187a20a586760f6fdfb"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
+      "sha256": "530827838812babb35a1b8d256f2dee2793c3786f4d80da0f37f89c883497df2"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
+      "sha256": "a4d24360116a8ade1a8a0171b2966653013c476b149aa241bf1514520cafd48d"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/product/CreateProduct.tsx",
+      "sha256": "4110022006c593f0386ab528de0d641069aa6514db8cfb31437a83abeed0e3d4"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/product/EditProduct.tsx",
+      "sha256": "71c54cd2f869b18d88aaff9bf9f0594cd5921a262cb976d5ccf5acbe5c7bee6d"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+      "sha256": "5365972048074b25c98bc402edeb5e825432264c62a82e5e1859259841cf7ce5"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/product/ProductVideoUpload.tsx",
+      "sha256": "d5181d54aa1f73ad4dbda27a198a598767fd44ae1d307043fae561f9d8791a09"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageEditorPage.tsx",
+      "sha256": "62829b64e39cfd7b0f8aeda651821a0741f6c7cfc459354e5ca4e1fefd2ff50e"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageLibrary.tsx",
+      "sha256": "ccbf06036b39e01059f6e3619aa0114043eb57b1c807d2cc8bac9d69f639063e"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetForm.tsx",
+      "sha256": "365c801569d47390e7c4c9ccf29e87edc46d78a0a20001a54422e14cc5896e4d"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetList.tsx",
+      "sha256": "2870850c82ca150b775e571eae774a5952b2b43784c571b653d0bb166f878b94"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/segment/CreateSegment.tsx",
+      "sha256": "d9ca20842799182eeb5c8c06ad24ba35fcdbf3b96185537b8401b3ecee4a55e0"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/segment/EditSegment.tsx",
+      "sha256": "1162614a15c6233a09647fb983d62d6f7a5bc7b55841a227403f001664c861bc"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx",
+      "sha256": "8539dc79225e2a26b2891cef427c9699b1ab1da1516a908e0e285061d169780f"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentList.tsx",
+      "sha256": "595008023f17c0cde50db9f384fa39bc61bb5e54845fe04075e784e6e5aca96b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/supplier/CreateSupplier.tsx",
+      "sha256": "0e5d43ee424591264d446dfa17536f00c6989954947bc2be4ccaee9a73c43489"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/supplier/EditSupplier.tsx",
+      "sha256": "117bad1ada6526364b41691e4e0c33bc76bb1518c0777ab536c02b3b9b47c6a4"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx",
+      "sha256": "f7a2f69b1b7414a45a5bac1723d85f9acddbd4368224e6bae9ba94f5f00a112f"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/user/Alluser.tsx",
+      "sha256": "104a4f9b41a2264e0501b1f336cae2d9a4391196b42639ac78903631df2d942b"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/app/page/user/UserDetail.tsx",
+      "sha256": "6726808dfd6057199643aa6ca193303b6804d9dd9d7ba2a13bf10a3c0e76abd3"
+    },
+    {
+      "path": "apps/commerce-portal/src/app/pages/ApiKeys.tsx",
+      "sha256": "2df79b87a37cbce30ef9691bf2b275fbb19e8858e2f28a2b19f2135c887c6902"
+    },
+    {
+      "path": "apps/commerce-portal/src/app/pages/Dashboard.tsx",
+      "sha256": "bf8aa39384765e2b71a65b3392238ffe691438d571e5f9648c3be95ab467464a"
+    },
+    {
+      "path": "apps/commerce-portal/src/app/pages/Docs.tsx",
+      "sha256": "97570ca743b693c6dfa39bc9367c945435638b071763415bf913dddb2f1dde3c"
+    },
+    {
+      "path": "apps/commerce-portal/src/app/pages/Login.tsx",
+      "sha256": "5aeea21c9f1969493db193381388042d1e9167ee44f471ee0f0639a3cd125dde"
+    },
+    {
+      "path": "apps/commerce-portal/src/app/pages/Register.tsx",
+      "sha256": "89c6f21ee5c9015d72febf2f27e45881f04898880d71d465e2178a3600f71303"
+    },
+    {
+      "path": "apps/commerce-portal/src/app/pages/Webhooks.tsx",
+      "sha256": "06c38a7398af5d0a43ed29f0f7fddf13ac6cfcf9be1b9d8b4297e5e1db248afb"
+    },
+    {
+      "path": "libs/ui/src/forms.tsx",
+      "sha256": "12f9c0df1685c0198b79444cfca71a958ea242a1a712fd5715e4127c7432e32d"
+    },
+    {
+      "path": "libs/ui/src/locales/ui-messages.json",
+      "sha256": "8c772f721fbcd27bd2c8b4838aa0183b1cf4279b2fe7ed3bc53b88606f41b117"
+    },
+    {
+      "path": "libs/ui/src/page-guides.ts",
+      "sha256": "cd4aa3eb7c24f7705d16194c0841ec446576cccd2730935f6ac506a990dfa057"
+    },
+    {
+      "path": "libs/ui/src/usability.tsx",
+      "sha256": "a11d48dbe62dab936ff1f252fff7d20bf090604e60a64e4de25584c8be7b82ff"
+    },
+    {
+      "path": "libs/ui/theme.css",
+      "sha256": "9bc0e574af1018ce62d83b0968b433b5dd67047f7e4d84fffc2cdd6cc2e096b1"
+    }
+  ],
+  "differentProtectedSourceFiles": [],
+  "sharedIndexDiff": "diff --git a/libs/ui/src/index.tsx b/libs/ui/src/index.tsx\nindex affb3cc..c5f05ac 100644\n--- a/libs/ui/src/index.tsx\n+++ b/libs/ui/src/index.tsx\n@@ -26,6 +26,10 @@ import { LanguageSelector } from './i18n';\n import { PageChrome, PageHelpLink, fieldExample, fieldHint } from './usability';\n import { blankFieldMessage, confirmLeaveIfDirty, scrollToFirstInvalid, useUnsavedChanges } from './forms';\n \n+// Additive opt-in API: existing Stitch Input/Select/forms keep their DOM and defaults.\n+export { TaskInput, TaskSelect, TaskTextarea, TaskForm, TaskSubmitButton } from './task-form';\n+export type { TaskInputProps, TaskSelectProps, TaskTextareaProps, TaskFormProps, TaskFormMessages, TaskFieldErrors, TaskSubmitResult } from './task-form';\n+\n // ui-copy-migration: only literal UI copy and notification templates\n import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from \"./i18n\";\n const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ');\n",
+  "note": "Only additive opt-in exports differ in shared index. Existing theme, DOM/default implementations, navigation and protected sources match HEAD. This is a source preservation check, not a full visual equivalence claim."
+}

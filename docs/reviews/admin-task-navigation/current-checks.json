@@ -1,0 +1,159 @@
+{
+  "recordedAt": "2026-10-09T09:08:54.160608+00:00",
+  "branch": "redesign/admin-task-navigation-upstream",
+  "base": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
+  "integrationCommit": "dbf5fe61c0d1a3070cc33329e908e1c7d4e443f4",
+  "preservedSnapshot": "30e1f788d12665b1e5b9b785ae70dadbe8561ff1",
+  "validatedSourceFingerprintSha256": "43b6b37fdbbc716428bbb0be85176a278a297a64e1b38048a25ed61be3048d02",
+  "heavyBuildAndBrowserJobsSerialized": true,
+  "testWorkers": 1,
+  "applicationVitest": {
+    "files": 17,
+    "tests": 272
+  },
+  "portalVitest": {
+    "files": 3,
+    "tests": 34
+  },
+  "backendTests": {
+    "suites": 6,
+    "tests": 60
+  },
+  "applicationBrowserScenarios": 46,
+  "componentBrowserScenarios": 6,
+  "upstreamWorkflowChecks": 54,
+  "layoutVisits": 724,
+  "finalAffectedStaffLayoutRechecks": 8,
+  "actualCurrentActionScreenshots": 12,
+  "actualCurrentLayoutScreenshots": 72,
+  "browserAPIs": "Intercepted local fixtures; unsupported integrations use503/error fixtures. No live persistence tested.",
+  "validationSequence": "Full combined-layout sweep and upstream workflows passed; final staff-count-only source fix then passed all272 admin tests, types/build, eight affected staff layouts, all46 actions and all6 shared form scenarios. Portal/backend/upstream workflow source stayed unchanged.",
+  "blockedOrNotRun": [
+    "Live merge receipt contract under current production prohibition",
+    "Actual service/database persistence and category database/migration integration tests: no authorized isolated database credentials; no migrations executed",
+    "Full legacy business/conditional-state acceptance, screen readers, Safari/Firefox and actual browser zoom",
+    "Library upload failed before writes; no retries authorized"
+  ],
+  "results": [
+    {
+      "check": "admin-types",
+      "command": "npx tsc -p apps/commerce-admin/tsconfig.app.json --noEmit",
+      "exitCode": 0,
+      "log": "logs/combined-admin-types.log",
+      "logSha256": "76162e465989f3f070a9de8db711fbf358e53b74d09ce1bbdb57c727e4c4a16d",
+      "interpretation": "Passed; actual observed completion."
+    },
+    {
+      "check": "portal-types",
+      "command": "npx tsc -p apps/commerce-portal/tsconfig.app.json --noEmit",
+      "exitCode": 0,
+      "log": "logs/combined-portal-types.log",
+      "logSha256": "76162e465989f3f070a9de8db711fbf358e53b74d09ce1bbdb57c727e4c4a16d",
+      "interpretation": "Passed; actual observed completion."
+    },
+    {
+      "check": "admin-tests",
+      "command": "npx vitest run --config apps/commerce-admin/vite.config.mts --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "log": "logs/combined-admin-tests.log",
+      "logSha256": "231fe28aab316df448046eadf4fe865678dc7bfecc91d6ea123296708748892d",
+      "interpretation": "Passed; actual observed completion."
+    },
+    {
+      "check": "portal-tests",
+      "command": "npx vitest run --config apps/commerce-portal/vite.config.mts --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "log": "logs/combined-portal-tests.log",
+      "logSha256": "864abbd02c3e8dd213248eba284d18e3c61fcfca35bb568331ea193f44b1bc54",
+      "interpretation": "Passed; actual observed completion."
+    },
+    {
+      "check": "backend-tests",
+      "command": "npx jest --config apps/commerce-platform/jest.config.cts --runInBand --runTestsByPath apps/commerce-platform/src/modules/commerce/inventory/application/inventory-ledger.service.spec.ts apps/commerce-platform/src/modules/integration/connector/josh/josh-admin-call.controller.spec.ts apps/commerce-platform/src/modules/core/auth/presentation/staff-role-access.spec.ts apps/commerce-platform/src/modules/core/auth/application/staff-accounts.service.spec.ts apps/commerce-platform/src/modules/core/auth/presentation/staff-auth.controller.spec.ts apps/commerce-platform/src/modules/commerce/product-categories/product-categories.upload.spec.ts",
+      "exitCode": 0,
+      "log": "logs/combined-backend-tests.log",
+      "logSha256": "8ea8afc391f0d8d465efc3ea3af8aa53eac7825fc30e3e053aed12eb7d4e193b",
+      "interpretation": "Passed; actual observed completion."
+    },
+    {
+      "check": "admin-build",
+      "command": "NODE_OPTIONS=--max-old-space-size=4096 npx vite build --config apps/commerce-admin/vite.config.mts",
+      "exitCode": 0,
+      "log": "logs/combined-admin-build.log",
+      "logSha256": "be5d2d66fe6166deb398343a6f0efc53faca1d87dc86ba18732d191619429ab6",
+      "interpretation": "Passed; actual observed completion."
+    },
+    {
+      "check": "portal-build",
+      "command": "NODE_OPTIONS=--max-old-space-size=4096 npx vite build --config apps/commerce-portal/vite.config.mts",
+      "exitCode": 0,
+      "log": "logs/combined-portal-build.log",
+      "logSha256": "1b3651cae592f7b320b5116dca1fce4107865f8644390d99c758e6cc2b55de10",
+      "interpretation": "Passed; actual observed completion."
+    },
+    {
+      "check": "all-page-layout",
+      "command": "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node apps/commerce-admin/e2e/all-page-review.mjs",
+      "exitCode": 0,
+      "log": "logs/combined-all-page-layout.log",
+      "logSha256": "ecd99c58487deb4337c6e83910feff4a2de560348b347de691459e95b118d804",
+      "interpretation": "Passed; actual observed completion. Browser results use intercepted fixtures."
+    },
+    {
+      "check": "final-staff-layout",
+      "command": "ALL_PAGE_REVIEW_PATHS=/settings/staff,/settings/staff/new PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node apps/commerce-admin/e2e/all-page-review.mjs",
+      "exitCode": 0,
+      "log": "logs/combined-final-staff-layout.log",
+      "logSha256": "a9deaafea288d44d040b333783683b769c48bbd9cbf4852f0ccdebb095ae98b7",
+      "interpretation": "Passed; actual observed completion. Browser results use intercepted fixtures."
+    },
+    {
+      "check": "upstream-workflows",
+      "command": "TABLE_REVIEW_WORKFLOWS=true TABLE_REVIEW_WORKFLOWS_ONLY=true TABLE_REVIEW_OUT=docs/reviews/admin-task-navigation/combined-browser/upstream-workflows PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node apps/commerce-admin/e2e/table-redesign-review.mjs",
+      "exitCode": 0,
+      "log": "logs/combined-upstream-workflows.log",
+      "logSha256": "9e9756f8e4b0a67a754c669fa8d8d4f7d0a796d85ee65a46e5bb1083078f0b9e",
+      "interpretation": "Passed; actual observed completion. Browser results use intercepted fixtures."
+    },
+    {
+      "check": "action-browser",
+      "command": "ADMIN_URL=http://127.0.0.1:4413 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node apps/commerce-admin/e2e/task-navigation.mjs",
+      "exitCode": 0,
+      "log": "logs/combined-action-browser.log",
+      "logSha256": "aa45177b259f8bf95d25553cb35e9c162825432da3e0d24871fae3553a6f4559",
+      "interpretation": "Passed; actual observed completion. Browser results use intercepted fixtures."
+    },
+    {
+      "check": "component-browser",
+      "command": "UI_FORM_BASE_URL=http://127.0.0.1:4414 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/chromium node apps/commerce-admin/e2e/task-form-components.mjs",
+      "exitCode": 0,
+      "log": "logs/combined-component-browser.log",
+      "logSha256": "38ec813a980e11a8cb87b01522572cfd4b2775b5f106dca3849e93076d4db5bc",
+      "interpretation": "Passed; actual observed completion. Browser results use intercepted fixtures."
+    },
+    {
+      "check": "whitespace",
+      "command": "git diff --cached --check",
+      "exitCode": 0,
+      "log": "logs/combined-whitespace.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "interpretation": "Passed; actual observed completion."
+    },
+    {
+      "check": "archive-runtime-boundary",
+      "command": "rg -n 'superseded-first-slice|admin-first-slice' apps libs tsconfig*.json",
+      "exitCode": 1,
+      "log": "logs/combined-archive-runtime-boundary.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "interpretation": "rg exit1 means no runtime archive references"
+    },
+    {
+      "check": "patch-replay",
+      "command": "git apply --check reconciled-implementation.patch against reconstructed affected files at e4346b7687c196ba4a1a8ca276e74448b90c3317",
+      "exitCode": 0,
+      "log": "logs/combined-patch-replay.log",
+      "logSha256": "4fa8515faaaee1fe2e1e9e920fab557dd0a2cdeb679dffa77cc25411a61dc1c4",
+      "interpretation": "Passed; actual observed completion."
+    }
+  ]
+}

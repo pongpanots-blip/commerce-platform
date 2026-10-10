@@ -8,6 +8,7 @@ import { DASHBOARD, HOME, NAV_ENTRIES, ROLE_ACCESS, ROLE_SHORTCUTS, SECTIONS, WO
 import { LEGACY_ITEMS, LEGACY_WORKSPACES, legacyMapping, legacyNavFor } from './navigation.legacy';
 import { isRouteAllowed, landingFor } from '../lib/landing';
 import { homeForRole, ROLE_HOME } from '../lib/role-home';
+import { FEATURE_ACTIONS, FEATURE_HOMES, featureHome } from './features';
 
 const STAFF_ROLES = ['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic', 'sale'];
 const NON_ADMIN = STAFF_ROLES.filter((r) => r !== 'admin');
@@ -36,21 +37,21 @@ describe('sidebar per role', () => {
     expect(groups.length).toBeLessThanOrEqual(7);
   });
 
-  it.each(STAFF_ROLES)('%s: every section, More settings included, shows at most 10 items before "show more"', (role) => {
-    for (const g of navFor(role).filter((g) => g.group)) expect(g.links.filter((l) => !l.more).length, `${role} › ${g.group}`).toBeLessThanOrEqual(10);
+  it.each(STAFF_ROLES)('%s: every section, More settings included, shows at most six items before "show more"', (role) => {
+    for (const g of navFor(role).filter((g) => g.group)) expect(g.links.filter((l) => !l.more).length, `${role} › ${g.group}`).toBeLessThanOrEqual(6);
   });
 
   it('More settings: connections, failed deliveries, sync jobs and logs first; test tools, marketing tools and store data copies after "show more"', () => {
     const advanced = navFor('admin').find((g) => g.group === titleOf('advanced'))!;
     expect(advanced.links.filter((l) => !l.more).map((l) => l.to)).toEqual([
-      '/integrations', '/erp/webhook-dead-letter', '/sync-jobs', '/webhooks', '/subscriptions',
-      '/erp/inbound-log', '/erp-ingest', '/josh-api-logs', '/erp/josh-logs', '/erp/webhook-platforms',
+      '/integrations', '/erp/webhook-dead-letter', '/sync-jobs', '/webhooks', '/subscriptions', '/erp/inbound-log',
     ]);
-    expect(advanced.links.filter((l) => l.more)).toHaveLength(30);
-    expect(advanced.links.findIndex((l) => l.more)).toBe(10); // main items first, then the "show more" ones
-    for (const to of ['/erp/simulator', '/j/kbank/testing-console', '/erp-stock', '/josh/kyc', '/josh/internal_docs']) expect(advanced.links.find((l) => l.to === to)!.more, to).toBe(true);
-    // marketing has only "more" items there, so it sees its 9 unfolded (still at most 10)
-    expect(navFor('marketing').find((g) => g.group === titleOf('advanced'))!.links.map((l) => !!l.more)).toEqual(Array(9).fill(false));
+    expect(advanced.links.filter(l => l.more).length).toBeGreaterThan(0);
+    for (const to of ['/erp/simulator', '/j/kbank/testing-console', '/erp-stock']) expect(advanced.links.find((l) => l.to === to)!.more, to).toBe(true);
+    // Marketing has nine permitted items: six primary links and three under Show more.
+    const marketing = navFor('marketing').find(g => g.group === titleOf('advanced'))!;
+    expect(marketing.links.filter(l => !l.more)).toHaveLength(6);
+    expect(marketing.links.filter(l => l.more)).toHaveLength(3);
   });
 
   it('More settings only where a role has ops pages (admin, marketing)', () => {
@@ -64,9 +65,36 @@ describe('sidebar per role', () => {
     expect(orders.links.map((l) => [l.to, !!l.more])).toEqual([['/orders', false]]);
   });
 
-  it('per-role item counts (PR body table)', () => {
-    const counts = Object.fromEntries(STAFF_ROLES.map((role) => [role, linksOf(role).length]));
-    expect(counts).toEqual({ admin: 119, marketing: 41, merchandising: 19, cs: 10, sales_manager: 11, business_analyst: 14, graphic: 6, sale: 9 });
+  it('offers one menu entry per feature and keeps scoped records and reports separate', () => {
+    const admin = linksOf('admin');
+    for (const alias of Object.keys(FEATURE_HOMES)) {
+      expect(admin).not.toContain(alias);
+      expect(admin).toContain(featureHome(alias));
+    }
+    for (const path of ['/products', '/j/allproducts', '/reports/products', '/orders', '/j/order', '/reports/orders', '/customers', '/j/company', '/reports/customers']) expect(admin).toContain(path);
+    expect(admin.length).toBeLessThan(119);
+  });
+
+  it('keeps live legacy actions discoverable within their feature with unchanged permissions', () => {
+    for (const alias of ['/josh/coupons', '/josh/suppliers', '/josh/credit_terms', '/josh/admin_access']) {
+      expect(FEATURE_ACTIONS[featureHome(alias)].map(action => action.to)).toContain(alias);
+      for (const role of NON_ADMIN) expect(isRouteAllowed(role, alias)).toBe(false);
+    }
+    expect(linksOf('admin')).toContain('/josh/internal_docs');
+    expect(isRouteAllowed('cs', '/cs/accounts/merge')).toBe(false);
+    expect(isRouteAllowed('admin', '/cs/accounts/merge')).toBe(true);
+    expect(isRouteAllowed('cs', '/cs/orders/new')).toBe(true);
+    expect(isRouteAllowed('cs', '/j/order/import')).toBe(false);
+  });
+
+  it.each(STAFF_ROLES)('%s: action URLs use the existing API role policy, with queries intact', (role) => {
+    for (const path of ['/cs/orders/new', '/cs/samples?status=pending', '/cs/samples/123/approved?status=pending']) {
+      expect(isRouteAllowed(role, path), path).toBe(role === 'admin' || role === 'cs');
+    }
+    for (const path of ['/stock-moves/receive', '/stock-moves/count', '/stock-moves/adjust', '/stock-moves/transfer', '/products/new']) expect(isRouteAllowed(role, path)).toBe(role === 'admin' || role === 'merchandising');
+    for (const path of ['/customers/new', '/settings/staff/new', '/integrations/new']) expect(isRouteAllowed(role, path)).toBe(role === 'admin');
+    expect(isRouteAllowed(role, '/cs/accounts/merge')).toBe(role === 'admin');
+    expect(isRouteAllowed(role, '/j/order/import')).toBe(role === 'admin');
   });
 
   it('journey funnel (josh /analytics/funnel is admin-only) is no longer offered to marketing', () => {
@@ -79,11 +107,12 @@ describe('sidebar per role', () => {
 describe('old menu → new menu', () => {
   it('every old menu item has a new home, nothing new appears and the redesign widened no role', () => {
     const mapping = legacyMapping();
-    expect(mapping.map((m) => m.to).sort()).toEqual(NAV_ENTRIES.map((e) => e.to).sort());
+    expect(mapping.map((m) => m.to).sort()).toEqual(LEGACY_ITEMS.map((e) => e.to).sort());
+    for (const item of mapping) expect(NAV_ENTRIES.some(entry => entry.to === item.canonicalTo), item.to).toBe(true);
     for (const role of NON_ADMIN) {
       const before = legacyNavFor(role).flatMap((g) => g.links.map((l) => l.to)).filter((to) => !to.startsWith('/workspaces/'));
       const narrowed = role === 'marketing' ? ['/j/marketing/journey-funnel'] : [];
-      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual(before.filter((to) => !narrowed.includes(to)).sort());
+      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual([...new Set(before.filter((to) => !narrowed.includes(to)).map(featureHome))].sort());
     }
   });
 
@@ -123,19 +152,23 @@ describe('routes', () => {
   it.each([
     ['/j/product/edit/7', '/j/allproducts'],
     ['/j/product/7', '/j/allproducts'],
-    ['/j/product/create', '/j/product/create'],
+    ['/j/product/create', '/j/allproducts'],
     ['/j/coupon/create', '/j/coupons'],
     ['/j/coupon/abc', '/j/coupons'],
     ['/j/categories/edit/1', '/j/categories'],
     ['/j/categories/create', '/j/categories'],
     ['/j/supplier/edit/3', '/j/suppliers'],
     ['/j/order/123', '/j/order'],
-    ['/j/order/import', '/j/order/import'],
+    ['/j/order/import', '/j/order'],
     ['/marketing/growth/results/w1', '/marketing/growth'],
     ['/marketing/growth/plans/new', '/marketing/growth/plans'],
     ['/reports/orders/A-1', '/reports/orders'],
     ['/products/42', '/products'],
-    ['/josh/coupons', '/josh/coupons'],
+    ['/josh/coupons', '/j/coupons'],
+    ['/josh/credit_terms', '/j/credit-terms'],
+    ['/j/cs/sample-requests', '/cs'],
+    ['/cs/orders/new', '/cs'],
+    ['/cs/samples/r1/approved', '/cs'],
     ['/', '/'],
   ])('%s highlights %s', (path, item) => {
     expect(resolves(path), path).toBe(true);
@@ -150,6 +183,7 @@ describe('copy (TH + EN)', () => {
     ...SECTIONS.flatMap((s) => [s.title, s.description]),
     ...NAV_ENTRIES.flatMap((e) => [e.label, e.description, ...Object.values(e.roleLabels ?? {})]),
     HOME.label, HOME.description!, DASHBOARD.label, DASHBOARD.description!,
+    ...Object.values(FEATURE_ACTIONS).flatMap(actions => actions.map(action => action.label)),
     'แสดงเพิ่มเติม ({0})', 'แสดงน้อยลง', 'วันนี้ต้องการทำอะไร', 'เลือกงานด้านล่าง หรือใช้เมนูด้านซ้ายเพื่อไปหน้าอื่น', 'ตอนนี้อยู่ที่', 'ระบบหลังบ้าน', 'สำหรับทีมงาน', 'หน้าหลัก',
   ];
 

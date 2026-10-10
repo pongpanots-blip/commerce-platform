@@ -1,0 +1,13 @@
+2026-10-09T10:10:41.5339194Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +873a9a443272c21242b6f364ffa2f9b478df90cc:refs/remotes/origin/release/admin-task-navigation-20261009
+2026-10-09T10:10:44.3580822Z  * [new ref]         873a9a443272c21242b6f364ffa2f9b478df90cc -> origin/release/admin-task-navigation-20261009
+2026-10-09T10:10:44.7178837Z 873a9a443272c21242b6f364ffa2f9b478df90cc
+2026-10-09T10:11:11.7739365Z   tags: ***/commerce-admin:873a9a443272c21242b6f364ffa2f9b478df90cc
+2026-10-09T10:11:12.4167661Z [command]/usr/bin/docker buildx build --cache-from type=gha,scope=admin --cache-to type=gha,mode=max,scope=admin --file docker/Dockerfile.admin --iidfile /home/runner/work/_temp/docker-actions-toolkit-BBllkp/build-iidfile-9b766e321b.txt --platform linux/arm64 --attest type=provenance,mode=min,inline-only=true,builder-id=https://github.com/pongpanots-blip/commerce-platform/actions/runs/37915342509/attempts/1 --tag ***/commerce-admin:873a9a443272c21242b6f364ffa2f9b478df90cc --metadata-file /home/runner/work/_temp/docker-actions-toolkit-BBllkp/build-metadata-6f04cf07fc.json --push .
+2026-10-09T10:12:36.6110833Z #23 exporting manifest sha256:0287edce1b39b0f571222c53ceadc0c2c59ffed9b7d50641bf99dc526c8077a4 done
+2026-10-09T10:12:36.6114221Z #23 exporting manifest list sha256:07ce24ab4cd121332e54853934bd96b869ebc0b4a588c530db3e0134af6fbc6a done
+2026-10-09T10:12:41.2754691Z #23 pushing manifest for ***/commerce-admin:873a9a443272c21242b6f364ffa2f9b478df90cc@sha256:07ce24ab4cd121332e54853934bd96b869ebc0b4a588c530db3e0134af6fbc6a 1.7s done
+2026-10-09T10:12:43.5656152Z               "vcs:revision": "873a9a443272c21242b6f364ffa2f9b478df90cc",
+2026-10-09T10:12:43.5665841Z             "image_tag": "873a9a443272c21242b6f364ffa2f9b478df90cc",
+2026-10-09T10:12:43.5921559Z         "github_workflow_sha": "873a9a443272c21242b6f364ffa2f9b478df90cc",
+2026-10-09T10:12:43.5925196Z   "containerimage.digest": "sha256:07ce24ab4cd121332e54853934bd96b869ebc0b4a588c530db3e0134af6fbc6a",
+2026-10-09T10:12:43.5926098Z   "image.name": "***/commerce-admin:873a9a443272c21242b6f364ffa2f9b478df90cc"

@@ -1,0 +1,1 @@
+Historical first combined-tree sweep: 720 visits, zero layout issues, four fixture errors from top-level sessionStorage injection executing in sandboxed preview frames. The fixture was subsequently scoped to the top-level application and the full sweep rerun. These failed results are not current successful evidence.

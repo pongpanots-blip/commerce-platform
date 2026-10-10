@@ -5,6 +5,7 @@
 #   ./ec2-deploy.sh latest                  # all 3 services, same tag
 #   ./ec2-deploy.sh abc1234 platform         # just the API
 #   ./ec2-deploy.sh abc1234 admin portal     # both UIs
+#   ./ec2-deploy.sh --skip-cleanup abc1234 admin # deploy without pruning images, containers or caches
 #   ./ec2-deploy.sh --retention-only         # health-check + reclaim old tags (no pull/up)
 #   ./ec2-deploy.sh --retention-only --keep platform=947d385 --keep admin=947d385,portal=947d385
 #
@@ -451,13 +452,15 @@ commerce_deploy_main() {
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   cd "$SCRIPT_DIR"
 
-  # Split options (--retention-only, --keep) from positionals (TAG, services...).
+  # Split options from positionals (TAG, services...). Cleanup stays enabled unless explicitly skipped.
   local retention_only=0
+  local skip_cleanup=0
   local -a positional=()
   COMMERCE_DEPLOY_KEEP=()
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --retention-only) retention_only=1; shift ;;
+      --skip-cleanup) skip_cleanup=1; shift ;;
       --keep)
         [[ $# -ge 2 ]] || { echo "--keep needs <service>=<tag>" >&2; exit 1; }
         commerce_deploy_parse_keep "$2" || exit 1
@@ -467,6 +470,11 @@ commerce_deploy_main() {
       *) positional+=("$1"); shift ;;
     esac
   done
+
+  if [[ "$retention_only" -eq 1 && "$skip_cleanup" -eq 1 ]]; then
+    echo "--skip-cleanup cannot be combined with --retention-only" >&2
+    exit 1
+  fi
 
   # --- retention-only mode ---
   if [[ "$retention_only" -eq 1 ]]; then
@@ -532,7 +540,9 @@ commerce_deploy_main() {
   # tagged deploy images are older than 48h and stayed forever, filling the disk.
   # Aggressive reclaim happens AFTER a healthy deploy (see retention below).
   commerce_deploy_log_disk "before pull"
-  docker image prune -f || true
+  if [[ "$skip_cleanup" -eq 0 ]]; then
+    docker image prune -f || true
+  fi
 
   "${COMPOSE[@]}" pull "${SERVICES[@]}"
   # Schema first: the app never runs migrations itself (migrationsRun is off). A failed migration
@@ -601,7 +611,11 @@ commerce_deploy_main() {
   commerce_deploy_remove_keys "$PENDING_PREV_FILE" "${done_keys[@]}"
   commerce_deploy_seed_keep_prev
 
-  commerce_deploy_run_retention
+  if [[ "$skip_cleanup" -eq 0 ]]; then
+    commerce_deploy_run_retention
+  else
+    echo "cleanup disabled: preserving all images, stopped containers and build caches"
+  fi
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then

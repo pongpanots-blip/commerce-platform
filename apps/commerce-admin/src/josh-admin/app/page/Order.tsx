@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AiOutlineEdit, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../config/admin-routes';
+import { roleCanWrite } from '../../../app/role-can';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -259,11 +260,11 @@ const Order = () => {
           />
         </div>
         <div className="flex flex-wrap items-start gap-2">
-          <Link
+          {roleCanWrite() && <Link
             to={ADMIN_ROUTES.orderImport}
             className="inline-flex h-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
-            {__uiText("Order Import")}</Link>
+            {__uiText("Order Import")}</Link>}
           <Link
             to={ADMIN_ROUTES.paymentTransactions}
             className="inline-flex h-fit items-center rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10"

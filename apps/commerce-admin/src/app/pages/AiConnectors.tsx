@@ -151,10 +151,10 @@ export function AiConnectors() {
 
       <Panel>
         <PanelHead title={__uiText("AI สร้าง / แก้ไขอะไรไปบ้าง")} sub={__uiText("ใครสั่ง ผ่าน AI ไหน เปลี่ยนอะไร — ล่าสุด 100 รายการ รวมครั้งที่ไม่สำเร็จ")} />
-        <ErrorText error={changes.error} />
+        <ErrorText error={changes.error} onRetry={changes.reload} />
         {changes.loading ? (
-          <Loading />
-        ) : !changes.data?.length ? (
+          <Loading variant="table" />
+        ) : changes.error ? null : !changes.data?.length ? (
           <Empty>{__uiText("AI ยังไม่ได้สร้างหรือแก้ไขอะไร")}</Empty>
         ) : (
           <Table>

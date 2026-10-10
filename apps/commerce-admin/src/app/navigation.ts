@@ -1,5 +1,6 @@
 import { normalizeRole } from '../lib/role-home';
 import type { NavGroup, NavItem } from '@cp/ui';
+import { FEATURE_HOMES } from './features';
 
 /**
  * The admin sidebar, in task-based sections. One source for the sidebar (labels, order, visibility,
@@ -7,7 +8,7 @@ import type { NavGroup, NavItem } from '@cp/ui';
  * (src/lib/landing.ts) and the tests.
  * - `more`: less used, after the section's "show more" item (menu search still finds it).
  * - More settings (`advanced`): connections, logs, test tools and store data copies; collapsed, and like every
- *   section at most 10 main items per role (the rest after "show more").
+ *   section at most six main items per role (the rest after "show more").
  * - `activeFor`: sub-pages (create / edit / detail) outside `to` that highlight the item.
  * Labels and descriptions are UI copy keys (libs/ui/src/locales/ui-messages.json, TH + EN), named by task.
  * The pre-redesign sidebar is frozen in navigation.legacy.ts (old → new mapping, redirects, tests).
@@ -32,8 +33,6 @@ type NavEntry = Omit<NavItem, 'icon' | 'badge'> & {
   roleLabels?: Readonly<Record<string, string>>;
 };
 
-const STORE_COPY = 'สำเนาข้อมูลร้านค้าแบบดูอย่างเดียว ใช้ได้แม้ระบบร้านค้าล่ม แก้ไขข้อมูลได้ที่หน้าหลักของหมวดนั้น';
-
 const NAV: Record<SectionId, NavEntry[]> = {
   catalog: [
     { to: '/j/allproducts', label: 'สินค้าบนร้านค้า', activeFor: ['/j/product'], description: 'ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า' },
@@ -46,7 +45,6 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/product-master-queue', label: 'อนุมัติข้อมูลสินค้าที่เปลี่ยน', description: 'ตรวจและอนุมัติข้อมูลสินค้าที่เปลี่ยน เช่น หน่วย แพ็ก แบรนด์ และ VAT' },
     { to: '/stock-moves', label: 'รับเข้า ปรับ และโอนสต็อก', description: 'บันทึกการรับสินค้าเข้า ปรับยอด และโอนสินค้าระหว่างคลัง' },
     { to: '/erp/inventory-warehouse', label: 'สต็อกแต่ละคลัง', description: 'ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง' },
-    { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true, more: true, description: 'สร้างสินค้าใหม่บนร้านค้า' },
     { to: '/j/product/video-upload', label: 'อัปโหลดวิดีโอสินค้า', end: true, more: true, description: 'อัปโหลดวิดีโอประกอบหน้าสินค้า' },
     { to: '/prices/staff', label: 'ราคาเฉพาะลูกค้าและราคาสัญญา', more: true, description: 'ราคาเฉพาะของลูกค้าแต่ละรายและราคาตามสัญญา' },
     { to: '/order-periods', label: 'รอบสั่งซื้อจากซัพพลายเออร์', more: true, description: 'รอบสั่งซื้อสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับ' },
@@ -62,7 +60,6 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/j/credit-backs', label: 'คืนเครดิตให้ลูกค้า', description: 'คืนเครดิตให้ลูกค้าและติดตามสถานะ' },
     { to: '/j/refunds', label: 'คืนสินค้าและคืนเงิน', description: 'คำขอคืนสินค้าและการคืนเงินของลูกค้า' },
     { to: '/j/cs/delivery-schedule', label: 'ตารางรอบส่ง', description: 'รอบจัดส่งและเกณฑ์การจัดส่ง' },
-    { to: '/j/order/import', label: 'นำเข้าออเดอร์', end: true, more: true, description: 'นำเข้าคำสั่งซื้อจากไฟล์' },
     { to: '/j/batch-sticker', label: 'พิมพ์สติกเกอร์', more: true, description: 'พิมพ์สติกเกอร์ติดกล่องให้หลายออเดอร์พร้อมกัน' },
     { to: '/orders', label: 'ชำระเงินและการจองของออเดอร์', more: true, description: 'สถานะชำระเงินและการจองสินค้าของแต่ละคำสั่งซื้อ' },
     { to: '/reservations', label: 'การจองสต็อกตอนชำระเงิน', more: true, description: 'สต็อกที่ถูกจองระหว่างชำระเงิน ทั้งที่จอง ยืนยัน ปล่อย และหมดอายุ' },
@@ -70,9 +67,8 @@ const NAV: Record<SectionId, NavEntry[]> = {
   customers: [
     { to: '/j/company', label: 'บริษัทลูกค้า', description: 'บริษัทลูกค้า ข้อมูลบริษัท เครดิตเทอม และสิทธิ์สั่งซื้อ' },
     { to: '/j/allusers', label: 'ผู้ใช้ของลูกค้า', description: 'ค้นหาบัญชีผู้ใช้ของลูกค้าและดูประวัติ' },
-    { to: '/cs', label: 'งานบริการลูกค้า', description: 'สั่งแทนลูกค้า คำขอสินค้าตัวอย่าง และรวมบัญชีในที่เดียว' },
+    { to: '/cs', label: 'งานบริการลูกค้า', activeFor: ['/j/cs/sample-requests'], description: 'เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี' },
     { to: '/livechat', label: 'แชตกับลูกค้า', description: 'อ่านและตอบแชตของลูกค้า' },
-    { to: '/j/cs/sample-requests', label: 'คำขอสินค้าตัวอย่าง', description: 'คำขอสินค้าตัวอย่างจากลูกค้า' },
     { to: '/j/price-requests', label: 'คำขอราคา', description: 'คำขอราคาพิเศษจากลูกค้า' },
     { to: '/j/kyc', label: 'ตรวจสอบตัวตนลูกค้า', description: 'ตรวจเอกสารยืนยันตัวตนของลูกค้าที่รอพิจารณา' },
     { to: '/reports/winback', label: 'ติดตามลูกค้าเก่า', description: 'ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย' },
@@ -119,6 +115,8 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/reports/health', label: 'สุขภาพระบบ', description: 'ข้อผิดพลาดและปัญหาที่กระทบการขายตอนนี้' },
   ],
   settings: [
+    { to: '/josh/internal_docs', label: 'เอกสารภายใน', description: 'เพิ่ม อ่าน และลบเอกสารที่ใช้ภายในทีม' },
+
     { to: '/settings/staff', label: 'บัญชีทีมงาน', description: 'เพิ่มทีมงาน กำหนดบทบาท และปิดบัญชี' },
     { to: '/settings/josh-staff', label: 'บัญชีทีมงานร้านค้า', description: 'บัญชีทีมงานที่ใช้หลังร้านของร้านค้า' },
     { to: '/j/admin-access', label: 'คำขอใช้งานหลังร้าน', description: 'คำขอใช้งานหลังร้านของร้านค้าที่รออนุมัติ' },
@@ -152,19 +150,6 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/j/jagota/payment-testing', label: 'ทดสอบชำระเงิน Jagota', more: true, description: 'ทดสอบการชำระเงินของ Jagota' },
     { to: '/erp/jagota-shadow', label: 'ทดลองส่งออเดอร์เข้าระบบหลัก (ERP)', more: true, description: 'ทดลองส่งคำสั่งซื้อเข้าระบบหลัก (ERP) ผ่านระบบใหม่ ก่อนเปิดใช้จริง' },
     { to: '/reports/price-shadow', label: 'เทียบราคาที่คำนวณใหม่', more: true, description: 'เทียบราคาที่ระบบใหม่คำนวณกับราคาที่ร้านค้าใช้อยู่' },
-    { to: '/josh/kyc', label: 'ข้อมูลคำขอยืนยันตัวตน', more: true, description: STORE_COPY },
-    { to: '/josh/credit_terms', label: 'ข้อมูลคำขอเครดิต', more: true, description: STORE_COPY },
-    { to: '/josh/admin_access', label: 'ข้อมูลคำขอใช้งานหลังร้าน', more: true, description: STORE_COPY },
-    { to: '/josh/shipments', label: 'ข้อมูลการจัดส่ง', more: true, description: STORE_COPY },
-    { to: '/josh/payments', label: 'ข้อมูลรายการชำระเงิน', more: true, description: STORE_COPY },
-    { to: '/josh/credit_notes', label: 'ข้อมูลใบลดหนี้', more: true, description: STORE_COPY },
-    { to: '/josh/credit_backs', label: 'ข้อมูลคืนเครดิต', more: true, description: STORE_COPY },
-    { to: '/josh/invoices', label: 'ข้อมูลใบแจ้งหนี้', more: true, description: STORE_COPY },
-    { to: '/josh/coupons', label: 'ข้อมูลคูปอง', more: true, description: STORE_COPY },
-    { to: '/josh/campaigns', label: 'ข้อมูลแคมเปญ', more: true, description: STORE_COPY },
-    { to: '/josh/segments', label: 'ข้อมูลกลุ่มลูกค้า', more: true, description: STORE_COPY },
-    { to: '/josh/suppliers', label: 'ข้อมูลซัพพลายเออร์', more: true, description: STORE_COPY },
-    { to: '/josh/internal_docs', label: 'เอกสารภายใน', more: true, description: STORE_COPY },
   ],
 };
 
@@ -173,7 +158,7 @@ export const HOME: NavItem = { to: '/home', label: 'หน้าแรก', end:
 export const DASHBOARD: NavItem = { to: '/', label: 'แดชบอร์ด', end: true, icon: 'space_dashboard', description: 'งานที่ต้องติดตามและสถานะระบบวันนี้ในหน้าเดียว' };
 
 /** Every sidebar destination (Dashboard aside), in sidebar order, with its section. */
-export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatMap((s) => NAV[s.id].map((item) => ({ ...item, section: s.id })));
+export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatMap((s) => NAV[s.id].map((item) => ({ ...item, activeFor: [...(item.activeFor ?? []), ...Object.entries(FEATURE_HOMES).filter(([, home]) => home === item.to).map(([alias]) => alias)], section: s.id })));
 
 /**
  * Destination permissions from the staff-role policy; omitted destinations are admin-only.
@@ -181,6 +166,13 @@ export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatM
  * a page whose first API calls 403 for it. Also decides post-login landing pages and deep links.
  */
 export const ROLE_ACCESS: Record<string, readonly string[]> = {
+  '/products/new': ['merchandising'],
+  '/customers/new': [],
+  '/settings/staff/new': [],
+  '/integrations/new': [],
+  '/cs/accounts/merge': [], // account merging is admin-only in the relay
+  '/j/order/import': [], // import is admin-only in the relay
+
   "/home": ["marketing", "merchandising", "cs", "sale", "sales_manager", "business_analyst", "graphic"],
   "/reports/winback/opportunities": ["sales_manager", "business_analyst"],
   "/reports/winback/my": ["sale"],
@@ -424,11 +416,17 @@ export const canSee = (roleRaw: string | null | undefined, to: string) => {
 export function navFor(roleRaw?: string): NavGroup[] {
   const role = normalizeRole(roleRaw);
   const groups = SECTIONS.flatMap((section): NavGroup[] => {
-    const links = NAV[section.id].filter((item) => canSee(role, item.to))
+    const links = NAV_ENTRIES.filter((item) => item.section === section.id).filter((item) => canSee(role, item.to))
       .map(({ roleLabels, ...item }): NavItem => ({ ...item, label: roleLabels?.[role] ?? item.label }));
     if (!links.length) return [];
-    // nothing but "more" items for this role: show them as the section's main items
-    return [{ group: section.title, icon: section.icon, links: links.every((item) => item.more) ? links.map((item) => ({ ...item, more: false })) : links }];
+    // Apply disclosure after permissions: a smaller role still sees its own useful tasks first.
+    const onlyMore = links.every(item => item.more);
+    let primary = 0;
+    return [{ group: section.title, icon: section.icon, links: links.map(item => {
+      const more = !onlyMore && item.more || primary >= 6;
+      if (!more) primary += 1;
+      return { ...item, more: !!more };
+    }) }];
   });
   return [{ links: role === 'admin' ? [HOME, DASHBOARD] : canSee(role, HOME.to) ? [HOME] : [] }, ...groups].filter((g) => g.links.length > 0);
 }
@@ -485,7 +483,7 @@ export const ROLE_SHORTCUTS: Readonly<Record<string, readonly Shortcut[]>> = {
     { to: '/cs', icon: 'support_agent' },
     { to: '/j/order', icon: 'receipt_long' },
     { to: '/j/shipments', icon: 'local_shipping' },
-    { to: '/j/cs/sample-requests', icon: 'inventory' },
+
     { to: '/j/credit-notes', icon: 'request_quote' },
   ],
   sale: [

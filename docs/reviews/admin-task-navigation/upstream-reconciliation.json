@@ -1,0 +1,239 @@
+{
+  "expectedBase": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
+  "priorBase": "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+  "snapshotCommit": "30e1f788d12665b1e5b9b785ae70dadbe8561ff1",
+  "snapshotBranch": "redesign/admin-task-navigation",
+  "combinedBranch": "redesign/admin-task-navigation-upstream",
+  "integrationCommit": "dbf5fe61c0d1a3070cc33329e908e1c7d4e443f4",
+  "targetOriginallyLocal": false,
+  "import": "Exact git fetch --no-tags from existing authorized origin; no other credentials loaded",
+  "method": "New branch at exact upstream, cherry-pick preserved snapshot, manually reconcile two content conflicts; no reset/rebase/merge/push",
+  "commitsReviewed": [
+    {
+      "sha": "7fa0e5827881d253c69a910a85c53548a4a56362",
+      "parents": [
+        "75b462c26b7cec8b323c00c50163d1af02a5415a"
+      ],
+      "subject": "fix(categories): rename level-3 \"All Type\" rows to \"All Types\"",
+      "firstParentPaths": [
+        "A\tapps/commerce-platform/src/migrations/1796000000000-RenameAllSubcategories.ts",
+        "M\tapps/commerce-platform/src/modules/commerce/product-categories/category-rules.ts",
+        "M\tapps/commerce-platform/src/modules/commerce/product-categories/product-categories.service.ts",
+        "M\tapps/commerce-platform/src/modules/integration/connector/josh/josh-products.ts",
+        "M\tapps/commerce-platform/src/modules/integration/segments/ownership.controller.ts"
+      ]
+    },
+    {
+      "sha": "4b0255826a274400d6c27244199c86a52bdbc272",
+      "parents": [
+        "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9",
+        "7fa0e5827881d253c69a910a85c53548a4a56362"
+      ],
+      "subject": "Merge pull request #105 from pongpanots-blip/claude/subcate-type-all-5cd82d",
+      "firstParentPaths": []
+    },
+    {
+      "sha": "177f506fdb3e7cfc0ce4ec8d09d03bfb81a15ac5",
+      "parents": [
+        "69b13b2d188d4f7fb1d9bfbe5136fa693fc0bbf9"
+      ],
+      "subject": "feat(admin): staff self-registration with @jagota.co.th email, pending admin approval",
+      "firstParentPaths": [
+        "M\tapps/commerce-admin/src/app/pages/Login.tsx",
+        "M\tapps/commerce-admin/src/lib/api.ts",
+        "M\tapps/commerce-platform/src/modules/core/auth/application/staff-accounts.service.spec.ts",
+        "M\tapps/commerce-platform/src/modules/core/auth/application/staff-accounts.service.ts",
+        "M\tapps/commerce-platform/src/modules/core/auth/presentation/staff-auth.controller.spec.ts",
+        "M\tapps/commerce-platform/src/modules/core/auth/presentation/staff-auth.controller.ts",
+        "M\tlibs/ui/src/locales/ui-messages.json"
+      ]
+    },
+    {
+      "sha": "73419a5ad24a439205586a55865b79eeb5aa3e9f",
+      "parents": [
+        "177f506fdb3e7cfc0ce4ec8d09d03bfb81a15ac5",
+        "4b0255826a274400d6c27244199c86a52bdbc272"
+      ],
+      "subject": "Merge remote-tracking branch 'origin/master' into claude/simple-register-system-61cae6",
+      "firstParentPaths": []
+    },
+    {
+      "sha": "b5c91fbdb3f900791096302202d28c5be8b46450",
+      "parents": [
+        "4b0255826a274400d6c27244199c86a52bdbc272",
+        "73419a5ad24a439205586a55865b79eeb5aa3e9f"
+      ],
+      "subject": "Merge pull request #106 from pongpanots-blip/claude/simple-register-system-61cae6",
+      "firstParentPaths": []
+    },
+    {
+      "sha": "7ea41cb51e6ec30a8013aac0c3edacdf01bf8cb6",
+      "parents": [
+        "4b0255826a274400d6c27244199c86a52bdbc272"
+      ],
+      "subject": "Redesign catalog and shared tables across admin and portal",
+      "firstParentPaths": [
+        "A\tapps/commerce-admin/e2e/table-page-inventory.cjs",
+        "A\tapps/commerce-admin/e2e/table-redesign-review.mjs",
+        "M\tapps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/components/bot/BranchEditor.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/CS/CsPlaceOrderPanel.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/campain/PromotionQuantityRuleFields.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorAddSite.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorReviewGrid.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/product/PromotionRulesLockedNotice.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx",
+        "M\tapps/commerce-admin/src/josh-admin/josh-admin.css",
+        "M\tapps/commerce-admin/src/josh-admin/libs/shared-ui-web/lib/Table/Table.tsx",
+        "A\tapps/commerce-admin/src/table-navigation.spec.tsx",
+        "A\tdocs/reviews/table-page-inventory-2026-10-09.json",
+        "A\tdocs/reviews/table-redesign/README.md",
+        "A\tdocs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-allproducts.png",
+        "A\tdocs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-product-record.png",
+        "A\tdocs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-suppliers.png",
+        "A\tdocs/reviews/table-redesign/screenshots/after-admin-en-phone-j-brands.png",
+        "A\tdocs/reviews/table-redesign/screenshots/after-admin-th-phone-j-allproducts.png",
+        "A\tdocs/reviews/table-redesign/screenshots/after-admin-th-phone-j-marketing-competitor-prices.png",
+        "A\tdocs/reviews/table-redesign/screenshots/after-admin-th-phone-j-product-create.png",
+        "A\tdocs/reviews/table-redesign/screenshots/after-portal-en-phone-keys.png",
+        "A\tdocs/reviews/table-redesign/screenshots/before-admin-en-desktop-j-allproducts.png",
+        "A\tdocs/reviews/table-redesign/screenshots/before-admin-th-phone-j-allproducts.png",
+        "A\tdocs/reviews/table-redesign/table-redesign-all-results.json",
+        "A\tdocs/reviews/table-redesign/table-redesign-embedded-results.json",
+        "A\tdocs/reviews/table-redesign/table-redesign-workflows-results.json",
+        "A\tlibs/ui/src/data-table.tsx",
+        "M\tlibs/ui/src/index.tsx",
+        "M\tlibs/ui/src/locales/ui-messages.json",
+        "M\tlibs/ui/src/usability.tsx",
+        "A\tlibs/ui/table.css",
+        "M\tlibs/ui/theme.css"
+      ]
+    },
+    {
+      "sha": "40dd03fd9196bf8be26ecc1eb99eeebd4be04faf",
+      "parents": [
+        "7ea41cb51e6ec30a8013aac0c3edacdf01bf8cb6",
+        "b5c91fbdb3f900791096302202d28c5be8b46450"
+      ],
+      "subject": "Merge remote-tracking branch 'origin/master' into codex/table-redesign-20261009",
+      "firstParentPaths": []
+    },
+    {
+      "sha": "2ce4eed293acbfeccb8d8a06ae10f25d3fa7cc66",
+      "parents": [
+        "b5c91fbdb3f900791096302202d28c5be8b46450",
+        "40dd03fd9196bf8be26ecc1eb99eeebd4be04faf"
+      ],
+      "subject": "Merge pull request #107 from pongpanots-blip/codex/table-redesign-20261009",
+      "firstParentPaths": []
+    },
+    {
+      "sha": "fb266e0bc491b03bb403aa37ebb7ccc7962fc821",
+      "parents": [
+        "b5c91fbdb3f900791096302202d28c5be8b46450"
+      ],
+      "subject": "fix(migrations): cast $2 in RenameAllSubcategories (prod deploy failed: inconsistent types deduced for parameter $2)",
+      "firstParentPaths": [
+        "M\tapps/commerce-platform/src/migrations/1796000000000-RenameAllSubcategories.ts"
+      ]
+    },
+    {
+      "sha": "e4346b7687c196ba4a1a8ca276e74448b90c3317",
+      "parents": [
+        "2ce4eed293acbfeccb8d8a06ae10f25d3fa7cc66",
+        "fb266e0bc491b03bb403aa37ebb7ccc7962fc821"
+      ],
+      "subject": "Merge pull request #108 from pongpanots-blip/fix/rename-all-subcategories-param-type",
+      "firstParentPaths": []
+    }
+  ],
+  "conflicts": [
+    {
+      "file": "libs/ui/src/index.tsx",
+      "resolution": "Retain upstream TableViewport/cp-data-table/Pager; map optional scrollLabel to TableViewport label."
+    },
+    {
+      "file": "libs/ui/src/locales/ui-messages.json",
+      "resolution": "Preserve all upstream and redesign-only keys; retain upstream Approved {0} products on sole semantic overlap."
+    }
+  ],
+  "upstreamFilesPreservedByteIdentical": [
+    "apps/commerce-admin/e2e/table-page-inventory.cjs",
+    "apps/commerce-admin/e2e/table-redesign-review.mjs",
+    "apps/commerce-admin/src/app/pages/Login.tsx",
+    "apps/commerce-admin/src/app/pages/MarketExplorer.tsx",
+    "apps/commerce-admin/src/josh-admin/app/components/bot/BranchEditor.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/CS/CsPlaceOrderPanel.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionQuantityRuleFields.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorAddSite.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorReviewGrid.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/product/PromotionRulesLockedNotice.tsx",
+    "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx",
+    "apps/commerce-admin/src/josh-admin/josh-admin.css",
+    "apps/commerce-admin/src/josh-admin/libs/shared-ui-web/lib/Table/Table.tsx",
+    "apps/commerce-admin/src/lib/api.ts",
+    "apps/commerce-admin/src/table-navigation.spec.tsx",
+    "apps/commerce-platform/src/migrations/1796000000000-RenameAllSubcategories.ts",
+    "apps/commerce-platform/src/modules/commerce/product-categories/category-rules.ts",
+    "apps/commerce-platform/src/modules/commerce/product-categories/product-categories.service.ts",
+    "apps/commerce-platform/src/modules/core/auth/application/staff-accounts.service.spec.ts",
+    "apps/commerce-platform/src/modules/core/auth/application/staff-accounts.service.ts",
+    "apps/commerce-platform/src/modules/core/auth/presentation/staff-auth.controller.spec.ts",
+    "apps/commerce-platform/src/modules/core/auth/presentation/staff-auth.controller.ts",
+    "apps/commerce-platform/src/modules/integration/connector/josh/josh-products.ts",
+    "apps/commerce-platform/src/modules/integration/segments/ownership.controller.ts",
+    "docs/reviews/table-page-inventory-2026-10-09.json",
+    "docs/reviews/table-redesign/README.md",
+    "docs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-allproducts.png",
+    "docs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-product-record.png",
+    "docs/reviews/table-redesign/screenshots/after-admin-en-desktop-j-suppliers.png",
+    "docs/reviews/table-redesign/screenshots/after-admin-en-phone-j-brands.png",
+    "docs/reviews/table-redesign/screenshots/after-admin-th-phone-j-allproducts.png",
+    "docs/reviews/table-redesign/screenshots/after-admin-th-phone-j-marketing-competitor-prices.png",
+    "docs/reviews/table-redesign/screenshots/after-admin-th-phone-j-product-create.png",
+    "docs/reviews/table-redesign/screenshots/after-portal-en-phone-keys.png",
+    "docs/reviews/table-redesign/screenshots/before-admin-en-desktop-j-allproducts.png",
+    "docs/reviews/table-redesign/screenshots/before-admin-th-phone-j-allproducts.png",
+    "docs/reviews/table-redesign/table-redesign-all-results.json",
+    "docs/reviews/table-redesign/table-redesign-embedded-results.json",
+    "docs/reviews/table-redesign/table-redesign-workflows-results.json",
+    "libs/ui/src/data-table.tsx",
+    "libs/ui/src/usability.tsx",
+    "libs/ui/table.css",
+    "libs/ui/theme.css"
+  ],
+  "upstreamFilesReconciled": [
+    "libs/ui/src/index.tsx",
+    "libs/ui/src/locales/ui-messages.json"
+  ],
+  "sourcePreservationCount": 57,
+  "upstreamChangedPaths": 59
+}

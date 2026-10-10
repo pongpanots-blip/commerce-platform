@@ -1,0 +1,21 @@
+vite v8.2.1 building client environment for production...
+[2Ktransforming...✓ 48 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/apps/commerce-portal/index.html                                                  0.48 kB │ gzip:   0.30 kB
+dist/apps/commerce-portal/assets/noto-sans-thai-thai-wght-normal-CtQSZ1tK.woff2      26.92 kB
+dist/apps/commerce-portal/assets/noto-sans-thai-latin-wght-normal-Bi3VDbYN.woff2     30.74 kB
+dist/apps/commerce-portal/assets/index-DqMMHpQ-.css                                  54.56 kB │ gzip:  10.84 kB
+dist/apps/commerce-portal/assets/index-COPkvIVU.js                                1,375.49 kB │ gzip: 304.39 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 582ms
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

@@ -1,0 +1,178 @@
+
+> nx run commerce-admin:build
+
+> vite build
+
+(node:50309) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+vite v8.2.1 building client environment for production...
+[2Ktransforming...[32m✓[0m 1357 modules transformed.
+rendering chunks...
+computing gzip size...
+[2m../../dist/apps/commerce-admin/[0m[32mindex.html                                              [0m[1;2m    0.95 kB[0m[2m │ gzip:   0.41 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[32mimageProcessor.worker-D1el0IlG.js                [0m[1;2m    1.12 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[32mnoto-sans-thai-thai-wght-normal-CtQSZ1tK.woff2   [0m[1;2m   26.92 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[32mnoto-sans-thai-latin-wght-normal-Bi3VDbYN.woff2  [0m[1;2m   30.74 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[35mMarketingNotifyTemplates-CsvgStCm.css            [0m[1;2m    3.61 kB[0m[2m │ gzip:   0.95 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[35mEditBotWorkflow-CNHZ78mg.css                     [0m[1;2m    5.45 kB[0m[2m │ gzip:   1.46 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[35mindex-COzPq9K4.css                               [0m[1;2m  174.11 kB[0m[2m │ gzip:  33.43 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36madmin-product-read-uhDNHxPA.js                   [0m[1;2m    0.03 kB[0m[2m │ gzip:   0.05 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36masset-url-CvHKwkrp.js                            [0m[1;2m    0.14 kB[0m[2m │ gzip:   0.13 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mrole-can-BvRmWeCz.js                             [0m[1;2m    0.15 kB[0m[2m │ gzip:   0.15 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcoupon-error.helpers-BH0ub3Zu.js                 [0m[1;2m    0.21 kB[0m[2m │ gzip:   0.19 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcategory-all-Bmt1mdFj.js                         [0m[1;2m    0.27 kB[0m[2m │ gzip:   0.16 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mreturn-to-Exi8QScu.js                            [0m[1;2m    0.32 kB[0m[2m │ gzip:   0.23 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcatalog-price-nwHXFdxr.js                        [0m[1;2m    0.32 kB[0m[2m │ gzip:   0.23 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mAdminListHeader-1dVWW2fw.js                      [0m[1;2m    0.33 kB[0m[2m │ gzip:   0.24 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36madmin-auth-D0BJiDIn.js                           [0m[1;2m    0.34 kB[0m[2m │ gzip:   0.25 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mproduct-media.helpers-DISXzBCX.js                [0m[1;2m    0.47 kB[0m[2m │ gzip:   0.27 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36museCompanySearch-DFCiwuLK.js                     [0m[1;2m    0.62 kB[0m[2m │ gzip:   0.40 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcarousel-product.helpers-C7M5DvZL.js             [0m[1;2m    0.77 kB[0m[2m │ gzip:   0.47 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mproduct-status.helpers-DQYf1SCN.js               [0m[1;2m    0.80 kB[0m[2m │ gzip:   0.37 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCopyField-DnCbfBXM.js                            [0m[1;2m    0.84 kB[0m[2m │ gzip:   0.51 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCouponStatusPill-DNyHjTcS.js                     [0m[1;2m    0.89 kB[0m[2m │ gzip:   0.51 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcoupon-time-DaI8kieY.js                          [0m[1;2m    0.96 kB[0m[2m │ gzip:   0.48 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCopyIdButton-Bbu4_wiA.js                         [0m[1;2m    0.98 kB[0m[2m │ gzip:   0.62 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateBotIntentRule-B76hN9oe.js                  [0m[1;2m    1.07 kB[0m[2m │ gzip:   0.64 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mInvoicesOverdue-I87KHzoC.js                      [0m[1;2m    1.08 kB[0m[2m │ gzip:   0.65 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBotIntentRuleForm-DblFWCh1.js                    [0m[1;2m    1.09 kB[0m[2m │ gzip:   0.59 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mActiveOffersAdmin-WZAsCQ_y.js                    [0m[1;2m    1.19 kB[0m[2m │ gzip:   0.73 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mLogoUploadField-CaHvcI9L.js                      [0m[1;2m    1.28 kB[0m[2m │ gzip:   0.78 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcoupon-import.helpers-BgNDNbwO.js                [0m[1;2m    1.30 kB[0m[2m │ gzip:   0.57 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mAdminInsertLayout-B8JUfppd.js                    [0m[1;2m    1.43 kB[0m[2m │ gzip:   0.85 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateBotTemplate-DGEttHgE.js                    [0m[1;2m    1.46 kB[0m[2m │ gzip:   0.79 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcategory-tree.helpers-C76zQyHL.js                [0m[1;2m    1.49 kB[0m[2m │ gzip:   0.69 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCouponConfirmDialog-xfj0SFlN.js                  [0m[1;2m    1.56 kB[0m[2m │ gzip:   0.82 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateSupplier-CiHlMJPn.js                       [0m[1;2m    1.56 kB[0m[2m │ gzip:   0.77 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPriceRequestsAdmin-1FT7Gtb1.js                   [0m[1;2m    1.58 kB[0m[2m │ gzip:   0.88 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mwith-selector-DWV6GPwF.js                        [0m[1;2m    1.62 kB[0m[2m │ gzip:   0.72 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPromotionPageControls-B9QxHUbw.js                [0m[1;2m    1.65 kB[0m[2m │ gzip:   0.79 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mUtmBuilder-DGYHiksC.js                           [0m[1;2m    1.66 kB[0m[2m │ gzip:   0.87 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mEditBotIntentRule-dXfofpYa.js                    [0m[1;2m    1.66 kB[0m[2m │ gzip:   0.92 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSampleRequestsAdmin-DXgDeRwY.js                  [0m[1;2m    1.68 kB[0m[2m │ gzip:   0.89 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBotTemplates-DCWHK-j8.js                         [0m[1;2m    1.70 kB[0m[2m │ gzip:   0.89 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBotIntentRules-CDBJalna.js                       [0m[1;2m    1.73 kB[0m[2m │ gzip:   0.91 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mDeliveryScheduleAdmin-DPhNxIKg.js                [0m[1;2m    1.87 kB[0m[2m │ gzip:   0.96 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36msupplier-form-ML8wVgV-.js                        [0m[1;2m    1.88 kB[0m[2m │ gzip:   0.82 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mpromotion-product-set.helpers-Or0PIr3H.js        [0m[1;2m    2.01 kB[0m[2m │ gzip:   0.99 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcategory-form-DJUfV_-p.js                        [0m[1;2m    2.06 kB[0m[2m │ gzip:   0.99 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mEditSupplier-BtmipgXD.js                         [0m[1;2m    2.07 kB[0m[2m │ gzip:   0.99 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mEditBotTemplate-CvGljDf-.js                      [0m[1;2m    2.11 kB[0m[2m │ gzip:   1.09 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36museMutation-B2oWWWc2.js                          [0m[1;2m    2.37 kB[0m[2m │ gzip:   0.98 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mRevealPiiButton-DSlyOt9c.js                      [0m[1;2m    2.37 kB[0m[2m │ gzip:   1.03 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBotWorkflows-D6C4rahw.js                         [0m[1;2m    2.58 kB[0m[2m │ gzip:   1.20 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSupplierList-BqJrNdQN.js                         [0m[1;2m    2.62 kB[0m[2m │ gzip:   1.33 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPromotionPageEditorPage-bqkGB535.js              [0m[1;2m    2.69 kB[0m[2m │ gzip:   1.34 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcampaign.helpers-mNnj4DQb.js                     [0m[1;2m    2.69 kB[0m[2m │ gzip:   1.19 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreditTermsAdmin-Dn9aJcxm.js                     [0m[1;2m    2.80 kB[0m[2m │ gzip:   1.25 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateCampaign-BBARY_i1.js                       [0m[1;2m    2.86 kB[0m[2m │ gzip:   1.34 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBrandList-CoxCFkNp.js                            [0m[1;2m    3.33 kB[0m[2m │ gzip:   1.44 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCompany-CwDw46rm.js                              [0m[1;2m    3.33 kB[0m[2m │ gzip:   1.52 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSmartLinkField-WyPStdqX.js                       [0m[1;2m    3.33 kB[0m[2m │ gzip:   1.29 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mpromotion-page-form.helpers-CAB5HPBe.js          [0m[1;2m    3.36 kB[0m[2m │ gzip:   1.29 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateCompanyAdmin-DePTJpV6.js                   [0m[1;2m    3.42 kB[0m[2m │ gzip:   1.35 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateBotWorkflow-BpuFKEud.js                    [0m[1;2m    3.55 kB[0m[2m │ gzip:   1.44 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mNotificationLog-wJme0YD1.js                      [0m[1;2m    3.57 kB[0m[2m │ gzip:   1.61 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mpromotion-mechanic.helpers-NCMUHJjN.js           [0m[1;2m    3.61 kB[0m[2m │ gzip:   1.36 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPromotionProductSetList-a3BC_as4.js              [0m[1;2m    3.62 kB[0m[2m │ gzip:   1.66 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCampaignList-CkY8r0-C.js                         [0m[1;2m    3.71 kB[0m[2m │ gzip:   1.76 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSmartLinksPage-zkeckIqj.js                       [0m[1;2m    3.78 kB[0m[2m │ gzip:   1.62 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSegmentRuleConfigFields-DyyiW35G.js              [0m[1;2m    3.83 kB[0m[2m │ gzip:   1.16 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mJagotaPaymentTesting-Cq7_hHLP.js                 [0m[1;2m    4.27 kB[0m[2m │ gzip:   1.65 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMarketingLinksPage-Bm4soUjl.js                   [0m[1;2m    4.45 kB[0m[2m │ gzip:   1.87 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mAdminAccessQueue-DyiRDyvW.js                     [0m[1;2m    4.53 kB[0m[2m │ gzip:   1.87 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPromotionMechanic-CqclUlS7.js                    [0m[1;2m    4.53 kB[0m[2m │ gzip:   2.04 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreditNotesAdmin-BAL0lPVp.js                     [0m[1;2m    4.75 kB[0m[2m │ gzip:   1.95 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPromotionPageLibrary-6qwhbT_2.js                 [0m[1;2m    4.88 kB[0m[2m │ gzip:   2.15 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcoupon-save-steps.helpers-BY9clv5g.js            [0m[1;2m    4.92 kB[0m[2m │ gzip:   2.02 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCartMoveCategoriesAdmin-CPKIk7QE.js              [0m[1;2m    4.94 kB[0m[2m │ gzip:   2.06 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mProductVideoUpload-iisHc8jt.js                   [0m[1;2m    4.99 kB[0m[2m │ gzip:   2.07 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSegmentList-B45X3hq2.js                          [0m[1;2m    5.04 kB[0m[2m │ gzip:   2.04 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMarketingSettingsPage-DheDGZly.js                [0m[1;2m    5.07 kB[0m[2m │ gzip:   1.83 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreditBacksAdmin-K6FwrUe6.js                     [0m[1;2m    5.10 kB[0m[2m │ gzip:   2.05 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCouponList-nb0hqZDz.js                           [0m[1;2m    5.15 kB[0m[2m │ gzip:   2.23 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mEditSegment-D9uwceHl.js                          [0m[1;2m    5.21 kB[0m[2m │ gzip:   2.18 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mOrderImport-DORIJ6IT.js                          [0m[1;2m    5.45 kB[0m[2m │ gzip:   1.86 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMarketingJourneyFunnel-C0sd0O7Q.js               [0m[1;2m    5.51 kB[0m[2m │ gzip:   1.94 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mNotificationCatalog-0yvc7e-f.js                  [0m[1;2m    5.70 kB[0m[2m │ gzip:   2.22 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateCategory-D-8I1vwl.js                       [0m[1;2m    5.87 kB[0m[2m │ gzip:   2.10 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mProductNotifyFunnel-GF3cB7EO.js                  [0m[1;2m    6.19 kB[0m[2m │ gzip:   2.20 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSmartLinkEdit-e7Rk1BWj.js                        [0m[1;2m    6.64 kB[0m[2m │ gzip:   2.15 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMarketingOfferCheckPage-B2uA3RiW.js              [0m[1;2m    6.88 kB[0m[2m │ gzip:   2.27 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBilling-R8LtmuyG.js                              [0m[1;2m    6.94 kB[0m[2m │ gzip:   2.34 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36madmin-routes-T0k6Kbyq.js                         [0m[1;2m    7.21 kB[0m[2m │ gzip:   2.07 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mOrder-CPWDZBPZ.js                                [0m[1;2m    7.33 kB[0m[2m │ gzip:   2.69 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mEditCategory-Mz12zuZa.js                         [0m[1;2m    7.46 kB[0m[2m │ gzip:   2.68 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPromotionQuantityRuleFields-DxpQH6Bc.js          [0m[1;2m    7.63 kB[0m[2m │ gzip:   2.10 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPaymentTransactions-DlGdJN4S.js                  [0m[1;2m    7.69 kB[0m[2m │ gzip:   2.65 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36museQuery-DDuaEps_.js                             [0m[1;2m    7.94 kB[0m[2m │ gzip:   2.92 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mRefundsAdmin-CwDWZqhM.js                         [0m[1;2m    8.20 kB[0m[2m │ gzip:   2.60 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMarketingQueueDashboard-17bIVNOw.js              [0m[1;2m    8.39 kB[0m[2m │ gzip:   2.67 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mAlluser-QI3lz_2U.js                              [0m[1;2m    8.42 kB[0m[2m │ gzip:   2.98 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36msegment-rule.helpers-C-iKPVE2.js                 [0m[1;2m    8.93 kB[0m[2m │ gzip:   2.43 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mcoupon-core-form.helpers-CG09uNb3.js             [0m[1;2m    9.44 kB[0m[2m │ gzip:   2.88 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mShipments-BWOg_Qdt.js                            [0m[1;2m    9.54 kB[0m[2m │ gzip:   3.39 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mShipmentDetail-BLYeyaZJ.js                       [0m[1;2m    9.73 kB[0m[2m │ gzip:   2.59 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mKycQueue--KRNL8Xz.js                             [0m[1;2m   10.05 kB[0m[2m │ gzip:   3.32 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateCoupon-Bzaoa0CL.js                         [0m[1;2m   10.17 kB[0m[2m │ gzip:   3.69 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mScrapedCatalogPage-CVR36k1r.js                   [0m[1;2m   10.24 kB[0m[2m │ gzip:   3.42 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateProduct-DwYEgcHS.js                        [0m[1;2m   10.51 kB[0m[2m │ gzip:   3.50 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mtiny-invariant-DKAw23Ls.js                       [0m[1;2m   11.44 kB[0m[2m │ gzip:   4.33 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mProductDetail-COqKktDq.js                        [0m[1;2m   11.85 kB[0m[2m │ gzip:   3.53 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBotTemplateBuilder-BOgGCt4s.js                   [0m[1;2m   12.76 kB[0m[2m │ gzip:   3.73 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCategoryList-7R9Qf_mz.js                         [0m[1;2m   13.18 kB[0m[2m │ gzip:   4.15 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mAllProduct-aS0_vXkc.js                           [0m[1;2m   13.37 kB[0m[2m │ gzip:   4.25 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCampaignDetail-D3lGjkM6.js                       [0m[1;2m   13.49 kB[0m[2m │ gzip:   4.55 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMarketingAnalyst-ZvAN2dHs.js                     [0m[1;2m   13.97 kB[0m[2m │ gzip:   4.15 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mOrderDetail-BHcOv3Ls.js                          [0m[1;2m   13.97 kB[0m[2m │ gzip:   4.10 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mNotificationDeliveryStats-C3CujhQp.js            [0m[1;2m   13.98 kB[0m[2m │ gzip:   3.73 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPageForm-DVvkA3HS.js                             [0m[1;2m   14.06 kB[0m[2m │ gzip:   4.88 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mEditBotWorkflow-CBRbFAGV.js                      [0m[1;2m   14.79 kB[0m[2m │ gzip:   4.73 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mquery-5_nYqxTv.js                                [0m[1;2m   14.98 kB[0m[2m │ gzip:   5.19 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mapi-Dobq4DWf.js                                  [0m[1;2m   16.35 kB[0m[2m │ gzip:   5.41 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCreateSegment-C853qTCI.js                        [0m[1;2m   16.61 kB[0m[2m │ gzip:   5.23 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mKbankTestingConsole-DLmXGkE7.js                  [0m[1;2m   17.46 kB[0m[2m │ gzip:   4.93 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mpromotion-common-kTRbzXfv.js                     [0m[1;2m   17.83 kB[0m[2m │ gzip:   6.15 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCompanyEdit-ChskjHmi.js                          [0m[1;2m   18.09 kB[0m[2m │ gzip:   4.79 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mWelcomeLeadEmailPage-Dv5DGRRX.js                 [0m[1;2m   19.36 kB[0m[2m │ gzip:   5.15 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSegmentBuilder-Dn8itaEU.js                       [0m[1;2m   19.39 kB[0m[2m │ gzip:   5.86 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mEditProduct-BT7rbaOW.js                          [0m[1;2m   19.73 kB[0m[2m │ gzip:   5.95 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPushCampaignsPage-CKpt0SSW.js                    [0m[1;2m   20.32 kB[0m[2m │ gzip:   4.84 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mSmartLinkAnalyticsPage-C3kN25kX.js               [0m[1;2m   20.94 kB[0m[2m │ gzip:   6.82 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCouponDetail-D9fjRYEQ.js                         [0m[1;2m   21.80 kB[0m[2m │ gzip:   6.58 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mPromotionProductSetForm-CNsWfoSe.js              [0m[1;2m   21.86 kB[0m[2m │ gzip:   5.92 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMechanicEditorPage-DILv9scE.js                   [0m[1;2m   24.42 kB[0m[2m │ gzip:   6.99 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mshared-ui-web-c3Bd2m_W.js                        [0m[1;2m   26.87 kB[0m[2m │ gzip:   9.21 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBulkImageUploadPage-DDiOPx9W.js                  [0m[1;2m   32.45 kB[0m[2m │ gzip:   7.67 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mshared-api-D2VeuKdg.js                           [0m[1;2m   34.68 kB[0m[2m │ gzip:   9.63 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mErpWebhookSimulator-BIowiDN7.js                  [0m[1;2m   36.62 kB[0m[2m │ gzip:   8.52 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mScrapingSourcesPage-DCIGh2kO.js                  [0m[1;2m   38.84 kB[0m[2m │ gzip:   8.90 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mUserDetail-CIiTLWRT.js                           [0m[1;2m   45.42 kB[0m[2m │ gzip:  11.38 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCouponFormSections-DTP5S7kl.js                   [0m[1;2m   45.59 kB[0m[2m │ gzip:  11.73 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMembershipTierConfig-Ch2gnwEn.js                 [0m[1;2m   61.45 kB[0m[2m │ gzip:  22.12 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mCompetitorPricesPage-ARgY5IU0.js                 [0m[1;2m   68.46 kB[0m[2m │ gzip:  15.67 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mdnd.esm-CAmx69JO.js                              [0m[1;2m   83.46 kB[0m[2m │ gzip:  25.32 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBatchSticker-DswyRd8e.js                         [0m[1;2m  127.75 kB[0m[2m │ gzip:  37.80 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mMarketingNotifyTemplates-Cz99xe9x.js             [0m[1;2m  209.45 kB[0m[2m │ gzip:  54.16 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mBarChart-SJZuPRU5.js                             [0m[1;2m  341.56 kB[0m[2m │ gzip:  97.52 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mRichTextEditor-CeCDN0Zy.js                       [0m[1;2m  398.62 kB[0m[2m │ gzip: 125.76 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36mindex-l2CwRb9s.js                                [0m[33;1m1,124.09 kB[0m[2m │ gzip: 302.44 kB[0m
+[2m../../dist/apps/commerce-admin/[0m[2massets/[0m[36msrc-BBj8bNeb.js                                  [0m[33;1m1,211.89 kB[0m[2m │ gzip: 252.85 kB[0m
+
+✓ built in 2.98s
+[plugin builtin:vite-reporter] [33;1m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[0m
+
+
+
+ NX   Successfully ran target build for project commerce-admin
+
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

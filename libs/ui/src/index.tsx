@@ -26,6 +26,11 @@ import { PaginationControls, TableViewport } from './data-table';
 import { LanguageSelector } from './i18n';
 import { PageChrome, PageHelpLink, fieldExample, fieldHint } from './usability';
 import { blankFieldMessage, confirmLeaveIfDirty, scrollToFirstInvalid, useUnsavedChanges } from './forms';
+import { TaskForm as SharedTaskForm, useTaskFormState as useSharedTaskFormState, type TaskFormProps } from './task-form';
+
+// Additive opt-in API: existing Stitch Input/Select/forms keep their DOM and defaults.
+export { TaskInput, TaskSelect, TaskTextarea, TaskMasterDataSelect, TaskForm, TaskSubmitButton, useTaskFormState } from './task-form';
+export type { TaskInputProps, TaskSelectProps, TaskTextareaProps, TaskFormProps, TaskFormMessages, TaskFieldErrors, TaskSubmitResult } from './task-form';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from "./i18n";
@@ -545,6 +550,33 @@ export function FormPanel({
   );
 }
 
+/** Opt-in validated form with the existing Stitch FormPanel layout and shared fields. */
+export function TaskPanelForm<Receipt>({ title, icon = 'add_circle', description, cols = 2, submitLabel, onCancel, children, onSuccess, ...props }: Omit<TaskFormProps<Receipt>, 'title'> & {
+  title: ReactNode; icon?: string; description?: ReactNode; cols?: 1 | 2 | 3 | 4;
+  submitLabel: ReactNode; onCancel?: () => void;
+}) {
+  const [dirty, setDirty] = useState(false);
+  const requestLeave = useUnsavedChanges(dirty);
+  const grid = { 1: '', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' }[cols];
+  return <SharedTaskForm {...props} appearance="stitch" data-panel className={cx(panelCls, 'overflow-hidden', props.className)} onInput={event => { setDirty(true); props.onInput?.(event); }} onSuccess={receipt => { setDirty(false); onSuccess?.(receipt); }}>
+    <div className="flex items-start gap-3 px-4 py-3 border-b border-secondary-container">
+      <span className="w-7 h-7 rounded-md bg-primary-container text-primary flex items-center justify-center shrink-0"><Icon name={icon} size={16} /></span>
+      <div className="min-w-0"><h2 className="text-sm font-semibold text-on-surface">{title}</h2>{description && <p className="text-[11px] text-on-surface-variant mt-0.5">{description}</p>}</div>
+    </div>
+    <div className={cx('grid grid-cols-1 gap-3 p-4', grid)}>{children}</div>
+    <TaskPanelFooter submitLabel={submitLabel} onCancel={onCancel && (() => { void requestLeave(onCancel); })} />
+  </SharedTaskForm>;
+}
+
+function TaskPanelFooter({ submitLabel, onCancel }: { submitLabel: ReactNode; onCancel?: () => void }) {
+  const { busy, disabled } = useSharedTaskFormState();
+  useUnsavedChanges(busy);
+  return <div className="flex flex-wrap items-center justify-end gap-2 px-4 py-3 border-t border-secondary-container bg-surface-container-low/50">
+    {onCancel && <Button variant="ghost" onClick={onCancel} disabled={busy}>{__uiText('ยกเลิก')}</Button>}
+    <Button variant="primary" type="submit" icon={busy ? 'progress_activity' : 'check'} disabled={busy || disabled}>{submitLabel}</Button>
+  </div>;
+}
+
 /** Full-width cell inside a FormPanel / KeyValueGrid grid. */
 export function Span({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cx('col-span-full', className)}>{children}</div>;
@@ -645,11 +677,11 @@ export function Alert({ tone = 'info', title, children, onClose, actions }: { to
 }
 
 /** Inline error line (load failures). Renders nothing when there is no error. */
-export function ErrorText({ error }: { error: string | null | undefined }) {
+export function ErrorText({ error, onRetry }: { error: string | null | undefined; onRetry?: () => void }) {
   __useUiLocale();
   if (!error) return null;
   const known = hasUiText(error);
-  return <Alert tone="danger">
+  return <Alert tone="danger" actions={onRetry && <Button onClick={onRetry}>{__uiText('ลองอีกครั้ง')}</Button>}>
     <p>{known ? __uiText(error) : __uiText('โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง')}</p>
     {!known && <details className="mt-3">
       <summary className="cursor-pointer">{__uiText('รายละเอียดข้อผิดพลาด')}</summary>
@@ -668,8 +700,17 @@ export function Empty({ children = 'ไม่มีข้อมูล', icon = '
   );
 }
 
-export function Loading({ children = 'กำลังโหลด…' }: { children?: ReactNode }) {
+export function Loading({ children = 'กำลังโหลด…', variant }: { children?: ReactNode; variant?: 'table' | 'form' | 'detail' }) {
   __useUiLocale();
+  if (variant) return <div role="status" aria-busy="true" className="w-full space-y-4 p-5 text-on-surface-variant text-xs">
+    <span className="sr-only">{typeof children === 'string' ? __uiText(children) : children}</span>
+    <div aria-hidden="true" className="space-y-3 motion-safe:animate-pulse">
+      <div className="h-5 w-1/3 rounded bg-surface-container-high" />
+      {Array.from({ length: variant === 'detail' ? 3 : 5 }, (_, row) => <div key={row} className={cx('grid gap-3', variant === 'table' ? 'grid-cols-4' : variant === 'form' ? 'grid-cols-2' : 'grid-cols-1')}>
+        {Array.from({ length: variant === 'table' ? 4 : variant === 'form' ? 2 : 1 }, (_, col) => <div key={col} className={cx('rounded bg-surface-container', variant === 'table' ? 'h-7' : 'h-10')} />)}
+      </div>)}
+    </div>
+  </div>;
   return (
     <div className="py-10 flex items-center justify-center gap-2 text-on-surface-variant text-xs">
       <Icon name="progress_activity" size={18} className="animate-spin text-primary" />
@@ -762,9 +803,9 @@ export function Delta({ pct }: { pct: number | null | undefined }) {
 // ---------------------------------------------------------------- tables
 
 /** Scrollable table shell with Stitch styling; children are <thead>/<tbody>. */
-export function Table({ children, maxHeight, className }: { children: ReactNode; maxHeight?: string; className?: string }) {
+export function Table({ children, maxHeight, className, scrollLabel }: { children: ReactNode; maxHeight?: string; className?: string; scrollLabel?: string }) {
   return (
-    <TableViewport className={className} style={maxHeight ? { maxHeight } : undefined}>
+    <TableViewport label={scrollLabel} className={className} style={maxHeight ? { maxHeight } : undefined}>
       <table className="cp-data-table">{children}</table>
     </TableViewport>
   );
@@ -1147,6 +1188,7 @@ export function Sidebar({
   env,
   nav,
   searchable,
+  showDestinationCounts = true,
   user,
   footer,
 }: {
@@ -1154,6 +1196,8 @@ export function Sidebar({
   env?: ReactNode;
   nav: NavGroup[];
   searchable?: boolean;
+  /** Counts of links are optional, and must not be presented as business status. */
+  showDestinationCounts?: boolean;
   user?: { name: string; detail?: string; onSignOut?: () => void };
   footer?: ReactNode;
 }) {
@@ -1250,7 +1294,7 @@ export function Sidebar({
                     <span>{__uiText(section.group)}</span>
                   </span>
                   <span className="flex items-center gap-1 shrink-0">
-                    <Count>{links.length}</Count>
+                    {showDestinationCounts && <Count>{links.length}</Count>}
                     <Icon name={expanded ? 'expand_more' : 'chevron_right'} size={16} className="text-outline" />
                   </span>
                 </button>

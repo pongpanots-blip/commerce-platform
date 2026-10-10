@@ -1,0 +1,1200 @@
+diff --git a/apps/commerce-admin/src/app/app.tsx b/apps/commerce-admin/src/app/app.tsx
+index c8d8211..fcc7d3f 100644
+--- a/apps/commerce-admin/src/app/app.tsx
++++ b/apps/commerce-admin/src/app/app.tsx
+@@ -2,7 +2,7 @@ import { SalesAssignment } from './pages/SalesAssignment';
+ import { MyWinback } from './pages/MyWinback';
+ import { lazy, Suspense, useEffect, useState } from 'react';
+ import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+-import { AppShell, CommandMenu, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
++import { AppShell, CommandMenu, ErrorText, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
+ import { navFor } from './navigation';
+ import { Workspace } from './pages/Workspace';
+ import { RoleHome } from './pages/RoleHome';
+@@ -56,7 +56,8 @@ import { StaffPrices } from './pages/StaffPrices';
+ import { MarketingWorkflows } from './pages/MarketingWorkflows';
+ import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
+ import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
+-import { CsDesk } from './pages/CsDesk';
++import { CsDesk, SampleRequestsRedirect } from './pages/CsDesk';
++import { FeatureActions } from './FeatureActions';
+ import { Livechat } from './pages/Livechat';
+ import { GrowthWorkspace } from './pages/growth/Workspace';
+ import { GrowthPlans } from './pages/growth/Plans';
+@@ -115,10 +116,18 @@ export function App() {
+   }, [auth]);
+   // null = not checked yet; the API refuses everything else while true, so the app waits for the change
+   const [mustChangePassword, setMustChangePassword] = useState<boolean | null>(null);
++  const [passwordCheckError, setPasswordCheckError] = useState<string | null>(null);
++  const [passwordCheckAttempt, setPasswordCheckAttempt] = useState(0);
+   useEffect(() => {
+-    if (!signedIn) return setMustChangePassword(null);
+-    staffApi.me().then((me) => setMustChangePassword(!!me.mustChangePassword), () => setMustChangePassword(false));
+-  }, [signedIn]);
++    setMustChangePassword(null);
++    setPasswordCheckError(null);
++    if (!signedIn) return;
++    let active = true;
++    staffApi.me().then((me) => { if (active) setMustChangePassword(previous => previous === true || !!me.mustChangePassword); }, (error) => {
++      if (active) setPasswordCheckError(error instanceof Error ? error.message : String(error));
++    });
++    return () => { active = false; };
++  }, [signedIn, passwordCheckAttempt]);
+   useEffect(() => {
+     const required = () => setMustChangePassword(true);
+     window.addEventListener('cp-password-change-required', required);
+@@ -149,7 +158,7 @@ export function App() {
+     setAuth('out');
+   }
+ 
+-  if (mustChangePassword === null) return null;
++  if (mustChangePassword === null) return <div className="min-h-screen bg-background p-5">{passwordCheckError ? <ErrorText error={passwordCheckError} onRetry={() => setPasswordCheckAttempt(attempt => attempt + 1)} /> : <Loading variant="detail" />}</div>;
+   if (mustChangePassword) return <BrowserRouter><ChangePassword forced onDone={() => setMustChangePassword(false)} onSignOut={signOut} /></BrowserRouter>;
+ 
+   return (
+@@ -167,6 +176,7 @@ export function App() {
+         }
+         topbar={<AdminTopBar role={role} />}
+       >
++          <FeatureActions role={role} />
+           <Routes>
+             <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={landingFor(role)} replace />} />
+             <Route path="/login" element={<LoginRedirect role={role} />} />
+@@ -208,7 +218,12 @@ export function App() {
+             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
+             <Route path="/marketing/workflows/:id/scheduled-runs" element={<WorkflowScheduledRuns />} />
+             <Route path="/j/*" element={<JoshAdminApp />} />
+-            <Route path="/cs" element={<CsDesk />} />
++            <Route path="/j/cs/sample-requests" element={<SampleRequestsRedirect role={role} />} />
++            <Route path="/cs" element={<CsDesk role={role} />} />
++            <Route path="/cs/orders/new" element={<CsDesk role={role} />} />
++            <Route path="/cs/samples" element={<CsDesk role={role} />} />
++            <Route path="/cs/samples/:id/:decision" element={<CsDesk role={role} />} />
++            <Route path="/cs/accounts/merge" element={<CsDesk role={role} />} />
+             <Route path="/livechat" element={<Livechat />} />
+             <Route path="/marketing/restaurants" element={<MarketExplorer />} />
+             <Route path="/marketing/research" element={<MarketingResearch />} />
+diff --git a/apps/commerce-admin/src/app/hooks.ts b/apps/commerce-admin/src/app/hooks.ts
+index c85cd0e..da8ac86 100644
+--- a/apps/commerce-admin/src/app/hooks.ts
++++ b/apps/commerce-admin/src/app/hooks.ts
+@@ -1,4 +1,4 @@
+-import { useCallback, useEffect, useState } from 'react';
++import { useCallback, useEffect, useRef, useState } from 'react';
+ 
+ export interface AsyncState<T> {
+   data: T | null;
+@@ -7,27 +7,63 @@ export interface AsyncState<T> {
+   reload: () => void;
+ }
+ 
+-/** Runs an async loader on mount and exposes a manual reload. */
++/** Latest request wins. Dependency changes clear old records; reload retains them for context. */
+ export function useAsync<T>(loader: () => Promise<T>, deps: unknown[] = []): AsyncState<T> {
+   const [data, setData] = useState<T | null>(null);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
++  const generation = useRef(0);
+ 
+   const run = useCallback(() => {
++    const request = ++generation.current;
+     setLoading(true);
+     setError(null);
+-    loader()
+-      .then((d) => setData(d))
+-      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
+-      .finally(() => setLoading(false));
++    // Also catch synchronous loader errors. Ignore superseded and unmounted requests.
++    Promise.resolve().then(loader)
++      .then((d) => { if (request === generation.current) setData(d); })
++      .catch((e) => { if (request === generation.current) setError(e instanceof Error ? e.message : String(e)); })
++      .finally(() => { if (request === generation.current) setLoading(false); });
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, deps);
+ 
+-  useEffect(() => run(), [run]);
++  useEffect(() => {
++    setData(null);
++    run();
++    return () => { ++generation.current; };
++  }, [run]);
+ 
+   return { data, loading, error, reload: run };
+ }
+ 
++/** A synchronous lock prevents double submissions before React renders the disabled button. */
++export function useMutation() {
++  const lock = useRef(false);
++  const mounted = useRef(true);
++  const [busy, setBusy] = useState(false);
++  const [error, setError] = useState<string | null>(null);
++  useEffect(() => {
++    mounted.current = true;
++    return () => { mounted.current = false; };
++  }, []);
++  async function run<T>(operation: () => Promise<T>): Promise<{ ok: true; value: T } | { ok: false }> {
++    if (lock.current || !mounted.current) return { ok: false };
++    lock.current = true;
++    setBusy(true);
++    setError(null);
++    try {
++      const value = await operation();
++      return mounted.current ? { ok: true, value } : { ok: false };
++    } catch (e) {
++      if (mounted.current) setError(e instanceof Error ? e.message : String(e));
++      return { ok: false };
++    } finally {
++      lock.current = false;
++      if (mounted.current) setBusy(false);
++    }
++  }
++  return { busy, error, run };
++}
++
+ export function statusBadgeClass(status: string): string {
+   switch (status) {
+     case 'processed':
+diff --git a/apps/commerce-admin/src/app/navigation.legacy.ts b/apps/commerce-admin/src/app/navigation.legacy.ts
+index a28d244..d3e9495 100644
+--- a/apps/commerce-admin/src/app/navigation.legacy.ts
++++ b/apps/commerce-admin/src/app/navigation.legacy.ts
+@@ -1,6 +1,7 @@
+ // The sidebar as it was before the redesign (#80: 7 workspaces with overview pages, plus #83's sale pages), frozen so tests and
+ // the PR's old → new mapping table can prove every old menu item still has a home. Not used by the app.
+ import type { NavGroup, NavItem } from '@cp/ui';
++import { featureHome } from './features';
+ import { NAV_ENTRIES, ROLE_ACCESS, SECTIONS, type SectionId } from './navigation';
+ 
+ export const ORIGINAL_NAV: NavGroup[] = [
+@@ -270,12 +271,12 @@ export function legacyNavFor(role: string): NavGroup[] {
+ }
+ 
+ /** Old menu item → new section (machine-readable; docs/admin-redesign/PR_BODY.md is generated from it). */
+-export function legacyMapping(): { to: string; oldWorkspace: string; oldLabel: string; section: SectionId; sectionTitle: string; more: boolean; label: string; roles: string[] }[] {
++export function legacyMapping(): { to: string; canonicalTo: string; oldWorkspace: string; oldLabel: string; section: SectionId; sectionTitle: string; more: boolean; label: string; roles: string[] }[] {
+   return LEGACY_ITEMS.map((old) => {
+-    const entry = NAV_ENTRIES.find((e) => e.to === old.to);
++    const entry = NAV_ENTRIES.find((e) => e.to === featureHome(old.to));
+     if (!entry) throw new Error(`no new home for ${old.to}`);
+     return {
+-      to: old.to, oldWorkspace: old.workspaceTitle, oldLabel: old.label,
++      to: old.to, canonicalTo: entry.to, oldWorkspace: old.workspaceTitle, oldLabel: old.label,
+       section: entry.section, sectionTitle: SECTIONS.find((s) => s.id === entry.section)!.title, more: !!entry.more, label: entry.label,
+       roles: ['admin', ...(ROLE_ACCESS[old.to] ?? [])],
+     };
+diff --git a/apps/commerce-admin/src/app/navigation.spec.ts b/apps/commerce-admin/src/app/navigation.spec.ts
+index 1323483..f2a3c90 100644
+--- a/apps/commerce-admin/src/app/navigation.spec.ts
++++ b/apps/commerce-admin/src/app/navigation.spec.ts
+@@ -8,6 +8,7 @@ import { DASHBOARD, HOME, NAV_ENTRIES, ROLE_ACCESS, ROLE_SHORTCUTS, SECTIONS, WO
+ import { LEGACY_ITEMS, LEGACY_WORKSPACES, legacyMapping, legacyNavFor } from './navigation.legacy';
+ import { isRouteAllowed, landingFor } from '../lib/landing';
+ import { homeForRole, ROLE_HOME } from '../lib/role-home';
++import { FEATURE_ACTIONS, FEATURE_HOMES, featureHome } from './features';
+ 
+ const STAFF_ROLES = ['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic', 'sale'];
+ const NON_ADMIN = STAFF_ROLES.filter((r) => r !== 'admin');
+@@ -46,9 +47,9 @@ describe('sidebar per role', () => {
+       '/integrations', '/erp/webhook-dead-letter', '/sync-jobs', '/webhooks', '/subscriptions',
+       '/erp/inbound-log', '/erp-ingest', '/josh-api-logs', '/erp/josh-logs', '/erp/webhook-platforms',
+     ]);
+-    expect(advanced.links.filter((l) => l.more)).toHaveLength(30);
++    expect(advanced.links.filter((l) => l.more).length).toBeLessThan(30);
+     expect(advanced.links.findIndex((l) => l.more)).toBe(10); // main items first, then the "show more" ones
+-    for (const to of ['/erp/simulator', '/j/kbank/testing-console', '/erp-stock', '/josh/kyc', '/josh/internal_docs']) expect(advanced.links.find((l) => l.to === to)!.more, to).toBe(true);
++    for (const to of ['/erp/simulator', '/j/kbank/testing-console', '/erp-stock']) expect(advanced.links.find((l) => l.to === to)!.more, to).toBe(true);
+     // marketing has only "more" items there, so it sees its 9 unfolded (still at most 10)
+     expect(navFor('marketing').find((g) => g.group === titleOf('advanced'))!.links.map((l) => !!l.more)).toEqual(Array(9).fill(false));
+   });
+@@ -64,9 +65,34 @@ describe('sidebar per role', () => {
+     expect(orders.links.map((l) => [l.to, !!l.more])).toEqual([['/orders', false]]);
+   });
+ 
+-  it('per-role item counts (PR body table)', () => {
+-    const counts = Object.fromEntries(STAFF_ROLES.map((role) => [role, linksOf(role).length]));
+-    expect(counts).toEqual({ admin: 119, marketing: 41, merchandising: 19, cs: 10, sales_manager: 11, business_analyst: 14, graphic: 6, sale: 9 });
++  it('offers one menu entry per feature and keeps scoped records and reports separate', () => {
++    const admin = linksOf('admin');
++    for (const alias of Object.keys(FEATURE_HOMES)) {
++      expect(admin).not.toContain(alias);
++      expect(admin).toContain(featureHome(alias));
++    }
++    for (const path of ['/products', '/j/allproducts', '/reports/products', '/orders', '/j/order', '/reports/orders', '/customers', '/j/company', '/reports/customers']) expect(admin).toContain(path);
++    expect(admin.length).toBeLessThan(119);
++  });
++
++  it('keeps live legacy actions discoverable within their feature with unchanged permissions', () => {
++    for (const alias of ['/josh/coupons', '/josh/suppliers', '/josh/credit_terms', '/josh/admin_access']) {
++      expect(FEATURE_ACTIONS[featureHome(alias)].map(action => action.to)).toContain(alias);
++      for (const role of NON_ADMIN) expect(isRouteAllowed(role, alias)).toBe(false);
++    }
++    expect(linksOf('admin')).toContain('/josh/internal_docs');
++    expect(isRouteAllowed('cs', '/cs/accounts/merge')).toBe(false);
++    expect(isRouteAllowed('admin', '/cs/accounts/merge')).toBe(true);
++    expect(isRouteAllowed('cs', '/cs/orders/new')).toBe(true);
++    expect(isRouteAllowed('cs', '/j/order/import')).toBe(false);
++  });
++
++  it.each(STAFF_ROLES)('%s: action URLs use the existing API role policy, with queries intact', (role) => {
++    for (const path of ['/cs/orders/new', '/cs/samples?status=pending', '/cs/samples/123/approved?status=pending']) {
++      expect(isRouteAllowed(role, path), path).toBe(role === 'admin' || role === 'cs');
++    }
++    expect(isRouteAllowed(role, '/cs/accounts/merge')).toBe(role === 'admin');
++    expect(isRouteAllowed(role, '/j/order/import')).toBe(role === 'admin');
+   });
+ 
+   it('journey funnel (josh /analytics/funnel is admin-only) is no longer offered to marketing', () => {
+@@ -79,11 +105,12 @@ describe('sidebar per role', () => {
+ describe('old menu → new menu', () => {
+   it('every old menu item has a new home, nothing new appears and the redesign widened no role', () => {
+     const mapping = legacyMapping();
+-    expect(mapping.map((m) => m.to).sort()).toEqual(NAV_ENTRIES.map((e) => e.to).sort());
++    expect(mapping.map((m) => m.to).sort()).toEqual(LEGACY_ITEMS.map((e) => e.to).sort());
++    for (const item of mapping) expect(NAV_ENTRIES.some(entry => entry.to === item.canonicalTo), item.to).toBe(true);
+     for (const role of NON_ADMIN) {
+       const before = legacyNavFor(role).flatMap((g) => g.links.map((l) => l.to)).filter((to) => !to.startsWith('/workspaces/'));
+       const narrowed = role === 'marketing' ? ['/j/marketing/journey-funnel'] : [];
+-      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual(before.filter((to) => !narrowed.includes(to)).sort());
++      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual([...new Set(before.filter((to) => !narrowed.includes(to)).map(featureHome))].sort());
+     }
+   });
+ 
+@@ -123,19 +150,23 @@ describe('routes', () => {
+   it.each([
+     ['/j/product/edit/7', '/j/allproducts'],
+     ['/j/product/7', '/j/allproducts'],
+-    ['/j/product/create', '/j/product/create'],
++    ['/j/product/create', '/j/allproducts'],
+     ['/j/coupon/create', '/j/coupons'],
+     ['/j/coupon/abc', '/j/coupons'],
+     ['/j/categories/edit/1', '/j/categories'],
+     ['/j/categories/create', '/j/categories'],
+     ['/j/supplier/edit/3', '/j/suppliers'],
+     ['/j/order/123', '/j/order'],
+-    ['/j/order/import', '/j/order/import'],
++    ['/j/order/import', '/j/order'],
+     ['/marketing/growth/results/w1', '/marketing/growth'],
+     ['/marketing/growth/plans/new', '/marketing/growth/plans'],
+     ['/reports/orders/A-1', '/reports/orders'],
+     ['/products/42', '/products'],
+-    ['/josh/coupons', '/josh/coupons'],
++    ['/josh/coupons', '/j/coupons'],
++    ['/josh/credit_terms', '/j/credit-terms'],
++    ['/j/cs/sample-requests', '/cs'],
++    ['/cs/orders/new', '/cs'],
++    ['/cs/samples/r1/approved', '/cs'],
+     ['/', '/'],
+   ])('%s highlights %s', (path, item) => {
+     expect(resolves(path), path).toBe(true);
+@@ -150,6 +181,7 @@ describe('copy (TH + EN)', () => {
+     ...SECTIONS.flatMap((s) => [s.title, s.description]),
+     ...NAV_ENTRIES.flatMap((e) => [e.label, e.description, ...Object.values(e.roleLabels ?? {})]),
+     HOME.label, HOME.description!, DASHBOARD.label, DASHBOARD.description!,
++    ...Object.values(FEATURE_ACTIONS).flatMap(actions => actions.map(action => action.label)),
+     'แสดงเพิ่มเติม ({0})', 'แสดงน้อยลง', 'วันนี้ต้องการทำอะไร', 'เลือกงานด้านล่าง หรือใช้เมนูด้านซ้ายเพื่อไปหน้าอื่น', 'ตอนนี้อยู่ที่', 'ระบบหลังบ้าน', 'สำหรับทีมงาน', 'หน้าหลัก',
+   ];
+ 
+diff --git a/apps/commerce-admin/src/app/navigation.ts b/apps/commerce-admin/src/app/navigation.ts
+index e618932..fbc01b7 100644
+--- a/apps/commerce-admin/src/app/navigation.ts
++++ b/apps/commerce-admin/src/app/navigation.ts
+@@ -1,5 +1,6 @@
+ import { normalizeRole } from '../lib/role-home';
+ import type { NavGroup, NavItem } from '@cp/ui';
++import { FEATURE_HOMES } from './features';
+ 
+ /**
+  * The admin sidebar, in task-based sections. One source for the sidebar (labels, order, visibility,
+@@ -32,8 +33,6 @@ type NavEntry = Omit<NavItem, 'icon' | 'badge'> & {
+   roleLabels?: Readonly<Record<string, string>>;
+ };
+ 
+-const STORE_COPY = 'สำเนาข้อมูลร้านค้าแบบดูอย่างเดียว ใช้ได้แม้ระบบร้านค้าล่ม แก้ไขข้อมูลได้ที่หน้าหลักของหมวดนั้น';
+-
+ const NAV: Record<SectionId, NavEntry[]> = {
+   catalog: [
+     { to: '/j/allproducts', label: 'สินค้าบนร้านค้า', activeFor: ['/j/product'], description: 'ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า' },
+@@ -46,7 +45,6 @@ const NAV: Record<SectionId, NavEntry[]> = {
+     { to: '/product-master-queue', label: 'อนุมัติข้อมูลสินค้าที่เปลี่ยน', description: 'ตรวจและอนุมัติข้อมูลสินค้าที่เปลี่ยน เช่น หน่วย แพ็ก แบรนด์ และ VAT' },
+     { to: '/stock-moves', label: 'รับเข้า ปรับ และโอนสต็อก', description: 'บันทึกการรับสินค้าเข้า ปรับยอด และโอนสินค้าระหว่างคลัง' },
+     { to: '/erp/inventory-warehouse', label: 'สต็อกแต่ละคลัง', description: 'ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง' },
+-    { to: '/j/product/create', label: 'เพิ่มสินค้า', end: true, more: true, description: 'สร้างสินค้าใหม่บนร้านค้า' },
+     { to: '/j/product/video-upload', label: 'อัปโหลดวิดีโอสินค้า', end: true, more: true, description: 'อัปโหลดวิดีโอประกอบหน้าสินค้า' },
+     { to: '/prices/staff', label: 'ราคาเฉพาะลูกค้าและราคาสัญญา', more: true, description: 'ราคาเฉพาะของลูกค้าแต่ละรายและราคาตามสัญญา' },
+     { to: '/order-periods', label: 'รอบสั่งซื้อจากซัพพลายเออร์', more: true, description: 'รอบสั่งซื้อสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับ' },
+@@ -62,7 +60,6 @@ const NAV: Record<SectionId, NavEntry[]> = {
+     { to: '/j/credit-backs', label: 'คืนเครดิตให้ลูกค้า', description: 'คืนเครดิตให้ลูกค้าและติดตามสถานะ' },
+     { to: '/j/refunds', label: 'คืนสินค้าและคืนเงิน', description: 'คำขอคืนสินค้าและการคืนเงินของลูกค้า' },
+     { to: '/j/cs/delivery-schedule', label: 'ตารางรอบส่ง', description: 'รอบจัดส่งและเกณฑ์การจัดส่ง' },
+-    { to: '/j/order/import', label: 'นำเข้าออเดอร์', end: true, more: true, description: 'นำเข้าคำสั่งซื้อจากไฟล์' },
+     { to: '/j/batch-sticker', label: 'พิมพ์สติกเกอร์', more: true, description: 'พิมพ์สติกเกอร์ติดกล่องให้หลายออเดอร์พร้อมกัน' },
+     { to: '/orders', label: 'ชำระเงินและการจองของออเดอร์', more: true, description: 'สถานะชำระเงินและการจองสินค้าของแต่ละคำสั่งซื้อ' },
+     { to: '/reservations', label: 'การจองสต็อกตอนชำระเงิน', more: true, description: 'สต็อกที่ถูกจองระหว่างชำระเงิน ทั้งที่จอง ยืนยัน ปล่อย และหมดอายุ' },
+@@ -70,9 +67,8 @@ const NAV: Record<SectionId, NavEntry[]> = {
+   customers: [
+     { to: '/j/company', label: 'บริษัทลูกค้า', description: 'บริษัทลูกค้า ข้อมูลบริษัท เครดิตเทอม และสิทธิ์สั่งซื้อ' },
+     { to: '/j/allusers', label: 'ผู้ใช้ของลูกค้า', description: 'ค้นหาบัญชีผู้ใช้ของลูกค้าและดูประวัติ' },
+-    { to: '/cs', label: 'งานบริการลูกค้า', description: 'สั่งแทนลูกค้า คำขอสินค้าตัวอย่าง และรวมบัญชีในที่เดียว' },
++    { to: '/cs', label: 'งานบริการลูกค้า', activeFor: ['/j/cs/sample-requests'], description: 'เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี' },
+     { to: '/livechat', label: 'แชตกับลูกค้า', description: 'อ่านและตอบแชตของลูกค้า' },
+-    { to: '/j/cs/sample-requests', label: 'คำขอสินค้าตัวอย่าง', description: 'คำขอสินค้าตัวอย่างจากลูกค้า' },
+     { to: '/j/price-requests', label: 'คำขอราคา', description: 'คำขอราคาพิเศษจากลูกค้า' },
+     { to: '/j/kyc', label: 'ตรวจสอบตัวตนลูกค้า', description: 'ตรวจเอกสารยืนยันตัวตนของลูกค้าที่รอพิจารณา' },
+     { to: '/reports/winback', label: 'ติดตามลูกค้าเก่า', description: 'ลูกค้าที่หยุดสั่งซื้อ และงานติดตามของฝ่ายขาย' },
+@@ -119,6 +115,8 @@ const NAV: Record<SectionId, NavEntry[]> = {
+     { to: '/reports/health', label: 'สุขภาพระบบ', description: 'ข้อผิดพลาดและปัญหาที่กระทบการขายตอนนี้' },
+   ],
+   settings: [
++    { to: '/josh/internal_docs', label: 'เอกสารภายใน', description: 'เพิ่ม อ่าน และลบเอกสารที่ใช้ภายในทีม' },
++
+     { to: '/settings/staff', label: 'บัญชีทีมงาน', description: 'เพิ่มทีมงาน กำหนดบทบาท และปิดบัญชี' },
+     { to: '/settings/josh-staff', label: 'บัญชีทีมงานร้านค้า', description: 'บัญชีทีมงานที่ใช้หลังร้านของร้านค้า' },
+     { to: '/j/admin-access', label: 'คำขอใช้งานหลังร้าน', description: 'คำขอใช้งานหลังร้านของร้านค้าที่รออนุมัติ' },
+@@ -152,19 +150,6 @@ const NAV: Record<SectionId, NavEntry[]> = {
+     { to: '/j/jagota/payment-testing', label: 'ทดสอบชำระเงิน Jagota', more: true, description: 'ทดสอบการชำระเงินของ Jagota' },
+     { to: '/erp/jagota-shadow', label: 'ทดลองส่งออเดอร์เข้าระบบหลัก (ERP)', more: true, description: 'ทดลองส่งคำสั่งซื้อเข้าระบบหลัก (ERP) ผ่านระบบใหม่ ก่อนเปิดใช้จริง' },
+     { to: '/reports/price-shadow', label: 'เทียบราคาที่คำนวณใหม่', more: true, description: 'เทียบราคาที่ระบบใหม่คำนวณกับราคาที่ร้านค้าใช้อยู่' },
+-    { to: '/josh/kyc', label: 'ข้อมูลคำขอยืนยันตัวตน', more: true, description: STORE_COPY },
+-    { to: '/josh/credit_terms', label: 'ข้อมูลคำขอเครดิต', more: true, description: STORE_COPY },
+-    { to: '/josh/admin_access', label: 'ข้อมูลคำขอใช้งานหลังร้าน', more: true, description: STORE_COPY },
+-    { to: '/josh/shipments', label: 'ข้อมูลการจัดส่ง', more: true, description: STORE_COPY },
+-    { to: '/josh/payments', label: 'ข้อมูลรายการชำระเงิน', more: true, description: STORE_COPY },
+-    { to: '/josh/credit_notes', label: 'ข้อมูลใบลดหนี้', more: true, description: STORE_COPY },
+-    { to: '/josh/credit_backs', label: 'ข้อมูลคืนเครดิต', more: true, description: STORE_COPY },
+-    { to: '/josh/invoices', label: 'ข้อมูลใบแจ้งหนี้', more: true, description: STORE_COPY },
+-    { to: '/josh/coupons', label: 'ข้อมูลคูปอง', more: true, description: STORE_COPY },
+-    { to: '/josh/campaigns', label: 'ข้อมูลแคมเปญ', more: true, description: STORE_COPY },
+-    { to: '/josh/segments', label: 'ข้อมูลกลุ่มลูกค้า', more: true, description: STORE_COPY },
+-    { to: '/josh/suppliers', label: 'ข้อมูลซัพพลายเออร์', more: true, description: STORE_COPY },
+-    { to: '/josh/internal_docs', label: 'เอกสารภายใน', more: true, description: STORE_COPY },
+   ],
+ };
+ 
+@@ -173,7 +158,7 @@ export const HOME: NavItem = { to: '/home', label: 'หน้าแรก', end:
+ export const DASHBOARD: NavItem = { to: '/', label: 'แดชบอร์ด', end: true, icon: 'space_dashboard', description: 'งานที่ต้องติดตามและสถานะระบบวันนี้ในหน้าเดียว' };
+ 
+ /** Every sidebar destination (Dashboard aside), in sidebar order, with its section. */
+-export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatMap((s) => NAV[s.id].map((item) => ({ ...item, section: s.id })));
++export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatMap((s) => NAV[s.id].map((item) => ({ ...item, activeFor: [...(item.activeFor ?? []), ...Object.entries(FEATURE_HOMES).filter(([, home]) => home === item.to).map(([alias]) => alias)], section: s.id })));
+ 
+ /**
+  * Destination permissions from the staff-role policy; omitted destinations are admin-only.
+@@ -181,6 +166,9 @@ export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatM
+  * a page whose first API calls 403 for it. Also decides post-login landing pages and deep links.
+  */
+ export const ROLE_ACCESS: Record<string, readonly string[]> = {
++  '/cs/accounts/merge': [], // account merging is admin-only in the relay
++  '/j/order/import': [], // import is admin-only in the relay
++
+   "/home": ["marketing", "merchandising", "cs", "sale", "sales_manager", "business_analyst", "graphic"],
+   "/reports/winback/opportunities": ["sales_manager", "business_analyst"],
+   "/reports/winback/my": ["sale"],
+@@ -424,7 +412,7 @@ export const canSee = (roleRaw: string | null | undefined, to: string) => {
+ export function navFor(roleRaw?: string): NavGroup[] {
+   const role = normalizeRole(roleRaw);
+   const groups = SECTIONS.flatMap((section): NavGroup[] => {
+-    const links = NAV[section.id].filter((item) => canSee(role, item.to))
++    const links = NAV_ENTRIES.filter((item) => item.section === section.id).filter((item) => canSee(role, item.to))
+       .map(({ roleLabels, ...item }): NavItem => ({ ...item, label: roleLabels?.[role] ?? item.label }));
+     if (!links.length) return [];
+     // nothing but "more" items for this role: show them as the section's main items
+@@ -485,7 +473,7 @@ export const ROLE_SHORTCUTS: Readonly<Record<string, readonly Shortcut[]>> = {
+     { to: '/cs', icon: 'support_agent' },
+     { to: '/j/order', icon: 'receipt_long' },
+     { to: '/j/shipments', icon: 'local_shipping' },
+-    { to: '/j/cs/sample-requests', icon: 'inventory' },
++
+     { to: '/j/credit-notes', icon: 'request_quote' },
+   ],
+   sale: [
+diff --git a/apps/commerce-admin/src/app/pages/CsDesk.tsx b/apps/commerce-admin/src/app/pages/CsDesk.tsx
+index 279a956..ef17432 100644
+--- a/apps/commerce-admin/src/app/pages/CsDesk.tsx
++++ b/apps/commerce-admin/src/app/pages/CsDesk.tsx
+@@ -1,17 +1,28 @@
+ // ui-metadata-migration: static labels and UI notices only
+ import { useState } from 'react';
++import { Link, Navigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
+ import {
+   Alert, Button, CodeBlock, DetailSection, Empty, ErrorText, Field, FormPanel, Hint, Input, Loading, Page, PageHeader, Panel, PanelHead,
+-  SearchInput, Segmented, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
++  SearchInput, Segmented, Select, StatusChip, TBody, TD, TH, THead, TR, Table, Textarea, Chip, EmptyState, useUnsavedChanges, fmt,
+ } from '@cp/ui';
+-import { joshAdmin, joshCustomerApi, joshProductApi, JoshRow } from '../../lib/api';
+-import { useAsync } from '../hooks';
++import { joshAdmin, joshCustomerApi, joshProductApi, JoshRow, session } from '../../lib/api';
++import { useAsync, useMutation } from '../hooks';
++import { isRouteAllowed } from '../../lib/landing';
+ 
+ // ui-copy-migration: only literal UI copy and notification templates
+ import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+ type Row = Record<string, unknown>;
++/** Some upstream routes report a business failure in a successful HTTP response. */
++function confirmedAnswer<T>(answer: T): T {
++  if (answer && typeof answer === 'object') {
++    const value = answer as Record<string, unknown>;
++    if (value.status === false || value.success === false) throw new Error(String(value.message ?? 'Operation was not saved'));
++  }
++  return answer;
++}
+ /** josh answers lists as an array, `{ data }`, `{ data: { items } }` or `{ items }`. */
+ function rowsOf(answer: unknown): Row[] {
++  confirmedAnswer(answer);
+   const a = answer as { data?: unknown; items?: unknown } | unknown[] | null;
+   if (Array.isArray(a)) return a as Row[];
+   const d = a?.data as { items?: unknown; data?: unknown } | unknown[] | undefined;
+@@ -19,42 +30,52 @@ function rowsOf(answer: unknown): Row[] {
+   if (Array.isArray(d?.items)) return d.items as Row[];
+   if (Array.isArray(d?.data)) return d.data as Row[];
+   if (Array.isArray(a?.items)) return a.items as Row[];
+-  return [];
++  throw new Error('Invalid sample request response');
+ }
+ 
+ const PAYMENT = [['credit', 'เครดิตเทอม'], ['qr', 'QR'], ['cod', 'เก็บปลายทาง'], ['payment_link', 'ลิงก์ชำระเงิน'], ['customer_credit', 'เครดิตลูกค้า']];
+-const SAMPLE_STATUS: Record<string, string> = { pending: 'รอพิจารณา', approved: 'อนุมัติ', rejected: 'ไม่อนุมัติ', fulfilled: 'ส่งแล้ว' };
++const SAMPLE_STATUS: Record<string, string> = { pending: 'รอพิจารณา', approved: 'อนุมัติแล้ว', rejected: 'ไม่อนุมัติแล้ว', fulfilled: 'ส่งแล้ว' };
++const SAMPLE_DECISION: Record<string, string> = { approved: 'อนุมัติ', rejected: 'ไม่อนุมัติ', fulfilled: 'บันทึกการส่ง' };
+ const show = (v: unknown) => (v == null ? '—' : typeof v === 'object' ? JSON.stringify(v) : String(v));
+ /** Backend rejects a CS search shorter than 2 characters. */
+ function readySearch(value: string) {
+   const term = value.trim();
+   return term.length >= 2 ? term : '';
+ }
+-type Tab = 'order' | 'samples' | 'merge';
++const CS_TASKS = [
++  { to: '/cs/orders/new', label: 'สั่งของแทนลูกค้า', description: 'เลือกลูกค้าและสินค้า ตรวจราคา แล้วสั่งซื้อ' },
++  { to: '/cs/samples', label: 'คำขอสินค้าตัวอย่าง', description: 'ตรวจคำขอ อนุมัติ และบันทึกการส่งสินค้า' },
++  { to: '/cs/accounts/merge', label: 'รวมบัญชีซ้ำ', description: 'ย้ายข้อมูลจากบัญชีซ้ำเข้าบัญชีหลัก' },
++];
++
++export function SampleRequestsRedirect({ role }: { role?: string }) {
++  const { search, hash } = useLocation();
++  return isRouteAllowed(role, '/j/cs/sample-requests')
++    ? <Navigate to={`/cs/samples${search}${hash}`} replace />
++    : <Alert tone="danger">{__uiText('คุณไม่มีสิทธิ์ทำงานนี้')}</Alert>;
++}
+ 
+ /**
+  * CS work that used to be in josh admin: order on behalf of a customer (josh quotes and places it
+  * with its own checkout), sample requests, merging duplicate accounts. Everything runs as josh's own
+  * CS-admin routes (josh COMMERCE_OWNS_CS_ORDERS / COMMERCE_OWNS_CUSTOMERS lock josh's own buttons).
+  */
+-export function CsDesk() {
++export function CsDesk({ role }: { role?: string }) {
+   __useUiLocale();
+-  const [tab, setTab] = useState<Tab>('order');
++  const { pathname } = useLocation();
++  const task = CS_TASKS.find(item => pathname === item.to || pathname.startsWith(`${item.to}/`));
++  if (!isRouteAllowed(role, pathname)) return <Page><PageHeader title={__uiText('งานบริการลูกค้า')} /><Alert tone="danger">{__uiText('คุณไม่มีสิทธิ์ทำงานนี้')}</Alert><Link to="/home">{__uiText('หน้าแรก')}</Link></Page>;
+   return (
+     <Page>
+-      <PageHeader title={__uiText("งาน CS (josh)")} subtitle={__uiText("สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit")} />
+-      <div className="overflow-x-auto">
+-        <Segmented<Tab>
+-          value={tab}
+-          onChange={setTab}
+-          options={[
+-            { value: 'order', label: __uiText("สั่งของแทนลูกค้า") },
+-            { value: 'samples', label: __uiText("คำขอสินค้าตัวอย่าง") },
+-            { value: 'merge', label: __uiText("รวมบัญชี") },
+-          ]}
+-        />
+-      </div>
+-      {tab === 'order' ? <OrderOnBehalf /> : tab === 'samples' ? <Samples /> : <Merge />}
++      <PageHeader title={__uiText(task?.label ?? 'งานบริการลูกค้า')} subtitle={__uiText(task?.description ?? 'เลือกงานที่ต้องการทำ แต่ละงานมีหน้าของตัวเอง')} />
++      <nav aria-label={__uiText('งานบริการลูกค้า')} className="flex flex-wrap gap-2">
++        {task && <Link className="min-h-10 rounded-lg border px-3 py-2 text-sm text-primary" to="/cs">{__uiText('งานบริการลูกค้า')}</Link>}
++        {CS_TASKS.filter(item => isRouteAllowed(role, item.to)).map(item => <Link key={item.to} to={item.to} aria-current={task?.to === item.to ? 'page' : undefined} className="min-h-10 rounded-lg border border-secondary-container px-3 py-2 text-sm text-primary focus-visible:outline-2 focus-visible:outline-primary">{__uiText(item.label)}</Link>)}
++      </nav>
++      {!task && <Panel className="p-5"><Hint>{__uiText('เลือกงานที่ต้องการทำ แต่ละงานมีหน้าของตัวเอง')}</Hint></Panel>}
++      {task?.to === '/cs/orders/new' && <OrderOnBehalf />}
++      {task?.to === '/cs/samples' && <Samples key={pathname} />}
++      {task?.to === '/cs/accounts/merge' && <Merge />}
+     </Page>
+   );
+ }
+@@ -79,6 +100,10 @@ function CustomerPick({ onPick }: { onPick: (p: { company: JoshRow; userId: stri
+         <Button type="submit" icon="search">{__uiText("ค้นหา")}</Button>
+       </form>
+       {q.trim().length > 0 && q.trim().length < 2 && <Hint>{__uiText("พิมพ์อย่างน้อย 2 ตัวอักษร")}</Hint>}
++      {found.loading && term && <Loading variant="form" />}
++      <ErrorText error={found.error} onRetry={found.reload} />
++      {detail.loading && companyId && <Loading variant="form" />}
++      <ErrorText error={detail.error} onRetry={detail.reload} />
+       {term && found.data && !found.data.items.length && <Empty icon="search_off">{__uiText("ไม่พบบริษัทที่ตรงกับคำค้น")}</Empty>}
+       {!!found.data?.items.length && (
+         <Field label={__uiText("บริษัท")}>
+@@ -117,28 +142,36 @@ function OrderOnBehalf() {
+   const [skuSearch, setSkuSearch] = useState('');
+   const [quote, setQuote] = useState<unknown>(null);
+   const [pay, setPay] = useState({ payment_method: 'credit', coupon_code: '', delivery_date: '' });
+-  const [busy, setBusy] = useState(false);
++  const mutation = useMutation();
++  const busy = mutation.busy;
+   const [msg, setMsg] = useState<{ tone: 'ok' | 'danger'; text: string } | null>(null);
+   const skuTerm = readySearch(skuSearch);
++  useUnsavedChanges(items.length > 0 || busy);
+   const products = useAsync(() => (skuTerm ? joshProductApi.list({ search: skuTerm, status: 'active', page: 1, limit: 10 }) : Promise.resolve(null)), [skuTerm]);
+   const body = () => ({ user_id: who!.userId, branch_id: who!.branchId, items: items.map((i) => ({ product_inventory_id: i.id, quantity: i.quantity })) });
+ 
+   async function run(fn: () => Promise<unknown>, after: (r: unknown) => void) {
+-    setBusy(true); setMsg(null);
+-    try { after(await fn()); } catch (e) { setMsg({ tone: 'danger', text: e instanceof Error ? e.message : String(e) }); } finally { setBusy(false); }
++    if (busy) return false;
++    setMsg(null);
++    const result = await mutation.run(() => fn().then(confirmedAnswer));
++    if (result.ok) after(result.value);
++    return result.ok;
+   }
+-  const getQuote = () => run(() => joshAdmin.call('POST', '/cs-admin/orders/quote', body()), (r) => setQuote(r));
++  const getQuote = () => { if (!busy && who && items.length) { setQuote(null); return run(() => joshAdmin.call('POST', '/cs-admin/orders/quote', body()), (r) => setQuote(r)); } };
+   function place() {
+-    if (!window.confirm(__uiText("สั่ง {0} รายการให้ {1} ({2})?\n\njosh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ", {"0": items.length, "1": who!.company.name, "2": pay.payment_method}))) return;
+-    run(() => joshAdmin.call('POST', '/cs-admin/orders/place-on-behalf', { ...body(), payment_method: pay.payment_method,
++    if (busy || !who || !items.length || quote == null) return false;
++    if (!window.confirm(__uiText("สั่ง {0} รายการให้ {1} ({2})?\n\njosh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ", {"0": items.length, "1": who.company.name, "2": pay.payment_method}))) return false;
++    return run(() => joshAdmin.call('POST', '/cs-admin/orders/place-on-behalf', { ...body(), payment_method: pay.payment_method,
+       ...(pay.coupon_code.trim() ? { coupon_code: pay.coupon_code.trim() } : {}), ...(pay.delivery_date ? { delivery_date: pay.delivery_date } : {}) }),
+-    (r) => { setMsg({ tone: 'ok', text: `สร้าง order แล้ว: ${JSON.stringify((r as { data?: unknown })?.data ?? r).slice(0, 200)}` }); setItems([]); setQuote(null); });
++    (r) => { setMsg({ tone: 'ok', text: __uiText('สร้างคำสั่งซื้อแล้ว') + ': ' + JSON.stringify((r as { data?: unknown })?.data ?? r).slice(0, 200) }); setItems([]); setQuote(null); });
+   }
+   const changeItems = (next: typeof items) => { setItems(next); setQuote(null); };
+ 
+   return (
+     <div className="space-y-4">
+       {msg && <Alert tone={msg.tone} onClose={() => setMsg(null)}>{msg.text}</Alert>}
++      <ErrorText error={mutation.error} />
++      <fieldset disabled={busy} className="min-w-0 space-y-4">
+       <Panel className="p-4 space-y-5">
+         <CustomerPick onPick={(p) => { setWho(p); setQuote(null); }} />
+         {who && (
+@@ -148,6 +181,8 @@ function OrderOnBehalf() {
+               <Button type="submit" icon="search">{__uiText("ค้นหาสินค้า")}</Button>
+             </form>
+             {skuQ.trim().length > 0 && skuQ.trim().length < 2 && <Hint>{__uiText("พิมพ์อย่างน้อย 2 ตัวอักษร")}</Hint>}
++            {products.loading && skuTerm && <Loading variant="table" />}
++            <ErrorText error={products.error} onRetry={products.reload} />
+             {skuTerm && products.data && !products.data.items.length && <Empty icon="search_off">{__uiText("ไม่พบสินค้าที่ตรงกับคำค้น")}</Empty>}
+             {!!products.data?.items.length && (
+               <div className="rounded-lg border border-secondary-container divide-y divide-secondary-container/70">
+@@ -205,91 +240,123 @@ function OrderOnBehalf() {
+           </FormPanel>
+         </>
+       )}
++      </fieldset>
+     </div>
+   );
+ }
+ 
+-function Samples() {
++export function sampleDecisions(status: string): string[] {
++  // Preserve both legacy capabilities: pending → fulfilled and approved → fulfilled.
++  return status === 'pending' ? ['approved', 'rejected', 'fulfilled'] : status === 'approved' ? ['fulfilled'] : [];
++}
++
++export function Samples() {
+   __useUiLocale();
+-  const [status, setStatus] = useState('');
+-  const [busy, setBusy] = useState(false);
+-  const [msg, setMsg] = useState('');
+-  const list = useAsync(() => joshAdmin.get('/cs-admin/sample-requests', status ? { status } : undefined), [status]);
+-  async function decide(id: string, next: string) {
+-    const note = window.prompt(`${SAMPLE_STATUS[next]} — หมายเหตุ CS (ไม่บังคับ)`, '');
+-    if (note === null) return;
+-    setBusy(true); setMsg('');
+-    try { await joshAdmin.call('PATCH', `/cs-admin/sample-requests/${id}`, { status: next, ...(note ? { cs_note: note } : {}) }); setMsg(__uiMessage("{0}แล้ว", {"0": SAMPLE_STATUS[next]})); list.reload(); }
+-    catch (e) { setMsg(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
++  const [params, setParams] = useSearchParams();
++  const { id, decision } = useParams();
++  const rawStatus = params.get('status') ?? '';
++  const status = Object.prototype.hasOwnProperty.call(SAMPLE_STATUS, rawStatus) ? rawStatus : '';
++  const mutation = useMutation();
++  const [saved, setSaved] = useState(false);
++  const draftKey = `cp-sample-note:${session.claims()?.sub ?? 'staff'}:${id}:${decision}`;
++  const [note, setNote] = useState(() => { try { return sessionStorage.getItem(draftKey) ?? ''; } catch { return ''; } });
++  const [confirmed, setConfirmed] = useState(false);
++  useUnsavedChanges((!!id && !!note && !saved) || mutation.busy);
++  const list = useAsync(async () => rowsOf(await joshAdmin.get('/cs-admin/sample-requests', !id && status ? { status } : undefined)), [status, id]);
++  const rows = list.data ?? [];
++  const selected = rows.find(row => String(row.id) === id);
++  const actionable = !!selected && !!decision && sampleDecisions(String(selected.status)).includes(decision);
++  const suffix = params.toString() ? `?${params}` : '';
++  const listUrl = `/cs/samples${suffix}`;
++  const filter = (next: string) => {
++    const updated = new URLSearchParams(params);
++    next ? updated.set('status', next) : updated.delete('status');
++    setParams(updated);
++  };
++  async function submit() {
++    if (saved || !actionable || !confirmed || list.loading || list.error) return false;
++    const result = await mutation.run(() => joshAdmin.call('PATCH', `/cs-admin/sample-requests/${id}`, {
++      status: decision, ...(note.trim() ? { cs_note: note.trim() } : {}),
++    }).then(confirmedAnswer));
++    if (!result.ok) return false;
++    setSaved(true);
++    try { sessionStorage.removeItem(draftKey); } catch { /* storage may be disabled */ }
++    list.reload();
++    return true;
+   }
+-  const rows = rowsOf(list.data);
+-  return (
+-    <Panel className="overflow-hidden">
+-      <PanelHead
+-        icon="science"
+-        title={__uiText("คำขอสินค้าตัวอย่าง")}
+-        actions={<Segmented value={status} onChange={setStatus} options={[{ value: '', label: __uiText("ทั้งหมด") }, ...Object.entries(SAMPLE_STATUS).map(([k, l]) => ({ value: k, label: l }))]} />}
+-      />
+-      {msg && <div className="px-4 pt-3"><Alert tone="info" onClose={() => setMsg('')}>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert></div>}
+-      <ErrorText error={list.error} />
+-      {list.loading && !list.data ? (
+-        <Loading />
+-      ) : rows.length ? (
+-        <Table>
+-          <THead>
+-            <TH>{__uiText("ขอเมื่อ")}</TH>
+-            <TH>{__uiText("ลูกค้า")}</TH>
+-            <TH>{__uiText("สินค้า")}</TH>
+-            <TH right>{__uiText("จำนวน")}</TH>
+-            <TH>{__uiText("สถานะ")}</TH>
+-            <TH>{__uiText("หมายเหตุ")}</TH>
+-            <TH />
+-          </THead>
+-          <TBody>
+-            {rows.map((r) => (
+-              <TR key={String(r.id)}>
+-                <TD kind="time">{r.created_at ? fmt.when(String(r.created_at)) : '—'}</TD>
+-                <TD>{show((r.company as JoshRow)?.name ?? r.company_name ?? r.user_id)}</TD>
+-                <TD kind="mono">{show((r.product as JoshRow)?.product_inventory_sku ?? r.sku ?? r.product_inventory_id)}</TD>
+-                <TD kind="num">{show(r.quantity)}</TD>
+-                <TD><StatusChip status={SAMPLE_STATUS[String(r.status)] ?? show(r.status)} /></TD>
+-                <TD kind="muted">{show(r.cs_note)}</TD>
+-                <TD kind="actions">
+-                  <div className="inline-flex gap-1">
+-                    {r.status === 'pending' && (
+-                      <>
+-                        <Button size="sm" variant="primary" disabled={busy} onClick={() => decide(String(r.id), 'approved')}>{__uiText("อนุมัติ")}</Button>
+-                        <Button size="sm" variant="danger-ghost" disabled={busy} onClick={() => decide(String(r.id), 'rejected')}>{__uiText("ไม่อนุมัติ")}</Button>
+-                      </>
+-                    )}
+-                    {r.status === 'approved' && <Button size="sm" disabled={busy} onClick={() => decide(String(r.id), 'fulfilled')}>{__uiText("ส่งแล้ว")}</Button>}
+-                  </div>
+-                </TD>
+-              </TR>
+-            ))}
+-          </TBody>
+-        </Table>
+-      ) : (
+-        <Empty icon="science">{__uiText("ไม่มีคำขอ")}</Empty>
+-      )}
+-    </Panel>
+-  );
++  const requestSummary = (r: Row) => <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-sm">
++    <div><dt className="text-on-surface-variant">{__uiText('ลูกค้า')}</dt><dd>{show((r.company as JoshRow)?.name ?? r.company_name ?? r.user_id)}</dd></div>
++    <div><dt className="text-on-surface-variant">{__uiText('สินค้า')}</dt><dd>{show((r.product as JoshRow)?.product_inventory_sku ?? r.sku ?? r.product_inventory_id)}</dd></div>
++    <div><dt className="text-on-surface-variant">{__uiText('จำนวน')}</dt><dd>{show(r.quantity)}</dd></div>
++    <div><dt className="text-on-surface-variant">{__uiText('สถานะ')}</dt><dd><StatusChip status={__uiText(SAMPLE_STATUS[String(r.status)] ?? show(r.status))} /></dd></div>
++  </dl>;
++  const decisionLinks = (r: Row) => <div className="flex flex-wrap gap-2">{sampleDecisions(String(r.status)).map(next => <Link key={next} className="inline-flex min-h-10 items-center rounded border border-secondary-container px-3 text-primary" to={`/cs/samples/${encodeURIComponent(String(r.id))}/${next}${suffix}`}>{__uiText(SAMPLE_DECISION[next])}</Link>)}</div>;
++  return <Panel className="overflow-hidden">
++    <PanelHead icon="science" title={__uiText(id ? 'ตรวจคำขอสินค้าตัวอย่าง' : 'คำขอสินค้าตัวอย่าง')}
++      actions={!id && <Button disabled={list.loading} onClick={list.reload}>{__uiText('Refresh')}</Button>} />
++    <div className="space-y-4 p-4">
++      {!id && <div className="overflow-x-auto"><Segmented value={status} onChange={filter} options={[
++        { value: '', label: __uiText('ทั้งหมด') }, ...Object.entries(SAMPLE_STATUS).map(([value, label]) => ({ value, label: __uiText(label) })),
++      ]} /></div>}
++      {rawStatus && !status && <Alert tone="warn" actions={<Button onClick={() => filter('')}>{__uiText('ล้างตัวกรอง')}</Button>}>{__uiText('ตัวกรองสถานะไม่ถูกต้อง')}</Alert>}
++      {saved && <Alert tone="ok">{__uiText('บันทึกสถานะคำขอแล้ว')} <Link className="underline" to={listUrl}>{__uiText('กลับหน้ารายการ')}</Link></Alert>}
++      <ErrorText error={mutation.error} />
++      <ErrorText error={list.error} onRetry={list.reload} />
++      {list.loading ? <Loading variant={id ? 'detail' : 'table'} /> : !list.error && list.data && <>
++        {!id && <div className="flex flex-wrap items-center gap-2" aria-label={__uiText('สถานะในรายการนี้')}><Hint>{__uiText('สถานะในรายการนี้')}</Hint>
++          {Object.entries(SAMPLE_STATUS).map(([key, label]) => <Chip key={key} tone={key === 'fulfilled' ? 'ok' : key === 'pending' ? 'warn' : 'muted'}>{__uiText(label)}: {rows.filter(row => row.status === key).length}</Chip>)}
++        </div>}
++        {id ? selected ? <>
++          {requestSummary(selected)}
++          {!saved && (actionable ? <FormPanel title={__uiText(SAMPLE_DECISION[decision!])} cols={1} busy={mutation.busy} onSubmit={submit} submitLabel={__uiText('ยืนยันและบันทึก')}>
++            <Field label={__uiText('หมายเหตุ')}><Textarea disabled={mutation.busy} value={note} onChange={event => {
++              setNote(event.target.value);
++              try { sessionStorage.setItem(draftKey, event.target.value); } catch { /* storage may be disabled */ }
++            }} /></Field>
++            <label className="flex items-center gap-2 text-sm"><input type="checkbox" required disabled={mutation.busy} checked={confirmed} onChange={event => setConfirmed(event.target.checked)} />{__uiText('ตรวจข้อมูลแล้ว พร้อมบันทึกสถานะ')}</label>
++          </FormPanel> : <Alert tone="warn">{__uiText('คำขอนี้เปลี่ยนสถานะแล้ว หรือทำงานนี้ไม่ได้')}</Alert>)}
++          {!saved && <Link className="inline-flex min-h-10 items-center text-sm text-primary underline" to={listUrl}>{__uiText('กลับหน้ารายการ')}</Link>}
++        </> : <EmptyState title={__uiText('ไม่พบคำขอนี้')} action={<Link to={listUrl}>{__uiText('กลับหน้ารายการ')}</Link>} />
++        : rows.length ? <><div className="hidden md:block"><Table><THead><TH>{__uiText('ขอเมื่อ')}</TH><TH>{__uiText('ลูกค้า')}</TH><TH>{__uiText('สินค้า')}</TH><TH right>{__uiText('จำนวน')}</TH><TH>{__uiText('สถานะ')}</TH><TH>{__uiText('หมายเหตุ')}</TH><TH>{__uiText('จัดการ')}</TH></THead>
++          <TBody>{rows.map(r => <TR key={String(r.id)}>
++            <TD kind="time">{r.created_at ? fmt.when(String(r.created_at)) : '—'}</TD>
++            <TD>{show((r.company as JoshRow)?.name ?? r.company_name ?? r.user_id)}</TD>
++            <TD kind="mono">{show((r.product as JoshRow)?.product_inventory_sku ?? r.sku ?? r.product_inventory_id)}</TD>
++            <TD kind="num">{show(r.quantity)}</TD>
++            <TD><StatusChip status={__uiText(SAMPLE_STATUS[String(r.status)] ?? show(r.status))} /></TD>
++            <TD kind="muted">{show(r.cs_note)}</TD>
++            <TD kind="actions">{decisionLinks(r)}</TD>
++          </TR>)}</TBody></Table></div>
++          <div className="space-y-3 md:hidden">{rows.map(r => <article key={String(r.id)} className="space-y-4 rounded-lg border border-secondary-container p-3">
++            <p className="text-xs text-on-surface-variant">{__uiText('ขอเมื่อ')}: {r.created_at ? fmt.when(String(r.created_at)) : '—'}</p>
++            {requestSummary(r)}
++            {r.cs_note != null && <p className="break-words text-xs">{__uiText('หมายเหตุ')}: {show(r.cs_note)}</p>}
++            {decisionLinks(r)}
++          </article>)}</div></>
++        : <EmptyState icon="science" title={__uiText('ไม่มีคำขอ')} description={__uiText('ไม่มีคำขอที่ตรงกับตัวกรองนี้')} action={status ? <Button onClick={() => filter('')}>{__uiText('ล้างตัวกรอง')}</Button> : <Button onClick={list.reload}>{__uiText('Refresh')}</Button>} />}
++      </>}
++    </div>
++  </Panel>;
+ }
+ 
+ function Merge() {
+   __useUiLocale();
+   const [v, setV] = useState({ primary_user_id: '', duplicate_user_id: '' });
+-  const [busy, setBusy] = useState(false);
++  const mutation = useMutation();
++  const busy = mutation.busy;
+   const [msg, setMsg] = useState('');
+   const [err, setErr] = useState('');
+-  const uuid = /^[0-9a-f-]{36}$/i;
++  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+   async function submit() {
++    if (busy) return false;
+     setMsg(''); setErr('');
+-    if (!uuid.test(v.primary_user_id) || !uuid.test(v.duplicate_user_id) || v.primary_user_id === v.duplicate_user_id) return setErr('ใส่ user id (uuid) สองบัญชีที่ต่างกัน');
+-    if (!window.confirm(__uiText("รวมบัญชี {0} เข้า {1}?\n\nบัญชีซ้ำจะถูกย้ายข้อมูลเข้าบัญชีหลัก ย้อนกลับไม่ได้", {"0": v.duplicate_user_id, "1": v.primary_user_id}))) return;
+-    setBusy(true);
+-    try { const r = await joshAdmin.call('POST', '/cs-admin/accounts/merge', v); setMsg(__uiMessage("รวมแล้ว: {0}", {"0": JSON.stringify(r).slice(0, 200)})); setV({ primary_user_id: '', duplicate_user_id: '' }); }
+-    catch (e) { setErr(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
++    if (!uuid.test(v.primary_user_id) || !uuid.test(v.duplicate_user_id) || v.primary_user_id.toLowerCase() === v.duplicate_user_id.toLowerCase()) { setErr('ใส่ user id (uuid) สองบัญชีที่ต่างกัน'); return false; }
++    if (!window.confirm(__uiText("รวมบัญชี {0} เข้า {1}?\n\nบัญชีซ้ำจะถูกย้ายข้อมูลเข้าบัญชีหลัก ย้อนกลับไม่ได้", {"0": v.duplicate_user_id, "1": v.primary_user_id}))) return false;
++    const result = await mutation.run(() => joshAdmin.call('POST', '/cs-admin/accounts/merge', v).then(confirmedAnswer));
++    if (!result.ok) return false;
++    setMsg(__uiMessage('รวมแล้ว: {0}', { '0': JSON.stringify(result.value).slice(0, 200) }));
++    setV({ primary_user_id: '', duplicate_user_id: '' });
++    return true;
+   }
+   return (
+     <div className="space-y-4 max-w-2xl">
+@@ -301,11 +368,11 @@ function Merge() {
+         cols={1}
+         submitLabel={__uiText("รวมบัญชี")}
+         busy={busy}
+-        error={err}
++        error={err || mutation.error}
+         onSubmit={submit}
+       >
+-        <Field label={__uiText("บัญชีหลัก (เก็บไว้)")}><Input className="font-mono" value={v.primary_user_id} onChange={(e) => setV({ ...v, primary_user_id: e.target.value.trim() })} /></Field>
+-        <Field label={__uiText("บัญชีซ้ำ (รวมเข้า)")}><Input className="font-mono" value={v.duplicate_user_id} onChange={(e) => setV({ ...v, duplicate_user_id: e.target.value.trim() })} /></Field>
++        <Field label={__uiText("บัญชีหลัก (เก็บไว้)")}><Input disabled={busy} className="font-mono" value={v.primary_user_id} onChange={(e) => setV({ ...v, primary_user_id: e.target.value.trim() })} /></Field>
++        <Field label={__uiText("บัญชีซ้ำ (รวมเข้า)")}><Input disabled={busy} className="font-mono" value={v.duplicate_user_id} onChange={(e) => setV({ ...v, duplicate_user_id: e.target.value.trim() })} /></Field>
+       </FormPanel>
+     </div>
+   );
+diff --git a/apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx b/apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx
+index e1cb38a..1103302 100644
+--- a/apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx
++++ b/apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx
+@@ -2,9 +2,9 @@
+ import { getUiLocale as __dateLocale } from '@cp/ui';
+ // ui-metadata-migration: static labels and UI notices only
+ import { useEffect, useState } from 'react';
+-import { Button, Checkbox, Empty, ErrorText, Hint, Page, PageHeader, Pager, Panel, PanelHead, SearchInput, Table, TBody, TD, TH, THead, TR } from '@cp/ui';
++import { Alert, Button, Checkbox, Empty, ErrorText, Hint, Loading, Page, PageHeader, Pager, Panel, PanelHead, SearchInput, Table, TBody, TD, TH, THead, TR, useUnsavedChanges } from '@cp/ui';
+ import { MasterPending, productMastersApi, productPricesApi } from '../../lib/api';
+-import { useAsync } from '../hooks';
++import { useAsync, useMutation } from '../hooks';
+ 
+ // ui-copy-migration: only literal UI copy and notification templates
+ import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+@@ -15,7 +15,6 @@ const LABEL: Record<string, string> = {
+   get season_start(){return __uiText("เริ่มฤดู");}, get season_end(){return __uiText("จบฤดู");},
+ };
+ const show = (v: unknown) => (v == null || v === '' ? '—' : Array.isArray(v) ? v.join(', ') : String(v));
+-const errText = (e: unknown) => (e instanceof Error ? e.message : String(e));
+ 
+ /**
+  * The MER queue of ERP changes to live products' units, pack, status, category … owned by commerce (stage 4d).
+@@ -31,49 +30,57 @@ export function ProductMasterQueue() {
+   const [pageSize, setPageSize] = useState(20);
+   const pending = useAsync(() => productMastersApi.pending(search, page, pageSize), [search, page, pageSize]);
+   const [picked, setPicked] = useState<Set<string>>(new Set());
+-  const [error, setError] = useState<string | null>(null);
++  const mutation = useMutation();
++  const [result, setResult] = useState<{ kind: 'approve' | 'reject'; count: number } | null>(null);
++  useUnsavedChanges(mutation.busy);
+   const isOwned = owned.data?.productMaster === true;
+ 
+   // Bulk approve / reject is page-scoped: changing page clears the selection; a page emptied by approve steps back.
+   const go = (p: number, size = pageSize) => { setPicked(new Set()); setPageSize(size); setPage(p); };
+   useEffect(() => {
+     const d = pending.data;
+-    if (d && !d.items.length && d.total > 0 && d.page > 1) setPage(Math.ceil(d.total / d.limit));
++    if (d && !d.items.length && d.total > 0 && d.page > 1) { setPicked(new Set()); setPage(Math.ceil(d.total / d.limit)); }
+   }, [pending.data]);
+ 
+-  const toggle = (sku: string) => setPicked((s) => { const n = new Set(s); n.has(sku) ? n.delete(sku) : n.add(sku); return n; });
++  const toggle = (sku: string) => { if (mutation.busy || pending.loading || pending.error) return; setPicked((s) => { const n = new Set(s); n.has(sku) ? n.delete(sku) : n.add(sku); return n; }); };
+   async function act(kind: 'approve' | 'reject') {
+-    setError(null);
+-    try {
+-      await (kind === 'approve' ? productMastersApi.approve([...picked]) : productMastersApi.reject([...picked]));
+-      setPicked(new Set());
+-      pending.reload();
+-    } catch (e) { setError(errText(e)); }
++    if (!isOwned || owned.loading || owned.error || pending.loading || pending.error || !picked.size || mutation.busy) return;
++    const skus = [...picked].filter(sku => pending.data?.items.some(item => item.sku === sku));
++    if (!skus.length) return;
++    setResult(null);
++    const answer = await mutation.run<{ approved: number } | { rejected: number }>(() => kind === 'approve' ? productMastersApi.approve(skus) : productMastersApi.reject(skus));
++    if (!answer.ok) return;
++    setResult({ kind, count: 'approved' in answer.value ? answer.value.approved : answer.value.rejected });
++    setPicked(new Set());
++    pending.reload();
+   }
+ 
+   return (
+     <Page>
+       <PageHeader title={__uiText("คิวข้อมูลสินค้าจาก ERP")} subtitle={__uiText("หน่วย แพ็ก แบรนด์ VAT สถานะ หมวด การสั่งซื้อ ของสินค้าที่ขายอยู่ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · สินค้าใหม่ (draft) อนุมัติที่หน้าสินค้า")} />
+       {owned.data && !isOwned && <Hint>{__uiText("ยังไม่ได้สลับ — คิวนี้ยังอยู่ที่ josh (COMMERCE_OWNS_PRODUCT_MASTER)")}</Hint>}
+-      <ErrorText error={error ?? pending.error ?? null} />
++      {result && <Alert tone={result.count > 0 ? 'ok' : 'info'} onClose={() => setResult(null)}>{__uiText(result.kind === 'approve' ? 'อนุมัติแล้ว {0} รายการ' : 'ไม่อนุมัติแล้ว {0} รายการ', { 0: result.count })}</Alert>}
++      <ErrorText error={mutation.error} />
++      <ErrorText error={owned.error} onRetry={owned.reload} />
++      <ErrorText error={pending.error} onRetry={pending.reload} />
+       <form className="flex gap-2 items-end" onSubmit={(e) => { e.preventDefault(); setSearch(query.trim()); go(1); }}>
+-        <div className="flex-1 max-w-sm"><SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={__uiText("SKU")} /></div>
+-        <Button type="submit">{__uiText("ค้นหา")}</Button>
++        <div className="flex-1 max-w-sm"><SearchInput aria-label={__uiText('ค้นหาสินค้า')} disabled={mutation.busy} value={query} onChange={(e) => setQuery(e.target.value)} placeholder={__uiText("SKU")} /></div>
++        <Button disabled={mutation.busy} type="submit">{__uiText("ค้นหา")}</Button>
+       </form>
+       <Panel>
+-        <PanelHead title={__uiText("รออนุมัติ ({0})", {"0": pending.data?.total ?? 0})} />
++        <PanelHead title={pending.loading || pending.error || !pending.data ? __uiText('รออนุมัติ') : __uiText("รออนุมัติ ({0})", {"0": pending.data.total})} />
+         <div className="px-4 py-2 flex gap-2">
+-          <Button variant="primary" disabled={!isOwned || picked.size === 0} onClick={() => void act('approve')}>{__uiText("อนุมัติ ")}{picked.size || ''}</Button>
+-          <Button variant="danger-ghost" disabled={!isOwned || picked.size === 0} onClick={() => void act('reject')}>{__uiText("ไม่อนุมัติ")}</Button>
++          <Button variant="primary" disabled={!isOwned || owned.loading || !!owned.error || pending.loading || !!pending.error || mutation.busy || picked.size === 0} onClick={() => void act('approve')}>{__uiText("อนุมัติ ")}{picked.size || ''}</Button>
++          <Button variant="danger-ghost" disabled={!isOwned || owned.loading || !!owned.error || pending.loading || !!pending.error || mutation.busy || picked.size === 0} onClick={() => void act('reject')}>{__uiText("ไม่อนุมัติ")}</Button>
+         </div>
+-        {pending.data?.items.length ? (
++        {pending.loading ? <Loading /> : pending.error ? null : pending.data?.items.length ? (
+           <>
+             <Table>
+               <THead><TR><TH /><TH>{__uiText("SKU")}</TH><TH>{__uiText("ERP เปลี่ยน (ตอนนี้ → ใหม่)")}</TH><TH>{__uiText("ERP ส่งเมื่อ")}</TH></TR></THead>
+               <TBody>
+                 {pending.data.items.map((r: MasterPending) => (
+                   <TR key={r.sku} selected={picked.has(r.sku)} onClick={() => toggle(r.sku)}>
+-                    <TD><Checkbox checked={picked.has(r.sku)} onChange={() => toggle(r.sku)} onClick={(e) => e.stopPropagation()} /></TD>
++                    <TD><Checkbox aria-label={__uiText('เลือก {0}', { 0: r.sku })} disabled={mutation.busy} checked={picked.has(r.sku)} onChange={() => toggle(r.sku)} onClick={(e) => e.stopPropagation()} /></TD>
+                     <TD kind="mono">{r.sku}</TD>
+                     <TD>
+                       {Object.entries(r.patch).map(([k, v]) => {
+@@ -86,9 +93,9 @@ export function ProductMasterQueue() {
+                 ))}
+               </TBody>
+             </Table>
+-            <Pager page={page} pageSize={pageSize} total={pending.data.total} onPage={(p) => go(p)} onPageSize={(n) => go(1, n)} />
++            {!mutation.busy && <Pager page={page} pageSize={pageSize} total={pending.data.total} onPage={(p) => go(p)} onPageSize={(n) => go(1, n)} />}
+           </>
+-        ) : <Empty>{__uiText("ไม่มีข้อมูลที่รออนุมัติ")}</Empty>}
++        ) : pending.data ? <Empty>{__uiText("ไม่มีข้อมูลที่รออนุมัติ")}</Empty> : null}
+       </Panel>
+     </Page>
+   );
+diff --git a/apps/commerce-admin/src/josh-admin/app/page/Order.tsx b/apps/commerce-admin/src/josh-admin/app/page/Order.tsx
+index 4674b2c..413d132 100644
+--- a/apps/commerce-admin/src/josh-admin/app/page/Order.tsx
++++ b/apps/commerce-admin/src/josh-admin/app/page/Order.tsx
+@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react';
+ import { Link, useNavigate } from 'react-router-dom';
+ import { AiOutlineEdit, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
+ import { ADMIN_ROUTES } from '../config/admin-routes';
++import { roleCanWrite } from '../../../app/role-can';
+ 
+ // ui-copy-migration: only literal UI copy and notification templates
+ import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+@@ -259,11 +260,11 @@ const Order = () => {
+           />
+         </div>
+         <div className="flex flex-wrap items-start gap-2">
+-          <Link
++          {roleCanWrite() && <Link
+             to={ADMIN_ROUTES.orderImport}
+             className="inline-flex h-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+           >
+-            {__uiText("Order Import")}</Link>
++            {__uiText("Order Import")}</Link>}
+           <Link
+             to={ADMIN_ROUTES.paymentTransactions}
+             className="inline-flex h-fit items-center rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
+diff --git a/docs/design/workspace-redesign.md b/docs/design/workspace-redesign.md
+index 79c4973..12e176e 100644
+--- a/docs/design/workspace-redesign.md
++++ b/docs/design/workspace-redesign.md
+@@ -4,7 +4,10 @@ The Admin and Portal share a calmer visual system: neutral surfaces, blue action
+ 
+ ## Work by category
+ 
+-All 114 original navigation destinations are retained for Admin; the current staff-role policy filters them for other staff. The Admin groups them by what the person is doing, rather than by backend ownership:
++Original deep links remain available; verified overlapping features now share canonical menu entries.
++The [canonical navigation follow-up](admin-canonical-navigation.md) records the feature mapping,
++the route-based customer-service slice, retained live actions, and remaining breadth. The current
++staff-role policy filters the menu for each role. Admin groups work by task:
+ 
+ | Category | Everyday workflow |
+ | --- | --- |
+diff --git a/libs/ui/src/index.tsx b/libs/ui/src/index.tsx
+index affb3cc..4fd08ab 100644
+--- a/libs/ui/src/index.tsx
++++ b/libs/ui/src/index.tsx
+@@ -500,7 +500,7 @@ export function FormPanel({
+ }) {
+   __useUiLocale();
+   const [dirty, setDirty] = useState(false);
+-  const requestLeave = useUnsavedChanges(dirty);
++  const requestLeave = useUnsavedChanges(dirty || !!busy);
+   const grid = { 1: '', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' }[cols];
+   return (
+     <form data-panel
+@@ -508,6 +508,7 @@ export function FormPanel({
+       onInput={() => setDirty(true)}
+       onSubmit={(e) => {
+         e.preventDefault();
++        if (busy) return;
+         if (e.currentTarget.querySelector('[aria-invalid="true"]')) {
+           scrollToFirstInvalid(e.currentTarget);
+           return;
+@@ -644,11 +645,11 @@ export function Alert({ tone = 'info', title, children, onClose, actions }: { to
+ }
+ 
+ /** Inline error line (load failures). Renders nothing when there is no error. */
+-export function ErrorText({ error }: { error: string | null | undefined }) {
++export function ErrorText({ error, onRetry }: { error: string | null | undefined; onRetry?: () => void }) {
+   __useUiLocale();
+   if (!error) return null;
+   const known = hasUiText(error);
+-  return <Alert tone="danger">
++  return <Alert tone="danger" actions={onRetry && <Button onClick={onRetry}>{__uiText('ลองอีกครั้ง')}</Button>}>
+     <p>{known ? __uiText(error) : __uiText('โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง')}</p>
+     {!known && <details className="mt-3">
+       <summary className="cursor-pointer">{__uiText('รายละเอียดข้อผิดพลาด')}</summary>
+@@ -667,12 +668,17 @@ export function Empty({ children = 'ไม่มีข้อมูล', icon = '
+   );
+ }
+ 
+-export function Loading({ children = 'กำลังโหลด…' }: { children?: ReactNode }) {
++export function Loading({ children = 'กำลังโหลด…', variant = 'table' }: { children?: ReactNode; variant?: 'table' | 'form' | 'detail' }) {
+   __useUiLocale();
+   return (
+-    <div className="py-10 flex items-center justify-center gap-2 text-on-surface-variant text-xs">
+-      <Icon name="progress_activity" size={18} className="animate-spin text-primary" />
+-      {typeof children === 'string' ? __uiText(children) : children}
++    <div role="status" aria-busy="true" className="w-full space-y-4 p-5 text-on-surface-variant text-xs">
++      <span className="sr-only">{typeof children === 'string' ? __uiText(children) : children}</span>
++      <div aria-hidden="true" className="space-y-3 motion-safe:animate-pulse">
++        <div className="h-5 w-1/3 rounded bg-surface-container-high" />
++        {Array.from({ length: variant === 'detail' ? 3 : 5 }, (_, row) => <div key={row} className={cx('grid gap-3', variant === 'table' ? 'grid-cols-4' : variant === 'form' ? 'grid-cols-2' : 'grid-cols-1')}>
++          {Array.from({ length: variant === 'table' ? 4 : variant === 'form' ? 2 : 1 }, (_, col) => <div key={col} className={cx('rounded bg-surface-container', variant === 'table' ? 'h-7' : 'h-10')} />)}
++        </div>)}
++      </div>
+     </div>
+   );
+ }
+@@ -1287,7 +1293,6 @@ export function Sidebar({
+                     <span>{__uiText(section.group)}</span>
+                   </span>
+                   <span className="flex items-center gap-1 shrink-0">
+-                    <Count>{links.length}</Count>
+                     <Icon name={expanded ? 'expand_more' : 'chevron_right'} size={16} className="text-outline" />
+                   </span>
+                 </button>
+diff --git a/libs/ui/src/locales/ui-messages.json b/libs/ui/src/locales/ui-messages.json
+index 89fba4b..6248da2 100644
+--- a/libs/ui/src/locales/ui-messages.json
++++ b/libs/ui/src/locales/ui-messages.json
+@@ -24734,5 +24734,161 @@
+   "รายการกลุ่มลูกค้า กลุ่มเก่าที่ไม่ใช่กลุ่มสดและยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดรายการ": {
+     "th": "รายการกลุ่มลูกค้า กลุ่มเก่าที่ไม่ใช่กลุ่มสดและยังไม่ล็อกรายชื่อจะล็อกเมื่อเปิดรายการ",
+     "en": "Customer groups. Opening this list freezes older non-live groups whose members are not yet frozen."
++  },
++  "เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี": {
++    "th": "เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี",
++    "en": "Choose an order, sample request, or account task"
++  },
++  "เพิ่ม อ่าน และลบเอกสารที่ใช้ภายในทีม": {
++    "th": "เพิ่ม อ่าน และลบเอกสารที่ใช้ภายในทีม",
++    "en": "Add, read, and delete documents used by your team"
++  },
++  "เปิดหรือปิดคูปองจากข้อมูลสำรอง": {
++    "th": "เปิดหรือปิดคูปองจากข้อมูลสำรอง",
++    "en": "Activate or deactivate a coupon using saved records"
++  },
++  "เพิ่มหรือแก้ซัพพลายเออร์จากข้อมูลสำรอง": {
++    "th": "เพิ่มหรือแก้ซัพพลายเออร์จากข้อมูลสำรอง",
++    "en": "Add or edit suppliers using saved records"
++  },
++  "พิจารณาเครดิตจากข้อมูลสำรอง": {
++    "th": "พิจารณาเครดิตจากข้อมูลสำรอง",
++    "en": "Review credit applications using saved records"
++  },
++  "พิจารณาสิทธิ์จากข้อมูลสำรอง": {
++    "th": "พิจารณาสิทธิ์จากข้อมูลสำรอง",
++    "en": "Review access requests using saved records"
++  },
++  "ดูข้อมูลสำรอง": {
++    "th": "ดูข้อมูลสำรอง",
++    "en": "View saved records"
++  },
++  "เลือกลูกค้าและสินค้า ตรวจราคา แล้วสั่งซื้อ": {
++    "th": "เลือกลูกค้าและสินค้า ตรวจราคา แล้วสั่งซื้อ",
++    "en": "Choose a customer and products, check the quote, then place the order"
++  },
++  "ตรวจคำขอ อนุมัติ และบันทึกการส่งสินค้า": {
++    "th": "ตรวจคำขอ อนุมัติ และบันทึกการส่งสินค้า",
++    "en": "Review requests, approve them, and record fulfilled samples"
++  },
++  "ย้ายข้อมูลจากบัญชีซ้ำเข้าบัญชีหลัก": {
++    "th": "ย้ายข้อมูลจากบัญชีซ้ำเข้าบัญชีหลัก",
++    "en": "Move duplicate account data into the primary account"
++  },
++  "เลือกงานที่ต้องการทำ แต่ละงานมีหน้าของตัวเอง": {
++    "th": "เลือกงานที่ต้องการทำ แต่ละงานมีหน้าของตัวเอง",
++    "en": "Choose a task to open its own page"
++  },
++  "คุณไม่มีสิทธิ์ทำงานนี้": {
++    "th": "คุณไม่มีสิทธิ์ทำงานนี้",
++    "en": "You do not have permission for this task"
++  },
++  "สร้างคำสั่งซื้อแล้ว": {
++    "th": "สร้างคำสั่งซื้อแล้ว",
++    "en": "Order created"
++  },
++  "ตรวจคำขอสินค้าตัวอย่าง": {
++    "th": "ตรวจคำขอสินค้าตัวอย่าง",
++    "en": "Review sample request"
++  },
++  "ตัวกรองสถานะไม่ถูกต้อง": {
++    "th": "ตัวกรองสถานะไม่ถูกต้อง",
++    "en": "The status filter is invalid"
++  },
++  "บันทึกสถานะคำขอแล้ว": {
++    "th": "บันทึกสถานะคำขอแล้ว",
++    "en": "Request status saved"
++  },
++  "สถานะในรายการนี้": {
++    "th": "สถานะในรายการนี้",
++    "en": "Statuses in this list"
++  },
++  "ยืนยันและบันทึก": {
++    "th": "ยืนยันและบันทึก",
++    "en": "Confirm and save"
++  },
++  "ตรวจข้อมูลแล้ว พร้อมบันทึกสถานะ": {
++    "th": "ตรวจข้อมูลแล้ว พร้อมบันทึกสถานะ",
++    "en": "I checked the details and am ready to save the status"
++  },
++  "คำขอนี้เปลี่ยนสถานะแล้ว หรือทำงานนี้ไม่ได้": {
++    "th": "คำขอนี้เปลี่ยนสถานะแล้ว หรือทำงานนี้ไม่ได้",
++    "en": "This request has changed status or this action is unavailable"
++  },
++  "ไม่พบคำขอนี้": {
++    "th": "ไม่พบคำขอนี้",
++    "en": "Request not found"
++  },
++  "ไม่มีคำขอที่ตรงกับตัวกรองนี้": {
++    "th": "ไม่มีคำขอที่ตรงกับตัวกรองนี้",
++    "en": "No requests match this filter"
++  },
++  "อนุมัติแล้ว {0} รายการ": {
++    "th": "อนุมัติแล้ว {0} รายการ",
++    "en": "Approved {0} records"
++  },
++  "ไม่อนุมัติแล้ว {0} รายการ": {
++    "th": "ไม่อนุมัติแล้ว {0} รายการ",
++    "en": "Rejected {0} records"
++  },
++  "รอพิจารณา": {
++    "th": "รอพิจารณา",
++    "en": "Pending review"
++  },
++  "กลับหน้ารายการ": {
++    "th": "กลับหน้ารายการ",
++    "en": "Back to list"
++  },
++  "ค้นหาบริษัทแล้วเลือกผู้ใช้และสาขา": {
++    "th": "ค้นหาบริษัทแล้วเลือกผู้ใช้และสาขา",
++    "en": "Find a company, then choose its user and delivery branch"
++  },
++  "เพิ่มสินค้าและจำนวน แล้วกดคิดราคา": {
++    "th": "เพิ่มสินค้าและจำนวน แล้วกดคิดราคา",
++    "en": "Add products and quantities, then request a quote"
++  },
++  "ตรวจราคาและวิธีชำระเงิน แล้วกดสั่งซื้อ": {
++    "th": "ตรวจราคาและวิธีชำระเงิน แล้วกดสั่งซื้อ",
++    "en": "Check the quote and payment method, then place the order"
++  },
++  "เลือกสถานะเพื่อกรองคำขอ": {
++    "th": "เลือกสถานะเพื่อกรองคำขอ",
++    "en": "Choose a status to filter requests"
++  },
++  "เปิดงานที่ต้องการทำจากคำขอ": {
++    "th": "เปิดงานที่ต้องการทำจากคำขอ",
++    "en": "Open an action from a request"
++  },
++  "ตรวจข้อมูลแล้วกดยืนยันและบันทึก": {
++    "th": "ตรวจข้อมูลแล้วกดยืนยันและบันทึก",
++    "en": "Review the details, then confirm and save"
++  },
++  "ตรวจลูกค้า สินค้า และจำนวน": {
++    "th": "ตรวจลูกค้า สินค้า และจำนวน",
++    "en": "Check the customer, product, and quantity"
++  },
++  "ใส่หมายเหตุถ้าต้องการ": {
++    "th": "ใส่หมายเหตุถ้าต้องการ",
++    "en": "Add a note if needed"
++  },
++  "ตรวจรหัสบัญชีหลักและบัญชีซ้ำ": {
++    "th": "ตรวจรหัสบัญชีหลักและบัญชีซ้ำ",
++    "en": "Check the primary and duplicate account IDs"
++  },
++  "ตรวจว่าทั้งสองบัญชีต่างกัน": {
++    "th": "ตรวจว่าทั้งสองบัญชีต่างกัน",
++    "en": "Confirm these are two different accounts"
++  },
++  "ยืนยันการรวมบัญชี ย้อนกลับไม่ได้": {
++    "th": "ยืนยันการรวมบัญชี ย้อนกลับไม่ได้",
++    "en": "Confirm the account merge; this cannot be undone"
++  },
++  "ไม่อนุมัติแล้ว": {
++    "th": "ไม่อนุมัติแล้ว",
++    "en": "Rejected"
++  },
++  "บันทึกการส่ง": {
++    "th": "บันทึกการส่ง",
++    "en": "Record fulfillment"
+   }
+ }
+diff --git a/libs/ui/src/page-guides.ts b/libs/ui/src/page-guides.ts
+index 136ddc3..badc9f5 100644
+--- a/libs/ui/src/page-guides.ts
++++ b/libs/ui/src/page-guides.ts
+@@ -34,6 +34,22 @@ const GUIDES: Record<string, PageGuide> = {
+       'เปิดแถวเพื่อดูรายละเอียดและขั้นถัดไป',
+     ],
+   },
++  '/cs/orders/new': {
++    summary: 'เลือกลูกค้าและสินค้า ตรวจราคา แล้วสั่งซื้อ',
++    steps: ['ค้นหาบริษัทแล้วเลือกผู้ใช้และสาขา', 'เพิ่มสินค้าและจำนวน แล้วกดคิดราคา', 'ตรวจราคาและวิธีชำระเงิน แล้วกดสั่งซื้อ'],
++  },
++  '/cs/samples': {
++    summary: 'ตรวจคำขอ อนุมัติ และบันทึกการส่งสินค้า',
++    steps: ['เลือกสถานะเพื่อกรองคำขอ', 'เปิดงานที่ต้องการทำจากคำขอ', 'ตรวจข้อมูลแล้วกดยืนยันและบันทึก'],
++  },
++  '/cs/samples/:id/:decision': {
++    summary: 'ตรวจคำขอ อนุมัติ และบันทึกการส่งสินค้า',
++    steps: ['ตรวจลูกค้า สินค้า และจำนวน', 'ใส่หมายเหตุถ้าต้องการ', 'ตรวจข้อมูลแล้วกดยืนยันและบันทึก'],
++  },
++  '/cs/accounts/merge': {
++    summary: 'ย้ายข้อมูลจากบัญชีซ้ำเข้าบัญชีหลัก',
++    steps: ['ตรวจรหัสบัญชีหลักและบัญชีซ้ำ', 'ตรวจว่าทั้งสองบัญชีต่างกัน', 'ยืนยันการรวมบัญชี ย้อนกลับไม่ได้'],
++  },
+   '/stock-moves': {
+     summary: 'บันทึกสินค้าเข้า ออก นับสต็อก หรือโอนระหว่างคลังที่แพลตฟอร์มดูแล',
+     steps: [

@@ -1,6 +1,7 @@
 import {
   manualPricePacketSchema,
   manualPricePatchSchema,
+  manualPriceSkuSchema,
   editedPriceValues,
   verifyManualPriceReceipt,
   verifyManualPriceReview,
@@ -14,10 +15,13 @@ const item = {
   currentUpdatedAt: null,
   currentUpdatedBy: null,
 };
-const packet = {
+const selection = {
   sku: item.sku,
   version: item.version,
   patch: { sellingUnitPrice: 0, moq: null },
+};
+const packet = {
+  ...selection,
   requestId: "00000000-0000-4000-8000-000000000001",
 };
 const review = {
@@ -81,6 +85,34 @@ it("supports raw Unicode SKU at PostgreSQL 64-character boundary and normalizes 
       .success,
   ).toBe(false);
 });
+it.each(["", " ", "\t\n", "SKU\u0000OTHER", "😀".repeat(65)])(
+  "refuses unstoreable or missing exact SKU %p",
+  (sku) => {
+    expect(manualPriceSkuSchema.safeParse(sku).success).toBe(false);
+    expect(manualPricePacketSchema.safeParse({ ...packet, sku }).success).toBe(
+      false,
+    );
+  },
+);
+it("preserves meaningful SKU spaces and refuses uncontracted UOM, currency or client identity", () => {
+  expect(manualPricePacketSchema.parse({ ...packet, sku: " SKU " }).sku).toBe(
+    " SKU ",
+  );
+  for (const extra of [
+    { uom: "kg" },
+    { currency: "THB" },
+    { actor: "admin" },
+    { cost: 1 },
+    { stock: 1 },
+  ]) {
+    expect(
+      manualPricePacketSchema.safeParse({ ...packet, ...extra }).success,
+    ).toBe(false);
+    expect(manualPricePatchSchema.safeParse({ moq: 1, ...extra }).success).toBe(
+      false,
+    );
+  }
+});
 it.each(["after", "packet", "version", "count", "delivery", "persisted"])(
   "refuses mismatched %s outcome",
   (kind) => {
@@ -95,13 +127,17 @@ it.each(["after", "packet", "version", "count", "delivery", "persisted"])(
   },
 );
 it("refuses wrong selection and a server review that does not match native manual semantics", () => {
+  expect(verifyManualPriceReview(review, selection)).toEqual(review);
   expect(() =>
-    verifyManualPriceReview({ ...review, after: item.current }, packet),
+    verifyManualPriceReview({ ...review, after: item.current }, selection),
   ).toThrow();
   expect(() =>
     verifyManualPriceReview(
       { ...review, item: { ...item, sku: "OTHER" } },
-      packet,
+      selection,
     ),
   ).toThrow();
+});
+it("requires an explicit selection for review rather than silently stripping a packet request ID", () => {
+  expect(() => verifyManualPriceReview(review, packet)).toThrow();
 });

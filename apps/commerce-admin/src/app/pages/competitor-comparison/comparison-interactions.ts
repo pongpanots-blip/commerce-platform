@@ -7,7 +7,6 @@ import {
   type ComparisonReceipt,
 } from "../../../../../commerce-platform/src/modules/integration/competitor-prices/comparison-contracts";
 import {
-  clearComparisonJob,
   readComparisonJobs,
   storeComparisonJob,
   type ComparisonJob,
@@ -43,6 +42,15 @@ export function useComparisonWriter(owner: string) {
   }, []);
   async function write(job: ComparisonJob) {
     if (lock.current || !mounted.current) return null;
+    if (job.owner !== owner) {
+      setError(
+        text(
+          "คำขอนี้ไม่ตรงกับบัญชีปัจจุบัน จึงยังไม่ส่งบันทึก",
+          "This request belongs to a different account. No save was sent.",
+        ),
+      );
+      return null;
+    }
     lock.current = true;
     setBusy(true);
     setError(null);
@@ -78,11 +86,8 @@ export function useComparisonWriter(owner: string) {
           ),
         );
       }
-      try {
-        clearComparisonJob(owner, job.packet.requestId);
-      } catch {
-        /* A retained committed request can be reconciled safely. */
-      }
+      // Recovery clears the journal only after rendering a validated receipt.
+      // An unmounted writer must retain the request ID, even when POST commits.
       return mounted.current ? receipt : null;
     } catch (e) {
       if (mounted.current) setError(message(e));

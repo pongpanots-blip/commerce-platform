@@ -19,7 +19,8 @@ export class CompetitorPricesController {
   }
 
   @Get() list() { return this.result(() => this.service.list()); }
-  @Get('review') reviewGrid(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: ReviewGridQueryDto) {
+  @Get('review') @StaffRoles('marketing', 'business_analyst', 'merchandising')
+  reviewGrid(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: ReviewGridQueryDto) {
     return this.result(() => this.review.grid(query));
   }
   @Get('review/search') reviewSearch(@Query(new ValidationPipe({ whitelist: true })) query: ReviewSearchQueryDto) {
@@ -33,10 +34,11 @@ export class CompetitorPricesController {
   reviewFinish(@Body(new ValidationPipe({ whitelist: true, transform: true })) dto: ReviewFinishDto, @Req() request: StaffRequest) {
     return this.result(() => this.review.finish(request.staff.email, dto));
   }
-  @Get('overview') overview(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: CompetitorOverviewQueryDto) {
+  @Get('overview') @StaffRoles('marketing', 'business_analyst', 'merchandising')
+  overview(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: CompetitorOverviewQueryDto) {
     return this.result(() => this.service.overview(query));
   }
-  @Get('overview/export') @Header('Cache-Control', 'private, no-store')
+  @Get('overview/export') @StaffRoles('marketing', 'business_analyst', 'merchandising') @Header('Cache-Control', 'private, no-store')
   async export(@Query(new ValidationPipe({ whitelist: true, transform: true })) query: CompetitorOverviewQueryDto) {
     const file = await this.service.overviewXlsx(query);
     return new StreamableFile(file, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -45,7 +47,7 @@ export class CompetitorPricesController {
   @Get('match-queue') matchQueue(@Query('after') after = '') { return this.result(() => this.service.matchQueue(String(after).slice(0, 100))); }
   @Get('sku/:sku/candidates') candidates(@Param('sku') sku: string) { return this.result(() => this.service.siteCandidates(sku)); }
   @Get('catalog/:sku') catalog(@Param('sku') sku: string) { return this.result(() => this.service.catalog(sku)); }
-  @Get('suggestions/:catalogItemId')
+  @Get('suggestions/:catalogItemId') @StaffRoles('marketing', 'business_analyst', 'merchandising')
   suggestions(@Param('catalogItemId', ParseUUIDPipe) catalogItemId: string) { return this.result(() => this.service.suggestions(catalogItemId)); }
   @Get('catalog-items/:id') catalogItem(@Param('id', ParseUUIDPipe) id: string) { return this.result(() => this.service.catalogItem(id)); }
   @Post() @HttpCode(200)

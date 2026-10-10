@@ -15,6 +15,7 @@ import {
   manualPriceItemSchema,
   manualPricePacketSchema,
   manualPriceSelectionSchema,
+  manualPriceSkuSchema,
   verifyManualPriceReceipt,
   type ManualPriceItem,
   type ManualPriceSelection,
@@ -48,7 +49,12 @@ export class ManualPriceService {
     }
   }
   private actor(actor: string) {
-    if (!actor || actor.length > 128)
+    if (
+      typeof actor !== "string" ||
+      !actor.trim() ||
+      actor.includes("\u0000") ||
+      Array.from(actor).length > 128
+    )
       throw new BadRequestException("Invalid staff identity");
   }
   private async state(m: EntityManager, sku: string): Promise<ManualPriceItem> {
@@ -82,7 +88,7 @@ export class ManualPriceService {
     });
   }
   async itemFor(sku: string) {
-    if (!sku || Array.from(sku).length > 64)
+    if (!manualPriceSkuSchema.safeParse(sku).success)
       throw new BadRequestException("Invalid SKU");
     return this.available(async () => ({
       item: await this.state(this.db.manager, sku),
@@ -112,7 +118,7 @@ export class ManualPriceService {
     const requestId = this.parse(priceRequestId, id);
     return this.available(async () => {
       const [r] = await this.db.query(
-        "SELECT receipt FROM commerce_promotion_draft_requests WHERE actor_id=$1 AND request_id=$2 AND receipt->'scenario'->>'kind'='product_price_edit'",
+        "SELECT draft_id,receipt FROM commerce_promotion_draft_requests WHERE actor_id=$1 AND request_id=$2 AND receipt->'scenario'->>'kind'='product_price_edit'",
         [actor, requestId],
       );
       if (!r)
@@ -120,8 +126,12 @@ export class ManualPriceService {
           "Committed price edit not found for this account",
         );
       const receipt = verifyManualPriceReceipt(r.receipt);
-      if (receipt.updatedBy !== actor)
-        throw Error("Receipt actor differs from authenticated staff");
+      if (
+        receipt.updatedBy !== actor ||
+        receipt.requestId !== requestId ||
+        receipt.id !== r.draft_id
+      )
+        throw Error("Receipt identity differs from its persisted request");
       return receipt;
     });
   }
@@ -134,7 +144,7 @@ export class ManualPriceService {
           `promotion-draft:${actor}:${packet.requestId}`,
         ]);
         const [previous] = await m.query(
-          "SELECT request_hash,receipt FROM commerce_promotion_draft_requests WHERE actor_id=$1 AND request_id=$2",
+          "SELECT request_hash,draft_id,receipt FROM commerce_promotion_draft_requests WHERE actor_id=$1 AND request_id=$2",
           [actor, packet.requestId],
         );
         if (previous) {
@@ -145,10 +155,10 @@ export class ManualPriceService {
             throw new ConflictException(
               "Request ID already identifies a different action",
             );
-          return {
-            ...verifyManualPriceReceipt(previous.receipt, packet),
-            replayed: true,
-          };
+          const receipt = verifyManualPriceReceipt(previous.receipt, packet);
+          if (receipt.updatedBy !== actor || receipt.id !== previous.draft_id)
+            throw Error("Receipt identity differs from its persisted request");
+          return { ...receipt, replayed: true };
         }
         if (!ownsPrices())
           throw new ConflictException(

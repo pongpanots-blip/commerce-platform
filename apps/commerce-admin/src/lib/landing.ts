@@ -52,7 +52,7 @@ export function isRouteAllowed(roleRaw: string | null | undefined, path: string)
   if(pathname==='/planning/marketing-readiness'||pathname.startsWith('/planning/marketing-readiness/'))return role==='marketing';
   if(pathname==='/analysis/financial'||pathname.startsWith('/analysis/financial/'))return ['sales_manager','business_analyst'].includes(role);
   if (pathname === '/planning/profit-goals' || pathname.startsWith('/planning/profit-goals/')) return isRouteAllowed(role, '/reports/winback');
-  if (pathname === '/planning/pack-prices' || pathname.startsWith('/planning/pack-prices/')) return isRouteAllowed(role, '/j/marketing/competitor-prices');
+  if (pathname === '/planning/pack-prices' || pathname.startsWith('/planning/pack-prices/')) return ['marketing', 'business_analyst'].includes(role);
   if (pathname === '/') return false;
   const task = /^\/tasks\/([^/]+)$/.exec(pathname);
   if (task) return SECTIONS.some(section => section.id === task[1] && !!sectionNavFor(role, section.id));

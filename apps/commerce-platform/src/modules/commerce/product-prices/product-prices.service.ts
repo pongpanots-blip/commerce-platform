@@ -114,6 +114,9 @@ export class ProductPricesService {
   async editWithin(m: EntityManager, sku: string, patch: PricePatch, staffId: string) {
     this.assertOwned();
     if (!COLS.some(([k]) => patch[k] !== undefined)) throw new BadRequestException('ไม่มีราคาให้แก้');
+      // Serialize the existence check as well as the write. An editor reviewing
+      // an absent price shares this lock with legacy PATCH/product-form writers.
+      await m.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`product-price:${sku}`]);
       const [known] = await m.query(`SELECT 1 FROM product_prices WHERE product_inventory_sku = $1
         UNION ALL SELECT 1 FROM josh_catalog_products WHERE sku = $1 LIMIT 1`, [sku]);
       if (!known) throw new NotFoundException(`ไม่พบสินค้า SKU ${sku}`);

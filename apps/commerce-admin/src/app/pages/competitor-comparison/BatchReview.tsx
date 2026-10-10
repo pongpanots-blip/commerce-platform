@@ -15,7 +15,7 @@ import { WorkspaceLink } from "../../WorkspaceParts";
 import { commerceText as text } from "../../commerce-copy";
 import {
   COMPARISON_HOME as home,
-  canChangeComparison,
+  canPerformComparison,
   type ComparisonWorkspace,
   type ComparisonPacket,
 } from "../../../../../commerce-platform/src/modules/integration/competitor-prices/comparison-contracts";
@@ -24,7 +24,8 @@ import { useComparisonWriter, useJobs } from "./comparison-interactions";
 import {
   batchBase,
   batchIsStale,
-  batchPacket,
+  authorizedBatchPacket,
+  batchChoicesAllowed,
   emptyBatch,
   readBatch,
   storeBatch,
@@ -71,7 +72,8 @@ export function BatchReview({
     [confirmed, setConfirmed] = useState(false);
   const stale = batchIsStale(draft, workspace),
     pending = jobs.filter((j) => j.packet.sku === workspace.sku),
-    allowed = canChangeComparison(role);
+    allowed = canPerformComparison(role, "verify"),
+    choicesAllowed = batchChoicesAllowed(draft, role);
   useEffect(() => {
     mounted.current = true;
     return () => {
@@ -94,7 +96,12 @@ export function BatchReview({
   }, [draft, owner, allowed]);
   function prepare(): ComparisonPacket | null {
     try {
-      const p = batchPacket(draft, workspace, crypto.randomUUID());
+      const p = authorizedBatchPacket(
+        draft,
+        workspace,
+        crypto.randomUUID(),
+        role,
+      );
       setError(null);
       return p;
     } catch {
@@ -111,6 +118,7 @@ export function BatchReview({
     if (
       lock.current ||
       !confirmed ||
+      !choicesAllowed ||
       stale ||
       pending.length ||
       storageError ||
@@ -201,6 +209,14 @@ export function BatchReview({
         </Alert>
       ) : (
         <>
+          {!choicesAllowed && (
+            <Alert tone="warn">
+              {text(
+                "คำตัดสินเดิมมีการเลิกใช้คู่สินค้า ซึ่งอยู่นอกสิทธิ์ปัจจุบัน เปลี่ยนคำตัดสินหรือนำคู่นั้นออกจากรายการก่อนส่ง",
+                "A retained removal decision is outside your current permissions. Change that decision or deselect the pair before saving.",
+              )}
+            </Alert>
+          )}
           {stale && (
             <Alert tone="warn">
               {text(
@@ -317,6 +333,7 @@ export function BatchReview({
                 <Button
                   disabled={
                     !confirmed ||
+                    !choicesAllowed ||
                     !draft.choices.length ||
                     stale ||
                     !!pending.length ||
@@ -338,10 +355,15 @@ export function BatchReview({
             <>
               {!workspace.rows.length && (
                 <Empty>
-                  {text(
-                    "ยังไม่มีคู่ที่บันทึกไว้ เพิ่มคู่ทีละรายการก่อน",
-                    "No recorded pairs yet. Add and inspect a pair first.",
-                  )}
+                  {canPerformComparison(role, "create")
+                    ? text(
+                        "ยังไม่มีคู่ที่บันทึกไว้ เพิ่มคู่ทีละรายการก่อน",
+                        "No recorded pairs yet. Add and inspect a pair first.",
+                      )
+                    : text(
+                        "ยังไม่มีคู่ที่บันทึกไว้ ให้การตลาดเพิ่มคู่ก่อนตรวจการจับคู่",
+                        "No recorded pairs yet. Marketing can add a pair before match verification.",
+                      )}
                 </Empty>
               )}
               <form
@@ -426,11 +448,23 @@ export function BatchReview({
                                 "same_product",
                                 "substitute",
                                 "remove",
-                              ].map((v) => (
-                                <option key={v} value={v}>
-                                  {decisionLabel(v)}
-                                </option>
-                              ))}
+                              ].map(
+                                (v) =>
+                                  (v !== "remove" ||
+                                    canPerformComparison(role, "remove") ||
+                                    chosen.decision === "remove") && (
+                                    <option
+                                      key={v}
+                                      value={v}
+                                      disabled={
+                                        v === "remove" &&
+                                        !canPerformComparison(role, "remove")
+                                      }
+                                    >
+                                      {decisionLabel(v)}
+                                    </option>
+                                  ),
+                              )}
                             </TaskSelect>
                             <TaskInput
                               label={
@@ -464,6 +498,7 @@ export function BatchReview({
                   type="submit"
                   disabled={
                     !draft.choices.length ||
+                    !choicesAllowed ||
                     stale ||
                     !!storageError ||
                     !!pending.length

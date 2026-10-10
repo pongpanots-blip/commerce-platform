@@ -21,6 +21,7 @@ import {
   storeComparisonJob,
 } from "./comparison-journal";
 import { ValidatedPlanningHandoff } from "./ValidatedPlanningHandoff";
+import { batchBase, emptyBatch, storeBatch } from "./comparison-batch";
 let role = "admin";
 const owner = "00000000-0000-4000-8000-000000000010";
 vi.mock("../../../lib/api", () => ({
@@ -239,19 +240,19 @@ it("renders two vendors with duplicate names and exact kilogram bases without fa
   expect(content()).not.toContain("Persisted action outcomes");
 });
 it.each(["business_analyst", "merchandising"])(
-  "%s retains original access scope before writes",
+  "%s reads comparison evidence without gaining source or review-marker authority",
   async (selected) => {
     await render(base, selected);
     expect(api.post).not.toHaveBeenCalled();
-    if (selected === "merchandising") {
-      expect(api.get).not.toHaveBeenCalled();
-      expect(content()).toContain("cannot read competitor evidence");
-    } else {
-      expect(content()).toContain("Public prices");
-      expect(
-        container.querySelector(`a[href="${base}/review-marker"]`),
-      ).toBeNull();
-    }
+    expect(content()).toContain("Public prices");
+    expect(
+      container.querySelector(`a[href="${base}/review-marker"]`),
+    ).toBeNull();
+    if (selected === "merchandising")
+      expect(content()).toContain(
+        "record reference prices and verify product matches",
+      );
+    else expect(content()).toContain("Read-only");
   },
 );
 it("legacy SKU links resolve into canonical URL and action back-forward retains entered values", async () => {
@@ -677,7 +678,7 @@ it("batch storage failure sends no action and remains recoverable in context", a
   expect(vi.mocked(api.post)).not.toHaveBeenCalled();
   expect(content()).toContain("Recovery storage is unavailable");
 });
-it.each(["business_analyst", "merchandising"])(
+it.each(["business_analyst"])(
   "%s cannot dispatch selected pair decisions",
   async (selectedRole) => {
     await render(base + "/batch", selectedRole);
@@ -686,7 +687,203 @@ it.each(["business_analyst", "merchandising"])(
       0,
     );
     expect(vi.mocked(api.post)).not.toHaveBeenCalled();
-    if (selectedRole === "merchandising")
-      expect(vi.mocked(api.get)).not.toHaveBeenCalled();
   },
 );
+it("MER pair details expose only reference capture and verification", async () => {
+  const pair = base + "/pairs/" + workspace().rows[0].id;
+  await render(pair, "merchandising");
+  for (const action of ["capture", "verify"])
+    expect(container.querySelector(`a[href="${pair}/${action}"]`)).toBeTruthy();
+  for (const action of ["pack", "remove", "refresh", "settings", "reassign"])
+    expect(container.querySelector(`a[href="${pair}/${action}"]`)).toBeNull();
+  expect(api.post).not.toHaveBeenCalled();
+});
+it.each([
+  "pack",
+  "remove",
+  "refresh",
+  "settings",
+  "reassign",
+  "create",
+  "review",
+])(
+  "a direct MER %s URL cannot render a write form or read action sources",
+  async (action) => {
+    const path =
+      action === "create"
+        ? base + "/match/new?item=" + workspace().rows[0].id
+        : action === "review"
+          ? base + "/review-marker"
+          : base + "/pairs/" + workspace().rows[0].id + "/" + action;
+    await render(path, "merchandising");
+    expect(content()).toContain("cannot perform this action");
+    expect(container.querySelector("form")).toBeNull();
+    expect(api.post).not.toHaveBeenCalled();
+    expect(vi.mocked(api.get).mock.calls).toEqual([
+      [endpoint + "/products/SYNTHETIC-SKU"],
+    ]);
+  },
+);
+it("MER reference capture survives back/forward and duplicate clicks await a persisted receipt", async () => {
+  let complete!: (value: unknown) => void;
+  vi.mocked(api.post).mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        complete = resolve;
+      }),
+  );
+  const path = base + "/pairs/" + workspace().rows[0].id + "/capture";
+  await render(path, "merchandising");
+  await fill("Observed full-pack price", "125.00");
+  await fill("Observed at (UTC)", "2026-10-10T00:00");
+  await act(async () =>
+    container
+      .querySelector("form")!
+      .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })),
+  );
+  await act(async () => button("Back test").click());
+  expect(field("Observed full-pack price").value).toBe("125.00");
+  await act(async () => button("Forward test").click());
+  await act(async () => {
+    button("Save this action").click();
+    button("Save this action").click();
+  });
+  expect(api.post).toHaveBeenCalledTimes(1);
+  const posted = vi.mocked(api.post).mock.calls[0][1] as ComparisonPacket;
+  expect(posted.commands).toMatchObject([
+    { operation: "capture", price: "125.00", currency: "THB" },
+  ]);
+  expect(content()).not.toContain("Persisted action outcomes");
+  expect(readComparisonJobs(owner)).toHaveLength(1);
+  await act(async () => {
+    saved = receipt(posted);
+    complete(saved);
+  });
+  expect(content()).toContain("Persisted action outcomes: 1 / 1");
+  expect(readComparisonJobs(owner)).toEqual([]);
+});
+it("MER can retry an absent verification request with its original identity", async () => {
+  const p = packet();
+  storeComparisonJob({ owner, packet: p, conflict: false });
+  await render(home + "/requests/" + p.requestId, "merchandising");
+  await act(async () => button("Retry the same immutable request").click());
+  expect(api.post).toHaveBeenCalledWith(endpoint + "/actions", p);
+  expect(content()).toContain("Persisted action outcomes: 1 / 1");
+});
+it("MER can recover the original request after navigating away before its commit", async () => {
+  let complete!: (value: unknown) => void;
+  vi.mocked(api.post).mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        complete = resolve;
+      }),
+  );
+  const path = base + "/pairs/" + workspace().rows[0].id + "/verify";
+  await render(path, "merchandising");
+  await fill(
+    "Reviewed reason",
+    "Reviewed actual synthetic source and product identity",
+  );
+  await act(async () => button("Review before saving").click());
+  await act(async () => button("Save this action").click());
+  expect(api.post).toHaveBeenCalledTimes(1);
+  const posted = vi.mocked(api.post).mock.calls[0][1] as ComparisonPacket;
+  expect(readComparisonJobs(owner)[0].packet).toEqual(posted);
+  await act(async () => button("Back test").click());
+  expect(container.querySelector("output")!.textContent).toBe(path);
+  await act(async () => {
+    saved = receipt(posted);
+    complete(saved);
+  });
+  expect(content()).not.toContain("Persisted action outcomes");
+  expect(readComparisonJobs(owner)[0].packet).toEqual(posted);
+  await link(home + "/requests/" + posted.requestId);
+  expect(api.get).toHaveBeenCalledWith(
+    endpoint + "/requests/" + posted.requestId,
+  );
+  expect(content()).toContain("Persisted action outcomes: 1 / 1");
+  expect(readComparisonJobs(owner)).toEqual([]);
+  expect(api.post).toHaveBeenCalledTimes(1);
+});
+it("a retained mixed request from an earlier role cannot be retried by MER", async () => {
+  const p: ComparisonPacket = {
+    ...packet(),
+    commands: [
+      packet().commands[0],
+      {
+        operation: "remove",
+        pairId: workspace().rows[1].id,
+        revision: 1,
+        note: "Historical removal intent before role change",
+      },
+    ],
+  };
+  storeComparisonJob({ owner, packet: p, conflict: false });
+  await render(home + "/requests/" + p.requestId, "merchandising");
+  expect(button("Retry the same immutable request")).toBeUndefined();
+  expect(content()).toContain("outside your current permissions");
+  expect(readComparisonJobs(owner)[0].packet).toEqual(p);
+  expect(api.post).not.toHaveBeenCalled();
+});
+it("MER batch supports verification decisions without a removal option", async () => {
+  await render(base + "/batch", "merchandising");
+  await tick(0);
+  const decision = field(
+    "Decision for Same vendor · " + workspace().rows[0].id,
+  ) as unknown as HTMLSelectElement;
+  expect([...decision.options].map((o) => o.value)).toEqual([
+    "uncertain",
+    "same_product",
+    "substitute",
+  ]);
+  await fill(
+    "Reason for Same vendor · " + workspace().rows[0].id,
+    "Reviewed actual synthetic pair evidence",
+  );
+  await act(async () => button("Review selected decisions").click());
+  await tick();
+  await act(async () => button("Confirm and save selected pairs").click());
+  const p = vi.mocked(api.post).mock.calls[0][1] as ComparisonPacket;
+  expect(p.commands.map((c) => c.operation)).toEqual(["verify"]);
+  expect(content()).toContain("Persisted action outcomes: 1 / 1");
+});
+it("MER retains and blocks an old removal batch until the decision is changed", async () => {
+  const w = workspace();
+  storeBatch(owner, {
+    ...emptyBatch(w),
+    choices: [
+      {
+        pairId: w.rows[0].id,
+        revision: w.rows[0].revision,
+        decision: "remove",
+        note: "Historical removal intent before a role change",
+      },
+    ],
+  });
+  await render(batchBase(w.sku) + "/review", "merchandising");
+  await tick();
+  expect(button("Confirm and save selected pairs").disabled).toBe(true);
+  expect(content()).toContain(
+    "retained removal decision is outside your current permissions",
+  );
+  expect(api.post).not.toHaveBeenCalled();
+  await link(batchBase(w.sku));
+  const select = field(
+    "Decision for Same vendor · " + w.rows[0].id,
+  ) as unknown as HTMLSelectElement;
+  expect(select.value).toBe("remove");
+  expect([...select.options].find((o) => o.value === "remove")!.disabled).toBe(
+    true,
+  );
+  await fill("Decision for Same vendor · " + w.rows[0].id, "same_product");
+  expect(button("Review selected decisions").disabled).toBe(false);
+});
+it("MER reads handoff evidence without gaining a pack or promotion draft link", async () => {
+  await render(base + "/planning", "merchandising");
+  expect(content()).toContain("Pairs with supported planning evidence");
+  expect(
+    container.querySelector('a[href^="/planning/pack-prices"]'),
+  ).toBeNull();
+  expect(container.querySelector('a[href^="/planning/promotions"]')).toBeNull();
+  expect(api.post).not.toHaveBeenCalled();
+});

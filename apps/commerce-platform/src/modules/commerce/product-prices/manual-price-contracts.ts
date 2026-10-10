@@ -2,10 +2,13 @@ import { z } from "zod";
 import { priceRequestId, priceValuesSchema } from "./price-approval-contracts";
 
 export const MANUAL_PRICE_API = "/product-prices/editor";
-const sku = z
+// Preserve the exact SKU, including Unicode and meaningful surrounding spaces.
+// PostgreSQL text cannot store NUL; an all-whitespace identifier is not a product.
+export const manualPriceSkuSchema = z
   .string()
   .min(1)
-  .refine((v) => Array.from(v).length <= 64);
+  .refine((v) => Array.from(v).length <= 64)
+  .refine((v) => v.trim().length > 0 && !v.includes("\u0000"));
 // The original PATCH accepts nonnegative numbers with at most two decimal places.
 // The new review also validates existing numeric(12,2)/int storage bounds before dispatch.
 // The legacy PATCH's DTO, conversions and business rules remain unchanged.
@@ -25,7 +28,7 @@ export const manualPricePatchSchema = z
     "Choose at least one field to set or clear",
   );
 export const manualPriceItemSchema = z.strictObject({
-  sku,
+  sku: manualPriceSkuSchema,
   version: z.string().regex(/^[a-f0-9]{64}$/),
   current: priceValuesSchema,
   currentRecorded: z.boolean(),
@@ -34,7 +37,7 @@ export const manualPriceItemSchema = z.strictObject({
   currentUpdatedBy: z.string().nullable(),
 });
 export const manualPriceSelectionSchema = z.strictObject({
-  sku,
+  sku: manualPriceSkuSchema,
   version: manualPriceItemSchema.shape.version,
   patch: manualPricePatchSchema,
 });

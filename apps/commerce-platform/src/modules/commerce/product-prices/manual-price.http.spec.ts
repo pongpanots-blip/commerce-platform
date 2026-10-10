@@ -24,7 +24,7 @@ const roles = [
     "cs",
     "graphic",
   ],
-  id = "00000000-0000-4000-8000-000000000001";
+  id = "00000000-0000-4000-8000-0000000000ab";
 describe("manual price edits with original active DB StaffAuthGuard", () => {
   let app: INestApplication, base: string;
   const jwt = new JwtService({ secret: "price-approval-local-fixture-only" });
@@ -95,7 +95,7 @@ describe("manual price edits with original active DB StaffAuthGuard", () => {
     async (role) => {
       for (const [path, method] of [
         ["editor/items/S", "GET"],
-        ["editor/items/S", "GET"],
+        ["", "GET"],
         ["editor/review", "POST"],
         ["editor/actions", "POST"],
         [`editor/requests/${id}`, "GET"],
@@ -173,5 +173,25 @@ describe("manual price edits with original active DB StaffAuthGuard", () => {
       ).status,
     ).toBe(400);
     expect(approval.itemFor).not.toHaveBeenCalled();
+  });
+  it.each(["S/1", "S%2", " SKU ", "สินค้า-😀"])(
+    "decodes an item deep link exactly once and preserves exact SKU %p",
+    async (sku) => {
+      const res = await fetch(
+        `${base}/editor/items/${encodeURIComponent(sku)}`,
+        {
+          headers: headers("admin"),
+        },
+      );
+      expect(res.status).toBe(200);
+      expect(approval.itemFor).toHaveBeenCalledWith(sku);
+    },
+  );
+  it("dispatches private recovery with the exact request ID and authenticated account", async () => {
+    const res = await fetch(`${base}/editor/requests/${id.toUpperCase()}`, {
+      headers: headers("admin"),
+    });
+    expect(res.status).toBe(200);
+    expect(approval.request).toHaveBeenCalledWith(id.toUpperCase(), "admin");
   });
 });

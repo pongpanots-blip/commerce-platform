@@ -77,6 +77,7 @@ const SalesWorkWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlan
 const MarketingReadinessWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlanningWorkspace').then(m=>({default:m.MarketingReadinessWorkspace})));
 const FinancialAnalysisWorkspace=lazy(()=>import('./pages/financial-analysis/FinancialAnalysisWorkspace'));
 const ComparisonWorkspace=lazy(()=>import('./pages/competitor-comparison/ComparisonWorkspace'));
+const GuidedAnalysisWorkspace=lazy(()=>import('./pages/guided-analysis/GuidedAnalysisWorkspace').then(m=>({default:m.GuidedAnalysisWorkspace})));
 const GoalPlanningWorkspace = lazy(() => import('./pages/financial-goals/GoalPlanningWorkspace'));
 const PackPlanningWorkspace = lazy(() => import('./pages/pack-price/PackPlanningWorkspace'));
 
@@ -228,6 +229,7 @@ export function App() {
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
             <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
             <Route path="/marketing/analyst" element={<Suspense fallback={<Loading />}><MarketingAnalyst /></Suspense>} />
+            <Route path="/analysis/customer-behavior/*" element={<TaskRoute role={role}><Suspense fallback={<Loading variant="detail" />}><GuidedAnalysisWorkspace role={role} /></Suspense></TaskRoute>} />
             <Route path="/marketing/growth" element={<GrowthWorkspace />} />
             <Route path="/marketing/growth/plans" element={<GrowthPlans />} />
             <Route path="/marketing/growth/plans/new" element={<GrowthPlanPage />} />

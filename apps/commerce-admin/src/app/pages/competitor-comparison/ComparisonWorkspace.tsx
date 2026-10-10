@@ -29,6 +29,9 @@ import { WorkspaceLink } from "../../WorkspaceParts";
 import { PlanningError as ErrorText } from "../planning/PlanningError";
 import {
   canChangeComparison,
+  canReadComparison,
+  canPerformComparison,
+  canApplyComparisonPacket,
   COMPARISON_API as endpoint,
   COMPARISON_HOME as home,
   comparisonCommandSchema,
@@ -140,7 +143,7 @@ export default function ComparisonWorkspace({
   useUiLocale();
   const { pathname } = useLocation(),
     [params] = useSearchParams();
-  if (!["admin", "marketing", "business_analyst"].includes(role))
+  if (!canReadComparison(role))
     return (
       <CommercePage>
         <Alert tone="danger">
@@ -445,7 +448,7 @@ function ChooseProduct({ owner, role }: { owner: string; role: string }) {
           ) : null}
         </div>
       </Panel>
-      {!canChangeComparison(role) && (
+      {!canPerformComparison(role, "capture") && (
         <Alert tone="muted">
           {text(
             "บัญชีนี้อ่านอย่างเดียว",
@@ -453,6 +456,7 @@ function ChooseProduct({ owner, role }: { owner: string; role: string }) {
           )}
         </Alert>
       )}
+      {role === "merchandising" && <MerComparisonAccess />}
     </CommercePage>
   );
 }
@@ -507,6 +511,11 @@ function ProductTask({
     return <PlanningHandoff workspace={workspace} role={role} />;
   if (tail === "/match")
     return <Candidates workspace={workspace} role={role} owner={owner} />;
+  if (
+    (tail === "/match/new" || tail === "/match/new/review") &&
+    !canPerformComparison(role, "create")
+  )
+    return <UnavailableAction workspace={workspace} />;
   if (tail === "/match/new" || tail === "/match/new/review")
     return (
       <ActionEditor
@@ -518,6 +527,11 @@ function ProductTask({
         base={`${base}/match/new`}
       />
     );
+  if (
+    (tail === "/review-marker" || tail === "/review-marker/review") &&
+    !canPerformComparison(role, "review")
+  )
+    return <UnavailableAction workspace={workspace} />;
   if (tail === "/review-marker" || tail === "/review-marker/review")
     return (
       <ActionEditor
@@ -544,6 +558,8 @@ function ProductTask({
     id = comparisonUuid.safeParse(match?.[1]);
   const row = id.success ? workspace.rows.find((r) => r.id === id.data) : null;
   if (!match || !row) return <Unavailable />;
+  if (match[2] && !canPerformComparison(role, match[2]))
+    return <UnavailableAction workspace={workspace} />;
   return match[2] ? (
     <ActionEditor
       workspace={workspace}
@@ -556,6 +572,32 @@ function ProductTask({
     />
   ) : (
     <PairDetail workspace={workspace} row={row} role={role} />
+  );
+}
+function MerComparisonAccess() {
+  return (
+    <Alert tone="muted">
+      {text(
+        "บันทึกราคาอ้างอิงและตรวจการจับคู่ได้ การตั้งค่าแหล่งข้อมูลและราคาขายใช้สิทธิ์เดิม",
+        "You can record reference prices and verify product matches. Source management and selling-price permissions are unchanged.",
+      )}
+    </Alert>
+  );
+}
+function UnavailableAction({ workspace }: { workspace: Workspace }) {
+  return (
+    <CommercePage>
+      <ProductHeader workspace={workspace} />
+      <Alert tone="muted">
+        {text(
+          "บัญชีนี้ไม่มีสิทธิ์ทำรายการนี้ จึงไม่มีการส่งบันทึก",
+          "This account cannot perform this action; no action is dispatched.",
+        )}
+      </Alert>
+      <WorkspaceLink to={productUrl(workspace.sku)}>
+        {text("อ่านผลเทียบ", "Read comparison")}
+      </WorkspaceLink>
+    </CommercePage>
   );
 }
 function ProductHeader({ workspace }: { workspace: Workspace }) {
@@ -606,17 +648,19 @@ function ComparisonMatrix({
       </p>
       <div className="flex flex-wrap gap-3">
         <WorkspaceLink to={`${base}/match`}>
-          {text("ตรวจและเพิ่มคู่สินค้า", "Review and add product pairs")}
+          {canPerformComparison(role, "create")
+            ? text("ตรวจและเพิ่มคู่สินค้า", "Review and add product pairs")
+            : text("อ่านข้อเสนอการจับคู่", "Inspect match suggestions")}
         </WorkspaceLink>
         <WorkspaceLink to={`${base}/planning`}>
           {text("ทบทวนหลักฐานก่อนวางแผน", "Review evidence before planning")}
         </WorkspaceLink>
-        {canChangeComparison(role) && (
+        {canPerformComparison(role, "verify") && (
           <WorkspaceLink to={`${base}/batch`}>
             {text("ทบทวนหลายคู่ของสินค้านี้", "Review selected product pairs")}
           </WorkspaceLink>
         )}
-        {canChangeComparison(role) && (
+        {canPerformComparison(role, "review") && (
           <WorkspaceLink to={`${base}/review-marker`}>
             {label("review")}
           </WorkspaceLink>
@@ -646,10 +690,15 @@ function ComparisonMatrix({
       )}
       {!workspace.rows.length ? (
         <Empty>
-          {text(
-            "ยังไม่มีคู่สินค้า เริ่มจากเพิ่มลิงก์สินค้าหรือเลือกสินค้าที่รวบรวมไว้",
-            "No product pairs yet. Add a product link or select a collected item.",
-          )}
+          {canPerformComparison(role, "create")
+            ? text(
+                "ยังไม่มีคู่สินค้า เริ่มจากเพิ่มลิงก์สินค้าหรือเลือกสินค้าที่รวบรวมไว้",
+                "No product pairs yet. Add a product link or select a collected item.",
+              )
+            : text(
+                "ยังไม่มีคู่สินค้าที่บันทึกไว้ ให้การตลาดเพิ่มคู่ก่อนตรวจหลักฐาน",
+                "No recorded product pairs yet. Marketing can add a pair before its evidence is reviewed.",
+              )}
         </Empty>
       ) : (
         <>
@@ -757,7 +806,7 @@ function ComparisonMatrix({
           )}
         </>
       )}
-      {!canChangeComparison(role) && (
+      {!canPerformComparison(role, "capture") && (
         <Alert tone="muted">
           {text(
             "อ่านอย่างเดียว ไม่มีการบันทึกราคาหรือยืนยันคู่สินค้า",
@@ -765,6 +814,7 @@ function ComparisonMatrix({
           )}
         </Alert>
       )}
+      {role === "merchandising" && <MerComparisonAccess />}
     </CommercePage>
   );
 }
@@ -824,7 +874,7 @@ function Candidates({
       <PageHeader
         title={text("ตรวจการจับคู่สินค้า", "Review product matching")}
         actions={
-          canChangeComparison(role) && (
+          canPerformComparison(role, "create") && (
             <WorkspaceLink to={`${base}/match/new`}>
               {text(
                 "เพิ่มจากลิงก์และราคาที่พบเอง",
@@ -858,7 +908,7 @@ function Candidates({
                         {text("ชื่อคล้าย", "Name similarity")}:{" "}
                         {c.similarityPercent}%
                       </p>
-                      {canChangeComparison(role) && (
+                      {canPerformComparison(role, "create") && (
                         <WorkspaceLink to={`${base}/match/new?item=${c.id}`}>
                           {text(
                             "ตรวจข้อมูลก่อนเพิ่มคู่",
@@ -874,10 +924,15 @@ function Candidates({
           </div>
         ) : (
           <Empty>
-            {text(
-              "ไม่พบข้อเสนอในสินค้าที่รวบรวมไว้ เพิ่มลิงก์เองหรือทบทวนคู่ที่มีแล้ว",
-              "No candidates among collected items. Add a manual link or inspect existing pairs.",
-            )}
+            {canPerformComparison(role, "create")
+              ? text(
+                  "ไม่พบข้อเสนอในสินค้าที่รวบรวมไว้ เพิ่มลิงก์เองหรือทบทวนคู่ที่มีแล้ว",
+                  "No candidates among collected items. Add a manual link or inspect existing pairs.",
+                )
+              : text(
+                  "ไม่พบข้อเสนอในสินค้าที่รวบรวมไว้ กลับไปตรวจคู่สินค้าที่บันทึกแล้ว",
+                  "No candidates among collected items. Return to the recorded pairs to inspect their evidence.",
+                )}
           </Empty>
         )
       ) : null}
@@ -945,23 +1000,23 @@ function PairDetail({
               {comparisonReason(r)}
             </Alert>
           ))}
-          {canChangeComparison(role) && (
-            <div className="flex flex-wrap gap-3">
-              {[
-                "capture",
-                "verify",
-                "pack",
-                "settings",
-                "reassign",
-                "refresh",
-                "remove",
-              ].map((action) => (
+          <div className="flex flex-wrap gap-3">
+            {[
+              "capture",
+              "verify",
+              "pack",
+              "settings",
+              "reassign",
+              "refresh",
+              "remove",
+            ]
+              .filter((action) => canPerformComparison(role, action))
+              .map((action) => (
                 <WorkspaceLink key={action} to={`${base}/${action}`}>
                   {label(action)}
                 </WorkspaceLink>
               ))}
-            </div>
-          )}
+          </div>
         </div>
       </Panel>
       <Panel>
@@ -1222,14 +1277,20 @@ function ActionEditor({
     [packet, setPacket] = useState<ComparisonPacket | null>(null);
   const sources = useAsync(
     () =>
-      api.get<{ id: string; name: string; origin: string }[]>(
-        `${endpoint}/sources`,
-      ),
-    [],
+      ["create", "reassign"].includes(action) &&
+      canPerformComparison(role, action)
+        ? api.get<{ id: string; name: string; origin: string }[]>(
+            `${endpoint}/sources`,
+          )
+        : Promise.resolve([]),
+    [action, role],
   );
   const item = useAsync(
     () =>
-      itemId && comparisonUuid.safeParse(itemId).success
+      action === "create" &&
+      canPerformComparison(role, action) &&
+      itemId &&
+      comparisonUuid.safeParse(itemId).success
         ? api.get<{
             id: string;
             sourceId: string;
@@ -1240,7 +1301,7 @@ function ActionEditor({
             configCurrent: boolean;
           }>(`${endpoint}/items/${itemId}`)
         : Promise.resolve(null),
-    [itemId],
+    [itemId, action, role],
   );
   useEffect(() => {
     if (!item.data) return;
@@ -1290,6 +1351,8 @@ function ActionEditor({
     pending = jobs.some((j) => j.packet.sku === workspace.sku);
   function prepare() {
     try {
+      if (!canPerformComparison(role, action))
+        throw Error("Action is outside this account's permissions");
       const command = commandFromComparisonForm(action, form, row);
       setErrors({});
       const p = comparisonPacketSchema.parse({
@@ -1317,7 +1380,7 @@ function ActionEditor({
   async function save() {
     if (
       lock.current ||
-      !canChangeComparison(role) ||
+      !canPerformComparison(role, action) ||
       stale ||
       pending ||
       storageError
@@ -1326,6 +1389,10 @@ function ActionEditor({
     lock.current = true;
     const p = packet ?? prepare();
     if (!p) {
+      lock.current = false;
+      return;
+    }
+    if (!canApplyComparisonPacket(role, p)) {
       lock.current = false;
       return;
     }
@@ -1344,7 +1411,7 @@ function ActionEditor({
     )
       navigate(requestUrl(p.requestId));
   }
-  if (!canChangeComparison(role))
+  if (!canPerformComparison(role, action))
     return (
       <CommercePage>
         <ProductHeader workspace={workspace} />
@@ -1854,7 +1921,7 @@ function Recovery({
       !job ||
       job.conflict ||
       !lookup.data?.absent ||
-      !canChangeComparison(role)
+      !canApplyComparisonPacket(role, job.packet)
     )
       return;
     const saved = await writer.write(job);
@@ -1904,7 +1971,7 @@ function Recovery({
                 </Button>
               </>
             ) : (
-              canChangeComparison(role) && (
+              canApplyComparisonPacket(role, job.packet) && (
                 <Button disabled={writer.busy} onClick={retry}>
                   {text(
                     "ส่งคำขอเดิมอีกครั้ง",
@@ -1920,6 +1987,14 @@ function Recovery({
                 "Original request is absent from this browser. No replacement intent is guessed.",
               )}
             </Empty>
+          )}
+          {job && !canApplyComparisonPacket(role, job.packet) && (
+            <Alert tone="warn">
+              {text(
+                "คำขอเดิมมีรายการนอกสิทธิ์ปัจจุบัน จึงส่งซ้ำไม่ได้ ตรวจผลเดิมได้โดยไม่สร้างคำขอใหม่",
+                "The retained request includes actions outside your current permissions. You can check its result, but cannot retry it.",
+              )}
+            </Alert>
           )}
           <Button disabled={writer.busy} onClick={lookup.reload}>
             {text("ตรวจผลอีกครั้ง", "Check again")}
@@ -2172,12 +2247,16 @@ function CollectedProduct({ id, role }: { id: string; role: string }) {
           {source.data.suggestions.map((s) => (
             <WorkspaceLink
               key={s.sku}
-              to={`${productUrl(s.sku)}/match/new?item=${id}`}
+              to={
+                canPerformComparison(role, "create")
+                  ? `${productUrl(s.sku)}/match/new?item=${id}`
+                  : productUrl(s.sku)
+              }
             >
               {s.name} · {s.sku} · {s.similarityPercent}%
             </WorkspaceLink>
           ))}
-          {canChangeComparison(role) && (
+          {canPerformComparison(role, "create") && (
             <form
               className="flex flex-wrap gap-3"
               onSubmit={(e) => {

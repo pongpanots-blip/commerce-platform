@@ -60,9 +60,11 @@ const decisionLabel = (d: string) =>
 function PriceEvidence({
   item,
   decision,
+  historical = false,
 }: {
   item: PriceApprovalItem;
   decision?: string;
+  historical?: boolean;
 }) {
   const labels = {
     sellingUnitPrice: text("ราคาต่อหน่วยขาย", "Price per selling unit"),
@@ -80,7 +82,10 @@ function PriceEvidence({
               <div className="space-y-1" key={key}>
                 <h3 className="font-semibold">{label}</h3>
                 <p>
-                  {text("ปัจจุบัน", "Current")}: {show(item.current[k])}
+                  {historical
+                    ? text("ฉบับที่ตรวจ", "Reviewed baseline")
+                    : text("ปัจจุบัน", "Current")}
+                  : {show(item.current[k])}
                 </p>
                 <p>
                   {text("ERP เสนอ", "ERP proposed")}:{" "}
@@ -120,7 +125,7 @@ function PriceEvidence({
             {text("ฉบับที่ตรวจ", "Reviewed evidence version")}: {item.version}
           </p>
         </details>
-        {!item.currentRecorded && (
+        {!item.currentRecorded && !historical && (
           <Alert tone="warn">
             {text(
               "ไม่มีแถวราคาปัจจุบัน การอนุมัติจะสร้างแถวจากค่าที่ ERP ส่งมาเท่านั้น",
@@ -724,7 +729,11 @@ function Receipt({ receipt }: { receipt: PriceApprovalReceipt }) {
       </p>
       {receipt.items.map((i) => (
         <div key={i.before.sku} className="space-y-2">
-          <PriceEvidence item={i.before} decision={receipt.packet.decision} />
+          <PriceEvidence
+            item={i.before}
+            decision={receipt.packet.decision}
+            historical
+          />
           <Panel>
             <div className="p-4">
               <h3 className="font-semibold">
@@ -780,11 +789,14 @@ function Recovery({ id, owner }: { id: string; owner: string }) {
     if (
       !job ||
       !result.data?.absent ||
+      result.loading ||
+      result.error ||
       !confirmed ||
       job.conflict ||
       writer.busy
     )
       return;
+    setConfirmed(false);
     const r = await writer.write(job);
     if (r.ok && writer.mounted.current) result.reload();
   };

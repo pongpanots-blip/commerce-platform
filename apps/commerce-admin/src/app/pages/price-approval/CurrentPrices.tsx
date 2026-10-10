@@ -35,7 +35,7 @@ import {
 import {
   MANUAL_PRICE_API as endpoint,
   manualPricePacketSchema,
-  manualPricePatchSchema,
+  manualPriceSkuSchema,
   manualPriceReadSchema,
   manualPriceSelectionSchema,
   verifyManualPriceReceipt,
@@ -53,16 +53,22 @@ import {
   storeManualForm,
   storeManualJob,
   storeManualSelection,
+  initialManualPriceForm as initial,
+  manualPatchFromForm,
   type ManualPriceForm,
   type ManualPriceJob,
 } from "./manual-price-journal";
 import { PriceRequestLinks, usePriceRequests } from "./PriceRequestLinks";
+import { ProductEvidence } from "./ProductEvidence";
 import { priceDetailUrl, priceSkuFromToken } from "./price-approval-routing";
 const home = "/product-prices/current";
+export const manualPriceViewUrl = (sku: string) =>
+  priceDetailUrl(sku).replace("/pending/", "/current/");
 export const manualPriceEditUrl = (sku: string) =>
-  priceDetailUrl(sku).replace("/pending/", "/current/") + "/edit";
-const reviewUrl = (sku: string) =>
-  manualPriceEditUrl(sku).replace(/\/edit$/, "/review");
+  manualPriceViewUrl(sku) + "/edit";
+export const manualPriceReviewUrl = (sku: string) =>
+  manualPriceViewUrl(sku) + "/review";
+export { manualPatchFromForm } from "./manual-price-journal";
 const outcome = (id: string) => home + "/requests/" + id;
 const keys = ["sellingUnitPrice", "orderingPrice", "moq"] as const;
 const label = (k: (typeof keys)[number]) =>
@@ -73,38 +79,6 @@ const label = (k: (typeof keys)[number]) =>
       : text("จำนวนขั้นต่ำ", "Minimum order quantity");
 const show = (v: unknown) =>
   v == null ? text("ยังไม่มีข้อมูล", "Not recorded") : String(v);
-const initial = (item: ManualPriceItem): ManualPriceForm => ({
-  item,
-  fields: {
-    sellingUnitPrice: {
-      mode: "keep",
-      value: item.current.sellingUnitPrice ?? "",
-    },
-    orderingPrice: { mode: "keep", value: item.current.orderingPrice ?? "" },
-    moq: {
-      mode: "keep",
-      value: item.current.moq == null ? "" : String(item.current.moq),
-    },
-  },
-});
-export function manualPatchFromForm(form: ManualPriceForm) {
-  const raw: Record<string, number | null> = {};
-  for (const k of keys) {
-    const f = form.fields[k];
-    if (f.mode === "clear") raw[k] = null;
-    else if (f.mode === "set") {
-      if (!/^\d+(?:\.\d+)?$/.test(f.value.trim()))
-        throw Error(
-          text(
-            "กรอกค่าที่เลือกเปลี่ยนให้ถูกต้อง",
-            "Enter a valid value for each field selected to set",
-          ),
-        );
-      raw[k] = Number(f.value.trim());
-    }
-  }
-  return manualPricePatchSchema.parse(raw);
-}
 function Scope() {
   return (
     <Alert tone="info">
@@ -126,9 +100,11 @@ function Scope() {
 function Evidence({
   item,
   review,
+  historical = false,
 }: {
   item: ManualPriceItem;
   review?: ManualPriceReview;
+  historical?: boolean;
 }) {
   return (
     <Panel>
@@ -139,7 +115,9 @@ function Evidence({
             <div key={k} className="space-y-1 min-w-0">
               <h3 className="font-medium">{label(k)}</h3>
               <p className="break-words">
-                {text("ปัจจุบัน: ", "Current: ")}
+                {historical
+                  ? text("ฉบับที่ตรวจ: ", "Reviewed baseline: ")
+                  : text("ปัจจุบัน: ", "Current: ")}
                 {show(item.current[k])}
               </p>
               {review && (
@@ -166,7 +144,7 @@ function Evidence({
           {show(item.currentSource)} · {text("ผู้แก้ล่าสุด: ", "Last editor: ")}
           {show(item.currentUpdatedBy)} · {show(item.currentUpdatedAt)}
         </p>
-        {!item.currentRecorded && (
+        {!item.currentRecorded && !historical && (
           <Alert tone="warn">
             {text(
               "สินค้าที่ระบบรู้จักนี้ยังไม่มีราคา บันทึกครั้งนี้จะสร้างแถวราคาด้วยค่าที่เลือกเท่านั้น",
@@ -176,6 +154,67 @@ function Evidence({
         )}
       </div>
     </Panel>
+  );
+}
+function useCurrentEvidence(sku: string) {
+  return useAsync(async () => {
+    const response = manualPriceReadSchema.parse(
+      await api.get(endpoint + "/items/" + encodeURIComponent(sku)),
+    );
+    if (response.item.sku !== sku)
+      throw Error("Returned evidence differs from requested SKU");
+    return response;
+  }, [sku]);
+}
+function Inspect({ owner, sku }: { owner: string; sku: string }) {
+  const source = useCurrentEvidence(sku),
+    requests = usePriceRequests(owner),
+    pending =
+      requests.edits.some((job) => job.packet.sku === sku) ||
+      requests.approvals.some((job) =>
+        job.packet.changes.some((change) => change.sku === sku),
+      );
+  return (
+    <>
+      <PageHeader
+        title={text("ตรวจราคาสินค้า", "Inspect product price")}
+        subtitle={sku}
+      />
+      <WorkspaceLink to={home}>
+        {text("กลับราคาปัจจุบัน", "Back to current prices")}
+      </WorkspaceLink>
+      <PriceRequestLinks owner={owner} sku={sku} />
+      <ErrorText error={source.error} onRetry={source.reload} />
+      {source.loading ? (
+        <Loading variant="detail" />
+      ) : !source.error && source.data ? (
+        <>
+          <Chip tone="muted">
+            {source.data.item.currentRecorded
+              ? text("มีแถวราคาที่บันทึก", "Price record exists")
+              : text("ยังไม่มีแถวราคา", "No price record")}
+          </Chip>
+          <Evidence
+            item={source.data.item}
+            historical={source.data.ownership !== "commerce"}
+          />
+          <ProductEvidence sku={sku} />
+          <Scope />
+          {source.data.ownership !== "commerce" ? (
+            <Alert tone="warn">
+              {text(
+                "Josh ยังเป็นเจ้าของราคา ค่า Commerce ที่เก็บไว้อาจไม่ใช่ราคาปัจจุบันของ Josh ยังแก้ที่นี่ไม่ได้",
+                "Josh still owns prices. Retained commerce values may differ from the current Josh price. Editing is unavailable here.",
+              )}
+            </Alert>
+          ) : pending ? null : (
+            <WorkspaceLink to={manualPriceEditUrl(sku)}>
+              {text("แก้ราคาที่ตรวจแล้ว", "Edit inspected price")}
+            </WorkspaceLink>
+          )}
+        </>
+      ) : null}
+    </>
   );
 }
 const row = z.object({
@@ -196,7 +235,11 @@ const pageSchema = z.object({
 function List({ owner }: { owner: string }) {
   const [params, setParams] = useSearchParams(),
     search = params.get("search") ?? "",
-    page = Math.max(1, Number(params.get("page")) || 1),
+    page =
+      Number.isSafeInteger(Number(params.get("page"))) &&
+      Number(params.get("page")) > 0
+        ? Number(params.get("page"))
+        : 1,
     limit = [20, 50, 100].includes(Number(params.get("limit")))
       ? Number(params.get("limit"))
       : 20;
@@ -222,19 +265,37 @@ function List({ owner }: { owner: string }) {
       source.data &&
       page > Math.max(1, Math.ceil(source.data.page.total / limit))
     )
-      change(Math.max(1, Math.ceil(source.data.page.total / limit)));
+      setParams(
+        {
+          ...(search ? { search } : {}),
+          page: String(Math.max(1, Math.ceil(source.data.page.total / limit))),
+          limit: String(limit),
+        },
+        { replace: true },
+      );
   }, [source.loading, source.error, source.data, page, limit]);
   return (
     <>
       <PageHeader
-        title={text(
-          "ตรวจและแก้ราคาปัจจุบัน",
-          "Inspect and edit current prices",
-        )}
-        subtitle={text(
-          "เลือกรายการ ตรวจค่าปัจจุบัน แล้วทบทวนการเปลี่ยนก่อนบันทึก",
-          "Choose a record, inspect current values, then review an edit before saving",
-        )}
+        title={
+          source.data?.owned === false
+            ? text(
+                "ตรวจราคา Commerce ที่เก็บไว้",
+                "Inspect retained commerce prices",
+              )
+            : text("ตรวจและแก้ราคาปัจจุบัน", "Inspect and edit current prices")
+        }
+        subtitle={
+          source.data?.owned === false
+            ? text(
+                "ตรวจค่าที่เก็บไว้ใน Commerce ผู้ดูแลราคา Josh อาจมีค่าปัจจุบันต่างจากนี้",
+                "Inspect values retained in commerce. The price owner Josh may have different current values.",
+              )
+            : text(
+                "เลือกรายการ ตรวจค่าปัจจุบัน แล้วทบทวนการเปลี่ยนก่อนบันทึก",
+                "Choose a record, inspect current values, then review an edit before saving",
+              )
+        }
       />
       <WorkspaceLink to="/product-prices">
         {text("เปิดข้อเสนอราคาจาก ERP", "Open ERP price proposals")}
@@ -265,7 +326,7 @@ function List({ owner }: { owner: string }) {
             <Alert tone="warn">
               {text(
                 "Josh ยังเป็นเจ้าของราคา ตรวจข้อมูลได้แต่ยังแก้ที่นี่ไม่ได้",
-                "Josh still owns prices. You can inspect records but cannot edit here.",
+                "Josh still owns prices. Retained commerce values may differ from the current Josh price. Editing is unavailable here.",
               )}
             </Alert>
           )}
@@ -295,13 +356,9 @@ function List({ owner }: { owner: string }) {
                       <TD>{r.source}</TD>
                       <TD>{r.updated_at}</TD>
                       <TD>
-                        {source.data!.owned ? (
-                          <WorkspaceLink to={manualPriceEditUrl(r.sku)}>
-                            {text("ตรวจและแก้", "Inspect and edit")}
-                          </WorkspaceLink>
-                        ) : (
-                          <span>{text("ตรวจข้อมูลเท่านั้น", "View only")}</span>
-                        )}
+                        <WorkspaceLink to={manualPriceViewUrl(r.sku)}>
+                          {text("ตรวจราคา", "Inspect price")}
+                        </WorkspaceLink>
                       </TD>
                     </TR>
                   ))}
@@ -319,6 +376,14 @@ function List({ owner }: { owner: string }) {
                     "ยังไม่มีราคาปัจจุบันที่บันทึก",
                     "No current price records yet.",
                   )}
+              {search.trim() && Array.from(search.trim()).length <= 64 && (
+                <WorkspaceLink to={manualPriceViewUrl(search.trim())}>
+                  {text(
+                    "ตรวจ SKU นี้จากรายการสินค้าที่ระบบรู้จัก",
+                    "Inspect this exact SKU in known products",
+                  )}
+                </WorkspaceLink>
+              )}
             </Empty>
           )}
           <Pager
@@ -338,14 +403,8 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
     [form, setForm] = useState(() => readManualForm(owner, sku)),
     [error, setError] = useState<string | null>(null),
     [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const source = useAsync(async () => {
-    const r = manualPriceReadSchema.parse(
-      await api.get(endpoint + "/items/" + encodeURIComponent(sku)),
-    );
-    if (r.item.sku !== sku)
-      throw Error("Returned evidence differs from requested SKU");
-    return r;
-  }, [sku]);
+  const source = useCurrentEvidence(sku),
+    formElement = useRef<HTMLFormElement>(null);
   useEffect(() => {
     if (source.data && !form) setForm(initial(source.data.item));
   }, [source.data, form]);
@@ -358,6 +417,12 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
     stale =
       !!form && !!source.data && form.item.version !== source.data.item.version;
   useUnsavedChanges(!!form && keys.some((k) => form.fields[k].mode !== "keep"));
+  useEffect(() => {
+    if (Object.keys(fieldErrors).length)
+      formElement.current
+        ?.querySelector<HTMLElement>('[aria-invalid="true"]')
+        ?.focus();
+  }, [fieldErrors]);
   const update = (next: ManualPriceForm) => {
     setForm(next);
     setError(null);
@@ -396,7 +461,7 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
         });
       storeManualForm(owner, form);
       storeManualSelection(owner, selection);
-      navigate(reviewUrl(sku));
+      navigate(manualPriceReviewUrl(sku));
     } catch (e) {
       if (e instanceof z.ZodError) {
         setFieldErrors(
@@ -414,10 +479,15 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
         );
       }
       setError(
-        text(
-          "เลือกอย่างน้อยหนึ่งช่องให้ตั้งค่าหรือล้างค่า แล้วตรวจค่าที่กรอก",
-          "Choose at least one field to set or clear, then check the entered values",
-        ),
+        e instanceof z.ZodError
+          ? text(
+              "เลือกอย่างน้อยหนึ่งช่องให้ตั้งค่าหรือล้างค่า แล้วตรวจค่าที่กรอก",
+              "Choose at least one field to set or clear, then check the entered values",
+            )
+          : text(
+              "ที่เก็บกู้คืนใช้ไม่ได้ ยังไม่ส่งการเปลี่ยน ลองใหม่ก่อนทบทวน",
+              "Recovery storage unavailable. No change was sent. Try again before reviewing.",
+            ),
       );
     }
   }
@@ -427,21 +497,40 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
         title={text("แก้ราคาสินค้า", "Edit product price")}
         subtitle={sku}
       />
-      <WorkspaceLink to={home}>
-        {text("กลับราคาปัจจุบัน", "Back to current prices")}
+      <WorkspaceLink to={manualPriceViewUrl(sku)}>
+        {text("กลับไปตรวจราคา", "Back to price inspection")}
       </WorkspaceLink>
-      <PriceRequestLinks owner={owner} />
+      <PriceRequestLinks owner={owner} sku={sku} />
       <ErrorText error={source.error} onRetry={source.reload} />
       <ErrorText error={error} />
       {source.loading ? (
         <Loading variant="detail" />
       ) : source.error ? (
         form ? (
-          <Evidence item={form.item} />
+          <>
+            <Alert tone="warn">
+              {text(
+                "แสดงฉบับที่เก็บในเครื่อง ยังยืนยันค่าปัจจุบันไม่ได้",
+                "Showing the retained local baseline. Current values are unverified.",
+              )}
+            </Alert>
+            <Evidence item={form.item} historical />
+          </>
         ) : null
       ) : form && source.data ? (
         <>
-          <Evidence item={source.data.item} />
+          <Evidence
+            item={source.data.item}
+            historical={source.data.ownership !== "commerce"}
+          />
+          {keys.some((key) => form.fields[key].mode !== "keep") && (
+            <Chip tone="muted">
+              {text(
+                "ฉบับแก้ในเครื่อง — ยังไม่ส่ง",
+                "Local edit — not submitted",
+              )}
+            </Chip>
+          )}
           <Scope />
           {stale && (
             <Alert tone="warn">
@@ -463,17 +552,23 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
             <Alert tone="warn">
               {text(
                 "Josh ยังเป็นเจ้าของราคา บันทึกที่นี่ไม่ได้",
-                "Josh still owns prices. Saving is unavailable here.",
+                "Josh still owns prices. Retained commerce values may differ from the current Josh price. Saving is unavailable here.",
               )}
             </Alert>
           )}
-          <form className="space-y-4" onSubmit={review} noValidate>
+          <form
+            ref={formElement}
+            className="space-y-4"
+            onSubmit={review}
+            noValidate
+          >
             <div className="grid gap-4 md:grid-cols-3">
               {keys.map((k) => (
                 <Panel key={k}>
                   <div className="p-4 space-y-3">
                     <TaskSelect
                       label={label(k) + text(" — การเปลี่ยน", " — change")}
+                      name={k + "-mode"}
                       value={form.fields[k].mode}
                       disabled={
                         pending ||
@@ -506,13 +601,20 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
                     {form.fields[k].mode === "set" ? (
                       <TaskInput
                         label={label(k) + text(" — ค่าใหม่", " — new value")}
+                        name={k}
                         type="number"
+                        inputMode={k === "moq" ? "numeric" : "decimal"}
+                        required
                         step={k === "moq" ? 1 : 0.01}
                         min={0}
                         max={k === "moq" ? 2147483647 : 9999999999.99}
                         value={form.fields[k].value}
                         error={fieldErrors[k]}
-                        disabled={pending || stale}
+                        disabled={
+                          pending ||
+                          stale ||
+                          source.data?.ownership !== "commerce"
+                        }
                         onChange={(e) =>
                           update({
                             ...form,
@@ -579,7 +681,16 @@ function useWriter(owner: string) {
   const write = (job: ManualPriceJob) =>
     mutation.run(async () => {
       if (job.owner !== owner) throw Error("Account identity changed");
-      storeManualJob(job);
+      try {
+        storeManualJob(job);
+      } catch {
+        throw Error(
+          text(
+            "เก็บคำขอสำหรับกู้คืนไม่ได้ ยังไม่ส่งการเปลี่ยน ตรวจคำขอเดิมก่อนลองอีกครั้ง",
+            "Recovery intent could not be saved. No change was sent. Check original requests before trying again.",
+          ),
+        );
+      }
       try {
         const r = verifyManualPriceReceipt(
           await api.post(endpoint + "/actions", job.packet),
@@ -628,6 +739,9 @@ function Review({ owner, sku }: { owner: string; sku: string }) {
         j.packet.changes.some((c) => c.sku === sku),
       ),
     review = source.data;
+  useEffect(() => {
+    if (source.loading) setConfirmed(false);
+  }, [source.loading]);
   async function save() {
     if (
       !review ||
@@ -662,9 +776,17 @@ function Review({ owner, sku }: { owner: string; sku: string }) {
       <WorkspaceLink to={manualPriceEditUrl(sku)}>
         {text("กลับไปแก้ค่าที่เลือก", "Back to selected edit")}
       </WorkspaceLink>
-      <PriceRequestLinks owner={owner} />
+      <PriceRequestLinks owner={owner} sku={sku} />
       <ErrorText error={source.error} onRetry={source.reload} />
       <ErrorText error={writer.error} />
+      {writer.busy && (
+        <p role="status">
+          {text(
+            "กำลังบันทึกคำขอเดิม กรุณารอผลยืนยัน",
+            "Saving the original request. Waiting for a confirmed outcome.",
+          )}
+        </p>
+      )}
       {source.loading ? (
         <Loading variant="detail" />
       ) : source.error ? (
@@ -693,7 +815,7 @@ function Review({ owner, sku }: { owner: string; sku: string }) {
               )}
             </Alert>
           )}
-          <label className="flex items-start gap-3">
+          <label className="flex min-h-11 items-start gap-3 rounded-lg border border-secondary-container p-3">
             <Checkbox
               aria-label={text(
                 "ยืนยันตรวจการแก้ราคาแล้ว",
@@ -751,7 +873,19 @@ function Receipt({ receipt }: { receipt: ManualPriceReceipt }) {
         </p>
       </Alert>
       <Chip tone="ok">{text("บันทึกแล้ว", "Saved")}</Chip>
-      <Evidence item={receipt.before} review={review} />
+      <Evidence item={receipt.before} review={review} historical />
+      <p>
+        {text(
+          "ผลนี้ยืนยันการแก้ของคำขอเดิม ราคาอาจเปลี่ยนหลังจากนั้น เปิดหน้าตรวจเพื่อดูค่าปัจจุบัน",
+          "This receipt confirms the original edit. Prices may have changed since; inspect the product for current values.",
+        )}
+      </p>
+      <WorkspaceLink to={manualPriceViewUrl(receipt.before.sku)}>
+        {text(
+          "ตรวจราคาปัจจุบันของสินค้านี้",
+          "Inspect this product’s current price",
+        )}
+      </WorkspaceLink>
       <p className="break-words">
         {text("ผู้บันทึก: ", "Saved by: ")}
         {receipt.updatedBy} · {receipt.savedAt} ·{" "}
@@ -788,10 +922,13 @@ function Recovery({ owner, id }: { owner: string; id: string }) {
     }
   }, [id, owner]);
   useEffect(() => {
+    if (result.loading) setConfirmed(false);
+  }, [result.loading]);
+  useEffect(() => {
     const r = result.data?.receipt;
     if (r && !result.loading && !result.error) {
       try {
-        clearManualDraft(owner, r.before.sku, r.before.version);
+        clearManualDraft(owner, r);
         clearManualJob(owner, id);
       } catch {
         /* The persisted outcome remains authoritative. */
@@ -802,11 +939,14 @@ function Recovery({ owner, id }: { owner: string; id: string }) {
     if (
       !job ||
       !result.data?.absent ||
+      result.loading ||
+      result.error ||
       !confirmed ||
       job.conflict ||
       writer.busy
     )
       return;
+    setConfirmed(false);
     const saved = await writer.write(job);
     if (saved.ok && writer.mounted.current) result.reload();
     else if (writer.mounted.current) result.reload();
@@ -836,7 +976,13 @@ function Recovery({ owner, id }: { owner: string; id: string }) {
           </Alert>
           {job ? (
             <>
-              <Evidence item={job.review.item} review={job.review} />
+              <p>
+                {text(
+                  "ฉบับที่ตรวจสำหรับคำขอเดิม ค่าปัจจุบันยังไม่ยืนยัน",
+                  "Evidence retained for the original request. Current values are unverified.",
+                )}
+              </p>
+              <Evidence item={job.review.item} review={job.review} historical />
               <Scope />
               {job.conflict ? (
                 <Alert tone="warn">
@@ -863,7 +1009,7 @@ function Recovery({ owner, id }: { owner: string; id: string }) {
                 </Alert>
               ) : (
                 <>
-                  <label className="flex gap-3">
+                  <label className="flex min-h-11 items-start gap-3 rounded-lg border border-secondary-container p-3">
                     <Checkbox
                       aria-label={text(
                         "ยืนยันส่งการแก้เดิมซ้ำ",
@@ -884,10 +1030,12 @@ function Recovery({ owner, id }: { owner: string; id: string }) {
                     disabled={!confirmed || writer.busy}
                     onClick={() => void retry()}
                   >
-                    {text(
-                      "ส่งการแก้เดิมหลังตรวจผลแล้ว",
-                      "Retry checked original edit",
-                    )}
+                    {writer.busy
+                      ? text("กำลังส่งคำขอเดิม", "Retrying original edit")
+                      : text(
+                          "ส่งการแก้เดิมหลังตรวจผลแล้ว",
+                          "Retry checked original edit",
+                        )}
                   </Button>
                 </>
               )}
@@ -940,17 +1088,22 @@ export function CurrentPrices({
   else {
     const request = tail.match(/^\/requests\/([^/]+)$/),
       id = priceRequestId.safeParse(request?.[1]),
-      item = tail.match(/^\/([^/]+)\/(edit|review)$/),
-      sku = item ? priceSkuFromToken(item[1]) : null;
+      item = tail.match(/^\/([^/]+)(?:\/(edit|review))?$/),
+      decodedSku = item ? priceSkuFromToken(item[1]) : null,
+      sku =
+        decodedSku && manualPriceSkuSchema.safeParse(decodedSku).success
+          ? decodedSku
+          : null;
     if (id.success)
       content = <Recovery key={owner + id.data} owner={owner} id={id.data} />;
     else if (sku && item)
-      content =
-        item[2] === "edit" ? (
-          <Edit key={owner + location.key} owner={owner} sku={sku} />
-        ) : (
-          <Review key={owner + location.key} owner={owner} sku={sku} />
-        );
+      content = !item[2] ? (
+        <Inspect key={owner + location.key} owner={owner} sku={sku} />
+      ) : item[2] === "edit" ? (
+        <Edit key={owner + location.key} owner={owner} sku={sku} />
+      ) : (
+        <Review key={owner + location.key} owner={owner} sku={sku} />
+      );
     else
       content = (
         <>
@@ -963,5 +1116,11 @@ export function CurrentPrices({
         </>
       );
   }
-  return <CommercePage>{content}</CommercePage>;
+  return (
+    <CommercePage>
+      <div className="min-w-0 space-y-4 [&_button]:min-h-11 [&_button]:whitespace-normal">
+        {content}
+      </div>
+    </CommercePage>
+  );
 }

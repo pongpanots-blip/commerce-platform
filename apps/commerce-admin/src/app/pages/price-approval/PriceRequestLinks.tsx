@@ -17,8 +17,18 @@ export function usePriceRequests(owner: string) {
   }, [owner]);
   return { approvals: readPriceJobs(owner), edits: readManualJobs(owner) };
 }
-export function PriceRequestLinks({ owner }: { owner: string }) {
-  const { approvals, edits } = usePriceRequests(owner);
+export function PriceRequestLinks({
+  owner,
+  sku,
+}: {
+  owner: string;
+  sku?: string;
+}) {
+  const requests = usePriceRequests(owner),
+    approvals = requests.approvals.filter(
+      (job) => !sku || job.packet.changes.some((change) => change.sku === sku),
+    ),
+    edits = requests.edits.filter((job) => !sku || job.packet.sku === sku);
   return approvals.length + edits.length ? (
     <Alert tone="warn">
       <p>
@@ -27,12 +37,21 @@ export function PriceRequestLinks({ owner }: { owner: string }) {
           "Check original requests before changing prices again",
         )}
       </p>
+      <p className="text-sm">
+        {text(
+          "มีคำขอเดิมที่เก็บในเครื่อง ผลยังไม่ยืนยันจนกว่าจะตรวจคำขอ",
+          "Original requests are retained on this device. Outcomes remain unverified until checked.",
+        )}
+      </p>
       {approvals.map((j) => (
         <WorkspaceLink
           key={"approval:" + j.packet.requestId}
           to={"/product-prices/requests/" + j.packet.requestId}
         >
-          {j.packet.changes.map((c) => c.sku).join(", ")}
+          <span className="break-words">
+            {text("ตรวจคำขอ ERP: ", "Check ERP request: ") +
+              j.packet.changes.map((c) => c.sku).join(", ")}
+          </span>
         </WorkspaceLink>
       ))}
       {edits.map((j) => (
@@ -40,7 +59,17 @@ export function PriceRequestLinks({ owner }: { owner: string }) {
           key={"edit:" + j.packet.requestId}
           to={"/product-prices/current/requests/" + j.packet.requestId}
         >
-          {text("แก้ราคา: ", "Price edit: ") + j.packet.sku}
+          <span className="break-words">
+            {text("ตรวจคำขอแก้ราคา: ", "Check price edit: ") + j.packet.sku}
+            {j.conflict && (
+              <span className="block text-sm">
+                {text(
+                  "ข้อมูลเปลี่ยน — ตรวจผลก่อนเริ่มใหม่",
+                  "Evidence changed — check outcome before starting again",
+                )}
+              </span>
+            )}
+          </span>
         </WorkspaceLink>
       ))}
     </Alert>

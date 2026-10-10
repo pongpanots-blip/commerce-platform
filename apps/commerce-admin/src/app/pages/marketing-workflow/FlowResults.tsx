@@ -54,7 +54,7 @@ export function FlowResults({ id }: { id: string }) {
             <THead><TH>{__uiText('ลูกค้า')}</TH><TH>{__uiText('สถานะ')}</TH><TH kind="time">{__uiText('เริ่ม')}</TH><TH>{__uiText('เหตุผล')}</TH><TH kind="actions" /></THead>
             <TBody>{list.data.rows.map((r) => (
               <TR key={r.id}>
-                <TD kind="mono">{r.userId.slice(0, 8)}{r.isTest ? ' (test)' : ''}{r.isHoldout ? ' (holdout)' : ''}</TD>
+                <TD kind="mono">{r.userId ? r.userId.slice(0, 8) : `guest ${(r.deviceId ?? '').slice(0, 8)}`}{r.isTest ? ' (test)' : ''}{r.isHoldout ? ' (holdout)' : ''}</TD>
                 <TD><StatusChip status={r.status} /></TD><TD kind="time">{when(r.startedAt)}</TD><TD>{r.endReason ?? ''}</TD>
                 <TD kind="actions"><Button size="sm" variant="ghost" onClick={() => setOpen(open === r.id ? null : r.id)}>{__uiText('log')}</Button></TD>
               </TR>

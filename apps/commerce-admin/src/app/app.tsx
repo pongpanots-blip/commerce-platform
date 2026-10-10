@@ -62,6 +62,7 @@ import { MarketingWorkflows } from './pages/MarketingWorkflows';
 import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
 import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
 import { FlowEditor } from './pages/marketing-workflow';
+import { MarketingEvents } from './pages/marketing-events';
 import { CsDesk, SampleRequestsRedirect } from './pages/CsDesk';
 import { Livechat } from './pages/Livechat';
 import { GrowthWorkspace } from './pages/growth/Workspace';
@@ -240,6 +241,7 @@ export function App() {
             <Route path="/marketing/growth/companies/:companyId" element={<GrowthTimeline />} />
             <Route path="/marketing/flows/new" element={<FlowEditor />} />
             <Route path="/marketing/flows/:id" element={<FlowEditor />} />
+            <Route path="/marketing/events" element={<MarketingEvents />} />
             <Route path="/marketing/workflows/new" element={<WorkflowEditor />} />
             <Route path="/marketing/workflows/:id/edit" element={<WorkflowEditor />} />
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />

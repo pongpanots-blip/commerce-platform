@@ -25654,5 +25654,85 @@
   "วิเคราะห์พฤติกรรมลูกค้า": {
     "th": "วิเคราะห์พฤติกรรมลูกค้า",
     "en": "Analyze customer behavior"
+  },
+  "Event ลูกค้า": {
+    "th": "Event ลูกค้า",
+    "en": "Customer events"
+  },
+  "ห้ามประกาศ attribute ที่เป็นข้อมูลส่วนบุคคล (อีเมล เบอร์โทร ชื่อ ที่อยู่) — ระบบจะปฏิเสธ": {
+    "th": "ห้ามประกาศ attribute ที่เป็นข้อมูลส่วนบุคคล (อีเมล เบอร์โทร ชื่อ ที่อยู่) — ระบบจะปฏิเสธ",
+    "en": "Do not declare attributes holding personal data (email, phone, name, address) — they are rejected"
+  },
+  "รายการ event": {
+    "th": "รายการ event",
+    "en": "Event catalog"
+  },
+  "Event ล่าสุด": {
+    "th": "Event ล่าสุด",
+    "en": "Recent events"
+  },
+  "ยังไม่มี event เข้ามา": {
+    "th": "ยังไม่มี event เข้ามา",
+    "en": "No events received yet"
+  },
+  "สร้าง event": {
+    "th": "สร้าง event",
+    "en": "Create event"
+  },
+  "แสดงเป็น": {
+    "th": "แสดงเป็น",
+    "en": "Display name"
+  },
+  "จากหน้าเว็บ / แอป": {
+    "th": "จากหน้าเว็บ / แอป",
+    "en": "From web / app"
+  },
+  "จากเซิร์ฟเวอร์": {
+    "th": "จากเซิร์ฟเวอร์",
+    "en": "From server"
+  },
+  "เก็บถาวร": {
+    "th": "เก็บถาวร",
+    "en": "Archived"
+  },
+  "ชื่อ (a-z 0-9 _)": {
+    "th": "ชื่อ (a-z 0-9 _)",
+    "en": "Name (a-z 0-9 _)"
+  },
+  "จากหน้าเว็บ / แอป (ผู้ใช้ปลอมได้ ไม่ใช่หลักฐานการซื้อ)": {
+    "th": "จากหน้าเว็บ / แอป (ผู้ใช้ปลอมได้ ไม่ใช่หลักฐานการซื้อ)",
+    "en": "From web / app (can be faked by users; not proof of purchase)"
+  },
+  "เพิ่ม attribute": {
+    "th": "เพิ่ม attribute",
+    "en": "Add attribute"
+  },
+  "เก็บถาวร event นี้": {
+    "th": "เก็บถาวร event นี้",
+    "en": "Archive this event"
+  },
+  "ระบุตัวจาก": {
+    "th": "ระบุตัวจาก",
+    "en": "Identified by"
+  },
+  "ไม่พบ event": {
+    "th": "ไม่พบ event",
+    "en": "No events found"
+  },
+  "แพลตฟอร์ม": {
+    "th": "แพลตฟอร์ม",
+    "en": "Platform"
+  },
+  "อุปกรณ์": {
+    "th": "อุปกรณ์",
+    "en": "Devices"
+  },
+  "ยังไม่มีสรุปรายวันในช่วงนี้ (สรุปทุกคืนตี 3)": {
+    "th": "ยังไม่มีสรุปรายวันในช่วงนี้ (สรุปทุกคืนตี 3)",
+    "en": "No daily totals in this range yet (summarised nightly at 03:00)"
+  },
+  "event ที่เว็บและแอปส่งมา และรายการ event ที่ระบบรับ": {
+    "th": "event ที่เว็บและแอปส่งมา และรายการ event ที่ระบบรับ",
+    "en": "Events sent by the web and app, and the catalog of accepted events"
   }
 }

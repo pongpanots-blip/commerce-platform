@@ -90,6 +90,7 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/j/segments', label: 'กลุ่มลูกค้าสำหรับแคมเปญ', description: 'กำหนดกลุ่มลูกค้าเป้าหมายสำหรับแคมเปญและคูปอง' },
     { to: '/j/marketing/push-campaigns', label: 'ส่งแจ้งเตือนถึงลูกค้า', description: 'ส่งการแจ้งเตือนที่เด้งขึ้นบนเครื่องของลูกค้า' },
     { to: '/marketing/workflows', label: 'ข้อความอัตโนมัติ', description: 'ข้อความที่ส่งอัตโนมัติตามพฤติกรรมลูกค้า' },
+    { to: '/marketing/events', label: 'Event ลูกค้า', more: true, description: 'event ที่เว็บและแอปส่งมา และรายการ event ที่ระบบรับ' },
     { to: '/j/marketing/competitor-prices', label: 'เทียบราคาคู่แข่ง', description: 'เทียบราคาสินค้าของเรากับเว็บคู่แข่ง' },
     { to: '/marketing/growth/plans', label: 'แผนและปฏิทิน', more: true, description: 'แผนการตลาดที่บันทึกไว้และปฏิทินงาน' },
     { to: '/marketing/analyst', label: 'ผู้ช่วยวิเคราะห์การตลาด', more: true, description: 'ถามคำถามการตลาดกับผู้ช่วย AI จากข้อมูลในระบบ' },

@@ -30,7 +30,7 @@ export class PackInputsService {
     if (typeof rawSku !== 'string' || !rawSku.trim() || rawSku.length > 100 || /[\x00-\x1f\x7f]/.test(rawSku)) throw new BadRequestException('Invalid SKU');
     const sku = rawSku.trim(), capturedAt = clock().toISOString();
     // Read the existing local catalog and recorded pairs only; never pull/scrape or capture observations.
-    const [product, pairs] = await Promise.all([this.competitors.catalog(sku, true), this.competitors.list()]);
+    const [product, pairs] = await Promise.all([this.competitors.catalog(sku, true), this.competitors.list(sku)]);
     const relevant = pairs.filter(p => p.ourProduct.id === product.id && p.ourProduct.sku === sku).sort((a, b) => a.id.localeCompare(b.id));
     const observations = relevant.slice(0, 200).map(p => ({ id: p.id, revision: p.revision, vendor: p.sourceName, productName: p.competitorName,
       originalPack: { unit: p.planningEvidence.unit, min: p.planningEvidence.min, max: p.planningEvidence.max, count: p.planningEvidence.count },

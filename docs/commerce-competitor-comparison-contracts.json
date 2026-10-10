@@ -1,0 +1,134 @@
+{
+  "capturedAt": "2026-10-10T03:06:39.649663+00:00",
+  "acceptedParent": "0a4f929f5ea0d9a164ebbd44bbc8b6f45cf60a00",
+  "scope": "Existing commerce-admin competitor comparison workspace and additive compatible native backend; development checkpoint only. This does not finish the entire commerce application.",
+  "canonicalHome": "/j/marketing/competitor-prices",
+  "sourceInstructions": "docs/design/stitch/task-ui-2026-10-08/DESIGN.md",
+  "featureMapping": [
+    {
+      "before": "Competitor results and local-state price/match/edit panels",
+      "now": "/j/marketing/competitor-prices/products/:sku; /pairs/:id; /pairs/:id/{capture,verify,pack,settings,refresh,remove}; each action has a /review URL",
+      "preserved": "Original catalog/competitor readers, human matching, manual capture, identity/context editing, collection permission and automatic collection, explicit collector, pair removal; typed quantities and original observations now stay distinct."
+    },
+    {
+      "before": "Category review grid and batch reviewed markers",
+      "now": "/j/marketing/competitor-prices; /products/:sku/match; /products/:sku/review-marker",
+      "preserved": "Category/SKU review queue and actual native reviewed marker. Suggestions never become verified matches automatically. New flow reviews one SKU explicitly; original batch endpoints remain compatible."
+    },
+    {
+      "before": "Overview filters and XLSX export",
+      "now": "/j/marketing/competitor-prices/overview",
+      "preserved": "Native all-product search, category, legacy vendor-name/position filters, paging and XLSX export. Existing report is explicitly kilogram-scoped; non-kg/ranged/FX/future/unknown-age bases are excluded. It is not a market-completeness claim."
+    },
+    {
+      "before": "Scraped-catalog ?catalogItem links and source steps",
+      "now": "/j/marketing/competitor-prices/collected/:id; /sources",
+      "preserved": "Old query links redirect to distinct action URLs. Collected-item SKU suggestions remain suggestions; manual SKU selection is retained. Source configuration/catalog management use their existing authorized feature URLs."
+    },
+    {
+      "before": "Private pack planning and promotion rehearsal",
+      "now": "/j/marketing/competitor-prices/products/:sku/planning",
+      "preserved": "Explicit selected IDs, at most 20, revalidated fingerprint and SKU handoff. Pack planner seeds selected observations only after its native source read matches; existing backups need explicit choice. Promotion rehearsal remains admin-only. No price/cost/activation assumptions are silently copied."
+    }
+  ],
+  "permissions": {
+    "read": [
+      "admin",
+      "marketing",
+      "business_analyst"
+    ],
+    "write": [
+      "admin",
+      "marketing"
+    ],
+    "businessAnalyst": "Original GET-only guard remains authoritative; no write controls or POST dispatched.",
+    "merchandising": "No new grant; competitor/pricing access dependency remains unresolved.",
+    "sourceConfiguration": "Existing source/catalog permissions unchanged.",
+    "receipts": "Owner-private request lookup; shared competitor history retains the existing authorized competitor read scope. Login secrets are never projected."
+  },
+  "basis": {
+    "unitFamilies": [
+      "kg (g normalization)",
+      "l (ml normalization)",
+      "whole pieces"
+    ],
+    "quantity": "Exact decimal/rational normalization, native precision boundaries and pack count; no midpoint for a range.",
+    "eligible": "Known matching fixed unit/pack, THB, VAT-inclusive, separately human-verified same-product identity, current source configuration, valid dates and freshness; member eligibility remains unverified.",
+    "excluded": [
+      "invalid/unknown/ranged quantities",
+      "unit mismatch",
+      "currency mismatch or unknown FX",
+      "exclusive/unverified VAT",
+      "invalid, future, stale or unknown dates",
+      "uncertain or substitute matches",
+      "source failure/configuration mismatch",
+      "member eligibility unverified",
+      "old observation after a pack/identity/context edit"
+    ],
+    "originalEvidence": "Raw money/currency/tax/basis/time/pack/context/actor snapshots preserved in the existing immutable action journal. Invalid bases never become THB aliases or ranked price deltas. Legacy history before this journal is unavailable; no historical provenance is invented."
+  },
+  "mutations": {
+    "api": "/competitor-prices/workspace/actions",
+    "packet": "Strict requestId UUID, SKU, sourceFingerprint and 1..20 commands; pair revision required; no duplicated pair intent or actor/permission overrides.",
+    "operations": [
+      "create",
+      "capture",
+      "verify",
+      "pack",
+      "settings",
+      "refresh",
+      "remove",
+      "review"
+    ],
+    "transaction": "Shared request advisory lock, product/pair/source locks, authoritative fingerprint/revision validation, savepoints for expected per-item errors; pair edits and durable receipt commit together. Unrecognized SQL/storage failure rolls back the whole transaction.",
+    "collector": "Vendor read happens before row locks. Evidence/config/revision is checked again under locks. Replays return the original committed receipt without another vendor fetch. Read/identity/price failures preserve the old observation and persist a failed outcome, never a completed-action count. Existing collector and auto-collection business constraints retained.",
+    "packReplacement": "Same pair ID; original observation archived. Native current-price alias cleared on pack/identity edits, match invalidated; later match verification cannot reinterpret the old quote. Legacy grid replacement is in-place and archives atomically.",
+    "receipt": "competitor_action kind plus shared scenario.kind discriminator prevents promotion/pack receipt/list readers from treating this as a different draft type. Committed/partial/failed counts reflect applied native actions, not browser intent.",
+    "recovery": "Owner-scoped immutable browser packet stored and roundtrip verified before dispatch. Duplicate clicks guarded synchronously. Unknown outcomes require authoritative lookup. Only confirmed 404 permits the exact same packet retry; conflicts require current review. Interrupted saves cannot redirect a newer navigation."
+  },
+  "operationalWrites": {
+    "sellingPriceWrites": false,
+    "promotionActivation": false,
+    "productionDataAccess": false,
+    "migrationExecution": false,
+    "pushPrMergeDeploy": false,
+    "screenshotsCaptured": 0
+  },
+  "remainingDependencies": [
+    "Production availability/permissions of existing typed competitor columns, catalog/source copies, commerce_promotion_drafts and request tables have not been verified; unavailable storage remains a retriable error, never success.",
+    "The raw observation journal uses existing JSON storage with per-pair lookups; production volume, indexing, retention and query budgets need follow-up using approved production read access.",
+    "Native pack observations cap at 200 and history at 20; coverage is explicitly truncated. Legacy source names in retained overview filters are not stable vendor IDs; typed per-product comparison uses stable IDs.",
+    "Upstream copy freshness remains unverified; member eligibility, delivery/region/minimum-order/quantity tiers and FX normalization need authoritative contracts. No delivered-price, recommendation, profit, ATP or activation readiness is claimed.",
+    "Legacy batch accept/reject endpoints remain compatible; the new typed UI deliberately requires separate human verification and per-SKU review. Further batch ergonomics can follow the canonical action pattern.",
+    "Advanced retailer-URL reassignment and batch proposal accept/reject ergonomics are not yet part of the new typed UI. Their legacy backend routes remain compatible; source/catalog management and per-SKU actions are reachable. Do not infer that every old local-state control was rebuilt.",
+    "MER competitor grant remains blocked pending an explicit permission decision; OCR-to-cart is cancelled.",
+    "Actual Claude/Cursor review is unrun and must occur on dot cloud computer through an authorized same-revision handoff. No credentials were copied and no transfer workaround was used."
+  ],
+  "validationEvidence": "/workspace/commerce-ui-audit-20261009/competitor-verification.json (local verification artifact; final commit/manifest recorded separately)",
+  "validation": {
+    "finalAutomated": {
+      "frontend": 452,
+      "backend": 514,
+      "ownedComparisonSql": 26,
+      "otherOwnedSql": 23,
+      "failed": 0,
+      "skipped": 0
+    },
+    "currentBuiltBrowser": {
+      "competitor": 27,
+      "handoff": 4,
+      "promotionAndOrder": 21,
+      "pack": 21,
+      "legacyAndProtected": 85,
+      "total": 158,
+      "screenshots": 0,
+      "browserAuthentication": "Synthetic transport; original real StaffAuthGuard tested in native HTTP suites. No production/full-auth E2E claim."
+    },
+    "typechecksAndBuilds": [
+      "commerce-admin",
+      "commerce-platform"
+    ],
+    "protectedSourceProof": "/workspace/commerce-ui-audit-20261009/competitor-protected-source-proof.json",
+    "checksAreSelectedRegressions": "No whole-app redesign or full-suite coverage claim. Historical/focused reruns are not added to these counts."
+  }
+}

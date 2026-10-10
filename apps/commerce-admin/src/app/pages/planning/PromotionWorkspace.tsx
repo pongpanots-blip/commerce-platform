@@ -11,6 +11,7 @@ import { blankPromotionForm, buildPromotionScenario, clearPromotionForm, formFro
 import { clearPromotionJob, packetFor, readPromotionJobs, storePromotionJob, verifySavedJob, type PromotionSaveJob } from './promotion-journal';
 import { PromotionEvidence } from './PromotionEvidence';
 import { PlanningError as ErrorText } from './PlanningError';
+import { ValidatedPlanningHandoff, type PlanningReferral } from '../competitor-comparison/ValidatedPlanningHandoff';
 
 const detailUrl = (id: string) => `${home}/drafts/${id}`;
 const requestUrl = (id: string) => `${home}/requests/${id}`;
@@ -55,7 +56,7 @@ export default function PromotionWorkspace({ role = session.claims()?.role }: { 
   if (!owner) return <CommercePage><Alert tone="danger">{text('ยังยืนยันบัญชีไม่ได้ โปรดเข้าสู่ระบบใหม่', 'The account could not be verified. Sign in again.')}</Alert></CommercePage>;
   const path = pathname.replace(/\/$/, '');
   if (path === home) return <DraftIndex owner={owner} />;
-  if (path === `${home}/new`) return <DraftEditor key="new" owner={owner} />;
+  if (path === `${home}/new`) return <ValidatedPlanningHandoff>{referral => <DraftEditor key={referral?.sourceFingerprint ?? "new"} owner={owner} referral={referral} />}</ValidatedPlanningHandoff>;
   const match = path.match(/^\/planning\/promotions\/(drafts|requests)\/([^/]+)(\/edit)?$/);
   const id = uuid.safeParse(match?.[2]);
   if (!match || !id.success || match[1] === 'requests' && match[3]) return <CommercePage><PageHeader title={text('ไม่พบหน้าร่างนี้', 'Draft page unavailable')} /><WorkspaceLink to={home}>{text('กลับไปร่างโปรโมชัน', 'Back to promotion drafts')}</WorkspaceLink></CommercePage>;
@@ -104,16 +105,16 @@ function RequestRecovery({ owner, requestId }: { owner: string; requestId: strin
   </CommercePage>;
 }
 
-function DraftEditor({ owner, draftId }: { owner: string; draftId?: string }) {
+function DraftEditor({ owner, draftId, referral }: { owner: string; draftId?: string; referral?: PlanningReferral }) {
   const original = useAsync(() => draftId ? readable(async () => parseReceipt(await api.get(`${endpoint}/drafts/${draftId}`), draftId)) : Promise.resolve(null), [draftId]);
   if (draftId && original.loading) return <CommercePage><Loading variant="detail" /></CommercePage>;
   if (draftId && (original.error || !original.data)) return <CommercePage><WorkspaceLink to={home}>{text('กลับไปร่าง', 'Back to drafts')}</WorkspaceLink><ErrorText error={original.error} onRetry={original.reload} /></CommercePage>;
-  return <EditorForm key={`${draftId ?? 'new'}:${original.data?.revision ?? 0}`} owner={owner} original={original.data} />;
+  return <EditorForm key={`${draftId ?? 'new'}:${original.data?.revision ?? 0}`} owner={owner} original={original.data} referral={referral} />;
 }
 
-function EditorForm({ owner, original }: { owner: string; original: PromotionReceipt | null }) {
+function EditorForm({ owner, original, referral }: { owner: string; original: PromotionReceipt | null; referral?: PlanningReferral }) {
   const draftId = original?.id, revision = original?.revision ?? null, backup = useRef(readPromotionForm(owner, draftId));
-  const [form, setForm] = useState(() => backup.current?.revision === revision ? backup.current.form : original ? formFromScenario(original.scenario) : blankPromotionForm());
+  const [form, setForm] = useState(() => backup.current?.revision === revision ? backup.current.form : original ? formFromScenario(original.scenario) : { ...blankPromotionForm(), sku: referral?.sku ?? "" });
   const [backupChoice, setBackupChoice] = useState(backup.current && backup.current.revision !== revision ? 'pending' : 'latest');
   const saveLock = useRef(false);
   const [errors, setErrors] = useState<Record<string, string>>({}), [inputs, setInputs] = useState<PromotionInputs | null>(null), [preview, setPreview] = useState<PromotionPreview | null>(null), [pendingId, setPendingId] = useState<string | null>(null);
@@ -142,7 +143,7 @@ function EditorForm({ owner, original }: { owner: string; original: PromotionRec
     finally { saveLock.current = false; }
   }
   const control = (key: Exclude<keyof PromotionForm, 'tiers'>, label: string, help?: string) => <TaskInput name={key} label={label} help={help} value={form[key]} error={errors[key]} disabled={busy || !!pending} inputMode={['quantity', 'percent', 'amount', 'buy', 'get', 'getPercent', 'margin'].includes(key) ? 'decimal' : undefined} onChange={e => change(key, e.target.value as never)} />;
-  return <CommercePage><WorkspaceLink to={draftId ? detailUrl(draftId) : home}>{text('กลับไปร่างโปรโมชัน', 'Back to promotion drafts')}</WorkspaceLink><PageHeader title={original ? text('แก้ไขร่างโปรโมชัน', 'Edit promotion draft') : text('ทดลองโปรโมชันใหม่', 'Plan a new promotion')} subtitle={text('1 เลือกสินค้า · 2 ใส่กติกา · 3 ตรวจผลและบันทึกร่าง', '1 Choose product · 2 Set offer · 3 Review and save draft')} />
+  return <CommercePage>{referral && form.sku !== referral.sku && <Alert tone="warn">{text("มีฟอร์มของสินค้าอื่น ค่าถูกเก็บไว้จนกว่าจะเลือกสินค้าใหม่", "An existing form uses another product. Its values remain retained until you choose the new product.")}<Button disabled={busy || !!pending} onClick={() => { setForm({ ...blankPromotionForm(), sku: referral.sku }); setInputs(null); setPreview(null); }}>{text("ใช้สินค้าที่เลือกและเริ่มสมมติฐานใหม่", "Use selected product and start new assumptions")}</Button></Alert>}<WorkspaceLink to={draftId ? detailUrl(draftId) : home}>{text('กลับไปร่างโปรโมชัน', 'Back to promotion drafts')}</WorkspaceLink><PageHeader title={original ? text('แก้ไขร่างโปรโมชัน', 'Edit promotion draft') : text('ทดลองโปรโมชันใหม่', 'Plan a new promotion')} subtitle={text('1 เลือกสินค้า · 2 ใส่กติกา · 3 ตรวจผลและบันทึกร่าง', '1 Choose product · 2 Set offer · 3 Review and save draft')} />
     {backup.current?.revision === revision && <Alert tone="muted">{text('คืนค่าที่กรอกไว้ในแท็บนี้ ยังไม่ใช่ร่างที่บันทึกบนระบบ', 'Restored input from this tab. These values are not a saved server draft.')}</Alert>}
     {changedBackup && <Alert tone="warn">{text('มีค่าที่ค้างจากฉบับเก่า กำลังแสดงฉบับล่าสุด เก็บสำเนาค่าเดิมเป็นร่างใหม่ได้', 'Older unsaved input exists. The latest version is shown; you can copy the older values into a new draft.')}<Button onClick={() => { storePromotionForm(owner, undefined, null, backup.current!.form); navigate(`${home}/new`); }}>{text('คัดลอกค่าเดิมเป็นร่างใหม่', 'Copy old input into a new draft')}</Button><Button onClick={() => { backup.current = null; setBackupChoice('latest'); }}>{text('เริ่มแก้จากฉบับล่าสุด', 'Edit from the latest revision')}</Button></Alert>}
     <PendingRequests jobs={pending ? [pending] : []} />

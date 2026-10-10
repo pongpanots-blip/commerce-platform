@@ -322,8 +322,8 @@ export class CompetitorPricesService {
   }
 
   /** The same SKU on the other sites: top 3 collected items per site, so one Josh SKU can be paired with every site. */
-  async siteCandidates(sku: string) {
-    const product = await this.product(sku);
+  async siteCandidates(sku: string, readOnlyCopy = false) {
+    const product = await this.product(sku, readOnlyCopy);
     const paired = await this.prices.find({ where: { productId: product.product_inventory_id }, select: { id: true, sourceUrl: true } });
     return this.candidatesFor(product, new Set(paired.map(row => row.sourceUrl)));
   }
@@ -358,18 +358,23 @@ export class CompetitorPricesService {
 
   private view(row: Pair) {
     const ourRate = catalogPricePerKg(row.product, Number(row.ourWeightKg));
-    const theirRate = row.priceIncVat == null ? null : Number(row.priceIncVat) / Number(row.competitorWeightKg);
+    const unsupportedLegacyKgBasis = (row.competitorUnit ?? 'kg') !== 'kg' || row.competitorQtyMin != null && row.competitorQtyMax != null && Number(row.competitorQtyMin) !== Number(row.competitorQtyMax);
+    const theirRate = unsupportedLegacyKgBasis || row.priceIncVat == null ? null : Number(row.priceIncVat) / Number(row.competitorWeightKg);
     const verified = !!row.verifiedFingerprint && row.verifiedFingerprint === this.fingerprint(row);
     const reason = row.product.removed_at ? 'สินค้านี้ไม่อยู่ในแค็ตตาล็อก Josh แล้ว'
       : !verified ? 'รอตรวจและยืนยันคู่สินค้า'
       : !row.vatIncluded ? 'ยังไม่ยืนยันว่าราคาคู่แข่งรวม VAT'
+      : unsupportedLegacyKgBasis ? 'หน่วยหรือช่วงขนาดนี้ไม่ใช่ฐานราคาต่อกก. ตรวจฐานหน่วยในหน้าเทียบสินค้า'
+      : row.captureMethod === 'automatic' && row.scrapingSource?.config.currency !== 'THB' ? 'สกุลเงินต่างกันหรือยังไม่ยืนยัน ไม่ใช้เทียบราคาบาท'
       : ourRate == null ? 'ตรวจหน่วยขายและราคาของเราในแค็ตตาล็อก'
       : theirRate == null ? 'ยังไม่มีราคาคู่แข่ง'
       : row.captureMethod === 'automatic' && (!row.scrapingSource || row.capturedSourceVersion !== scrapingVersion(row.scrapingSource.config)) ? 'ตั้งค่าตัวอ่านเว็บเปลี่ยน กรุณาดึงราคาใหม่'
       // A collected price stays usable for its source's own cycle + 1 day (daily run → 48 h); manual pairs 24 h.
-      : !row.observedAt || Date.now() - row.observedAt.getTime() > freshForHours(row) * 3600000 ? `ราคาเกิน ${freshForHours(row)} ชั่วโมง กรุณาอัปเดต`
+      : row.observedAt && row.observedAt.getTime() > Date.now() ? 'เวลาที่พบราคาอยู่ในอนาคต'
+      : !row.observedAt || !Number.isFinite(freshForHours(row)) || Date.now() - row.observedAt.getTime() > freshForHours(row) * 3600000 ? `ราคาเกินอายุข้อมูลหรือยังไม่ทราบอายุ กรุณาอัปเดต`
       : row.lastError ? 'ดึงครั้งล่าสุดไม่สำเร็จ กรุณาตรวจแหล่งที่มา' : null;
     const refreshReason = !row.scrapingSource ? 'ตั้งค่าเว็บต้นทาง แล้วบันทึกคู่สินค้านี้อีกครั้งเพื่อเปิดตัวดึงราคา'
+      : unsupportedLegacyKgBasis ? 'ตัวรวบรวมเดิมรองรับน้ำหนักกก. คงที่เท่านั้น บันทึกราคาหน่วยอื่นด้วยตนเอง'
       : !row.scrapingSource.config.collectionAllowed ? 'เว็บต้นทางยังไม่ยืนยันสิทธิ์ดึงข้อมูล'
       : !row.scrapingSource.config.vatIncluded || row.scrapingSource.config.currency !== 'THB' ? 'ตั้งค่าฐานราคาเว็บเป็น THB รวม VAT ก่อนเทียบ'
       : !row.collectionAllowed ? 'ยังไม่ยืนยันสิทธิ์ดึงข้อมูลจากแหล่งนี้'
@@ -546,8 +551,8 @@ export class CompetitorPricesService {
     return Buffer.from(await workbook.xlsx.writeBuffer());
   }
 
-  async list() {
-    const rows = (await this.prices.find({ relations: ['product', 'scrapingSource'], order: { createdAt: 'DESC' } })).map(shaped);
+  async list(sku?: string) {
+    const rows = (await this.prices.find({ ...(sku ? { where: { product: { sku } } } : {}), relations: ['product', 'scrapingSource'], order: { createdAt: 'DESC' } })).map(shaped);
     return rows.map(row => this.view(row));
   }
 
@@ -565,6 +570,27 @@ export class CompetitorPricesService {
       if (revision != null && row.revision !== revision) throw new BadRequestException('ข้อมูลเปลี่ยนระหว่างทำรายการ กรุณาโหลดใหม่');
       mutate(row);
       await repository.save(row);
+    });
+    return this.view(await this.read(id));
+  }
+
+  /** Compatibility path: replace typed dimensions in place; never delete a pair before recreating it. */
+  async replacePack(id: string, productId: string, size: PackSize, revision: number, actor: string) {
+    await this.prices.manager.transaction(async manager => {
+      const repository = manager.getRepository(CompetitorPrice);
+      const row = await repository.findOne({ where: { id }, lock: { mode: 'pessimistic_write' } });
+      if (!row || row.productId !== productId) throw new NotFoundException('Pair unavailable');
+      if (row.revision !== revision) throw new ConflictException('Pair changed. Reload before replacing its pack.');
+      const before = JSON.parse(JSON.stringify(row));
+      row.competitorUnit = size.unit; row.competitorQtyMin = size.min; row.competitorQtyMax = size.max;
+      row.competitorPackCount = size.packCount; row.competitorWeightKg = size.min * size.packCount;
+      row.verifiedFingerprint = null; row.verifiedBy = null; row.verifiedAt = null;
+      row.priceIncVat = null;
+      row.matchNote = 'Uncertain: Pack changed; review the match and record a price for this pack.';
+      const saved = await repository.save(row);
+      // The original observation and dimensions stay archived atomically with the replacement.
+      await manager.query(`INSERT INTO commerce_promotion_drafts(id,actor_id,revision,scenario,evidence,preview)
+        VALUES(gen_random_uuid(),$1,1,$2,$3,$4)`, [actor, JSON.stringify({kind:'competitor_legacy_archive',pairId:id}),JSON.stringify(before),JSON.stringify(saved)]);
     });
     return this.view(await this.read(id));
   }

@@ -76,6 +76,7 @@ const TodayInbox = lazy(() => import('./pages/today/TodayInbox'));
 const SalesWorkWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlanningWorkspace').then(m=>({default:m.SalesWorkWorkspace})));
 const MarketingReadinessWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlanningWorkspace').then(m=>({default:m.MarketingReadinessWorkspace})));
 const FinancialAnalysisWorkspace=lazy(()=>import('./pages/financial-analysis/FinancialAnalysisWorkspace'));
+const ComparisonWorkspace=lazy(()=>import('./pages/competitor-comparison/ComparisonWorkspace'));
 const GoalPlanningWorkspace = lazy(() => import('./pages/financial-goals/GoalPlanningWorkspace'));
 const PackPlanningWorkspace = lazy(() => import('./pages/pack-price/PackPlanningWorkspace'));
 
@@ -238,6 +239,7 @@ export function App() {
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
             <Route path="/marketing/workflows/:id/scheduled-runs" element={<WorkflowScheduledRuns />} />
             <Route path="/j/*" element={<JoshAdminApp />} />
+            <Route path="/j/marketing/competitor-prices/*" element={<Suspense fallback={<Loading variant="detail" />}><ComparisonWorkspace role={role}/></Suspense>}/>
             <Route path="/j/payment-transactions" element={<PaymentWorkspace role={role} />} />
             <Route path="/j/payment-transactions/:transactionId" element={<PaymentWorkspace role={role} />} />
             <Route path="/j/cs/sample-requests" element={<SampleRequestsRedirect role={role} />} />

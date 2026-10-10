@@ -157,7 +157,8 @@ export default function PushCampaignsPage() {
     const handle = window.setTimeout(() => {
       getUsers({ search: userQuery.trim(), limit: 8, page: 1 })
         .then((res) => {
-          const rows = (res?.data?.data ?? res?.data ?? []) as Array<{
+          // josh's paged /users answers { data: { data: rows, meta } } (Shipments reads it the same way)
+          const rows = (res?.data?.data?.data ?? res?.data?.data ?? res?.data ?? []) as Array<{
             id: string;
             first_name?: string;
             last_name?: string;

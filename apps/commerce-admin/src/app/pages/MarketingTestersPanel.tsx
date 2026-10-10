@@ -20,7 +20,7 @@ export function MarketingTestersPanel() {
   return (
     <Panel className="overflow-hidden">
       <PanelHead title={__uiText("Tester (ผู้รับข้อความทดสอบ)")} />
-      <Hint>{__uiText("ส่งทดสอบจริง (แจ้งเตือน / workflow / ผ่าน AI) ได้เฉพาะบัญชีในรายการนี้ · ใส่อีเมลบัญชีลูกค้าทดสอบในแอป")}</Hint>
+      <div className="px-4 pt-3"><Hint>{__uiText("ส่งทดสอบจริง (แจ้งเตือน / workflow / ผ่าน AI) ได้เฉพาะบัญชีในรายการนี้ · ใส่อีเมลบัญชีลูกค้าทดสอบในแอป")}</Hint></div>
       <ErrorText error={error ?? list.error} />
       <form className="flex gap-2 px-4 py-3" onSubmit={(e) => { e.preventDefault(); if (email.trim()) void act(() => marketingTestersApi.add(email.trim())); }}>
         <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={__uiText("อีเมลบัญชีทดสอบ")} className="max-w-sm" />

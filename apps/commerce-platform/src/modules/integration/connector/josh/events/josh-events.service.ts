@@ -63,9 +63,11 @@ export class JoshEventsService {
           await this.guarded('josh_orders', 'orders_id', e, (m) => this.saveOrder(m, e)));
       case 'customer.snapshot':
         return this.signalled('marketing-trigger.customer', e.aggregateId, await this.guarded('josh_customers', 'id', e, async (m) => {
+          const [prev] = await m.query(`SELECT data->>'pdpa_consent' AS consent FROM josh_customers WHERE id = $1`, [e.aggregateId]);
           await m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: e.data ?? {}, sourceVersion: e.version, deletedAt: null });
-          // Signup consent (pdpa_consent) gates every use of events (spec §5.1); false → their events go, journeys stop.
-          if (e.data?.pdpa_consent === false) {
+          // Signup consent (pdpa_consent) gates every use of events (spec §5.1). Only a withdrawal (true → false) clears
+          // events and stops journeys: josh re-sends this snapshot on every users update, and legacy rows default to false.
+          if (prev?.consent === 'true' && e.data?.pdpa_consent === false) {
             await withdrawConsent(m, e.aggregateId);
             await stopEnrollmentsForCustomer(m, e.aggregateId, 'consent_withdrawn');
           }
@@ -101,19 +103,22 @@ export class JoshEventsService {
     }
   }
 
-  /** josh user_devices row → copy + device link, guest journeys adopted, recent events re-checked after commit (spec §5). */
+  /**
+   * josh user_devices row → copy + device link, guest journeys adopted, recent events re-checked after commit (spec §5).
+   * The copy is version-guarded like other reference rows, but links are history: an older (stale) snapshot still records
+   * its link — linkDevice is idempotent and places it by time.
+   */
   private async deviceLinked(e: JoshEnvelope): Promise<ApplyResult> {
-    let recent: string[] = [];
-    const result = await this.reference('josh_user_devices', e, async (m) => {
-      await this.saveReference(m, 'josh_user_devices', e);
-      const d = e.data;
-      if (typeof d.user_id !== 'string' || typeof d.individual_id !== 'string') return;
+    const result = await this.reference('josh_user_devices', e, (m) => this.saveReference(m, 'josh_user_devices', e));
+    const d = e.data;
+    if (typeof d?.user_id !== 'string' || typeof d?.individual_id !== 'string') return result;
+    const recent = await this.db.transaction(async (m) => {
       const linked = await linkDevice(m, { deviceId: d.individual_id, userId: d.user_id, platform: String(d.platform ?? 'web'),
         linkedAt: new Date(d.last_seen_at ?? e.occurredAt) });
       if (linked.usable) await adoptGuestEnrollments(m, d.individual_id, d.user_id);
-      recent = linked.recentEventIds;
+      return linked.recentEventIds;
     });
-    if (result === 'applied' && recent.length) this.emitter?.emit('marketing-trigger.events', { eventIds: recent });
+    if (recent.length) this.emitter?.emit('marketing-trigger.events', { eventIds: recent });
     return result;
   }
 

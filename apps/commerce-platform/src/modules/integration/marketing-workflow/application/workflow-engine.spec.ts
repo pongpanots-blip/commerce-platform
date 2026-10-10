@@ -177,7 +177,7 @@ describe('WorkflowEngine', () => {
     expect(s.queue.step).not.toHaveBeenCalled();
   });
   describe('event layer', () => {
-    const D = 'd'.repeat(32);
+    const D = 'device-abc12345'; // a non-hex device id: outbox aggregate ids are uuid
     const waitEvent = (n: number, matched: string | null, timeout: string | null): WorkflowStep =>
       ({ id: id(n), type: 'wait_event', eventName: 'purchase', filters: [], timeoutHours: 2, matchedNextId: matched, timeoutNextId: timeout } as WorkflowStep);
 
@@ -223,10 +223,10 @@ describe('WorkflowEngine', () => {
       const email: WorkflowStep = { id: id(3), type: 'action', action: { kind: 'notify', channels: ['email'], templateKey: 'custom_b' }, nextId: null };
       const s = setup([notify(1, id(2)), coupon, email], { triggerType: 'event', device: { pushSubscriptionId: '5b000000-0000-4000-8000-000000000001', platform: 'web' } });
       const trig = { eventId: 'ev-1', name: 'add_to_cart', attributes: { item_id: 'SKU-1' } };
-      await s.run('ev-1', { triggerEvent: trig }, { userId: null, deviceId: D });
+      const eid = await s.run('ev-1', { triggerEvent: trig }, { userId: null, deviceId: D });
       expect(s.events.publish).toHaveBeenCalledTimes(1);
       const [event] = (s.events.publish.mock.calls[0] as unknown[]) as [{ aggregateId: string; payload: Record<string, unknown> }];
-      expect(event.aggregateId).toBe(D);
+      expect(event.aggregateId).toBe(eid); // the enrollment (uuid), never the device id
       expect(event.payload).toMatchObject({ userId: null, channels: ['push'], target: { kind: 'device', subscriptionId: '5b000000-0000-4000-8000-000000000001', platform: 'web' },
         data: { event: { item_id: 'SKU-1' } } });
       expect(s.logs.map((l) => [l.kind, l.status, l.meta.reason ?? null])).toEqual([['notify', 'queued', null], ['grant_coupon', 'skipped', 'guest_no_user'], ['notify', 'skipped', 'guest_channel']]);

@@ -1,13 +1,14 @@
 import { BadRequestException } from '@nestjs/common';
 import { JoshEventsService } from './josh-events.service';
 
-function makeService(storedVersion: string | null, emitter?: { emit: jest.Mock }) {
+function makeService(storedVersion: string | null, emitter?: { emit: jest.Mock }, storedConsent: string | null = null) {
   const calls: Array<[string, unknown[] | undefined]> = [];
   const repo = { upsert: jest.fn(), delete: jest.fn(), insert: jest.fn(), save: jest.fn() };
   const manager = {
     query: jest.fn(async (sql: string, params?: unknown[]) => {
       calls.push([sql, params]);
       if (sql.includes('SELECT source_version')) return storedVersion === null ? [] : [{ source_version: storedVersion }];
+      if (sql.includes('AS consent')) return storedConsent === null ? [] : [{ consent: storedConsent }];
       return [];
     }),
     getRepository: jest.fn(() => repo),
@@ -36,16 +37,22 @@ describe('JoshEventsService', () => {
     expect(stale.emit).not.toHaveBeenCalled();
   });
 
-  it('customer.snapshot without consent removes the customer\'s events and stops journeys (spec §5.1)', async () => {
+  it('consent withdrawn (stored true → false) removes the customer\'s events and stops journeys (spec §5.1)', async () => {
     const U = '22222222-2222-4222-8222-222222222222';
-    const { svc, calls } = makeService(null);
+    const { svc, calls } = makeService(null, undefined, 'true');
     await svc.apply({ type: 'customer.snapshot', aggregateId: U, version: '5', occurredAt: '', data: { pdpa_consent: false } });
     const sqls = calls.map(([sql]) => sql.replace(/\s+/g, ' ').trim());
     expect(sqls).toContain('DELETE FROM marketing_events WHERE attributed_user_id = $1');
     expect(sqls.some((q) => q.startsWith("UPDATE marketing_workflow_enrollments SET status = 'skipped'"))).toBe(true);
-    const consenting = makeService(null);
-    await consenting.svc.apply({ type: 'customer.snapshot', aggregateId: U, version: '5', occurredAt: '', data: { pdpa_consent: true } });
-    expect(consenting.calls.some(([sql]) => sql.includes('DELETE FROM marketing_events'))).toBe(false);
+  });
+
+  it('a customer who never consented (false → false, or a first snapshot) keeps their journeys — every users update re-sends the snapshot', async () => {
+    const U = '22222222-2222-4222-8222-222222222222';
+    for (const stored of ['false', null]) {
+      const s = makeService(null, undefined, stored);
+      await s.svc.apply({ type: 'customer.snapshot', aggregateId: U, version: '5', occurredAt: '', data: { pdpa_consent: false } });
+      expect(s.calls.some(([sql]) => sql.includes('DELETE FROM marketing_events') || sql.includes('UPDATE marketing_workflow_enrollments'))).toBe(false);
+    }
   });
 
   it('customer.deleted also removes events, device links, devices and the guest push log (PDPA)', async () => {
@@ -252,6 +259,14 @@ describe('JoshEventsService', () => {
       expect(sqls.some((q) => q.startsWith('INSERT INTO josh_reference_tombstones'))).toBe(true);
       expect(sqls).toContain('UPDATE company_sales_reps SET assigned_sales_user_id = NULL, updated_at = now() WHERE assigned_sales_user_id = $1');
       expect(sqls).toContain('DELETE FROM josh_staff_access WHERE id = $1');
+    });
+
+    it('an older device.snapshot (stale copy) still records its link — links are history, not latest state', async () => {
+      const { svc, calls } = ref({ row: '99' });
+      const data = { id: CO, user_id: '22222222-2222-4222-8222-222222222222', individual_id: 'a'.repeat(32), platform: 'web', last_seen_at: '2026-10-10T01:00:00Z' };
+      expect(await svc.apply({ type: 'device.snapshot', aggregateId: CO, version: '30', occurredAt: 'x', data })).toBe('stale');
+      expect(calls.find(([sql]) => sql.startsWith('INSERT INTO josh_user_devices'))).toBeUndefined();
+      expect(calls.find(([sql]) => sql.includes('INSERT INTO marketing_device_links'))).toBeDefined();
     });
 
     it('device.snapshot copies the josh row and records a device link (spec §5)', async () => {

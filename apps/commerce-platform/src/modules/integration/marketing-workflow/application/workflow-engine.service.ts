@@ -249,7 +249,8 @@ export class WorkflowEngine {
       await this.store.log(m, e.id, stepId, 'notify', 'skipped', { reason: 'guest_cap', templateKey: a.templateKey });
       return;
     }
-    await this.events.publish(new MarketingNotifyRequested(e.deviceId!, { userId: null, templateKey: a.templateKey, channels: ['push'],
+    // Aggregate = the enrollment: outbox aggregate ids are uuid and device ids need not be.
+    await this.events.publish(new MarketingNotifyRequested(e.id, { userId: null, templateKey: a.templateKey, channels: ['push'],
       target: { kind: 'device', subscriptionId: device.pushSubscriptionId, platform: device.platform },
       data: this.notifyData(r, a), dedupeKey: `cmw:${wf.id}:${e.id}:${stepId}` }), m);
     await this.store.logGuestPush(m, e.deviceId!);

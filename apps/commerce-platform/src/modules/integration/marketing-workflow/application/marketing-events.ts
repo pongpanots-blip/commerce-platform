@@ -1,7 +1,7 @@
 import { DomainEvent } from '../../../../shared-kernel/domain/domain-event';
 import type { NotifyChannel } from '../domain/workflow.types';
 
-/** To josh: deliver a notify template; josh dedupes on dedupeKey. Aggregate = the josh user, or the device for a guest (target). */
+/** To josh: deliver a notify template; josh dedupes on dedupeKey. Aggregate = the josh user, or the enrollment for a guest (target). */
 export interface MarketingNotifyPayload {
   userId: string | null; templateKey: string; channels: NotifyChannel[]; data: Record<string, unknown>; dedupeKey: string;
   target?: { kind: 'device'; subscriptionId: string; platform: string };

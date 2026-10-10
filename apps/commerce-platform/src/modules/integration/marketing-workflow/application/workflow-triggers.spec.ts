@@ -6,7 +6,8 @@ const activated = new Date('2026-10-10T03:00:00Z');
 const T = new Date('2026-10-10T06:20:00Z');
 const wf = (triggerType: string, triggerConfig: object = {}, over: object = {}) => ({ id: `wf-${triggerType}`, triggerType, triggerConfig, activatedAt: activated, lastScheduledKey: null, ...over });
 
-function setup(workflows: ReturnType<typeof wf>[], times: { first?: Date | null; last?: Date | null } = {}, crossed = false) {
+function setup(workflows: ReturnType<typeof wf>[], times: { first?: Date | null; last?: Date | null } = {}, crossed = false,
+  events: object[] = [], waits: object[] = [], goals: object[] = [], device: object | null = null) {
   const store = {
     activeWorkflows: jest.fn(async (types: string[]) => workflows.filter((w) => types.includes(w.triggerType))),
     customerTime: jest.fn(async (_u: string, f: string) => (f === 'first_app_login_at' ? times.first ?? null : times.last ?? null)),
@@ -14,9 +15,16 @@ function setup(workflows: ReturnType<typeof wf>[], times: { first?: Date | null;
     markConverted: jest.fn(async () => undefined),
     customerIdsAfter: jest.fn(async (after: string | null) => (after ? [] : [U, '22222222-2222-4222-8222-222222222222'])),
     setLastScheduledKey: jest.fn(async () => undefined),
+    eventsByIds: jest.fn(async () => events),
+    waitingFor: jest.fn(async () => waits),
+    eventGoalCandidates: jest.fn(async () => goals),
+    markConvertedAt: jest.fn(async () => undefined),
+    devicePush: jest.fn(async () => device),
+    manager: {},
   };
-  const engine = { enroll: jest.fn(async (..._args: unknown[]) => 'e1') };
-  return { t: new WorkflowTriggers(store as never, engine as never), store, engine };
+  const engine = { enroll: jest.fn(async (..._a: unknown[]) => 'e1'), resumeFromEvent: jest.fn(async (..._a: unknown[]) => undefined) };
+  const rules = { typesOf: jest.fn(async () => ({ order_id: 'string', price: 'number' })) };
+  return { t: new WorkflowTriggers(store as never, engine as never, rules as never), store, engine };
 }
 
 describe('WorkflowTriggers', () => {
@@ -87,5 +95,55 @@ describe('WorkflowTriggers', () => {
     await done.t.runScheduled(new Date('2026-10-10T11:05:00Z'));
     expect(early.engine.enroll).not.toHaveBeenCalled();
     expect(done.engine.enroll).not.toHaveBeenCalled();
+  });
+  describe('event triggers (spec §7)', () => {
+    const D = 'd'.repeat(32);
+    const ev = (over: object = {}) => ({ eventId: 'ev-1', deviceId: D, name: 'add_to_cart', attributes: { price: 600, order_id: 'O1' },
+      occurredAt: '2026-10-10T06:10:00.000Z', attributedUserId: U, attribution: 'device_link', actorKind: 'customer', ...over });
+    const eventWf = (cfg: object = {}) => wf('event', { eventName: 'add_to_cart', filters: [{ key: 'price', op: 'gte', value: 500 }], includeGuests: false, ...cfg });
+
+    it('enrolls once per event id with the trigger event, only for matching recent events after activation', async () => {
+      const s = setup([eventWf()], {}, false, [ev()]);
+      await s.t.handleEvents(['ev-1'], T);
+      expect(s.engine.enroll).toHaveBeenCalledWith(expect.objectContaining({ id: 'wf-event' }), { userId: U, deviceId: null }, 'ev-1',
+        { triggerEvent: { eventId: 'ev-1', name: 'add_to_cart', attributes: { price: 600, order_id: 'O1' } } });
+      for (const over of [{ attributes: { price: 100 } }, { occurredAt: '2026-10-10T05:00:00.000Z' }, { occurredAt: '2026-10-10T02:59:00.000Z' }, { name: 'view_item' }]) {
+        const n = setup([eventWf()], {}, false, [ev(over)]);
+        await n.t.handleEvents(['ev-1'], T);
+        expect(n.engine.enroll).not.toHaveBeenCalled();
+      }
+    });
+
+    it('skips staff and no-consent events entirely; guests only when the workflow includes guests and the device takes push', async () => {
+      for (const over of [{ attribution: 'staff', attributedUserId: null }, { attribution: 'no_consent', attributedUserId: null }]) {
+        const s = setup([eventWf({ includeGuests: true })], {}, false, [ev(over)], [{ id: 'e9', waitingFor: { stepId: 's', eventName: 'add_to_cart', filters: [], since: '' }, triggerEvent: null }]);
+        await s.t.handleEvents(['ev-1'], T);
+        expect(s.engine.enroll).not.toHaveBeenCalled();
+        expect(s.engine.resumeFromEvent).not.toHaveBeenCalled();
+      }
+      const guest = ev({ attributedUserId: null, attribution: null });
+      const noGuests = setup([eventWf()], {}, false, [guest], [], [], { pushSubscriptionId: 'x', platform: 'web' });
+      await noGuests.t.handleEvents(['ev-1'], T);
+      expect(noGuests.engine.enroll).not.toHaveBeenCalled();
+      const noPush = setup([eventWf({ includeGuests: true })], {}, false, [guest], [], [], { pushSubscriptionId: null, platform: 'web' });
+      await noPush.t.handleEvents(['ev-1'], T);
+      expect(noPush.engine.enroll).not.toHaveBeenCalled();
+      const ok = setup([eventWf({ includeGuests: true })], {}, false, [guest], [], [], { pushSubscriptionId: 'x', platform: 'web' });
+      await ok.t.handleEvents(['ev-1'], T);
+      expect(ok.engine.enroll).toHaveBeenCalledWith(expect.anything(), { userId: null, deviceId: D }, 'ev-1', expect.anything());
+    });
+
+    it('wakes waiting enrollments whose filters match (fromTrigger) and marks event-goal conversions', async () => {
+      const waits = [
+        { id: 'w1', waitingFor: { stepId: 's1', eventName: 'add_to_cart', filters: [{ key: 'order_id', op: 'eq', value: { fromTrigger: 'order_id' } }], since: '' }, triggerEvent: { eventId: 'x', name: 'begin_checkout', attributes: { order_id: 'O1' } } },
+        { id: 'w2', waitingFor: { stepId: 's1', eventName: 'add_to_cart', filters: [{ key: 'order_id', op: 'eq', value: { fromTrigger: 'order_id' } }], since: '' }, triggerEvent: { eventId: 'y', name: 'begin_checkout', attributes: { order_id: 'O2' } } },
+      ];
+      const goals = [{ id: 'g1', goal: { kind: 'event', eventName: 'add_to_cart', filters: [] }, triggerEvent: null }];
+      const s = setup([], {}, false, [ev()], waits, goals);
+      await s.t.handleEvents(['ev-1'], T);
+      expect(s.engine.resumeFromEvent).toHaveBeenCalledTimes(1);
+      expect(s.engine.resumeFromEvent).toHaveBeenCalledWith('w1', 's1', 'ev-1');
+      expect(s.store.markConvertedAt).toHaveBeenCalledWith('g1', new Date('2026-10-10T06:10:00.000Z'));
+    });
   });
 });

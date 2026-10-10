@@ -63,6 +63,8 @@ export class MarketingWorkflowController {
     const row = await this.flows.row(id);
     const issues = await this.flows.issuesOf(row);
     if (issues.length) throw new UnprocessableEntityException({ message: 'workflow ยังไม่พร้อม', issues });
-    return { enrollmentId: await this.engine.enroll(row, x.userId, `test:${Date.now()}`, { test: true, skipWaits: x.skipWaits }) };
+    const trigger = row.triggerType === 'event'
+      ? { eventId: `test:${Date.now()}`, name: (row.triggerConfig as { eventName: string }).eventName, attributes: x.eventAttributes ?? {} } : null;
+    return { enrollmentId: await this.engine.enroll(row, x.userId, `test:${Date.now()}`, { test: true, skipWaits: x.skipWaits, triggerEvent: trigger }) };
   }
 }

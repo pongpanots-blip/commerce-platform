@@ -1,8 +1,9 @@
+import { uiText } from '@cp/ui';
 import type { CanvasPosition, WorkflowStep } from '@cp/marketing-workflow';
 
 /** Pure edits of a workflow's graph. Every pointer is explicit (`nextId` etc.); the entry is `entryStepId`. */
 export const TRIGGER = 'trigger';
-export type StepKind = 'audience' | 'wait' | 'condition' | 'split' | 'push' | 'email' | 'in_app' | 'webhook' | 'grant_coupon';
+export type StepKind = 'audience' | 'wait' | 'condition' | 'split' | 'push' | 'email' | 'in_app' | 'webhook' | 'grant_coupon' | 'wait_event' | 'event_split';
 export interface Anchor { stepId: string; port?: string }
 export interface Graph { entryStepId: string | null; steps: WorkflowStep[] }
 
@@ -17,6 +18,8 @@ export function newStep(kind: StepKind, newId: string = uuid()): WorkflowStep {
       { id: uuid(), label: 'A', percent: 50, nextId: null }, { id: uuid(), label: 'B', percent: 50, nextId: null }] };
     case 'webhook': return { id: newId, type: 'webhook', method: 'POST', url: '', headers: [], body: '', nextId: null };
     case 'grant_coupon': return { id: newId, type: 'action', action: { kind: 'grant_coupon', couponId: '' }, nextId: null };
+    case 'wait_event': return { id: newId, type: 'wait_event', eventName: '', filters: [], timeoutHours: 24, timeoutMinutes: 0, matchedNextId: null, timeoutNextId: null };
+    case 'event_split': return { id: newId, type: 'event_split', rule: { op: 'AND', children: [] }, yesNextId: null, noNextId: null };
     default: return { id: newId, type: 'action', action: { kind: 'notify', channels: [kind], templateKey: '' }, nextId: null };
   }
 }
@@ -24,6 +27,8 @@ export function newStep(kind: StepKind, newId: string = uuid()): WorkflowStep {
 export function outPorts(step: WorkflowStep): { port?: string; label: string; target: string | null }[] {
   if (step.type === 'condition') return [{ port: 'yes', label: 'Yes', target: step.yesNextId }, { port: 'no', label: 'No', target: step.noNextId }];
   if (step.type === 'split') return step.branches.map((b) => ({ port: b.id, label: `${b.label} ${b.percent}%`, target: b.nextId }));
+  if (step.type === 'event_split') return [{ port: 'yes', label: 'Yes', target: step.yesNextId }, { port: 'no', label: 'No', target: step.noNextId }];
+  if (step.type === 'wait_event') return [{ port: 'matched', label: uiText('เกิดขึ้น'), target: step.matchedNextId }, { port: 'timeout', label: uiText('หมดเวลา'), target: step.timeoutNextId }];
   return [{ port: undefined, label: '', target: step.nextId }];
 }
 
@@ -39,6 +44,8 @@ export function targetOf(g: Graph, a: Anchor): string | null {
 
 function withTarget(step: WorkflowStep, port: string | undefined, target: string | null): WorkflowStep {
   if (step.type === 'condition') return port === 'no' ? { ...step, noNextId: target } : { ...step, yesNextId: target };
+  if (step.type === 'event_split') return port === 'no' ? { ...step, noNextId: target } : { ...step, yesNextId: target };
+  if (step.type === 'wait_event') return port === 'timeout' ? { ...step, timeoutNextId: target } : { ...step, matchedNextId: target };
   if (step.type === 'split') {
     const branchId = port ?? step.branches[0]?.id;
     return { ...step, branches: step.branches.map((b) => (b.id === branchId ? { ...b, nextId: target } : b)) };
@@ -77,6 +84,8 @@ export function removeStep(g: Graph, id: string): Graph {
   const steps = g.steps.filter((s) => s.id !== id).map((s): WorkflowStep => {
     if (s.type === 'condition') return { ...s, yesNextId: repoint(s.yesNextId), noNextId: repoint(s.noNextId) };
     if (s.type === 'split') return { ...s, branches: s.branches.map((b) => ({ ...b, nextId: repoint(b.nextId) })) };
+    if (s.type === 'event_split') return { ...s, yesNextId: repoint(s.yesNextId), noNextId: repoint(s.noNextId) };
+    if (s.type === 'wait_event') return { ...s, matchedNextId: repoint(s.matchedNextId), timeoutNextId: repoint(s.timeoutNextId) };
     return { ...s, nextId: repoint(s.nextId) };
   });
   return { entryStepId: repoint(g.entryStepId), steps };

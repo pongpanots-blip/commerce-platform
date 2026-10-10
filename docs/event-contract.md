@@ -126,7 +126,7 @@ qty ที่ **เก่ากว่า** ค่าที่ commerce มีอ
 | `company.sales_rep` | `CommerceSalesRepsService` ตั้ง `company.assigned_sales_user_id` (ผ่าน `commerce_applied_versions` ตาม `assignedAt`; ต้องเปิด `COMMERCE_OWNS_CUSTOMERS` ไม่งั้นตอบ 409) |
 | `staff.access` | ขั้น 6 · `CommerceStaffService` (josh `feat/stage6-staff-admin` — pair-ready) ตั้ง `users.role` / `users.is_active` และ `token_version = GREATEST(token_version, minTokenVersion)` ผ่านตัวกัน version `'staff.access'` แล้วล้าง cache role ภายใน · ต้องเปิด `COMMERCE_OWNS_STAFF` (ไม่งั้น 409) · user ไม่รู้จัก / เป็นลูกค้า / บัญชีระบบของ commerce → 422 · trigger เดิมส่ง `staff.snapshot` กลับให้ commerce |
 | `winback.notify` / `winback.welcome_email` / `winback.row` | `CommerceWinbackEventsService` — ส่งแจ้งเตือน / อีเมลด้วยระบบของ josh และเขียนสำเนาตาราง winback (ต้องเปิด `WINBACK_OWNED_BY_COMMERCE`) |
-| `marketing.notify` / `marketing.grant_coupon` | `CommerceMarketingEventsService` — notify: template override + opt-out + frequency cap ของ josh แล้ว `NotificationService.dispatch` (ตอบ `outcome`: `sent` / `marketing_opt_out` / `frequency_cap`) · grant: `grantFromMarketingWorkflow` (idempotent; `granted` / `already_granted`). เปิดส่งโดยเพิ่มทั้งสอง type เข้า subscription ของ josh (`ops/scripts/josh-subscription.cjs`, `SCRIPT_ARGS='add=marketing.notify,marketing.grant_coupon'`) **หลัง** deploy josh ที่มีตัวรับแล้วเท่านั้น — josh ตอบ 422 กับ type ที่ไม่รู้จักและ commerce ส่ง 4xx ไป dead-letter |
+| `marketing.notify` / `marketing.grant_coupon` | `CommerceMarketingEventsService` — notify: template override + opt-out + frequency cap ของ josh แล้ว `NotificationService.dispatch` (ตอบ `outcome`: `sent` / `marketing_opt_out` / `frequency_cap`) · guest: `userId: null` + `target: { kind: 'device', subscriptionId, platform }` → push อย่างเดียวถึง OneSignal subscription นั้น (template render โดยไม่มีข้อมูลลูกค้า ไม่ผ่าน frequency cap ของ josh — commerce คุมเพดาน guest 1 ครั้ง/device/24 ชม.; ตอบ `sent` / `template_missing` / `failed`) · grant: `grantFromMarketingWorkflow` (idempotent; `granted` / `already_granted`). เปิดส่งโดยเพิ่มทั้งสอง type เข้า subscription ของ josh (`ops/scripts/josh-subscription.cjs`, `SCRIPT_ARGS='add=marketing.notify,marketing.grant_coupon'`) **หลัง** deploy josh ที่มีตัวรับแล้วเท่านั้น — josh ตอบ 422 กับ type ที่ไม่รู้จักและ commerce ส่ง 4xx ไป dead-letter |
 
 `failed` ที่ handler คืน (SKU ไม่มีใน shop) → ตอบ `422` · error อื่น → `5xx`
 
@@ -163,13 +163,14 @@ action log ที่ failed → `marketing_workflow`) — เปิดด้ว�
 | `push_campaign.snapshot` | ทั้งแถวของ `push_campaigns` (ขั้น 5, S5-12): `{ id, name, notification_type, title, body, title_en, body_en, image_url, deep_link, deep_link_web, audience, ab_enabled, ab_variant_b, status, scheduled_at, sent_at, stats, created_by, last_error, created_at, updated_at }` → `josh_push_campaigns` · `stats` เปลี่ยนระหว่างส่ง → ส่งใหม่ (drainer รวมเป็นหนึ่ง snapshot ต่อแคมเปญต่อรอบ) · `audience` เป็นตามที่ josh เก็บ (อาจมี `userIds` / `companyIds` ที่เลือกเอง — id เท่านั้น ไม่มีชื่อ / เบอร์) · ผลส่งรายคนยังอยู่ใน Mongo ของ josh (`JOSH_MONGO_URL`) |
 | `marketing_workflow.snapshot` | หนึ่ง workflow กับตัวนับ (ขั้น 5, S5-12): `{ workflow, enrollmentsByStatus, enrollmentsByDay, runsByDay, recentRuns, recentFailures, conversions }` · `workflow` = ทั้งแถว `marketing_workflows` ยกเว้น `previous_version` · `enrollmentsByStatus[]` = `{ status, n }` (ทั้งหมด) · `enrollmentsByDay[]` = `{ day, enrolled, running, failed, converted, holdout }` ตามวันที่ `started_at` เวลาไทย 366 วันล่าสุด · `runsByDay[]` = `{ day, runs, failed_runs, last_run_at }` ตาม `fired_at` · `recentRuns[]` (20) = `{ fired_at, source, status, skip_reason, audience_count, enrolled_count, error_message }` · `recentFailures[]` (20) = action log ที่ failed `{ created_at, step_id, action_kind, status, detail }` · `conversions[]` = `{ order_id, started_at, converted_at }` ของ enrollment ที่ไม่ใช่ holdout, user เดียวกับ order, order อยู่ใน conversion window ปัจจุบัน, `started_at` 366 วันล่าสุด — commerce กรองสถานะ / จ่ายแล้ว / ช่วงวันที่เองจาก `josh_orders` → `josh_marketing_workflows` · **ไม่มี enrollment รายคนและไม่มี user id** · ส่งใหม่เมื่อ workflow, enrollment (สถานะ / เริ่ม / holdout / conversion), scheduled run หรือ action log ที่ failed เปลี่ยน — การเดิน step (`current_step_id` / `resume_at`) ไม่ส่ง |
 | `cuisine.snapshot` | `{ id, parent_id, cuisine_name, cuisine_name_th, level, is_active }` (ขั้น 2c) → `josh_cuisines` |
+| `device.snapshot` | แถว `user_devices`: `{ id, user_id, individual_id, platform, first_seen_at, last_seen_at }` (event layer, spec 2026-10-10-marketing-event-layer §5) — ส่งตอน insert และตอน `user_id` เปลี่ยนเท่านั้น (login ซ้ำที่แค่ขยับ `last_seen_at` ไม่ส่ง) → `josh_user_devices` + บันทึก link ใน `marketing_device_links` (`linked_at` = `last_seen_at`) แล้วระบุตัว event ของ device นั้นใหม่เฉพาะช่วงที่ link ครอบ · พนักงาน (`josh_staff`, `user_type` ไม่ใช่ `customer`) ไม่ถูกนับเป็นลูกค้า |
 | `restaurant_place.snapshot` | ทั้งแถวของ `restaurant_place` (ขั้น 2c) → `josh_restaurant_places` (เก็บเฉพาะคอลัมน์ที่มี) |
 | `staff.snapshot` | user ที่ไม่ใช่ลูกค้า: `{ id, email, first_name, last_name, role, user_type, is_active, token_version, company_id, created_at, last_app_login_at }` (ขั้น 2c) → `josh_staff` — ใช้ตรวจ token ของแอปฝ่ายขาย · `token_version` อยู่ที่นี่เท่านั้น ไม่อยู่ใน `customer.snapshot` |
-| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` / `branch.deleted` / `jagota_sync.deleted` / `push_campaign.deleted` / `marketing_workflow.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล และลบ `josh_staff_access` (ขั้น 6) |
+| `company.deleted` / `cuisine.deleted` / `restaurant_place.deleted` / `staff.deleted` / `branch.deleted` / `jagota_sync.deleted` / `push_campaign.deleted` / `marketing_workflow.deleted` / `device.deleted` | `{ id }` — commerce ลบแถวและเก็บ tombstone (`josh_reference_tombstones`) กัน snapshot เก่ามาสร้างกลับ · `staff.deleted` ล้าง sales ของบริษัทที่คนนั้นดูแล และลบ `josh_staff_access` (ขั้น 6) |
 
 `version` ของ `*.deleted` มาจาก `commerce_snapshot_seq` เดียวกับ snapshot (ไม่ใช่ id แถว outbox) จึงชนะ snapshot ก่อนหน้าได้
 
-Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"|"company"|"cuisine"|"restaurant_place"|"staff"|"branch"|"jagota_sync"|"push_campaign"|"marketing_workflow"|"promotion-rules"|"promotion-lock"}` → josh
+Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"|"customer"|"catalog"|"company"|"cuisine"|"restaurant_place"|"staff"|"branch"|"jagota_sync"|"push_campaign"|"marketing_workflow"|"promotion-rules"|"promotion-lock"|"device"}` → josh
 `POST /internal/commerce/backfill` (ลงลายเซ็นแบบ commerce → josh)
 
 ขั้น 5 (S5-11) — ลำดับ rollout: deploy commerce (migration `JoshReportCopies`) **ก่อน** josh (migrations
@@ -181,3 +182,31 @@ Backfill: commerce staff `POST /api/reports/order-copy/backfill {"group":"order"
 `CommerceOutbox{PushCampaign,MarketingWorkflow}`) · จากนั้น backfill `push_campaign`, `marketing_workflow`
 
 Stage 4 G9 adds `product.promotion-rules.snapshot` (`{sku,rules,version,rules_reset_version}`; decimal bigint strings, full replacement, empty clears). Signed Josh inbound groups `promotion-rules.snapshot` and `promotion-lock.snapshot` use the normal numeric envelope version. Lock snapshots also carry the retained assignment marker `rules_reset_version`, including unlocked snapshots, so pending edits cannot restore tiers after an assignment was removed. Commerce returns the observed marker on every owned write. See [G9 cutover](runbooks/stage4g-promotions-cutover.md). Mechanic/campaign/audience configuration stays in Josh.
+
+## 7. Behaviour events ingest (`POST /api/events`)
+
+commerce เป็นเจ้าของ event พฤติกรรม (spec `docs/superpowers/specs/2026-10-10-marketing-event-layer-design.md` §3) — shop-web และแอปมือถือยิงเส้นเดียวกัน
+ไม่ต้อง login (ระบุตัวด้วย device link จาก `device.snapshot`) · ปิดอยู่จนตั้ง `MARKETING_EVENTS_INGEST_ENABLED=true` (ปิด → `503 { code: 'ingest_disabled' }`)
+
+```jsonc
+// request
+{ "schemaVersion": 1, "deviceId": "^[A-Za-z0-9_-]{8,64}$", "platform": "web" | "ios" | "android",
+  "pushSubscriptionId": "uuid",            // ไม่บังคับ — OneSignal subscription id (เมื่อเปิดรับ push)
+  "events": [ { "eventId": "uuid", "name": "add_to_cart", "occurredAt": "ISO-8601 มี offset",
+                "context": { "companyId": "…", "branchId": "…", "actorKind": "customer" | "anonymous" },
+                "attributes": { "item_id": "SKU-1", "price": 199.5 } } ] }
+// response 200 — ผลต่อ event ตามลำดับที่ส่ง
+{ "results": [ { "eventId": "uuid", "status": "accepted" | "duplicate" | "rejected", "reason": "unknown_event" } ] }
+```
+
+- `events` 1–20 ตัว · body ≤ 32 KB · attribute ≤ 20 key และ ≤ 2 KB ต่อ event · `occurredAt` อนาคตไม่เกิน 5 นาที ย้อนหลังไม่เกิน 7 วัน
+- เหตุผลที่ปฏิเสธ: `unknown_event`, `archived_event`, `bad_attribute_type`, `too_large`, `in_future`, `too_old` · envelope เสีย → `400` · เกินโควตา → `429`
+  (120 request/นาที ต่อ IP, 60 event/นาที ต่อ device)
+- รับเฉพาะ event ใน catalog (`/marketing/events` ใน commerce-admin) · attribute ที่ไม่ได้ประกาศถูกตัดทิ้ง · ห้ามส่งข้อมูลส่วนบุคคลหรือคำค้นแบบข้อความอิสระ
+- `source` / `environment` / `receivedAt` เป็นของ server — client ส่งมาไม่ได้
+- ส่งซ้ำด้วย `eventId` + `occurredAt` เดิม → `duplicate` (เก็บครั้งเดียว)
+- client ยิงแบบ fire-and-forget: batch ทุก 2 วินาทีหรือครบ 20 ตัว, `fetch` แบบ `keepalive`, timeout 3 วินาที, ไม่ retry, error ไม่ขึ้นหน้าจอ
+
+**แอปมือถือ (สัญญาสำหรับทีมมือถือ):** เส้นเดียวกัน · `platform: "ios" | "android"` · `deviceId` = `pushSubscriptionId` = OneSignal subscription id
+ตัวเดียวกับที่ส่ง `POST /api/auth/device` ของ josh · `context.actorKind` = `customer` เมื่อ login, `anonymous` เมื่อยังไม่ login ·
+`companyId` / `branchId` = active branch ตอนเกิด event · ชื่อ event และ attribute ตาม catalog เดียวกับเว็บ

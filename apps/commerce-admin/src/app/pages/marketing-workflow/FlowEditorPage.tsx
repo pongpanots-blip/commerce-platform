@@ -1,9 +1,9 @@
 // ui-copy-migration: only literal UI copy and notification templates
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Button, Input, Loading, Modal, Page, PageHeader, Segmented, Select, StatusChip, toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
-import type { SegmentOption, TriggerType, WebhookSecretItem, Workflow, WorkflowInput, WorkflowIssue, WorkflowMeta, WorkflowStep } from '@cp/marketing-workflow';
-import { flowsApi, marketingTestersApi, type MarketingTester } from '../../../lib/api';
+import { Alert, Button, Input, Loading, Modal, Page, PageHeader, Segmented, Select, StatusChip, Textarea, toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import type { DynamicSegment, EventDefinition, SegmentOption, TriggerType, WebhookSecretItem, Workflow, WorkflowInput, WorkflowIssue, WorkflowMeta, WorkflowStep } from '@cp/marketing-workflow';
+import { dynamicSegmentsApi, eventsApi, flowsApi, marketingTestersApi, type MarketingTester } from '../../../lib/api';
 import { useAsync } from '../../hooks';
 import { getCoupons } from '../workflow-editor/josh/extra.api';
 import { FlowCanvas } from './FlowCanvas';
@@ -47,6 +47,8 @@ function Editor({ id }: { id: string }) {
   const [segments, setSegments] = useState<SegmentOption[]>([]);
   const [coupons, setCoupons] = useState<CouponOption[]>([]);
   const [secrets, setSecrets] = useState<WebhookSecretItem[]>([]);
+  const [definitions, setDefinitions] = useState<EventDefinition[]>([]);
+  const [dynamicSegments, setDynamicSegments] = useState<DynamicSegment[]>([]);
   const [selection, setSelection] = useState<string | null>(TRIGGER);
   const [tab, setTab] = useState<'flow' | 'results'>('flow');
   const [issues, setIssues] = useState<WorkflowIssue[]>([]);
@@ -56,8 +58,10 @@ function Editor({ id }: { id: string }) {
   const [historyOpen, setHistoryOpen] = useState(false);
 
   const load = useCallback(async () => {
-    const [w, m, segs, secs] = await Promise.all([flowsApi.get(id), flowsApi.meta(), flowsApi.segmentOptions(), flowsApi.secrets.list()]);
+    const [w, m, segs, secs, defs, dyn] = await Promise.all([flowsApi.get(id), flowsApi.meta(), flowsApi.segmentOptions(), flowsApi.secrets.list(),
+      eventsApi.definitions(), dynamicSegmentsApi.list()]);
     setWf(w); setInput(inputOf(w)); setIssues(w.issues); setMeta(m); setSegments(segs); setSecrets(secs); setDirty(false);
+    setDefinitions(defs.definitions); setDynamicSegments(dyn);
     // Coupons live in josh (admin-call); the editor still works without them.
     getCoupons(1, 200, '').then((res) => setCoupons(((res?.data?.data?.data ?? []) as CouponOption[])
       .map((c) => ({ id: c.id, coupon_code: c.coupon_code, title: c.title })))).catch(() => setCoupons([]));
@@ -127,31 +131,37 @@ function Editor({ id }: { id: string }) {
           </div>
           <div className="w-80 shrink-0 overflow-y-auto">
             <StepPanel selection={selection} input={input} meta={meta} issues={issues} segments={segments} coupons={coupons} secrets={secrets}
+              definitions={definitions} dynamicSegments={dynamicSegments}
               onChangeInput={patch} onChangeStep={(s: WorkflowStep) => patch({ steps: input.steps.map((x) => (x.id === s.id ? s : x)) })}
               onRemoveStep={(sid) => { applyGraph(removeStep(graph, sid)); setSelection(null); }}
               onSecretsChanged={() => { flowsApi.secrets.list().then(setSecrets).catch(() => undefined); }} />
           </div>
         </div>
       )}
-      {testOpen && <TestRunModal id={id} dirty={dirty} onSave={save} onClose={() => setTestOpen(false)} />}
+      {testOpen && <TestRunModal id={id} dirty={dirty} triggerType={input.triggerType} onSave={save} onClose={() => setTestOpen(false)} />}
       {historyOpen && <RevisionsModal id={id} onLoad={(snapshot) => { setInput(snapshot); setDirty(true); setHistoryOpen(false); }} onClose={() => setHistoryOpen(false)} />}
     </Page>
   );
 }
 
-function TestRunModal({ id, dirty, onSave, onClose }: { id: string; dirty: boolean; onSave: () => Promise<void>; onClose: () => void }) {
+function TestRunModal({ id, dirty, triggerType, onSave, onClose }: { id: string; dirty: boolean; triggerType: TriggerType; onSave: () => Promise<void>; onClose: () => void }) {
   __useUiLocale();
   const testers = useAsync(() => marketingTestersApi.list(), []);
   const [userId, setUserId] = useState('');
   const [skipWaits, setSkipWaits] = useState(true);
+  const [attrs, setAttrs] = useState('{}');
   const [msg, setMsg] = useState<string | null>(null);
   const list: MarketingTester[] = testers.data ?? [];
   const chosen = userId || list[0]?.userId || '';
   const start = async () => {
     setMsg(null);
     try {
+      let eventAttributes: Record<string, unknown> | undefined;
+      if (triggerType === 'event') {
+        try { eventAttributes = JSON.parse(attrs || '{}'); } catch { setMsg(__uiText('JSON ไม่ถูกต้อง')); return; }
+      }
       if (dirty) await onSave();
-      const r = await flowsApi.testRun(id, chosen, skipWaits);
+      const r = await flowsApi.testRun(id, chosen, skipWaits, eventAttributes);
       setMsg(r.enrollmentId ? __uiText('เริ่มแล้ว — ดูผลที่แท็บผลลัพธ์ (test)') : __uiText('ไม่ได้เริ่ม'));
     } catch (e) {
       const found = issuesOf(e);
@@ -167,6 +177,7 @@ function TestRunModal({ id, dirty, onSave, onClose }: { id: string; dirty: boole
             {list.map((t) => <option key={t.userId} value={t.userId}>{t.name ?? t.email} · {t.email}</option>)}
           </Select>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={skipWaits} onChange={(e) => setSkipWaits(e.target.checked)} />{__uiText('ข้าม Time Delay')}</label>
+          {triggerType === 'event' && <Textarea rows={3} className="font-mono text-xs" aria-label={__uiText('attribute ตัวอย่าง (JSON)')} value={attrs} onChange={(e) => setAttrs(e.target.value)} />}
           <p className="text-xs text-on-surface-variant">{__uiText('ส่งจริง (push / email / คูปองผ่าน josh, webhook ยิงจริง) เฉพาะ tester ที่เลือก')}</p>
         </div>
       ) : <p className="text-sm">{__uiText('ยังไม่มี tester — เพิ่มได้ที่หน้า ข้อความอัตโนมัติ › Tester')}</p>}

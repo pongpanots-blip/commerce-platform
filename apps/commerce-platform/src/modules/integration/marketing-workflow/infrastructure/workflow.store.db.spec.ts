@@ -93,4 +93,36 @@ const url = process.env.MARKETING_TEST_DATABASE_URL;
       expect(await store.notifiesQueuedToday(m, U)).toBeGreaterThanOrEqual(1);
     });
   });
+  it('guest enrollments dedupe per device; lockWaiting only finds an enrollment still waiting on that step', async () => {
+    const D = 'g'.repeat(32);
+    const a = await store.insertEnrollment({ workflowId: wf, userId: null, deviceId: D, occurrenceKey: 'ev1', entryStepId: 's1', holdout: false, test: false, skipWaits: false, triggerEvent: null });
+    expect(await store.insertEnrollment({ workflowId: wf, userId: null, deviceId: D, occurrenceKey: 'ev1', entryStepId: 's1', holdout: false, test: false, skipWaits: false, triggerEvent: null })).toBeNull();
+    await db.transaction((m) => store.parkForEvent(m, a!, 's1', { stepId: 's1', eventName: 'purchase', filters: [], since: new Date().toISOString() }, new Date(Date.now() + 60_000)));
+    expect((await store.waitingFor({ userId: null, deviceId: D }, 'purchase', new Date())).map((r) => r.id)).toEqual([a]);
+    await db.transaction(async (m) => expect(await store.lockWaiting(m, a!, 's1')).toMatchObject({ deviceId: D }));
+    await db.transaction((m) => store.moveAfterEvent(m, a!, 's2'));
+    await db.transaction(async (m) => expect(await store.lockWaiting(m, a!, 's1')).toBeNull());
+  });
+
+  it('event goals, event reads and guest push count run as SQL', async () => {
+    const D = 'q'.repeat(32);
+    const E = 'e2000000-0000-4000-8000-000000000001';
+    await db.query(`DELETE FROM marketing_events WHERE device_id = $1`, [D]); // a previous failed run
+    await db.query(`UPDATE marketing_workflows SET exit_on_goal = '{"kind":"event","eventName":"purchase","filters":[]}', conversion_window_days = 7 WHERE id = $1`, [wf]);
+    const g = await store.insertEnrollment({ workflowId: wf, userId: null, deviceId: D, occurrenceKey: 'goal', entryStepId: 's1', holdout: false, test: false, skipWaits: false });
+    await db.query(`INSERT INTO marketing_events (schema_version, event_id, device_id, platform, source, environment, name, attributes, occurred_at)
+      VALUES (1, $1, $2, 'web', 'shop_browser', 'development', 'purchase', '{"order_id":"O1"}', now() + interval '1 second')`, [E, D]);
+    const [ev] = await store.eventsByIds([E]);
+    expect(ev).toMatchObject({ eventId: E, deviceId: D, name: 'purchase', attributes: { order_id: 'O1' }, attributedUserId: null });
+    expect((await store.eventGoalCandidates({ userId: null, deviceId: D }, 'purchase', new Date(ev.occurredAt))).map((c) => c.id)).toEqual([g]);
+    await db.transaction(async (m) => {
+      expect(await store.eventsSince(m, { userId: null, deviceId: D }, 'purchase', new Date(Date.now() - 60_000))).toEqual([{ attributes: { order_id: 'O1' } }]);
+      await store.logGuestPush(m, D);
+      expect(await store.guestPushesLast24h(m, D)).toBe(1);
+    });
+    await store.markConvertedAt(g!, new Date(ev.occurredAt));
+    expect(await store.eventGoalCandidates({ userId: null, deviceId: D }, 'purchase', new Date(ev.occurredAt))).toEqual([]);
+    await db.query(`DELETE FROM marketing_events WHERE device_id = $1`, [D]);
+    await db.query(`DELETE FROM marketing_guest_push_log WHERE device_id = $1`, [D]);
+  });
 });

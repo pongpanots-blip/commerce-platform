@@ -13,6 +13,7 @@ export const PALETTE: PaletteCategory[] = [
     { id: 'order_milestone', get label() { return uiText('ยอดสั่งซื้อถึงเป้า'); }, icon: 'shopping_cart_checkout', trigger: true },
     { id: 'first_login', get label() { return uiText('เข้าแอปครั้งแรก'); }, icon: 'person_add', trigger: true },
     { id: 'app_login', get label() { return uiText('กลับมาเข้าแอป'); }, icon: 'autorenew', trigger: true },
+    { id: 'event', get label() { return uiText('เมื่อเกิด event'); }, icon: 'bolt', trigger: true },
   ] },
   { category: 'channel', get title() { return uiText('CHANNELS'); }, color: '#a157d8', items: [
     { id: 'push', get label() { return uiText('Push'); }, icon: 'notifications' },
@@ -22,7 +23,9 @@ export const PALETTE: PaletteCategory[] = [
   ] },
   { category: 'flow', get title() { return uiText('FLOW'); }, color: '#3d8fe8', items: [
     { id: 'wait', get label() { return uiText('Time Delay'); }, icon: 'hourglass_top' },
+    { id: 'wait_event', get label() { return uiText('Wait for event'); }, icon: 'pending_actions' },
     { id: 'condition', get label() { return uiText('Condition Split'); }, icon: 'polyline' },
+    { id: 'event_split', get label() { return uiText('Event condition'); }, icon: 'rule' },
     { id: 'split', get label() { return uiText('A/B Split'); }, icon: 'account_tree' },
     { id: 'audience', get label() { return uiText('Audience filter'); }, icon: 'group' },
   ] },
@@ -42,9 +45,9 @@ export function kindOf(step: WorkflowStep): StepKind {
 
 export function disabledReason(item: PaletteItem, steps: WorkflowStep[], triggerType: TriggerType, limits: WorkflowMeta['limits']): string | null {
   if (item.trigger) return item.id === triggerType ? uiText('ใช้อยู่แล้ว') : null;
-  const count = (t: WorkflowStep['type']) => steps.filter((s) => s.type === t).length;
+  const count = (...t: WorkflowStep['type'][]) => steps.filter((s) => t.includes(s.type)).length;
   if (item.id === 'audience' && count('audience') >= limits.maxAudienceSteps) return uiText('มี Audience filter ได้ 1 อัน');
-  if (item.id === 'wait' && count('wait') >= limits.maxWaitSteps) return uiText('Time Delay ครบ {0} อันแล้ว', { 0: limits.maxWaitSteps });
-  if (item.id === 'condition' && count('condition') >= limits.maxConditionSteps) return uiText('Condition ครบ {0} อันแล้ว', { 0: limits.maxConditionSteps });
+  if ((item.id === 'wait' || item.id === 'wait_event') && count('wait', 'wait_event') >= limits.maxWaitSteps) return uiText('Time Delay ครบ {0} อันแล้ว', { 0: limits.maxWaitSteps });
+  if ((item.id === 'condition' || item.id === 'event_split') && count('condition', 'event_split') >= limits.maxConditionSteps) return uiText('Condition ครบ {0} อันแล้ว', { 0: limits.maxConditionSteps });
   return null;
 }

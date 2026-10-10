@@ -9,6 +9,7 @@ import { StorefrontModule } from './storefront/storefront.module';
 import { PortalModule } from './portal/portal.module';
 import { mountMcp } from './mcp/mcp.http';
 import { TaskAwareLogger } from './shared-kernel/infrastructure/scheduled-task';
+import { applyTrustProxy } from './shared-kernel/presentation/trust-proxy';
 
 async function bootstrap() {
   validateEnv(process.env);
@@ -18,6 +19,7 @@ async function bootstrap() {
   app.useLogger(new TaskAwareLogger());
   // Product / coupon images go to josh as base64 through /api/josh/admin-call (3.5 MB of files per call).
   app.useBodyParser('json', { limit: '6mb' });
+  applyTrustProxy(app.getHttpAdapter().getInstance(), process.env);
   // COMMERCE_CORS_ORIGINS is a comma-separated allowlist (no spaces), e.g.
   // "http://localhost:4403,http://localhost:4404" — add :4404 (commerce-portal
   // dev server) alongside :4403 (commerce-admin) when running the portal UI locally.

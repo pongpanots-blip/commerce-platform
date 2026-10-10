@@ -12,4 +12,5 @@ export class WorkflowTriggerListener {
 
   @OnEvent('marketing-trigger.customer') customer(p: { userId: string }) { this.queue.trigger('customer', p.userId); }
   @OnEvent('marketing-trigger.order') order(p: { userId: string }) { this.queue.trigger('order', p.userId); }
+  @OnEvent('marketing-trigger.events') events(p: { eventIds: string[] }) { this.queue.events(p.eventIds); }
 }

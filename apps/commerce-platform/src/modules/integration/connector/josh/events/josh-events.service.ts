@@ -8,7 +8,8 @@ import { Row, toHead, toLine } from '../orders/josh-order-copy';
 import { JoshCatalogProduct } from '../josh-catalog-product.entity';
 import { JoshCustomerCopy } from './josh-customer-copy.entity';
 import { OrderStockService } from '../../../../commerce/inventory/application/order-stock.service';
-import { stopMarketingForCustomer } from '../../../marketing-workflow/infrastructure/workflow.store';
+import { adoptGuestEnrollments, stopEnrollmentsForCustomer, stopMarketingForCustomer } from '../../../marketing-workflow/infrastructure/workflow.store';
+import { deleteMarketingEventsForCustomer, linkDevice, withdrawConsent } from '../../../marketing-events/infrastructure/device-links';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface JoshEnvelope { type: string; aggregateId: string; version: string; occurredAt: string; data: any }
@@ -21,7 +22,7 @@ export type ApplyResult = 'applied' | 'stale';
 const REFERENCE_TABLES = {
   company: 'josh_companies', cuisine: 'josh_cuisines', restaurant_place: 'josh_restaurant_places', staff: 'josh_staff',
   branch: 'josh_branches', jagota_sync: 'jagota_order_sync_history', push_campaign: 'josh_push_campaigns',
-  marketing_workflow: 'josh_marketing_workflows',
+  marketing_workflow: 'josh_marketing_workflows', device: 'josh_user_devices',
 } as const;
 /** order.snapshot children (stage 5, S5-11) → copy table, replaced per order like the lines. */
 const ORDER_CHILDREN = { payments: 'josh_order_payments', shipments: 'josh_order_shipments', refunds: 'josh_order_refunds' } as const;
@@ -61,8 +62,14 @@ export class JoshEventsService {
         return this.signalled('marketing-trigger.order', e.data?.order?.user_id,
           await this.guarded('josh_orders', 'orders_id', e, (m) => this.saveOrder(m, e)));
       case 'customer.snapshot':
-        return this.signalled('marketing-trigger.customer', e.aggregateId, await this.guarded('josh_customers', 'id', e, (m) =>
-          m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: e.data ?? {}, sourceVersion: e.version, deletedAt: null })));
+        return this.signalled('marketing-trigger.customer', e.aggregateId, await this.guarded('josh_customers', 'id', e, async (m) => {
+          await m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: e.data ?? {}, sourceVersion: e.version, deletedAt: null });
+          // Signup consent (pdpa_consent) gates every use of events (spec §5.1); false → their events go, journeys stop.
+          if (e.data?.pdpa_consent === false) {
+            await withdrawConsent(m, e.aggregateId);
+            await stopEnrollmentsForCustomer(m, e.aggregateId, 'consent_withdrawn');
+          }
+        }));
       case 'customer.deleted':
         // PDPA: wipe the copy (tombstone blocks older snapshots) and everything commerce derived from it.
         // Segment member_count stays as frozen, like josh (its snapshot rows cascade, the count doesn't change).
@@ -75,6 +82,7 @@ export class JoshEventsService {
           await m.query('UPDATE winback_account SET josh_user_id = NULL WHERE josh_user_id = $1', [e.aggregateId]);
           // Commerce marketing workflows: stop the customer's journeys and blank their webhook rows (same transaction).
           await stopMarketingForCustomer(m, e.aggregateId);
+          await deleteMarketingEventsForCustomer(m, e.aggregateId);
         });
       case 'catalog.snapshot':
         return this.guarded('josh_catalog_products', 'id', e, (m) => this.saveCatalog(m, e));
@@ -86,9 +94,27 @@ export class JoshEventsService {
         return this.saveFallback(e);
       case 'marketing_workflow.snapshot':
         return this.reference('josh_marketing_workflows', e, (m) => this.saveWorkflow(m, e));
+      case 'device.snapshot':
+        return this.deviceLinked(e);
       default:
         return this.applyReference(e);
     }
+  }
+
+  /** josh user_devices row → copy + device link, guest journeys adopted, recent events re-checked after commit (spec §5). */
+  private async deviceLinked(e: JoshEnvelope): Promise<ApplyResult> {
+    let recent: string[] = [];
+    const result = await this.reference('josh_user_devices', e, async (m) => {
+      await this.saveReference(m, 'josh_user_devices', e);
+      const d = e.data;
+      if (typeof d.user_id !== 'string' || typeof d.individual_id !== 'string') return;
+      const linked = await linkDevice(m, { deviceId: d.individual_id, userId: d.user_id, platform: String(d.platform ?? 'web'),
+        linkedAt: new Date(d.last_seen_at ?? e.occurredAt) });
+      if (linked.usable) await adoptGuestEnrollments(m, d.individual_id, d.user_id);
+      recent = linked.recentEventIds;
+    });
+    if (result === 'applied' && recent.length) this.emitter?.emit('marketing-trigger.events', { eventIds: recent });
+    return result;
   }
 
   /** Stage 2c: `<group>.snapshot` / `<group>.deleted` for the reference rows winback reads (no josh replica). */

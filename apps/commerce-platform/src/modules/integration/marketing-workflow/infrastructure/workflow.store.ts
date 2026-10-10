@@ -149,10 +149,27 @@ export class WorkflowStore {
  * the unsent webhook rows and blank every marketing webhook row's rendered URL / headers / body.
  */
 export async function stopMarketingForCustomer(m: EntityManager, userId: string): Promise<void> {
-  await m.query(`UPDATE marketing_workflow_enrollments SET status = 'skipped', end_reason = 'customer_deleted', completed_at = now(),
-    current_step_id = NULL, resume_at = NULL WHERE user_id = $1 AND status IN ('pending', 'running')`, [userId]);
+  await stopEnrollmentsForCustomer(m, userId, 'customer_deleted');
   await m.query(`UPDATE webhook_deliveries SET status = CASE WHEN status = 'pending' THEN 'failed' ELSE status END,
       error = CASE WHEN status = 'pending' THEN 'customer_deleted' ELSE error END, payload = 'null'::jsonb, headers = NULL, target_url = ''
     WHERE kind = 'marketing' AND id IN (SELECT (l.meta->>'deliveryId')::uuid FROM marketing_workflow_action_logs l
       JOIN marketing_workflow_enrollments e ON e.id = l.enrollment_id WHERE e.user_id = $1 AND l.kind = 'webhook' AND l.meta ? 'deliveryId')`, [userId]);
+}
+
+/** Ends the customer's open journeys (PDPA delete, consent withdrawn). */
+export async function stopEnrollmentsForCustomer(m: EntityManager, userId: string, reason: string): Promise<void> {
+  await m.query(`UPDATE marketing_workflow_enrollments SET status = 'skipped', end_reason = $2, completed_at = now(),
+    current_step_id = NULL, resume_at = NULL, waiting_for = NULL WHERE user_id = $1 AND status IN ('pending', 'running')`, [userId, reason]);
+}
+
+/**
+ * A guest logged in (spec §5 step 4, §10): their open guest journeys become the customer's. One the customer already
+ * has for the same workflow + occurrence ends as `merged` instead.
+ */
+export async function adoptGuestEnrollments(m: EntityManager, deviceId: string, userId: string): Promise<void> {
+  await m.query(`UPDATE marketing_workflow_enrollments g SET user_id = $2 WHERE g.device_id = $1 AND g.user_id IS NULL AND g.status IN ('pending', 'running')
+    AND NOT EXISTS (SELECT 1 FROM marketing_workflow_enrollments x WHERE x.workflow_id = g.workflow_id AND x.user_id = $2 AND x.occurrence_key = g.occurrence_key)`,
+    [deviceId, userId]);
+  await m.query(`UPDATE marketing_workflow_enrollments SET status = 'skipped', end_reason = 'merged', completed_at = now(), current_step_id = NULL,
+    resume_at = NULL, waiting_for = NULL WHERE device_id = $1 AND user_id IS NULL AND status IN ('pending', 'running')`, [deviceId]);
 }

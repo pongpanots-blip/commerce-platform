@@ -16,7 +16,7 @@ commerce เป็นเจ้าของข้อมูลพฤติกร�
 5. Step `wait_event` (Wait for event + timeout, ทางออก "เกิดขึ้น" / "หมดเวลา")
 6. Goal แบบ event
 7. จับคู่ attribute ข้าม event (เงื่อนไขอ้างค่าจาก event ที่ trigger)
-8. Segment rule ตาม event: จำนวนครั้ง หรือผลรวมของ attribute ในช่วงเวลา ที่ attribute ตรง
+8. Event rule (จำนวนครั้ง / ผลรวมของ attribute ในช่วงเวลา ที่ attribute ตรง) ใช้ใน Dynamic segment และใน workflow (§11)
 9. Journey ของ guest (ยังไม่ login): trigger ด้วย event ของ device, ส่ง push ไปที่ device, รับช่วงเป็นของ user ตอน login
 10. ตัวแปร `{{event.<key>}}` ใน notify / webhook
 11. หน้า admin "Events" + เก็บข้อมูลแบบไม่บวม (partition รายเดือน, อายุ 90 วัน, สรุปรายวัน)
@@ -27,7 +27,7 @@ commerce เป็นเจ้าของข้อมูลพฤติกร�
 
 **ก้อนถัดไป (spec แยก):** 2) สถิติบน canvas · 3) polish editor (autosave, stop) · 4) content editor
 
-**ไม่อยู่ในก้อนนี้:** แก้แอปมือถือ (ให้ contract ไป), segment ของ guest, email / in-app / คูปองถึง guest (ไม่มีตัวตนให้ส่ง),
+**ไม่อยู่ในก้อนนี้:** แก้แอปมือถือ (ให้ contract ไป), segment ของ guest, rule ตาม event ใน segment เดิมที่ sync กับ josh, email / in-app / คูปองถึง guest (ไม่มีตัวตนให้ส่ง),
 archive ไป S3, ย้าย workflow ของ josh มา commerce (phase 3)
 
 ## 2. ข้อมูลที่มีอยู่แล้ว
@@ -204,26 +204,42 @@ validator: key ต้องมีใน attribute ของ event ที่ trig
   (frequency cap ของ josh, opt-out) ทำงานตามเดิม
 - analytics: นับ guest แยก (`enrolledGuests`, `mergedToUser`)
 
-## 11. Segment rule ตาม event
+## 11. เงื่อนไขตาม event: Event rule, Dynamic segment, ใน workflow
 
-leaf ใหม่ใน `segment-definition.compiler.ts`:
+segment เดิมของ commerce ถูก freeze รายชื่อตอนสร้างและ sync ไป josh — rule ตาม event ต้องประเมินสดและ josh ไม่มีข้อมูล event
+จึง**ไม่ใส่ในตัวสร้าง segment เดิม** แต่ใช้ "event rule" ตัวเดียวกันในสองที่:
+
+**Event rule** (ประเมินสดทุกครั้ง ใน commerce เท่านั้น):
 
 ```ts
-{ field: 'event', event: { name, measure: 'count' | { sum: key }, op: 'gte' | 'eq' | 'lte', value,
-  window: { lastDays } | { from, to }, filters } }
+type EventRule = { op: 'AND' | 'OR'; children: EventRule[] } | EventLeaf;      // ลึก ≤ 4, leaf ≤ 16
+type EventLeaf =
+  | { kind: 'event'; name; measure: 'count' | { sum: key }; op: 'gte' | 'eq' | 'lte'; value;
+      window: { lastDays } | { from, to }; filters }
+  | { kind: 'segment'; segmentId };                                         // อ้าง dynamic segment (ห้ามใช้ใน dynamic segment เอง)
 ```
 
-- compile เป็น `(SELECT <count(*) | COALESCE(SUM((e.attributes->>$k)::numeric), 0)> FROM marketing_events e
-  WHERE e.attributed_user_id = <user id ของ query> AND e.name = $n AND e.occurred_at >= $n [AND e.occurred_at < $n] AND <filters>) <op> $n`
+- leaf `event` compile เป็น `(SELECT <count(*) | COALESCE(SUM((e.attributes->>$k)::numeric), 0)> FROM marketing_events e
+  WHERE e.attributed_user_id = $user AND e.name = $n AND e.occurred_at >= $n [AND e.occurred_at < $n] AND <filters>) <op> $n`
   — ทุกค่าเป็น parameter, key ตรวจกับ catalog, number cast `::numeric`, date cast `::timestamptz`
 - `sum` ใช้ได้เฉพาะ attribute ชนิด number · `count` value 0–1000 (`eq 0` = "ไม่เคยทำ") · `sum` value เป็นตัวเลขใดก็ได้
 - `lastDays` 1–90 · `from`/`to` ต้องอยู่ใน 90 วันล่าสุด · filters ห้าม `fromTrigger`
 - **coverage:** ช่วงเวลาของ rule ต้องเริ่มไม่ก่อน `collecting_since` ของ platform แรกที่เก็บ (`marketing_event_coverage`) —
   ไม่งั้นบันทึก / activate ไม่ได้ พร้อมข้อความ "เริ่มเก็บ event เมื่อ …" (ช่วงที่ยังไม่เก็บต้องไม่ถูกนับเป็นศูนย์) ·
-  ตัวสร้าง segment แสดงว่า platform ไหนส่ง event อยู่ (ตอนนี้เว็บอย่างเดียว — ลูกค้าที่ใช้แต่มือถือจะนับได้ 0 จนกว่ามือถือจะส่ง)
-- นับเฉพาะ event ที่ระบุตัวแล้วและ user ใช้ได้ตาม §5.1
-- ใช้ร่วม AND/OR กับ leaf อื่นได้ · ใช้ได้ทุกที่ที่ใช้ segment: node Audience, `segment.in`, scheduled, `userMatchesSegment`
-- ตัวสร้าง segment ใน admin: เพิ่มชนิด rule "Event" (เลือก event, นับครั้ง / ผลรวมของ attribute, ช่วงเวลา, เงื่อนไข attribute)
+  ตัวสร้าง rule แสดงว่า platform ไหนส่ง event อยู่ (ตอนนี้เว็บอย่างเดียว — ลูกค้าที่ใช้แต่มือถือจะนับได้ 0 จนกว่ามือถือจะส่ง)
+- นับเฉพาะ event ที่ระบุตัวแล้วและ user ใช้ได้ตาม §5.1 · guest ไม่ผ่าน rule ใดๆ
+
+**Dynamic segment** (ตารางใหม่ `marketing_dynamic_segments`: `id uuid`, `name`, `description`, `rule jsonb`, `created_by`,
+`created_at`, `updated_at`): event rule ที่ตั้งชื่อเก็บไว้ใช้ซ้ำ แบบ segment ของ Pushwoosh
+- ไม่ freeze, ไม่ sync ไป josh, ใช้ได้เฉพาะ workflow ของ commerce · ลบไม่ได้ถ้า workflow ที่ active อ้างอยู่ (`409`)
+- preview: จำนวนลูกค้าที่เข้าเงื่อนไขตอนนี้ (`segment_customers` ที่ consent × rule, timeout 5 วินาที)
+- หน้า admin `/marketing/dynamic-segments`: รายการ + ตัวสร้าง rule + preview
+
+**ใน workflow:**
+- node Audience เพิ่ม `dynamicSegmentIds`, `excludeDynamicSegmentIds` และ `eventRule` (inline) — เงื่อนไขทุกส่วนต้องผ่าน (AND กับ segment เดิม)
+- step ใหม่ `event_split` `{ id, type: 'event_split', rule: EventRule, yesNextId, noNextId }` ("Event condition" ในหมวด FLOW) —
+  นับรวมกับ `maxConditionSteps` (5) · ไป Yes เมื่อ rule ผ่าน
+- workflow ที่ `includeGuests` ใช้ event rule / dynamic segment ไม่ได้ (ตาม §10)
 
 ## 12. ตัวแปร event ในข้อความ
 
@@ -238,7 +254,7 @@ leaf ใหม่ใน `segment-definition.compiler.ts`:
 + partition `marketing_events_default` กันพลาด · migration สร้างตารางแม่ + partition เดือนปัจจุบัน + 2 เดือนถัดไป
 (raw SQL — TypeORM entity ชี้ตารางแม่ใช้ query ได้ตามปกติ แต่ไม่ให้ `synchronize` จัดการ)
 
-**job รายคืน 03:00 Asia/Bangkok** (BullMQ repeatable บนคิว `marketing-workflow`):
+**job รายคืน 03:00 Asia/Bangkok** (`@Cron` ของ `@nestjs/schedule` + `pg_try_advisory_lock` กันรันซ้อนเมื่อมีหลาย instance — ทุกขั้นทำซ้ำได้ผลเท่าเดิม):
 1. สร้าง partition ล่วงหน้าให้ครบเดือนปัจจุบัน + 2 เดือนถัดไป (`CREATE TABLE IF NOT EXISTS ... PARTITION OF`)
 2. upsert `marketing_event_daily` ของเมื่อวาน (นับซ้ำได้ ผลเท่าเดิม)
 3. `DROP` partition ที่ขอบบนเก่ากว่า `now − 90 วัน` (ทั้งก้อน ไม่มี bloat) · ข้อมูลจึงอยู่ 90–120 วัน แต่ segment / UI
@@ -262,7 +278,7 @@ leaf ใหม่ใน `segment-definition.compiler.ts`:
 **กฎ catalog:**
 - `name` และ `type` ของ attribute แก้ไม่ได้หลังสร้าง · เพิ่ม attribute ได้ · ลบ = archive
 - archive event หรือ attribute ที่ workflow `active` ใช้อยู่ (trigger / wait_event / goal / filters / `fromTrigger`) หรือ segment
-  ใช้อยู่ → `409` พร้อมรายชื่อที่ใช้
+  (dynamic segment) ใช้อยู่ → `409` พร้อมรายชื่อที่ใช้
 - ชื่อ attribute ที่เข้าข่าย PII ถูกปฏิเสธ: `email`, `phone`, `tel`, `mobile`, `name`, `first_name`, `last_name`, `address`,
   `id_card`, `citizen_id`, `password`, `token` (เทียบแบบไม่สนตัวพิมพ์ และ `_` / `-`)
 

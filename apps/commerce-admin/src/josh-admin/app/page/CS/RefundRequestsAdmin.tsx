@@ -49,6 +49,9 @@ const CASH_REASON_LABEL: Record<string, () => string> = {
   other: () => __uiText('อื่น ๆ'),
 };
 
+/** josh STUCK_PAYOUT_MS — a card payout still pending this long after approval may be resolved by hand. */
+const STUCK_PAYOUT_MS = 10 * 60_000;
+
 function money(n: number | null | undefined) {
   return n == null ? '—' : `฿${Number(n).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
@@ -148,7 +151,13 @@ export default function RefundRequestsAdmin() {
   ];
 
   const d = detail;
-  const unknownGateway = d?.status === 'processing' && d.gatewayStatus === 'unknown';
+  // Same rule as josh's resolve: KBank never answered, or the payout has sat `pending` for over 10 minutes.
+  const stuckPending =
+    d?.status === 'processing' &&
+    d.gatewayStatus === 'pending' &&
+    !!d.approvedAt &&
+    Date.now() - new Date(d.approvedAt).getTime() > STUCK_PAYOUT_MS;
+  const unknownGateway = (d?.status === 'processing' && d.gatewayStatus === 'unknown') || stuckPending;
   const btn = 'rounded-lg px-3 py-1.5 text-sm font-medium disabled:opacity-50';
 
   return (

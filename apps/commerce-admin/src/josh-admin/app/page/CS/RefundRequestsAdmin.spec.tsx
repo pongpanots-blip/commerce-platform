@@ -130,3 +130,14 @@ it('an unknown KBank outcome shows the portal warning and no retry', async () =>
   expect(button('ลองใหม่')).toBeUndefined();
   expect(button('ทำเครื่องหมายว่าสำเร็จ')).toBeDefined();
 });
+
+it('REVIEW I1: a card payout stuck in pending for over 10 minutes can be resolved; a fresh one cannot', async () => {
+  const old = new Date(Date.now() - 11 * 60_000).toISOString();
+  await openWith(detail({ status: 'processing', gatewayStatus: 'pending', approvedAt: old, cashAmountIncVat: 300 }));
+  expect(button('ทำเครื่องหมายว่าสำเร็จ')).toBeDefined();
+});
+
+it('a payout pending for a moment shows no resolve buttons', async () => {
+  await openWith(detail({ status: 'processing', gatewayStatus: 'pending', approvedAt: new Date().toISOString() }));
+  expect(button('ทำเครื่องหมายว่าสำเร็จ')).toBeUndefined();
+});

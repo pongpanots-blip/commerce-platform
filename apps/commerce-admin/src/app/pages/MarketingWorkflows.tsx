@@ -2,8 +2,8 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { Fragment, useState } from 'react';
-import { Alert, Button, Checkbox, CodeBlock, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, TogglePill, fmt, ButtonLink } from '@cp/ui';
-import { WorkflowRow, workflowsApi } from '../../lib/api';
+import { Alert, Button, Checkbox, CodeBlock, StatusChip, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, TogglePill, fmt, ButtonLink } from '@cp/ui';
+import { flowsApi, WorkflowRow, workflowsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { MarketingTestersPanel } from './MarketingTestersPanel';
 
@@ -54,7 +54,7 @@ export function MarketingWorkflows() {
                 {[7, 30, 90].map((d) => <option key={d} value={d}>{d} {__uiText(" วัน")}</option>)}
               </Select>
             </label>
-            <ButtonLink variant="primary" icon="add" to="/marketing/workflows/new">{__uiText("สร้าง workflow")}</ButtonLink>
+            <ButtonLink variant="primary" icon="add" to="/marketing/flows/new">{__uiText("สร้าง workflow")}</ButtonLink>
           </div>
         }
       />
@@ -62,8 +62,11 @@ export function MarketingWorkflows() {
       {msg && <Alert tone="ok">{(typeof msg === 'string' ? __uiText(msg) : msg)}</Alert>}
       <ErrorText error={list.error} />
 
+      <CommerceFlowsPanel />
+
       {list.data && (
         <Panel className="overflow-hidden">
+          <PanelHead title={__uiText("Workflow ของ josh")} sub={__uiText("รันใน josh · แก้ด้วย editor เดิม")} />
           {list.data.length ? (
             <Table>
               <THead>
@@ -221,3 +224,30 @@ function EditJson({ initial, busy, onSave, onCancel }: { initial: string; busy: 
   );
 }
 
+
+/** Workflows commerce runs itself (spec 2026-10-10) — built with the journey editor at /marketing/flows/:id. */
+function CommerceFlowsPanel() {
+  __useUiLocale();
+  const flows = useAsync(() => flowsApi.list(), []);
+  return (
+    <Panel className="overflow-hidden">
+      <PanelHead title={__uiText("Workflow ของ commerce (ใหม่)")} sub={__uiText("รันใน commerce · ลากวาง Webhook / A/B Split ได้")} />
+      <ErrorText error={flows.error} onRetry={flows.reload} />
+      {flows.loading && !flows.data ? <Loading variant="table" /> : flows.data?.length ? (
+        <Table>
+          <THead><TR><TH>{__uiText("Workflow")}</TH><TH>{__uiText("สถานะ")}</TH><TH>{__uiText("เริ่มเมื่อ")}</TH>
+            <TH kind="num">{__uiText("เข้า 30 วัน")}</TH><TH kind="num">{__uiText("Converted")}</TH><TH kind="time">{__uiText("แก้ล่าสุด")}</TH><TH kind="actions" /></TR></THead>
+          <TBody>
+            {flows.data.map((w) => (
+              <TR key={w.id}>
+                <TD>{w.name}</TD><TD><StatusChip status={w.status} /></TD><TD kind="mono">{w.triggerType}</TD>
+                <TD kind="num">{w.enrolled30d}</TD><TD kind="num">{w.converted30d}</TD><TD kind="time">{when(w.updatedAt)}</TD>
+                <TD kind="actions"><ButtonLink to={`/marketing/flows/${w.id}`} icon="edit">{__uiText("เปิด")}</ButtonLink></TD>
+              </TR>
+            ))}
+          </TBody>
+        </Table>
+      ) : <div className="px-4 py-8"><Empty icon="automation">{__uiText("ยังไม่มี — กดสร้าง workflow ใหม่")}</Empty></div>}
+    </Panel>
+  );
+}

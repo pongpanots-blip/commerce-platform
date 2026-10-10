@@ -1,6 +1,6 @@
 // ui-metadata-migration: static labels and UI notices only
 import { getCompany } from '@josh/shared-api';
-import { Input, Table, TableColumn } from '@josh/shared-ui-web';
+import { Input, Table, TableColumn, TableViewBar, useTableViews } from '@josh/shared-ui-web';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
@@ -88,6 +88,12 @@ const Company = () => {
     void getData(currentPage, search);
   }, [currentPage, search]);
 
+  const views = useTableViews('j-company', { search }, (v) => {
+    setSearch(v.search ?? '');
+    setSearchInput(v.search ?? '');
+    setCurrentPage(1);
+  });
+
   return (
     <div className="cp-management-page grid gap-5 w-full">
       <AdminListHeader
@@ -97,6 +103,7 @@ const Company = () => {
         createPath={ADMIN_ROUTES.companyCreate}
       />
 
+      <TableViewBar views={views} columns={columns} />
       <div className="flex max-w-md items-end gap-2">
         <Input
           label={__uiText("ค้นหาบริษัท")}
@@ -126,6 +133,7 @@ const Company = () => {
           columns={columns}
           data={apiResponse?.data || []}
           idKey="id"
+          hiddenKeys={views.hidden}
           totalItems={Number(apiResponse?.meta?.total || 0)}
           currentPage={Number(apiResponse?.meta?.page || 1)}
           totalPages={Number(apiResponse?.meta?.totalPages || 1)}

@@ -80,21 +80,23 @@ archive ไป S3, ย้าย workflow ของ josh มา commerce (phase 3
 | ตาราง | คอลัมน์ | index / หมายเหตุ |
 |---|---|---|
 | `marketing_event_definitions` | `name varchar(64) PK` (`^[a-z][a-z0-9_]{1,63}$`), `label`, `description`, `attributes jsonb` (`[{ key, type: 'string'\|'number'\|'boolean'\|'date', label }]`), `evidence` (`browser` / `server`), `status` (`active`/`archived`), `created_at`, `updated_at` | seed (`evidence = browser`): `view_item`, `view_category`, `search`, `add_to_cart`, `begin_checkout`, `purchase`, `login` (attribute ตาม `lib/analytics-events.ts` ของ shop-web) |
-| `marketing_events` | **ข้อเท็จจริง (ไม่แก้หลัง insert):** `id bigint` (identity), `schema_version smallint`, `event_id uuid`, `device_id uuid NOT NULL`, `platform varchar(10)`, `source varchar(16)`, `environment varchar(16)`, `name varchar(64)`, `attributes jsonb`, `company_id varchar(100) NULL`, `branch_id varchar(100) NULL`, `actor_kind varchar(10) NULL`, `occurred_at timestamptz NOT NULL`, `received_at timestamptz default now()` · **การระบุตัว (อัปเดตได้):** `attributed_user_id uuid NULL`, `attribution varchar(16) NULL` (`device_link`) | **`PARTITION BY RANGE (occurred_at)` รายเดือน** (§13) · `PK (id, occurred_at)` · `UNIQUE (event_id, occurred_at)` · `(attributed_user_id, name, occurred_at) WHERE attributed_user_id IS NOT NULL` · `(device_id, occurred_at)` |
+| `marketing_events` | **ข้อเท็จจริง (ไม่แก้หลัง insert):** `id bigint` (identity), `schema_version smallint`, `event_id uuid`, `device_id varchar(64) NOT NULL`, `platform varchar(10)`, `source varchar(16)`, `environment varchar(16)`, `name varchar(64)`, `attributes jsonb`, `company_id varchar(100) NULL`, `branch_id varchar(100) NULL`, `actor_kind varchar(10) NULL`, `occurred_at timestamptz NOT NULL`, `received_at timestamptz default now()` · **การระบุตัว (อัปเดตได้):** `attributed_user_id uuid NULL`, `attribution varchar(16) NULL` (`device_link`) | **`PARTITION BY RANGE (occurred_at)` รายเดือน** (§13) · `PK (id, occurred_at)` · `UNIQUE (event_id, occurred_at)` · `(attributed_user_id, name, occurred_at) WHERE attributed_user_id IS NOT NULL` · `(device_id, occurred_at)` |
 | `marketing_event_coverage` | `platform varchar(10) PK`, `collecting_since timestamptz` | ตั้งตอน event แรกของ platform ถูกรับ (`INSERT … ON CONFLICT DO NOTHING`) · ใช้ตรวจ segment (§11) |
-| `marketing_devices` | `device_id uuid PK`, `platform varchar(10)`, `push_subscription_id uuid NULL`, `first_seen_at`, `last_seen_at` | ข้อมูลส่ง push ถึง guest (§10) |
-| `marketing_device_links` | `id bigserial PK`, `device_id uuid`, `user_id uuid`, `platform varchar(10)`, `linked_at timestamptz` | `UNIQUE (device_id, linked_at)` · `(user_id)` |
+| `marketing_devices` | `device_id varchar(64) PK`, `platform varchar(10)`, `push_subscription_id uuid NULL`, `first_seen_at`, `last_seen_at` | ข้อมูลส่ง push ถึง guest (§10) |
+| `marketing_device_links` | `id bigserial PK`, `device_id varchar(64)`, `user_id uuid`, `platform varchar(10)`, `linked_at timestamptz`, `is_staff boolean` | `UNIQUE (device_id, linked_at)` · `(user_id)` |
 | `marketing_event_daily` | `date date`, `name`, `platform`, `events int`, `users int`, `devices int` | `PK (date, name, platform)` เก็บถาวร |
-| `marketing_workflow_enrollments` (แก้) | `user_id` เป็น `NULL` ได้ · เพิ่ม `device_id uuid NULL`, `waiting_for jsonb NULL` (`{ stepId, eventName, filters, since }`), `trigger_event jsonb NULL` (`{ eventId, name, attributes }`) | `CHECK (user_id IS NOT NULL OR device_id IS NOT NULL)` · unique เดิม `(workflow_id, user_id, occurrence_key)` + ใหม่ `UNIQUE (workflow_id, device_id, occurrence_key) WHERE user_id IS NULL` · `(device_id) WHERE user_id IS NULL AND status IN ('pending','running')` |
-| `marketing_guest_push_log` | `device_id uuid`, `sent_at timestamptz` | `(device_id, sent_at)` · ใช้นับเพดาน guest push (§10) · ลบตามอายุ 7 วัน |
+| `marketing_workflow_enrollments` (แก้) | `user_id` เป็น `NULL` ได้ · เพิ่ม `device_id varchar(64) NULL`, `waiting_for jsonb NULL` (`{ stepId, eventName, filters, since }`), `trigger_event jsonb NULL` (`{ eventId, name, attributes }`) | `CHECK (user_id IS NOT NULL OR device_id IS NOT NULL)` · unique เดิม `(workflow_id, user_id, occurrence_key)` + ใหม่ `UNIQUE (workflow_id, device_id, occurrence_key) WHERE user_id IS NULL` · `(device_id) WHERE user_id IS NULL AND status IN ('pending','running')` |
+| `marketing_guest_push_log` | `device_id varchar(64)`, `sent_at timestamptz` | `(device_id, sent_at)` · ใช้นับเพดาน guest push (§10) · ลบตามอายุ 7 วัน |
 
 - `marketing_workflows.trigger_type` ไม่มี CHECK อยู่แล้ว — เพิ่ม `'event'` ที่ zod / types
 - ต้องใช้ Postgres ≥ 12 (unique index บนตาราง partition) — ตรวจเวอร์ชันของ prod ตอนเขียน plan
 
 ## 5. Device link และการ merge event เข้ากับ user
 
-**ที่มา:** josh ส่ง `device.snapshot` ผ่าน outbox เดิม `{ individualId, userId, platform }` (aggregateId = `user_devices.id`)
-เฉพาะตอน `user_id` ของแถวเปลี่ยน (รวมแถวใหม่) · `linked_at` = `occurredAt` ของ envelope
+**ที่มา:** josh ส่ง `device.snapshot` ผ่าน outbox เดิม — data = แถว `user_devices` (`id`, `user_id`, `individual_id`, `platform`,
+`first_seen_at`, `last_seen_at`; aggregateId = `user_devices.id`) เฉพาะตอน `user_id` ของแถวเปลี่ยน (รวมแถวใหม่) ·
+commerce เก็บสำเนาใน `josh_user_devices` (version guard แบบ reference copy) · `linked_at` = `last_seen_at` ของแถว (ไม่มี → `occurredAt`)
+· พนักงาน = user ที่อยู่ใน `josh_staff` และ `user_type` ไม่ใช่ `customer` (`is_staff`)
 
 **commerce รับ `device.snapshot`** (ใน `josh-events.service.ts`, ทรานแซกชันเดียวกับ version guard เดิม):
 1. insert `marketing_device_links (device_id, user_id, platform, linked_at)` — ถ้า link ล่าสุดก่อนหน้า `linked_at` ของ device นี้เป็น user เดิมอยู่แล้ว → ไม่ insert
@@ -310,8 +312,8 @@ type EventLeaf =
 
 **shop-web** (`lib/analytics.ts`): `track()` ส่งเข้า commerce เพิ่ม (ยังส่ง josh ต่อ) ถ้ามี `NEXT_PUBLIC_COMMERCE_EVENTS_URL`
 - ใช้ device id ตัวเดียวกับที่ส่ง josh (`ensureDeviceId()`) · `eventId = crypto.randomUUID()`
-- `context`: `companyId` / `branchId` ของ active branch ตอนที่เกิด event, `actorKind` = `staff` เมื่อ login เป็นพนักงาน
-  (`customer` เมื่อเป็นลูกค้า, `anonymous` เมื่อยังไม่ login)
+- `context`: `companyId` / `branchId` ของ active branch ตอนที่เกิด event (`getShopSession()`), `actorKind` = `customer` เมื่อ login,
+  `anonymous` เมื่อยังไม่ login — client แยกพนักงาน josh ไม่ได้ (`role` ในเว็บเป็นสิทธิ์ในบริษัท) commerce จึงตัดสินพนักงานเองจาก link (§5)
 - `pushSubscriptionId` = `OneSignal.User.PushSubscription.id` ถ้าเปิดรับ push (`lib/onesignal.ts`)
 - รวม event เป็น batch ทุก 2 วินาที หรือครบ 20 ตัว · ส่งด้วย `fetch(..., { keepalive: true })`, ตอนปิดหน้าใช้ `sendBeacon`
 - fire-and-forget: timeout 3 วินาที, ไม่ retry, error ไม่ขึ้นหน้าเว็บ · ส่งเฉพาะชื่อที่อยู่ใน seed catalog
@@ -339,7 +341,7 @@ batch / fire-and-forget แบบเดียวกัน
 
 ## 18. ความปลอดภัย
 
-- endpoint สาธารณะ: zod strict, UUID ทุก id, body ≤ 32 KB, ชนิด attribute ตาม catalog, rate limit ต่อ IP + device, CORS เฉพาะ shop
+- endpoint สาธารณะ: zod strict, UUID ทุก id ยกเว้น `deviceId` (`^[A-Za-z0-9_-]{8,64}$` เท่ากับ `individual_id` ของ josh — device id ของเว็บเป็น hex 32 ตัว), body ≤ 32 KB, ชนิด attribute ตาม catalog, rate limit ต่อ IP + device, CORS เฉพาะ shop
 - `occurredAt` ถูกจำกัดช่วง (อนาคต ≤ 5 นาที, ย้อนหลัง ≤ 7 วัน) กันยิงย้อนหลังปั่น segment
 - event จาก client ผู้ใช้ปลอมให้ตัวเองได้ → คูปองจาก trigger `event` ต้องมี cooldown (§14)
 - ปลอม `deviceId` / `pushSubscriptionId` ของคนอื่นต้องรู้ UUID ของเขา (ไม่เปิดเผย) · ผลเสียสูงสุดคือ push ถึง device นั้น

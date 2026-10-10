@@ -133,14 +133,6 @@ export class WorkflowStore {
         AND EXISTS (SELECT 1 FROM josh_orders o WHERE o.user_id = e.user_id AND o.status = ANY($2::text[]) AND o.create_date >= e.started_at
           AND o.create_date <= e.started_at + make_interval(days => w.conversion_window_days))`, [userId, COUNTED]);
   }
-  /** PDPA delete: stop the customer's journeys and their unsent webhooks. */
-  async customerDeleted(userId: string): Promise<void> {
-    await this.db.query(`UPDATE webhook_deliveries SET status = 'failed', error = 'customer_deleted' WHERE kind = 'marketing' AND status = 'pending'
-      AND id IN (SELECT (l.meta->>'deliveryId')::uuid FROM marketing_workflow_action_logs l JOIN marketing_workflow_enrollments e ON e.id = l.enrollment_id
-        WHERE e.user_id = $1 AND l.kind = 'webhook' AND l.meta ? 'deliveryId')`, [userId]);
-    await this.db.query(`UPDATE marketing_workflow_enrollments SET status = 'skipped', end_reason = 'customer_deleted', completed_at = now(),
-      current_step_id = NULL, resume_at = NULL WHERE user_id = $1 AND status IN ('pending', 'running')`, [userId]);
-  }
   /** Keyset page over the customers commerce knows (PDPA-deleted excluded). */
   async customerIdsAfter(afterId: string | null, limit: number): Promise<string[]> {
     const rows = await this.db.query(`SELECT id FROM segment_customers WHERE ($1::uuid IS NULL OR id > $1::uuid) ORDER BY id LIMIT $2`, [afterId, limit]);
@@ -149,4 +141,18 @@ export class WorkflowStore {
   async setLastScheduledKey(workflowId: string, key: string): Promise<void> {
     await this.db.query(`UPDATE marketing_workflows SET last_scheduled_key = $2 WHERE id = $1`, [workflowId, key]);
   }
+}
+
+/**
+ * PDPA delete (spec §8), run inside josh-events' `customer.deleted` transaction so it can't be lost: stop the
+ * customer's journeys first (waits for an in-flight run's row lock, so its new delivery is visible next), then fail
+ * the unsent webhook rows and blank every marketing webhook row's rendered URL / headers / body.
+ */
+export async function stopMarketingForCustomer(m: EntityManager, userId: string): Promise<void> {
+  await m.query(`UPDATE marketing_workflow_enrollments SET status = 'skipped', end_reason = 'customer_deleted', completed_at = now(),
+    current_step_id = NULL, resume_at = NULL WHERE user_id = $1 AND status IN ('pending', 'running')`, [userId]);
+  await m.query(`UPDATE webhook_deliveries SET status = CASE WHEN status = 'pending' THEN 'failed' ELSE status END,
+      error = CASE WHEN status = 'pending' THEN 'customer_deleted' ELSE error END, payload = 'null'::jsonb, headers = NULL, target_url = ''
+    WHERE kind = 'marketing' AND id IN (SELECT (l.meta->>'deliveryId')::uuid FROM marketing_workflow_action_logs l
+      JOIN marketing_workflow_enrollments e ON e.id = l.enrollment_id WHERE e.user_id = $1 AND l.kind = 'webhook' AND l.meta ? 'deliveryId')`, [userId]);
 }

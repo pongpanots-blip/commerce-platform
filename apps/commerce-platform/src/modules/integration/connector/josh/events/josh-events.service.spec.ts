@@ -31,8 +31,6 @@ describe('JoshEventsService', () => {
     const withUser = { ...order('6'), data: { ...order('6').data, order: { ...order('6').data.order, user_id: U } } };
     await makeService('5', emitter).svc.apply(withUser);
     expect(emitter.emit).toHaveBeenCalledWith('marketing-trigger.order', { userId: U });
-    await makeService(null, emitter).svc.apply({ type: 'customer.deleted', aggregateId: U, version: '7', occurredAt: '', data: {} });
-    expect(emitter.emit).toHaveBeenCalledWith('marketing-trigger.customer-deleted', { userId: U });
     const stale = { emit: jest.fn() };
     await makeService('9', stale).svc.apply({ type: 'customer.snapshot', aggregateId: U, version: '5', occurredAt: '', data: {} });
     expect(stale.emit).not.toHaveBeenCalled();
@@ -72,6 +70,16 @@ describe('JoshEventsService', () => {
     expect(sqls).toContain('DELETE FROM customer_metrics WHERE user_id = $1');
     expect(sqls).toContain('DELETE FROM segment_members WHERE user_id = $1');
     expect(calls.find(([sql]) => sql.startsWith('DELETE FROM segment_members'))?.[1]).toEqual(['u1']);
+  });
+
+  it('customer.deleted stops the customer\'s marketing journeys and blanks their webhook rows in the same transaction (PDPA)', async () => {
+    const { svc, calls } = makeService(null);
+    await svc.apply({ type: 'customer.deleted', aggregateId: 'u1', version: '9', occurredAt: 'x', data: { id: 'u1' } });
+    const stop = calls.findIndex(([sql]) => sql.includes('UPDATE marketing_workflow_enrollments') && sql.includes('customer_deleted'));
+    const blank = calls.findIndex(([sql]) => sql.includes('UPDATE webhook_deliveries') && sql.includes("target_url = ''"));
+    expect(stop).toBeGreaterThan(-1);
+    expect(blank).toBeGreaterThan(stop); // journeys first: an in-flight run holds the row lock, then its new delivery is visible
+    expect(calls[blank][1]).toEqual(['u1']);
   });
 
   it('customer.deleted unlinks the customer\'s winback account (PDPA, stage 2b)', async () => {

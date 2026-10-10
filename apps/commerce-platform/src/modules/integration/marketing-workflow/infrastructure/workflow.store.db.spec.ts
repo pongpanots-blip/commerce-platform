@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { MarketingWorkflowRow } from './marketing-workflow.entity';
-import { WorkflowStore } from './workflow.store';
+import { stopMarketingForCustomer, WorkflowStore } from './workflow.store';
 
 /** Opt-in: MARKETING_TEST_DATABASE_URL=postgres:///<migrated db> (never a shared / prod DB). */
 const url = process.env.MARKETING_TEST_DATABASE_URL;
@@ -69,9 +69,17 @@ const url = process.env.MARKETING_TEST_DATABASE_URL;
       expect(conv.converted).toBe(true);
 
       const live = await store.insertEnrollment({ workflowId: wf, userId: C, occurrenceKey: 'pdpa', entryStepId: 's1', holdout: false, test: false, skipWaits: false });
-      await store.customerDeleted(C);
+      const sent = await db.transaction((m) => store.insertWebhookDelivery(m, { idempotencyKey: `cmw:${live}:sent`, url: 'https://h.co/?e=a@b.co', method: 'POST', headers: [{ key: 'X', value: 'v' }], body: '{"email":"a@b.co"}' }));
+      const pending = await db.transaction((m) => store.insertWebhookDelivery(m, { idempotencyKey: `cmw:${live}:pending`, url: 'https://h.co/', method: 'POST', headers: [], body: '{}' }));
+      await db.query(`UPDATE webhook_deliveries SET status = 'success' WHERE id = $1`, [sent]);
+      await db.transaction(async (m) => { for (const d of [sent, pending]) await store.log(m, live!, 's9', 'webhook', 'queued', { deliveryId: d }); });
+      await db.transaction((m) => stopMarketingForCustomer(m, C));
       const [gone] = await db.query(`SELECT status, end_reason FROM marketing_workflow_enrollments WHERE id = $1`, [live]);
       expect(gone).toEqual({ status: 'skipped', end_reason: 'customer_deleted' });
+      const rows = await db.query(`SELECT id, status, target_url, headers, payload FROM webhook_deliveries WHERE id = ANY($1::uuid[]) ORDER BY id`, [[sent, pending]]);
+      expect(rows.find((r: { id: string }) => r.id === sent)).toMatchObject({ status: 'success', target_url: '', headers: null, payload: null });
+      expect(rows.find((r: { id: string }) => r.id === pending)).toMatchObject({ status: 'failed', target_url: '' });
+      await db.query(`DELETE FROM webhook_deliveries WHERE id = ANY($1::uuid[])`, [[sent, pending]]);
     } finally {
       await db.query(`DELETE FROM josh_orders WHERE user_id = $1`, [C]);
       await db.query(`DELETE FROM josh_customers WHERE id = $1`, [C]);

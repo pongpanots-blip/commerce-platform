@@ -8,6 +8,7 @@ import { Row, toHead, toLine } from '../orders/josh-order-copy';
 import { JoshCatalogProduct } from '../josh-catalog-product.entity';
 import { JoshCustomerCopy } from './josh-customer-copy.entity';
 import { OrderStockService } from '../../../../commerce/inventory/application/order-stock.service';
+import { stopMarketingForCustomer } from '../../../marketing-workflow/infrastructure/workflow.store';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface JoshEnvelope { type: string; aggregateId: string; version: string; occurredAt: string; data: any }
@@ -65,14 +66,16 @@ export class JoshEventsService {
       case 'customer.deleted':
         // PDPA: wipe the copy (tombstone blocks older snapshots) and everything commerce derived from it.
         // Segment member_count stays as frozen, like josh (its snapshot rows cascade, the count doesn't change).
-        return this.signalled('marketing-trigger.customer-deleted', e.aggregateId, await this.guarded('josh_customers', 'id', e, async (m) => {
+        return this.guarded('josh_customers', 'id', e, async (m) => {
           await m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: {}, sourceVersion: e.version, deletedAt: new Date() });
           await m.query('DELETE FROM customer_metrics WHERE user_id = $1', [e.aggregateId]);
           await m.query('DELETE FROM segment_members WHERE user_id = $1', [e.aggregateId]);
           // The deleted customer's winback account loses its user link; it reaches josh through the mirror once
           // commerce owns winback.
           await m.query('UPDATE winback_account SET josh_user_id = NULL WHERE josh_user_id = $1', [e.aggregateId]);
-        }));
+          // Commerce marketing workflows: stop the customer's journeys and blank their webhook rows (same transaction).
+          await stopMarketingForCustomer(m, e.aggregateId);
+        });
       case 'catalog.snapshot':
         return this.guarded('josh_catalog_products', 'id', e, (m) => this.saveCatalog(m, e));
       case 'catalog.deleted':

@@ -36,6 +36,8 @@ export class WebhookDeliveryWorker extends WorkerHost {
   async handle(deliveryId: string): Promise<void> {
     const delivery = await this.deliveries.findOne({ where: { id: deliveryId } });
     if (!delivery) throw new Error(`Delivery ${deliveryId} not found`);
+    // Marketing webhook rows have their own queue/worker (marketing-workflow module); never send them from here.
+    if (delivery.kind === 'marketing') return;
     if (delivery.status === 'success' || delivery.status === 'superseded') return;
     if (await this.isSuperseded(delivery)) {
       // Sending an older snapshot after (or instead of) a newer one would roll

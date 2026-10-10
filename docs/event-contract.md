@@ -69,6 +69,7 @@ Body:
 | `company.sales_rep` | มอบหมาย / ล้าง sales ของบริษัท (ขั้น 2b, `COMMERCE_OWNS_SALES_REPS=true`) | `companyId`, `salesUserId` (uuid หรือ null), `assignedAt` (ISO) — snapshot ตัวล่าสุดตาม `assignedAt` ชนะ |
 | `staff.access` | admin เปลี่ยนสิทธิ์ / ปิด-เปิด / ให้ออกจากระบบทุกเครื่อง ของบัญชีพนักงานใน josh ที่ commerce-admin › บัญชี josh (ขั้น 6, `COMMERCE_OWNS_STAFF=true`) | `id` (josh users.id), `email`, `role` (รหัส role ของ josh — ไม่มี `platform_admin`), `isActive`, `minTokenVersion` (josh ยก `token_version` ขึ้นเป็นอย่างน้อยค่านี้ = ออกจากระบบทุกเครื่อง; ไม่ลด), `version` (ISO) — snapshot ตัวใหม่สุดชนะ · ไม่แตะบัญชีระบบ `commerce-platform@system.josh.internal` |
 | `winback.row` / `winback.notify` / `winback.welcome_email` | winback ที่ commerce เป็นเจ้าของ (`WINBACK_OWNER=commerce`) | `winback.row`: `table`, `id`, `row` (null = ลบ) · `winback.notify`: `userId`, `type` (`winback_*`), `category`, `data`, `dedupeKey` · `winback.welcome_email`: `toEmail`, `locale` |
+| `marketing.notify` / `marketing.grant_coupon` | marketing workflow ที่ commerce รันเอง (spec 2026-10-10) — aggregate = josh user id | `marketing.notify`: `userId`, `templateKey`, `channels` (`push`/`email`/`in_app`), `data`, `dedupeKey` (`cmw:<workflowId>:<enrollmentId>:<stepId>`) · `marketing.grant_coupon`: `userId`, `couponId` |
 
 segment.* ไม่ใช่ snapshot (ส่งทุกตัว) · ใน transaction เดียวกัน `segment.upserted` ถูกส่งก่อน `segment.members` เสมอ
 
@@ -125,6 +126,7 @@ qty ที่ **เก่ากว่า** ค่าที่ commerce มีอ
 | `company.sales_rep` | `CommerceSalesRepsService` ตั้ง `company.assigned_sales_user_id` (ผ่าน `commerce_applied_versions` ตาม `assignedAt`; ต้องเปิด `COMMERCE_OWNS_CUSTOMERS` ไม่งั้นตอบ 409) |
 | `staff.access` | ขั้น 6 · `CommerceStaffService` (josh `feat/stage6-staff-admin` — pair-ready) ตั้ง `users.role` / `users.is_active` และ `token_version = GREATEST(token_version, minTokenVersion)` ผ่านตัวกัน version `'staff.access'` แล้วล้าง cache role ภายใน · ต้องเปิด `COMMERCE_OWNS_STAFF` (ไม่งั้น 409) · user ไม่รู้จัก / เป็นลูกค้า / บัญชีระบบของ commerce → 422 · trigger เดิมส่ง `staff.snapshot` กลับให้ commerce |
 | `winback.notify` / `winback.welcome_email` / `winback.row` | `CommerceWinbackEventsService` — ส่งแจ้งเตือน / อีเมลด้วยระบบของ josh และเขียนสำเนาตาราง winback (ต้องเปิด `WINBACK_OWNED_BY_COMMERCE`) |
+| `marketing.notify` / `marketing.grant_coupon` | `CommerceMarketingEventsService` — notify: template override + opt-out + frequency cap ของ josh แล้ว `NotificationService.dispatch` (ตอบ `outcome`: `sent` / `marketing_opt_out` / `frequency_cap`) · grant: `grantFromMarketingWorkflow` (idempotent; `granted` / `already_granted`). เปิดส่งโดยเพิ่มทั้งสอง type เข้า subscription ของ josh (`ops/scripts/josh-subscription.cjs`, `SCRIPT_ARGS='add=marketing.notify,marketing.grant_coupon'`) **หลัง** deploy josh ที่มีตัวรับแล้วเท่านั้น — josh ตอบ 422 กับ type ที่ไม่รู้จักและ commerce ส่ง 4xx ไป dead-letter |
 
 `failed` ที่ handler คืน (SKU ไม่มีใน shop) → ตอบ `422` · error อื่น → `5xx`
 

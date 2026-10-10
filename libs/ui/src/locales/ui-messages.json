@@ -25238,5 +25238,413 @@
   "สถานะล่าสุด: {0}": {
     "th": "สถานะล่าสุด: {0}",
     "en": "Current status: {0}"
+  },
+  "ลาก step จากแถบซ้ายมาวาง — Entry → Message หรือ Action → +": {
+    "th": "ลาก step จากแถบซ้ายมาวาง — Entry → Message หรือ Action → +",
+    "en": "Drag steps from the toolbar — Entry → Message or Action → +"
+  },
+  "Workflow ใหม่": {
+    "th": "Workflow ใหม่",
+    "en": "New workflow"
+  },
+  "เปิดใช้แล้ว": {
+    "th": "เปิดใช้แล้ว",
+    "en": "Activated"
+  },
+  "ชื่อ workflow": {
+    "th": "ชื่อ workflow",
+    "en": "Workflow name"
+  },
+  "ยังไม่ได้บันทึก": {
+    "th": "ยังไม่ได้บันทึก",
+    "en": "Unsaved changes"
+  },
+  "หยุดแล้ว": {
+    "th": "หยุดแล้ว",
+    "en": "Paused"
+  },
+  "ยังเปิดใช้ไม่ได้: {0} จุดที่ต้องแก้ (การ์ดขอบแดง)": {
+    "th": "ยังเปิดใช้ไม่ได้: {0} จุดที่ต้องแก้ (การ์ดขอบแดง)",
+    "en": "Cannot activate yet: {0} issues to fix (cards with a red border)"
+  },
+  "Flow": {
+    "th": "Flow",
+    "en": "Flow"
+  },
+  "จัดเรียงอัตโนมัติ": {
+    "th": "จัดเรียงอัตโนมัติ",
+    "en": "Auto layout"
+  },
+  "เริ่มแล้ว — ดูผลที่แท็บผลลัพธ์ (test)": {
+    "th": "เริ่มแล้ว — ดูผลที่แท็บผลลัพธ์ (test)",
+    "en": "Started — see the Results tab (test)"
+  },
+  "ไม่ได้เริ่ม": {
+    "th": "ไม่ได้เริ่ม",
+    "en": "Not started"
+  },
+  "รันทดสอบกับ tester": {
+    "th": "รันทดสอบกับ tester",
+    "en": "Test run with a tester"
+  },
+  "ส่งจริงให้ tester": {
+    "th": "ส่งจริงให้ tester",
+    "en": "Send for real to the tester"
+  },
+  "tester": {
+    "th": "tester",
+    "en": "tester"
+  },
+  "ข้าม Time Delay": {
+    "th": "ข้าม Time Delay",
+    "en": "Skip time delays"
+  },
+  "ส่งจริง (push / email / คูปองผ่าน josh, webhook ยิงจริง) เฉพาะ tester ที่เลือก": {
+    "th": "ส่งจริง (push / email / คูปองผ่าน josh, webhook ยิงจริง) เฉพาะ tester ที่เลือก",
+    "en": "Real sends (push / email / coupon through josh, real webhook calls) to the selected tester only"
+  },
+  "ยังไม่มี tester — เพิ่มได้ที่หน้า ข้อความอัตโนมัติ › Tester": {
+    "th": "ยังไม่มี tester — เพิ่มได้ที่หน้า ข้อความอัตโนมัติ › Tester",
+    "en": "No testers yet — add them on Automated messages › Tester"
+  },
+  "ประวัติการแก้ไข": {
+    "th": "ประวัติการแก้ไข",
+    "en": "Revision history"
+  },
+  "เปิดฉบับนี้": {
+    "th": "เปิดฉบับนี้",
+    "en": "Open this version"
+  },
+  "เข้า workflow": {
+    "th": "เข้า workflow",
+    "en": "Enrolled"
+  },
+  "กำลังรอ": {
+    "th": "กำลังรอ",
+    "en": "Waiting"
+  },
+  "ครบ flow": {
+    "th": "ครบ flow",
+    "en": "Completed"
+  },
+  "สั่งซื้อ (converted)": {
+    "th": "สั่งซื้อ (converted)",
+    "en": "Ordered (converted)"
+  },
+  "Holdout": {
+    "th": "Holdout",
+    "en": "Holdout"
+  },
+  "Conversion: ได้รับข้อความ {0} · Holdout {1}": {
+    "th": "Conversion: ได้รับข้อความ {0} · Holdout {1}",
+    "en": "Conversion: messaged {0} · holdout {1}"
+  },
+  "A/B Split": {
+    "th": "A/B Split",
+    "en": "A/B Split"
+  },
+  "กิ่ง": {
+    "th": "กิ่ง",
+    "en": "Branch"
+  },
+  "ผลการส่ง": {
+    "th": "ผลการส่ง",
+    "en": "Send results"
+  },
+  "ยังไม่มีการส่ง": {
+    "th": "ยังไม่มีการส่ง",
+    "en": "Nothing sent yet"
+  },
+  "ลูกค้าที่เข้า workflow": {
+    "th": "ลูกค้าที่เข้า workflow",
+    "en": "Enrolled customers"
+  },
+  "log": {
+    "th": "log",
+    "en": "log"
+  },
+  "ยังไม่มีลูกค้าเข้า workflow": {
+    "th": "ยังไม่มีลูกค้าเข้า workflow",
+    "en": "No customers enrolled yet"
+  },
+  "เพิ่ม step ต่อจากตรงนี้": {
+    "th": "เพิ่ม step ต่อจากตรงนี้",
+    "en": "Add a step after this"
+  },
+  "ค้นหา step": {
+    "th": "ค้นหา step",
+    "en": "Search steps"
+  },
+  "เลือกการ์ดบน canvas เพื่อตั้งค่า": {
+    "th": "เลือกการ์ดบน canvas เพื่อตั้งค่า",
+    "en": "Select a card on the canvas to configure it"
+  },
+  "Entry": {
+    "th": "Entry",
+    "en": "Entry"
+  },
+  "ชื่อกิ่ง": {
+    "th": "ชื่อกิ่ง",
+    "en": "Branch name"
+  },
+  "ลบกิ่ง": {
+    "th": "ลบกิ่ง",
+    "en": "Remove branch"
+  },
+  "เพิ่มกิ่ง": {
+    "th": "เพิ่มกิ่ง",
+    "en": "Add branch"
+  },
+  "แบ่งเท่ากัน": {
+    "th": "แบ่งเท่ากัน",
+    "en": "Split evenly"
+  },
+  "สัดส่วนรวมตอนนี้ {0}% — ต้องเท่ากับ 100%": {
+    "th": "สัดส่วนรวมตอนนี้ {0}% — ต้องเท่ากับ 100%",
+    "en": "Total is {0}% — it must be 100%"
+  },
+  "ลูกค้าคนเดิมได้กิ่งเดิมเสมอ · ดูผลแต่ละกิ่งได้ที่แท็บผลลัพธ์": {
+    "th": "ลูกค้าคนเดิมได้กิ่งเดิมเสมอ · ดูผลแต่ละกิ่งได้ที่แท็บผลลัพธ์",
+    "en": "A customer always gets the same branch · see each branch on the Results tab"
+  },
+  "ยังไม่เลือก template": {
+    "th": "ยังไม่เลือก template",
+    "en": "No template selected"
+  },
+  "ยังไม่เลือกคูปอง": {
+    "th": "ยังไม่เลือกคูปอง",
+    "en": "No coupon selected"
+  },
+  "อยู่ใน segment ใดก็ได้": {
+    "th": "อยู่ใน segment ใดก็ได้",
+    "en": "In any of these segments"
+  },
+  "ยกเว้น segment": {
+    "th": "ยกเว้น segment",
+    "en": "Exclude segments"
+  },
+  "ยังไม่มี segment ที่ใช้กับ workflow ของ commerce ได้": {
+    "th": "ยังไม่มี segment ที่ใช้กับ workflow ของ commerce ได้",
+    "en": "No segments usable by commerce workflows yet"
+  },
+  "รอได้ 1 นาที ถึง 30 วัน": {
+    "th": "รอได้ 1 นาที ถึง 30 วัน",
+    "en": "Wait between 1 minute and 30 days"
+  },
+  "ตัวอย่าง: still_no_order == true AND user.order_count >= 2 · ไป Yes เมื่อจริง, No เมื่อเท็จ": {
+    "th": "ตัวอย่าง: still_no_order == true AND user.order_count >= 2 · ไป Yes เมื่อจริง, No เมื่อเท็จ",
+    "en": "Example: still_no_order == true AND user.order_count >= 2 · Yes when true, No when false"
+  },
+  "ตรวจเงื่อนไข": {
+    "th": "ตรวจเงื่อนไข",
+    "en": "Check condition"
+  },
+  "Template ข้อความ (josh)": {
+    "th": "Template ข้อความ (josh)",
+    "en": "Message template (josh)"
+  },
+  "josh เป็นคนส่งจริง และเคารพการปิดรับข่าวสารของลูกค้า": {
+    "th": "josh เป็นคนส่งจริง และเคารพการปิดรับข่าวสารของลูกค้า",
+    "en": "josh does the actual sending and respects customer opt-outs"
+  },
+  "ออเดอร์เดียว": {
+    "th": "ออเดอร์เดียว",
+    "en": "Single order"
+  },
+  "ยอดซื้อสะสม": {
+    "th": "ยอดซื้อสะสม",
+    "en": "Lifetime spend"
+  },
+  "บางวัน": {
+    "th": "บางวัน",
+    "en": "Some days"
+  },
+  "นับเฉพาะหลังกด Activate": {
+    "th": "นับเฉพาะหลังกด Activate",
+    "en": "Counts only after Activate"
+  },
+  "นับเฉพาะการเข้าแอปหลังกด Activate — ลูกค้าเดิมที่เคยเข้าแล้วจะไม่ถูกส่งย้อนหลัง": {
+    "th": "นับเฉพาะการเข้าแอปหลังกด Activate — ลูกค้าเดิมที่เคยเข้าแล้วจะไม่ถูกส่งย้อนหลัง",
+    "en": "Counts only app logins after Activate — customers who logged in earlier are not messaged retroactively"
+  },
+  "ช่วงเวลาทำงาน": {
+    "th": "ช่วงเวลาทำงาน",
+    "en": "Active hours"
+  },
+  "Cooldown (วัน)": {
+    "th": "Cooldown (วัน)",
+    "en": "Cooldown (days)"
+  },
+  "Holdout %": {
+    "th": "Holdout %",
+    "en": "Holdout %"
+  },
+  "วัด conversion (วัน)": {
+    "th": "วัด conversion (วัน)",
+    "en": "Conversion window (days)"
+  },
+  "หยุดส่งเมื่อลูกค้าสั่งซื้อแล้ว": {
+    "th": "หยุดส่งเมื่อลูกค้าสั่งซื้อแล้ว",
+    "en": "Stop once the customer orders"
+  },
+  "URL ต้องขึ้นต้นด้วย http:// หรือ https://": {
+    "th": "URL ต้องขึ้นต้นด้วย http:// หรือ https://",
+    "en": "The URL must start with http:// or https://"
+  },
+  "URL นี้ชี้ไปที่เครือข่ายภายใน ระบบจะไม่ยิงให้": {
+    "th": "URL นี้ชี้ไปที่เครือข่ายภายใน ระบบจะไม่ยิงให้",
+    "en": "This URL points to an internal network; it will not be called"
+  },
+  "Headers": {
+    "th": "Headers",
+    "en": "Headers"
+  },
+  "ค่าลับถูกลบแล้ว": {
+    "th": "ค่าลับถูกลบแล้ว",
+    "en": "secret deleted"
+  },
+  "ชื่อ header": {
+    "th": "ชื่อ header",
+    "en": "Header name"
+  },
+  "ค่าลับ": {
+    "th": "ค่าลับ",
+    "en": "Secret value"
+  },
+  "ใส่ค่าลับ": {
+    "th": "ใส่ค่าลับ",
+    "en": "Enter secret value"
+  },
+  "ค่า header": {
+    "th": "ค่า header",
+    "en": "Header value"
+  },
+  "ลบ header": {
+    "th": "ลบ header",
+    "en": "Remove header"
+  },
+  "ความลับ (เก็บเข้ารหัส ดูย้อนหลังไม่ได้)": {
+    "th": "ความลับ (เก็บเข้ารหัส ดูย้อนหลังไม่ได้)",
+    "en": "Secret (stored encrypted, cannot be viewed later)"
+  },
+  "เปลี่ยนค่า": {
+    "th": "เปลี่ยนค่า",
+    "en": "Change value"
+  },
+  "บันทึกค่าลับ": {
+    "th": "บันทึกค่าลับ",
+    "en": "Save secret"
+  },
+  "เพิ่ม header": {
+    "th": "เพิ่ม header",
+    "en": "Add header"
+  },
+  "Body": {
+    "th": "Body",
+    "en": "Body"
+  },
+  "ส่งทดสอบ (ข้อมูลตัวอย่าง)": {
+    "th": "ส่งทดสอบ (ข้อมูลตัวอย่าง)",
+    "en": "Test send (sample data)"
+  },
+  "ไม่สำเร็จ: {0}": {
+    "th": "ไม่สำเร็จ: {0}",
+    "en": "Failed: {0}"
+  },
+  "ตอบกลับ {0}": {
+    "th": "ตอบกลับ {0}",
+    "en": "Responded {0}"
+  },
+  "ENTRY": {
+    "th": "ENTRY",
+    "en": "ENTRY"
+  },
+  "ยอดสั่งซื้อถึงเป้า": {
+    "th": "ยอดสั่งซื้อถึงเป้า",
+    "en": "Order milestone"
+  },
+  "เข้าแอปครั้งแรก": {
+    "th": "เข้าแอปครั้งแรก",
+    "en": "First app login"
+  },
+  "กลับมาเข้าแอป": {
+    "th": "กลับมาเข้าแอป",
+    "en": "App login"
+  },
+  "CHANNELS": {
+    "th": "CHANNELS",
+    "en": "CHANNELS"
+  },
+  "In-App": {
+    "th": "In-App",
+    "en": "In-App"
+  },
+  "Webhook": {
+    "th": "Webhook",
+    "en": "Webhook"
+  },
+  "FLOW": {
+    "th": "FLOW",
+    "en": "FLOW"
+  },
+  "Time Delay": {
+    "th": "Time Delay",
+    "en": "Time Delay"
+  },
+  "Condition Split": {
+    "th": "Condition Split",
+    "en": "Condition Split"
+  },
+  "Audience filter": {
+    "th": "Audience filter",
+    "en": "Audience filter"
+  },
+  "REWARDS": {
+    "th": "REWARDS",
+    "en": "REWARDS"
+  },
+  "แจกคูปอง": {
+    "th": "แจกคูปอง",
+    "en": "Grant coupon"
+  },
+  "ใช้อยู่แล้ว": {
+    "th": "ใช้อยู่แล้ว",
+    "en": "Already in use"
+  },
+  "มี Audience filter ได้ 1 อัน": {
+    "th": "มี Audience filter ได้ 1 อัน",
+    "en": "Only one audience filter allowed"
+  },
+  "Time Delay ครบ {0} อันแล้ว": {
+    "th": "Time Delay ครบ {0} อันแล้ว",
+    "en": "Time delay limit of {0} reached"
+  },
+  "Condition ครบ {0} อันแล้ว": {
+    "th": "Condition ครบ {0} อันแล้ว",
+    "en": "Condition limit of {0} reached"
+  },
+  "Workflow ของ josh": {
+    "th": "Workflow ของ josh",
+    "en": "josh workflows"
+  },
+  "รันใน josh · แก้ด้วย editor เดิม": {
+    "th": "รันใน josh · แก้ด้วย editor เดิม",
+    "en": "Run by josh · edited with the existing editor"
+  },
+  "Workflow ของ commerce (ใหม่)": {
+    "th": "Workflow ของ commerce (ใหม่)",
+    "en": "Commerce workflows (new)"
+  },
+  "รันใน commerce · ลากวาง Webhook / A/B Split ได้": {
+    "th": "รันใน commerce · ลากวาง Webhook / A/B Split ได้",
+    "en": "Run by commerce · drag-and-drop Webhook / A/B Split"
+  },
+  "เข้า 30 วัน": {
+    "th": "เข้า 30 วัน",
+    "en": "Enrolled 30d"
+  },
+  "ยังไม่มี — กดสร้าง workflow ใหม่": {
+    "th": "ยังไม่มี — กดสร้าง workflow ใหม่",
+    "en": "None yet — create a new workflow"
   }
 }

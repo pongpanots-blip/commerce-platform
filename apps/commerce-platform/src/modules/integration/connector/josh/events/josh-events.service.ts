@@ -2,11 +2,13 @@ import { ProductPromotionRulesService } from '../../../../commerce/product-promo
 import { BadRequestException, Injectable, Optional } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JoshOrderCopy, JoshOrderLineCopy } from '../orders/josh-order-copy.entity';
 import { Row, toHead, toLine } from '../orders/josh-order-copy';
 import { JoshCatalogProduct } from '../josh-catalog-product.entity';
 import { JoshCustomerCopy } from './josh-customer-copy.entity';
 import { OrderStockService } from '../../../../commerce/inventory/application/order-stock.service';
+import { stopMarketingForCustomer } from '../../../marketing-workflow/infrastructure/workflow.store';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface JoshEnvelope { type: string; aggregateId: string; version: string; occurredAt: string; data: any }
@@ -38,7 +40,15 @@ export class JoshEventsService {
     /** Stage 3: orders deduct the commerce-owned warehouse (STOCK_ORDER_WAREHOUSE_CODE). */
     @Optional() private readonly orderStock?: OrderStockService,
     @Optional() private readonly promotions?: ProductPromotionRulesService,
+    /** Commerce marketing workflows listen for applied customer / order snapshots (marketing-trigger.*). */
+    @Optional() private readonly emitter?: EventEmitter2,
   ) {}
+
+  /** After commit: tell commerce's marketing workflows (local EventEmitter, no `type` so webhook dispatch ignores it). */
+  private signalled(name: string, userId: unknown, result: ApplyResult): ApplyResult {
+    if (result === 'applied' && typeof userId === 'string' && userId) this.emitter?.emit(name, { userId });
+    return result;
+  }
 
   async apply(e: JoshEnvelope): Promise<ApplyResult> {
     if (!e?.aggregateId || !/^\d+$/.test(String(e.version ?? ''))) throw new BadRequestException('aggregateId and numeric version required');
@@ -48,10 +58,11 @@ export class JoshEventsService {
         if (!this.promotions) throw new BadRequestException('promotion service unavailable');
         return this.promotions.inbound(e);
       case 'order.snapshot':
-        return this.guarded('josh_orders', 'orders_id', e, (m) => this.saveOrder(m, e));
+        return this.signalled('marketing-trigger.order', e.data?.order?.user_id,
+          await this.guarded('josh_orders', 'orders_id', e, (m) => this.saveOrder(m, e)));
       case 'customer.snapshot':
-        return this.guarded('josh_customers', 'id', e, (m) =>
-          m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: e.data ?? {}, sourceVersion: e.version, deletedAt: null }));
+        return this.signalled('marketing-trigger.customer', e.aggregateId, await this.guarded('josh_customers', 'id', e, (m) =>
+          m.getRepository(JoshCustomerCopy).save({ id: e.aggregateId, data: e.data ?? {}, sourceVersion: e.version, deletedAt: null })));
       case 'customer.deleted':
         // PDPA: wipe the copy (tombstone blocks older snapshots) and everything commerce derived from it.
         // Segment member_count stays as frozen, like josh (its snapshot rows cascade, the count doesn't change).
@@ -62,6 +73,8 @@ export class JoshEventsService {
           // The deleted customer's winback account loses its user link; it reaches josh through the mirror once
           // commerce owns winback.
           await m.query('UPDATE winback_account SET josh_user_id = NULL WHERE josh_user_id = $1', [e.aggregateId]);
+          // Commerce marketing workflows: stop the customer's journeys and blank their webhook rows (same transaction).
+          await stopMarketingForCustomer(m, e.aggregateId);
         });
       case 'catalog.snapshot':
         return this.guarded('josh_catalog_products', 'id', e, (m) => this.saveCatalog(m, e));

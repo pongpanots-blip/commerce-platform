@@ -38,6 +38,33 @@ export class SegmentsService {
     return { statusCode: 200, message: 'สำเร็จ', data: await this.db.getRepository(Segment).find({ order: { priority: 'DESC', slug: 'ASC' } }) };
   }
 
+  /**
+   * One customer against one segment, for commerce-run marketing workflows: frozen → its members; otherwise the
+   * compiled rule over SEGMENT_BASE_FROM. Rules only josh can match (live / device-level) → false.
+   */
+  async userMatchesSegment(segmentId: string, userId: string, m: EntityManager = this.db.manager): Promise<boolean> {
+    const segment = await m.getRepository(Segment).findOneBy({ id: segmentId });
+    if (!segment || !segment.is_active || isLiveSegment(segment)) return false;
+    if (segment.frozen_at) {
+      return (await m.query(`SELECT 1 AS ok FROM segment_members WHERE segment_id = $1 AND user_id = $2 LIMIT 1`, [segmentId, userId])).length > 0;
+    }
+    if (!segment.definition && segment.rule_type === UserSegmentRuleType.MANUAL_USER_LIST) {
+      const raw = segment.rule_config?.user_ids;
+      if (!Array.isArray(raw) || !raw.includes(userId)) return false;
+      return (await m.query(`SELECT 1 AS ok FROM segment_customers WHERE id = $1`, [userId])).length > 0;
+    }
+    const { where, params } = segment.definition
+      ? this.compiler.compile(segment.definition as unknown as SegmentDefinition)
+      : compileLegacyRule(segment.rule_type as UserSegmentRuleType, segment.rule_config);
+    return (await m.query(`SELECT 1 AS ok ${SEGMENT_BASE_FROM} WHERE (${where}) AND u.id = $${params.length + 1} LIMIT 1`, [...params, userId])).length > 0;
+  }
+
+  /** Segments a commerce workflow may use as an audience (active, evaluable here). */
+  async evaluableSegments(): Promise<{ id: string; name: string; memberCount: number | null }[]> {
+    const rows = await this.db.getRepository(Segment).find({ where: { is_active: true }, order: { priority: 'DESC', name: 'ASC' } });
+    return rows.filter((s) => !isLiveSegment(s)).map((s) => ({ id: s.id, name: s.name, memberCount: s.member_count }));
+  }
+
   async findOne(id: string) {
     const segment = await this.db.getRepository(Segment).findOneBy({ id });
     if (!segment) throw new NotFoundException('User segment not found');

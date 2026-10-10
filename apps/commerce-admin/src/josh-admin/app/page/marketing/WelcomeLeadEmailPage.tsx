@@ -95,7 +95,7 @@ function CopyRow({
   const inputType = type === 'url' ? 'url' : 'text';
 
   return (
-    <div className="grid gap-3 rounded-lg border border-gray-100 p-3 xl:grid-cols-[220px,minmax(0,1fr),minmax(0,1fr)]">
+    <div className="grid gap-3 rounded-lg border border-gray-100 p-3 md:grid-cols-[220px,1fr,1fr]">
       <label htmlFor={isRich ? undefined : thId} className="text-xs font-medium text-gray-500">
         {label}
       </label>
@@ -175,7 +175,7 @@ function StyleRow({
   __useUiLocale();
   const parse = (raw: string): number => Math.round(Number(raw)) || 0;
   return (
-    <div className="grid gap-3 rounded-lg border border-gray-100 p-3 xl:grid-cols-[220px,minmax(0,1fr),minmax(0,1fr)] xl:items-center">
+    <div className="grid gap-3 rounded-lg border border-gray-100 p-3 md:grid-cols-[220px,1fr,1fr] md:items-center">
       <span className="text-xs font-medium text-gray-500">{label}</span>
       <input
         type="number"
@@ -555,11 +555,11 @@ export default function WelcomeLeadEmailPage() {
   };
 
   if (loading) {
-    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด…")}</div>;
+    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด…")}</div>;
   }
 
   return (
-    <div className="cp-management-page space-y-6">
+    <div className="mx-auto max-w-[1500px] space-y-6 p-6">
       <div>
         <Link to={ADMIN_ROUTES.marketingSettings} className="text-sm text-gray-500 hover:text-gray-700">
           {__uiText("← Marketing Settings")}</Link>
@@ -577,7 +577,7 @@ export default function WelcomeLeadEmailPage() {
         </div>
       ) : null}
 
-      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr),660px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr,660px]">
         <div className="space-y-6">
           <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -755,7 +755,7 @@ export default function WelcomeLeadEmailPage() {
           </button>
         </div>
 
-        <div className="min-w-0 2xl:sticky 2xl:top-6 2xl:self-start">
+        <div className="lg:sticky lg:top-6 lg:self-start">
           <section className="space-y-3 rounded-xl border border-gray-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-gray-900">{__uiText("Preview")}</h2>

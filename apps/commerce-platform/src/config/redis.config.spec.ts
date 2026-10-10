@@ -21,6 +21,8 @@ describe('QUEUES', () => {
       WEBHOOK: 'webhook',
       WEBHOOK_OUT: 'webhook-out',
       SYNC: 'sync-job',
+      MARKETING: 'marketing-workflow',
+      MARKETING_WEBHOOK: 'marketing-webhook',
     });
   });
 });

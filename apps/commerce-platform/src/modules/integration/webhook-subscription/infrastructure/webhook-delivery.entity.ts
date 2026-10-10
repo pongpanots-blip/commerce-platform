@@ -8,8 +8,23 @@ export type DeliveryStatus = 'pending' | 'success' | 'failed' | 'superseded';
 @Entity('webhook_deliveries')
 @Index(['subscriptionId', 'status'])
 export class WebhookDelivery extends BaseEntity {
-  @Column({ type: 'uuid', name: 'subscription_id' })
-  subscriptionId: string;
+  /** null only for kind = 'marketing'. */
+  @Column({ type: 'uuid', name: 'subscription_id', nullable: true })
+  subscriptionId: string | null;
+
+  /** event = a subscription delivery · marketing = a marketing workflow webhook step (own queue, no subscription). */
+  @Column({ type: 'varchar', length: 16, default: 'event' })
+  kind: 'event' | 'marketing';
+
+  @Column({ type: 'varchar', length: 8, nullable: true })
+  method: string | null;
+
+  /** Marketing only, secret refs NOT resolved (resolved at send time). */
+  @Column({ type: 'jsonb', nullable: true })
+  headers: { key: string; value: string }[] | null;
+
+  @Column({ type: 'varchar', length: 191, name: 'idempotency_key', nullable: true })
+  idempotencyKey: string | null;
 
   @Column({ type: 'varchar', length: 191, name: 'event_type' })
   eventType: string;

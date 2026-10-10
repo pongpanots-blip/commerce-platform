@@ -8,6 +8,10 @@ export const QUEUES = {
   WEBHOOK: 'webhook',
   WEBHOOK_OUT: 'webhook-out',
   SYNC: 'sync-job',
+  /** Commerce marketing workflows: enrollment steps + trigger checks. */
+  MARKETING: 'marketing-workflow',
+  /** Marketing workflow webhook steps (external endpoints; webhook_deliveries kind = marketing). */
+  MARKETING_WEBHOOK: 'marketing-webhook',
 } as const;
 
 export type QueueName = (typeof QUEUES)[keyof typeof QUEUES];
@@ -35,6 +39,18 @@ export const DELIVERY_JOB_OPTIONS = {
   backoff: { type: 'custom' },
 } as const;
 export const deliveryBackoff = (attemptsMade: number): number => Math.min(1000 * 2 ** Math.max(attemptsMade - 1, 0), 60_000);
+
+/**
+ * Marketing workflow webhook steps (external endpoints, not a platform catching up): ~15 minutes with
+ * deliveryBackoff. Callers give each enqueue its own jobId (see WorkflowQueue / retryDelivery).
+ */
+export const MARKETING_WEBHOOK_MAX_ATTEMPTS = 20;
+export const MARKETING_WEBHOOK_JOB_OPTIONS = {
+  attempts: MARKETING_WEBHOOK_MAX_ATTEMPTS,
+  backoff: { type: 'custom' },
+  removeOnComplete: 1000,
+  removeOnFail: 5000,
+} as const;
 
 export interface RedisConnection {
   host: string;

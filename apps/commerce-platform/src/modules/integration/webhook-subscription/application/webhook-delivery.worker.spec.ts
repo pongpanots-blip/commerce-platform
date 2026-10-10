@@ -27,6 +27,15 @@ describe('WebhookDeliveryWorker', () => {
   afterEach(() => { global.fetch = realFetch; });
   const respond = (status: number) => { global.fetch = jest.fn().mockResolvedValue({ ok: status < 300, status }) as never; };
 
+  it('never sends a marketing workflow row (it has its own worker and no subscription)', async () => {
+    respond(200);
+    const d = { ...base(), kind: 'marketing', subscriptionId: null };
+    const { worker } = makeWorker(d);
+    await worker.handle('d-1');
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(d.status).toBe('pending');
+  });
+
   it('marks success on 2xx and signs the body', async () => {
     respond(200);
     const d = base();

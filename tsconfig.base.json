@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "paths": {
       "@cp/ui": ["./libs/ui/src/index.tsx"],
-      "@cp/growth": ["./libs/growth/src/index.d.ts"]
+      "@cp/growth": ["./libs/growth/src/index.d.ts"],
+      "@cp/marketing-workflow": ["./libs/marketing-workflow/src/index.d.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

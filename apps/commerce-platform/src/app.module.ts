@@ -58,6 +58,7 @@ import { WinbackModule } from './modules/integration/winback/winback.module';
 import { CompetitorPricesModule } from './modules/integration/competitor-prices/competitor-prices.module';
 import { CustomersModule } from './modules/integration/customers/customers.module';
 import { SegmentsModule } from './modules/integration/segments/segments.module';
+import { MarketingWorkflowModule } from './modules/integration/marketing-workflow/marketing-workflow.module';
 import { ProductPricesModule } from './modules/commerce/product-prices/product-prices.module';
 import { ProductEvidenceModule } from './modules/commerce/product-evidence/product-evidence.module';
 import { ProductContentsModule } from './modules/commerce/product-contents/product-contents.module';
@@ -137,6 +138,7 @@ import { McpModule } from './mcp/mcp.module';
     ProductPromotionRulesModule,
     OrderingModule,
     SegmentsModule,
+    MarketingWorkflowModule,
     McpModule,
   ],
   controllers: [AppController],

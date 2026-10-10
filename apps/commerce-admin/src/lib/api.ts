@@ -1,5 +1,7 @@
 // Thin fetch wrapper for the Commerce Platform API. Base URL, staff session and token refresh: ./auth.
 import { authedFetch, BASE, session } from './auth';
+import type { ActionLogRow, EnrollmentRow, SegmentOption, WebhookSecretItem, WebhookTestResult, Workflow, WorkflowAnalytics,
+  WorkflowInput, WorkflowListItem, WorkflowMeta, WorkflowRevision, WorkflowStep } from '@cp/marketing-workflow';
 
 export { authedFetch, logout, restoreSession, session } from './auth';
 
@@ -406,6 +408,32 @@ export const marketingTestersApi = {
   list: () => api.get<MarketingTester[]>('/marketing/testers'),
   add: (email: string) => api.post<MarketingTester[]>('/marketing/testers', { email }),
   remove: (userId: string) => api.del<MarketingTester[]>(`/marketing/testers/${userId}`),
+};
+
+// ---- Commerce-run marketing workflows (commerce-platform /marketing/flows) ----
+export const flowsApi = {
+  list: () => api.get<WorkflowListItem[]>('/marketing/flows'),
+  meta: () => api.get<WorkflowMeta>('/marketing/flows/meta'),
+  segmentOptions: () => api.get<SegmentOption[]>('/marketing/flows/segment-options'),
+  validateExpression: (expression: string) => api.post<{ ok: boolean; error?: string }>('/marketing/flows/validate-expression', { expression }),
+  webhookTest: (step: Extract<WorkflowStep, { type: 'webhook' }>) => api.post<WebhookTestResult>('/marketing/flows/webhook-test', { step }),
+  secrets: {
+    list: () => api.get<WebhookSecretItem[]>('/marketing/flows/webhook-secrets'),
+    create: (name: string, value: string) => api.post<WebhookSecretItem>('/marketing/flows/webhook-secrets', { name, value }),
+    replace: (id: string, value: string) => api.put<WebhookSecretItem>(`/marketing/flows/webhook-secrets/${id}`, { value }),
+    remove: (id: string) => api.del<void>(`/marketing/flows/webhook-secrets/${id}`),
+  },
+  create: (input: WorkflowInput) => api.post<Workflow>('/marketing/flows', input),
+  get: (id: string) => api.get<Workflow>(`/marketing/flows/${id}`),
+  update: (id: string, input: WorkflowInput) => api.put<Workflow>(`/marketing/flows/${id}`, input),
+  remove: (id: string) => api.del<void>(`/marketing/flows/${id}`),
+  activate: (id: string) => api.post<Workflow>(`/marketing/flows/${id}/activate`, {}),
+  pause: (id: string) => api.post<Workflow>(`/marketing/flows/${id}/pause`, {}),
+  revisions: (id: string) => api.get<WorkflowRevision[]>(`/marketing/flows/${id}/revisions`),
+  analytics: (id: string) => api.get<WorkflowAnalytics>(`/marketing/flows/${id}/analytics`),
+  enrollments: (id: string, page: number) => api.get<{ rows: EnrollmentRow[]; total: number }>(`/marketing/flows/${id}/enrollments?page=${page}`),
+  logs: (id: string, eid: string) => api.get<ActionLogRow[]>(`/marketing/flows/${id}/enrollments/${eid}/logs`),
+  testRun: (id: string, userId: string, skipWaits: boolean) => api.post<{ enrollmentId: string | null }>(`/marketing/flows/${id}/test-run`, { userId, skipWaits }),
 };
 
 // ---- Product galleries (stage 4e: owned by commerce; files in josh's media bucket) ----

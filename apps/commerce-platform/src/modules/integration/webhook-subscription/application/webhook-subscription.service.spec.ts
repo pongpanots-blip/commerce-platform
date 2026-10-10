@@ -39,7 +39,7 @@ function makeService(rows: Row[]) {
     },
   };
   const subs = { createQueryBuilder: jest.fn(() => qb) };
-  return new WebhookSubscriptionService(subs as never, {} as never, {} as never);
+  return new WebhookSubscriptionService(subs as never, {} as never, {} as never, {} as never);
 }
 
 const ids = (rows: Row[]) => rows.map((r) => r.id).sort();

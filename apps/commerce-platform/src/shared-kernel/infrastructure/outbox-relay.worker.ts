@@ -1,11 +1,11 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Interval } from '@nestjs/schedule';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Client } from 'pg';
 import { Repository } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { OutboxMessage } from './outbox.entity';
+import { ScheduledInterval } from './scheduled-task';
 
 const MAX_ATTEMPTS = 5;
 const BATCH_SIZE = 50;
@@ -75,7 +75,7 @@ export class OutboxRelayWorker implements OnModuleInit, OnModuleDestroy {
   }
 
   /** Runs until the outbox is empty; a wake-up during a run makes it go round once more instead of overlapping. */
-  @Interval(2000)
+  @ScheduledInterval('outbox-relay', 2000)
   async processPending(): Promise<void> {
     if (this.running) {
       this.again = true;

@@ -1,3 +1,4 @@
+import { eventStoreHealth } from '../../marketing-events/infrastructure/event-partitions';
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DeliveryMonitor } from '../../webhook-subscription/application/delivery-monitor';
@@ -62,7 +63,11 @@ export class SystemHealthReport {
     if (this.erpLogs.configured) {
       try { joshErpInbound = await this.erpLogs.summary(range.from, range.to); } catch (error) { joshErpInbound = { available: false, reason: `josh log query failed: ${error instanceof Error ? error.message : error}` }; }
     }
-    return { period: range.label, now: { ok: problemsNow.length === 0, problems: problemsNow.map((p) => p.message) }, commerce, josh, joshErpInbound };
+    const marketingEvents = await eventStoreHealth(this.db).catch((error) => ({ available: false, reason: String(error instanceof Error ? error.message : error) }));
+    const problems = problemsNow.map((p) => p.message);
+    if ('defaultPartitionRows' in marketingEvents && marketingEvents.defaultPartitionRows > 0)
+      problems.push(`marketing_events: ${marketingEvents.defaultPartitionRows} แถวอยู่ใน default partition (job สร้าง partition พลาด — รอบถัดไปย้ายให้)`);
+    return { period: range.label, now: { ok: problems.length === 0, problems }, commerce, josh, joshErpInbound, marketingEvents };
   }
 
   /**

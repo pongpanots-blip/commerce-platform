@@ -29,9 +29,7 @@ export function mountMcp(app: INestApplication) {
   const tools = app.get(McpTools);
   const http = app.getHttpAdapter().getInstance() as express.Express;
   const resourceUrl = new URL(`${base}/mcp`);
-  // Behind nginx: count hops so rate limits key on the real client IP, not the proxy.
-  const hops = Number(process.env.TRUST_PROXY_HOPS);
-  if (hops > 0) http.set('trust proxy', hops);
+  // trust proxy (TRUST_PROXY_HOPS) is applied in main.ts for the whole app.
 
   http.use(mcpAuthRouter({
     provider, issuerUrl: new URL(base), resourceServerUrl: resourceUrl,

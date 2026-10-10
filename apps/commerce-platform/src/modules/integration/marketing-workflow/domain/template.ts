@@ -1,6 +1,6 @@
-import type { WebhookHeader, WebhookMethod, WorkflowStep } from './workflow.types';
+import type { TriggerEvent, WebhookHeader, WebhookMethod, WorkflowStep } from './workflow.types';
 
-const VAR_RE = /\{\{\s*(\w+)\s*\}\}/g;
+const VAR_RE = /\{\{\s*([\w.]+)\s*\}\}/g;
 /** A header value that is exactly a secret reference; the sender swaps in the stored value. */
 export const SECRET_REF = /^\{\{secret:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\}\}$/i;
 export type RenderMode = 'url' | 'json' | 'header' | 'text';
@@ -22,7 +22,8 @@ export const TEMPLATE_VARS = [
   { key: 'user_email', label: 'อีเมลลูกค้า' }, { key: 'user_phone', label: 'เบอร์โทรลูกค้า' }, { key: 'user_custype', label: 'ประเภทลูกค้า (custype)' },
   { key: 'cuisine_name', label: 'ประเภทร้าน (Cuisine)' }, { key: 'today', label: 'วันที่วันนี้' }, { key: 'user_id', label: 'รหัสลูกค้า' },
   { key: 'workflow_id', label: 'รหัส workflow' }, { key: 'workflow_name', label: 'ชื่อ workflow' }, { key: 'enrollment_id', label: 'รหัสการเข้า workflow' },
-  { key: 'step_id', label: 'รหัส step' },
+  { key: 'step_id', label: 'รหัส step' }, { key: 'event.name', label: 'ชื่อ event ที่เริ่ม workflow' }, { key: 'device.id', label: 'รหัสอุปกรณ์' },
+  { key: 'device.platform', label: 'แพลตฟอร์มของอุปกรณ์' },
 ] as const;
 
 export interface VarContext { userId: string; workflowId: string; workflowName: string; enrollmentId: string; stepId: string }
@@ -54,3 +55,15 @@ export function renderWebhook(step: Extract<WorkflowStep, { type: 'webhook' }>, 
 
 export const secretIdsOf = (headers: WebhookHeader[]): string[] =>
   headers.map((h) => SECRET_REF.exec(h.value)?.[1]).filter((v): v is string => !!v);
+
+
+/** `{{event.name}}`, `{{event.<attribute>}}`, `{{device.id}}`, `{{device.platform}}` (spec §12). */
+export function eventVars(ev: TriggerEvent | null, device: { id: string; platform: string } | null): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (ev) {
+    out['event.name'] = ev.name;
+    for (const [k, v] of Object.entries(ev.attributes ?? {})) if (v !== null && v !== undefined) out[`event.${k}`] = String(v);
+  }
+  if (device) { out['device.id'] = device.id; out['device.platform'] = device.platform; }
+  return out;
+}

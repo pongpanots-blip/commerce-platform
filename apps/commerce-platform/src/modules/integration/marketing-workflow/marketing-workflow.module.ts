@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { QUEUES } from '../../../config/redis.config';
 import { SettingsModule } from '../../core/settings/settings.module';
 import { JoshModule } from '../connector/josh/josh.module';
+import { MarketingEventsModule } from '../marketing-events/marketing-events.module';
 import { SegmentsModule } from '../segments/segments.module';
 import { WebhookDelivery } from '../webhook-subscription/infrastructure/webhook-delivery.entity';
 import { MarketingWebhookWorker } from './application/marketing-webhook.worker';
@@ -27,7 +28,7 @@ import { MarketingWorkflowController } from './presentation/marketing-workflow.c
   imports: [
     TypeOrmModule.forFeature([MarketingWorkflowRow, MarketingWorkflowRevisionRow, MarketingWebhookSecret, WebhookDelivery]),
     BullModule.registerQueue({ name: QUEUES.MARKETING }, { name: QUEUES.MARKETING_WEBHOOK }),
-    SegmentsModule, SettingsModule, JoshModule,
+    SegmentsModule, SettingsModule, JoshModule, MarketingEventsModule,
   ],
   controllers: [MarketingWorkflowController],
   providers: [WorkflowStore, WorkflowQueue, WorkflowEngine, WorkflowTriggers, WorkflowTriggerListener, WorkflowProcessor, WorkflowSweep,

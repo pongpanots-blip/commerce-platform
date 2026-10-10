@@ -16,7 +16,8 @@ export class WorkflowAnalyticsService {
         count(*) FILTER (WHERE status = 'skipped')::int AS skipped, count(*) FILTER (WHERE status = 'failed')::int AS failed,
         count(converted_at)::int AS converted, count(*) FILTER (WHERE is_holdout)::int AS holdout,
         count(*) FILTER (WHERE NOT is_holdout)::int AS treated, count(converted_at) FILTER (WHERE is_holdout)::int AS holdout_converted,
-        count(converted_at) FILTER (WHERE NOT is_holdout)::int AS treated_converted
+        count(converted_at) FILTER (WHERE NOT is_holdout)::int AS treated_converted,
+        count(*) FILTER (WHERE device_id IS NOT NULL)::int AS guests, count(*) FILTER (WHERE device_id IS NOT NULL AND user_id IS NOT NULL)::int AS merged
       FROM marketing_workflow_enrollments WHERE workflow_id = $1 AND NOT is_test`, [workflowId]);
     const actions = await this.db.query(`SELECT l.kind, l.status, count(*)::int AS count FROM marketing_workflow_action_logs l
       JOIN marketing_workflow_enrollments e ON e.id = l.enrollment_id WHERE e.workflow_id = $1 AND NOT e.is_test AND l.kind NOT IN ('split', 'condition')
@@ -33,7 +34,7 @@ export class WorkflowAnalyticsService {
       }),
     }));
     return {
-      counts: { enrolled: c.enrolled, running: c.running, completed: c.completed, skipped: c.skipped, failed: c.failed, converted: c.converted, holdout: c.holdout },
+      counts: { enrolled: c.enrolled, running: c.running, completed: c.completed, skipped: c.skipped, failed: c.failed, converted: c.converted, holdout: c.holdout, enrolledGuests: c.guests, mergedToUser: c.merged },
       actions, splits,
       holdout: { enrolled: c.holdout, converted: c.holdout_converted }, treated: { enrolled: c.treated, converted: c.treated_converted },
     };
@@ -44,7 +45,7 @@ export class WorkflowAnalyticsService {
       ORDER BY started_at DESC LIMIT 50 OFFSET $2`, [workflowId, (page - 1) * 50]);
     return {
       total: rows[0]?.total ?? 0,
-      rows: rows.map((r: Record<string, unknown>) => ({ id: r.id, userId: r.user_id, status: r.status, occurrenceKey: r.occurrence_key,
+      rows: rows.map((r: Record<string, unknown>) => ({ id: r.id, userId: r.user_id ?? null, deviceId: r.device_id ?? null, status: r.status, occurrenceKey: r.occurrence_key,
         currentStepId: r.current_step_id, resumeAt: iso(r.resume_at), isHoldout: r.is_holdout, isTest: r.is_test, startedAt: iso(r.started_at),
         completedAt: iso(r.completed_at), endReason: r.end_reason, convertedAt: iso(r.converted_at) }) as EnrollmentRow),
     };

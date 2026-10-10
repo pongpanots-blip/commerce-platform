@@ -1,3 +1,4 @@
+import { eventVars } from './template';
 import { renderTemplate, renderWebhook, secretIdsOf, webhookVars } from './template';
 
 const vars = { user_name: 'Nok "the" Boss\r\nX-Evil: 1', user_email: 'a&b@x.co' };
@@ -34,4 +35,10 @@ describe('webhookVars / renderWebhook', () => {
   });
   it('sends no body for GET', () =>
     expect(renderWebhook({ id: 's', type: 'webhook', method: 'GET', url: 'https://h.co', headers: [], body: 'x', nextId: null }, {}).body).toBeNull());
+});
+
+it('renders event and device variables with dots in the name', () => {
+  const vars = { ...eventVars({ eventId: 'e', name: 'add_to_cart', attributes: { item_id: 'SKU "1"', price: 10 } }, { id: 'd1', platform: 'web' }) };
+  expect(renderTemplate('{"sku":"{{event.item_id}}","p":{{event.price}},"d":"{{device.id}}"}', vars, 'json')).toBe('{"sku":"SKU \\"1\\"","p":10,"d":"d1"}');
+  expect(renderTemplate('{{event.missing}}', vars, 'text')).toBe('{{event.missing}}');
 });

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Interval } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
+import { ScheduledInterval } from '../../../../shared-kernel/infrastructure/scheduled-task';
 
 /** Per active subscription: the queue still waiting, and what was dead-lettered in the last window. */
 export const SUBSCRIPTION_HEALTH_SQL = `
@@ -101,7 +101,7 @@ export class DeliveryMonitor {
     return detectProblems(subs, outbox, t);
   }
 
-  @Interval(30_000)
+  @ScheduledInterval('webhook-delivery-monitor', 30_000)
   async tick(): Promise<void> {
     try {
       await this.dataSource.transaction(async (m) => {

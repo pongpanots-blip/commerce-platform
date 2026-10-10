@@ -1,7 +1,8 @@
 // Thin fetch wrapper for the Commerce Platform API. Base URL, staff session and token refresh: ./auth.
 import { authedFetch, BASE, session } from './auth';
 import type { ActionLogRow, EnrollmentRow, SegmentOption, WebhookSecretItem, WebhookTestResult, Workflow, WorkflowAnalytics,
-  WorkflowInput, WorkflowListItem, WorkflowMeta, WorkflowRevision, WorkflowStep } from '@cp/marketing-workflow';
+  WorkflowInput, WorkflowListItem, WorkflowMeta, WorkflowRevision, WorkflowStep, DynamicSegment, DynamicSegmentInput, EventCoverage, EventDailyRow,
+  EventDefinition, EventDefinitionInput, EventRule, MarketingEventRow } from '@cp/marketing-workflow';
 
 export { authedFetch, logout, restoreSession, session } from './auth';
 
@@ -433,7 +434,28 @@ export const flowsApi = {
   analytics: (id: string) => api.get<WorkflowAnalytics>(`/marketing/flows/${id}/analytics`),
   enrollments: (id: string, page: number) => api.get<{ rows: EnrollmentRow[]; total: number }>(`/marketing/flows/${id}/enrollments?page=${page}`),
   logs: (id: string, eid: string) => api.get<ActionLogRow[]>(`/marketing/flows/${id}/enrollments/${eid}/logs`),
-  testRun: (id: string, userId: string, skipWaits: boolean) => api.post<{ enrollmentId: string | null }>(`/marketing/flows/${id}/test-run`, { userId, skipWaits }),
+  testRun: (id: string, userId: string, skipWaits: boolean, eventAttributes?: Record<string, unknown>) =>
+    api.post<{ enrollmentId: string | null }>(`/marketing/flows/${id}/test-run`, { userId, skipWaits, ...(eventAttributes ? { eventAttributes } : {}) }),
+};
+
+// ---- Behaviour events + dynamic segments (spec 2026-10-10-marketing-event-layer) ----
+const eventQs = (q: Record<string, string | number | undefined>) =>
+  new URLSearchParams(Object.entries(q).filter(([, v]) => v !== undefined && v !== '').map(([k, v]) => [k, String(v)])).toString();
+export const eventsApi = {
+  definitions: () => api.get<{ definitions: EventDefinition[]; coverage: EventCoverage[] }>('/marketing/events/definitions'),
+  createDefinition: (d: EventDefinitionInput) => api.post<EventDefinition>('/marketing/events/definitions', d),
+  updateDefinition: (name: string, d: EventDefinitionInput) => api.put<EventDefinition>(`/marketing/events/definitions/${encodeURIComponent(name)}`, d),
+  archive: (name: string) => api.post<EventDefinition>(`/marketing/events/definitions/${encodeURIComponent(name)}/archive`, {}),
+  list: (q: { deviceId?: string; userId?: string; name?: string; page: number }) => api.get<{ rows: MarketingEventRow[]; total: number }>(`/marketing/events?${eventQs(q)}`),
+  daily: (from: string, to: string) => api.get<EventDailyRow[]>(`/marketing/events/daily?${eventQs({ from, to })}`),
+};
+export const dynamicSegmentsApi = {
+  list: () => api.get<DynamicSegment[]>('/marketing/dynamic-segments'),
+  get: (id: string) => api.get<DynamicSegment>(`/marketing/dynamic-segments/${id}`),
+  create: (s: DynamicSegmentInput) => api.post<DynamicSegment>('/marketing/dynamic-segments', s),
+  update: (id: string, s: DynamicSegmentInput) => api.put<DynamicSegment>(`/marketing/dynamic-segments/${id}`, s),
+  remove: (id: string) => api.del<void>(`/marketing/dynamic-segments/${id}`),
+  preview: (rule: EventRule) => api.post<{ count: number | null; issues: string[] }>('/marketing/dynamic-segments/preview', { rule }),
 };
 
 // ---- Product galleries (stage 4e: owned by commerce; files in josh's media bucket) ----
@@ -865,4 +887,15 @@ export const auditLogsApi = {
     return api.get<Paginated<AuditLogRow>>(`/audit-logs?${p}`);
   },
   facets: () => api.get<{ actions: { value: string; count: number }[]; entityTypes: { value: string; count: number }[] }>('/audit-logs/facets'),
+};
+
+export interface ScheduledTaskRow {
+  name: string; kind: 'cron' | 'interval'; expression: string | null; timeZone: string | null; intervalMs: number | null;
+  enabled: boolean; running: number; runs: number; problems: number; nextRunAt: string | null; lastSuccessAt: string | null;
+  last: { startedAt: string; endedAt: string | null; problem: string | null; manual: boolean } | null;
+  lastProblem: { at: string; message: string } | null;
+}
+export const scheduledTasksApi = {
+  list: () => api.get<{ since: string; tasks: ScheduledTaskRow[] }>('/scheduled-tasks'),
+  run: (name: string) => api.post<{ started: boolean }>(`/scheduled-tasks/${encodeURIComponent(name)}/run`, {}),
 };

@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { cronConfig } from '../../../../config/cron.config';
 import { joshApiConfigured, postToJosh } from './josh-api';
 import { JoshReplica } from './josh-replica';
+import { ScheduledCron } from '../../../../shared-kernel/infrastructure/scheduled-task';
 
 /** The order statuses josh's bestseller carousel counts (carousel.service.ts). josh answers 409 if its list differs. */
 export const JOSH_BESTSELLER_ORDER_STATUSES = ['paid', 'preparing', 'shipped', 'delivered'];
@@ -92,7 +92,7 @@ export class BestsellersOffloadJob {
     return skus.length;
   }
 
-  @Cron(cronConfig.joshBestsellers.expression, { timeZone: cronConfig.joshBestsellers.timeZone, disabled: !cronConfig.joshBestsellers.enabled })
+  @ScheduledCron('josh-bestsellers', cronConfig.joshBestsellers.expression, { timeZone: cronConfig.joshBestsellers.timeZone, disabled: !cronConfig.joshBestsellers.enabled })
   async scheduled() {
     if (this.running || !this.configured) return;
     this.running = true;

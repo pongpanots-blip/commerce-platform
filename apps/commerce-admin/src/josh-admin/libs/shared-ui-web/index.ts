@@ -5,6 +5,7 @@ export * from './lib/Input/Input';
 export * from './lib/Textarea/Textarea';
 export * from './lib/CardAdmin/CardAdmin';
 export * from './lib/Table/Table';
+export * from './lib/Table/TableViews';
 export * from './lib/DateRangeInput/DateRangeInput';
 export * from './lib/DateRangeInput/DateTimeRangeInput';
 export * from './lib/button/button';

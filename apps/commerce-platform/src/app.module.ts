@@ -32,6 +32,7 @@ import { UserModule } from './modules/core/user/user.module';
 import { CompanyModule } from './modules/core/company/company.module';
 import { OrganizationModule } from './modules/core/organization/organization.module';
 import { AuditModule } from './modules/core/audit/audit.module';
+import { ScheduledTasksModule } from './modules/core/scheduled-tasks/scheduled-tasks.controller';
 import { SettingsModule } from './modules/core/settings/settings.module';
 import { ApiKeyModule } from './modules/core/api-key/api-key.module';
 
@@ -58,6 +59,7 @@ import { WinbackModule } from './modules/integration/winback/winback.module';
 import { CompetitorPricesModule } from './modules/integration/competitor-prices/competitor-prices.module';
 import { CustomersModule } from './modules/integration/customers/customers.module';
 import { SegmentsModule } from './modules/integration/segments/segments.module';
+import { MarketingEventsModule } from './modules/integration/marketing-events/marketing-events.module';
 import { MarketingWorkflowModule } from './modules/integration/marketing-workflow/marketing-workflow.module';
 import { ProductPricesModule } from './modules/commerce/product-prices/product-prices.module';
 import { ProductEvidenceModule } from './modules/commerce/product-evidence/product-evidence.module';
@@ -104,6 +106,7 @@ import { McpModule } from './mcp/mcp.module';
     CompanyModule,
     OrganizationModule,
     AuditModule,
+    ScheduledTasksModule,
     SettingsModule,
     ApiKeyModule,
 
@@ -138,6 +141,7 @@ import { McpModule } from './mcp/mcp.module';
     ProductPromotionRulesModule,
     OrderingModule,
     SegmentsModule,
+    MarketingEventsModule,
     MarketingWorkflowModule,
     McpModule,
   ],

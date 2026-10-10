@@ -2,6 +2,13 @@ import { checkExpression } from './expression.fields';
 import { SECRET_REF } from './template';
 import { LIMITS, NOTIFY_CHANNELS, nextIdsOf, WEBHOOK_METHODS } from './workflow.types';
 import type { WorkflowInput, WorkflowIssue, WorkflowStep } from './workflow.types';
+import { filterIssues, isFromTrigger, type Types } from '../../marketing-events/domain/event-filter';
+import { ruleIssues, typesOf, type RuleContext } from '../../marketing-events/domain/event-rule';
+import type { EventFilter, EventTriggerConfig } from './workflow.types';
+
+/** What event checks need from IO (catalog, coverage, dynamic segments and their own problems). Absent → structural checks only. */
+export interface EventContext extends RuleContext { segmentProblems: Map<string, string[]> }
+
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -11,7 +18,7 @@ const isInt = (n: unknown, min: number, max: number) => Number.isInteger(n) && (
 type Add = (stepId: string | null, code: string, message: string) => void;
 
 /** Everything that blocks activation (a draft may be saved with issues). Messages are shown to staff. */
-export function validateWorkflow(w: WorkflowInput): WorkflowIssue[] {
+export function validateWorkflow(w: WorkflowInput, ctx?: EventContext): WorkflowIssue[] {
   const issues: WorkflowIssue[] = [];
   const add: Add = (stepId, code, message) => issues.push({ stepId, code, message });
 
@@ -32,12 +39,16 @@ export function validateWorkflow(w: WorkflowInput): WorkflowIssue[] {
   for (const s of w.steps) if (nextIdsOf(s).some((n) => n !== null && !ids.has(n))) add(s.id, 'bad_next', 'เส้นทางชี้ไปที่ step ที่ไม่มีอยู่');
   if (hasCycle(w.steps)) add(null, 'cycle', 'flow วนกลับมาที่เดิม');
 
-  const count = (t: WorkflowStep['type']) => w.steps.filter((s) => s.type === t).length;
+  const count = (...t: WorkflowStep['type'][]) => w.steps.filter((s) => t.includes(s.type)).length;
   if (count('audience') > LIMITS.maxAudienceSteps) add(null, 'too_many_audiences', 'มี Audience filter ได้ 1 อัน');
-  if (count('wait') > LIMITS.maxWaitSteps) add(null, 'too_many_waits', `มี Time Delay ได้ไม่เกิน ${LIMITS.maxWaitSteps} อัน`);
-  if (count('condition') > LIMITS.maxConditionSteps) add(null, 'too_many_conditions', `มี Condition ได้ไม่เกิน ${LIMITS.maxConditionSteps} อัน`);
+  if (count('wait', 'wait_event') > LIMITS.maxWaitSteps) add(null, 'too_many_waits', `มี Time Delay ได้ไม่เกิน ${LIMITS.maxWaitSteps} อัน`);
+  if (count('condition', 'event_split') > LIMITS.maxConditionSteps) add(null, 'too_many_conditions', `มี Condition ได้ไม่เกิน ${LIMITS.maxConditionSteps} อัน`);
 
   for (const s of w.steps) validateStep(s, (code, message) => add(s.id, code, message));
+  if (ctx) eventIssues(w, ctx, add);
+  guestIssues(w, add);
+  if (w.triggerType === 'event' && w.cooldownDays < 1 && w.steps.some((s) => s.type === 'action' && s.action.kind === 'grant_coupon'))
+    add(null, 'event_coupon_cooldown', 'workflow ที่เริ่มด้วย event และแจกคูปองต้องตั้ง cooldown อย่างน้อย 1 วัน (event มาจากเครื่องลูกค้า ปลอมได้)');
   return issues;
 }
 
@@ -50,6 +61,11 @@ function validateTrigger(w: WorkflowInput, add: Add) {
   } else if (w.triggerType === 'order_milestone') {
     if (!['single_order_total', 'lifetime_spend', 'lifetime_order_count'].includes(c.metric as string) || !['>=', '>'].includes(c.operator as string)
       || typeof c.value !== 'number' || !(c.value > 0)) add(null, 'trigger_config', 'ตั้งเงื่อนไขยอดสั่งซื้อให้ครบ');
+  } else if (w.triggerType === 'event') {
+    if (typeof c.eventName !== 'string' || !c.eventName) add(null, 'trigger_config', 'เลือก event ที่เริ่ม workflow');
+    if (!Array.isArray(c.filters)) add(null, 'trigger_config', 'เงื่อนไข attribute ไม่ถูกต้อง');
+    else if ((c.filters as EventFilter[]).some((f) => isFromTrigger(f.value))) add(null, 'trigger_filter', 'เงื่อนไขของ trigger ใช้ค่าจาก event ที่ trigger ไม่ได้');
+    if (typeof c.includeGuests !== 'boolean') add(null, 'trigger_config', 'ตั้งค่า "รวม guest"');
   } else if (w.triggerType !== 'first_login' && w.triggerType !== 'app_login') add(null, 'trigger_type', 'ประเภท trigger นี้ยังไม่รองรับ');
 }
 
@@ -84,6 +100,16 @@ function validateStep(s: WorkflowStep, add: (code: string, message: string) => v
           || !s.action.channels.every((c) => (NOTIFY_CHANNELS as readonly string[]).includes(c))) add('notify_channels', 'เลือกช่องทางส่งอย่างน้อย 1 ช่องทาง');
       } else if (!UUID.test(s.action.couponId ?? '')) add('coupon', 'เลือกคูปอง');
       return;
+    case 'wait_event': {
+      const total = (s.timeoutHours ?? 0) * 60 + (s.timeoutMinutes ?? 0);
+      if (!isInt(s.timeoutHours, 0, LIMITS.maxWaitMinutes) || !isInt(s.timeoutMinutes ?? 0, 0, 59) || total < 1 || total > LIMITS.maxWaitMinutes)
+        add('wait_event_timeout', 'รอได้ 1 นาที ถึง 30 วัน');
+      if (!s.eventName) add('wait_event_name', 'เลือก event ที่รอ');
+      return;
+    }
+    case 'event_split':
+      if (!s.rule) add('event_split_rule', 'ตั้งเงื่อนไข event');
+      return;
     case 'webhook': {
       if (!(WEBHOOK_METHODS as readonly string[]).includes(s.method)) add('webhook_method', 'method ไม่ถูกต้อง');
       if (!/^https?:\/\//i.test(s.url ?? '') || s.url.length > LIMITS.maxUrlLength) add('webhook_url', 'URL ต้องขึ้นต้นด้วย http:// หรือ https:// และยาวไม่เกิน 1024');
@@ -110,4 +136,45 @@ function hasCycle(steps: WorkflowStep[]): boolean {
     return false;
   };
   return steps.some((s) => visit(s.id));
+}
+
+function eventIssues(w: WorkflowInput, ctx: EventContext, add: Add) {
+  const defOf = (name: string, stepId: string | null) => {
+    const d = ctx.catalog.get(name);
+    if (!d || d.status !== 'active') { add(stepId, 'event_unknown', `ไม่มี event "${name}" ใน catalog`); return null; }
+    return d;
+  };
+  const trig = w.triggerType === 'event' ? (w.triggerConfig as EventTriggerConfig) : null;
+  const trigDef = trig?.eventName ? defOf(trig.eventName, null) : null;
+  const trigTypes: Types | null = trigDef ? typesOf(trigDef) : null;
+  if (trigDef && Array.isArray(trig?.filters)) for (const m of filterIssues(trig!.filters, typesOf(trigDef), null)) add(null, 'trigger_filter', m);
+  if (w.exitOnGoal?.kind === 'event') {
+    const d = defOf(w.exitOnGoal.eventName, null);
+    if (d) for (const m of filterIssues(w.exitOnGoal.filters ?? [], typesOf(d), trigTypes)) add(null, 'goal_filter', m);
+  }
+  for (const s of w.steps) {
+    if (s.type === 'wait_event' && s.eventName) {
+      const d = defOf(s.eventName, s.id);
+      if (d) for (const m of filterIssues(s.filters ?? [], typesOf(d), trigTypes)) add(s.id, 'wait_event_filter', m);
+    }
+    if (s.type === 'event_split' && s.rule) for (const m of ruleIssues(s.rule, ctx)) add(s.id, 'event_rule', m);
+    if (s.type === 'audience') {
+      if (s.eventRule) for (const m of ruleIssues(s.eventRule, ctx)) add(s.id, 'event_rule', m);
+      for (const sid of [...(s.dynamicSegmentIds ?? []), ...(s.excludeDynamicSegmentIds ?? [])]) {
+        if (!ctx.segmentIds?.has(sid)) add(s.id, 'dynamic_segment', 'ไม่พบ dynamic segment');
+        else if (ctx.segmentProblems.get(sid)?.length) add(s.id, 'dynamic_segment', 'dynamic segment ที่เลือกยังมีเงื่อนไขที่ต้องแก้');
+      }
+    }
+  }
+}
+
+/** Guests have no customer data (spec §10): only time conditions, no audience or event rules. */
+function guestIssues(w: WorkflowInput, add: Add) {
+  if (w.triggerType !== 'event' || !(w.triggerConfig as EventTriggerConfig).includeGuests) return;
+  for (const s of w.steps) {
+    if (s.type === 'audience') add(s.id, 'guest_audience', 'workflow ที่รวม guest ใช้ Audience filter ไม่ได้ (guest ไม่มีข้อมูลลูกค้า)');
+    if (s.type === 'event_split') add(s.id, 'guest_event_rule', 'workflow ที่รวม guest ใช้ Event condition ไม่ได้');
+    if (s.type === 'condition' && /\b(segment\.in|user\.|still_no_order)/.test(s.expression ?? ''))
+      add(s.id, 'guest_condition', 'workflow ที่รวม guest ใช้ได้แค่เงื่อนไขเวลา (time.*)');
+  }
 }

@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "396e8d6ed018ee3d23c46139327c017ae6c23fd6",
-  "imageTag": "396e8d6",
+  "sourceCommit": "670393dd4dcaaa9aea6b8c453ffc947bf0c10e34",
+  "imageTag": "670393d",
   "migrations": [
     "InitialSchema1784105337942",
     "AddIntegrationSlug1784108912731",
@@ -53,38 +53,43 @@
     "RenameAllSubcategories1796000000000",
     "ProductErpChecks1796100000000",
     "CommercePromotionDrafts1796200000000",
-    "ProductErpExtras1796200000000"
+    "ProductErpExtras1796200000000",
+    "CommerceMarketingWorkflows1796300000000",
+    "MarketingEventLayer1796400000000"
   ],
   "approved": [
-    "CommercePromotionDrafts1796200000000",
-    "ProductErpExtras1796200000000"
+    "MarketingEventLayer1796400000000"
   ],
   "approvedCode": {
-    "CommercePromotionDrafts1796200000000": {
-      "file": "1796200000000-CommercePromotionDrafts.js",
-      "sha256": "fa69ae17a51fff5e84eba8fa2c145d8fabbb82d174bd27aa3d974c6094d5b37f"
-    },
-    "ProductErpExtras1796200000000": {
-      "file": "1796200000000-ProductErpExtras.js",
-      "sha256": "b86ccb03bbfb99679d3d41a0281954ab9808d118108e098afba9e2f03232ae37"
+    "MarketingEventLayer1796400000000": {
+      "file": "1796400000000-MarketingEventLayer.js",
+      "sha256": "db949af210932bc11c800b6f8f1a05cfc8ea754289235218893f9bae6ba728f8"
     }
   },
   "relations": {
-    "CommercePromotionDrafts1796200000000": [
-      "commerce_promotion_drafts",
-      "commerce_promotion_draft_requests"
-    ],
-    "ProductErpExtras1796200000000": [
-      "product_erp_extras"
+    "MarketingEventLayer1796400000000": [
+      "marketing_event_definitions",
+      "marketing_events_default",
+      "marketing_event_coverage",
+      "marketing_devices",
+      "marketing_device_links",
+      "marketing_event_daily",
+      "marketing_dynamic_segments",
+      "marketing_guest_push_log",
+      "josh_user_devices"
     ]
   },
   "deployedTags": {
     "platform": [
       "6790132",
-      "396e8d6"
+      "396e8d6",
+      "5d258a7",
+      "670393d"
     ],
     "admin": [
-      "396e8d6"
+      "396e8d6",
+      "5d258a7",
+      "670393d"
     ],
     "portal": [
       "020066e"

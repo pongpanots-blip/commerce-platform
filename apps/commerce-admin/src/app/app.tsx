@@ -47,6 +47,7 @@ import { WebhookPlatforms } from './pages/WebhookPlatforms';
 import { InventoryPerWarehouse } from './pages/InventoryPerWarehouse';
 import { AiConnectors } from './pages/AiConnectors';
 import { AuditLogs } from './pages/AuditLogs';
+import { ScheduledTasks } from './pages/ScheduledTasks';
 import { ErpSimulator } from './pages/ErpSimulator';
 import { HealthReportPage, SalesReport, TrafficReport } from './pages/ShopReports';
 import { MarketExplorer, OrderTargetgroup } from './pages/MarketExplorer';
@@ -63,6 +64,7 @@ import { MarketingWorkflows } from './pages/MarketingWorkflows';
 import { JoshAdminApp } from '../josh-admin/JoshAdminApp';
 import { WorkflowEditor, WorkflowEnrollments, WorkflowScheduledRuns } from './pages/workflow-editor';
 import { FlowEditor } from './pages/marketing-workflow';
+import { DynamicSegments, MarketingEvents } from './pages/marketing-events';
 import { CsDesk, SampleRequestsRedirect } from './pages/CsDesk';
 import { Livechat } from './pages/Livechat';
 import { GrowthWorkspace } from './pages/growth/Workspace';
@@ -241,6 +243,9 @@ export function App() {
             <Route path="/marketing/growth/companies/:companyId" element={<GrowthTimeline />} />
             <Route path="/marketing/flows/new" element={<FlowEditor />} />
             <Route path="/marketing/flows/:id" element={<FlowEditor />} />
+            <Route path="/marketing/events" element={<MarketingEvents />} />
+            <Route path="/marketing/dynamic-segments" element={<DynamicSegments />} />
+            <Route path="/marketing/dynamic-segments/:id" element={<DynamicSegments />} />
             <Route path="/marketing/workflows/new" element={<WorkflowEditor />} />
             <Route path="/marketing/workflows/:id/edit" element={<WorkflowEditor />} />
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
@@ -265,6 +270,7 @@ export function App() {
             <Route path="/marketing/competitor-prices" element={<Navigate to="/j/marketing/competitor-prices" replace />} />
             <Route path="/ai/connectors" element={<AiConnectors />} />
             <Route path="/settings/activity-log" element={<AuditLogs />} />
+            <Route path="/scheduled-tasks" element={<ScheduledTasks />} />
             <Route path="/erp/josh-logs" element={<JoshErpLogs />} />
             <Route path="/erp/inbound-log" element={<InboundLog />} />
             <Route path="/erp/webhook-dead-letter" element={<WebhookDeadLetter />} />

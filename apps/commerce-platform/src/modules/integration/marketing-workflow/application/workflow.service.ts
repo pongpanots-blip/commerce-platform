@@ -6,7 +6,9 @@ import { SegmentsService } from '../../segments/segments.service';
 import { MARKETING_EXPRESSION_FIELD_TYPES } from '../domain/expression.parser';
 import { FIELD_LABELS, SUPPORTED_FIELDS } from '../domain/expression.fields';
 import { TEMPLATE_VARS } from '../domain/template';
-import { validateWorkflow } from '../domain/workflow.validator';
+import { validateWorkflow, type EventContext } from '../domain/workflow.validator';
+import { DynamicSegmentsService } from '../../marketing-events/application/dynamic-segments.service';
+import { EventRuleService } from '../../marketing-events/application/event-rule.service';
 import { LIMITS } from '../domain/workflow.types';
 import type { Workflow, WorkflowInput, WorkflowIssue, WorkflowListItem, WorkflowMeta, WorkflowRevision } from '../domain/workflow.types';
 import { MarketingWorkflowRevisionRow } from '../infrastructure/marketing-workflow-revision.entity';
@@ -25,6 +27,8 @@ export class WorkflowService {
     @InjectRepository(MarketingWorkflowRevisionRow) private readonly revisions: Repository<MarketingWorkflowRevisionRow>,
     private readonly segments: SegmentsService,
     @InjectDataSource() private readonly db: DataSource,
+    private readonly rules: EventRuleService,
+    private readonly dynamicSegments: DynamicSegmentsService,
   ) {}
 
   meta(): WorkflowMeta {
@@ -89,7 +93,10 @@ export class WorkflowService {
 
   /** Pure rules + what needs IO: audiences commerce can evaluate, static webhook URLs that are public. */
   async issuesOf(row: MarketingWorkflowRow): Promise<WorkflowIssue[]> {
-    const issues = validateWorkflow(inputOf(row));
+    const dynamic = await this.dynamicSegments.list();
+    const ctx: EventContext = { ...(await this.rules.context()), segmentIds: new Set(dynamic.map((d) => d.id)),
+      segmentProblems: new Map(dynamic.map((d) => [d.id, d.issues])) };
+    const issues = validateWorkflow(inputOf(row), ctx);
     const evaluable = new Set((await this.segments.evaluableSegments()).map((s) => s.id));
     for (const s of row.steps ?? []) {
       if (s.type === 'audience' && [...(s.segmentIds ?? []), ...(s.excludeSegmentIds ?? [])].some((x) => !evaluable.has(x)))

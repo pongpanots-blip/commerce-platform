@@ -7,21 +7,23 @@ export type WorkflowAction =
 export interface SplitBranch { id: string; label: string; percent: number; nextId: string | null }
 export interface WebhookHeader { key: string; value: string }
 export type WorkflowStep =
-  | { id: string; type: 'audience'; segmentIds?: string[]; excludeSegmentIds?: string[]; nextId: string | null }
+  | { id: string; type: 'audience'; segmentIds?: string[]; excludeSegmentIds?: string[]; dynamicSegmentIds?: string[]; excludeDynamicSegmentIds?: string[]; eventRule?: EventRule | null; nextId: string | null }
   | { id: string; type: 'wait'; hours: number; minutes?: number; nextId: string | null }
   | { id: string; type: 'condition'; expression: string; yesNextId: string | null; noNextId: string | null }
   | { id: string; type: 'split'; branches: SplitBranch[] }
   | { id: string; type: 'action'; action: WorkflowAction; nextId: string | null }
-  | { id: string; type: 'webhook'; method: WebhookMethod; url: string; headers: WebhookHeader[]; body?: string; nextId: string | null };
+  | { id: string; type: 'webhook'; method: WebhookMethod; url: string; headers: WebhookHeader[]; body?: string; nextId: string | null }
+  | { id: string; type: 'wait_event'; eventName: string; filters: EventFilter[]; timeoutHours: number; timeoutMinutes?: number; matchedNextId: string | null; timeoutNextId: string | null }
+  | { id: string; type: 'event_split'; rule: EventRule; yesNextId: string | null; noNextId: string | null };
 export type WorkflowStepType = WorkflowStep['type'];
-export type TriggerType = 'scheduled' | 'order_milestone' | 'first_login' | 'app_login';
+export type TriggerType = 'scheduled' | 'order_milestone' | 'first_login' | 'app_login' | 'event';
 export interface ScheduledTriggerConfig { time: string; daysOfWeek?: number[]; timezone?: string }
 export interface OrderMilestoneTriggerConfig { metric: 'single_order_total' | 'lifetime_spend' | 'lifetime_order_count'; operator: '>=' | '>'; value: number }
-export type TriggerConfig = ScheduledTriggerConfig | OrderMilestoneTriggerConfig | Record<string, never>;
+export type TriggerConfig = ScheduledTriggerConfig | OrderMilestoneTriggerConfig | EventTriggerConfig | Record<string, never>;
 export type WorkflowSchedule = {
   timezone: string; daysOfWeek?: number[]; startTime?: string; endTime?: string; activeFrom?: string | null; activeTo?: string | null;
 } | null;
-export type ExitGoal = { kind: 'order_placed' } | null;
+export type ExitGoal = { kind: 'order_placed' } | { kind: 'event'; eventName: string; filters: EventFilter[] } | null;
 export type WorkflowStatus = 'draft' | 'active' | 'paused';
 export interface CanvasPosition { x: number; y: number }
 export interface WorkflowInput {
@@ -43,15 +45,42 @@ export interface WorkflowMeta {
 export interface SegmentOption { id: string; name: string; memberCount: number | null }
 export interface WorkflowRevision { id: string; createdBy: string | null; createdAt: string; snapshot: WorkflowInput }
 export interface WorkflowAnalytics {
-  counts: { enrolled: number; running: number; completed: number; skipped: number; failed: number; converted: number; holdout: number };
+  counts: { enrolled: number; running: number; completed: number; skipped: number; failed: number; converted: number; holdout: number; enrolledGuests: number; mergedToUser: number };
   actions: { kind: string; status: string; count: number }[];
   splits: { stepId: string; branches: { branchId: string; label: string; entered: number; converted: number }[] }[];
   holdout: { enrolled: number; converted: number }; treated: { enrolled: number; converted: number };
 }
 export interface EnrollmentRow {
-  id: string; userId: string; status: string; occurrenceKey: string; currentStepId: string | null; resumeAt: string | null;
+  id: string; userId: string | null; deviceId: string | null; status: string; occurrenceKey: string; currentStepId: string | null; resumeAt: string | null;
   isHoldout: boolean; isTest: boolean; startedAt: string; completedAt: string | null; endReason: string | null; convertedAt: string | null;
 }
 export interface ActionLogRow { id: string; stepId: string; kind: string; status: string; meta: Record<string, unknown>; createdAt: string }
 export interface WebhookSecretItem { id: string; name: string; createdAt: string; updatedAt: string }
 export interface WebhookTestResult { status: number | null; body: string; error?: string }
+
+// ---- Event layer (spec 2026-10-10-marketing-event-layer) ----
+export type EventAttributeType = 'string' | 'number' | 'boolean' | 'date';
+export interface EventAttributeDef { key: string; type: EventAttributeType; label: string; archived?: boolean }
+export type EventEvidence = 'browser' | 'server';
+export interface EventDefinitionInput { name: string; label: string; description: string | null; attributes: EventAttributeDef[]; evidence: EventEvidence }
+export interface EventDefinition extends EventDefinitionInput { status: 'active' | 'archived'; createdAt: string; updatedAt: string }
+export interface EventCoverage { platform: string; collectingSince: string }
+export type FilterOp = 'eq' | 'neq' | 'contains' | 'in' | 'gt' | 'gte' | 'lt' | 'lte' | 'before' | 'after' | 'within_last_days' | 'within_next_days';
+export type FilterValue = string | number | boolean | string[] | { fromTrigger: string };
+export interface EventFilter { key: string; op: FilterOp; value: FilterValue }
+export type EventWindow = { lastDays: number } | { from: string; to: string };
+export type EventLeaf =
+  | { kind: 'event'; name: string; measure: 'count' | { sum: string }; op: 'gte' | 'eq' | 'lte'; value: number; window: EventWindow; filters: EventFilter[] }
+  | { kind: 'segment'; segmentId: string };
+export type EventRule = { op: 'AND' | 'OR'; children: EventRule[] } | EventLeaf;
+export interface EventTriggerConfig { eventName: string; filters: EventFilter[]; includeGuests: boolean }
+export interface TriggerEvent { eventId: string; name: string; attributes: Record<string, unknown> }
+export interface WaitingFor { stepId: string; eventName: string; filters: EventFilter[]; since: string }
+export interface DynamicSegmentInput { name: string; description: string | null; rule: EventRule }
+export interface DynamicSegment extends DynamicSegmentInput { id: string; createdBy: string | null; createdAt: string; updatedAt: string; issues: string[] }
+export interface MarketingEventRow {
+  eventId: string; deviceId: string; platform: string; source: string; name: string; attributes: Record<string, unknown>;
+  companyId: string | null; branchId: string | null; actorKind: string | null; occurredAt: string; receivedAt: string;
+  attributedUserId: string | null; attribution: string | null;
+}
+export interface EventDailyRow { date: string; name: string; platform: string; events: number; users: number; devices: number }

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { WinbackNotifyService } from './winback-notify.service';
 import { cronConfig } from './shared/winback.config';
+import { ScheduledCron } from '../../../shared-kernel/infrastructure/scheduled-task';
 
 /**
  * Neither reminder has an event to hang off — time passing is the trigger.
@@ -15,7 +15,7 @@ export class WinbackNotifyCron {
 
   constructor(private readonly notify: WinbackNotifyService) {}
 
-  @Cron(cronConfig.winbackAppointmentsDue.expression, {
+  @ScheduledCron('winback-appointments-due', cronConfig.winbackAppointmentsDue.expression, {
     timeZone: cronConfig.winbackAppointmentsDue.timeZone,
     disabled: !cronConfig.winbackAppointmentsDue.enabled,
   })
@@ -28,7 +28,7 @@ export class WinbackNotifyCron {
     }
   }
 
-  @Cron(cronConfig.winbackDailyDigest.expression, {
+  @ScheduledCron('winback-daily-digest', cronConfig.winbackDailyDigest.expression, {
     timeZone: cronConfig.winbackDailyDigest.timeZone,
     disabled: !cronConfig.winbackDailyDigest.enabled,
   })
@@ -41,7 +41,7 @@ export class WinbackNotifyCron {
     }
   }
 
-  @Cron(cronConfig.winbackAgingLeads.expression, {
+  @ScheduledCron('winback-aging-leads', cronConfig.winbackAgingLeads.expression, {
     timeZone: cronConfig.winbackAgingLeads.timeZone,
     disabled: !cronConfig.winbackAgingLeads.enabled,
   })

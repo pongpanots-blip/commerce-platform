@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Cron } from '@nestjs/schedule';
 import { EntityManager, In, IsNull, Repository } from 'typeorm';
 import { JSDOM } from 'jsdom';
 import { ScrapedItem, ScrapingProgress, ScrapingSource } from '../domain/scraping-source.entity';
@@ -8,6 +7,7 @@ import { Setting } from '../../../core/settings/infrastructure/setting.entity';
 import { DiscoverScrapingDto, PreviewScrapingDto, SaveScrapingSourceDto, SaveSiteLoginDto, StartScrapingDto } from './dto/scraping.dto';
 import { decryptCredential, encryptCredential } from '../infrastructure/credential-cipher';
 import { PublicWebReader, publicUrl, scrapingVersion, extractedWeightKg, resolveWebsite, discoveredFieldLabels, ExtractedWebItem, SiteLogin } from '../infrastructure/public-web.reader';
+import { ScheduledCron } from '../../../../shared-kernel/infrastructure/scheduled-task';
 
 const emptyProgress = (): ScrapingProgress => ({ pending: [], visited: [], successful: 0, failed: 0, items: 0 });
 const envInt = (name: string, fallback: number, min: number, max: number) => {
@@ -375,7 +375,7 @@ export class ScrapingService {
     return { ...item, weightKg: extractedWeightKg(item.fields.weight || item.name), observedAt: new Date() };
   }
 
-  @Cron('*/15 * * * * *', { disabled: process.env.SCRAPING_CRON_DISABLED === 'true' })
+  @ScheduledCron('scraping-tick', '*/15 * * * * *', { disabled: process.env.SCRAPING_CRON_DISABLED === 'true' })
   async tick() {
     if (this.ticking) return;
     this.ticking = true;

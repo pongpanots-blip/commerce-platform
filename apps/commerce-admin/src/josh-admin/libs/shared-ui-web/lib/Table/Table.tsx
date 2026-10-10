@@ -43,6 +43,8 @@ interface TableProps<T> {
   emptyTitle?: string;
   emptyDescription?: React.ReactNode;
   renderMobileRow?: (row: T, selection: MobileSelection) => React.ReactNode;
+  /** Column keys to leave out (column chooser / saved views). */
+  hiddenKeys?: string[];
 }
 
 function Checkbox({
@@ -76,7 +78,7 @@ function Checkbox({
 }
 
 export function Table<T>({
-  columns,
+  columns: allColumns,
   data,
   sortKey,
   sortOrder,
@@ -96,8 +98,10 @@ export function Table<T>({
   emptyTitle = 'ยังไม่มีรายการ',
   emptyDescription,
   renderMobileRow,
+  hiddenKeys,
 }: TableProps<T>) {
   useUiLocale();
+  const columns = hiddenKeys?.length ? allColumns.filter((c) => !hiddenKeys.includes(c.key)) : allColumns;
   const safeData = Array.isArray(data) ? data : [];
   const selectable = safeData.filter(
     (row) => !isRowSelectable || isRowSelectable(row),

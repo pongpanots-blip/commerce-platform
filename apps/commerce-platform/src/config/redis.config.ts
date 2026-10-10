@@ -8,6 +8,10 @@ export const QUEUES = {
   WEBHOOK: 'webhook',
   WEBHOOK_OUT: 'webhook-out',
   SYNC: 'sync-job',
+  /** Commerce marketing workflows: enrollment steps + trigger checks. */
+  MARKETING: 'marketing-workflow',
+  /** Marketing workflow webhook steps (external endpoints; webhook_deliveries kind = marketing). */
+  MARKETING_WEBHOOK: 'marketing-webhook',
 } as const;
 
 export type QueueName = (typeof QUEUES)[keyof typeof QUEUES];

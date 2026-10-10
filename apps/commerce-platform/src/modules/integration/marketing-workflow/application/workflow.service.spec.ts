@@ -15,11 +15,21 @@ function setup(row: Record<string, unknown> | null = null) {
   };
   const revisions = { save: jest.fn(async (r: unknown) => r), find: jest.fn(async () => []) };
   const segments = { evaluableSegments: jest.fn(async () => [{ id: id(9), name: 'VIP', memberCount: 3 }]) };
-  const svc = new WorkflowService(workflows as never, revisions as never, segments as never, { query: jest.fn(async () => []) } as never);
+  const rules = { context: jest.fn(async () => ({ catalog: new Map(), coverageStart: null, segmentIds: new Set<string>(), now: new Date() })) };
+  const dynamic = { list: jest.fn(async () => []) };
+  const svc = new WorkflowService(workflows as never, revisions as never, segments as never, { query: jest.fn(async () => []) } as never, rules as never, dynamic as never);
   return { svc, saved, revisions };
 }
 
 describe('WorkflowService', () => {
+  it('the editor payload with event steps parses', () => {
+    const steps = [{ id: id(1), type: 'wait_event', eventName: 'purchase', filters: [{ key: 'order_id', op: 'eq', value: { fromTrigger: 'order_id' } }],
+      timeoutHours: 2, matchedNextId: null, timeoutNextId: null },
+      { id: id(2), type: 'event_split', rule: { op: 'AND', children: [{ kind: 'segment', segmentId: id(3) }] }, yesNextId: null, noNextId: null }];
+    expect(workflowInputSchema.safeParse({ ...valid, triggerType: 'event', triggerConfig: { eventName: 'add_to_cart', filters: [], includeGuests: true },
+      entryStepId: id(1), steps, exitOnGoal: { kind: 'event', eventName: 'purchase', filters: [] } }).success).toBe(true);
+  });
+
   it('the editor payload shape parses', () => expect(workflowInputSchema.safeParse(valid).success).toBe(true));
   it('saves a draft with issues and records a revision', async () => {
     const { svc, revisions } = setup();

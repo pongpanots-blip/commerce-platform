@@ -35,8 +35,16 @@ export async function sendWebhook(
   } catch (e) {
     throw new WebhookSendError(e instanceof Error && e.name === 'TimeoutError' ? 'timeout' : 'network_error', true);
   }
-  const body = (await res.text().catch(() => '')).slice(0, 2048);
+  // Mask before the cut so a secret split by it can't leak either (test send shows this body to staff).
+  const body = maskSecrets(await res.text().catch(() => ''), secrets).slice(0, 2048);
   if (res.status >= 300 && res.status < 400) throw new WebhookSendError('redirect_not_followed', false, res.status);
   if (res.ok) return { status: res.status, body };
   throw new WebhookSendError(`http_${res.status}`, res.status >= 500 || res.status === 408 || res.status === 429, res.status);
+}
+
+/** Test send shows the target's reply; a target that echoes request headers must not reveal a stored secret. */
+export function maskSecrets(text: string, secrets: Map<string, string>): string {
+  let out = text;
+  for (const value of secrets.values()) if (value) out = out.split(value).join('••••');
+  return out;
 }

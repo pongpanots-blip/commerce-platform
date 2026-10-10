@@ -1,4 +1,4 @@
-import { sendWebhook, WebhookSendError } from './webhook-send';
+import { maskSecrets, sendWebhook, WebhookSendError } from './webhook-send';
 
 const SID = '11111111-1111-4111-8111-111111111111';
 const pub = async () => [{ address: '93.184.216.34' }];
@@ -29,9 +29,26 @@ describe('sendWebhook', () => {
     expect(e2).toMatchObject({ code: 'network_error', retryable: true });
     expect(JSON.stringify(e2) + String(e2.message)).not.toContain('s3cr3t');
   });
+  it('never returns a stored secret the target echoes back, even across the 2 KB cut', async () => {
+    const echo = 'x'.repeat(2037) + 'Bearer s3cr3t'; // the 2 KB cut lands inside the secret
+    const out = await sendWebhook(req, new Map([[SID, 'Bearer s3cr3t']]), { fetchImpl: async () => res(200, echo), resolve: pub });
+    expect(out.body).not.toContain('s3cr');
+  });
   it('sends no body for GET', async () => {
     const fetchImpl = jest.fn(async () => res(200));
     await sendWebhook({ ...req, method: 'GET', headers: [] }, new Map(), { fetchImpl, resolve: pub });
     expect((fetchImpl.mock.calls[0] as unknown as [string, RequestInit])[1].body).toBeUndefined();
   });
+});
+
+describe('maskSecrets', () => {
+  it('hides every stored secret value a target echoes back (test send shows the response body)', () => {
+    const secrets = new Map([['a', 'Bearer s3cr3t'], ['b', 'k-123']]);
+    const echoed = '{"headers":{"Authorization":"Bearer s3cr3t","X-Key":"k-123"},"again":"Bearer s3cr3t"}';
+    const masked = maskSecrets(echoed, secrets);
+    expect(masked).not.toContain('s3cr3t');
+    expect(masked).not.toContain('k-123');
+    expect(masked).toContain('••••');
+  });
+  it('leaves text alone when there are no secrets', () => expect(maskSecrets('ok', new Map())).toBe('ok'));
 });

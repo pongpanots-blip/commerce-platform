@@ -32,7 +32,7 @@ export class MarketingWorkflowController {
     const step = parse(webhookTestSchema, b).step as Extract<WorkflowStep, { type: 'webhook' }>;
     const req = renderWebhook(step, webhookVars(SAMPLE, { userId: '00000000-0000-4000-8000-000000000000', workflowId: 'test', workflowName: 'test', enrollmentId: 'test', stepId: step.id }));
     try {
-      return await sendWebhook(req, await this.secrets.resolve(secretIdsOf(req.headers)));
+      return await sendWebhook(req, await this.secrets.resolve(secretIdsOf(req.headers))); // body comes back with secrets masked
     } catch (e) {
       const err = e instanceof WebhookSendError ? e : new WebhookSendError('send_failed', false);
       return { status: err.status, body: '', error: err.code };

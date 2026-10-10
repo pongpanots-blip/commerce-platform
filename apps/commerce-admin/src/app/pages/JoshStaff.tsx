@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Alert, Button, Chip, Empty, ErrorText, Loading, Page, PageHeader, Panel, PanelHead, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
+  Alert, Button, Chip, Empty, ErrorText, Loading, Page, PageHeader, Pager, Panel, PanelHead, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
 import { JOSH_ROLE_LABEL, JOSH_STAFF_ROLES, joshStaffApi, JoshStaffAccount } from '../../lib/api';
 import { useAsync } from '../hooks';
@@ -20,6 +20,8 @@ export function JoshStaff() {
   const list = useAsync(() => joshStaffApi.list(), []);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const canEdit = !!owned.data?.staff;
 
   async function run(key: string, confirmText: string, fn: () => Promise<unknown>) {
@@ -42,6 +44,8 @@ export function JoshStaff() {
   const signOut = (a: JoshStaffAccount) => run(`out:${a.id}`, `ให้ ${a.email} ออกจากระบบ josh ทุกเครื่อง?`, () => joshStaffApi.set(a.id, { revokeSessions: true }));
 
   const rows = list.data ?? [];
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(rows.length / pageSize)));
+  const pageRows = rows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   return (
     <Page>
       <PageHeader
@@ -60,6 +64,7 @@ export function JoshStaff() {
         {list.loading && !list.data ? (
           <Loading />
         ) : rows.length ? (
+          <>
           <Table>
             <THead>
               <TH>{__uiText("อีเมล")}</TH>
@@ -70,7 +75,7 @@ export function JoshStaff() {
               <TH kind="actions">{__uiText("จัดการ")}</TH>
             </THead>
             <TBody>
-              {rows.map((a) => (
+              {pageRows.map((a) => (
                 <TR key={a.id}>
                   <TD kind="mono">{a.email ?? '—'}{a.pending && <Chip tone="warn" className="ml-2">{__uiText("รอ josh")}</Chip>}</TD>
                   <TD>{a.name || '—'}</TD>
@@ -98,6 +103,8 @@ export function JoshStaff() {
               ))}
             </TBody>
           </Table>
+          <Pager page={currentPage} pageSize={pageSize} total={rows.length} onPage={setPage} onPageSize={(n) => { setPageSize(n); setPage(1); }} />
+          </>
         ) : (
           <Empty icon="badge">{__uiText("ยังไม่มีสำเนาพนักงานจาก josh (staff.snapshot — backfill กลุ่ม staff)")}</Empty>
         )}

@@ -1,8 +1,11 @@
 import { DomainEvent } from '../../../../shared-kernel/domain/domain-event';
 import type { NotifyChannel } from '../domain/workflow.types';
 
-/** To josh (`internal/erp-events`): deliver a notify template; josh dedupes on dedupeKey. Aggregate = the josh user. */
-export interface MarketingNotifyPayload { userId: string; templateKey: string; channels: NotifyChannel[]; data: Record<string, unknown>; dedupeKey: string }
+/** To josh: deliver a notify template; josh dedupes on dedupeKey. Aggregate = the josh user, or the device for a guest (target). */
+export interface MarketingNotifyPayload {
+  userId: string | null; templateKey: string; channels: NotifyChannel[]; data: Record<string, unknown>; dedupeKey: string;
+  target?: { kind: 'device'; subscriptionId: string; platform: string };
+}
 export class MarketingNotifyRequested extends DomainEvent<MarketingNotifyPayload> { readonly type = 'marketing.notify'; }
 
 /** To josh: grant a coupon (idempotent per coupon + user in josh). */

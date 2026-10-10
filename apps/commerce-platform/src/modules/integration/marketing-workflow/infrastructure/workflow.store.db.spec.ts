@@ -93,4 +93,14 @@ const url = process.env.MARKETING_TEST_DATABASE_URL;
       expect(await store.notifiesQueuedToday(m, U)).toBeGreaterThanOrEqual(1);
     });
   });
+  it('guest enrollments dedupe per device; lockWaiting only finds an enrollment still waiting on that step', async () => {
+    const D = 'g'.repeat(32);
+    const a = await store.insertEnrollment({ workflowId: wf, userId: null, deviceId: D, occurrenceKey: 'ev1', entryStepId: 's1', holdout: false, test: false, skipWaits: false, triggerEvent: null });
+    expect(await store.insertEnrollment({ workflowId: wf, userId: null, deviceId: D, occurrenceKey: 'ev1', entryStepId: 's1', holdout: false, test: false, skipWaits: false, triggerEvent: null })).toBeNull();
+    await db.transaction((m) => store.parkForEvent(m, a!, 's1', { stepId: 's1', eventName: 'purchase', filters: [], since: new Date().toISOString() }, new Date(Date.now() + 60_000)));
+    expect((await store.waitingFor({ userId: null, deviceId: D }, 'purchase', new Date())).map((r) => r.id)).toEqual([a]);
+    await db.transaction(async (m) => expect(await store.lockWaiting(m, a!, 's1')).toMatchObject({ deviceId: D }));
+    await db.transaction((m) => store.moveAfterEvent(m, a!, 's2'));
+    await db.transaction(async (m) => expect(await store.lockWaiting(m, a!, 's1')).toBeNull());
+  });
 });

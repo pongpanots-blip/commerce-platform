@@ -3,20 +3,25 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { randomUUID } from 'node:crypto';
 import { DataSource, EntityManager } from 'typeorm';
 import { JOSH_ACTIVE_ORDER_STATUSES } from '../../customers/customer-metrics.service';
-import type { OrderMilestoneTriggerConfig, TriggerType, WebhookHeader } from '../domain/workflow.types';
+import type { OrderMilestoneTriggerConfig, TriggerEvent, TriggerType, WaitingFor, WebhookHeader, ExitGoal } from '../domain/workflow.types';
 import { MarketingWorkflowRow } from './marketing-workflow.entity';
 
-export interface EnrollmentRecord {
-  id: string; workflowId: string; userId: string; occurrenceKey: string; status: string; currentStepId: string | null;
-  resumeAt: Date | null; isHoldout: boolean; isTest: boolean; skipWaits: boolean; splitAssignments: Record<string, string>; startedAt: Date;
-}
 type Row = Record<string, unknown>;
+export type Who = { userId: string | null; deviceId: string | null };
+export interface EnrollmentRecord {
+  id: string; workflowId: string; userId: string | null; deviceId: string | null; occurrenceKey: string; status: string; currentStepId: string | null;
+  resumeAt: Date | null; isHoldout: boolean; isTest: boolean; skipWaits: boolean; splitAssignments: Record<string, string>; startedAt: Date;
+  waitingFor: WaitingFor | null; triggerEvent: TriggerEvent | null;
+}
 const toEnrollment = (r: Row): EnrollmentRecord => ({
-  id: r.id as string, workflowId: r.workflow_id as string, userId: r.user_id as string, occurrenceKey: r.occurrence_key as string,
-  status: r.status as string, currentStepId: (r.current_step_id as string | null) ?? null, resumeAt: (r.resume_at as Date | null) ?? null,
-  isHoldout: !!r.is_holdout, isTest: !!r.is_test, skipWaits: !!r.skip_waits,
+  id: r.id as string, workflowId: r.workflow_id as string, userId: (r.user_id as string | null) ?? null, deviceId: (r.device_id as string | null) ?? null,
+  occurrenceKey: r.occurrence_key as string, status: r.status as string, currentStepId: (r.current_step_id as string | null) ?? null,
+  resumeAt: (r.resume_at as Date | null) ?? null, isHoldout: !!r.is_holdout, isTest: !!r.is_test, skipWaits: !!r.skip_waits,
   splitAssignments: (r.split_assignments as Record<string, string>) ?? {}, startedAt: new Date(r.started_at as string),
+  waitingFor: (r.waiting_for as WaitingFor | null) ?? null, triggerEvent: (r.trigger_event as TriggerEvent | null) ?? null,
 });
+/** `$1` = user id, `$2` = device id; a guest (no user) is matched by its device. */
+const WHO_SQL = `(($1::uuid IS NOT NULL AND user_id = $1) OR ($1::uuid IS NULL AND user_id IS NULL AND device_id = $2))`;
 const COUNTED = [...JOSH_ACTIVE_ORDER_STATUSES];
 
 /** Every SQL the marketing workflow engine and triggers run (so the logic above it is unit-tested with a fake). */
@@ -24,12 +29,16 @@ const COUNTED = [...JOSH_ACTIVE_ORDER_STATUSES];
 export class WorkflowStore {
   constructor(@InjectDataSource() private readonly db: DataSource) {}
 
-  async insertEnrollment(i: { workflowId: string; userId: string; occurrenceKey: string; entryStepId: string | null; holdout: boolean; test: boolean; skipWaits: boolean }): Promise<string | null> {
+  async insertEnrollment(i: { workflowId: string; userId: string | null; deviceId?: string | null; occurrenceKey: string; entryStepId: string | null;
+    holdout: boolean; test: boolean; skipWaits: boolean; triggerEvent?: TriggerEvent | null }): Promise<string | null> {
+    const conflict = i.userId ? '(workflow_id, user_id, occurrence_key)' : '(workflow_id, device_id, occurrence_key) WHERE user_id IS NULL';
     const rows = await this.db.query(
-      `INSERT INTO marketing_workflow_enrollments (workflow_id, user_id, occurrence_key, status, current_step_id, is_holdout, is_test, skip_waits, completed_at, end_reason)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CASE WHEN $6 THEN now() END, CASE WHEN $6 THEN 'holdout' END)
-       ON CONFLICT (workflow_id, user_id, occurrence_key) DO NOTHING RETURNING id`,
-      [i.workflowId, i.userId, i.occurrenceKey, i.holdout ? 'completed' : 'pending', i.holdout ? null : i.entryStepId, i.holdout, i.test, i.skipWaits]);
+      `INSERT INTO marketing_workflow_enrollments (workflow_id, user_id, device_id, occurrence_key, status, current_step_id, is_holdout, is_test, skip_waits,
+         completed_at, end_reason, trigger_event)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CASE WHEN $7 THEN now() END, CASE WHEN $7 THEN 'holdout' END, $10::jsonb)
+       ON CONFLICT ${conflict} DO NOTHING RETURNING id`,
+      [i.workflowId, i.userId, i.userId ? null : i.deviceId ?? null, i.occurrenceKey, i.holdout ? 'completed' : 'pending', i.holdout ? null : i.entryStepId,
+        i.holdout, i.test, i.skipWaits, i.triggerEvent ? JSON.stringify(i.triggerEvent) : null]);
     return rows[0]?.id ?? null;
   }
 
@@ -83,9 +92,9 @@ export class WorkflowStore {
     const [r] = await m.query(`SELECT data FROM josh_customers WHERE id = $1 AND deleted_at IS NULL`, [userId]);
     return (r?.data as Record<string, unknown>) ?? null;
   }
-  async inCooldown(workflowId: string, userId: string, days: number): Promise<boolean> {
-    const [r] = await this.db.query(`SELECT EXISTS (SELECT 1 FROM marketing_workflow_enrollments WHERE workflow_id = $1 AND user_id = $2 AND NOT is_test
-      AND started_at > now() - make_interval(days => $3)) AS hit`, [workflowId, userId, days]);
+  async inCooldown(workflowId: string, who: Who, days: number): Promise<boolean> {
+    const [r] = await this.db.query(`SELECT EXISTS (SELECT 1 FROM marketing_workflow_enrollments WHERE workflow_id = $3 AND ${WHO_SQL} AND NOT is_test
+      AND started_at > now() - make_interval(days => $4)) AS hit`, [who.userId, who.deviceId, workflowId, days]);
     return !!r?.hit;
   }
   /** Waits that are due, plus pending enrollments whose first job was lost (> 2 min old). */
@@ -98,6 +107,55 @@ export class WorkflowStore {
     const rows = await this.db.query(`SELECT id FROM webhook_deliveries WHERE kind = 'marketing' AND status = 'pending' AND updated_at < now() - interval '10 minutes'
       ORDER BY updated_at LIMIT $1`, [limit]);
     return rows.map((r: { id: string }) => r.id);
+  }
+
+  async parkForEvent(m: EntityManager, id: string, stepId: string, waitingFor: WaitingFor, resumeAt: Date) {
+    await m.query(`UPDATE marketing_workflow_enrollments SET status = 'running', current_step_id = $2, waiting_for = $3::jsonb, resume_at = $4 WHERE id = $1`,
+      [id, stepId, JSON.stringify(waitingFor), resumeAt]);
+  }
+  async clearWait(m: EntityManager, id: string) {
+    await m.query(`UPDATE marketing_workflow_enrollments SET waiting_for = NULL WHERE id = $1`, [id]);
+  }
+  /** Waits for a row lock (not SKIP LOCKED): an event that races the timeout queues behind it and then finds nothing to do. */
+  async lockWaiting(m: EntityManager, id: string, stepId: string): Promise<EnrollmentRecord | null> {
+    const [r] = await m.query(`SELECT * FROM marketing_workflow_enrollments WHERE id = $1 AND status = 'running' AND current_step_id = $2
+      AND waiting_for->>'stepId' = $2 FOR UPDATE`, [id, stepId]);
+    return r ? toEnrollment(r) : null;
+  }
+  async moveAfterEvent(m: EntityManager, id: string, nextId: string | null) {
+    await m.query(`UPDATE marketing_workflow_enrollments SET current_step_id = $2, waiting_for = NULL, resume_at = NULL WHERE id = $1`, [id, nextId]);
+  }
+  async waitingFor(who: Who, eventName: string, occurredAt: Date): Promise<{ id: string; waitingFor: WaitingFor; triggerEvent: TriggerEvent | null }[]> {
+    const rows = await this.db.query(`SELECT id, waiting_for, trigger_event FROM marketing_workflow_enrollments WHERE status = 'running'
+      AND waiting_for->>'eventName' = $3 AND ${WHO_SQL} AND (waiting_for->>'since')::timestamptz <= $4`, [who.userId, who.deviceId, eventName, occurredAt]);
+    return rows.map((r: Row) => ({ id: r.id as string, waitingFor: r.waiting_for as WaitingFor, triggerEvent: (r.trigger_event as TriggerEvent | null) ?? null }));
+  }
+  async eventsSince(m: EntityManager, who: Who, eventName: string, since: Date): Promise<{ attributes: Record<string, unknown> }[]> {
+    const col = who.userId ? 'attributed_user_id = $1::uuid' : 'device_id = $1 AND attributed_user_id IS NULL';
+    return m.query(`SELECT attributes FROM marketing_events WHERE ${col} AND name = $2 AND occurred_at >= $3 ORDER BY occurred_at LIMIT 200`,
+      [who.userId ?? who.deviceId, eventName, since]);
+  }
+  async devicePush(m: EntityManager, deviceId: string): Promise<{ pushSubscriptionId: string | null; platform: string } | null> {
+    const [r] = await m.query(`SELECT push_subscription_id, platform FROM marketing_devices WHERE device_id = $1`, [deviceId]);
+    return r ? { pushSubscriptionId: r.push_subscription_id ?? null, platform: r.platform } : null;
+  }
+  async guestPushesLast24h(m: EntityManager, deviceId: string): Promise<number> {
+    const [r] = await m.query(`SELECT count(*)::int AS n FROM marketing_guest_push_log WHERE device_id = $1 AND sent_at > now() - interval '24 hours'`, [deviceId]);
+    return r?.n ?? 0;
+  }
+  async logGuestPush(m: EntityManager, deviceId: string) {
+    await m.query(`INSERT INTO marketing_guest_push_log (device_id) VALUES ($1)`, [deviceId]);
+  }
+  /** Open conversions on an event goal (spec §9): started before the event, still inside the workflow's window. */
+  async eventGoalCandidates(who: Who, eventName: string, occurredAt: Date): Promise<{ id: string; goal: Extract<ExitGoal, { kind: 'event' }>; triggerEvent: TriggerEvent | null }[]> {
+    const rows = await this.db.query(`SELECT e.id, w.exit_on_goal, e.trigger_event FROM marketing_workflow_enrollments e JOIN marketing_workflows w ON w.id = e.workflow_id
+      WHERE e.converted_at IS NULL AND NOT e.is_test AND w.exit_on_goal->>'kind' = 'event' AND w.exit_on_goal->>'eventName' = $3
+        AND ${WHO_SQL.replace(/user_id/g, 'e.user_id').replace(/device_id/g, 'e.device_id')}
+        AND e.started_at <= $4 AND $4 <= e.started_at + make_interval(days => w.conversion_window_days)`, [who.userId, who.deviceId, eventName, occurredAt]);
+    return rows.map((r: Row) => ({ id: r.id as string, goal: r.exit_on_goal as Extract<ExitGoal, { kind: 'event' }>, triggerEvent: (r.trigger_event as TriggerEvent | null) ?? null }));
+  }
+  async markConvertedAt(id: string, at: Date) {
+    await this.db.query(`UPDATE marketing_workflow_enrollments SET converted_at = $2 WHERE id = $1 AND converted_at IS NULL`, [id, at]);
   }
 
   activeWorkflows(types: TriggerType[]): Promise<MarketingWorkflowRow[]> {

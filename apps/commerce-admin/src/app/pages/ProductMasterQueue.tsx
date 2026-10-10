@@ -69,7 +69,7 @@ export function ProductMasterQueue() {
         {pending.data?.items.length ? (
           <>
             <Table>
-              <THead><TR><TH /><TH>{__uiText("SKU")}</TH><TH>{__uiText("ERP เปลี่ยน (ตอนนี้ → ใหม่)")}</TH><TH>{__uiText("ERP ส่งเมื่อ")}</TH></TR></THead>
+              <THead><TH /><TH>{__uiText("SKU")}</TH><TH>{__uiText("ERP เปลี่ยน (ตอนนี้ → ใหม่)")}</TH><TH>{__uiText("ERP ส่งเมื่อ")}</TH></THead>
               <TBody>
                 {pending.data.items.map((r: MasterPending) => (
                   <TR key={r.sku} selected={picked.has(r.sku)} onClick={() => toggle(r.sku)}>

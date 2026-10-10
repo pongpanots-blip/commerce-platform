@@ -3,6 +3,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { StaffRequest, StaffRole, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions, UploadFile } from './josh-actions';
+import { MarketingTesters } from './marketing-testers';
 
 const M: StaffRole[] = ['marketing'];
 const MER: StaffRole[] = ['marketing', 'merchandising'];
@@ -32,7 +33,7 @@ const AREAS: { path: RegExp; roles: StaffRole[]; methods?: string[] }[] = [
   { path: /^\/(campaigns|user-segments)(\/|$)/, roles: M },
   { path: /^\/(marketing-workflows|marketing-notify-templates|marketing-trigger-presets|marketing-settings)(\/|$)/, roles: M },
   { path: /^\/admin\/bot\//, roles: M },
-  { path: /^\/(banner|popup-definitions)$/, roles: M },
+  { path: new RegExp(`^/(banner(/${ID})?|popup-definitions)$`), roles: M }, // /banner/:id: MCP banner edits (josh's relay must allow it too)
   { path: /^\/(product-category|brands|cuisine)(\/|$)/, roles: MER },
   { path: /^\/(marketing-notify-templates|marketing-settings|smart-links|marketing-offers|marketing\/deeplink)(\/|$)/, roles: M },
   { path: /^\/(membership-tiers|users|analytics\/(funnel|users)|pii\/reveal|company\/|branch\/)/, roles: ADMIN },
@@ -60,6 +61,9 @@ const AREAS: { path: RegExp; roles: StaffRole[]; methods?: string[] }[] = [
   { path: /^\/(company|admin-access|admin\/kyc|erp\/testing|payment\/jagota\/testing)(\/|$)/, roles: ADMIN },
 ];
 const METHODS = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'];
+/** Test sends reach a real device: only callers that check the tester list (commerce-admin pages) may make them. */
+const PUSH_TEST = new RegExp(`^/admin/push-campaigns/${ID}/test$`);
+const WORKFLOW_TEST = new RegExp(`^/marketing-workflows/${ID}/test$`);
 /** josh takes JSON bodies up to 5 MB; base64 adds a third — keep all files of one call under 3.5 MB. */
 export const MAX_RELAY_FILES_BYTES = 3.5 * 1024 * 1024;
 /** `/upload` (real multipart): same caps as josh's `/admin-call/upload`. */
@@ -82,11 +86,11 @@ export interface AdminCallBody {
 @Controller('josh/admin-call')
 @StaffRoles('marketing', 'merchandising', 'cs', 'graphic')
 export class JoshAdminCallController {
-  constructor(private readonly josh: JoshActions) {}
+  constructor(private readonly josh: JoshActions, private readonly testers: MarketingTesters) {}
 
   @Post() @HttpCode(HttpStatus.OK)
   call(@Body() b: AdminCallBody, @Req() req: StaffRequest) {
-    return joshAdminCall(this.josh, { userId: req.staff.userId, email: req.staff.email, role: req.staff.role }, b, 'admin');
+    return joshAdminCall(this.josh, { userId: req.staff.userId, email: req.staff.email, role: req.staff.role }, b, 'admin', undefined, this.testers);
   }
 
   /** Large files (videos, bulk images): multipart with a `request` field = `{ method, path, query, body }` and the files as josh names them. */
@@ -97,18 +101,24 @@ export class JoshAdminCallController {
     try { b = JSON.parse(request ?? ''); } catch { throw new BadRequestException('request: JSON { method, path, query, body }'); }
     if (!parts.length) throw new BadRequestException('no files — use POST /josh/admin-call');
     const files: UploadFile[] = parts.map((p) => ({ field: p.fieldname, filename: p.originalname, contentType: p.mimetype || undefined, bytes: p.buffer }));
-    return joshAdminCall(this.josh, { userId: req.staff.userId, email: req.staff.email, role: req.staff.role }, { ...b, files: undefined }, 'admin', files);
+    return joshAdminCall(this.josh, { userId: req.staff.userId, email: req.staff.email, role: req.staff.role }, { ...b, files: undefined }, 'admin', files, this.testers);
   }
 }
 
 /** Shared by commerce-admin and MCP: check the path and role, call josh, unwrap josh's answer (a josh 4xx becomes the same error). */
-export async function joshAdminCall(josh: JoshActions, actor: { userId: string; email: string; role: string }, b: AdminCallBody, via: string, uploads?: UploadFile[]): Promise<unknown> {
+export async function joshAdminCall(josh: JoshActions, actor: { userId: string; email: string; role: string }, b: AdminCallBody, via: string, uploads?: UploadFile[], testers?: MarketingTesters): Promise<unknown> {
   const method = String(b?.method ?? '').toUpperCase();
   const path = String(b?.path ?? '');
   if (!METHODS.includes(method) || !path.startsWith('/') || path.includes('..') || path.length > 300) throw new BadRequestException('method and a josh path (/coupon, …) required');
   const area = AREAS.find((a) => a.path.test(path) && (!a.methods || a.methods.includes(method)));
   if (!area) throw new ForbiddenException(`${path} is not a josh admin route commerce drives`);
   if (actor.role !== 'admin' && !area.roles.includes(actor.role as StaffRole)) throw new ForbiddenException('admin only');
+  if (method === 'POST' && (PUSH_TEST.test(path) || WORKFLOW_TEST.test(path))) {
+    if (!testers) throw new ForbiddenException('test sends only from commerce-admin or the MCP test tools');
+    const body = b.body as { userId?: unknown; dryRun?: unknown } | undefined;
+    if (PUSH_TEST.test(path)) await testers.assert(body?.userId);
+    else await testers.assertWorkflowTest(body);
+  }
   const files = (b.files ?? []).slice(0, 10);
   for (const f of files) if (!f?.field || !f.filename || typeof f.base64 !== 'string') throw new BadRequestException('files: { field, filename, base64 }');
   if (files.reduce((n, f) => n + f.base64.length * 0.75, 0) > MAX_RELAY_FILES_BYTES) throw new BadRequestException('files: 3.5 MB per save at most');

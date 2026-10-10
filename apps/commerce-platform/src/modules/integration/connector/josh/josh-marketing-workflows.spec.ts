@@ -1,14 +1,15 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { JoshMarketingWorkflowsController } from './josh-marketing-workflows.controller';
 import { JoshMarketingWorkflows } from './josh-marketing-workflows';
+import { MarketingTesters } from './marketing-testers';
 
 describe('JoshMarketingWorkflowsController', () => {
   const ID = '11111111-1111-4111-8111-111111111111';
   const req = { staff: { userId: 'staff-1', email: 'mkt@jagota.co.th' } } as never;
 
-  it('activate / pause / update go to josh; nothing else (no test-send)', async () => {
+  it('activate / pause / update go to josh; nothing else through :action', async () => {
     const josh = { run: jest.fn(async () => ({})) };
-    const c = new JoshMarketingWorkflowsController({ available: true } as never, josh as never);
+    const c = new JoshMarketingWorkflowsController({ available: true } as never, josh as never, {} as never);
     await c.setState(ID, 'activate', req);
     await c.setState(ID, 'pause', req);
     await c.update(ID, { workflow: { name: 'x' } }, req);
@@ -17,6 +18,20 @@ describe('JoshMarketingWorkflowsController', () => {
       ['marketing-workflows', 'activate', { id: ID }],
       ['marketing-workflows', 'pause', { id: ID }],
       ['marketing-workflows', 'update', { id: ID, workflow: { name: 'x' } }],
+    ]);
+  });
+
+  it('test: dry runs for anyone, a real run only for a tester', async () => {
+    const T = '22222222-2222-4222-8222-222222222222';
+    const testers = new MarketingTesters({ findOneBy: jest.fn(async () => ({ value: { testers: [{ userId: T, email: 't@x.co' }] } })) } as never, {} as never);
+    const josh = { run: jest.fn(async () => ({})) };
+    const c = new JoshMarketingWorkflowsController({ available: true } as never, josh as never, testers);
+    await c.test(ID, { userId: ID }, req);
+    await expect(c.test(ID, { userId: ID, dryRun: false }, req)).rejects.toThrow('tester');
+    await c.test(ID, { userId: T, dryRun: false }, req);
+    expect(josh.run.mock.calls.map((call) => (call as unknown[]).slice(0, 3))).toEqual([
+      ['marketing-workflows', 'test', { id: ID, userId: ID, individualId: undefined, dryRun: undefined }],
+      ['marketing-workflows', 'test', { id: ID, userId: T, individualId: undefined, dryRun: false }],
     ]);
   });
 });

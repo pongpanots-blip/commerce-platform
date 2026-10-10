@@ -298,13 +298,21 @@ test('workflow gate precedes host/config mutations and build pins the applicatio
 test('anonymous availability probes are GET-only, require health/guard/missing-route statuses and stop on failure', async () => {
   const {routes,verifyAvailability}=require('../../docker/platform-api-availability.cjs');
   const requests=[];
+  const health=execFileSync('bash',['-c','source "$1/docker/ec2-deploy.sh"; commerce_deploy_health_url platform','health-route',root],{encoding:'utf8'}).trim();
   const probe=async(url,options)=>{
     assert.equal(options.method,'GET');assert.equal(options.redirect,'error');assert.equal(options.headers,undefined);
-    requests.push(url);return {status:url.endsWith('/health')?200:url.includes('__unregistered_')?404:401};
+    requests.push(url);return {status:url===health?200:url.includes('__unregistered_')?404:401};
   };
   assert.equal((await verifyAvailability(probe)).length,routes.length+2);
   assert.equal(requests.length,14);
+  assert.equal(requests[0],health);
   let calls=0;
   await assert.rejects(verifyAvailability(async()=>({status:++calls===1?200:404})),/API availability status mismatch/);
   assert.equal(calls,2);
+});
+test('health probe uses the public root handler from the frozen application source', () => {
+  const controller=fs.readFileSync(path.join(root,'apps/commerce-platform/src/app.controller.ts'),'utf8');
+  const main=fs.readFileSync(path.join(root,'apps/commerce-platform/src/main.ts'),'utf8');
+  assert.match(controller,/@Public\(\)/);assert.match(controller,/@Controller\(\)/);assert.match(controller,/@Get\(\)/);
+  assert.match(main,/const globalPrefix = 'api'/);
 });

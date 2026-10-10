@@ -13,10 +13,16 @@ const routes = [
   '/api/reports/pack-price-planning/drafts',
   '/api/reports/promotion-planning/drafts',
 ];
+class AvailabilityError extends Error {
+  constructor(route, status) {
+    super('API availability status mismatch: ' + route + ' ' + status);
+    this.route = route; this.status = status;
+  }
+}
 async function verifyAvailability(request = fetch) {
   const results = [];
   for (const [route, expected] of [
-    ['/api/health', 200], ...routes.map(route => [route, 401]),
+    ['/api', 200], ...routes.map(route => [route, 401]),
     ['/api/__unregistered_availability_probe__', 404],
   ]) {
     const response = await request('http://127.0.0.1:3100' + route, {
@@ -24,14 +30,15 @@ async function verifyAvailability(request = fetch) {
     });
     await response.body?.cancel();
     results.push({ route, status: response.status });
-    if (response.status !== expected) throw Error('API availability status mismatch: ' + route + ' ' + response.status);
+    if (response.status !== expected) throw new AvailabilityError(route, response.status);
   }
   return results;
 }
-module.exports = { routes, verifyAvailability };
+module.exports = { routes, verifyAvailability, AvailabilityError };
 if (require.main === module || process.argv[1] === '-') verifyAvailability().then(results => {
   console.log('anonymous API availability verified:', JSON.stringify(results));
-}).catch(() => {
+}).catch(error => {
   console.error('anonymous API availability failed; no authenticated business request was sent');
+  if (error instanceof AvailabilityError) console.error('availability status:', JSON.stringify({ route:error.route,status:error.status }));
   process.exitCode = 1;
 });

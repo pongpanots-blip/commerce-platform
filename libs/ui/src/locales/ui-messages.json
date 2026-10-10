@@ -25734,5 +25734,105 @@
   "event ที่เว็บและแอปส่งมา และรายการ event ที่ระบบรับ": {
     "th": "event ที่เว็บและแอปส่งมา และรายการ event ที่ระบบรับ",
     "en": "Events sent by the web and app, and the catalog of accepted events"
+  },
+  "กลุ่มลูกค้าตาม event": {
+    "th": "กลุ่มลูกค้าตาม event",
+    "en": "Event-based segments"
+  },
+  "สร้างกลุ่ม": {
+    "th": "สร้างกลุ่ม",
+    "en": "Create segment"
+  },
+  "คำนวณสดทุกครั้งที่ workflow ใช้ — ไม่ส่งไป josh ใช้ได้เฉพาะ workflow ของ commerce": {
+    "th": "คำนวณสดทุกครั้งที่ workflow ใช้ — ไม่ส่งไป josh ใช้ได้เฉพาะ workflow ของ commerce",
+    "en": "Evaluated live each time a workflow uses it — never sent to josh; commerce workflows only"
+  },
+  "ต้องแก้ {0} จุด": {
+    "th": "ต้องแก้ {0} จุด",
+    "en": "{0} issue(s) to fix"
+  },
+  "ยังไม่มีกลุ่ม": {
+    "th": "ยังไม่มีกลุ่ม",
+    "en": "No segments yet"
+  },
+  "กลุ่มใหม่": {
+    "th": "กลุ่มใหม่",
+    "en": "New segment"
+  },
+  "นับลูกค้าตอนนี้": {
+    "th": "นับลูกค้าตอนนี้",
+    "en": "Count customers now"
+  },
+  "ตอนนี้มีลูกค้า (ที่ยินยอม) เข้าเงื่อนไข {0} คน": {
+    "th": "ตอนนี้มีลูกค้า (ที่ยินยอม) เข้าเงื่อนไข {0} คน",
+    "en": "{0} consenting customer(s) match right now"
+  },
+  "ช่วงเวลาย้อนก่อนวันที่เริ่มเก็บไม่ได้": {
+    "th": "ช่วงเวลาย้อนก่อนวันที่เริ่มเก็บไม่ได้",
+    "en": "Windows cannot start before collection began"
+  },
+  "รวมเงื่อนไขแบบ": {
+    "th": "รวมเงื่อนไขแบบ",
+    "en": "Combine conditions"
+  },
+  "ทุกข้อ (AND)": {
+    "th": "ทุกข้อ (AND)",
+    "en": "All (AND)"
+  },
+  "ข้อใดข้อหนึ่ง (OR)": {
+    "th": "ข้อใดข้อหนึ่ง (OR)",
+    "en": "Any (OR)"
+  },
+  "เงื่อนไข event": {
+    "th": "เงื่อนไข event",
+    "en": "Event condition"
+  },
+  "นับ": {
+    "th": "นับ",
+    "en": "Measure"
+  },
+  "จำนวนครั้ง": {
+    "th": "จำนวนครั้ง",
+    "en": "Number of times"
+  },
+  "ผลรวมของ {0}": {
+    "th": "ผลรวมของ {0}",
+    "en": "Sum of {0}"
+  },
+  "เปรียบเทียบ": {
+    "th": "เปรียบเทียบ",
+    "en": "Compare"
+  },
+  "วันล่าสุด": {
+    "th": "วันล่าสุด",
+    "en": "last days"
+  },
+  "ใช้ค่าจาก event ที่เริ่ม workflow": {
+    "th": "ใช้ค่าจาก event ที่เริ่ม workflow",
+    "en": "Use the value from the event that started the workflow"
+  },
+  "เพิ่มเงื่อนไข attribute": {
+    "th": "เพิ่มเงื่อนไข attribute",
+    "en": "Add attribute condition"
+  },
+  "กลุ่มลูกค้าที่คำนวณสดจาก event สำหรับข้อความอัตโนมัติ": {
+    "th": "กลุ่มลูกค้าที่คำนวณสดจาก event สำหรับข้อความอัตโนมัติ",
+    "en": "Live event-based customer groups for automated messages"
+  },
+  "เป็นหนึ่งใน": {
+    "th": "เป็นหนึ่งใน",
+    "en": "is one of"
+  },
+  "หลัง": {
+    "th": "หลัง",
+    "en": "after"
+  },
+  "ภายใน N วันที่ผ่านมา": {
+    "th": "ภายใน N วันที่ผ่านมา",
+    "en": "within the last N days"
+  },
+  "ภายใน N วันข้างหน้า": {
+    "th": "ภายใน N วันข้างหน้า",
+    "en": "within the next N days"
   }
 }

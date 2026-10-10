@@ -235,8 +235,8 @@ function CommerceFlowsPanel() {
       <ErrorText error={flows.error} onRetry={flows.reload} />
       {flows.loading && !flows.data ? <Loading variant="table" /> : flows.data?.length ? (
         <Table>
-          <THead><TR><TH>{__uiText("Workflow")}</TH><TH>{__uiText("สถานะ")}</TH><TH>{__uiText("เริ่มเมื่อ")}</TH>
-            <TH kind="num">{__uiText("เข้า 30 วัน")}</TH><TH kind="num">{__uiText("Converted")}</TH><TH kind="time">{__uiText("แก้ล่าสุด")}</TH><TH kind="actions" /></TR></THead>
+          <THead><TH>{__uiText("Workflow")}</TH><TH>{__uiText("สถานะ")}</TH><TH>{__uiText("เริ่มเมื่อ")}</TH>
+            <TH kind="num">{__uiText("เข้า 30 วัน")}</TH><TH kind="num">{__uiText("Converted")}</TH><TH kind="time">{__uiText("แก้ล่าสุด")}</TH><TH kind="actions" /></THead>
           <TBody>
             {flows.data.map((w) => (
               <TR key={w.id}>

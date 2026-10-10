@@ -46,10 +46,10 @@ export function WebhookForm({ step, meta, secrets, onChange, onSecretsChanged }:
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
-        <Select aria-label="Method" value={step.method} onChange={(e) => onChange({ ...step, method: e.target.value as Webhook['method'], ...(e.target.value === 'GET' ? { body: '' } : {}) })}>
+        <div className="w-28 shrink-0"><Select aria-label="Method" value={step.method} onChange={(e) => onChange({ ...step, method: e.target.value as Webhook['method'], ...(e.target.value === 'GET' ? { body: '' } : {}) })}>
           {['POST', 'PUT', 'PATCH', 'GET'].map((m) => <option key={m}>{m}</option>)}
-        </Select>
-        <Input className="flex-1" placeholder="https://" value={step.url} onChange={(e) => onChange({ ...step, url: e.target.value })} aria-label="URL" />
+        </Select></div>
+        <Input className="min-w-0 flex-1" placeholder="https://" value={step.url} onChange={(e) => onChange({ ...step, url: e.target.value })} aria-label="URL" />
       </div>
       {warning === 'scheme' && <Hint>{__uiText('URL ต้องขึ้นต้นด้วย http:// หรือ https://')}</Hint>}
       {warning === 'internal' && <Hint>{__uiText('URL นี้ชี้ไปที่เครือข่ายภายใน ระบบจะไม่ยิงให้')}</Hint>}

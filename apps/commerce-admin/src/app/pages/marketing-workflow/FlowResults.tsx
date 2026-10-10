@@ -33,7 +33,7 @@ export function FlowResults({ id }: { id: string }) {
         <Panel key={sp.stepId}>
           <PanelHead title={__uiText('A/B Split')} />
           <Table>
-            <THead><TR><TH>{__uiText('กิ่ง')}</TH><TH kind="num">{__uiText('เข้า')}</TH><TH kind="num">{__uiText('Converted')}</TH><TH kind="num">%</TH></TR></THead>
+            <THead><TH>{__uiText('กิ่ง')}</TH><TH kind="num">{__uiText('เข้า')}</TH><TH kind="num">{__uiText('Converted')}</TH><TH kind="num">%</TH></THead>
             <TBody>{sp.branches.map((b) => <TR key={b.branchId}><TD>{b.label}</TD><TD kind="num">{b.entered}</TD><TD kind="num">{b.converted}</TD><TD kind="num">{pct(b.converted, b.entered)}</TD></TR>)}</TBody>
           </Table>
         </Panel>
@@ -42,7 +42,7 @@ export function FlowResults({ id }: { id: string }) {
         <PanelHead title={__uiText('ผลการส่ง')} />
         {s.actions.length ? (
           <Table>
-            <THead><TR><TH>{__uiText('ประเภท')}</TH><TH>{__uiText('สถานะ')}</TH><TH kind="num">{__uiText('จำนวน')}</TH></TR></THead>
+            <THead><TH>{__uiText('ประเภท')}</TH><TH>{__uiText('สถานะ')}</TH><TH kind="num">{__uiText('จำนวน')}</TH></THead>
             <TBody>{s.actions.map((a) => <TR key={`${a.kind}:${a.status}`}><TD>{a.kind}</TD><TD><StatusChip status={a.status} /></TD><TD kind="num">{a.count}</TD></TR>)}</TBody>
           </Table>
         ) : <Empty>{__uiText('ยังไม่มีการส่ง')}</Empty>}
@@ -51,7 +51,7 @@ export function FlowResults({ id }: { id: string }) {
         <PanelHead title={__uiText('ลูกค้าที่เข้า workflow')} />
         {list.data?.rows.length ? (
           <Table>
-            <THead><TR><TH>{__uiText('ลูกค้า')}</TH><TH>{__uiText('สถานะ')}</TH><TH kind="time">{__uiText('เริ่ม')}</TH><TH>{__uiText('เหตุผล')}</TH><TH kind="actions" /></TR></THead>
+            <THead><TH>{__uiText('ลูกค้า')}</TH><TH>{__uiText('สถานะ')}</TH><TH kind="time">{__uiText('เริ่ม')}</TH><TH>{__uiText('เหตุผล')}</TH><TH kind="actions" /></THead>
             <TBody>{list.data.rows.map((r) => (
               <TR key={r.id}>
                 <TD kind="mono">{r.userId.slice(0, 8)}{r.isTest ? ' (test)' : ''}{r.isHoldout ? ' (holdout)' : ''}</TD>

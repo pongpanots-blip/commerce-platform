@@ -45,7 +45,7 @@ repository มี API สมัคร/login และข้อมูล onboardi
 
 ต้องกำหนดว่า “accepted/confirmed order” หมายถึง transaction สำเร็จใดในแต่ละช่องทาง ได้แก่ commerce checkout, Josh, เครดิต และพนักงานสั่งแทน รวม canonical order ID เพื่อไม่ให้ออเดอร์เดียวที่ปรากฏหลายระบบถูกนับซ้ำ การยกเลิก คืนเงิน แก้ไขออเดอร์ และการยืนยันล่าช้าต้องมีนโยบาย version/correction ที่ชัดเจนก่อนนำมาคำนวณ
 
-ฝั่ง commerce มีหลักฐานต้นทางที่เป็นผู้สมัครใช้งานได้: [OrderCheckoutSaga.onPaymentPaid](../apps/commerce-platform/src/modules/commerce/order/application/order-checkout.saga.ts) เปลี่ยน `pending_payment` เป็น `confirmed` และสร้าง `order.confirmed` ใน transaction เดียวกัน แต่ payload ปัจจุบันมีเพียง order ID และ storefront checkout DTO ยังไม่ให้หลักฐานบริษัท/สาขาครบ จึงต้องเติม/ตรวจ occurrence mapping ก่อนใช้กับ BA
+ฝั่ง commerce มีจุดเริ่มตรวจหลักฐานต้นทาง: [OrderCheckoutSaga.onPaymentPaid](../apps/commerce-platform/src/modules/commerce/order/application/order-checkout.saga.ts) เปลี่ยน `pending_payment` เป็น `confirmed` และสร้าง `order.confirmed` ใน transaction เดียวกัน แต่ payload ปัจจุบันมีเพียง order ID และ storefront checkout DTO ยังไม่ให้หลักฐานบริษัท/สาขาครบ จึงต้องเติม/ตรวจ occurrence mapping ก่อนใช้กับ BA
 
 `checkout_started`, click, thank-you page และ GTM `purchase` เป็นพฤติกรรม browser ไม่ใช่หลักฐานว่าเซิร์ฟเวอร์ commit ออเดอร์สำเร็จ ส่วน Josh `order.snapshot` เป็นสำเนาสถานะล่าสุด ไม่ใช่ immutable acceptance history ต้องหาต้นทางที่ยืนยันเวลาและ transition ได้ ดู [Josh events](../apps/commerce-platform/src/modules/integration/connector/josh/events/josh-events.service.ts)
 

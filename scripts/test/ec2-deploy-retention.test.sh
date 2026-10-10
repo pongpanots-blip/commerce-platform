@@ -233,6 +233,14 @@ flow_setup() {
   FLOW_DIR="$(mktemp -d "$FLOW_ROOT/case.XXXXXX")"
   mkdir -p "$FLOW_DIR/docker"
   cp "$ROOT/docker/ec2-deploy.sh" "$FLOW_DIR/docker/"
+  cp "$ROOT/docker/docker-compose.prod.yml" "$FLOW_DIR/docker/"
+  # This harness isolates Docker retention. Migration admission/execution has
+  # its own controlled metadata and native PostgreSQL tests.
+  cat > "$FLOW_DIR/docker/platform-migration-scope.sh" <<'STUB'
+#!/bin/bash
+echo "migration-scope $*" >> "$STUB_STATE/log"
+exit 0
+STUB
   export STUB_STATE="$FLOW_DIR/state"
   mkdir -p "$STUB_STATE"
   : > "$STUB_STATE/log"; : > "$STUB_STATE/down"; echo 0 > "$STUB_STATE/clock"
@@ -254,7 +262,10 @@ flow_setup() {
 # Run the script; sets FLOW_RC and FLOW_OUT.
 flow_run() {
   FLOW_RC=0
+  local gate_tag="${1:-}"
+  [[ "$gate_tag" != --skip-cleanup ]] || gate_tag="${2:-}"
   FLOW_OUT="$(PATH="$STUB_BIN:$PATH" COMMERCE_HEALTH_ATTEMPTS=1 COMMERCE_HEALTH_SLEEP_SEC=0 \
+    MIGRATION_SCOPE_IMAGE_TAG="$gate_tag" \
     "$FLOW_DIR/docker/ec2-deploy.sh" "$@" 2>&1)" || FLOW_RC=$?
 }
 flow_down() { printf '%s\n' "$@" > "$STUB_STATE/down"; }
@@ -274,8 +285,11 @@ assert_eq "F1 failed admin: secret lines filtered from logs" "0" "$(grep -cE 'fa
 assert_eq "F1 failed admin: non-secret log line shown" "1" "$(grep -c 'boom: health failed' <<< "$FLOW_OUT" || true)"
 flow_down
 : > "$STUB_STATE/log"
+printf 'JAGOTA_GATEWAY_ENABLED=existing\n' >> "$FLOW_DIR/docker/.env"
+printf 'JAGOTA_GATEWAY_ENABLED=changed\n' > "$FLOW_DIR/docker/.env.jagota-gateway"
 flow_run newP platform
 assert_eq "F1 healthy platform deploy exits 0" "0" "$FLOW_RC"
+assert_eq "F1 guarded platform preserves gateway configuration" "existing" "$(kv .env JAGOTA_GATEWAY_ENABLED)"
 assert_eq "F1 platform: admin pending entry untouched" "6817a67" "$(kv .image-tags-prev.pending ADMIN_TAG)"
 assert_eq "F1 platform: admin NOT promoted to prev" "" "$(kv .image-tags-prev ADMIN_TAG)"
 assert_eq "F1 platform: prev PLATFORM_TAG=add97ee" "add97ee" "$(kv .image-tags-prev PLATFORM_TAG)"

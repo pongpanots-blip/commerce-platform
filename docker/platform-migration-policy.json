@@ -1,0 +1,93 @@
+{
+  "sourceCommit": "396e8d6ed018ee3d23c46139327c017ae6c23fd6",
+  "imageTag": "396e8d6",
+  "migrations": [
+    "InitialSchema1784105337942",
+    "AddIntegrationSlug1784108912731",
+    "AddWebhookSubscriptions1784110967584",
+    "Cycle2ReservationCheckout1784272694815",
+    "Cycle3bPortalIngest1784346928501",
+    "ErpFeedInventoryLedger1791028537685",
+    "CreateMarketingResearch1791030000000",
+    "ScrapingCatalog1792300000000",
+    "CompetitorPricesAndJoshCatalog1792400000000",
+    "McpOAuth1792500000000",
+    "WebhookDeliverySupersedeIndex1792600000000",
+    "ScrapingSourceLogin1792700000000",
+    "JagotaShadowChecks1792800000000",
+    "JagotaOrderSends1792900000000",
+    "PriceShadowChecks1793000000000",
+    "StaffPrices1793100000000",
+    "JagotaOrderSyncHistory1793200000000",
+    "DbdLookups1793300000000",
+    "OrderQuoteChecks1793400000000",
+    "LivechatLogs1793500000000",
+    "JoshOrderCopies1793600000000",
+    "JagotaCustomerSends1793700000000",
+    "WinbackTables1793800000000",
+    "GrowthPlans1793900000000",
+    "MarketAnalysisReports1793901000000",
+    "StaffMustChangePassword1794000000000",
+    "JoshEventsInbound1794100000000",
+    "CompetitorOwnership1794200000000",
+    "CustomerMarketing1794300000000",
+    "CompanySalesReps1794400000000",
+    "JoshReferenceCopies1794500000000",
+    "StockOwnership1794600000000",
+    "ProductPrices1794700000000",
+    "ProductContents1794800000000",
+    "ProductCategoriesBrands1794900000000",
+    "ProductMasters1795000000000",
+    "ProductImages1795100000000",
+    "OrderingLogistics1795150000000",
+    "JoshReportCopies1795200000000",
+    "JoshMarketingCopies1795300000000",
+    "ProductPromotionRules1795300000000",
+    "PromotionRuleAssignmentResets1795310000000",
+    "JoshStaffAccess1795400000000",
+    "WinbackAppRecord1795500000000",
+    "AllCategory1795600000000",
+    "WinbackStaffLinks1795700000000",
+    "AuthRefreshToken1795800000000",
+    "WinbackVisitGps1795900000000",
+    "RenameAllSubcategories1796000000000",
+    "ProductErpChecks1796100000000",
+    "CommercePromotionDrafts1796200000000",
+    "ProductErpExtras1796200000000"
+  ],
+  "approved": [
+    "CommercePromotionDrafts1796200000000",
+    "ProductErpExtras1796200000000"
+  ],
+  "approvedCode": {
+    "CommercePromotionDrafts1796200000000": {
+      "file": "1796200000000-CommercePromotionDrafts.js",
+      "sha256": "fa69ae17a51fff5e84eba8fa2c145d8fabbb82d174bd27aa3d974c6094d5b37f"
+    },
+    "ProductErpExtras1796200000000": {
+      "file": "1796200000000-ProductErpExtras.js",
+      "sha256": "b86ccb03bbfb99679d3d41a0281954ab9808d118108e098afba9e2f03232ae37"
+    }
+  },
+  "relations": {
+    "CommercePromotionDrafts1796200000000": [
+      "commerce_promotion_drafts",
+      "commerce_promotion_draft_requests"
+    ],
+    "ProductErpExtras1796200000000": [
+      "product_erp_extras"
+    ]
+  },
+  "deployedTags": {
+    "platform": [
+      "6790132",
+      "396e8d6"
+    ],
+    "admin": [
+      "396e8d6"
+    ],
+    "portal": [
+      "020066e"
+    ]
+  }
+}

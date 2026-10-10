@@ -50,6 +50,10 @@ on:
         description: 'Image tag (default = git SHA)'
         required: false
         type: string
+      application_commit:
+        description: 'Optional full commit SHA for the application build, separate from deployment helpers'
+        required: false
+        type: string
       skip_deploy:
         description: 'Build & push only (skip EC2)'
         required: false
@@ -84,9 +88,14 @@ jobs:
     outputs:
       services: ${{ steps.resolve.outputs.services }}
       tag: ${{ steps.resolve.outputs.tag }}
+      application_commit: ${{ steps.resolve.outputs.application_commit }}
     steps:
       - id: resolve
+        env:
+          APPLICATION_COMMIT: ${{ inputs.application_commit }}
         run: |
+          SOURCE_COMMIT="${APPLICATION_COMMIT:-$GITHUB_SHA}"
+          [[ "$SOURCE_COMMIT" =~ ^[a-f0-9]{40}$ ]] || { echo 'application_commit must be a full commit SHA'; exit 1; }
           if [ "${{ github.event_name }}" = "push" ]; then
             REF="${GITHUB_REF#refs/tags/}"
             case "$REF" in
@@ -107,6 +116,11 @@ jobs:
           fi
           echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "application_commit=$SOURCE_COMMIT" >> "$GITHUB_OUTPUT"
+      - name: Check out migration guard
+        uses: actions/checkout@v4
+      - name: Test migration guard
+        run: node --test scripts/test/platform-migration-scope.test.cjs
 
   build-push:
     needs: resolve
@@ -116,6 +130,8 @@ jobs:
         service: ${{ fromJson(needs.resolve.outputs.services) }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.application_commit }}
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
@@ -151,17 +167,28 @@ jobs:
           DEPLOY_DIR: ${{ secrets.EC2_DEPLOY_DIR }}
           EXPECTED_ADMIN_TAG: ${{ inputs.expected_admin_tag }}
         run: bash docker/deploy-preflight.sh "$DEPLOY_DIR/docker"
+      - name: Verify approved pending migrations before host changes
+        if: contains(fromJson(needs.resolve.outputs.services), 'platform')
+        env:
+          DEPLOY_DIR: ${{ secrets.EC2_DEPLOY_DIR }}
+          MIGRATION_SCOPE_COMMIT: ${{ needs.resolve.outputs.application_commit }}
+          MIGRATION_SCOPE_IMAGE_TAG: ${{ needs.resolve.outputs.tag }}
+        run: bash docker/platform-migration-scope.sh preflight "$DEPLOY_DIR/docker"
       # Keep the EC2's compose/nginx/scripts in step with the repo (certbot/ certs live only on the box).
       - name: Sync docker/ files to the deploy dir
         run: |
           D="${{ secrets.EC2_DEPLOY_DIR }}/docker"
           mkdir -p "$D/nginx"
           cp docker/docker-compose.prod.yml docker/ec2-deploy.sh docker/ssl-init.sh docker/github-runner-setup.sh "$D/"
+          cp docker/platform-migration-scope.sh docker/platform-migration-scope.cjs docker/platform-migration-policy.json "$D/"
+          cp docker/platform-api-availability.cjs "$D/"
           cp docker/nginx/commerce-proxy.conf "$D/nginx/"
       - name: Pull + restart on this EC2
         env:
           TAG: ${{ needs.resolve.outputs.tag }}
           SERVICES: ${{ needs.resolve.outputs.services }}
+          MIGRATION_SCOPE_COMMIT: ${{ needs.resolve.outputs.application_commit }}
+          MIGRATION_SCOPE_IMAGE_TAG: ${{ needs.resolve.outputs.tag }}
           SKIP_CLEANUP: ${{ inputs.skip_cleanup == true }}
           COMMERCE_DB_HOST: ${{ secrets.COMMERCE_DB_HOST }}
           COMMERCE_DB_USERNAME: ${{ secrets.COMMERCE_DB_USERNAME }}
@@ -197,6 +224,9 @@ jobs:
           # Persist the env for manual compose commands on the box (ssl-init.sh, logs, exec). Compose reads
           # ./.env itself; image tags (*_TAG) are kept by ec2-deploy.sh, so preserve those lines.
           umask 077
+          # Guarded platform releases retain the authorized running connection and flags.
+          # No repository-variable access or environment/ownership changes are required.
+          if [[ "$SERVICES" != *'"platform"'* ]]; then
           { grep -E '^[A-Z]+_TAG=' .env 2>/dev/null || true
             for v in ECR_REGISTRY COMMERCE_DB_HOST COMMERCE_DB_USERNAME COMMERCE_DB_PASSWORD COMMERCE_DB_NAME REDIS_HOST \
                      STOREFRONT_API_KEYS PORTAL_JWT_SECRET COMMERCE_CORS_ORIGINS JOSH_DATABASE_URL JOSH_MONGO_URL \
@@ -206,10 +236,11 @@ jobs:
                      AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY WINBACK_INTAKE_KEY; do
               if [ -n "${!v}" ]; then printf "%s='%s'\n" "$v" "${!v}"; fi
             done; } > .env.new && mv .env.new .env
-          SVC_LIST=$(echo "$SERVICES" | tr -d '[]"' | tr ',' ' ')
           # Cutover flags: repo variable PLATFORM_FLAGS (KEY=VALUE lines, non-secret) → platform-flags.env (compose env_file).
           printf '%s\n' "$PLATFORM_FLAGS" | grep -E '^[A-Z][A-Z0-9_]*=[^ ]*$' > platform-flags.env || true
           if grep -Eiq '(SECRET|PASSWORD|TOKEN|_KEY|DATABASE_URL)=' platform-flags.env; then echo "::error::PLATFORM_FLAGS must not carry secrets"; exit 1; fi
+          fi
+          SVC_LIST=$(echo "$SERVICES" | tr -d '[]"' | tr ',' ' ')
           # The media key pair (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY, josh bucket only) is for the container and is
           # already in ./.env. Keep it out of this shell: the ECR credential helper would use it instead of the instance
           # role and the pull fails ("no basic auth credentials"). Compose still reads the keys from ./.env.
@@ -218,3 +249,19 @@ jobs:
           read -r -a SERVICE_ARGS <<< "$SVC_LIST"
           DEPLOY_ARGS+=("${SERVICE_ARGS[@]}")
           env -u AWS_ACCESS_KEY_ID -u AWS_SECRET_ACCESS_KEY ./ec2-deploy.sh "${DEPLOY_ARGS[@]}"
+      - name: Verify migrated schema, sibling images and anonymous API availability
+        if: contains(fromJson(needs.resolve.outputs.services), 'platform')
+        env:
+          DEPLOY_DIR: ${{ secrets.EC2_DEPLOY_DIR }}
+          MIGRATION_SCOPE_COMMIT: ${{ needs.resolve.outputs.application_commit }}
+          MIGRATION_SCOPE_IMAGE_TAG: ${{ needs.resolve.outputs.tag }}
+        run: |
+          D="$DEPLOY_DIR/docker"
+          bash docker/platform-migration-scope.sh preflight "$D"
+          cd "$D"
+          for svc in platform admin portal; do
+            id="$(docker compose -f docker-compose.prod.yml ps -q "$svc")"
+            docker inspect -f '{{.Name}} {{.Config.Image}} {{.Image}}' "$id"
+            [[ "$svc" != platform ]] || platform_id="$id"
+          done
+          docker exec -i "$platform_id" node - < platform-api-availability.cjs

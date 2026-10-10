@@ -60,6 +60,24 @@ export class McpConnectionsController {
        ORDER BY a.created_at DESC LIMIT $1`, params);
   }
 
+  /** What AI created or changed, who asked for it (the staff member signed in to that AI) and through which AI app; failed tries included. */
+  @Get('changes')
+  async changes(@Req() req: StaffRequest, @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number) {
+    const params: unknown[] = [Math.min(Math.max(limit, 1), 500)];
+    const where = this.scope(req, 'a.actor_id', params);
+    return this.db.query(
+      `SELECT a.id, a.created_at AS "at", a.context->>'tool' AS tool, a.context->>'summary' AS summary,
+              a.entity_type AS "entityType", a.entity_id AS "entityId", a.context->>'adminUrl' AS "adminUrl",
+              coalesce(a.context->'changes', '[]'::jsonb) AS changes, a.context->>'error' AS error,
+              a.actor_id AS "staffUserId", coalesce(u.email, a.context->>'email') AS "staffEmail",
+              coalesce(c.info->>'client_name', a.context->>'clientId') AS "clientName"
+       FROM audit_logs a
+       LEFT JOIN users u ON u.id = a.actor_id
+       LEFT JOIN mcp_oauth_clients c ON c.client_id = a.context->>'clientId'
+       WHERE a.action = 'mcp.write'${where}
+       ORDER BY a.created_at DESC LIMIT $1`, params);
+  }
+
   /** Cut an AI client off: every live access + refresh token for that client/staff pair stops working now. */
   @Post(':clientId/revoke')
   @HttpCode(200)

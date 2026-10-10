@@ -167,8 +167,9 @@ backend josh ~253k บรรทัด · โค้ดที่ย้ายหร
 
 **Marketing workflows** — ปิดไว้ (default off)
 - Marketing › Marketing workflows: ดูทุก workflow + ผล (เข้า / กำลังไป / ล้มเหลว / ซื้อ) · เปิด/หยุด · แก้แบบ JSON → josh `internal/commerce/marketing-workflows` → MarketingWorkflowService · MCP `marketing_workflows`
-- การคัดลูกค้าเข้าและส่งข้อความยังเป็น cron ของ josh · ไม่มีปุ่มส่งทดสอบจาก commerce · ตัวแก้แบบกราฟยังอยู่ที่ josh
-- สวิตช์ josh `COMMERCE_OWNS_MARKETING_WORKFLOWS` ล็อกการสร้าง/แก้/เปิด/หยุดใน josh
+- การคัดลูกค้าเข้าและส่งข้อความยังเป็น cron ของ josh · ตัวแก้แบบกราฟอยู่ใน commerce แล้ว (`/marketing/workflows/:id`)
+- สวิตช์ josh `COMMERCE_OWNS_MARKETING_WORKFLOWS` ล็อกการสร้าง/แก้/เปิด/หยุดใน josh · push campaign (สร้าง/แก้/ตั้งเวลา/ส่ง) ล็อกด้วย `COMMERCE_OWNS_CAMPAIGNS` พร้อม campaign และ segment
+- **ส่งทดสอบ (2026-10-09):** push campaign และ workflow ส่งทดสอบจริงได้เฉพาะ **tester** — รายชื่อเก็บใน settings ของ commerce (`marketing/testers`, บัญชีจาก `josh_users`), แก้ที่ ข้อความอัตโนมัติ › Tester · commerce ตรวจทุกทาง (หน้า admin, admin-call, MCP `push_campaign_test` / `marketing_workflow_test`) · dry run ของ workflow ใช้ user ไหนก็ได้ (ไม่ส่งจริง)
 
 **ข้อมูลลูกค้า / เครดิต** — ปิดไว้ (default off)
 - รายงานร้าน › ลูกค้า (รายละเอียด): ปุ่ม "แก้" ของบริษัท (ชื่อ วงเงิน เครดิตวัน ที่อยู่ โทร), สาขา (ชื่อ ผู้รับ โทร ที่อยู่ส่ง), ผู้ใช้ (ชื่อ อีเมล มือถือ) → josh `internal/commerce/customers` → CsAdminService / CompanyService · แก้บริษัทต้องเป็น admin ใน josh · ค่าที่ถูกปิดบังเริ่มว่าง = คงเดิม

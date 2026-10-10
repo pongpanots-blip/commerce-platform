@@ -22,6 +22,7 @@ import {
 } from '@josh/shared-api';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
+import { marketingTestersApi, type MarketingTester } from '../../../../lib/api';
 import { useCompanySearch } from '../../components/useCompanySearch';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -101,6 +102,9 @@ export default function PushCampaignsPage() {
   const [estimate, setEstimate] = useState<number | null>(null);
   const [scheduledAt, setScheduledAt] = useState('');
   const [testUserId, setTestUserId] = useState('');
+  // Real test sends only reach commerce's tester list (managed under ข้อความอัตโนมัติ › Tester).
+  const [testers, setTesters] = useState<MarketingTester[]>([]);
+  useEffect(() => { marketingTestersApi.list().then(setTesters, () => setTesters([])); }, []);
   const [createdId, setCreatedId] = useState<string | null>(null);
 
   // pickers
@@ -287,7 +291,7 @@ export default function PushCampaignsPage() {
 
   const handleTest = async () => {
     if (!testUserId.trim()) {
-      setError(__uiMessage("ใส่ userId สำหรับทดสอบ"));
+      setError(__uiMessage("เลือก tester ที่จะส่งทดสอบ"));
       return;
     }
     setBusy(true);
@@ -296,8 +300,8 @@ export default function PushCampaignsPage() {
       const id = await ensureSaved();
       if (!id) return;
       await testPushCampaign(id, testUserId.trim());
-    } catch {
-      setError(__uiMessage("ส่งทดสอบไม่สำเร็จ"));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : __uiMessage("ส่งทดสอบไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
@@ -737,13 +741,15 @@ export default function PushCampaignsPage() {
               <div className="mt-3 flex flex-wrap items-end gap-2">
                 <div className="min-w-[220px] flex-1">
                   <label className="mb-1 block text-xs text-gray-500">
-                    {__uiText("Test & preview (userId)")}</label>
-                  <input
+                    {__uiText("ส่งทดสอบถึง tester")}</label>
+                  <select
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                     value={testUserId}
                     onChange={(e) => setTestUserId(e.target.value)}
-                    placeholder={__uiText("uuid ของ user")}
-                  />
+                  >
+                    <option value="">{testers.length ? __uiText("เลือก tester") : __uiText("ยังไม่มี tester — เพิ่มที่ ข้อความอัตโนมัติ")}</option>
+                    {testers.map((t) => <option key={t.userId} value={t.userId}>{t.name ? `${t.name} · ${t.email}` : t.email}</option>)}
+                  </select>
                 </div>
                 <button
                   type="button"

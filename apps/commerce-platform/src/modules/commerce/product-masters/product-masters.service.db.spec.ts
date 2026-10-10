@@ -24,6 +24,7 @@ const NEW = 'T4D-NEW';
       await db.query(`DELETE FROM outbox_messages WHERE aggregate_id = $1`, [skuAggregateId(s, 'master')]);
       await db.query(`DELETE FROM product_master_pending WHERE product_inventory_sku = $1`, [s]);
       await db.query(`DELETE FROM product_masters WHERE product_inventory_sku = $1`, [s]);
+      await db.query(`DELETE FROM product_erp_extras WHERE product_inventory_sku = $1`, [s]);
     }
   };
   const lastSnap = async () => (await db.query(`SELECT payload FROM outbox_messages WHERE type = 'product.master.snapshot' AND aggregate_id = $1 ORDER BY created_at DESC LIMIT 1`, [skuAggregateId(SKU, 'master')]))[0]?.payload;
@@ -63,6 +64,23 @@ const NEW = 'T4D-NEW';
     expect(f).not.toHaveProperty('packaging_type');
     await svc.edit(SKU, { pack_size: '20 KG X 1 BG', weight_per_unit: '20 KG' }, 'staff-1');
     expect((await lastSnap()).fields).toMatchObject({ pack_size: '20 KG X 1 BG', weight_per_unit: '20 KG' });
+  });
+
+  it('ERP extras land for any SKU even without the switch: absent keeps, lists replace, a bad field is skipped alone', async () => {
+    process.env.COMMERCE_OWNS_PRODUCT_MASTER = 'false';
+    try {
+      await db.transaction((m) => svc.stageFromErp(m, [{
+        PRODUCT_CODE: NEW, AGING_DAYS: 180, MIN_PRICE: 1100, MIN_SELLING_UNIT_PRICE: 110,
+        SUBSTITUTES: [{ PRODUCT_CODE: 'S-2', SEQ: 2 }, { PRODUCT_CODE: 'S-1', SEQ: 1 }],
+        FDA_IMAGES: [{ URL: 'https://erp.example/halal.pdf', DOC_TYPE: 'CERT', EXPIRY_DATE: '2027-03-31' }],
+      }], new Date()));
+      await db.transaction((m) => svc.stageFromErp(m, { PRODUCT_CODE: NEW, AGING_DAYS: -1, SUBSTITUTES: [{ PRODUCT_CODE: 'S-3', SEQ: 1 }], FDA_IMAGES: [] }, new Date()));
+    } finally { process.env.COMMERCE_OWNS_PRODUCT_MASTER = 'true'; }
+    expect(await svc.extras(NEW)).toMatchObject({
+      sku: NEW, aging_days: 180, min_price: '1100.00', min_selling_unit_price: '110.00',
+      substitutes: [{ sku: 'S-3', seq: 1 }], fda_images: [],
+    });
+    expect(await svc.extras('T4D-NONE')).toMatchObject({ aging_days: null, substitutes: [], updated_at: null });
   });
 
   it('reject drops the queue row; staff edit maps the category id to its code; bad values and the switch are refused', async () => {

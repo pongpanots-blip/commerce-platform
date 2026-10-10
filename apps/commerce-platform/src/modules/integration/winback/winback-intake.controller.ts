@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query, UseGuards, ValidationPipe } from '@nestjs/common';
-import { Throttle } from './shared/throttle';
+import { Throttle } from '../../../shared-kernel/presentation/throttle';
 import { Public } from './shared/public.decorator';
 import { WinbackIntakeKeyGuard } from './winback-intake-key.guard';
 import { IntakeLeadDto } from './dto/intake-lead.dto';

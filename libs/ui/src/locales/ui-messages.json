@@ -24907,6 +24907,46 @@
     "th": "สมัครด้วยอีเมล @jagota.co.th",
     "en": "Sign up with a @jagota.co.th email"
   },
+  "Tester (ผู้รับข้อความทดสอบ)": {
+    "th": "Tester (ผู้รับข้อความทดสอบ)",
+    "en": "Testers (test message recipients)"
+  },
+  "ส่งทดสอบจริง (แจ้งเตือน / workflow / ผ่าน AI) ได้เฉพาะบัญชีในรายการนี้ · ใส่อีเมลบัญชีลูกค้าทดสอบในแอป": {
+    "th": "ส่งทดสอบจริง (แจ้งเตือน / workflow / ผ่าน AI) ได้เฉพาะบัญชีในรายการนี้ · ใส่อีเมลบัญชีลูกค้าทดสอบในแอป",
+    "en": "Real test sends (notifications / workflows / via AI) reach only the accounts listed here · enter the email of a test customer account in the app"
+  },
+  "อีเมลบัญชีทดสอบ": {
+    "th": "อีเมลบัญชีทดสอบ",
+    "en": "Test account email"
+  },
+  "เพิ่ม tester": {
+    "th": "เพิ่ม tester",
+    "en": "Add tester"
+  },
+  "เพิ่มโดย": {
+    "th": "เพิ่มโดย",
+    "en": "Added by"
+  },
+  "ยังไม่มี tester": {
+    "th": "ยังไม่มี tester",
+    "en": "No testers yet"
+  },
+  "ส่งทดสอบถึง tester": {
+    "th": "ส่งทดสอบถึง tester",
+    "en": "Test send to a tester"
+  },
+  "เลือก tester": {
+    "th": "เลือก tester",
+    "en": "Choose a tester"
+  },
+  "ยังไม่มี tester — เพิ่มที่ ข้อความอัตโนมัติ": {
+    "th": "ยังไม่มี tester — เพิ่มที่ ข้อความอัตโนมัติ",
+    "en": "No testers yet — add them under Automated messages"
+  },
+  "เลือก tester ที่จะส่งทดสอบ": {
+    "th": "เลือก tester ที่จะส่งทดสอบ",
+    "en": "Choose a tester for the test send"
+  },
   "เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี": {
     "th": "เลือกงานสั่งแทนลูกค้า พิจารณาสินค้าตัวอย่าง หรือรวมบัญชี",
     "en": "Choose an order, sample request, or account task"

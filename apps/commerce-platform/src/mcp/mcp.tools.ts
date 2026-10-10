@@ -38,6 +38,7 @@ import { JoshPromotions } from '../modules/integration/connector/josh/josh-promo
 import { JoshActions } from '../modules/integration/connector/josh/josh-actions';
 import { joshAdminCall } from '../modules/integration/connector/josh/josh-admin-call.controller';
 import { JoshMarketingWorkflows } from '../modules/integration/connector/josh/josh-marketing-workflows';
+import { MarketingTesters } from '../modules/integration/connector/josh/marketing-testers';
 import { JagotaSyncHistoryImport } from '../modules/integration/connector/josh/jagota/jagota-sync-history';
 import { BACKOFFICE_VIEWS, JoshBackoffice } from '../modules/integration/connector/josh/josh-backoffice';
 import { JoshApiLogs } from '../modules/integration/connector/josh/josh-api-logs';
@@ -49,20 +50,23 @@ import { GrowthService } from '../modules/integration/growth/growth.service';
 import { GrowthDataService } from '../modules/integration/growth/growth-data.service';
 import { assertReviewable, planListSchema, planSchema, taskSchema } from '../modules/integration/growth/growth.validation';
 import { analysisInput, MarketAnalystService } from './market-analyst.service';
+import { adminUrl, changesOf, MARKETING_KINDS, MarketingKindName, quietJoshError, unwrapJosh } from './mcp.marketing-kinds';
+import { editProductCopy, PRODUCT_COPY_FIELDS, productCopyFields } from '../modules/integration/connector/josh/josh-actions.controller';
+import { JoshCatalogSyncService } from '../modules/integration/connector/josh/josh-catalog-sync.service';
+import { ModuleRef } from '@nestjs/core';
 
 const json = (data: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(data) }] });
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 const WRITE = { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false };
 
-/** josh admin routes behind marketing_list / marketing_save; `off` = what a new one is created with. */
-const MARKETING_KINDS: Record<'workflow' | 'coupon' | 'segment' | 'campaign' | 'product_set' | 'promotion_page', { path: string; update: 'PATCH' | 'PUT'; off?: Record<string, unknown> }> = {
-  workflow: { path: '/marketing-workflows', update: 'PATCH' },
-  coupon: { path: '/coupon', update: 'PATCH', off: { is_active: false } },
-  segment: { path: '/user-segments', update: 'PATCH', off: { is_active: false } },
-  campaign: { path: '/campaigns', update: 'PATCH', off: { is_active: false } },
-  product_set: { path: '/admin/promotion-product-sets', update: 'PATCH' },
-  promotion_page: { path: '/promotion-pages', update: 'PUT', off: { is_active: false } },
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/** What a write tool fills in for its audit row (mcp.write): the record it touched, its value before, what was sent, the changed fields. */
+type WriteLog = {
+  entityType?: string; entityId?: string | null; before?: unknown; after?: unknown; summary?: string;
+  changes?: { field: string; before: unknown; after: unknown }[]; adminUrl?: string;
 };
+const SAVE_KINDS = ['workflow', 'promotion', 'coupon', 'segment', 'campaign', 'product_set', 'promotion_page', 'banner', 'notify_template', 'smart_link', 'welcome_email', 'push_campaign'] as const;
+const LIST_KINDS = ['coupon', 'segment', 'campaign', 'product_set', 'promotion_page', 'banner', 'notify_template', 'smart_link', 'welcome_email'] as const;
 
 /** josh lists come as an array, `{ data }`, `{ data: { items } }` or `{ items }`. */
 function rowsOf(answer: unknown): Record<string, unknown>[] {
@@ -127,6 +131,9 @@ export class McpTools {
     private readonly growth: GrowthService,
     private readonly growthData: GrowthDataService,
     private readonly analyst: MarketAnalystService,
+    private readonly catalogSync: JoshCatalogSyncService,
+    private readonly modules: ModuleRef,
+    private readonly testers: MarketingTesters,
   ) {}
 
   /** A fresh server per request (stateless transport) with the tools this staff member may use. */
@@ -225,14 +232,30 @@ export class McpTools {
     }, async ({ rule }) => json(await joshAdminCall(this.joshActions, { userId: staff.userId, email: staff.email, role: staff.role }, { method: 'POST', path: '/user-segments/preview', body: rule }, 'mcp')));
 
     server.registerTool('marketing_list', {
-      title: 'Marketing setup on josh: coupons, segments, campaigns, product sets, promotion pages (marketing)',
-      description: 'Lists what marketing has set up in josh, as josh returns it (josh field names): coupons, user segments, campaigns, product sets (the SKU groups promotions use) and promotion landing pages. Use the ids with marketing_save to change one. Promotions → josh_promotions; workflows → marketing_workflows.',
-      inputSchema: { kind: z.enum(['coupon', 'segment', 'campaign', 'product_set', 'promotion_page']), search: z.string().max(100).optional() },
+      title: 'Marketing setup on josh: coupons, segments, campaigns, product sets, promotion pages, banners, templates, smart links, welcome email (marketing)',
+      description: 'Lists what marketing has set up in josh, as josh returns it (josh field names): coupons, user segments, campaigns, product sets (the SKU groups promotions use), promotion landing pages, banners (HERO = home carousel, POPUP_* = popups), notify templates (message texts workflows send), smart links, and the one welcome-lead email. Use the ids with marketing_save to change one; marketing_fields shows the fields. Promotions → josh_promotions; workflows → marketing_workflows.',
+      inputSchema: { kind: z.enum(LIST_KINDS), search: z.string().max(100).optional() },
       annotations: READ_ONLY,
     }, async ({ kind, search }) => {
       const answer = await joshAdminCall(this.joshActions, { userId: staff.userId, email: staff.email, role: staff.role }, { method: 'GET', path: MARKETING_KINDS[kind].path, query: kind === 'coupon' ? { limit: 200 } : undefined }, 'mcp');
+      if (MARKETING_KINDS[kind].singleton) return json({ kind, item: unwrapJosh(answer), adminPage: adminUrl(MARKETING_KINDS[kind].admin()) });
       const rows = rowsOf(answer).filter((r) => !search || JSON.stringify(r).toLowerCase().includes(search.toLowerCase()));
       return json({ kind, count: rows.length, items: rows.slice(0, 100) });
+    });
+
+    server.registerTool('marketing_fields', {
+      title: 'Fields marketing_save takes for one kind (marketing)',
+      description: 'JSON schema of `data` for marketing_save: required fields, enums and limits (josh\'s own field names), whether new ones are created switched off, and what an edit does. Read this before writing; workflow / promotion / push_campaign have no fixed schema — copy an existing one.',
+      inputSchema: { kind: z.enum(SAVE_KINDS) },
+      annotations: READ_ONLY,
+    }, async ({ kind }) => {
+      if (kind === 'promotion' || kind === 'push_campaign' || !MARKETING_KINDS[kind].fields) {
+        return json({ kind, schema: null, howTo: kind === 'promotion' ? 'copy the shape of josh_promotions id=… (mechanic fields)' : kind === 'push_campaign' ? 'copy the shape of an existing push campaign (push_campaigns); created as a draft only' : 'copy the shape of marketing_workflows id=… (trigger, steps)' });
+      }
+      const k = MARKETING_KINDS[kind];
+      return json({ kind, label: k.label, schema: z.toJSONSchema(k.fields!), createdSwitchedOff: k.off ?? null,
+        create: k.singleton ? 'not possible: one record, edit it (no id)' : 'omit id', edit: k.replace ? 'send every field: the record is replaced' : 'send only the fields to change',
+        note: k.note, adminPage: adminUrl(k.admin()) });
     });
 
     server.registerTool('marketing_workflows', {
@@ -318,6 +341,13 @@ export class McpTools {
       return json({ overview, campaigns: rows.slice(0, limit).map((r) => ({ id: r.id, name: r.name, status: r.status, title: r.title,
         audience: r.audience, ab_enabled: r.ab_enabled, scheduled_at: r.scheduled_at, sent_at: r.sent_at, stats: r.stats, last_error: r.last_error })) });
     });
+
+    server.registerTool('marketing_testers', {
+      title: 'Marketing testers',
+      description: 'The josh accounts that may receive real test sends (push_campaign_test, marketing_workflow_test). Staff add or remove them in commerce-admin › การตลาด › ข้อความอัตโนมัติ › Tester.',
+      inputSchema: {},
+      annotations: READ_ONLY,
+    }, async () => json({ testers: (await this.testers.list()).map((t) => ({ email: t.email, name: t.name })) }));
 
     server.registerTool('josh_products', {
       title: 'Shop products (josh catalog)',
@@ -445,7 +475,7 @@ export class McpTools {
 
     server.registerTool('catalog_products', {
       title: 'Josh catalog lookup',
-      description: 'Our products (copy of the Josh catalog): SKU, Thai/English name, brand, unit and live selling price incl. VAT.',
+      description: 'Our products (copy of the Josh catalog): josh product id, SKU, Thai/English name, first image, brand, unit and live selling price incl. VAT. Product sets take the SKUs.',
       inputSchema: {
         query: z.string().min(1).max(100).describe('SKU (exact or prefix) or product name'),
         limit: z.number().int().min(1).max(50).default(20),
@@ -458,7 +488,7 @@ export class McpTools {
         .where('p.removed_at IS NULL').andWhere(`p.translations::text ILIKE :q`, { q: `%${query.replace(/[%_]/g, '')}%` })
         .take(limit - bySku.length).getMany();
       const rows = [...bySku, ...byName.filter((p) => !bySku.some((s) => s.id === p.id))];
-      return json(rows.map((p) => ({ sku: p.sku, name: productName(p), brand: p.brandName, status: p.status, sellingUnit: p.sellingUnit,
+      return json(rows.map((p) => ({ id: p.id, sku: p.sku, name: productName(p), imageUrl: p.imageUrl, brand: p.brandName, status: p.status, sellingUnit: p.sellingUnit,
         sellingUnitPriceIncVat: p.sellingUnitPrice == null ? null : Number(p.sellingUnitPrice), packSize: p.packSize, updatedAt: p.joshUpdatedAt })));
     });
   }
@@ -468,7 +498,7 @@ export class McpTools {
    * AI client, tool and exact arguments); with it → do it. A changed argument needs a new preview.
    */
   private async twoStep(staff: McpStaff, clientId: string, tool: string, args: Record<string, unknown>,
-    preview: () => Promise<unknown>, run: () => Promise<unknown>) {
+    preview: () => Promise<unknown>, run: (log: WriteLog) => Promise<unknown>) {
     const { confirmCode, ...rest } = args;
     const hash = argsHash(rest);
     if (!confirmCode) {
@@ -479,12 +509,60 @@ export class McpTools {
     if (!(await this.oauth.consumeConfirm(String(confirmCode), staff.userId, clientId, tool, hash))) {
       return { ...json({ status: 'rejected', reason: 'confirmCode is invalid, expired, already used, or the arguments changed. Call again without confirmCode for a new preview.' }), isError: true };
     }
-    const result = await run();
-    await this.db.getRepository(AuditLog).insert({
-      actorId: staff.userId, action: 'mcp.write', entityType: 'mcp_tool', entityId: null,
-      context: { tool, args: rest, clientId, email: staff.email, role: staff.role },
+    // Who asked which AI to change what: the change log on commerce-admin › AI connectors reads these rows.
+    const log: WriteLog = {};
+    const record = (error?: unknown) => this.db.getRepository(AuditLog).insert({
+      actorId: staff.userId, action: 'mcp.write', entityType: log.entityType ?? 'mcp_tool', entityId: log.entityId ?? null,
+      before: log.before ?? null, after: log.after ?? null,
+      context: { tool, args: rest, clientId, email: staff.email, role: staff.role, summary: log.summary, changes: log.changes, adminUrl: log.adminUrl,
+        ...(error === undefined ? {} : { error: error instanceof Error ? error.message : String(error) }) },
     });
-    return json({ status: 'done', result });
+    let result: unknown;
+    try {
+      result = await run(log);
+    } catch (error) {
+      await record(error).catch((e) => Logger.error(`MCP write audit failed (${tool} by ${staff.email}): ${e instanceof Error ? e.message : e}`, 'Mcp'));
+      throw error;
+    }
+    await record();
+    return json({ status: 'done', result, ...(log.adminUrl ? { openInAdmin: log.adminUrl } : {}) });
+  }
+
+  /** The josh record an edit starts from (shown in the preview and kept in the audit row). */
+  private async joshRecord(staff: McpStaff, kind: MarketingKindName, id?: string): Promise<Record<string, unknown> | null> {
+    const k = MARKETING_KINDS[kind];
+    const get = (path: string) => joshAdminCall(this.joshActions, { userId: staff.userId, email: staff.email, role: staff.role }, { method: 'GET', path }, 'mcp');
+    if (k.singleton) return unwrapJosh(await get(k.path));
+    if (k.one) return unwrapJosh(await get(`${k.path}/${id}`));
+    const found = rowsOf(await get(k.path)).find((r) => r.id === id);
+    if (!found) throw new BadRequestException(`no ${kind} ${id} in josh — use marketing_list kind=${kind}`);
+    return found;
+  }
+
+  /** marketing_save for promotions and push campaign drafts: josh's own commerce actions, not the admin-call relay. */
+  private saveJoshAction(staff: McpStaff, clientId: string, args: { kind: 'promotion' | 'push_campaign'; id?: string; data: Record<string, unknown>; confirmCode?: string }) {
+    const { kind, id, data } = args;
+    const joshActor = { userId: staff.userId, email: staff.email };
+    const action = kind === 'push_campaign' ? 'create push campaign draft' : `${id ? `edit promotion ${id}` : 'create promotion (switched off)'}`;
+    const before = async () => (kind === 'promotion' && id && this.promotions.available ? this.promotions.detail(id).catch(() => null) as Promise<Record<string, unknown> | null> : null);
+    const page = (savedId?: string) => adminUrl(kind === 'push_campaign' ? '/j/marketing/push-campaigns' : savedId ? `/j/promotions-mechanic/${savedId}/edit` : '/j/promotions-mechanic');
+    return this.twoStep(staff, clientId, 'marketing_save', args as never,
+      async () => {
+        const was = await before();
+        return { action: `${action} in josh`, before: was, changes: id ? changesOf(was, data) : undefined, data, checkIn: page(id),
+          note: 'josh checks the data when it is saved; switching on / sending stays in commerce-admin' };
+      },
+      async (log) => {
+        const was = await before();
+        Object.assign(log, { entityType: `josh.${kind}`, entityId: id ?? null, before: was, after: data, summary: action, changes: id ? changesOf(was, data) : undefined });
+        const answer = kind === 'push_campaign'
+          ? await this.joshActions.run('push-campaigns', 'create', { campaign: data }, joshActor, 'mcp')
+          : await this.joshActions.run('promotions', id ? 'update' : 'create', id ? { id, changes: data } : { mechanic: { ...data, is_active: false } }, joshActor, 'mcp');
+        const savedId = id ?? String(unwrapJosh(answer)?.id ?? '');
+        if (UUID_RE.test(savedId)) log.entityId = savedId;
+        log.adminUrl = page(UUID_RE.test(savedId) ? savedId : undefined);
+        return answer;
+      });
   }
 
   private writes(server: McpServer, staff: McpStaff, clientId: string) {
@@ -493,28 +571,62 @@ export class McpTools {
     this.growthWrites(server, staff, clientId);
 
     server.registerTool('marketing_save', {
-      title: 'Create or edit marketing setup on josh — always switched off (needs confirmation)',
-      description: 'Create (no id) or edit (with id) a marketing workflow, promotion, coupon, segment, campaign, product set, promotion page or push campaign draft. `data` uses josh\'s own field names and rules (josh validates and answers with its reason if something is wrong) — read an existing one first (marketing_workflows, josh_promotions, marketing_list) and copy its shape. Anything new is created switched off / as a draft; this tool never switches anything on, activates a workflow or sends a push — a person does that in commerce-admin after checking it.',
+      title: 'Create or edit marketing setup on josh — new ones switched off (needs confirmation)',
+      description: 'Create (no id) or edit (with id) a marketing workflow, promotion, coupon, segment, campaign, product set, promotion page, banner / home carousel, notify template, smart link or push campaign draft, or edit the one welcome-lead email (no id). `data` uses josh\'s field names — marketing_fields shows them per kind; read an existing one first (marketing_list, marketing_workflows, josh_promotions). The preview shows the record before, the fields that change and the commerce-admin page to check it on. Anything new is created switched off / as a draft; this tool never switches anything on, activates a workflow or sends a push — a person does that in commerce-admin. An edit to something already live reaches customers right away. Every save is logged with who asked and through which AI.',
       inputSchema: {
-        kind: z.enum(['workflow', 'promotion', 'coupon', 'segment', 'campaign', 'product_set', 'promotion_page', 'push_campaign']),
-        id: z.string().uuid().optional().describe('edit this one; omit to create'),
-        data: z.record(z.string(), z.unknown()).describe('josh fields to set'),
+        kind: z.enum(SAVE_KINDS),
+        id: z.string().uuid().optional().describe('edit this one; omit to create (welcome_email: always omit)'),
+        data: z.record(z.string(), z.unknown()).describe('josh fields to set (marketing_fields)'),
         confirmCode: CONFIRM,
       },
       annotations: WRITE,
     }, async (args) => {
       const { kind, id, data } = args;
+      const reject = (reason: string, extra: object = {}) => ({ ...json({ status: 'rejected', reason, ...extra }), isError: true });
       const switchesOn = Object.entries(data).find(([k, v]) => (['is_active', 'active'].includes(k) && v === true) || (k === 'status' && v === 'active'));
-      if (switchesOn) return { ...json({ status: 'rejected', reason: `${switchesOn[0]}=${String(switchesOn[1])}: switching on / activating is done by a person in commerce-admin, not from MCP.` }), isError: true };
-      if (kind === 'push_campaign' && id) return { ...json({ status: 'rejected', reason: 'push campaigns: MCP creates drafts only; edit / schedule / send in commerce-admin.' }), isError: true };
-      const def = kind === 'promotion' || kind === 'push_campaign' ? null : MARKETING_KINDS[kind];
-      const body = !id && def?.off ? { ...data, ...def.off } : data;
+      if (switchesOn) return reject(`${switchesOn[0]}=${String(switchesOn[1])}: switching on / activating is done by a person in commerce-admin, not from MCP.`);
+      if (kind === 'push_campaign' && id) return reject('push campaigns: MCP creates drafts only; edit / schedule / send in commerce-admin.');
+      if (kind === 'promotion' || kind === 'push_campaign') return this.saveJoshAction(staff, clientId, args as never);
+
+      const k = MARKETING_KINDS[kind];
+      if (k.singleton && id) return reject(`${kind} is one record: leave id out to edit it.`);
+      const edit = !!id || !!k.singleton;
+      let fields = data;
+      if (k.fields) {
+        const schema = (edit && !k.replace ? k.fields.partial() : k.fields).strict();
+        const parsed = schema.safeParse(data);
+        if (!parsed.success) return reject('data does not match josh\'s fields — fix these and call again.', {
+          problems: parsed.error.issues.map((i) => `${i.path.join('.') || 'data'}: ${i.message}`), fields: z.toJSONSchema(schema) });
+        fields = parsed.data as Record<string, unknown>;
+      }
+      const sent = edit || k.offAfterCreate ? fields : { ...fields, ...k.off };
+      const body = k.toJosh ? k.toJosh(sent, !edit) : sent;
+      const before = () => (edit ? this.joshRecord(staff, kind, id) : Promise.resolve(null));
+      const action = `${edit ? 'edit' : 'create (switched off)'} ${k.label}${id ? ` ${id}` : ''}`;
       return this.twoStep(staff, clientId, 'marketing_save', args,
-        async () => ({ action: `${id ? 'edit' : 'create (switched off)'} ${kind}${id ? ` ${id}` : ''} in josh`, data: body, note: 'josh checks the data when it is saved; switching on stays in commerce-admin' }),
         async () => {
-          if (kind === 'promotion') return this.joshActions.run('promotions', id ? 'update' : 'create', id ? { id, changes: body } : { mechanic: { ...body, is_active: false } }, joshActor, 'mcp');
-          if (kind === 'push_campaign') return this.joshActions.run('push-campaigns', 'create', { campaign: body }, joshActor, 'mcp');
-          return joshAdminCall(this.joshActions, joshActor, { method: id ? def!.update : 'POST', path: id ? `${def!.path}/${id}` : def!.path, body }, 'mcp');
+          const was = await before();
+          const live = edit && (k.singleton || was?.is_active === true || was?.active === true);
+          return { action: `${action} in josh`, before: was, changes: edit ? changesOf(was, sent) : undefined, data: sent,
+            live: live ? 'this is live: customers see the change as soon as it is saved' : undefined, note: k.note,
+            checkIn: adminUrl(k.admin(id)), afterSave: 'switching on stays in commerce-admin' };
+        },
+        async (log) => {
+          const was = await before();
+          Object.assign(log, { entityType: `josh.${kind}`, entityId: id ?? null, before: was, after: sent, summary: action, changes: edit ? changesOf(was, sent) : undefined });
+          const answer = await joshAdminCall(this.joshActions, joshActor, { method: edit ? k.update : 'POST', path: id ? `${k.path}/${id}` : k.path, body }, 'mcp');
+          const quiet = quietJoshError(answer);
+          if (quiet) throw new BadRequestException(`josh: ${quiet}`);
+          const savedId = id ?? String(unwrapJosh(answer)?.id ?? '');
+          if (UUID_RE.test(savedId)) log.entityId = savedId;
+          log.adminUrl = adminUrl(k.admin(savedId || undefined));
+          if (!edit && k.offAfterCreate && k.off) {
+            if (!UUID_RE.test(savedId)) throw new BadRequestException(`created, but josh returned no id to switch it off — switch it off in commerce-admin (${log.adminUrl})`);
+            await joshAdminCall(this.joshActions, joshActor, { method: k.update, path: `${k.path}/${savedId}`, body: k.off }, 'mcp').catch((e) => {
+              throw new BadRequestException(`created ${savedId}, but switching it off failed (${e instanceof Error ? e.message : e}) — switch it off in commerce-admin: ${log.adminUrl}`);
+            });
+          }
+          return answer;
         });
     });
 
@@ -525,7 +637,53 @@ export class McpTools {
       annotations: WRITE,
     }, async (args) => this.twoStep(staff, clientId, 'marketing_workflow_pause', args,
       async () => ({ action: 'pause marketing workflow', workflow: await this.workflows.detail(args.id).then((w) => { const r = w as Record<string, unknown>; return { id: r.id, name: r.name, status: r.status }; }).catch(() => ({ id: args.id })) }),
-      () => this.joshActions.run('marketing-workflows', 'pause', { id: args.id }, joshActor, 'mcp')));
+      (log) => {
+        Object.assign(log, { entityType: 'josh.workflow', entityId: args.id, summary: `pause Marketing workflow ${args.id}`, adminUrl: adminUrl(MARKETING_KINDS.workflow.admin(args.id)) });
+        return this.joshActions.run('marketing-workflows', 'pause', { id: args.id }, joshActor, 'mcp');
+      }));
+
+    // Test sends reach a real device, so they only ever go to the tester list — never to customers.
+    const testTargets = async (email?: string) => {
+      const all = await this.testers.list();
+      const to = email ? all.filter((t) => t.email.toLowerCase() === email.toLowerCase()) : all;
+      if (!to.length) throw new Error(email ? `${email} is not a tester (marketing_testers)` : 'no testers yet — add them in commerce-admin › การตลาด › ข้อความอัตโนมัติ › Tester');
+      return to;
+    };
+    const eachTester = async (to: { userId: string; email: string }[], send: (userId: string) => Promise<unknown>) => {
+      const results: { email: string; ok: boolean; error?: string }[] = [];
+      for (const t of to) results.push(await send(t.userId).then(() => ({ email: t.email, ok: true }), (e) => ({ email: t.email, ok: false, error: e instanceof Error ? e.message : String(e) })));
+      return { results };
+    };
+
+    server.registerTool('push_campaign_test', {
+      title: 'Test-send a push campaign to testers (needs confirmation)',
+      description: 'Send one josh push campaign as a test to marketing testers only (see marketing_testers) — never to customers. Omit testerEmail to send to every tester.',
+      inputSchema: { id: z.string().uuid(), testerEmail: z.string().email().optional(), confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => {
+      const to = await testTargets(args.testerEmail);
+      return this.twoStep(staff, clientId, 'push_campaign_test', args,
+        async () => ({ action: 'test-send push campaign', campaign: this.push.available ? await this.push.findOne(args.id).then((c) => ({ id: c.id, name: c.name, title: c.title }), () => ({ id: args.id })) : { id: args.id }, to: to.map((t) => t.email) }),
+        (log) => {
+          Object.assign(log, { entityType: 'josh.push_campaign', entityId: args.id, summary: `test-send push campaign ${args.id} to ${to.map((t) => t.email).join(', ')}` });
+          return eachTester(to, (userId) => this.joshActions.run('push-campaigns', 'test', { id: args.id, userId }, joshActor, 'mcp'));
+        });
+    });
+
+    server.registerTool('marketing_workflow_test', {
+      title: 'Test a marketing workflow on testers (needs confirmation)',
+      description: 'Run one josh marketing workflow for marketing testers only (see marketing_testers). dryRun true (default) only describes what would be sent; false really sends its messages to the testers.',
+      inputSchema: { id: z.string().uuid(), testerEmail: z.string().email().optional(), dryRun: z.boolean().default(true), confirmCode: CONFIRM },
+      annotations: WRITE,
+    }, async (args) => {
+      const to = await testTargets(args.testerEmail);
+      return this.twoStep(staff, clientId, 'marketing_workflow_test', args,
+        async () => ({ action: args.dryRun ? 'dry-run marketing workflow (nothing is sent)' : 'test-send marketing workflow', workflow: await this.workflows.detail(args.id).then((w) => { const r = w as Record<string, unknown>; return { id: r.id, name: r.name, status: r.status }; }).catch(() => ({ id: args.id })), to: to.map((t) => t.email) }),
+        (log) => {
+          Object.assign(log, { entityType: 'josh.workflow', entityId: args.id, summary: `${args.dryRun ? 'dry-run' : 'test-send'} Marketing workflow ${args.id} for ${to.map((t) => t.email).join(', ')}`, adminUrl: adminUrl(MARKETING_KINDS.workflow.admin(args.id)) });
+          return eachTester(to, (userId) => this.joshActions.run('marketing-workflows', 'test', { id: args.id, userId, dryRun: args.dryRun }, joshActor, 'mcp'));
+        });
+    });
 
 
     server.registerTool('research_create_topic', {
@@ -649,6 +807,42 @@ export class McpTools {
       }));
 
     if (staff.role !== 'admin') return;
+
+    const copyValue = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+    server.registerTool('product_content_save', {
+      title: 'Edit a product\'s names, descriptions and marketing text (admin, needs confirmation)',
+      description: 'Change the copy of one shop product: Thai/English name and description, ingredients, allergens, usage, pairing, storage, shelf life, organic flag, short code — the same fields graphic edits in commerce-admin. Price, cost, stock, status, SKU and ERP master data are not editable here. Goes live on the shop once saved; logged with who asked.',
+      inputSchema: {
+        sku: z.string().min(1).max(100).describe('from catalog_products'),
+        fields: z.object(Object.fromEntries(PRODUCT_COPY_FIELDS.map((f) => [f, copyValue.optional()]))).strict()
+          .refine((f) => Object.values(f).some((v) => v !== undefined), 'give at least one field'),
+        confirmCode: CONFIRM,
+      },
+      annotations: WRITE,
+    }, async (args) => {
+      const product = async () => {
+        const p = await this.db.getRepository(JoshCatalogProduct).findOneBy({ sku: args.sku, removedAt: IsNull() });
+        if (!p) throw new BadRequestException(`no shop product with SKU ${args.sku} — use catalog_products`);
+        const tr = (lang: string) => p.translations?.find((t) => t.language_code === lang);
+        // The catalog copy carries names and descriptions; the other copy fields are not copied to commerce.
+        const known: Record<string, unknown> = { product_name_th: tr('th')?.product_name ?? null, product_name_en: tr('en')?.product_name ?? null,
+          product_description_th: tr('th')?.product_description ?? null, product_description_en: tr('en')?.product_description ?? null };
+        const before = Object.fromEntries(Object.keys(args.fields).map((f) => [f, f in known ? known[f] : '(not in commerce\'s catalog copy)']));
+        return { p, before };
+      };
+      const { kept } = productCopyFields(args.fields);
+      return this.twoStep(staff, clientId, 'product_content_save', args,
+        async () => {
+          const { p, before } = await product();
+          return { action: 'edit product copy in josh', sku: p.sku, product: productName(p), before, changes: changesOf(before, kept), live: 'shown on the shop as soon as it is saved',
+            checkIn: adminUrl(`/j/product/edit/${p.id}`) };
+        },
+        async (log) => {
+          const { p, before } = await product();
+          Object.assign(log, { entityType: 'josh.product', entityId: p.id, before, after: kept, summary: `edit product copy ${p.sku}`, changes: changesOf(before, kept), adminUrl: adminUrl(`/j/product/edit/${p.id}`) });
+          return editProductCopy({ josh: this.joshActions, catalog: this.catalogSync, modules: this.modules }, p.id, args.fields, joshActor, 'mcp');
+        });
+    });
 
     server.registerTool('stock_adjust', {
       title: 'Adjust stock in a warehouse commerce owns (admin, needs confirmation)',

@@ -2,6 +2,7 @@ import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param
 import { StaffRequest, StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { JoshActions } from './josh-actions';
 import { JoshMarketingWorkflows } from './josh-marketing-workflows';
+import { MarketingTesters } from './marketing-testers';
 import { joshOnly } from './system-health';
 
 const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
@@ -10,7 +11,7 @@ const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v
 @Controller()
 @StaffRoles('marketing')
 export class JoshMarketingWorkflowsController {
-  constructor(private readonly workflows: JoshMarketingWorkflows, private readonly josh: JoshActions) {}
+  constructor(private readonly workflows: JoshMarketingWorkflows, private readonly josh: JoshActions, private readonly testers: MarketingTesters) {}
 
   private replica() {
     if (!this.workflows.available) throw joshOnly('marketingWorkflows');
@@ -36,6 +37,13 @@ export class JoshMarketingWorkflowsController {
   @Post('josh/marketing-workflows/:id/update') @HttpCode(HttpStatus.OK)
   update(@Param('id', ParseUUIDPipe) id: string, @Body() b: { workflow?: unknown }, @Req() req: StaffRequest) {
     return this.josh.run('marketing-workflows', 'update', { id, workflow: obj(b?.workflow) }, this.as(req), 'admin');
+  }
+
+  /** Body: { userId?, individualId?, dryRun? } — a real run (dryRun false) with a josh user needs a tester. Declared before :id/:action. */
+  @Post('josh/marketing-workflows/:id/test') @HttpCode(HttpStatus.OK)
+  async test(@Param('id', ParseUUIDPipe) id: string, @Body() b: { userId?: string; individualId?: string; dryRun?: boolean }, @Req() req: StaffRequest) {
+    await this.testers.assertWorkflowTest(b);
+    return this.josh.run('marketing-workflows', 'test', { id, userId: b?.userId, individualId: b?.individualId, dryRun: b?.dryRun }, this.as(req), 'admin');
   }
 
   @Post('josh/marketing-workflows/:id/:action') @HttpCode(HttpStatus.OK)

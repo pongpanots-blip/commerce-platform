@@ -1,8 +1,9 @@
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
 import { Paged, QueuePage, queueList, QueueSql } from '../queue-page';
+import { buildExtrasPatch, EXTRA_COLUMNS } from './erp-extras';
 import { buildMasterPatch, splitMaster } from './master-fields';
 import { ProductMasterSnapshot } from './product-master-snapshot.event';
 
@@ -26,6 +27,8 @@ const PENDING_SQL: QueueSql = {
  */
 @Injectable()
 export class ProductMastersService {
+  private readonly logger = new Logger(ProductMastersService.name);
+
   constructor(
     @InjectDataSource() private readonly db: DataSource,
     @Inject(EVENT_BUS) private readonly events: IEventBus,
@@ -37,8 +40,9 @@ export class ProductMastersService {
    * live). New SKUs and drafts are josh's: it creates the draft with ERP values and MER activates it there.
    */
   async stageFromErp(m: EntityManager, body: unknown, at: Date): Promise<number> {
-    if (!ownsProductMaster()) return 0;
     const items = (Array.isArray(body) ? body : [body]).filter((i): i is Record<string, unknown> => !!i && typeof i === 'object');
+    for (const item of items) await this.saveExtras(m, item);
+    if (!ownsProductMaster()) return 0;
     let staged = 0;
     for (const item of items) {
       const sku = typeof item.PRODUCT_CODE === 'string' ? item.PRODUCT_CODE.trim() : '';
@@ -55,6 +59,31 @@ export class ProductMastersService {
       staged++;
     }
     return staged;
+  }
+
+  /**
+   * The upsert's extras (erp-extras.ts) apply straight away for any SKU — ERP facts, not MER-approved content, and
+   * commerce is their only writer. Bad fields are skipped and logged so the rest of the call still lands.
+   */
+  private async saveExtras(m: EntityManager, item: Record<string, unknown>) {
+    const sku = typeof item.PRODUCT_CODE === 'string' ? item.PRODUCT_CODE.trim() : '';
+    const { patch, invalid } = buildExtrasPatch(item);
+    if (invalid.length) this.logger.warn(`ERP product ${sku || '?'}: skipped invalid ${invalid.join(', ')}`);
+    const cols = EXTRA_COLUMNS.filter((c) => c in patch);
+    if (!sku || sku.length > 64 || !cols.length) return;
+    const json = (c: string) => c === 'substitutes' || c === 'fda_images';
+    await m.query(
+      `INSERT INTO product_erp_extras (product_inventory_sku, ${cols.join(', ')}) VALUES ($1, ${cols.map((c, i) => `$${i + 2}${json(c) ? '::jsonb' : ''}`).join(', ')})
+       ON CONFLICT (product_inventory_sku) DO UPDATE SET ${cols.map((c) => `${c} = EXCLUDED.${c}`).join(', ')}, updated_at = now()`,
+      [sku, ...cols.map((c) => (json(c) ? JSON.stringify(patch[c]) : patch[c]))]);
+  }
+
+  /** Aging, min prices, substitutes and FDA album of one SKU; a SKU the ERP never sent them for reads empty. */
+  async extras(sku: string) {
+    const [row] = await this.db.query(
+      `SELECT product_inventory_sku AS sku, aging_days, min_price, min_selling_unit_price, substitutes, fda_images, updated_at
+       FROM product_erp_extras WHERE product_inventory_sku = $1`, [sku]);
+    return row ?? { sku, aging_days: null, min_price: null, min_selling_unit_price: null, substitutes: [], fda_images: [], updated_at: null };
   }
 
   /** The MER queue, newest ERP change first. Without paging: the legacy bare array, capped at 500. */

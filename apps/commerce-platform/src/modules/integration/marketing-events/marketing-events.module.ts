@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DynamicSegmentsService } from './application/dynamic-segments.service';
 import { EventCatalogService } from './application/event-catalog.service';
 import { EventIngestService } from './application/event-ingest.service';
+import { EventRetention } from './application/event-retention';
 import { EventRuleService } from './application/event-rule.service';
 import { MarketingDynamicSegmentRow } from './infrastructure/marketing-dynamic-segment.entity';
 import { MarketingEventDefinitionRow } from './infrastructure/marketing-event-definition.entity';
@@ -15,7 +16,7 @@ import { MarketingEventsController } from './presentation/marketing-events.contr
 @Module({
   imports: [TypeOrmModule.forFeature([MarketingEventDefinitionRow, MarketingDynamicSegmentRow])],
   controllers: [EventsIngestController, MarketingEventsController, DynamicSegmentsController],
-  providers: [EventsStore, EventCatalogService, EventIngestService, EventRuleService, DynamicSegmentsService],
+  providers: [EventsStore, EventCatalogService, EventIngestService, EventRuleService, DynamicSegmentsService, EventRetention],
   exports: [EventsStore, EventCatalogService, EventRuleService, DynamicSegmentsService],
 })
 export class MarketingEventsModule {}

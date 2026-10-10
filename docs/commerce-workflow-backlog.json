@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-10T04:14:50.365560+00:00",
+  "updatedAt": "2026-10-10T04:35:07.648136+00:00",
   "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
   "designGuidance": {
     "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
@@ -77,7 +77,7 @@
     {
       "priority": 3,
       "task": "Pack-and-price planning",
-      "status": "Bounded typed multi-vendor comparison, action URLs, authoritative durable receipts/recovery and validated planning handoff implemented for existing admin/marketing writes and BA GET-only readers. MER remains excluded pending permission approval. Existing source/catalog/report workflows and legacy deep links retained; full application redesign not claimed.",
+      "status": "Bounded /planning/pack-prices action pages implement explicit own-product pack/price scenarios, comparable recorded observations, private reviewed drafts, persisted receipts and interrupted-save recovery. Comparison handoff validates SKU/source/selected observations. Existing product prices, stock and campaign rules remain operationally unchanged; this is a planning slice, not physical repacking or the whole app redesign.",
       "dependencies": [
         "Existing read-only active catalog copy and recorded verified competitor pair evidence",
         "MER permission remains unresolved; no grant",
@@ -102,21 +102,20 @@
         "FX/tax/delivery scope and variable pack contracts where needed",
         "Production readiness outside this slice"
       ],
-      "implementationContract": "docs/commerce-competitor-comparison-contracts.json",
+      "implementationContract": "docs/commerce-pack-price-planning-contracts.json",
       "remainingDependencies": [
-        "Production availability/permissions/retention of existing commerce_promotion_drafts and request tables has not been verified; unavailable storage remains a retriable error, never success.",
-        "The raw observation journal uses existing JSON storage with per-pair lookups; production volume, indexing, retention and query budgets need follow-up using approved production read access.",
-        "Native pack observations cap at 200 and history at 20; coverage is explicitly truncated. Legacy source names in retained overview filters are not stable vendor IDs; typed per-product comparison uses stable IDs.",
-        "Upstream copy freshness remains unverified; member eligibility, delivery/region/minimum-order/quantity tiers and FX normalization need authoritative contracts. No delivered-price, recommendation, profit, ATP or activation readiness is claimed.",
-        "Legacy batch accept/reject endpoints remain compatible; the new typed UI deliberately requires separate human verification and per-SKU review. Further batch ergonomics can follow the canonical action pattern.",
-        "MER competitor grant remains blocked pending an explicit permission decision; OCR-to-cart is cancelled.",
-        "Actual Claude/Cursor review is unrun and must occur on dot cloud computer through an authorized same-revision handoff. No credentials were copied and no transfer workaround was used."
+        "MER competitor access needs an explicit ACL/source-contract decision; do not silently grant access.",
+        "BA remains read-only; saving needs a separate explicitly approved policy change.",
+        "No authoritative connected internal cost; profit/margin/markup remain unavailable in actual connected preview.",
+        "No FX, variable/range pack evaluation, weight/volume conversion, delivery normalization or authoritative market/price recommendation.",
+        "Catalog copy sourceVersion/freshness and comprehensive product picker remain unavailable in reused source contract; exact SKU entry reads the existing active local copy.",
+        "Production deployment/storage readiness and production-authenticated full-stack E2E are outside this bounded development slice; this is not the entire app redesign."
       ]
     },
     {
       "priority": 3,
       "task": "Profit, cost and objective planning",
-      "status": "Bounded typed multi-vendor comparison, action URLs, authoritative durable receipts/recovery and validated planning handoff implemented for existing admin/marketing writes and BA GET-only readers. MER remains excluded pending permission approval. Existing source/catalog/report workflows and legacy deep links retained; full application redesign not claimed.",
+      "status": "Bounded /planning/profit-goals action pages implement owner-private hypothetical objectives and assumptions, UTC month identity, checked arithmetic, persisted receipt/recovery and revision conflicts. Admin saves; sales_manager and business_analyst retain read/preview access. Existing monthly GMV target stays separate. Connected accounting actuals and attainment remain unavailable.",
       "dependencies": [
         "Compatible net sales and effective COGS",
         "Objective owner/period/scope rules",
@@ -128,15 +127,11 @@
         "Unknown actuals show null and no attainment; net profit requires expenses."
       ],
       "implementedContracts": "docs/commerce-goals-sales-contracts.json",
-      "implementationContract": "docs/commerce-competitor-comparison-contracts.json",
+      "implementationContract": "docs/commerce-goals-sales-contracts.json",
       "remainingDependencies": [
-        "Production availability/permissions/retention of existing commerce_promotion_drafts and request tables has not been verified; unavailable storage remains a retriable error, never success.",
-        "The raw observation journal uses existing JSON storage with per-pair lookups; production volume, indexing, retention and query budgets need follow-up using approved production read access.",
-        "Native pack observations cap at 200 and history at 20; coverage is explicitly truncated. Legacy source names in retained overview filters are not stable vendor IDs; typed per-product comparison uses stable IDs.",
-        "Upstream copy freshness remains unverified; member eligibility, delivery/region/minimum-order/quantity tiers and FX normalization need authoritative contracts. No delivered-price, recommendation, profit, ATP or activation readiness is claimed.",
-        "Legacy batch accept/reject endpoints remain compatible; the new typed UI deliberately requires separate human verification and per-SKU review. Further batch ergonomics can follow the canonical action pattern.",
-        "MER competitor grant remains blocked pending an explicit permission decision; OCR-to-cart is cancelled.",
-        "Actual Claude/Cursor review is unrun and must occur on dot cloud computer through an authorized same-revision handoff. No credentials were copied and no transfer workaround was used."
+        "Authoritative compatible accounting net sales ex VAT, effective COGS/internal cost, expenses and completeness are required before actual profit or attainment.",
+        "Organization objective ownership, approval, scope and periods are not established by owner-private drafts.",
+        "Production storage/retention/indexing and authenticated deployed E2E remain unverified; local acceptance does not authorize release."
       ]
     },
     {
@@ -239,5 +234,6 @@
   "financialSourceCoverage": {
     "contracts": "docs/commerce-financial-analysis-contracts.json",
     "state": "Bounded recorded source coverage/variance implemented; actual accounting/goal integration pending required source contracts."
-  }
+  },
+  "consolidatedAcceptance": "docs/commerce-pre-release-acceptance-2026-10-10.json"
 }

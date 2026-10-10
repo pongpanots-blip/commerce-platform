@@ -1,5 +1,6 @@
 import { JoshAdminCallController } from '../../../integration/connector/josh/josh-admin-call.controller';
 import { McpConnectionsController } from '../../../../mcp/mcp-connections.controller';
+import { ScheduledTasksController } from '../../scheduled-tasks/scheduled-tasks.controller';
 import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
@@ -234,6 +235,13 @@ describe('sale / manager access matrix (real global guard, method overrides incl
     const handler = () => undefined;
     await deny('sale', handler, JoshAdminCallController, 'GET');
     await deny('sale', handler, McpConnectionsController, 'GET');
+  });
+  it('scheduled tasks (list + run now) are admin only', async () => {
+    for (const role of STAFF_ROLES.filter((r) => r !== 'admin')) {
+      await deny(role, ScheduledTasksController.prototype.list, ScheduledTasksController, 'GET');
+      await deny(role, ScheduledTasksController.prototype.run, ScheduledTasksController, 'POST');
+    }
+    await allow('admin', ScheduledTasksController.prototype.run, ScheduledTasksController, 'POST');
   });
 });
 

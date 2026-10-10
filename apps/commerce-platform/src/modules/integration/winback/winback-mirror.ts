@@ -1,10 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { DataSource, EntityManager } from 'typeorm';
 import { DomainEvent } from '../../../shared-kernel/domain/domain-event';
 import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
 import { JoshReplica } from '../../integration/connector/josh/josh-replica';
 import { winbackOwnedByCommerce } from './shared/winback.config';
+import { ScheduledCron } from '../../../shared-kernel/infrastructure/scheduled-task';
 
 /** The six winback tables, parents first (deletes run in reverse), then the app records (winback_app_record). */
 export const WINBACK_TABLES = ['winback_account', 'winback_contact', 'winback_activity', 'winback_stage_history', 'winback_sales_target', 'winback_meeting_ack', 'winback_app_record'] as const;
@@ -50,7 +50,7 @@ export class WinbackMirror {
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
   ) {}
 
-  @Cron(process.env.CRON_WINBACK_MIRROR?.trim() || '*/5 * * * *', { disabled: !cronOn })
+  @ScheduledCron('winback-mirror', process.env.CRON_WINBACK_MIRROR?.trim() || '*/5 * * * *', { disabled: !cronOn })
   async tick() {
     if (this.running || !this.replica.configured) return;
     this.running = true;

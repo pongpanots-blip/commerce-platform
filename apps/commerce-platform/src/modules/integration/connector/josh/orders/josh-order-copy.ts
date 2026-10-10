@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
 import { paidOrderSql } from '../josh-insights';
 import { JoshReplica } from '../josh-replica';
 import { JoshOrderCopy, JoshOrderLineCopy } from './josh-order-copy.entity';
+import { ScheduledCron } from '../../../../../shared-kernel/infrastructure/scheduled-task';
 
 const BATCH = 500;
 /** Statuses an order can still leave — re-read until it settles. */
@@ -54,7 +54,7 @@ export class JoshOrderCopyService {
 
   get available() { return this.replica.configured; }
 
-  @Cron(cronConfig.joshOrderCopy.expression, { timeZone: cronConfig.joshOrderCopy.timeZone, disabled: !cronConfig.joshOrderCopy.enabled })
+  @ScheduledCron('josh-order-copy', cronConfig.joshOrderCopy.expression, { timeZone: cronConfig.joshOrderCopy.timeZone, disabled: !cronConfig.joshOrderCopy.enabled })
   async tick() {
     if (!this.available || this.running) return; // ponytail: in-process guard; one commerce instance runs this cron
     this.running = true;

@@ -1,5 +1,4 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
@@ -7,6 +6,7 @@ import { ErpFeedService } from './erp-feed.service';
 import { ProductMastersService } from '../../../../commerce/product-masters/product-masters.service';
 import { ProductImagesService } from '../../../../commerce/product-images/product-images.service';
 import { OrderingService } from '../../../../commerce/ordering/ordering.service';
+import { ScheduledCron } from '../../../../../shared-kernel/infrastructure/scheduled-task';
 
 const BATCH = 100;
 
@@ -32,7 +32,7 @@ export class ErpFallbackReplayJob {
     @Optional() private readonly ordering?: OrderingService,
   ) {}
 
-  @Cron(cronConfig.erpFallbackReplay.expression, { disabled: !cronConfig.erpFallbackReplay.enabled })
+  @ScheduledCron('erp-fallback-replay', cronConfig.erpFallbackReplay.expression, { disabled: !cronConfig.erpFallbackReplay.enabled })
   async tick() {
     if (this.running) return;
     this.running = true;

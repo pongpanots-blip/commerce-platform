@@ -8,11 +8,14 @@ import { validateEnv } from './config/env.validation';
 import { StorefrontModule } from './storefront/storefront.module';
 import { PortalModule } from './portal/portal.module';
 import { mountMcp } from './mcp/mcp.http';
+import { TaskAwareLogger } from './shared-kernel/infrastructure/scheduled-task';
 
 async function bootstrap() {
   validateEnv(process.env);
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
+  // Marks a scheduled-task run as a problem when the job logs a warn/error (most jobs catch and log instead of throwing).
+  app.useLogger(new TaskAwareLogger());
   // Product / coupon images go to josh as base64 through /api/josh/admin-call (3.5 MB of files per call).
   app.useBodyParser('json', { limit: '6mb' });
   // COMMERCE_CORS_ORIGINS is a comma-separated allowlist (no spaces), e.g.

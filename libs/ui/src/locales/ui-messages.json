@@ -25834,5 +25834,97 @@
   "ภายใน N วันข้างหน้า": {
     "th": "ภายใน N วันข้างหน้า",
     "en": "within the next N days"
+  },
+  "เมื่อเกิด event": {
+    "th": "เมื่อเกิด event",
+    "en": "When an event happens"
+  },
+  "เกิดขึ้น": {
+    "th": "เกิดขึ้น",
+    "en": "Happened"
+  },
+  "JSON ไม่ถูกต้อง": {
+    "th": "JSON ไม่ถูกต้อง",
+    "en": "Invalid JSON"
+  },
+  "attribute ตัวอย่าง (JSON)": {
+    "th": "attribute ตัวอย่าง (JSON)",
+    "en": "Sample attributes (JSON)"
+  },
+  "เลือก event": {
+    "th": "เลือก event",
+    "en": "Choose an event"
+  },
+  "event จากหน้าเว็บ / แอป ผู้ใช้ปลอมได้ — ถ้าแจกคูปองต้องตั้ง cooldown และคูปองมูลค่าสูงควรใช้ trigger ยอดสั่งซื้อแทน": {
+    "th": "event จากหน้าเว็บ / แอป ผู้ใช้ปลอมได้ — ถ้าแจกคูปองต้องตั้ง cooldown และคูปองมูลค่าสูงควรใช้ trigger ยอดสั่งซื้อแทน",
+    "en": "Web / app events can be faked by users — coupons need a cooldown, and high-value coupons should use the order trigger instead"
+  },
+  "เงื่อนไข attribute (ทุกข้อ)": {
+    "th": "เงื่อนไข attribute (ทุกข้อ)",
+    "en": "Attribute conditions (all)"
+  },
+  "รวม guest (ยังไม่ login)": {
+    "th": "รวม guest (ยังไม่ login)",
+    "en": "Include guests (not logged in)"
+  },
+  "guest ได้เฉพาะ push ถึงอุปกรณ์ที่กดรับ push ไม่เกิน 1 ครั้ง/วัน · ใช้ Audience และ Event condition ไม่ได้ · ต้องให้ DPO ยืนยันก่อนเปิดใช้จริง": {
+    "th": "guest ได้เฉพาะ push ถึงอุปกรณ์ที่กดรับ push ไม่เกิน 1 ครั้ง/วัน · ใช้ Audience และ Event condition ไม่ได้ · ต้องให้ DPO ยืนยันก่อนเปิดใช้จริง",
+    "en": "Guests get push only, to devices that accepted push, at most once a day · no Audience or Event condition · needs DPO sign-off before real use"
+  },
+  "รอ event": {
+    "th": "รอ event",
+    "en": "Wait for event"
+  },
+  "เงื่อนไข attribute": {
+    "th": "เงื่อนไข attribute",
+    "en": "Attribute conditions"
+  },
+  "หมดเวลา (ชั่วโมง)": {
+    "th": "หมดเวลา (ชั่วโมง)",
+    "en": "Timeout (hours)"
+  },
+  "นับเฉพาะ event หลังเข้า step นี้ · เกิดขึ้น → ทางออกบน · ครบเวลา → ทางออกล่าง": {
+    "th": "นับเฉพาะ event หลังเข้า step นี้ · เกิดขึ้น → ทางออกบน · ครบเวลา → ทางออกล่าง",
+    "en": "Only events after entering this step count · happened → upper exit · timeout → lower exit"
+  },
+  "ไป Yes เมื่อเงื่อนไขเป็นจริง ณ ตอนที่ลูกค้ามาถึง step นี้": {
+    "th": "ไป Yes เมื่อเงื่อนไขเป็นจริง ณ ตอนที่ลูกค้ามาถึง step นี้",
+    "en": "Goes to Yes when the condition holds at the moment the customer reaches this step"
+  },
+  "อยู่ในกลุ่มตาม event ใดก็ได้": {
+    "th": "อยู่ในกลุ่มตาม event ใดก็ได้",
+    "en": "In any of these event-based segments"
+  },
+  "ยกเว้นกลุ่มตาม event": {
+    "th": "ยกเว้นกลุ่มตาม event",
+    "en": "Except these event-based segments"
+  },
+  "เพิ่มเงื่อนไข event": {
+    "th": "เพิ่มเงื่อนไข event",
+    "en": "Add event conditions"
+  },
+  "หยุดส่งเมื่อ": {
+    "th": "หยุดส่งเมื่อ",
+    "en": "Stop sending when"
+  },
+  "ไม่หยุด": {
+    "th": "ไม่หยุด",
+    "en": "Never"
+  },
+  "ลูกค้าสั่งซื้อแล้ว (จากระบบ)": {
+    "th": "ลูกค้าสั่งซื้อแล้ว (จากระบบ)",
+    "en": "The customer ordered (from the system)"
+  },
+  "ลูกค้าทำ event": {
+    "th": "ลูกค้าทำ event",
+    "en": "The customer does an event"
+  },
+  "event จากหน้าเว็บไม่ใช่หลักฐานการซื้อ — ถ้าเป้าหมายคือการสั่งซื้อ ใช้ \"ลูกค้าสั่งซื้อแล้ว\"": {
+    "th": "event จากหน้าเว็บไม่ใช่หลักฐานการซื้อ — ถ้าเป้าหมายคือการสั่งซื้อ ใช้ \"ลูกค้าสั่งซื้อแล้ว\"",
+    "en": "A web event is not proof of purchase — if the goal is an order, use \"The customer ordered\""
+  },
+  "ยังไม่เลือก event": {
+    "th": "ยังไม่เลือก event",
+    "en": "No event chosen"
   }
 }

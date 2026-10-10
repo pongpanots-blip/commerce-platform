@@ -71,4 +71,18 @@ describe('workflow-graph', () => {
     const split = newStep('split', 'x') as { branches: { percent: number }[] };
     expect(split.branches.map((b) => b.percent)).toEqual([50, 50]);
   });
+  it('wait_event and event_split have two ports; removing them ends what pointed at them', () => {
+    const w = fresh('wait_event'); const a = fresh('push'); const b = fresh('email');
+    let g = insertAfter(empty, { stepId: TRIGGER }, w);
+    g = insertAfter(g, { stepId: w.id, port: 'timeout' }, a);
+    g = insertAfter(g, { stepId: w.id, port: 'matched' }, b);
+    expect(targetOf(g, { stepId: w.id, port: 'timeout' })).toBe(a.id);
+    expect(targetOf(g, { stepId: w.id, port: 'matched' })).toBe(b.id);
+    g = removeStep(g, w.id);
+    expect(g.entryStepId).toBeNull();
+    const s = fresh('event_split');
+    expect((s as { rule: { op: string } }).rule.op).toBe('AND');
+    g = insertAfter(empty, { stepId: TRIGGER }, s);
+    expect(firstFreePort(g, s.id)).toEqual({ stepId: s.id, port: 'yes' });
+  });
 });

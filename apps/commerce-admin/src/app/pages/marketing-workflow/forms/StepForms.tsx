@@ -6,6 +6,7 @@ import type { NotifyChannel, SegmentOption, WorkflowMeta, WorkflowStep } from '@
 import { flowsApi } from '../../../../lib/api';
 import { CouponPicker, NotifyTemplatePicker } from '../../workflow-editor/josh/MarketingStepSidePanel';
 import { itemOf } from '../palette-items';
+import { describeRule } from '../../marketing-events/rule-helpers';
 
 type Of<T extends WorkflowStep['type']> = Extract<WorkflowStep, { type: T }>;
 export interface CouponOption { id: string; coupon_code: string; title: string }
@@ -19,6 +20,8 @@ export function describeStep(step: WorkflowStep, ctx: { segments: SegmentOption[
     case 'condition': return { title: label('condition'), subtitle: step.expression };
     case 'split': return { title: label('split'), subtitle: step.branches.map((b) => `${b.label} ${b.percent}%`).join(' / ') };
     case 'webhook': return { title: label('webhook'), subtitle: `${step.method} ${step.url || '—'}` };
+    case 'wait_event': return { title: label('wait_event'), subtitle: `${step.eventName || '—'} · ${step.timeoutHours} ${__uiText('ชม.')}` };
+    case 'event_split': return { title: label('event_split'), subtitle: describeRule(step.rule, new Map()) };
     case 'action': {
       const a = step.action;
       if (a.kind === 'notify') return { title: a.channels.map((c) => label(c)).join(' + ') || label('push'), subtitle: a.templateKey || __uiText('ยังไม่เลือก template') };

@@ -32,6 +32,7 @@ import { UserModule } from './modules/core/user/user.module';
 import { CompanyModule } from './modules/core/company/company.module';
 import { OrganizationModule } from './modules/core/organization/organization.module';
 import { AuditModule } from './modules/core/audit/audit.module';
+import { ScheduledTasksModule } from './modules/core/scheduled-tasks/scheduled-tasks.controller';
 import { SettingsModule } from './modules/core/settings/settings.module';
 import { ApiKeyModule } from './modules/core/api-key/api-key.module';
 
@@ -104,6 +105,7 @@ import { McpModule } from './mcp/mcp.module';
     CompanyModule,
     OrganizationModule,
     AuditModule,
+    ScheduledTasksModule,
     SettingsModule,
     ApiKeyModule,
 

@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { cronConfig } from '../../../../config/cron.config';
 import { MarketingResearchService } from './marketing-research.service';
 import { ResearchFreeWorker } from './research-free.worker';
 import { ResearchAiWorker } from './research-ai.worker';
+import { ScheduledCron } from '../../../../shared-kernel/infrastructure/scheduled-task';
 
 @Injectable()
 export class MarketingResearchCron {
@@ -14,7 +14,7 @@ export class MarketingResearchCron {
     private readonly aiWorker: ResearchAiWorker,
   ) {}
 
-  @Cron(cronConfig.marketingResearch.expression, {
+  @ScheduledCron('marketing-research', cronConfig.marketingResearch.expression, {
     timeZone: cronConfig.marketingResearch.timeZone,
     disabled: !cronConfig.marketingResearch.enabled,
   })

@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Interval } from '@nestjs/schedule';
 import { WorkflowStore } from '../infrastructure/workflow.store';
 import { WorkflowQueue } from './workflow-queue';
 import { WorkflowTriggers } from './workflow-triggers.service';
+import { ScheduledInterval } from '../../../../shared-kernel/infrastructure/scheduled-task';
 
 /** Off only with CRON_MARKETING_WORKFLOW_ENABLED=false|0 (no workflow runs until staff activates one). */
 const enabled = () => !['false', '0'].includes((process.env.CRON_MARKETING_WORKFLOW_ENABLED ?? '').trim().toLowerCase());
@@ -14,7 +14,7 @@ export class WorkflowSweep {
   private running = false;
   constructor(private readonly store: WorkflowStore, private readonly queue: WorkflowQueue, private readonly triggers: WorkflowTriggers) {}
 
-  @Interval(60_000)
+  @ScheduledInterval('marketing-workflow-sweep', 60_000)
   async tick(): Promise<void> {
     if (!enabled() || this.running) return;
     this.running = true;

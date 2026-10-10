@@ -44,7 +44,7 @@ describe('sidebar per role', () => {
   it('More settings: connections, failed deliveries, sync jobs and logs first; test tools, marketing tools and store data copies after "show more"', () => {
     const advanced = navFor('admin').find((g) => g.group === titleOf('advanced'))!;
     expect(advanced.links.filter((l) => !l.more).map((l) => l.to)).toEqual([
-      '/integrations', '/erp/webhook-dead-letter', '/sync-jobs', '/webhooks', '/subscriptions', '/erp/inbound-log',
+      '/integrations', '/erp/webhook-dead-letter', '/sync-jobs', '/scheduled-tasks', '/webhooks', '/subscriptions',
     ]);
     expect(advanced.links.filter(l => l.more).length).toBeGreaterThan(0);
     for (const to of ['/erp/simulator', '/j/kbank/testing-console', '/erp-stock']) expect(advanced.links.find((l) => l.to === to)!.more, to).toBe(true);

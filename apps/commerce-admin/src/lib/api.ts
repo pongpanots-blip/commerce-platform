@@ -866,3 +866,14 @@ export const auditLogsApi = {
   },
   facets: () => api.get<{ actions: { value: string; count: number }[]; entityTypes: { value: string; count: number }[] }>('/audit-logs/facets'),
 };
+
+export interface ScheduledTaskRow {
+  name: string; kind: 'cron' | 'interval'; expression: string | null; timeZone: string | null; intervalMs: number | null;
+  enabled: boolean; running: number; runs: number; problems: number; nextRunAt: string | null; lastSuccessAt: string | null;
+  last: { startedAt: string; endedAt: string | null; problem: string | null; manual: boolean } | null;
+  lastProblem: { at: string; message: string } | null;
+}
+export const scheduledTasksApi = {
+  list: () => api.get<{ since: string; tasks: ScheduledTaskRow[] }>('/scheduled-tasks'),
+  run: (name: string) => api.post<{ started: boolean }>(`/scheduled-tasks/${encodeURIComponent(name)}/run`, {}),
+};

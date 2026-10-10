@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Interval } from '@nestjs/schedule';
 import { DataSource, In, LessThan } from 'typeorm';
 import { Order } from '../../order/infrastructure/order.entity';
 import { OrderFulfillment } from '../../order/infrastructure/order-fulfillment.entity';
 import { Payment } from '../../payment/infrastructure/payment.entity';
 import { ReservationRepository } from '../infrastructure/reservation.repository';
 import { ReservationFacade } from './reservation.facade';
+import { ScheduledInterval } from '../../../../shared-kernel/infrastructure/scheduled-task';
 
 const SWEEP_MS = Number(process.env.RESERVATION_SWEEP_MS || 60_000);
 
@@ -39,7 +39,7 @@ export class ReservationExpiryWorker {
     private readonly facade: ReservationFacade,
   ) {}
 
-  @Interval(SWEEP_MS)
+  @ScheduledInterval('reservation-expiry', SWEEP_MS)
   async tick(): Promise<void> {
     if (this.running) return; // no overlapping sweeps
     this.running = true;

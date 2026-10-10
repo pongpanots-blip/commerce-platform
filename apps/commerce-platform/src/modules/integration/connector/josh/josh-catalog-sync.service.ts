@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Cron } from '@nestjs/schedule';
 import { Repository } from 'typeorm';
 import { cronConfig } from '../../../../config/cron.config';
 import { JoshCatalogProduct } from './josh-catalog-product.entity';
 import { JoshReplica } from './josh-replica';
+import { ScheduledCron } from '../../../../shared-kernel/infrastructure/scheduled-task';
 
 const SELECT = `SELECT p.product_inventory_id AS id, p.product_inventory_sku AS sku, p.product_status AS status,
   p.brand_code, p.brand_name, p.country_code_source, p.storage_temperature, p.packaging_type, p.pack_size,
@@ -78,7 +78,7 @@ export class JoshCatalogSyncService {
     if (rows.length) await this.upsert(rows);
   }
 
-  @Cron(cronConfig.joshCatalogSync.expression, { timeZone: cronConfig.joshCatalogSync.timeZone, disabled: !cronConfig.joshCatalogSync.enabled })
+  @ScheduledCron('josh-catalog-sync', cronConfig.joshCatalogSync.expression, { timeZone: cronConfig.joshCatalogSync.timeZone, disabled: !cronConfig.joshCatalogSync.enabled })
   async scheduled() {
     if (this.running || !this.configured) return;
     this.running = true;

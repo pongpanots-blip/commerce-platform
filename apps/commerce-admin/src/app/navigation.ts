@@ -128,6 +128,7 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/integrations', label: 'ระบบที่เชื่อมต่อ', description: 'ระบบภายนอกที่เชื่อมกับเราและสถานะการเชื่อมต่อ' },
     { to: '/erp/webhook-dead-letter', label: 'รายการส่งไม่สำเร็จ', description: 'ข้อมูลที่ส่งไม่สำเร็จ ตรวจสอบและส่งใหม่' },
     { to: '/sync-jobs', label: 'งานซิงก์ข้อมูล', description: 'งานซิงก์ข้อมูลกับระบบภายนอกและผลลัพธ์' },
+    { to: '/scheduled-tasks', label: 'งานอัตโนมัติตามเวลา', description: 'งานที่ระบบรันเองตามเวลา ผลการรันล่าสุด และสั่งรันทันที' },
     { to: '/webhooks', label: 'เหตุการณ์ขาเข้า', description: 'เหตุการณ์ที่ระบบภายนอกส่งเข้ามา' },
     { to: '/subscriptions', label: 'การส่งเหตุการณ์ขาออก', description: 'ปลายทางที่รับเหตุการณ์จากระบบของเรา' },
     { to: '/erp/inbound-log', label: 'บันทึกข้อมูลจากระบบหลัก (ERP)', description: 'บันทึกข้อมูลที่ระบบหลัก (ERP) ส่งเข้ามา' },

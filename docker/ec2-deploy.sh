@@ -499,6 +499,21 @@ commerce_deploy_main() {
     SERVICES=("${ALL_SERVICES[@]}")
   fi
 
+  # Also gate direct invocations before env/tag/config changes, pulls or cleanup.
+  if [[ " ${SERVICES[*]} " == *" platform "* ]]; then
+    [[ ${#SERVICES[@]} -eq 1 ]] || { echo 'reviewed migration scope permits platform-only deployment' >&2; exit 1; }
+    [[ "$TAG" == "${MIGRATION_SCOPE_IMAGE_TAG:-}" ]] || { echo 'deployment tag differs from migration scope' >&2; exit 1; }
+    [[ -r docker-compose.prod.yml ]] || { echo 'existing compose configuration missing' >&2; exit 1; }
+    # Compose process variables override .env. Remove every interpolation override
+    # so the guarded release retains the existing connection, flags and sibling tags.
+    local compose_key
+    while IFS= read -r compose_key; do
+      compose_key="${compose_key#\$\{}"
+      [[ "$compose_key" == ECR_REGISTRY ]] || unset "$compose_key"
+    done < <(grep -oE '\$\{[A-Z][A-Z0-9_]*' docker-compose.prod.yml | sort -u)
+    bash "$(dirname "${BASH_SOURCE[0]}")/platform-migration-scope.sh" preflight "$PWD"
+  fi
+
   local -a TAG_VARS=()
   local -a OLD_TAGS=()
   local svc TAG_VAR old_tag
@@ -523,7 +538,7 @@ commerce_deploy_main() {
   #     "JAGOTA_NODEAPI_USERNAME=..." "JAGOTA_NODEAPI_PASSWORD=..." \
   #     > .env.jagota-gateway && chmod 600 .env.jagota-gateway
   # Then re-run this deploy (or compose up -d platform).
-  if [[ -f .env.jagota-gateway ]]; then
+  if [[ -f .env.jagota-gateway && " ${SERVICES[*]} " != *" platform "* ]]; then
     echo "merging .env.jagota-gateway into .env"
     touch .env
     local line key
@@ -548,7 +563,9 @@ commerce_deploy_main() {
   # Schema first: the app never runs migrations itself (migrationsRun is off). A failed migration
   # stops the deploy before the new platform container replaces the running one.
   if [[ " ${SERVICES[*]} " == *" platform "* ]]; then
-    "${COMPOSE[@]}" run --rm --no-deps platform node node_modules/typeorm/cli.js migration:run -d src/data-source.js
+    # Recheck metadata and restrict the executor to the exact reviewed migration names.
+    # The workflow's earlier read-only gate runs before configuration/service mutations.
+    bash "$(dirname "${BASH_SOURCE[0]}")/platform-migration-scope.sh" run "$PWD"
   fi
 
   # Per deployed service, remember the tag that was live before this deploy in the pending

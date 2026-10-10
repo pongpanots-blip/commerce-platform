@@ -336,3 +336,6 @@ logic กราฟ (insert, ต่อ / ตัดเส้น, ลบ step แ�
 - marketing webhook ใช้คิว/worker ของตัวเอง (`marketing-webhook`) แทน worker ของ subscription เดิม — worker เดิมข้ามแถว `kind = 'marketing'`; แถวยังอยู่ใน `webhook_deliveries` จึงขึ้นใน MCP `webhook_failures` ได้ (delivery monitor ไม่เห็นเพราะ join subscription)
 - josh: `CommerceErpEventsController` รับ service ใหม่แบบ `@Optional()` + `ownedMarketing()` (ไม่ได้ wire → 5xx ให้ commerce retry) เพราะ parameter ตัวท้ายเป็น optional ทั้งหมด
 - วางการ์ดบนการ์ดที่ทุกทางออกมีปลายทางแล้ว → แทรกที่ทางออกแรก (ปลายทางเดิมต่อท้าย step ใหม่) แทน popover ให้เลือกทางออก
+- trigger จาก snapshot (first_login / app_login / order_milestone) นับเฉพาะเหตุการณ์ใน 60 นาทีล่าสุด (`TRIGGER_RECENT_MINUTES`) — ถ้าตอนนั้น enroll ไม่ได้ (นอกช่วงเวลา, cooldown, ไม่อยู่ใน audience) จะไม่ไป enroll ภายหลังตอน snapshot อื่นที่ไม่เกี่ยว (จาก final review)
+- PDPA (`customer.deleted`) ทำในทรานแซกชันเดียวกับ josh-events: หยุด enrollment แล้ว fail แถว webhook ที่ยังไม่ส่ง และล้าง URL / headers / body ของแถว webhook ทุกแถวของลูกค้า
+- ส่ง webhook ทดสอบ: ค่า secret ที่ปลายทางสะท้อนกลับมาใน body ถูกปิดเป็น `••••` ก่อนตัด 2 KB

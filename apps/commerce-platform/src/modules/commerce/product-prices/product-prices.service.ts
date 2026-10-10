@@ -105,6 +105,8 @@ export class ProductPricesService {
 
   /** Staff edit (commerce-admin price page, or the product form's price fields). */
   async edit(sku: string, patch: PricePatch, staffId: string) {
+    this.assertOwned();
+    if (!COLS.some(([k]) => patch[k] !== undefined)) throw new BadRequestException('ไม่มีราคาให้แก้');
     return this.db.transaction(m => this.editWithin(m, sku, patch, staffId));
   }
 

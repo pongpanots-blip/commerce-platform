@@ -43,6 +43,7 @@ import {
   type PriceApprovalJob,
 } from "./price-approval-journal";
 import { CurrentPrices } from "./CurrentPrices";
+import { PriceRequestLinks, usePriceRequests } from "./PriceRequestLinks";
 import {
   priceDetailUrl as detail,
   priceSkuFromToken,
@@ -181,25 +182,7 @@ function usePriceJobs(owner: string) {
   return jobs;
 }
 function PendingRequests({ owner }: { owner: string }) {
-  const jobs = usePriceJobs(owner);
-  return jobs.length ? (
-    <Alert tone="warn">
-      <p>
-        {text(
-          "ตรวจคำขอเดิมก่อนตัดสินใจซ้ำ",
-          "Check original requests before deciding again",
-        )}
-      </p>
-      {jobs.map((j) => (
-        <WorkspaceLink
-          key={j.packet.requestId}
-          to={outcome(j.packet.requestId)}
-        >
-          {j.packet.changes.map((c) => c.sku).join(", ")}
-        </WorkspaceLink>
-      ))}
-    </Alert>
-  ) : null;
+  return <PriceRequestLinks owner={owner} />;
 }
 function Queue({ owner }: { owner: string }) {
   const [params, setParams] = useSearchParams(),
@@ -554,9 +537,17 @@ function Review({ owner, sku }: { owner: string; sku?: string }) {
     return null;
   }, [sku, path]);
   const review = source.data,
-    pending = usePriceJobs(owner).some((j) =>
-      j.packet.changes.some((c) => review?.items.some((i) => i.sku === c.sku)),
-    );
+    manualPending = usePriceRequests(owner).edits.some((j) =>
+      review?.items.some((i) => i.sku === j.packet.sku),
+    ),
+    approvalJobs = usePriceJobs(owner),
+    pending =
+      manualPending ||
+      approvalJobs.some((j) =>
+        j.packet.changes.some((c) =>
+          review?.items.some((i) => i.sku === c.sku),
+        ),
+      );
   const emptyNativePatch =
     decision === "approve" &&
     review?.items.some((i) =>
@@ -920,15 +911,8 @@ export function PriceApprovalWorkspace({
       />
     );
   const tail = location.pathname.slice(home.length);
-  if (tail === "/current")
-    return (
-      <CommercePage>
-        <WorkspaceLink to={home}>
-          {text("กลับคิวราคา", "Back to price queue")}
-        </WorkspaceLink>
-        <CurrentPrices key={owner} />
-      </CommercePage>
-    );
+  if (tail === "/current" || tail.startsWith("/current/"))
+    return <CurrentPrices key={owner} owner={owner} role={role} />;
   if (!tail || tail === "/")
     return (
       <CommercePage>

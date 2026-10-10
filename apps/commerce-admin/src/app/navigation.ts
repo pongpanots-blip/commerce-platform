@@ -59,6 +59,7 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/j/credit-notes', label: 'ใบลดหนี้', description: 'ออกและติดตามใบลดหนี้' },
     { to: '/j/credit-backs', label: 'คืนเครดิตให้ลูกค้า', description: 'คืนเครดิตให้ลูกค้าและติดตามสถานะ' },
     { to: '/j/refunds', label: 'คืนสินค้าและคืนเงิน', description: 'คำขอคืนสินค้าและการคืนเงินของลูกค้า' },
+    { to: '/j/refund-requests', label: 'คำขอคืนเงิน', description: 'ตรวจหลักฐาน อนุมัติ และโอนคืนเงินลูกค้า (คืนสินค้า / ส่วนต่างน้ำหนัก)' },
     { to: '/j/cs/delivery-schedule', label: 'ตารางรอบส่ง', description: 'รอบจัดส่งและเกณฑ์การจัดส่ง' },
     { to: '/j/batch-sticker', label: 'พิมพ์สติกเกอร์', more: true, description: 'พิมพ์สติกเกอร์ติดกล่องให้หลายออเดอร์พร้อมกัน' },
     { to: '/orders', label: 'ชำระเงินและการจองของออเดอร์', more: true, description: 'สถานะชำระเงินและการจองสินค้าของแต่ละคำสั่งซื้อ' },

@@ -26226,5 +26226,181 @@
   "ส่งออกไม่สำเร็จ: {0}": {
     "th": "ส่งออกไม่สำเร็จ: {0}",
     "en": "Export failed: {0}"
+  },
+  "KBank ไม่ตอบกลับ — ตรวจใน KBank portal ก่อนว่าคืนเงินแล้วหรือยัง ห้ามสั่งคืนซ้ำถ้าไม่แน่ใจ": {
+    "th": "KBank ไม่ตอบกลับ — ตรวจใน KBank portal ก่อนว่าคืนเงินแล้วหรือยัง ห้ามสั่งคืนซ้ำถ้าไม่แน่ใจ",
+    "en": "KBank did not answer — check the KBank portal first; never refund again unless you are sure it did not go through"
+  },
+  "KBank ไม่ได้คืนเงิน (หมายเหตุ)": {
+    "th": "KBank ไม่ได้คืนเงิน (หมายเหตุ)",
+    "en": "KBank did not refund (note)"
+  },
+  "ขอข้อมูลอะไรเพิ่มจากลูกค้า?": {
+    "th": "ขอข้อมูลอะไรเพิ่มจากลูกค้า?",
+    "en": "What do you need from the customer?"
+  },
+  "ขอข้อมูลเพิ่ม": {
+    "th": "ขอข้อมูลเพิ่ม",
+    "en": "Request changes"
+  },
+  "คำขอคืนเงิน": {
+    "th": "คำขอคืนเงิน",
+    "en": "Refund requests"
+  },
+  "คืนสินค้า": {
+    "th": "คืนสินค้า",
+    "en": "Return"
+  },
+  "คืนเข้าบัตร": {
+    "th": "คืนเข้าบัตร",
+    "en": "Card refund"
+  },
+  "คืนไปที่": {
+    "th": "คืนไปที่",
+    "en": "Refund to"
+  },
+  "ชื่อบัญชี": {
+    "th": "ชื่อบัญชี",
+    "en": "Account holder"
+  },
+  "ตรวจหลักฐาน อนุมัติ และโอนคืนเงินลูกค้า (flow ใหม่)": {
+    "th": "ตรวจหลักฐาน อนุมัติ และโอนคืนเงินลูกค้า (flow ใหม่)",
+    "en": "Check evidence, approve and pay back customer refunds (new flow)"
+  },
+  "ตรวจหลักฐาน อนุมัติ และโอนคืนเงินลูกค้า (คืนสินค้า / ส่วนต่างน้ำหนัก)": {
+    "th": "ตรวจหลักฐาน อนุมัติ และโอนคืนเงินลูกค้า (คืนสินค้า / ส่วนต่างน้ำหนัก)",
+    "en": "Check evidence, approve and pay back customer refunds (returns / weight differences)"
+  },
+  "ต้องดูแล": {
+    "th": "ต้องดูแล",
+    "en": "Needs attention"
+  },
+  "ถอดรหัสไม่ได้": {
+    "th": "ถอดรหัสไม่ได้",
+    "en": "Cannot decrypt"
+  },
+  "ทำรายการไม่สำเร็จ": {
+    "th": "ทำรายการไม่สำเร็จ",
+    "en": "Action failed"
+  },
+  "ทำเครื่องหมายว่าล้มเหลว": {
+    "th": "ทำเครื่องหมายว่าล้มเหลว",
+    "en": "Mark as failed"
+  },
+  "ทำเครื่องหมายว่าสำเร็จ": {
+    "th": "ทำเครื่องหมายว่าสำเร็จ",
+    "en": "Mark as completed"
+  },
+  "ธุรกิจต้องการเงินสด": {
+    "th": "ธุรกิจต้องการเงินสด",
+    "en": "My business needs the cash back"
+  },
+  "บัญชีรับเงินคืน": {
+    "th": "บัญชีรับเงินคืน",
+    "en": "Refund bank account"
+  },
+  "บันทึกการโอน": {
+    "th": "บันทึกการโอน",
+    "en": "Save transfer"
+  },
+  "บันทึกการโอนเงินคืน": {
+    "th": "บันทึกการโอนเงินคืน",
+    "en": "Record the refund transfer"
+  },
+  "ฝ่ายบัญชีต้องการรับคืนเข้าบัญชี": {
+    "th": "ฝ่ายบัญชีต้องการรับคืนเข้าบัญชี",
+    "en": "Our accounting needs a bank refund"
+  },
+  "ยอด (inc VAT)": {
+    "th": "ยอด (inc VAT)",
+    "en": "Amount (inc VAT)"
+  },
+  "ยอดคืน": {
+    "th": "ยอดคืน",
+    "en": "Refund amount"
+  },
+  "ยอดโอน": {
+    "th": "ยอดโอน",
+    "en": "Amount transferred"
+  },
+  "ยอมรับเงื่อนไข": {
+    "th": "ยอมรับเงื่อนไข",
+    "en": "Accepted terms"
+  },
+  "ยังไม่มีแผนสั่งซื้อเร็ว ๆ นี้": {
+    "th": "ยังไม่มีแผนสั่งซื้อเร็ว ๆ นี้",
+    "en": "I don't plan to order again soon"
+  },
+  "ยืนยันจาก KBank portal (หมายเหตุ)": {
+    "th": "ยืนยันจาก KBank portal (หมายเหตุ)",
+    "en": "Confirmed in the KBank portal (note)"
+  },
+  "รอลูกค้า": {
+    "th": "รอลูกค้า",
+    "en": "Waiting for customer"
+  },
+  "รอโอน": {
+    "th": "รอโอน",
+    "en": "To transfer"
+  },
+  "ลูกค้ายังไม่เลือก": {
+    "th": "ลูกค้ายังไม่เลือก",
+    "en": "Not chosen yet"
+  },
+  "วันเวลาที่โอน": {
+    "th": "วันเวลาที่โอน",
+    "en": "Transferred at"
+  },
+  "วิธีคืน": {
+    "th": "วิธีคืน",
+    "en": "Method"
+  },
+  "สมุดบัญชี": {
+    "th": "สมุดบัญชี",
+    "en": "Bookbank"
+  },
+  "สลิป": {
+    "th": "สลิป",
+    "en": "Slip"
+  },
+  "ส่วนต่างน้ำหนัก": {
+    "th": "ส่วนต่างน้ำหนัก",
+    "en": "Weight difference"
+  },
+  "อนุมัติคืนเงิน": {
+    "th": "อนุมัติคืนเงิน",
+    "en": "Approve refund of"
+  },
+  "อื่น ๆ": {
+    "th": "อื่น ๆ",
+    "en": "Other"
+  },
+  "เลขคำขอ": {
+    "th": "เลขคำขอ",
+    "en": "Request #"
+  },
+  "เหตุผลที่ขอเป็นเงิน": {
+    "th": "เหตุผลที่ขอเป็นเงิน",
+    "en": "Cash reason"
+  },
+  "เหตุผลที่ปฏิเสธ": {
+    "th": "เหตุผลที่ปฏิเสธ",
+    "en": "Rejection reason"
+  },
+  "แจ้งเมื่อ": {
+    "th": "แจ้งเมื่อ",
+    "en": "Reported"
+  },
+  "โอนเข้าบัญชี": {
+    "th": "โอนเข้าบัญชี",
+    "en": "Bank transfer"
+  },
+  "โอนแล้ว": {
+    "th": "โอนแล้ว",
+    "en": "Transferred"
+  },
+  "ให้ลูกค้าเลือกวิธีใหม่ เพราะอะไร?": {
+    "th": "ให้ลูกค้าเลือกวิธีใหม่ เพราะอะไร?",
+    "en": "Why should the customer choose again?"
   }
 }

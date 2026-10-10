@@ -78,8 +78,10 @@ const SalesWorkWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlan
 const MarketingReadinessWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlanningWorkspace').then(m=>({default:m.MarketingReadinessWorkspace})));
 const FinancialAnalysisWorkspace=lazy(()=>import('./pages/financial-analysis/FinancialAnalysisWorkspace'));
 const ComparisonWorkspace=lazy(()=>import('./pages/competitor-comparison/ComparisonWorkspace'));
+const GuidedAnalysisWorkspace=lazy(()=>import('./pages/guided-analysis/GuidedAnalysisWorkspace').then(m=>({default:m.GuidedAnalysisWorkspace})));
 const GoalPlanningWorkspace = lazy(() => import('./pages/financial-goals/GoalPlanningWorkspace'));
 const PackPlanningWorkspace = lazy(() => import('./pages/pack-price/PackPlanningWorkspace'));
+const ProductContentWorkspace = lazy(() => import('./pages/product-content-editor/ProductContentWorkspace'));
 
 /** Route context and a single page-search entry point across every category. */
 function AdminTopBar({ role }: { role?: string }) {
@@ -229,6 +231,7 @@ export function App() {
             <Route path="/reports/order-targetgroup" element={<OrderTargetgroup />} />
             <Route path="/marketing/workflows" element={<MarketingWorkflows />} />
             <Route path="/marketing/analyst" element={<Suspense fallback={<Loading />}><MarketingAnalyst /></Suspense>} />
+            <Route path="/analysis/customer-behavior/*" element={<TaskRoute role={role}><Suspense fallback={<Loading variant="detail" />}><GuidedAnalysisWorkspace role={role} /></Suspense></TaskRoute>} />
             <Route path="/marketing/growth" element={<GrowthWorkspace />} />
             <Route path="/marketing/growth/plans" element={<GrowthPlans />} />
             <Route path="/marketing/growth/plans/new" element={<GrowthPlanPage />} />
@@ -242,6 +245,7 @@ export function App() {
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
             <Route path="/marketing/workflows/:id/scheduled-runs" element={<WorkflowScheduledRuns />} />
             <Route path="/j/*" element={<JoshAdminApp />} />
+            <Route path="/j/product/:id/content/*" element={<TaskRoute role={role}><Suspense fallback={<Loading variant="detail" />}><ProductContentWorkspace role={role} /></Suspense></TaskRoute>} />
             <Route path="/j/marketing/competitor-prices/*" element={<Suspense fallback={<Loading variant="detail" />}><ComparisonWorkspace role={role}/></Suspense>}/>
             <Route path="/j/payment-transactions" element={<PaymentWorkspace role={role} />} />
             <Route path="/j/payment-transactions/:transactionId" element={<PaymentWorkspace role={role} />} />

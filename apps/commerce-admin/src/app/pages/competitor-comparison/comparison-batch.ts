@@ -2,6 +2,8 @@ import { z } from "zod";
 import {
   comparisonUuid,
   comparisonPacketSchema,
+  canPerformComparison,
+  canApplyComparisonPacket,
   type ComparisonWorkspace,
 } from "../../../../../commerce-platform/src/modules/integration/competitor-prices/comparison-contracts";
 import { comparisonFormKey } from "./comparison-journal";
@@ -88,6 +90,27 @@ export function batchPacket(
           },
     ),
   });
+}
+export function batchChoicesAllowed(draft: BatchDraft, role: string) {
+  return draft.choices.every((choice) =>
+    canPerformComparison(
+      role,
+      choice.decision === "remove" ? "remove" : "verify",
+    ),
+  );
+}
+export function authorizedBatchPacket(
+  draft: BatchDraft,
+  workspace: ComparisonWorkspace,
+  requestId: string,
+  role: string,
+) {
+  const packet = batchPacket(draft, workspace, requestId);
+  if (!canApplyComparisonPacket(role, packet))
+    throw Error(
+      "Selected decisions are outside this account's current permissions",
+    );
+  return packet;
 }
 export function readBatch(owner: string, sku: string) {
   try {

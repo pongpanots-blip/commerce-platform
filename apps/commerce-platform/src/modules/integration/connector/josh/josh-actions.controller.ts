@@ -7,6 +7,7 @@ import { winbackOwnedByCommerce } from '../../winback/shared/winback.config';
 import { ownsSalesReps, SalesRepsService } from '../../customers/sales-reps.service';
 import { ownsPrices, ProductPricesService } from '../../../commerce/product-prices/product-prices.service';
 import { ownsProductContent, ProductContentsService } from '../../../commerce/product-contents/product-contents.service';
+import { ProductContentEditorService } from '../../../commerce/product-content-editor/product-content-editor.service';
 import { splitContent } from '../../../commerce/product-contents/content-fields';
 import { ownsProductMaster, ProductMastersService } from '../../../commerce/product-masters/product-masters.service';
 import { splitMaster } from '../../../commerce/product-masters/master-fields';
@@ -124,7 +125,11 @@ export class JoshActionsController {
    * form still goes to josh.
    */
   @Post('products/:id/update') @HttpCode(HttpStatus.OK) @StaffRoles('merchandising', 'graphic')
-  async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown> }, @Req() req: StaffRequest) {
+  async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() b: { fields?: Record<string, unknown>; contentEdit?: unknown }, @Req() req: StaffRequest) {
+    // A reviewed content-only request is validated and persisted atomically before the legacy mixed form path.
+    if (b && typeof b === 'object' && Object.prototype.hasOwnProperty.call(b, 'contentEdit')) {
+      return this.modules.get(ProductContentEditorService, { strict: false }).saveFromProductUpdate(id, b, req.staff.userId);
+    }
     // ponytail: graphic writes copy fields only. The merchandising path below is unchanged.
     if (req.staff.role === 'graphic') return this.editContentOnly(id, b?.fields, req);
     const promotion = ownsPromotions() ? splitPromotionRules(plain(b?.fields)) : { rules: undefined, rest: plain(b?.fields) };

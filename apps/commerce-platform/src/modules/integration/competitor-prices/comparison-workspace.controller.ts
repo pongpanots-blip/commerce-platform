@@ -1,6 +1,8 @@
 import {
   Body,
+  BadRequestException,
   Controller,
+  ForbiddenException,
   Get,
   Header,
   Param,
@@ -13,10 +15,14 @@ import {
   StaffRoles,
 } from "../../../shared-kernel/presentation/auth.decorators";
 import { ComparisonWorkspaceService } from "./comparison-workspace.service";
+import {
+  canApplyComparisonPacket,
+  comparisonPacketSchema,
+} from "./comparison-contracts";
 
-/** Same competitor readership; original global read-only staff rule blocks BA writes. */
+/** MER has comparison evidence access; the original global rule keeps BA read-only. */
 @Controller("competitor-prices/workspace")
-@StaffRoles("marketing", "business_analyst")
+@StaffRoles("marketing", "business_analyst", "merchandising")
 export class ComparisonWorkspaceController {
   constructor(private readonly workspace: ComparisonWorkspaceService) {}
   @Header("Cache-Control", "private, no-store") @Get("sources") sources() {
@@ -53,10 +59,18 @@ export class ComparisonWorkspaceController {
   ) {
     return this.workspace.request(id, req.staff.userId);
   }
-  @Post("actions") @StaffRoles("marketing") save(
+  @Post("actions") @StaffRoles("marketing", "merchandising") save(
     @Body() body: unknown,
     @Req() req: StaffRequest,
   ) {
-    return this.workspace.save(body, req.staff.userId, req.staff.email);
+    const parsed = comparisonPacketSchema.safeParse(body);
+    if (!parsed.success)
+      throw new BadRequestException("Invalid comparison action request");
+    // Check the complete immutable packet before any source reads, vendor calls or writes.
+    if (!canApplyComparisonPacket(req.staff.role, parsed.data))
+      throw new ForbiddenException(
+        "This account may only record reference prices and verify product matches",
+      );
+    return this.workspace.save(parsed.data, req.staff.userId, req.staff.email);
   }
 }

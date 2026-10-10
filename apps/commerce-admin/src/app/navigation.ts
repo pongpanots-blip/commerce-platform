@@ -105,6 +105,7 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/j/bot/templates', label: 'แชตบอต: ข้อความสำเร็จรูป', more: true, description: 'ข้อความสำเร็จรูปของแชตบอต' },
   ],
   reports: [
+    { to: '/analysis/customer-behavior', label: 'วิเคราะห์พฤติกรรมลูกค้า', description: 'เลือกเงื่อนไขกลุ่มลูกค้า ตรวจหลักฐาน และดูข้อจำกัดของข้อมูล' },
     { to: '/reports/sales', label: 'รายงานยอดขาย', roleLabels: { sale: 'ยอดขายของฉัน', sales_manager: 'ยอดขายทีมและผลงานรายเซลส์' }, description: 'ยอดขายตามช่วงเวลา เทียบกับช่วงก่อนหน้า' },
     { to: '/reports/orders', label: 'รายงานออเดอร์', roleLabels: { sale: 'ออเดอร์ของฉัน' }, description: 'รายการและสรุปคำสั่งซื้อของร้าน' },
     { to: '/reports/products', label: 'รายงานสินค้า', description: 'สินค้าขายดี ยอดขาย และสถานะสินค้า' },
@@ -166,6 +167,7 @@ export const NAV_ENTRIES: (NavEntry & { section: SectionId })[] = SECTIONS.flatM
  * a page whose first API calls 403 for it. Also decides post-login landing pages and deep links.
  */
 export const ROLE_ACCESS: Record<string, readonly string[]> = {
+  '/analysis/customer-behavior': ['business_analyst'],
   '/products/new': ['merchandising'],
   '/customers/new': [],
   '/settings/staff/new': [],
@@ -275,7 +277,8 @@ export const ROLE_ACCESS: Record<string, readonly string[]> = {
   ],
   "/j/marketing/competitor-prices": [
     "marketing",
-    "business_analyst"
+    "business_analyst",
+    "merchandising"
   ],
   "/j/marketing/scraping-sources": [
     "marketing"

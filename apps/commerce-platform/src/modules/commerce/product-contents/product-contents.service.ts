@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { EVENT_BUS, IEventBus } from '../../../shared-kernel/interfaces/event-bus.interface';
 import { splitContent } from './content-fields';
 import { ProductContentSnapshot } from './product-content-snapshot.event';
@@ -31,7 +31,18 @@ export class ProductContentsService {
     const { content, rest } = splitContent(body);
     if (Object.keys(rest).length) throw new BadRequestException(`ไม่ใช่เนื้อหาสินค้า: ${Object.keys(rest).join(', ')}`);
     if (!Object.keys(content).length) throw new BadRequestException('ไม่มีเนื้อหาให้แก้');
-    return this.db.transaction(async (m) => {
+    return this.db.transaction(m => this.editWithin(m, sku, content, staffId, source));
+  }
+
+  /** Same native edit in an existing transaction, including its outbox event. */
+  async editWithin(m: EntityManager, sku: string, body: Record<string, unknown>, staffId: string, source: 'staff' | 'create' = 'staff') {
+      if (!ownsProductContent()) throw new ConflictException('เนื้อหาสินค้ายังแก้ที่ josh (COMMERCE_OWNS_PRODUCT_CONTENT is not true)');
+      const { content, rest } = splitContent(body);
+      if (Object.keys(rest).length) throw new BadRequestException(`ไม่ใช่เนื้อหาสินค้า: ${Object.keys(rest).join(', ')}`);
+      if (!Object.keys(content).length) throw new BadRequestException('ไม่มีเนื้อหาให้แก้');
+      // Every native caller, including create/product forms, shares the same
+      // lock before its existence check and write with the reviewed editor.
+      await m.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`product-content:${sku}`]);
       // A product josh just created may not be in the catalog copy yet.
       const [known] = source === 'create' ? [true] : await m.query(`SELECT 1 FROM product_contents WHERE product_inventory_sku = $1
         UNION ALL SELECT 1 FROM josh_catalog_products WHERE sku = $1 LIMIT 1`, [sku]);
@@ -44,6 +55,5 @@ export class ProductContentsService {
       const snapshot = { sku, fields: row.fields, version: new Date().toISOString() };
       await this.events.publish(new ProductContentSnapshot(snapshot), m);
       return snapshot;
-    });
   }
 }

@@ -6,6 +6,11 @@ import {
   normalizedComparisonPack,
   parseComparisonHandoff,
   verifyComparisonReceipt,
+  canReadComparison,
+  canChangeComparison,
+  canPerformComparison,
+  canApplyComparisonPacket,
+  COMPARISON_OPERATIONS,
 } from "./comparison-contracts";
 const id = "00000000-0000-4000-8000-000000000010";
 function metadata(inputs = fixtureInputs()) {
@@ -20,6 +25,51 @@ function metadata(inputs = fixtureInputs()) {
   }));
 }
 describe("typed multi-vendor comparison eligibility and strict action contracts", () => {
+  it("gives MER only reference capture and match verification while preserving full and read-only roles", () => {
+    for (const role of ["admin", "marketing"])
+      for (const operation of COMPARISON_OPERATIONS)
+        expect(canPerformComparison(role, operation)).toBe(true);
+    expect(canReadComparison("merchandising")).toBe(true);
+    expect(canChangeComparison("merchandising")).toBe(false);
+    expect(
+      COMPARISON_OPERATIONS.filter((op) =>
+        canPerformComparison("merchandising", op),
+      ),
+    ).toEqual(["verify", "capture"]);
+    for (const role of [
+      "business_analyst",
+      "sale",
+      "sales_manager",
+      "cs",
+      "graphic",
+      "",
+      "developer",
+    ])
+      for (const operation of COMPARISON_OPERATIONS)
+        expect(canPerformComparison(role, operation)).toBe(false);
+    expect(canReadComparison("business_analyst")).toBe(true);
+    expect(canReadComparison("sale")).toBe(false);
+    expect(canPerformComparison("admin", "activate")).toBe(false);
+    expect(canApplyComparisonPacket("admin", { commands: [] })).toBe(false);
+  });
+  it.each(
+    COMPARISON_OPERATIONS.filter((op) => !["verify", "capture"].includes(op)),
+  )(
+    "rejects the whole retained MER packet containing %s, with no partially authorized packet",
+    (operation) => {
+      const commands = [
+        { operation: "verify" } as never,
+        { operation } as never,
+      ];
+      expect(canApplyComparisonPacket("merchandising", { commands })).toBe(
+        false,
+      );
+      expect(canApplyComparisonPacket("marketing", { commands })).toBe(true);
+      expect(canApplyComparisonPacket("business_analyst", { commands })).toBe(
+        false,
+      );
+    },
+  );
   it("normalizes six 500g pieces exactly, with no midpoint or binary price arithmetic", () => {
     expect(
       normalizedComparisonPack({ unit: "g", min: "500", max: "500", count: 6 }),

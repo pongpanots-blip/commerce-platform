@@ -69,6 +69,7 @@ const JOSH_ROUTES = {
   productBulkImageUpload: '/product/bulk-image-upload',
   productDetail: (id: string) => `/product/${id}`,
   productEdit: (id: string) => `/product/edit/${id}`,
+  productContent: (id: string) => `/product/${id}/content`,
   suppliers: '/suppliers',
   supplierCreate: '/supplier/create',
   supplierEdit: (id: string) => `/supplier/edit/${id}`,

@@ -290,6 +290,11 @@ export function MasterDataSelect({
   required = false,
   'aria-label': label,
   'aria-labelledby': labelledBy,
+  inputId,
+  fieldName,
+  'aria-describedby': describedBy,
+  'aria-invalid': invalid,
+  'aria-busy': loading,
 }: {
   options: MasterOption[];
   value: string | string[];
@@ -306,6 +311,11 @@ export function MasterDataSelect({
   required?: boolean;
   'aria-label'?: string;
   'aria-labelledby'?: string;
+  inputId?: string;
+  fieldName?: string;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean | 'true' | 'false' | 'grammar' | 'spelling';
+  'aria-busy'?: boolean;
 }) {
   const locale = useUiLocale();
   const [query, setQuery] = useState('');
@@ -413,7 +423,9 @@ export function MasterDataSelect({
   const singleLabel = !multiple && !query ? byValue.get(String(value))?.label ?? '' : '';
 
   return (
-    <div ref={box} className="relative min-w-0">
+    <div ref={box} className="relative min-w-0" onBlur={event => {
+      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) { setOpen(false); setQuery(''); }
+    }}>
       {multiple && selected.size > 0 && (
         <div className="mb-1 flex flex-wrap gap-1">
           {[...selected].map((item) => (
@@ -425,6 +437,8 @@ export function MasterDataSelect({
       )}
       <input
         ref={input}
+        id={inputId}
+        data-field-name={fieldName}
         type="text"
         required={required}
         role="combobox"
@@ -433,6 +447,10 @@ export function MasterDataSelect({
         aria-autocomplete="list"
         aria-label={label}
         aria-labelledby={labelledBy}
+        aria-describedby={describedBy}
+        aria-invalid={invalid}
+        aria-busy={loading}
+        aria-activedescendant={open && active < shown.length ? `${listId}-option-${active}` : undefined}
         className={masterInputCls}
         disabled={disabled}
         placeholder={uiText(placeholder)}
@@ -455,7 +473,7 @@ export function MasterDataSelect({
       {open && (
         <ul id={listId} role="listbox" className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-secondary-container bg-surface-container-lowest py-1 shadow-lg">
           {shown.map((option, index) => (
-            <li key={option.value} role="option" aria-selected={selected.has(option.value)} className={cx('cursor-pointer px-3 py-2 text-sm text-on-surface', index === active && 'bg-surface-container-low')} onMouseDown={(event) => { event.preventDefault(); choose(option); }}>
+            <li key={option.value} id={`${listId}-option-${index}`} role="option" aria-selected={selected.has(option.value)} className={cx('cursor-pointer px-3 py-2 text-sm text-on-surface', index === active && 'bg-surface-container-low')} onMouseDown={(event) => { event.preventDefault(); choose(option); }}>
               {option.label}
             </li>
           ))}

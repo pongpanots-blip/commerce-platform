@@ -1,0 +1,196 @@
+{
+  "inventory": {
+    "elements": 156,
+    "files": 116,
+    "adminRoutes": 118,
+    "portalRoutes": 4
+  },
+  "visits": [
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "th",
+      "viewport": "desktop",
+      "path": "/product-prices",
+      "actualPath": "/product-prices",
+      "title": "ราคาสินค้า",
+      "textLength": 488,
+      "tables": 2,
+      "rows": 2,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": []
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "th",
+      "viewport": "phone",
+      "path": "/product-prices",
+      "actualPath": "/product-prices",
+      "title": "ราคาสินค้า",
+      "textLength": 560,
+      "tables": 2,
+      "rows": 2,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": [
+        {
+          "keyboard": true,
+          "labelled": true,
+          "hint": true
+        },
+        {
+          "keyboard": true,
+          "labelled": true,
+          "hint": true
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "en",
+      "viewport": "phone",
+      "path": "/product-prices",
+      "actualPath": "/product-prices",
+      "title": "Product Prices",
+      "textLength": 632,
+      "tables": 2,
+      "rows": 2,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": [
+        {
+          "keyboard": true,
+          "labelled": true,
+          "hint": true
+        },
+        {
+          "keyboard": true,
+          "labelled": true,
+          "hint": true
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "en",
+      "viewport": "desktop",
+      "path": "/product-prices",
+      "actualPath": "/product-prices",
+      "title": "Product Prices",
+      "textLength": 550,
+      "tables": 2,
+      "rows": 2,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": []
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "th",
+      "viewport": "phone",
+      "path": "/product-master-queue",
+      "actualPath": "/product-master-queue",
+      "title": "คิวข้อมูลสินค้าจาก ERP",
+      "textLength": 438,
+      "tables": 1,
+      "rows": 1,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": [
+        {
+          "keyboard": true,
+          "labelled": true,
+          "hint": true
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "th",
+      "viewport": "desktop",
+      "path": "/product-master-queue",
+      "actualPath": "/product-master-queue",
+      "title": "คิวข้อมูลสินค้าจาก ERP",
+      "textLength": 402,
+      "tables": 1,
+      "rows": 1,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": []
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "en",
+      "viewport": "desktop",
+      "path": "/product-master-queue",
+      "actualPath": "/product-master-queue",
+      "title": "ERP product queue",
+      "textLength": 422,
+      "tables": 1,
+      "rows": 1,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": []
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "en",
+      "viewport": "phone",
+      "path": "/product-master-queue",
+      "actualPath": "/product-master-queue",
+      "title": "ERP product queue",
+      "textLength": 463,
+      "tables": 1,
+      "rows": 1,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": [
+        {
+          "keyboard": true,
+          "labelled": true,
+          "hint": true
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "issues": [],
+  "checks": [],
+  "unsupported": [
+    "GET /admin/stats",
+    "GET /reports/health"
+  ],
+  "productionRequests": 0
+}

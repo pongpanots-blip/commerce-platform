@@ -1,0 +1,31 @@
+{
+  "serialized": true,
+  "workers": 1,
+  "results": [
+    {
+      "check": "admin-types",
+      "exitCode": 0,
+      "log": "/tmp/admin-opt-in-final-admin-types.log"
+    },
+    {
+      "check": "portal-types",
+      "exitCode": 0,
+      "log": "/tmp/admin-opt-in-final-portal-types.log"
+    },
+    {
+      "check": "admin-tests",
+      "exitCode": 0,
+      "log": "/tmp/admin-opt-in-final-admin-tests.log"
+    },
+    {
+      "check": "admin-build",
+      "exitCode": 0,
+      "log": "/tmp/admin-opt-in-final-admin-build.log"
+    },
+    {
+      "check": "portal-build",
+      "exitCode": 0,
+      "log": "/tmp/admin-opt-in-final-portal-build.log"
+    }
+  ]
+}

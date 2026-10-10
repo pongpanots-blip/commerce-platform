@@ -1,0 +1,165 @@
+vite v8.2.1 building client environment for production...
+[2Ktransforming...✓ 1356 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/apps/commerce-admin/index.html                                                  0.95 kB │ gzip:   0.41 kB
+dist/apps/commerce-admin/assets/imageProcessor.worker-D1el0IlG.js                    1.12 kB
+dist/apps/commerce-admin/assets/noto-sans-thai-thai-wght-normal-CtQSZ1tK.woff2      26.92 kB
+dist/apps/commerce-admin/assets/noto-sans-thai-latin-wght-normal-Bi3VDbYN.woff2     30.74 kB
+dist/apps/commerce-admin/assets/MarketingNotifyTemplates-CsvgStCm.css                3.61 kB │ gzip:   0.95 kB
+dist/apps/commerce-admin/assets/EditBotWorkflow-CNHZ78mg.css                         5.45 kB │ gzip:   1.46 kB
+dist/apps/commerce-admin/assets/index-BgSQA-f2.css                                 163.49 kB │ gzip:  31.56 kB
+dist/apps/commerce-admin/assets/admin-product-read-uhDNHxPA.js                       0.03 kB │ gzip:   0.05 kB
+dist/apps/commerce-admin/assets/asset-url-CvHKwkrp.js                                0.14 kB │ gzip:   0.13 kB
+dist/apps/commerce-admin/assets/role-can-BG6xoctJ.js                                 0.15 kB │ gzip:   0.15 kB
+dist/apps/commerce-admin/assets/coupon-error.helpers-BH0ub3Zu.js                     0.21 kB │ gzip:   0.19 kB
+dist/apps/commerce-admin/assets/category-all-Bmt1mdFj.js                             0.27 kB │ gzip:   0.16 kB
+dist/apps/commerce-admin/assets/return-to-Exi8QScu.js                                0.32 kB │ gzip:   0.23 kB
+dist/apps/commerce-admin/assets/catalog-price-nwHXFdxr.js                            0.32 kB │ gzip:   0.23 kB
+dist/apps/commerce-admin/assets/AdminListHeader-Dfqb2A3k.js                          0.33 kB │ gzip:   0.24 kB
+dist/apps/commerce-admin/assets/admin-auth-utAn3Mzo.js                               0.33 kB │ gzip:   0.25 kB
+dist/apps/commerce-admin/assets/product-media.helpers-DISXzBCX.js                    0.47 kB │ gzip:   0.27 kB
+dist/apps/commerce-admin/assets/useCompanySearch-BRG5DF3A.js                         0.62 kB │ gzip:   0.41 kB
+dist/apps/commerce-admin/assets/carousel-product.helpers-C7M5DvZL.js                 0.77 kB │ gzip:   0.47 kB
+dist/apps/commerce-admin/assets/product-status.helpers-B9ds8vhY.js                   0.80 kB │ gzip:   0.37 kB
+dist/apps/commerce-admin/assets/CopyField-1I-FTgJc.js                                0.84 kB │ gzip:   0.51 kB
+dist/apps/commerce-admin/assets/CouponStatusPill-M-nou3E1.js                         0.89 kB │ gzip:   0.51 kB
+dist/apps/commerce-admin/assets/coupon-time-DaI8kieY.js                              0.96 kB │ gzip:   0.48 kB
+dist/apps/commerce-admin/assets/CopyIdButton-BcSHyMQz.js                             0.97 kB │ gzip:   0.62 kB
+dist/apps/commerce-admin/assets/CreateBotIntentRule-DD_zJXJE.js                      1.07 kB │ gzip:   0.64 kB
+dist/apps/commerce-admin/assets/InvoicesOverdue-DB7MX67N.js                          1.08 kB │ gzip:   0.66 kB
+dist/apps/commerce-admin/assets/BotIntentRuleForm-CQmryNKh.js                        1.09 kB │ gzip:   0.59 kB
+dist/apps/commerce-admin/assets/ActiveOffersAdmin-D2gc9U4q.js                        1.19 kB │ gzip:   0.74 kB
+dist/apps/commerce-admin/assets/LogoUploadField-5Muqwg3O.js                          1.28 kB │ gzip:   0.78 kB
+dist/apps/commerce-admin/assets/coupon-import.helpers-BgNDNbwO.js                    1.30 kB │ gzip:   0.57 kB
+dist/apps/commerce-admin/assets/AdminInsertLayout-CJ_UjEfk.js                        1.43 kB │ gzip:   0.85 kB
+dist/apps/commerce-admin/assets/CreateBotTemplate-t0LXfzki.js                        1.46 kB │ gzip:   0.80 kB
+dist/apps/commerce-admin/assets/category-tree.helpers-CumJxw2i.js                    1.49 kB │ gzip:   0.69 kB
+dist/apps/commerce-admin/assets/CouponConfirmDialog-Cu4Z4mzG.js                      1.56 kB │ gzip:   0.82 kB
+dist/apps/commerce-admin/assets/CreateSupplier-BOpSwst1.js                           1.56 kB │ gzip:   0.78 kB
+dist/apps/commerce-admin/assets/PriceRequestsAdmin-CJ1cym75.js                       1.58 kB │ gzip:   0.89 kB
+dist/apps/commerce-admin/assets/with-selector-D9UTe0Rm.js                            1.62 kB │ gzip:   0.72 kB
+dist/apps/commerce-admin/assets/PromotionPageControls-BU6sqfFQ.js                    1.65 kB │ gzip:   0.79 kB
+dist/apps/commerce-admin/assets/UtmBuilder-CXSi-UYZ.js                               1.66 kB │ gzip:   0.87 kB
+dist/apps/commerce-admin/assets/EditBotIntentRule-BkFgGlkh.js                        1.66 kB │ gzip:   0.93 kB
+dist/apps/commerce-admin/assets/SampleRequestsAdmin-DEfhwShN.js                      1.68 kB │ gzip:   0.90 kB
+dist/apps/commerce-admin/assets/BotTemplates-DsdpebCJ.js                             1.70 kB │ gzip:   0.90 kB
+dist/apps/commerce-admin/assets/BotIntentRules-DdulWhGz.js                           1.73 kB │ gzip:   0.91 kB
+dist/apps/commerce-admin/assets/SupplierList-Bo2h3BQ-.js                             1.79 kB │ gzip:   0.99 kB
+dist/apps/commerce-admin/assets/DeliveryScheduleAdmin-gYkoVu_K.js                    1.87 kB │ gzip:   0.96 kB
+dist/apps/commerce-admin/assets/supplier-form-CAsW0qGN.js                            1.88 kB │ gzip:   0.82 kB
+dist/apps/commerce-admin/assets/BrandList-Bdp-xkoB.js                                1.91 kB │ gzip:   0.93 kB
+dist/apps/commerce-admin/assets/promotion-product-set.helpers-Or0PIr3H.js            2.01 kB │ gzip:   0.99 kB
+dist/apps/commerce-admin/assets/category-form-Bl3gmYMd.js                            2.06 kB │ gzip:   1.00 kB
+dist/apps/commerce-admin/assets/EditSupplier-BfmfKKtu.js                             2.07 kB │ gzip:   0.99 kB
+dist/apps/commerce-admin/assets/EditBotTemplate-C7Qtf0Cs.js                          2.11 kB │ gzip:   1.10 kB
+dist/apps/commerce-admin/assets/useMutation-U_FXzEih.js                              2.37 kB │ gzip:   0.98 kB
+dist/apps/commerce-admin/assets/RevealPiiButton-Df9VLG8G.js                          2.37 kB │ gzip:   1.03 kB
+dist/apps/commerce-admin/assets/BotWorkflows-DZeCc77S.js                             2.58 kB │ gzip:   1.20 kB
+dist/apps/commerce-admin/assets/PromotionPageEditorPage-BZTIA5Ne.js                  2.69 kB │ gzip:   1.35 kB
+dist/apps/commerce-admin/assets/campaign.helpers-Bus6q7KU.js                         2.69 kB │ gzip:   1.19 kB
+dist/apps/commerce-admin/assets/CreditTermsAdmin-ChX-nEFU.js                         2.80 kB │ gzip:   1.25 kB
+dist/apps/commerce-admin/assets/CreateCampaign-CSdBGbUf.js                           2.86 kB │ gzip:   1.35 kB
+dist/apps/commerce-admin/assets/Company-B2CbDNcm.js                                  3.33 kB │ gzip:   1.52 kB
+dist/apps/commerce-admin/assets/SmartLinkField-BRvrxImO.js                           3.33 kB │ gzip:   1.29 kB
+dist/apps/commerce-admin/assets/promotion-page-form.helpers-CAB5HPBe.js              3.36 kB │ gzip:   1.29 kB
+dist/apps/commerce-admin/assets/CreateCompanyAdmin-BdPKdG04.js                       3.42 kB │ gzip:   1.35 kB
+dist/apps/commerce-admin/assets/CreateBotWorkflow-BpEU4_Hs.js                        3.55 kB │ gzip:   1.44 kB
+dist/apps/commerce-admin/assets/NotificationLog-Bk_OpaQQ.js                          3.57 kB │ gzip:   1.61 kB
+dist/apps/commerce-admin/assets/promotion-mechanic.helpers-NCMUHJjN.js               3.61 kB │ gzip:   1.36 kB
+dist/apps/commerce-admin/assets/PromotionProductSetList-DtoqEJ8I.js                  3.62 kB │ gzip:   1.66 kB
+dist/apps/commerce-admin/assets/CampaignList-AQuhqp5P.js                             3.71 kB │ gzip:   1.76 kB
+dist/apps/commerce-admin/assets/SmartLinksPage-vqFNrgiT.js                           3.78 kB │ gzip:   1.62 kB
+dist/apps/commerce-admin/assets/SegmentRuleConfigFields-DR9BDYv8.js                  3.83 kB │ gzip:   1.16 kB
+dist/apps/commerce-admin/assets/JagotaPaymentTesting-D8B22Vgr.js                     4.17 kB │ gzip:   1.63 kB
+dist/apps/commerce-admin/assets/MarketingLinksPage-DbiJR3W1.js                       4.45 kB │ gzip:   1.87 kB
+dist/apps/commerce-admin/assets/AdminAccessQueue-CzxfLw2c.js                         4.53 kB │ gzip:   1.87 kB
+dist/apps/commerce-admin/assets/PromotionMechanic-CEUrJVIn.js                        4.53 kB │ gzip:   2.04 kB
+dist/apps/commerce-admin/assets/CreditNotesAdmin-ClOqKFx0.js                         4.75 kB │ gzip:   1.95 kB
+dist/apps/commerce-admin/assets/PromotionPageLibrary-B2L91osE.js                     4.88 kB │ gzip:   2.15 kB
+dist/apps/commerce-admin/assets/coupon-save-steps.helpers-BEPcX10m.js                4.92 kB │ gzip:   2.03 kB
+dist/apps/commerce-admin/assets/CartMoveCategoriesAdmin-RkfiC_WE.js                  4.94 kB │ gzip:   2.05 kB
+dist/apps/commerce-admin/assets/ProductVideoUpload-B1ovixmL.js                       4.99 kB │ gzip:   2.08 kB
+dist/apps/commerce-admin/assets/SegmentList-heZOyQqH.js                              5.04 kB │ gzip:   2.04 kB
+dist/apps/commerce-admin/assets/MarketingSettingsPage-Buamqfzb.js                    5.07 kB │ gzip:   1.83 kB
+dist/apps/commerce-admin/assets/CreditBacksAdmin-BqLmK5jq.js                         5.10 kB │ gzip:   2.06 kB
+dist/apps/commerce-admin/assets/CouponList-Djh8GGlF.js                               5.15 kB │ gzip:   2.22 kB
+dist/apps/commerce-admin/assets/EditSegment-bOU4E9d9.js                              5.21 kB │ gzip:   2.19 kB
+dist/apps/commerce-admin/assets/OrderImport-Ccd2xsqy.js                              5.44 kB │ gzip:   1.87 kB
+dist/apps/commerce-admin/assets/MarketingJourneyFunnel-DQAedEcy.js                   5.51 kB │ gzip:   1.95 kB
+dist/apps/commerce-admin/assets/NotificationCatalog-Wv0giLFu.js                      5.70 kB │ gzip:   2.23 kB
+dist/apps/commerce-admin/assets/CreateCategory-C7eqMBTV.js                           5.87 kB │ gzip:   2.10 kB
+dist/apps/commerce-admin/assets/ProductNotifyFunnel-CfumupBu.js                      6.19 kB │ gzip:   2.21 kB
+dist/apps/commerce-admin/assets/SmartLinkEdit-Bv09LGvg.js                            6.64 kB │ gzip:   2.16 kB
+dist/apps/commerce-admin/assets/MarketingOfferCheckPage-xo0KoPbS.js                  6.79 kB │ gzip:   2.26 kB
+dist/apps/commerce-admin/assets/Billing-Cm54MlS-.js                                  6.94 kB │ gzip:   2.34 kB
+dist/apps/commerce-admin/assets/admin-routes-T0k6Kbyq.js                             7.21 kB │ gzip:   2.07 kB
+dist/apps/commerce-admin/assets/Order-qqaRcFYT.js                                    7.33 kB │ gzip:   2.70 kB
+dist/apps/commerce-admin/assets/EditCategory-ClBU6itP.js                             7.46 kB │ gzip:   2.69 kB
+dist/apps/commerce-admin/assets/PromotionQuantityRuleFields-Be59N0lX.js              7.53 kB │ gzip:   2.07 kB
+dist/apps/commerce-admin/assets/PaymentTransactions-w-z01dC3.js                      7.69 kB │ gzip:   2.65 kB
+dist/apps/commerce-admin/assets/useQuery-Cz7UDEfF.js                                 7.94 kB │ gzip:   2.92 kB
+dist/apps/commerce-admin/assets/RefundsAdmin-Dt0kiWhb.js                             8.12 kB │ gzip:   2.58 kB
+dist/apps/commerce-admin/assets/MarketingQueueDashboard-C-gztEEd.js                  8.39 kB │ gzip:   2.67 kB
+dist/apps/commerce-admin/assets/Alluser-B3wX_3UC.js                                  8.42 kB │ gzip:   2.99 kB
+dist/apps/commerce-admin/assets/segment-rule.helpers-CKjYFYXf.js                     8.93 kB │ gzip:   2.43 kB
+dist/apps/commerce-admin/assets/coupon-core-form.helpers-iHayx_Wn.js                 9.44 kB │ gzip:   2.89 kB
+dist/apps/commerce-admin/assets/Shipments-tC3OONFd.js                                9.54 kB │ gzip:   3.40 kB
+dist/apps/commerce-admin/assets/AllProduct-BMAPWBDA.js                               9.64 kB │ gzip:   3.29 kB
+dist/apps/commerce-admin/assets/ShipmentDetail-EnSumLY9.js                           9.73 kB │ gzip:   2.59 kB
+dist/apps/commerce-admin/assets/KycQueue-CcCcvfDo.js                                10.05 kB │ gzip:   3.32 kB
+dist/apps/commerce-admin/assets/CreateCoupon-MkzmdSU2.js                            10.17 kB │ gzip:   3.70 kB
+dist/apps/commerce-admin/assets/ScrapedCatalogPage-CX_I9VX6.js                      10.24 kB │ gzip:   3.42 kB
+dist/apps/commerce-admin/assets/CreateProduct-BgDCbMkZ.js                           10.51 kB │ gzip:   3.51 kB
+dist/apps/commerce-admin/assets/tiny-invariant-DQPqXlBc.js                          11.44 kB │ gzip:   4.34 kB
+dist/apps/commerce-admin/assets/ProductDetail-CjamOFFy.js                           11.70 kB │ gzip:   3.51 kB
+dist/apps/commerce-admin/assets/BotTemplateBuilder-CW-cfctY.js                      12.76 kB │ gzip:   3.73 kB
+dist/apps/commerce-admin/assets/CategoryList-kPJHzYuI.js                            13.18 kB │ gzip:   4.15 kB
+dist/apps/commerce-admin/assets/CampaignDetail-CZ1scsZU.js                          13.49 kB │ gzip:   4.55 kB
+dist/apps/commerce-admin/assets/OrderDetail-D6kw3ONi.js                             13.89 kB │ gzip:   4.07 kB
+dist/apps/commerce-admin/assets/MarketingAnalyst-CnxMaSrE.js                        13.96 kB │ gzip:   4.15 kB
+dist/apps/commerce-admin/assets/NotificationDeliveryStats-BQt9LX3R.js               13.98 kB │ gzip:   3.74 kB
+dist/apps/commerce-admin/assets/PageForm-CQMezKfq.js                                14.06 kB │ gzip:   4.89 kB
+dist/apps/commerce-admin/assets/EditBotWorkflow-BOYNJN3W.js                         14.70 kB │ gzip:   4.70 kB
+dist/apps/commerce-admin/assets/query-CjwnyJQ0.js                                   14.98 kB │ gzip:   5.19 kB
+dist/apps/commerce-admin/assets/api-B9gwRUg6.js                                     16.23 kB │ gzip:   5.38 kB
+dist/apps/commerce-admin/assets/CreateSegment-BA6jiunR.js                           16.61 kB │ gzip:   5.23 kB
+dist/apps/commerce-admin/assets/KbankTestingConsole-BbkSQ35k.js                     17.46 kB │ gzip:   4.96 kB
+dist/apps/commerce-admin/assets/promotion-common-DV0CZtXz.js                        17.83 kB │ gzip:   6.16 kB
+dist/apps/commerce-admin/assets/CompanyEdit-C0V0GtfQ.js                             17.97 kB │ gzip:   4.77 kB
+dist/apps/commerce-admin/assets/WelcomeLeadEmailPage-Bed5Slwc.js                    19.36 kB │ gzip:   5.15 kB
+dist/apps/commerce-admin/assets/SegmentBuilder-CtIMzeuG.js                          19.39 kB │ gzip:   5.87 kB
+dist/apps/commerce-admin/assets/EditProduct-D-e90XkH.js                             19.67 kB │ gzip:   5.92 kB
+dist/apps/commerce-admin/assets/PushCampaignsPage-BbwulESA.js                       20.12 kB │ gzip:   4.79 kB
+dist/apps/commerce-admin/assets/SmartLinkAnalyticsPage-6ZTsxSN_.js                  20.94 kB │ gzip:   6.81 kB
+dist/apps/commerce-admin/assets/CouponDetail-DYZFOD3U.js                            21.80 kB │ gzip:   6.57 kB
+dist/apps/commerce-admin/assets/PromotionProductSetForm-DlXFIKen.js                 21.86 kB │ gzip:   5.92 kB
+dist/apps/commerce-admin/assets/MechanicEditorPage-BHHxjNPf.js                      24.42 kB │ gzip:   7.00 kB
+dist/apps/commerce-admin/assets/shared-ui-web-CglJJKUL.js                           28.71 kB │ gzip:   9.35 kB
+dist/apps/commerce-admin/assets/BulkImageUploadPage-B9FYsVQb.js                     32.29 kB │ gzip:   7.65 kB
+dist/apps/commerce-admin/assets/shared-api-DVHRLVzy.js                              34.68 kB │ gzip:   9.63 kB
+dist/apps/commerce-admin/assets/ErpWebhookSimulator-CRNIuepL.js                     36.53 kB │ gzip:   8.50 kB
+dist/apps/commerce-admin/assets/ScrapingSourcesPage-VCTOJxOg.js                     38.80 kB │ gzip:   8.89 kB
+dist/apps/commerce-admin/assets/UserDetail-CkFhHpyM.js                              45.32 kB │ gzip:  11.38 kB
+dist/apps/commerce-admin/assets/CouponFormSections-BBu4v7wN.js                      45.59 kB │ gzip:  11.69 kB
+dist/apps/commerce-admin/assets/MembershipTierConfig-DS9ILlew.js                    61.34 kB │ gzip:  22.13 kB
+dist/apps/commerce-admin/assets/CompetitorPricesPage-D882PDWi.js                    68.29 kB │ gzip:  15.63 kB
+dist/apps/commerce-admin/assets/dnd.esm-csRVkKCC.js                                 83.46 kB │ gzip:  25.32 kB
+dist/apps/commerce-admin/assets/BatchSticker-BsqqOGxX.js                           127.75 kB │ gzip:  37.80 kB
+dist/apps/commerce-admin/assets/MarketingNotifyTemplates-D8mj19ig.js               209.45 kB │ gzip:  54.18 kB
+dist/apps/commerce-admin/assets/BarChart-BY4_8hNB.js                               341.56 kB │ gzip:  97.52 kB
+dist/apps/commerce-admin/assets/RichTextEditor-DYWymn_4.js                         398.62 kB │ gzip: 125.76 kB
+dist/apps/commerce-admin/assets/index-CmG3H38c.js                                1,123.11 kB │ gzip: 302.13 kB
+dist/apps/commerce-admin/assets/src-B9MOPy58.js                                  1,201.61 kB │ gzip: 250.69 kB
+
+✓ built in 3.45s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

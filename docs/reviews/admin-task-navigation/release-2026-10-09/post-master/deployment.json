@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-10-09T10:21:16.607156+00:00",
+  "releaseCommit": "873a9a443272c21242b6f364ffa2f9b478df90cc",
+  "dispatchEndpoint": "POST /repos/pongpanots-blip/commerce-platform/actions/workflows/deploy-ecr.yml/dispatches",
+  "request": {
+    "ref": "release/admin-task-navigation-20261009",
+    "inputs": {
+      "deploy_service": "admin",
+      "image_tag": "873a9a443272c21242b6f364ffa2f9b478df90cc",
+      "skip_deploy": false,
+      "skip_cleanup": true
+    },
+    "return_run_details": true
+  },
+  "response": {
+    "workflow_run_id": 37915342509,
+    "run_url": "https://api.github.com/repos/pongpanots-blip/commerce-platform/actions/runs/37915342509",
+    "html_url": "https://github.com/pongpanots-blip/commerce-platform/actions/runs/37915342509"
+  },
+  "dispatchExitCode": 0,
+  "workflowDispatched": true,
+  "status": "Succeeded at10:13:13UTC; audit subsequently identified PR111 admin additions that require corrective release",
+  "productionHealthVerified": true,
+  "publicBundleVerified": false,
+  "previouslyDeniedRunMetadataEndpoint": "Not accessed; monitoring distinct authorized workflow-jobs endpoint",
+  "healthScope": "Localhost platform/admin/portal before and after deploy; no authenticated business writes",
+  "previousAdminTag": "020066e",
+  "deployedAdminTag": "873a9a443272c21242b6f364ffa2f9b478df90cc",
+  "registryManifestDigest": "sha256:07ce24ab4cd121332e54853934bd96b869ebc0b4a588c530db3e0134af6fbc6a",
+  "cleanupDisabledConfirmed": true,
+  "backendPortalPulled": false,
+  "migrationExecuted": false,
+  "followupRequired": "Preserve2admin files from actual previous production020066e (PR111); expected_admin_tag guard prevents another intervening release"
+}

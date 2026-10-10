@@ -1,0 +1,2 @@
+# Exact build logs preserve the tool's whitespace; application source checks remain enabled.
+logs/*.log -whitespace

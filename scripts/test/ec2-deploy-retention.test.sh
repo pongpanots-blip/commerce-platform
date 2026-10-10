@@ -186,6 +186,7 @@ case "$1" in
   compose)
     sub="$4"; shift 4
     case "$sub" in
+      ps) echo "c-${@: -1}" ;;
       pull)
         for svc in "$@"; do
           var="${svc^^}_TAG"; tag="${!var}"; repo="reg/commerce-${svc}"
@@ -204,11 +205,18 @@ case "$1" in
         done ;;
       logs) printf 'booting\nDB_PASSWORD=fake-pw-value\nJWT Token fake-token-value\nboom: health failed\n' ;;
     esac ;;
+  image)
+    if [[ "$2" == inspect ]]; then
+      ref="${@: -1}"; repo="${ref%:*}"; tag="${ref##*:}"
+      row="$(grep -P "^\Q${repo}\E\t\Q${tag}\E\t" "$S/images.tsv")" || exit 1
+      if [[ "$3" == -f ]]; then printf 'sha256:%s\n' "$(printf '%s' "$row" | cut -f4)"; fi
+    fi ;;
 esac
 exit 0
 STUB
 cat > "$STUB_BIN/curl" <<'STUB'
 #!/bin/bash
+echo "curl $*" >> "$STUB_STATE/log"
 for a in "$@"; do
   case "$a" in http://*)
     port="${a#http://127.0.0.1:}"; port="${port%%/*}"
@@ -344,6 +352,106 @@ assert_eq "F4 --keep=... form exits 0" "0" "$FLOW_RC"
 assert_eq "F4 --keep never overwrites a recorded prev" "old1" "$(kv .image-tags-prev ADMIN_TAG)"
 assert_eq "F4 recorded prev old1 and pin 947d385 both kept" "yes yes" "$(has_image admin old1) $(has_image admin 947d385)"
 assert_eq "F4 admin old2 removed" "no" "$(has_image admin old2)"
+
+# --- Flow 5: explicit skip preserves every old image and invokes no destructive Docker command ---
+flow_setup
+flow_run --skip-cleanup newA admin
+assert_eq "F5 skip cleanup: healthy admin succeeds" "0" "$FLOW_RC"
+assert_eq "F5 skip cleanup: no image/container/cache/volume pruning or image removal" "0" "$(grep -cE 'docker (rmi|.*prune)' "$STUB_STATE/log" || true)"
+assert_eq "F5 skip cleanup: all old app images retained" "yes yes yes yes yes yes" "$(has_image admin old1) $(has_image admin old2) $(has_image platform old1) $(has_image platform old2) $(has_image portal old1) $(has_image portal old2)"
+assert_eq "F5 skip cleanup: admin pull only" "1" "$(grep -c '^docker compose -f docker-compose.prod.yml pull admin$' "$STUB_STATE/log" || true)"
+assert_eq "F5 skip cleanup: no platform migration" "0" "$(grep -c 'migration:run' "$STUB_STATE/log" || true)"
+assert_eq "F5 skip cleanup: all three services health checked" "3" "$(grep -c '^curl ' "$STUB_STATE/log" || true)"
+assert_eq "F5 skip cleanup: previous admin recorded" "6817a67" "$(kv .image-tags-prev ADMIN_TAG)"
+assert_eq "F5 skip cleanup: other running tags unchanged" "add97ee add97ee" "$(kv .env PLATFORM_TAG) $(kv .env PORTAL_TAG)"
+# An unhealthy sibling must still fail deployment, even when cleanup is disabled.
+flow_setup
+flow_down 4404
+flow_run newA --skip-cleanup admin
+assert_eq "F5 skip cleanup: unhealthy portal blocks success" "1" "$FLOW_RC"
+assert_eq "F5 skip cleanup: failure also invokes no destructive Docker command" "0" "$(grep -cE 'docker (rmi|.*prune)' "$STUB_STATE/log" || true)"
+assert_eq "F5 skip cleanup: failed admin preserves pending rollback" "6817a67" "$(kv .image-tags-prev.pending ADMIN_TAG)"
+assert_eq "F5 skip cleanup: failed admin does not promote previous tag" "" "$(kv .image-tags-prev ADMIN_TAG)"
+flow_setup
+flow_run --skip-cleanup --retention-only
+assert_eq "F5 conflicting modes rejected" "1" "$FLOW_RC"
+assert_eq "F5 conflicting modes touch no docker state" "0" "$(wc -l < "$STUB_STATE/log")"
+
+# --- Flow 6: execute actual workflow command construction against the same isolated Docker fixture ---
+WORKFLOW_RUN="$FLOW_ROOT/workflow-run.sh"
+node - "$ROOT/.github/workflows/deploy-ecr.yml" "$WORKFLOW_RUN" <<'JS'
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const workflow = require('yaml').parse(fs.readFileSync(process.argv[2], 'utf8'));
+const input = workflow.on.workflow_dispatch.inputs.skip_cleanup;
+assert.equal(input.type, 'boolean');
+assert.equal(input.default, false);
+assert.equal(workflow.on.workflow_dispatch.inputs.expected_admin_tag.type, 'string');
+assert.equal(workflow.jobs.deploy.steps.find(step => step.name === 'Verify existing target and rollback images').env.EXPECTED_ADMIN_TAG, '${{ inputs.expected_admin_tag }}');
+const step = workflow.jobs.deploy.steps.find(step => step.name === 'Pull + restart on this EC2');
+assert.equal(step.env.SKIP_CLEANUP, '${{ inputs.skip_cleanup == true }}');
+assert.equal(step.run.split('${{ secrets.EC2_DEPLOY_DIR }}').length, 2);
+// Match GitHub's Bash -eo pipefail shell; application deploy script still enforces nounset.
+fs.writeFileSync(process.argv[3], '#!/bin/bash\nset -eo pipefail\n' + step.run.replace('${{ secrets.EC2_DEPLOY_DIR }}', '${FLOW_TARGET}'));
+JS
+flow_setup
+WORKFLOW_RC=0
+env -i PATH="$STUB_BIN:$PATH" STUB_STATE="$STUB_STATE" COMMERCE_HEALTH_ATTEMPTS=1 COMMERCE_HEALTH_SLEEP_SEC=0 \
+  FLOW_TARGET="$FLOW_DIR" TAG=newA SERVICES='["admin"]' SKIP_CLEANUP=true \
+  PLATFORM_FLAGS='' AWS_ACCESS_KEY_ID='' AWS_SECRET_ACCESS_KEY='' \
+  bash "$WORKFLOW_RUN" > "$FLOW_ROOT/workflow-output" 2>&1 || WORKFLOW_RC=$?
+assert_eq "F6 workflow skip input: admin deploy succeeds" "0" "$WORKFLOW_RC"
+assert_eq "F6 workflow skip input: no destructive Docker command" "0" "$(grep -cE 'docker (rmi|.*prune)' "$STUB_STATE/log" || true)"
+assert_eq "F6 workflow skip input: admin pull only" "1" "$(grep -c '^docker compose -f docker-compose.prod.yml pull admin$' "$STUB_STATE/log" || true)"
+assert_eq "F6 workflow skip input: no migration" "0" "$(grep -c 'migration:run' "$STUB_STATE/log" || true)"
+assert_eq "F6 workflow skip input: all three services health checked" "3" "$(grep -c '^curl ' "$STUB_STATE/log" || true)"
+
+# --- Flow 7: read-only preflight verifies actual service tags/rollback availability before writes ---
+preflight_run() {
+  PREFLIGHT_RC=0
+  env -i PATH="$STUB_BIN:$PATH" STUB_STATE="$STUB_STATE" ECR_REGISTRY=reg \
+    EXPECTED_ADMIN_TAG="${PREFLIGHT_EXPECTED_ADMIN_TAG:-}" \
+    COMMERCE_HEALTH_ATTEMPTS=1 COMMERCE_HEALTH_SLEEP_SEC=0 \
+    bash "$ROOT/docker/deploy-preflight.sh" "$FLOW_DIR/docker" > "$FLOW_ROOT/preflight-output" 2>&1 || PREFLIGHT_RC=$?
+}
+flow_setup
+mkdir -p "$FLOW_DIR/docker/nginx"
+cp "$ROOT/docker/nginx/commerce-proxy.conf" "$FLOW_DIR/docker/nginx/"
+touch "$FLOW_DIR/docker/docker-compose.prod.yml"
+preflight_run
+assert_eq "F7 preflight: healthy current stack accepted" "0" "$PREFLIGHT_RC"
+assert_eq "F7 preflight: all three current image identities recorded" "3" "$(grep -c '^verified current ' "$FLOW_ROOT/preflight-output" || true)"
+assert_eq "F7 preflight: only read-only Docker commands" "0" "$(grep -vcE '^docker (compose .* ps|inspect|image inspect)|^curl ' "$STUB_STATE/log" || true)"
+assert_eq "F7 preflight: no tag ledger changed" "no" "$([[ -f "$FLOW_DIR/docker/.image-tags-prev" ]] && echo yes || echo no)"
+PREFLIGHT_EXPECTED_ADMIN_TAG=6817a67
+preflight_run
+assert_eq "F7 preflight: expected current admin tag accepted" "0" "$PREFLIGHT_RC"
+PREFLIGHT_EXPECTED_ADMIN_TAG=another-release
+preflight_run
+assert_eq "F7 preflight: another admin release stops before writes" "1" "$PREFLIGHT_RC"
+assert_eq "F7 preflight: concurrent release failure explains changed tag" "1" "$(grep -c 'admin tag changed since release preparation' "$FLOW_ROOT/preflight-output" || true)"
+PREFLIGHT_EXPECTED_ADMIN_TAG=''
+printf 'PLATFORM_TAG=different\n' >> "$FLOW_DIR/docker/.env"
+preflight_run
+assert_eq "F7 preflight: mismatched backend tag stops before deployment" "1" "$PREFLIGHT_RC"
+sed -i '$d' "$FLOW_DIR/docker/.env"
+flow_down 4404
+preflight_run
+assert_eq "F7 preflight: unhealthy portal stops before deployment" "1" "$PREFLIGHT_RC"
+flow_down
+sed -i '/commerce-admin.*6817a67/d' "$STUB_STATE/images.tsv"
+preflight_run
+assert_eq "F7 preflight: unavailable rollback image stops before deployment" "1" "$PREFLIGHT_RC"
+flow_setup
+mkdir -p "$FLOW_DIR/docker/nginx"
+cp "$ROOT/docker/nginx/commerce-proxy.conf" "$FLOW_DIR/docker/nginx/"
+touch "$FLOW_DIR/docker/docker-compose.prod.yml"
+# Same configured/running reference, but its local tag now targets another image.
+sed -i '/commerce-admin.*6817a67/s/idadmin1$/retargeted-admin/' "$STUB_STATE/images.tsv"
+preflight_run
+assert_eq "F7 preflight: retargeted rollback tag stops before deployment" "1" "$PREFLIGHT_RC"
+assert_eq "F7 preflight: retargeted tag failure explains identity mismatch" "1" "$(grep -c 'rollback tag points to a different image' "$FLOW_ROOT/preflight-output" || true)"
+assert_eq "F7 preflight: retargeted tag check only uses read-only Docker commands" "0" "$(grep -vcE '^docker (compose .* ps|inspect|image inspect)|^curl ' "$STUB_STATE/log" || true)"
 
 echo "----"
 echo "passed=${pass} failed=${fail}"

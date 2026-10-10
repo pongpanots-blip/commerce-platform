@@ -1,0 +1,91 @@
+{
+  "inventory": {
+    "elements": 156,
+    "files": 116,
+    "adminRoutes": 118,
+    "portalRoutes": 4
+  },
+  "visits": [
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "th",
+      "viewport": "phone",
+      "path": "/order-periods",
+      "actualPath": "/order-periods",
+      "title": "รอบสั่งซื้อ supplier (ERP)",
+      "textLength": 414,
+      "tables": 0,
+      "rows": 0,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": []
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "th",
+      "viewport": "desktop",
+      "path": "/order-periods",
+      "actualPath": "/order-periods",
+      "title": "รอบสั่งซื้อ supplier (ERP)",
+      "textLength": 414,
+      "tables": 0,
+      "rows": 0,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": []
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "en",
+      "viewport": "phone",
+      "path": "/order-periods",
+      "actualPath": "/order-periods",
+      "title": "Supplier Order Periods (ERP)",
+      "textLength": 447,
+      "tables": 0,
+      "rows": 0,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": []
+    },
+    {
+      "phase": "after",
+      "app": "admin",
+      "locale": "en",
+      "viewport": "desktop",
+      "path": "/order-periods",
+      "actualPath": "/order-periods",
+      "title": "Supplier Order Periods (ERP)",
+      "textLength": 447,
+      "tables": 0,
+      "rows": 0,
+      "cards": 0,
+      "unstyled": 0,
+      "uncontained": 0,
+      "overflow": false,
+      "offenders": [],
+      "scrollRegions": []
+    }
+  ],
+  "errors": [],
+  "issues": [],
+  "checks": [],
+  "unsupported": [
+    "GET /admin/stats",
+    "GET /reports/health",
+    "GET /order-periods"
+  ],
+  "productionRequests": 0
+}

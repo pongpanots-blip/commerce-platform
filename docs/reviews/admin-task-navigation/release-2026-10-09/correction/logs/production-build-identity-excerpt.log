@@ -1,0 +1,11 @@
+2026-10-09T10:24:16.6682786Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +944f87d0e9afdc1de7cecb35e41caf93091ad0a0:refs/remotes/origin/release/admin-task-navigation-20261009
+2026-10-09T10:24:20.3344997Z  * [new ref]         944f87d0e9afdc1de7cecb35e41caf93091ad0a0 -> origin/release/admin-task-navigation-20261009
+2026-10-09T10:24:20.6958464Z 944f87d0e9afdc1de7cecb35e41caf93091ad0a0
+2026-10-09T10:24:44.6649217Z   tags: ***/commerce-admin:944f87d0e9afdc1de7cecb35e41caf93091ad0a0
+2026-10-09T10:24:45.3333882Z [command]/usr/bin/docker buildx build --cache-from type=gha,scope=admin --cache-to type=gha,mode=max,scope=admin --file docker/Dockerfile.admin --iidfile /home/runner/work/_temp/docker-actions-toolkit-vZfDYW/build-iidfile-b038f450cd.txt --platform linux/arm64 --attest type=provenance,mode=min,inline-only=true,builder-id=https://github.com/pongpanots-blip/commerce-platform/actions/runs/37917355287/attempts/1 --tag ***/commerce-admin:944f87d0e9afdc1de7cecb35e41caf93091ad0a0 --metadata-file /home/runner/work/_temp/docker-actions-toolkit-vZfDYW/build-metadata-022f8d4892.json --push .
+2026-10-09T10:26:03.4447215Z #23 pushing manifest for ***/commerce-admin:944f87d0e9afdc1de7cecb35e41caf93091ad0a0@sha256:93b5e2332f033edcfb5eec5b00d83b2a44825d9bdf3927a983a5541b78375217 1.7s done
+2026-10-09T10:26:06.3383896Z               "vcs:revision": "944f87d0e9afdc1de7cecb35e41caf93091ad0a0",
+2026-10-09T10:26:06.3388306Z             "image_tag": "944f87d0e9afdc1de7cecb35e41caf93091ad0a0",
+2026-10-09T10:26:06.3497718Z         "github_workflow_sha": "944f87d0e9afdc1de7cecb35e41caf93091ad0a0",
+2026-10-09T10:26:06.3503156Z   "containerimage.digest": "sha256:93b5e2332f033edcfb5eec5b00d83b2a44825d9bdf3927a983a5541b78375217",
+2026-10-09T10:26:06.3504058Z   "image.name": "***/commerce-admin:944f87d0e9afdc1de7cecb35e41caf93091ad0a0"

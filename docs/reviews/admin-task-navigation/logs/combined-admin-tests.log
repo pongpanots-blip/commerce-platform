@@ -1,0 +1,14 @@
+
+ RUN  v4.1.10 /workspace/commerce-platform/apps/commerce-admin
+
+
+ Test Files  17 passed (17)
+      Tests  272 passed (272)
+   Start at  08:54:43
+   Duration  14.53s (transform 4.23s, setup 0ms, import 6.59s, tests 3.06s, environment 2.99s)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

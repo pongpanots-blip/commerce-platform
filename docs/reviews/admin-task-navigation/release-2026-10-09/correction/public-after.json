@@ -1,0 +1,14 @@
+{
+  "recordedAt": "2026-10-09T10:28:12.685860+00:00",
+  "method": "Unauthenticated GET only after corrective deploy",
+  "checks": [
+    {
+      "url": "https://commerce.joshapp.io/admin/",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "url": "https://commerce.joshapp.io/api",
+      "error": "HTTP Error 403: Forbidden"
+    }
+  ]
+}

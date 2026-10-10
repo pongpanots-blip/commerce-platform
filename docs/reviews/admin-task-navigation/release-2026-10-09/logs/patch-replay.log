@@ -1,0 +1,3 @@
+Base: 7a6eae64dfa42477b2901464f8a68748d75d2f71
+Command: git apply --check reconciled-implementation.patch against reconstructed affected base files
+Exit code: 0

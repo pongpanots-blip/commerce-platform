@@ -1,0 +1,23 @@
+2026-10-09T10:26:31.7286462Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --filter=blob:none --depth=1 origin +944f87d0e9afdc1de7cecb35e41caf93091ad0a0:refs/remotes/origin/release/admin-task-navigation-20261009
+2026-10-09T10:26:32.5014157Z  + 873a9a4...944f87d 944f87d0e9afdc1de7cecb35e41caf93091ad0a0 -> origin/release/admin-task-navigation-20261009  (forced update)
+2026-10-09T10:26:33.1660703Z 944f87d0e9afdc1de7cecb35e41caf93091ad0a0
+2026-10-09T10:26:33.2048397Z   EXPECTED_ADMIN_TAG: 873a9a443272c21242b6f364ffa2f9b478df90cc
+2026-10-09T10:26:33.3681168Z verified current platform image: tag=020066e id=sha256:41d39259cb652d76a996a9503db1a93c399acf3732c98674d80b7e13e9856f33
+2026-10-09T10:26:33.5116334Z verified current admin image: tag=873a9a443272c21242b6f364ffa2f9b478df90cc id=sha256:14bf213e9795ae752d6205ff9c96ec8a42e22bc9883dee5cdb55e1ba37a6c781
+2026-10-09T10:26:33.6426820Z verified current portal image: tag=020066e id=sha256:87841b61d6651d8bf1adc84bf034ad4f8492ac7d85c618bae7ca210800924fd6
+2026-10-09T10:26:33.6704090Z health check OK (attempt 1/90): platform admin portal
+2026-10-09T10:26:33.6705907Z verified production proxy target and locally available healthy rollback images; no state changed
+2026-10-09T10:26:33.7008584Z if [[ "$SKIP_CLEANUP" == 'true' ]]; then DEPLOY_ARGS+=(--skip-cleanup); fi
+2026-10-09T10:26:33.7017945Z   TAG: 944f87d0e9afdc1de7cecb35e41caf93091ad0a0
+2026-10-09T10:26:33.7019196Z   SKIP_CLEANUP: true
+2026-10-09T10:26:33.8465616Z  Image ***/commerce-admin:944f87d0e9afdc1de7cecb35e41caf93091ad0a0 Pulling 
+2026-10-09T10:26:34.2720249Z  Image ***/commerce-admin:944f87d0e9afdc1de7cecb35e41caf93091ad0a0 Pulled 
+2026-10-09T10:26:34.3763743Z  Container docker-platform-1 Running 
+2026-10-09T10:26:34.3778219Z  Container docker-redis-1 Running 
+2026-10-09T10:26:34.8436708Z  Container docker-admin-1 Recreated 
+2026-10-09T10:26:35.1542008Z  Container docker-admin-1 Started 
+2026-10-09T10:26:35.2642620Z  Container docker-nginx-1 Running 
+2026-10-09T10:26:35.2648740Z  Container docker-certbot-1 Running 
+2026-10-09T10:26:35.2961293Z health check OK (attempt 1/90): platform admin portal
+2026-10-09T10:26:35.3006629Z recording previous ADMIN_TAG=873a9a443272c21242b6f364ffa2f9b478df90cc (new=944f87d0e9afdc1de7cecb35e41caf93091ad0a0)
+2026-10-09T10:26:35.3145794Z cleanup disabled: preserving all images, stopped containers and build caches

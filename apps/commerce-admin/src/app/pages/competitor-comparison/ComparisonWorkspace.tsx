@@ -46,10 +46,11 @@ import {
   clearComparisonJob,
   comparisonFormKey,
   readComparisonJobs,
-  storeComparisonJob,
-  type ComparisonJob,
 } from "./comparison-journal";
 import { comparisonDate, comparisonReason } from "./comparison-copy";
+
+import { useJobs, useComparisonWriter } from "./comparison-interactions";
+import { BatchReview } from "./BatchReview";
 
 const productUrl = (sku: string) =>
   `${home}/products/${encodeURIComponent(sku)}`;
@@ -64,6 +65,10 @@ const label = (action: string) =>
         pack: ["แก้ขนาดแพ็ก", "Change pack dimensions"],
         remove: ["เลิกใช้คู่สินค้านี้", "Remove product pair"],
         review: ["ทำเครื่องหมายทบทวนสินค้า", "Mark product reviewed"],
+        reassign: [
+          "เปลี่ยนลิงก์และแหล่งสินค้า",
+          "Change product link and source",
+        ],
         settings: [
           "แก้ชื่อและสิทธิ์รวบรวม",
           "Edit identity and collection permission",
@@ -100,84 +105,6 @@ async function readable<T>(run: () => Promise<T>) {
   } catch (e) {
     throw Error(message(e));
   }
-}
-function useJobs(owner: string) {
-  const [jobs, set] = useState(() => readComparisonJobs(owner));
-  useEffect(() => {
-    const refresh = () => set(readComparisonJobs(owner));
-    refresh();
-    window.addEventListener("storage", refresh);
-    window.addEventListener("cp-comparison-journal", refresh);
-    return () => {
-      window.removeEventListener("storage", refresh);
-      window.removeEventListener("cp-comparison-journal", refresh);
-    };
-  }, [owner]);
-  return jobs;
-}
-export function useComparisonWriter(owner: string) {
-  const lock = useRef(false),
-    mounted = useRef(true),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
-  async function write(job: ComparisonJob) {
-    if (lock.current || !mounted.current) return null;
-    lock.current = true;
-    setBusy(true);
-    setError(null);
-    try {
-      try {
-        storeComparisonJob(job);
-      } catch {
-        throw Error(
-          text(
-            "ยังเก็บคำขอกู้คืนไม่ได้ จึงยังไม่ส่งบันทึก",
-            "Recovery storage is unavailable. No save was sent.",
-          ),
-        );
-      }
-      let receipt: ComparisonReceipt;
-      try {
-        receipt = verifyComparisonReceipt(
-          await api.post(`${endpoint}/actions`, job.packet),
-          job.packet,
-        );
-      } catch (e) {
-        if ((e as { status?: number }).status === 409) {
-          try {
-            storeComparisonJob({ ...job, conflict: true });
-          } catch {
-            /* Original packet remains retained. */
-          }
-        }
-        throw Error(
-          text(
-            "ยังยืนยันผลบันทึกไม่ได้ ตรวจคำขอเดิมก่อนส่งซ้ำ",
-            "Save outcome is unverified. Check the original request before submitting again.",
-          ),
-        );
-      }
-      try {
-        clearComparisonJob(owner, job.packet.requestId);
-      } catch {
-        /* A retained committed request can be reconciled safely. */
-      }
-      return mounted.current ? receipt : null;
-    } catch (e) {
-      if (mounted.current) setError(message(e));
-      return null;
-    } finally {
-      lock.current = false;
-      if (mounted.current) setBusy(false);
-    }
-  }
-  return { write, busy, error };
 }
 function Pending({ owner, sku }: { owner: string; sku?: string }) {
   const jobs = useJobs(owner).filter((j) => !sku || j.packet.sku === sku);
@@ -567,6 +494,15 @@ function ProductTask({
     );
   const workspace = source.data,
     base = productUrl(sku);
+  if (tail === "/batch" || tail === "/batch/review")
+    return (
+      <BatchReview
+        workspace={workspace}
+        owner={owner}
+        role={role}
+        review={tail.endsWith("/review")}
+      />
+    );
   if (tail === "/planning")
     return <PlanningHandoff workspace={workspace} role={role} />;
   if (tail === "/match")
@@ -603,7 +539,7 @@ function ProductTask({
       />
     );
   const match = tail.match(
-      /^\/pairs\/([^/]+)(?:\/(capture|verify|pack|remove|settings|refresh)(\/review)?)?$/,
+      /^\/pairs\/([^/]+)(?:\/(capture|verify|pack|remove|settings|refresh|reassign)(\/review)?)?$/,
     ),
     id = comparisonUuid.safeParse(match?.[1]);
   const row = id.success ? workspace.rows.find((r) => r.id === id.data) : null;
@@ -675,6 +611,11 @@ function ComparisonMatrix({
         <WorkspaceLink to={`${base}/planning`}>
           {text("ทบทวนหลักฐานก่อนวางแผน", "Review evidence before planning")}
         </WorkspaceLink>
+        {canChangeComparison(role) && (
+          <WorkspaceLink to={`${base}/batch`}>
+            {text("ทบทวนหลายคู่ของสินค้านี้", "Review selected product pairs")}
+          </WorkspaceLink>
+        )}
         {canChangeComparison(role) && (
           <WorkspaceLink to={`${base}/review-marker`}>
             {label("review")}
@@ -1011,6 +952,7 @@ function PairDetail({
                 "verify",
                 "pack",
                 "settings",
+                "reassign",
                 "refresh",
                 "remove",
               ].map((action) => (
@@ -1156,7 +1098,24 @@ export function commandFromComparisonForm(
   let command: unknown;
   if (action === "review") command = { operation: "review", note: form.note };
   else if (action === "refresh") command = { operation: "refresh", ...pair };
-  else if (action === "settings")
+  else if (action === "reassign") {
+    if (
+      row &&
+      form.sourceUrl === row.url &&
+      (form.sourceId || null) === row.sourceId
+    )
+      throw Error("Choose a different product URL or source.");
+    command = {
+      operation: "reassign",
+      ...pair,
+      sourceUrl: form.sourceUrl,
+      sourceId: form.sourceId || null,
+      name: form.name,
+      competitorSku: form.competitorSku,
+      context: form.context,
+      note: form.note,
+    };
+  } else if (action === "settings")
     command = {
       operation: "settings",
       ...pair,
@@ -1380,7 +1339,10 @@ function ActionEditor({
         /* Receipt is authoritative. */
       }
       navigate(requestUrl(p.requestId));
-    } else navigate(requestUrl(p.requestId));
+    } else if (
+      readComparisonJobs(owner).some((j) => j.packet.requestId === p.requestId)
+    )
+      navigate(requestUrl(p.requestId));
   }
   if (!canChangeComparison(role))
     return (
@@ -1525,7 +1487,7 @@ function ActionEditor({
               </p>
             )}
             <p>{label(action)}</p>
-            {["create", "settings"].includes(action) && (
+            {["create", "settings", "reassign"].includes(action) && (
               <>
                 <p>{form.name}</p>
                 <p>{form.sourceUrl}</p>
@@ -1570,6 +1532,17 @@ function ActionEditor({
             <p>
               {choiceText(form.relationship)} · {form.note}
             </p>
+            {action === "reassign" && (
+              <Alert tone="warn">
+                {text(
+                  "เปลี่ยนลิงก์เฉพาะคู่นี้ เก็บหลักฐานเดิมในประวัติ ล้างราคาที่ใช้งาน การยืนยันคู่ และการยืนยัน VAT ปิดการรวบรวมอัตโนมัติและสิทธิ์รวบรวม ต้องบันทึกราคาและตรวจคู่ใหม่ก่อนใช้",
+                  "This changes only this pair. Original quotes stay in history. The current price, match and VAT confirmation are cleared; collection permission and automatic collection are turned off. Record and review new evidence before use.",
+                )}
+                <p>
+                  {text("ลิงก์เดิม", "Previous URL")}: {row?.url}
+                </p>
+              </Alert>
+            )}
             <Alert tone="warn">
               {text(
                 "บันทึกราคาไม่ยืนยันคู่สินค้า ราคาที่หน่วยหรือฐานไม่ตรงจะเก็บหลักฐานและแยกออกจากผลเทียบ",
@@ -1601,16 +1574,16 @@ function ActionEditor({
                 navigate(`${base}/review${itemId ? `?item=${itemId}` : ""}`);
             }}
           >
-            {["create", "settings"].includes(action) && (
+            {["create", "settings", "reassign"].includes(action) && (
               <>
                 {input("name", "ชื่อสินค้าคู่แข่ง", "Competitor product name")}
-                {action === "create" &&
+                {["create", "reassign"].includes(action) &&
                   input(
                     "sourceUrl",
                     "ลิงก์หน้าสินค้า HTTPS",
                     "HTTPS product URL",
                   )}
-                {action === "create" && (
+                {["create", "reassign"].includes(action) && (
                   <TaskSelect
                     label={text("แหล่งราคา", "Price source")}
                     value={form.sourceId}
@@ -1732,7 +1705,7 @@ function ActionEditor({
                     text("ยังไม่พร้อมรวบรวม", "Collection is unavailable")}
               </Alert>
             )}
-            {["create", "capture", "settings"].includes(action) &&
+            {["create", "capture", "settings", "reassign"].includes(action) &&
               input(
                 "context",
                 "เงื่อนไขราคาและบริบท",
@@ -1745,7 +1718,7 @@ function ActionEditor({
                 "Product relationship",
                 ["uncertain", "same_product", "substitute"],
               )}
-            {["verify", "remove", "review"].includes(action) &&
+            {["verify", "remove", "review", "reassign"].includes(action) &&
               input(
                 "note",
                 "เหตุผลที่ตรวจแล้ว อย่างน้อย 10 ตัวอักษร",
@@ -1795,30 +1768,43 @@ function ReceiptOutcome({ receipt }: { receipt: ComparisonReceipt }) {
         </span>
       </Alert>
       <p>{comparisonDate(receipt.savedAt)}</p>
-      {receipt.results.map((r) => (
-        <Panel key={r.index}>
-          <div className="p-3">
-            <p>
-              {label(receipt.packet.commands[r.index].operation)} ·{" "}
-              {r.status === "applied"
-                ? text("บันทึกแล้ว", "Persisted")
-                : r.after
-                  ? text(
-                      "งานไม่สำเร็จ บันทึกสถานะล้มเหลวไว้แล้ว",
-                      "Action failed; failure status recorded",
-                    )
-                  : text("ไม่ได้บันทึก", "Not applied")}
-            </p>
-            {r.message && <Alert tone="danger">{r.message}</Alert>}
-            {r.after?.revision != null && (
-              <p>
-                {text("ฉบับข้อมูลหลังบันทึก", "Persisted record revision")}:{" "}
-                {String(r.after.revision)}
+      {receipt.results.map((r) => {
+        const command = receipt.packet.commands[r.index],
+          recorded = r.after ?? r.before;
+        return (
+          <Panel key={r.index}>
+            <div className="p-3">
+              <p className="break-words">
+                {String(
+                  recorded?.competitorName ??
+                    ("pairId" in command ? command.pairId : receipt.packet.sku),
+                )}
               </p>
-            )}
-          </div>
-        </Panel>
-      ))}
+              {recorded?.sourceUrl != null && (
+                <p className="break-words">{String(recorded?.sourceUrl)}</p>
+              )}
+              <p>
+                {label(receipt.packet.commands[r.index].operation)} ·{" "}
+                {r.status === "applied"
+                  ? text("บันทึกแล้ว", "Persisted")
+                  : r.after
+                    ? text(
+                        "งานไม่สำเร็จ บันทึกสถานะล้มเหลวไว้แล้ว",
+                        "Action failed; failure status recorded",
+                      )
+                    : text("ไม่ได้บันทึก", "Not applied")}
+              </p>
+              {r.message && <Alert tone="danger">{r.message}</Alert>}
+              {r.after?.revision != null && (
+                <p>
+                  {text("ฉบับข้อมูลหลังบันทึก", "Persisted record revision")}:{" "}
+                  {String(r.after.revision)}
+                </p>
+              )}
+            </div>
+          </Panel>
+        );
+      })}
       <WorkspaceLink to={productUrl(receipt.packet.sku)}>
         {text("อ่านฐานราคาและสถานะล่าสุด", "Read current comparison evidence")}
       </WorkspaceLink>

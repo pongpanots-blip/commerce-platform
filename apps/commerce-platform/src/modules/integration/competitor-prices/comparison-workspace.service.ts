@@ -167,8 +167,9 @@ export class ComparisonWorkspaceService {
             observation,
             identityChanged:
               !!observation &&
-              ((typeof observation.name === "string" &&
-                observation.name !== row.competitorName) ||
+              (observation.sourceChanged === true ||
+                (typeof observation.name === "string" &&
+                  observation.name !== row.competitorName) ||
                 (typeof observation.competitorSku === "string" &&
                   observation.competitorSku !== row.competitorSku) ||
                 (typeof observation.url === "string" &&
@@ -407,7 +408,9 @@ export class ComparisonWorkspaceService {
           [product.product_inventory_id],
         );
         const extraSources = packet.commands.flatMap((c) =>
-          c.operation === "create" && c.sourceId ? [c.sourceId] : [],
+          (c.operation === "create" || c.operation === "reassign") && c.sourceId
+            ? [c.sourceId]
+            : [],
         );
         await m.query(
           "SELECT id FROM scraping_sources WHERE id IN (SELECT scraping_source_id FROM competitor_prices WHERE product_id=$1) OR id=ANY($2::uuid[]) ORDER BY id FOR SHARE",
@@ -652,7 +655,39 @@ export class ComparisonWorkspaceService {
           };
       }
       before = { ...copy(row), observation };
-      if (command.operation === "settings") {
+      if (command.operation === "reassign") {
+        // Same public URL/source resolution as the retained legacy update API;
+        // change only this pair, with its native revision and original quote archived.
+        const url = publicUrl(command.sourceUrl).href,
+          source = await this.scraping.findOrigin(url);
+        if (!source) competitorSource(url);
+        if ((source?.id ?? null) !== command.sourceId)
+          throw new ConflictException(
+            "Source identity changed. Select the current source.",
+          );
+        if (url === row.sourceUrl && command.sourceId === row.scrapingSourceId)
+          throw new BadRequestException(
+            "Choose a different product URL or source.",
+          );
+        row.sourceUrl = url;
+        row.scrapingSourceId = command.sourceId;
+        row.competitorName = command.name;
+        row.competitorSku = command.competitorSku;
+        row.sourceContext = command.context;
+        row.priceIncVat = null;
+        row.capturedSourceVersion = null;
+        row.verifiedFingerprint = null;
+        row.verifiedAt = null;
+        row.verifiedBy = null;
+        row.matchNote = "Uncertain: Source changed. " + command.note;
+        row.vatIncluded = false;
+        row.collectionAllowed = false;
+        row.autoRefresh = false;
+        row.lastError = null;
+        if (observation) observation = { ...observation, sourceChanged: true };
+        // Retain original observedAt and immutable raw observation, so it is shown
+        // as historical evidence and excluded by identity until a new capture.
+      } else if (command.operation === "settings") {
         if (
           command.autoRefresh &&
           (!command.collectionAllowed || !row.vatIncluded)

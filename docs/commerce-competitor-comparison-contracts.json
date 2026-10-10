@@ -29,18 +29,16 @@
       "before": "Private pack planning and promotion rehearsal",
       "now": "/j/marketing/competitor-prices/products/:sku/planning",
       "preserved": "Explicit selected IDs, at most 20, revalidated fingerprint and SKU handoff. Pack planner seeds selected observations only after its native source read matches; existing backups need explicit choice. Promotion rehearsal remains admin-only. No price/cost/activation assumptions are silently copied."
+    },
+    {
+      "before": "Legacy retailer URL edit and existing-pair multi-action review",
+      "now": "/products/:sku/pairs/:id/reassign{/review}; /products/:sku/batch{/review}, under canonical competitor home",
+      "preserved": "Original same-product/pair/source authority and legacy PUT/review/finish APIs; explicit selected-pair review does not infer proposal matches or mark several SKUs reviewed."
     }
   ],
   "permissions": {
-    "read": [
-      "admin",
-      "marketing",
-      "business_analyst"
-    ],
-    "write": [
-      "admin",
-      "marketing"
-    ],
+    "read": ["admin", "marketing", "business_analyst"],
+    "write": ["admin", "marketing"],
     "businessAnalyst": "Original GET-only guard remains authoritative; no write controls or POST dispatched.",
     "merchandising": "No new grant; competitor/pricing access dependency remains unresolved.",
     "sourceConfiguration": "Existing source/catalog permissions unchanged.",
@@ -78,13 +76,15 @@
       "settings",
       "refresh",
       "remove",
-      "review"
+      "review",
+      "reassign"
     ],
     "transaction": "Shared request advisory lock, product/pair/source locks, authoritative fingerprint/revision validation, savepoints for expected per-item errors; pair edits and durable receipt commit together. Unrecognized SQL/storage failure rolls back the whole transaction.",
     "collector": "Vendor read happens before row locks. Evidence/config/revision is checked again under locks. Replays return the original committed receipt without another vendor fetch. Read/identity/price failures preserve the old observation and persist a failed outcome, never a completed-action count. Existing collector and auto-collection business constraints retained.",
     "packReplacement": "Same pair ID; original observation archived. Native current-price alias cleared on pack/identity edits, match invalidated; later match verification cannot reinterpret the old quote. Legacy grid replacement is in-place and archives atomically.",
     "receipt": "competitor_action kind plus shared scenario.kind discriminator prevents promotion/pack receipt/list readers from treating this as a different draft type. Committed/partial/failed counts reflect applied native actions, not browser intent.",
-    "recovery": "Owner-scoped immutable browser packet stored and roundtrip verified before dispatch. Duplicate clicks guarded synchronously. Unknown outcomes require authoritative lookup. Only confirmed 404 permits the exact same packet retry; conflicts require current review. Interrupted saves cannot redirect a newer navigation."
+    "recovery": "Owner-scoped immutable browser packet stored and roundtrip verified before dispatch. Duplicate clicks guarded synchronously. Unknown outcomes require authoritative lookup. Only confirmed 404 permits the exact same packet retry; conflicts require current review. Interrupted saves cannot redirect a newer navigation.",
+    "sourceReassignment": "Same pair/product, stable current source and public URL; original quote retained with historical sourceChanged annotation. Current price/match/VAT/collection/automatic collection cleared after explicit review. URL roundtrip cannot reinterpret old quote; new capture/valid collector is required."
   },
   "operationalWrites": {
     "sellingPriceWrites": false,
@@ -99,8 +99,8 @@
     "The raw observation journal uses existing JSON storage with per-pair lookups; production volume, indexing, retention and query budgets need follow-up using approved production read access.",
     "Native pack observations cap at 200 and history at 20; coverage is explicitly truncated. Legacy source names in retained overview filters are not stable vendor IDs; typed per-product comparison uses stable IDs.",
     "Upstream copy freshness remains unverified; member eligibility, delivery/region/minimum-order/quantity tiers and FX normalization need authoritative contracts. No delivered-price, recommendation, profit, ATP or activation readiness is claimed.",
-    "Legacy batch accept/reject endpoints remain compatible; the new typed UI deliberately requires separate human verification and per-SKU review. Further batch ergonomics can follow the canonical action pattern.",
-    "Advanced retailer-URL reassignment and batch proposal accept/reject ergonomics are not yet part of the new typed UI. Their legacy backend routes remain compatible; source/catalog management and per-SKU actions are reachable. Do not infer that every old local-state control was rebuilt.",
+    "Cross-SKU inferred proposal acceptance/rejection and legacy finish batch semantics remain outside the bounded explicit existing-pair review. Original endpoints unchanged; new pair review requires explicit decisions and confirmation.",
+    "Retailer URL reassignment and selected existing-pair review are implemented in canonical action URLs. Full source CRUD/reader/login/collection and collected-catalog editing remain on legacy pages; cross-SKU proposal batches still need a separate bounded flow.",
     "MER competitor grant remains blocked pending an explicit permission decision; OCR-to-cart is cancelled.",
     "Actual Claude/Cursor review is unrun and must occur on dot cloud computer through an authorized same-revision handoff. No credentials were copied and no transfer workaround was used."
   ],
@@ -124,11 +124,9 @@
       "screenshots": 0,
       "browserAuthentication": "Synthetic transport; original real StaffAuthGuard tested in native HTTP suites. No production/full-auth E2E claim."
     },
-    "typechecksAndBuilds": [
-      "commerce-admin",
-      "commerce-platform"
-    ],
+    "typechecksAndBuilds": ["commerce-admin", "commerce-platform"],
     "protectedSourceProof": "/workspace/commerce-ui-audit-20261009/competitor-protected-source-proof.json",
     "checksAreSelectedRegressions": "No whole-app redesign or full-suite coverage claim. Historical/focused reruns are not added to these counts."
-  }
+  },
+  "sourceBatchClosureContract": "docs/commerce-competitor-source-batch-contracts.json"
 }

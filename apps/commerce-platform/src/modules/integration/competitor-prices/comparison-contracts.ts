@@ -94,6 +94,18 @@ const pairCommand = {
 export const comparisonCommandSchema = z.discriminatedUnion("operation", [
   z
     .object({
+      operation: z.literal("reassign"),
+      ...pairCommand,
+      sourceUrl: z.url().max(2000),
+      sourceId: comparisonUuid.nullable(),
+      name: z.string().trim().min(1).max(500),
+      competitorSku: z.string().trim().max(100),
+      context: z.string().trim().min(1).max(1000),
+      note: z.string().trim().min(10).max(900),
+    })
+    .strict(),
+  z
+    .object({
       operation: z.literal("review"),
       note: z.string().trim().min(10).max(900),
     })

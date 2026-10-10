@@ -520,3 +520,173 @@ it("legacy source links resolve to a distinct canonical action URL", async () =>
   );
   expect(content()).toContain("Manage price sources");
 });
+
+it("source reassignment reviews previous/new URL, reason and disabled collection before sending", async () => {
+  const w = workspace(),
+    path = base + "/pairs/" + w.rows[0].id + "/reassign";
+  vi.mocked(api.get).mockImplementation(async (url) =>
+    url.endsWith("/sources")
+      ? [
+          {
+            id: w.rows[1].sourceId,
+            name: "Other vendor",
+            origin: "https://vendor-1.example.invalid",
+          },
+        ]
+      : url.includes("/requests/")
+        ? saved
+        : w,
+  );
+  await render(path);
+  await fill(
+    "HTTPS product URL",
+    "https://vendor-1.example.invalid/new-product",
+  );
+  await fill("Price source", w.rows[1].sourceId!);
+  await fill(
+    "Reviewed reason, at least 10 characters",
+    "Reviewed changed source and original historical quote",
+  );
+  await act(async () => button("Review before saving").click());
+  expect(content()).toContain("Original quotes stay in history");
+  expect(content()).toContain(w.rows[0].url);
+  expect(vi.mocked(api.post)).not.toHaveBeenCalled();
+  await act(async () => button("Save this action").click());
+  expect(vi.mocked(api.post).mock.calls[0][1]).toMatchObject({
+    sku: w.sku,
+    commands: [
+      {
+        operation: "reassign",
+        pairId: w.rows[0].id,
+        sourceId: w.rows[1].sourceId,
+        sourceUrl: "https://vendor-1.example.invalid/new-product",
+      },
+    ],
+  });
+});
+const tick = async (index = 0) =>
+  act(async () =>
+    container
+      .querySelectorAll<HTMLInputElement>('input[type="checkbox"]')
+      [index].click(),
+  );
+async function chooseBatch() {
+  const w = workspace();
+  await render(base + "/batch");
+  await tick(0);
+  await fill(
+    "Reason for Same vendor · " + w.rows[0].id,
+    "Reviewed exact source and product identity",
+  );
+  await fill("Decision for Same vendor · " + w.rows[0].id, "same_product");
+  await tick(1);
+  await fill(
+    "Reason for Same vendor · " + w.rows[1].id,
+    "Reviewed unsuitable alternate product pair",
+  );
+  await fill("Decision for Same vendor · " + w.rows[1].id, "remove");
+  await act(async () => button("Review selected decisions").click());
+}
+it("batch review requires explicit confirmation and duplicate clicks send exactly the selected pairs", async () => {
+  await chooseBatch();
+  expect(content()).toContain("the SKU reviewed marker is unchanged");
+  expect(button("Confirm and save selected pairs").disabled).toBe(true);
+  expect(vi.mocked(api.post)).not.toHaveBeenCalled();
+  await tick();
+  await act(async () => {
+    button("Confirm and save selected pairs").click();
+    button("Confirm and save selected pairs").click();
+  });
+  expect(vi.mocked(api.post)).toHaveBeenCalledTimes(1);
+  const p = vi.mocked(api.post).mock.calls[0][1] as ComparisonPacket;
+  expect(p.commands.map((c) => c.operation)).toEqual(["verify", "remove"]);
+  expect(content()).toContain("Persisted action outcomes: 2 / 2");
+});
+it("direct batch review without retained decisions cannot dispatch", async () => {
+  await render(base + "/batch/review");
+  expect(content()).toContain("No pairs selected");
+  await tick();
+  expect(button("Confirm and save selected pairs").disabled).toBe(true);
+  expect(vi.mocked(api.post)).not.toHaveBeenCalled();
+});
+it("back-forward retains reviewed choices and requires a fresh confirmation", async () => {
+  await chooseBatch();
+  await tick();
+  await act(async () => button("Back test").click());
+  expect(
+    field("Reason for Same vendor · " + workspace().rows[0].id).value,
+  ).toBe("Reviewed exact source and product identity");
+  await act(async () => button("Forward test").click());
+  expect(button("Confirm and save selected pairs").disabled).toBe(true);
+  expect(vi.mocked(api.post)).not.toHaveBeenCalled();
+});
+it("changed batch evidence preserves choices but blocks confirmation until explicitly discarded", async () => {
+  await render(base + "/batch");
+  await tick(0);
+  await fill(
+    "Reason for Same vendor · " + workspace().rows[0].id,
+    "Reviewed exact source and product identity",
+  );
+  const changed = workspace();
+  changed.sourceFingerprint = "c".repeat(64);
+  changed.inputs.sourceFingerprint = changed.sourceFingerprint;
+  vi.mocked(api.get).mockResolvedValue(changed);
+  await act(async () => button("Review selected decisions").click());
+  expect(content()).toContain("Retained decisions cannot be submitted");
+  await tick();
+  expect(button("Confirm and save selected pairs").disabled).toBe(true);
+  await act(async () =>
+    button("Discard retained decisions and review current pairs").click(),
+  );
+  expect(content()).toContain("Selected pairs: 0");
+  expect(vi.mocked(api.post)).not.toHaveBeenCalled();
+});
+it("a persisted partial batch counts only applied native outcomes", async () => {
+  await chooseBatch();
+  vi.mocked(api.post).mockImplementation(async (_url, p) => {
+    const r = receipt(p as ComparisonPacket);
+    saved = verifyComparisonReceipt({
+      ...r,
+      status: "partial",
+      results: r.results.map((x, i) =>
+        i
+          ? {
+              ...x,
+              status: "failed",
+              after: null,
+              message: "Synthetic missing pair",
+            }
+          : x,
+      ),
+    });
+    return saved;
+  });
+  await tick();
+  await act(async () => button("Confirm and save selected pairs").click());
+  expect(content()).toContain("Persisted action outcomes: 1 / 2");
+  expect(content()).toContain("Not applied");
+  expect(content()).toContain("Synthetic missing pair");
+});
+it("batch storage failure sends no action and remains recoverable in context", async () => {
+  await chooseBatch();
+  vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+    throw Error("Unavailable");
+  });
+  await tick();
+  await act(async () => button("Confirm and save selected pairs").click());
+  expect(vi.mocked(api.post)).not.toHaveBeenCalled();
+  expect(content()).toContain("Recovery storage is unavailable");
+});
+it.each(["business_analyst", "merchandising"])(
+  "%s cannot dispatch selected pair decisions",
+  async (selectedRole) => {
+    await render(base + "/batch", selectedRole);
+    expect(button("Confirm and save selected pairs")).toBeUndefined();
+    expect(container.querySelectorAll('input[type="checkbox"]')).toHaveLength(
+      0,
+    );
+    expect(vi.mocked(api.post)).not.toHaveBeenCalled();
+    if (selectedRole === "merchandising")
+      expect(vi.mocked(api.get)).not.toHaveBeenCalled();
+  },
+);

@@ -631,5 +631,260 @@ const raw = process.env.COMPARISON_TEST_DATABASE_URL;
         }
       },
     );
+
+    const reassignment = (
+      w: Awaited<ReturnType<typeof f.workspace.workspace>>,
+    ): Extract<ComparisonCommand, { operation: "reassign" }> => ({
+      operation: "reassign",
+      pairId: f.pairs[0],
+      revision: w.rows.find((r) => r.id === f.pairs[0])!.revision,
+      sourceUrl: f.sources[1].origin + "/p/reassigned-chicken",
+      sourceId: f.sources[1].id,
+      name: "Reviewed alternate chicken",
+      competitorSku: "ALT-CHICKEN",
+      context: "Reviewed public terms from alternate source",
+      note: "Reviewed source change and original historical quotation",
+    });
+    it("reassigns only this pair, retaining raw quote while clearing price/match and collection", async () => {
+      const w = await f.workspace.workspace(f.products[0].sku),
+        c = reassignment(w),
+        reader = jest.spyOn(f.scraping, "readProduct");
+      const result = await f.workspace.save(
+        await packet([c]),
+        f.actor,
+        f.email,
+      );
+      expect(result.status).toBe("committed");
+      expect(reader).not.toHaveBeenCalled();
+      reader.mockRestore();
+      const row = await db
+        .getRepository(CompetitorPrice)
+        .findOneByOrFail({ id: c.pairId });
+      expect(row).toMatchObject({
+        productId: f.products[0].id,
+        sourceUrl: c.sourceUrl,
+        scrapingSourceId: c.sourceId,
+        priceIncVat: null,
+        verifiedFingerprint: null,
+        vatIncluded: false,
+        collectionAllowed: false,
+        autoRefresh: false,
+      });
+      expect(row.revision).toBe(c.revision + 1);
+      expect(row.observedAt).not.toBeNull();
+      expect(result.results[0].before?.observation).toMatchObject({
+        url: w.rows.find((r) => r.id === c.pairId)!.url,
+        price: "100.00",
+      });
+      expect(result.results[0].after?.observation).toMatchObject(
+        result.results[0].before?.observation as object,
+      );
+      expect(result.results[0].after?.observation).toMatchObject({
+        sourceChanged: true,
+      });
+      const next = await f.workspace.workspace(w.sku),
+        changed = next.rows.find((r) => r.id === c.pairId)!;
+      expect(changed.rawEvidence?.url).toBe(
+        w.rows.find((r) => r.id === c.pairId)!.url,
+      );
+      expect(changed.reasons).toContain("observation_identity_changed");
+      expect(changed.eligible).toBe(false);
+      expect(next.review).toBeNull();
+      expect((await f.workspace.history(c.pairId)).items).toHaveLength(1);
+    });
+    it("cannot reinterpret an old quote after verifying the new source identity", async () => {
+      const w = await f.workspace.workspace(f.products[0].sku);
+      await f.workspace.save(await packet([reassignment(w)]), f.actor, f.email);
+      await f.workspace.save(
+        await packet([await currentVerify()]),
+        f.actor,
+        f.email,
+      );
+      const row = (await f.workspace.workspace(w.sku)).rows.find(
+        (r) => r.id === f.pairs[0],
+      )!;
+      expect(row.reasons).toContain("observation_identity_changed");
+      expect(row.eligible).toBe(false);
+      expect(
+        (
+          await db
+            .getRepository(CompetitorPrice)
+            .findOneByOrFail({ id: row.id })
+        ).priceIncVat,
+      ).toBeNull();
+      await f.workspace.save(
+        await packet([
+          {
+            operation: "capture",
+            pairId: row.id,
+            revision: row.revision,
+            price: "120.00",
+            currency: "THB",
+            taxBasis: "inclusive",
+            priceBasis: "public",
+            observedAt: new Date().toISOString(),
+            context: "Reviewed public terms from alternate source",
+          },
+        ]),
+        f.actor,
+        f.email,
+      );
+      await f.workspace.save(
+        await packet([await currentVerify()]),
+        f.actor,
+        f.email,
+      );
+      expect(
+        (await f.workspace.workspace(w.sku)).rows.find((r) => r.id === row.id),
+      ).toMatchObject({
+        eligible: true,
+        rawEvidence: {
+          url: f.sources[1].origin + "/p/reassigned-chicken",
+          price: "120.00",
+        },
+      });
+    });
+    it("replays concurrent source change requests once without another revision or source read", async () => {
+      const w = await f.workspace.workspace(f.products[0].sku),
+        p = await packet([reassignment(w)]);
+      const results = await Promise.all([
+        f.workspace.save(p, f.actor, f.email),
+        f.workspace.save(p, f.actor, f.email),
+      ]);
+      expect(results[0].requestId).toBe(results[1].requestId);
+      expect(results.filter((r) => r.replayed)).toHaveLength(1);
+      expect(
+        (
+          await db
+            .getRepository(CompetitorPrice)
+            .findOneByOrFail({ id: f.pairs[0] })
+        ).revision,
+      ).toBe(
+        p.commands[0].operation === "reassign" ? p.commands[0].revision + 1 : 0,
+      );
+      expect(
+        (
+          await db.query(
+            "SELECT count(*)::int n FROM commerce_promotion_draft_requests",
+          )
+        )[0].n,
+      ).toBe(1);
+    });
+    it("blocks a stale source-change review without native changes or a success receipt", async () => {
+      const w = await f.workspace.workspace(f.products[0].sku),
+        p = await packet([reassignment(w)]);
+      await db
+        .getRepository(CompetitorPrice)
+        .update(f.pairs[0], { competitorName: "Concurrent edit" });
+      await expect(f.workspace.save(p, f.actor, f.email)).rejects.toThrow(
+        "changed",
+      );
+      expect(
+        (
+          await db
+            .getRepository(CompetitorPrice)
+            .findOneByOrFail({ id: f.pairs[0] })
+        ).sourceUrl,
+      ).toBe(w.rows.find((r) => r.id === f.pairs[0])!.url);
+      expect(
+        (
+          await db.query(
+            "SELECT count(*)::int n FROM commerce_promotion_draft_requests",
+          )
+        )[0].n,
+      ).toBe(0);
+    });
+    it("records failed outcomes for unsafe, unchanged, wrong-source or already-paired URLs without modifying native pair", async () => {
+      const w = await f.workspace.workspace(f.products[0].sku),
+        c = reassignment(w),
+        before = await db
+          .getRepository(CompetitorPrice)
+          .findOneByOrFail({ id: f.pairs[0] });
+      for (const values of [
+        { sourceUrl: "http://vendor-2.example.invalid/p/other" },
+        { sourceUrl: "https://127.0.0.1/p/other", sourceId: null },
+        { sourceId: f.sources[0].id },
+        { sourceUrl: before.sourceUrl, sourceId: before.scrapingSourceId },
+        { sourceUrl: f.sources[1].origin + "/p/chicken" },
+      ]) {
+        const result = await f.workspace.save(
+          await packet([{ ...c, ...values }]),
+          f.actor,
+          f.email,
+        );
+        expect(result.status).toBe("failed");
+        expect(result.results[0].status).toBe("failed");
+        expect(
+          await db
+            .getRepository(CompetitorPrice)
+            .findOneByOrFail({ id: f.pairs[0] }),
+        ).toEqual(before);
+      }
+    });
+    it("persists mixed batch outcomes and never counts a failed pair or marks the SKU reviewed", async () => {
+      const p = await packet([
+        await currentVerify(),
+        {
+          operation: "remove",
+          pairId: randomUUID(),
+          revision: 1,
+          note: "Explicitly reviewed synthetic missing pair",
+        },
+      ]);
+      const receipt = await f.workspace.save(p, f.actor, f.email);
+      expect(receipt.status).toBe("partial");
+      expect(receipt.results.map((r) => r.status)).toEqual([
+        "applied",
+        "failed",
+      ]);
+      expect((await f.workspace.workspace(p.sku)).review).toBeNull();
+      expect(await f.workspace.save(p, f.actor, f.email)).toMatchObject({
+        requestId: p.requestId,
+        replayed: true,
+        status: "partial",
+      });
+      expect(await f.workspace.request(p.requestId, f.actor)).toMatchObject({
+        status: "partial",
+        persisted: true,
+      });
+      await expect(
+        f.workspace.request(p.requestId, "other-owner"),
+      ).rejects.toThrow("not found");
+      expect((await f.workspace.history(f.pairs[0])).items).toHaveLength(1);
+    });
+
+    it("keeps a quotation historical after a URL roundtrip until an actual new capture", async () => {
+      const w = await f.workspace.workspace(f.products[0].sku),
+        original = w.rows.find((r) => r.id === f.pairs[0])!;
+      await f.workspace.save(await packet([reassignment(w)]), f.actor, f.email);
+      const current = await f.workspace.workspace(w.sku);
+      await f.workspace.save(
+        await packet([
+          {
+            ...reassignment(current),
+            sourceUrl: original.url,
+            sourceId: original.sourceId,
+            name: String(original.observation.productName),
+            competitorSku: original.competitorSku,
+            context: original.context,
+          },
+        ]),
+        f.actor,
+        f.email,
+      );
+      await f.workspace.save(
+        await packet([await currentVerify()]),
+        f.actor,
+        f.email,
+      );
+      const returned = (await f.workspace.workspace(w.sku)).rows.find(
+        (r) => r.id === original.id,
+      )!;
+      expect(returned.url).toBe(original.url);
+      expect(returned.rawEvidence?.url).toBe(original.url);
+      expect(returned.reasons).toContain("observation_identity_changed");
+      expect(returned.eligible).toBe(false);
+      expect(returned.rawEvidence).toMatchObject({ sourceChanged: true });
+    });
   },
 );

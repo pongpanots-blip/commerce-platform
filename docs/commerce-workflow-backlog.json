@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-10T04:35:07.648136+00:00",
+  "updatedAt": "2026-10-10T05:06:41.400975+00:00",
   "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
   "designGuidance": {
     "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
@@ -51,7 +51,7 @@
     {
       "priority": 3,
       "task": "MER compare, manual observations, matching and promotion planning",
-      "status": "Bounded typed multi-vendor comparison, action URLs, authoritative durable receipts/recovery and validated planning handoff implemented for existing admin/marketing writes and BA GET-only readers. MER remains excluded pending permission approval. Existing source/catalog/report workflows and legacy deep links retained; full application redesign not claimed.",
+      "status": "Accepted canonical typed comparison now includes reviewed retailer URL/source reassignment and explicit 1–20 existing-pair decisions for one SKU, durable native outcomes/recovery and unchanged admin/marketing writes, BA GET-only, MER exclusion. Source CRUD/reader settings and cross-SKU inferred proposal batches remain legacy.",
       "dependencies": [
         "Existing competitor review/manual capture services",
         "Outstanding ACL decision",
@@ -65,14 +65,16 @@
       ],
       "implementationContract": "docs/commerce-competitor-comparison-contracts.json",
       "remainingDependencies": [
-        "Production availability/permissions/retention of existing commerce_promotion_drafts and request tables has not been verified; unavailable storage remains a retriable error, never success.",
+        "Production availability/permissions of existing typed competitor columns, catalog/source copies, commerce_promotion_drafts and request tables have not been verified; unavailable storage remains a retriable error, never success.",
         "The raw observation journal uses existing JSON storage with per-pair lookups; production volume, indexing, retention and query budgets need follow-up using approved production read access.",
         "Native pack observations cap at 200 and history at 20; coverage is explicitly truncated. Legacy source names in retained overview filters are not stable vendor IDs; typed per-product comparison uses stable IDs.",
         "Upstream copy freshness remains unverified; member eligibility, delivery/region/minimum-order/quantity tiers and FX normalization need authoritative contracts. No delivered-price, recommendation, profit, ATP or activation readiness is claimed.",
-        "Legacy batch accept/reject endpoints remain compatible; the new typed UI deliberately requires separate human verification and per-SKU review. Further batch ergonomics can follow the canonical action pattern.",
+        "Cross-SKU inferred proposal acceptance/rejection and legacy finish batch semantics remain outside the bounded explicit existing-pair review. Original endpoints unchanged; new pair review requires explicit decisions and confirmation.",
+        "Retailer URL reassignment and selected existing-pair review are implemented in canonical action URLs. Full source CRUD/reader/login/collection and collected-catalog editing remain on legacy pages; cross-SKU proposal batches still need a separate bounded flow.",
         "MER competitor grant remains blocked pending an explicit permission decision; OCR-to-cart is cancelled.",
         "Actual Claude/Cursor review is unrun and must occur on dot cloud computer through an authorized same-revision handoff. No credentials were copied and no transfer workaround was used."
-      ]
+      ],
+      "sourceBatchClosureContract": "docs/commerce-competitor-source-batch-contracts.json"
     },
     {
       "priority": 3,

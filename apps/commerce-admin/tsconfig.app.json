@@ -17,6 +17,9 @@
       "@cp/growth": [
         "../../libs/growth/src/index.d.ts"
       ],
+      "@cp/marketing-workflow": [
+        "../../libs/marketing-workflow/src/index.d.ts"
+      ],
       "@josh/shared-api": [
         "src/josh-admin/libs/shared-api/index.ts"
       ],

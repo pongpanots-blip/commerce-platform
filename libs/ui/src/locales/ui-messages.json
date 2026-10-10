@@ -26219,6 +26219,14 @@
     "th": "แก้เทอม",
     "en": "Edit term"
   },
+  "ส่งออก {0} จาก {1} รายการ (สูงสุด {2}) ใช้ตัวกรองให้แคบลงเพื่อส่งออกส่วนที่เหลือ": {
+    "th": "ส่งออก {0} จาก {1} รายการ (สูงสุด {2}) ใช้ตัวกรองให้แคบลงเพื่อส่งออกส่วนที่เหลือ",
+    "en": "Exported {0} of {1} orders (limit {2}). Narrow the filters to export the rest."
+  },
+  "ส่งออกไม่สำเร็จ: {0}": {
+    "th": "ส่งออกไม่สำเร็จ: {0}",
+    "en": "Export failed: {0}"
+  },
   "KBank ไม่ตอบกลับ — ตรวจใน KBank portal ก่อนว่าคืนเงินแล้วหรือยัง ห้ามสั่งคืนซ้ำถ้าไม่แน่ใจ": {
     "th": "KBank ไม่ตอบกลับ — ตรวจใน KBank portal ก่อนว่าคืนเงินแล้วหรือยัง ห้ามสั่งคืนซ้ำถ้าไม่แน่ใจ",
     "en": "KBank did not answer — check the KBank portal first; never refund again unless you are sure it did not go through"

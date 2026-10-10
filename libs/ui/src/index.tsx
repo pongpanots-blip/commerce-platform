@@ -1440,7 +1440,7 @@ export const fmt = {
 export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
 export { TaskPageFrame } from './TaskPageFrame';
 export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, PageHelpLink, enablePageGuides, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
-export { TableViewport, TableEmpty, PaginationControls } from './data-table';
+export { TableViewport, TableEmpty, PaginationControls, downloadCsv } from './data-table';
 export { FormSection, FormActions, DetailHeader, CopyableId, MasterDataSelect, findMasterMatch, masterKey, useUnsavedChanges, confirmLeaveIfDirty, scrollToFirstInvalid, blankFieldMessage } from './forms';
 export { pageGuide } from './page-guides';
 export type { PageGuide } from './page-guides';

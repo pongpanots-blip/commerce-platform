@@ -140,9 +140,11 @@ field อื่น (`cart.*`, `page.views`) → validator ปฏิเสธพ�
 
 ### 4.4 Webhook (commerce ยิงเอง)
 
-1. แทนค่าตัวแปรใน `url`, `headers[].value`, `body`: `{{user.*}}` จาก `josh_customers.data` (ชุดตัวแปรเดียวกับ notify
-   template ของ josh เท่าที่มีใน snapshot), `{{workflow.id}}`, `{{workflow.name}}`, `{{enrollment.id}}`, `{{step.id}}`
-   — ค่า `{{secret:…}}` ไม่แตะ
+1. แทนค่าตัวแปรใน `url`, `headers[].value`, `body` ด้วยรูปแบบเดียวกับ notify template ของ josh (`{{user_name}}`,
+   `{{user_first_name}}`, `{{user_last_name}}`, `{{user_email}}`, `{{user_phone}}`, `{{user_custype}}`, `{{cuisine_name}}`,
+   `{{today}}` จาก `josh_customers.data`) และ `{{user_id}}`, `{{workflow_id}}`, `{{workflow_name}}`, `{{enrollment_id}}`,
+   `{{step_id}}` — ค่า `{{secret:…}}` ไม่แตะ · escape ตามที่ใส่: ใน URL ใช้ `encodeURIComponent`, ใน body ที่เป็น JSON
+   escape เป็น JSON string, ใน header ตัด CR/LF
 2. SSRF guard (4.5) กับ URL ที่แทนค่าแล้ว ไม่ผ่าน → log `failed: blocked_url` ไปต่อ
 3. สร้างแถว `webhook_deliveries` (`kind='marketing'`, `idempotency_key='cmw:<enrollmentId>:<stepId>'`) แล้ว enqueue
    `QUEUES.WEBHOOK_OUT` → log `queued` (`meta: { method, host, deliveryId }` — ไม่เก็บ header / body / query) → ไปต่อทันที
@@ -155,7 +157,8 @@ marketing delivery: `event_type='marketing.webhook'`, `payload` = body string, `
 `WebhookDeliveryWorker.handle()` เมื่อ `kind='marketing'`: ข้าม supersede check และ portal allowlist · เช็ก SSRF ซ้ำตอนส่ง
 (กัน DNS rebinding) · แทนค่า secret **ตอนส่งเท่านั้น** ค่าจริงไม่ลง DB / log / error · ใช้ method + headers ที่กำหนด +
 `x-delivery-id` · GET ไม่มี body · ไม่ได้ตั้ง `Content-Type` → `application/json` · `redirect: 'manual'` (3xx = failed
-`redirect_not_followed`) · timeout 10 วิ, retry / 4xx เหมือนเดิม · ถ้าไม่สำเร็จ ไปขึ้นใน `webhook_failures` เหมือนเดิม
+`redirect_not_followed`) · timeout 10 วิ, 4xx เหมือนเดิม · retry สูงสุด 20 ครั้ง (`deliveryBackoff` เดิม ~15 นาที — ไม่ใช่
+200 ครั้งแบบ delivery ถึง josh) · ถ้าไม่สำเร็จ ไปขึ้นใน `webhook_failures` เหมือนเดิม
 
 ### 4.5 SSRF guard
 
@@ -197,8 +200,10 @@ enrollments (หน้าละ 50), action logs ของ enrollment, secrets, 
 
 ## 5. ฝั่ง josh (เพิ่มอย่างเดียว)
 
-ใน `internal/erp-events` (ตัวรับเดียวกับ `winback.notify`) เพิ่ม 2 type — josh ที่ไม่ได้ deploy ตัวนี้จะไม่รู้จัก type
-และ event ค้างใน outbox ของ commerce จนกว่าจะ deploy (ไม่หาย)
+ใน `internal/erp-events` (ตัวรับเดียวกับ `winback.notify`) เพิ่ม 2 type — josh ตอบ 422 กับ type ที่ไม่รู้จัก และ commerce
+ถือ 4xx เป็น dead-letter (ไม่ retry) จึง**ต้อง deploy josh ก่อน** แล้วค่อยเพิ่ม 2 type นี้เข้า subscription ของ josh
+(`ops/scripts/josh-subscription.cjs`, `SCRIPT_ARGS='add=marketing.notify,marketing.grant_coupon'`) — subscription คือสวิตช์
+เปิดการส่ง ไม่ต้องมี env flag ใหม่ฝั่ง josh (แบบเดียวกับ `winback.notify`)
 
 - `marketing.notify` → ทำแบบเดียวกับ notify ใน runner ของ josh: `notifyTemplates.findByKey` →
   `buildTemplateVarsForUser` → `buildNotifyTemplateOverride` → `notificationService.dispatch({ userId, type: templateKey,
@@ -278,12 +283,13 @@ logic กราฟ (insert, ต่อ / ตัดเส้น, ลบ step แ�
 
 ## 7. Rollout
 
-1. **josh backend**: 2 event type ใน `internal/erp-events` (5) — deploy ก่อนได้ เพราะไม่มีใครส่งมา
+1. **josh backend**: 2 event type ใน `internal/erp-events` (5) — deploy ก่อน เพราะยังไม่มีใครส่งมา
 2. **commerce-platform**: โมดูล `marketing-workflow` + migration + webhook delivery + SSRF + secrets · ตั้ง
    `MARKETING_WEBHOOK_SECRETS_KEY` ใน prod · ยังไม่มี workflow ไหน active = ไม่มีผลกับระบบ
-3. **commerce-admin**: editor ใหม่ + list 2 กลุ่ม · ทำบน branch ที่แตกจาก `release/admin-task-navigation-20261009`
-   (ตัวที่รันบน prod) ไม่ใช่ master
-4. ทดสอบจริงบน prod ด้วย "รันทดสอบ" กับ tester เท่านั้น ก่อน activate workflow แรก
+3. **เปิดการส่งไป josh**: เพิ่ม `marketing.notify`, `marketing.grant_coupon` เข้า subscription ของ josh (หลังข้อ 1 เท่านั้น)
+4. **commerce-admin**: editor ใหม่ + list 2 กลุ่ม · master มี commit ของ `release/admin-task-navigation-20261009` ครบแล้ว
+   (ตรวจ 2026-10-10) จึงทำต่อจาก master ได้ — ตรวจซ้ำก่อน deploy ว่า branch ที่ prod รันไม่มี commit ที่ master ไม่มี
+5. ทดสอบจริงบน prod ด้วย "รันทดสอบ" กับ tester เท่านั้น ก่อน activate workflow แรก
 
 **ความเสี่ยงที่ยอมรับในเฟส 1:** frequency cap แยกกันสองระบบ — ลูกค้าอาจได้ข้อความจาก workflow ของ josh + commerce รวมกันเกิน cap
 (josh ใช้ cap ของตัวเองกับ `marketing.notify` ด้วย จึงกันได้บางส่วน) · แก้จริงในเฟส 3
@@ -293,7 +299,7 @@ logic กราฟ (insert, ต่อ / ตัดเส้น, ลบ step แ�
 | สถานการณ์ | ผล |
 |---|---|
 | josh ล่ม | event `marketing.*` รอใน outbox แล้วส่งเมื่อ josh กลับมา · workflow เดินต่อตามปกติ |
-| josh ยังไม่ deploy ตัวรับ | event ค้างใน outbox (josh ตอบ error) ไม่หาย |
+| josh ยังไม่ deploy ตัวรับ | ไม่เกิด เพราะ type ยังไม่อยู่ใน subscription ของ josh (rollout ข้อ 3) — ถ้าเพิ่มผิดลำดับ josh ตอบ 422 → dead-letter, ส่งซ้ำด้วยมือจาก dead-letter ได้ |
 | Redis ล่ม | delayed job หาย → sweep ทุก 1 นาทีเป็นทางสำรอง · enqueue ไม่ await |
 | resume ซ้ำ (job + sweep) | `FOR UPDATE SKIP LOCKED` + เช็ก `current_step_id` |
 | URL ชี้ IP ภายใน / resolve ไม่ได้ | `failed: blocked_url` ไม่ยิง ไปต่อ |

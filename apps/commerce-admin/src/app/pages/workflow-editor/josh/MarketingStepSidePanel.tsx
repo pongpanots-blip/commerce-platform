@@ -288,7 +288,7 @@ function GateFields({ onDeleteStep }: { onDeleteStep: () => void }) {
  * still gets its own option so it stays visible and selected instead of
  * silently reading as "nothing chosen".
  */
-function CouponPicker({
+export function CouponPicker({
   coupons,
   value,
   onChange,
@@ -425,7 +425,7 @@ function NotifyFields({
  * selects and previews. Refreshes the list on window focus so a template
  * created in another tab appears without reloading the editor.
  */
-function NotifyTemplatePicker({
+export function NotifyTemplatePicker({
   templateKey,
   onSelect,
 }: {

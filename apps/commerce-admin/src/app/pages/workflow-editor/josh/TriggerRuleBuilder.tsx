@@ -360,7 +360,7 @@ const ORDER_MILESTONE_METRIC_OPTIONS: Array<{
  * Visual builder for order milestones — ประกอบเงื่อนไขจาก dropdown:
  * [ตัวชี้วัด] [ถึง/เกิน] [ตัวเลข] เช่น "ยอดออเดอร์ครั้งเดียว ≥ 5,000 บาท".
  */
-function OrderMilestoneFields({
+export function OrderMilestoneFields({
   config,
   onUpdateTrigger,
 }: {
@@ -453,7 +453,7 @@ const SCHEDULED_DOW_OPTIONS: Array<{ value: number; label: string }> = [
 ];
 
 /** Visual builder for the clock trigger — เวลา + วันในสัปดาห์ (ว่าง = ทุกวัน). */
-function ScheduledTriggerFields({
+export function ScheduledTriggerFields({
   config,
   onUpdateTrigger,
 }: {

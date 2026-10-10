@@ -142,7 +142,7 @@ const SCHEDULE_DOW_OPTIONS: Array<{ value: number; label: string }> = [
   { value: 6, get label(){return __uiText("ส");} },
 ];
 
-function defaultSchedule(): MarketingWorkflowSchedule {
+export function defaultSchedule(): MarketingWorkflowSchedule {
   return {
     timezone: 'Asia/Bangkok',
     daysOfWeek: [],
@@ -162,7 +162,7 @@ function fromDateInputValue(value: string): string | null {
 }
 
 /** Dense schedule form — collapsed to a one-line summary + "ตลอดเวลา" toggle when `null`. */
-function ScheduleEditor({
+export function ScheduleEditor({
   schedule,
   onChange,
 }: {

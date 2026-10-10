@@ -284,7 +284,7 @@ test('policy matches all migration names in the frozen application source', () =
   const names = fs.readdirSync(dir).filter(n => n.endsWith('.ts')).map(n =>
     fs.readFileSync(path.join(dir,n),'utf8').match(/export class (\w+) implements MigrationInterface/)[1]);
   assert.deepEqual([...names].sort(), [...policy.migrations].sort());
-  assert.deepEqual(policy.approved, ['CommerceMarketingWorkflows1796300000000']);
+  assert.deepEqual(policy.approved, ['MarketingEventLayer1796400000000']);
 });
 test('workflow gate precedes host/config mutations and build pins the application commit', () => {
   const workflow = fs.readFileSync(path.join(root,'.github/workflows/deploy-ecr.yml'),'utf8');

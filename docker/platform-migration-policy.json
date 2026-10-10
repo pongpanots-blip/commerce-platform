@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "5d258a70f2863bce816f8e06b137d5b0742fbda3",
-  "imageTag": "5d258a7",
+  "sourceCommit": "670393dd4dcaaa9aea6b8c453ffc947bf0c10e34",
+  "imageTag": "670393d",
   "migrations": [
     "InitialSchema1784105337942",
     "AddIntegrationSlug1784108912731",
@@ -54,24 +54,29 @@
     "ProductErpChecks1796100000000",
     "CommercePromotionDrafts1796200000000",
     "ProductErpExtras1796200000000",
-    "CommerceMarketingWorkflows1796300000000"
+    "CommerceMarketingWorkflows1796300000000",
+    "MarketingEventLayer1796400000000"
   ],
   "approved": [
-    "CommerceMarketingWorkflows1796300000000"
+    "MarketingEventLayer1796400000000"
   ],
   "approvedCode": {
-    "CommerceMarketingWorkflows1796300000000": {
-      "file": "1796300000000-CommerceMarketingWorkflows.js",
-      "sha256": "f9626959204435562a8baa14a81fb054598e865081ca20bb38bcd974045ccee2"
+    "MarketingEventLayer1796400000000": {
+      "file": "1796400000000-MarketingEventLayer.js",
+      "sha256": "db949af210932bc11c800b6f8f1a05cfc8ea754289235218893f9bae6ba728f8"
     }
   },
   "relations": {
-    "CommerceMarketingWorkflows1796300000000": [
-      "marketing_workflows",
-      "marketing_workflow_revisions",
-      "marketing_workflow_enrollments",
-      "marketing_workflow_action_logs",
-      "marketing_webhook_secrets"
+    "MarketingEventLayer1796400000000": [
+      "marketing_event_definitions",
+      "marketing_events_default",
+      "marketing_event_coverage",
+      "marketing_devices",
+      "marketing_device_links",
+      "marketing_event_daily",
+      "marketing_dynamic_segments",
+      "marketing_guest_push_log",
+      "josh_user_devices"
     ]
   },
   "deployedTags": {

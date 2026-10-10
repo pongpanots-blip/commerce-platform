@@ -122,6 +122,7 @@ const NAV: Record<SectionId, NavEntry[]> = {
 
     { to: '/settings/staff', label: 'บัญชีทีมงาน', description: 'เพิ่มทีมงาน กำหนดบทบาท และปิดบัญชี' },
     { to: '/settings/josh-staff', label: 'บัญชีทีมงานร้านค้า', description: 'บัญชีทีมงานที่ใช้หลังร้านของร้านค้า' },
+    { to: '/settings/activity-log', label: 'ประวัติการเปลี่ยนแปลง', description: 'ใครแก้อะไรในระบบ และแก้เมื่อไหร่' },
     { to: '/j/admin-access', label: 'คำขอใช้งานหลังร้าน', description: 'คำขอใช้งานหลังร้านของร้านค้าที่รออนุมัติ' },
     { to: '/account/password', label: 'เปลี่ยนรหัสผ่าน', description: 'เปลี่ยนรหัสผ่านของคุณ' },
   ],
@@ -129,6 +130,7 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/integrations', label: 'ระบบที่เชื่อมต่อ', description: 'ระบบภายนอกที่เชื่อมกับเราและสถานะการเชื่อมต่อ' },
     { to: '/erp/webhook-dead-letter', label: 'รายการส่งไม่สำเร็จ', description: 'ข้อมูลที่ส่งไม่สำเร็จ ตรวจสอบและส่งใหม่' },
     { to: '/sync-jobs', label: 'งานซิงก์ข้อมูล', description: 'งานซิงก์ข้อมูลกับระบบภายนอกและผลลัพธ์' },
+    { to: '/scheduled-tasks', label: 'งานอัตโนมัติตามเวลา', description: 'งานที่ระบบรันเองตามเวลา ผลการรันล่าสุด และสั่งรันทันที' },
     { to: '/webhooks', label: 'เหตุการณ์ขาเข้า', description: 'เหตุการณ์ที่ระบบภายนอกส่งเข้ามา' },
     { to: '/subscriptions', label: 'การส่งเหตุการณ์ขาออก', description: 'ปลายทางที่รับเหตุการณ์จากระบบของเรา' },
     { to: '/erp/inbound-log', label: 'บันทึกข้อมูลจากระบบหลัก (ERP)', description: 'บันทึกข้อมูลที่ระบบหลัก (ERP) ส่งเข้ามา' },

@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { cronConfig } from '../../../config/cron.config';
 import { joshApiConfigured, postToJosh } from '../connector/josh/josh-api';
+import { ScheduledCron } from '../../../shared-kernel/infrastructure/scheduled-task';
 
 /**
  * josh's ACTIVE_ORDER_STATUSES (shared/enums/order-status-sets.ts). Sent with every batch; josh refuses
@@ -92,7 +92,7 @@ export class CustomerMetricsService {
     return { sent: rows.length };
   }
 
-  @Cron(cronConfig.joshCustomerMetrics.expression, { timeZone: cronConfig.joshCustomerMetrics.timeZone, disabled: !cronConfig.joshCustomerMetrics.enabled })
+  @ScheduledCron('josh-customer-metrics', cronConfig.joshCustomerMetrics.expression, { timeZone: cronConfig.joshCustomerMetrics.timeZone, disabled: !cronConfig.joshCustomerMetrics.enabled })
   async scheduled() {
     if (this.running) return;
     this.running = true;

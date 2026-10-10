@@ -1,5 +1,4 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
@@ -8,6 +7,7 @@ import { JoshReplica } from '../josh-replica';
 import { PriceShadowCheck } from './price-shadow-check.entity';
 import { resolveSkuPrice, ResolvedSkuPrice } from './pricing.resolver';
 import { roundOrderUnitPrice } from './pricing.types';
+import { ScheduledCron } from '../../../../../shared-kernel/infrastructure/scheduled-task';
 
 const BATCH = 300;
 
@@ -53,7 +53,7 @@ export class PriceShadow {
 
   get available() { return this.replica.configured; }
 
-  @Cron(cronConfig.priceShadow.expression, { timeZone: cronConfig.priceShadow.timeZone, disabled: !cronConfig.priceShadow.enabled })
+  @ScheduledCron('price-shadow', cronConfig.priceShadow.expression, { timeZone: cronConfig.priceShadow.timeZone, disabled: !cronConfig.priceShadow.enabled })
   async tick() {
     if (!this.available || this.running) return; // ponytail: in-process guard; one commerce instance runs this cron
     this.running = true;

@@ -1,10 +1,10 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
 import { JoshReplica } from '../josh-replica';
 import { JagotaSyncHistory } from './jagota-sync-history.entity';
+import { ScheduledCron } from '../../../../../shared-kernel/infrastructure/scheduled-task';
 
 const BATCH = 1000;
 /** josh updates a sync row after it is created (ERP webhook doc no., retries) and has no updated_at — re-read this window every run. */
@@ -40,7 +40,7 @@ export class JagotaSyncHistoryImport {
 
   get available() { return this.replica.configured; }
 
-  @Cron(cronConfig.jagotaSyncImport.expression, { timeZone: cronConfig.jagotaSyncImport.timeZone, disabled: !cronConfig.jagotaSyncImport.enabled })
+  @ScheduledCron('jagota-sync-import', cronConfig.jagotaSyncImport.expression, { timeZone: cronConfig.jagotaSyncImport.timeZone, disabled: !cronConfig.jagotaSyncImport.enabled })
   async tick() {
     if (!this.available || this.running) return; // ponytail: in-process guard; one commerce instance runs this cron
     this.running = true;

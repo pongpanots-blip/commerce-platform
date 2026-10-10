@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "396e8d6ed018ee3d23c46139327c017ae6c23fd6",
-  "imageTag": "396e8d6",
+  "sourceCommit": "5d258a70f2863bce816f8e06b137d5b0742fbda3",
+  "imageTag": "5d258a7",
   "migrations": [
     "InitialSchema1784105337942",
     "AddIntegrationSlug1784108912731",
@@ -53,38 +53,36 @@
     "RenameAllSubcategories1796000000000",
     "ProductErpChecks1796100000000",
     "CommercePromotionDrafts1796200000000",
-    "ProductErpExtras1796200000000"
+    "ProductErpExtras1796200000000",
+    "CommerceMarketingWorkflows1796300000000"
   ],
   "approved": [
-    "CommercePromotionDrafts1796200000000",
-    "ProductErpExtras1796200000000"
+    "CommerceMarketingWorkflows1796300000000"
   ],
   "approvedCode": {
-    "CommercePromotionDrafts1796200000000": {
-      "file": "1796200000000-CommercePromotionDrafts.js",
-      "sha256": "fa69ae17a51fff5e84eba8fa2c145d8fabbb82d174bd27aa3d974c6094d5b37f"
-    },
-    "ProductErpExtras1796200000000": {
-      "file": "1796200000000-ProductErpExtras.js",
-      "sha256": "b86ccb03bbfb99679d3d41a0281954ab9808d118108e098afba9e2f03232ae37"
+    "CommerceMarketingWorkflows1796300000000": {
+      "file": "1796300000000-CommerceMarketingWorkflows.js",
+      "sha256": "f9626959204435562a8baa14a81fb054598e865081ca20bb38bcd974045ccee2"
     }
   },
   "relations": {
-    "CommercePromotionDrafts1796200000000": [
-      "commerce_promotion_drafts",
-      "commerce_promotion_draft_requests"
-    ],
-    "ProductErpExtras1796200000000": [
-      "product_erp_extras"
+    "CommerceMarketingWorkflows1796300000000": [
+      "marketing_workflows",
+      "marketing_workflow_revisions",
+      "marketing_workflow_enrollments",
+      "marketing_workflow_action_logs",
+      "marketing_webhook_secrets"
     ]
   },
   "deployedTags": {
     "platform": [
       "6790132",
-      "396e8d6"
+      "396e8d6",
+      "5d258a7"
     ],
     "admin": [
-      "396e8d6"
+      "396e8d6",
+      "5d258a7"
     ],
     "portal": [
       "020066e"

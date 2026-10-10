@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createHash, randomBytes } from 'node:crypto';
 import { IsNull, MoreThan, Repository } from 'typeorm';
@@ -14,6 +13,7 @@ import { User } from '../modules/core/user/infrastructure/user.entity';
 import { StaffRole } from '../shared-kernel/presentation/auth.decorators';
 import { McpGrantKind, McpOAuthClient, McpOAuthGrant } from './mcp-oauth.entity';
 import { loginPage } from './mcp-login.page';
+import { ScheduledCron } from '../shared-kernel/infrastructure/scheduled-task';
 
 /** read = look up + summarize. write = the few change tools, only when the staff member ticks it at sign-in. */
 export const MCP_SCOPE = 'commerce.read';
@@ -171,7 +171,7 @@ export class McpOAuthProvider implements OAuthServerProvider {
    * expiry; tokens stay 30 days past expiry so the AI connectors page still shows recent connections.
    * Plain idempotent DELETE, safe if several instances run it.
    */
-  @Cron('0 4 * * *', { timeZone: 'Asia/Bangkok' })
+  @ScheduledCron('mcp-oauth-purge', '0 4 * * *', { timeZone: 'Asia/Bangkok' })
   async purgeExpired() {
     const result = await this.grants.query(
       `DELETE FROM mcp_oauth_grants

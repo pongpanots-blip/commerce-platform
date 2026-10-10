@@ -1,6 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Cron } from '@nestjs/schedule';
 import { createHash } from 'node:crypto';
 import { IsNull, Not, Repository } from 'typeorm';
 import { cronConfig } from '../../../config/cron.config';
@@ -13,6 +12,7 @@ import { CompetitorPrice } from './competitor-price.entity';
 import { CaptureCompetitorPriceDto, SaveCompetitorPriceDto } from './competitor-price.dto';
 import { InventoryShape, roundMoney, toInventoryShape } from './catalog-shape';
 import { PackSize, itemPackSize, ourPack, packQuantity, packSizeText, unitLabel } from './competitor-size';
+import { ScheduledCron } from '../../../shared-kernel/infrastructure/scheduled-task';
 export { extractedWeightKg } from '../../platform/scraping/infrastructure/public-web.reader';
 
 /*
@@ -763,7 +763,7 @@ export class CompetitorPricesService {
   }
 
   /** Off until cutover (CRON_COMPETITOR_PRICES_REFRESH_ENABLED=true); josh runs its own copy until then. */
-  @Cron(cronConfig.competitorPricesRefresh.expression, {
+  @ScheduledCron('competitor-prices-refresh', cronConfig.competitorPricesRefresh.expression, {
     timeZone: cronConfig.competitorPricesRefresh.timeZone,
     disabled: !cronConfig.competitorPricesRefresh.enabled,
   })

@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
 import { JoshReplica } from '../josh-replica';
 import { buildErpCreateOrderRequest, diffErpRequests, ErpCreateOrderRequest, ErpOrderInput, InventoryRow } from './erp-order-request';
 import { JagotaShadowCheck } from './jagota-shadow-check.entity';
+import { ScheduledCron } from '../../../../../shared-kernel/infrastructure/scheduled-task';
 
 const BATCH = 200;
 type SyncRow = { id: string; order_id: string | null; shipment_id: string | null; sync_status: string | null; created_at: Date; erp: ErpCreateOrderRequest | null };
@@ -29,7 +29,7 @@ export class JagotaShadow {
 
   get available() { return this.replica.configured; }
 
-  @Cron(cronConfig.jagotaShadow.expression, { timeZone: cronConfig.jagotaShadow.timeZone, disabled: !cronConfig.jagotaShadow.enabled })
+  @ScheduledCron('jagota-shadow', cronConfig.jagotaShadow.expression, { timeZone: cronConfig.jagotaShadow.timeZone, disabled: !cronConfig.jagotaShadow.enabled })
   async tick() {
     if (!this.available || this.running) return; // ponytail: in-process guard; one commerce instance runs this cron
     this.running = true;

@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Repository } from 'typeorm';
 import { cronConfig } from '../../../../../config/cron.config';
@@ -7,6 +6,7 @@ import { JoshActionActor, JoshActions } from '../josh-actions';
 import { JoshReplica } from '../josh-replica';
 import { JoshCatalogProduct } from '../josh-catalog-product.entity';
 import { StaffPrice, StaffPriceKind } from './staff-price.entity';
+import { ScheduledCron } from '../../../../../shared-kernel/infrastructure/scheduled-task';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -62,7 +62,7 @@ export class StaffPrices {
 
   get available() { return this.replica.configured; }
 
-  @Cron(cronConfig.staffPricesImport.expression, { timeZone: cronConfig.staffPricesImport.timeZone, disabled: !cronConfig.staffPricesImport.enabled })
+  @ScheduledCron('staff-prices-import', cronConfig.staffPricesImport.expression, { timeZone: cronConfig.staffPricesImport.timeZone, disabled: !cronConfig.staffPricesImport.enabled })
   async tick() {
     if (!this.available || this.importing) return; // ponytail: in-process guard; one commerce instance runs this cron
     try { await this.importFromJosh(); } catch (e) { this.logger.warn(`staff price import failed: ${e instanceof Error ? e.message : e}`); }

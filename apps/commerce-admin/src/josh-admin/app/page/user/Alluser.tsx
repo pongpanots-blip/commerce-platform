@@ -5,7 +5,7 @@ import {
   getUserSegments,
   type UserSegmentListItem,
 } from '@josh/shared-api';
-import { Input, Select, Table, TableColumn } from '@josh/shared-ui-web';
+import { Input, Select, Table, TableColumn, TableViewBar, useTableViews } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AiOutlineDownload, AiOutlineEye } from 'react-icons/ai';
@@ -293,6 +293,14 @@ const Alluser = () => {
   const totalItems = Number(apiResponse.meta.total || 0);
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
+  const views = useTableViews('j-allusers', { search, segmentId, onboarding }, (v) => {
+    setSearch(v.search ?? '');
+    setSearchInput(v.search ?? '');
+    setSegmentId(v.segmentId ?? '');
+    setOnboarding(v.onboarding ?? '');
+    setCurrentPage(1);
+  });
+
   return (
     <div className="cp-management-page grid w-full gap-5">
       <AdminListHeader
@@ -414,10 +422,14 @@ const Alluser = () => {
           <div className="border-b border-gray-100 px-4 py-2 text-xs text-gray-400">
             {__uiText("กำลังโหลด...")}</div>
         )}
+        <div className="border-b border-gray-100 px-4 py-2">
+          <TableViewBar views={views} columns={columns} />
+        </div>
         <Table
           columns={columns}
           data={apiResponse.data}
           idKey="id"
+          hiddenKeys={views.hidden}
           totalItems={totalItems}
           currentPage={currentPage}
           totalPages={totalPages}

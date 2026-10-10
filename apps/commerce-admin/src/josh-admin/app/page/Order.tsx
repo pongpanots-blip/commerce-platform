@@ -2,7 +2,7 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { getOrderAnalytics, getOrders, type AdminOrderUiStatus, type OrderAnalytics } from '@josh/shared-api';
-import { Button, CardAdmin, DateRangeInput, Select, Table, TableColumn, Text } from '@josh/shared-ui-web';
+import { Button, CardAdmin, DateRangeInput, Select, Table, TableColumn, TableViewBar, Text, useTableViews } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AiOutlineEdit, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
@@ -91,6 +91,15 @@ const Order = () => {
   useEffect(() => {
     loadOrders();
   }, [loadOrders]);
+
+  const views = useTableViews('j-order', { statusFilter, startDate, endDate, sortKey, sortOrder }, (v) => {
+    setStatusFilter(v.statusFilter ?? 'all');
+    setStartDate(v.startDate ?? '');
+    setEndDate(v.endDate ?? '');
+    setSortKey(v.sortKey ?? 'date');
+    setSortOrder(v.sortOrder ?? 'DESC');
+    setCurrentPage(1);
+  });
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -312,7 +321,8 @@ const Order = () => {
             }}
           />
         </div>
-        <div>
+        <div className="flex flex-wrap items-center gap-2">
+          <TableViewBar views={views} columns={columns} />
           <Button text={__uiText("export CSV")} />
         </div>
       </div>
@@ -324,6 +334,7 @@ const Order = () => {
             columns={columns}
             data={orders}
             idKey="order_id"
+            hiddenKeys={views.hidden}
             sortKey={sortKey}
             sortOrder={sortOrder}
             onSort={handleSort}

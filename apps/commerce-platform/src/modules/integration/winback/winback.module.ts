@@ -1,3 +1,6 @@
+import { SalesWorkController, MarketingReadinessController } from '../commercial-work/commercial-planning.controller';
+import { CommercialSourcesService } from '../commercial-work/commercial-sources.service';
+import { CommercialDraftsService } from '../commercial-work/commercial-drafts.service';
 import { GoalPlanningController } from '../financial-goals/goal-planning.controller';
 import { GoalInputsService } from '../financial-goals/goal-inputs.service';
 import { GoalDraftsService } from '../financial-goals/goal-drafts.service';
@@ -74,9 +77,9 @@ for (const c of [WinbackController, WinbackAppController, WinbackRestaurantPlace
     ApiKeyModule,
     TypeOrmModule.forFeature([WinbackAccount, WinbackActivity, WinbackContact, WinbackSalesTarget, WinbackStageHistory, WinbackMeetingAck, WinbackAppRecord, ...JOSH_COPY_TABLES]),
   ],
-  controllers: [WinbackController, WinbackAppController, WinbackRestaurantPlaceController, WinbackIntakeController, WinbackLoginController, WinbackReportsController, GoalPlanningController],
+  controllers: [WinbackController, WinbackAppController, WinbackRestaurantPlaceController, WinbackIntakeController, WinbackLoginController, WinbackReportsController, GoalPlanningController, SalesWorkController, MarketingReadinessController],
   providers: [
-    GoalInputsService, GoalDraftsService,
+    GoalInputsService, GoalDraftsService, CommercialSourcesService, CommercialDraftsService,
     AdminWriteGuard,
     WinbackStaffIdentityService,
     WinbackAppRoleGuard,

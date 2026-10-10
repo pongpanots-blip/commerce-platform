@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-09T23:57:11.649162+00:00",
+  "updatedAt": "2026-10-10T00:44:38.624660+00:00",
   "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
   "designGuidance": {
     "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
@@ -112,7 +112,7 @@
     {
       "priority": 4,
       "task": "Sales reorder and follow-up workspace",
-      "status": "Read-only opportunities/leads list and returned-record action URLs implemented with original native own-and-unassigned or team readers, strict URL filters and recorded owner/status. Reorder/follow-up drafting and operational assignment remain queued; this reader does not send messages or claim completed contact.",
+      "status": "Bounded private company follow-up/reorder proposal pages implemented; original assigned-company/paid-order readers, incomplete history and missing UOM/current price/ATP remain explicit. Sale previews GET-only, admin/manager retain private drafts. Existing opportunity/lead readers and operational activities retained; no outbound contact or order.",
       "dependencies": [
         "Existing assigned-company identity mapping",
         "Prior orders and authorized inventory",
@@ -123,12 +123,18 @@
         "Reorders use current source availability/prices, with unresolved items visible.",
         "Follow-ups remain reviewable drafts; no live customer messages."
       ],
-      "implementedContracts": "docs/commerce-goals-sales-contracts.json"
+      "implementedContracts": "docs/commerce-commercial-work-contracts.json",
+      "remaining": [
+        "Sale persistence remains unavailable under global GET-only policy; any future scope decision must be explicit.",
+        "Operational assignment workflow audit remains separate.",
+        "Authoritative historical-to-selling UOM, current customer price and ATP required before any reviewed cart.",
+        "Individual CRM follow-up history/company-account mapping still unverified."
+      ]
     },
     {
       "priority": 5,
       "task": "Marketing readiness and BA variance drilldown",
-      "status": "Queued",
+      "status": "Bounded single-SKU Marketing readiness evidence and private brief implemented under original catalog roles. Known recorded blockers plus unverified freshness/ATP/stock age/cost/spend/attribution visible; no readiness-to-activate or ROAS claim. BA financial variance/source integration remains queued.",
       "dependencies": [
         "Stock/age/cost coverage definitions",
         "Attribution/spend currently unavailable",
@@ -138,6 +144,13 @@
         "Show campaign blockers and evidence, not invented ROAS or profit.",
         "BA variance drills into actual underlying records and authorized assignment routes.",
         "No campaign activation or ACL expansion."
+      ],
+      "implementedContracts": "docs/commerce-commercial-work-contracts.json",
+      "remaining": [
+        "Multi-product campaign readiness and time/budget rules",
+        "Confirmed inventory/stock-age/effective-cost/attribution/spend contracts",
+        "Existing live campaign orchestration remains outside this pass",
+        "BA authoritative net revenue ex VAT, effective COGS/expenses and record-level variance source contracts remain the next priority; preserve GET-only."
       ]
     },
     {

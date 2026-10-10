@@ -8,7 +8,7 @@ describe('canonical task indexes', () => {
     const original = navFor(role).filter(group => group.group).flatMap(group => group.links.filter(link => role !== 'admin' || link.to !== '/reports/winback/my').map(link => link.to));
     const indexes = taskSectionsFor(role);
     const destinations = indexes.flatMap(section => section.links.map(link => link.to));
-    expect(destinations.sort()).toEqual([...original, ...(['admin', 'sales_manager', 'business_analyst'].includes(role) ? ['/planning/profit-goals'] : []), ...(['admin', 'marketing', 'business_analyst'].includes(role) ? ['/planning/pack-prices'] : []), ...(role === 'admin' ? ['/planning/promotions', '/review/orders'] : [])].sort());
+    expect(destinations.sort()).toEqual([...original, ...(['admin','sale','sales_manager'].includes(role)?['/planning/sales-work']:[]), ...(['admin','marketing'].includes(role)?['/planning/marketing-readiness']:[]), ...(['admin', 'sales_manager', 'business_analyst'].includes(role) ? ['/planning/profit-goals'] : []), ...(['admin', 'marketing', 'business_analyst'].includes(role) ? ['/planning/pack-prices'] : []), ...(role === 'admin' ? ['/planning/promotions', '/review/orders'] : [])].sort());
     expect(new Set(destinations).size).toBe(destinations.length);
     const sidebar = taskSidebarFor(role).flatMap(group => group.links);
     expect(new Set(sidebar.map(link => link.to)).size).toBe(sidebar.length);
@@ -59,3 +59,5 @@ describe('canonical task indexes', () => {
     expect(resolvePostLoginPath(role, '/planning/pack-prices/new/observations')).toBe(allowed ? '/planning/pack-prices/new/observations' : '/home');
   });
 });
+
+it.each(roles)('%s has one canonical commercial task home and preserves action deep links',role=>{for(const [home,allowed] of [['/planning/sales-work',['admin','sale','sales_manager']],['/planning/marketing-readiness',['admin','marketing']]] as const){expect(taskFeatureNavFor(role).flatMap(g=>g.links).filter(l=>l.to===home)).toHaveLength(allowed.includes(role as never)?1:0);expect(isRouteAllowed(role,home+'/new/review')).toBe(allowed.includes(role as never));expect(isRouteAllowed(role,home+'/requests/00000000-0000-4000-8000-000000000099')).toBe(allowed.includes(role as never));}});

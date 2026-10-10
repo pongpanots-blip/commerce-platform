@@ -55,6 +55,20 @@ export class JoshCustomers {
 
   get available() { return this.replica.configured; }
 
+  async planningSubjects(search: string, repIds?: string[]) {
+    const {where,params}=companyWhere({search,repIds});
+    const rows=await this.replica.query<Record<string,unknown>>(`SELECT c.id,c.name FROM company c ${where} ORDER BY c.name,c.id LIMIT 21`,params);
+    return {items:rows.slice(0,20),hasMore:rows.length>20};
+  }
+
+  /** Narrow planning projection; same original assignment SQL, no contact/credit/KYC payload. */
+  async planningSubject(id: string, repIds?: string[]) {
+    if (!UUID.test(id)) throw new BadRequestException('id must be a uuid');
+    const [row] = await this.replica.query<Record<string, unknown>>(`SELECT c.id,c.name,c.assigned_sales_user_id FROM company c WHERE c.id=$1 ${repIds !== undefined ? `AND ${repScopeSql('c', '$2')}` : ''}`, repIds !== undefined ? [id,repIds] : [id]);
+    if (!row) throw new NotFoundException('Company is unavailable in the current authorized scope');
+    return row;
+  }
+
   async summary(f: CompanyFilters = {}) {
     const { where, params } = companyWhere(f);
     const issues = Object.entries(COMPANY_ISSUES).map(([k, cond]) => `count(*) FILTER (WHERE ${cond})::int AS ${k}`).join(', ');

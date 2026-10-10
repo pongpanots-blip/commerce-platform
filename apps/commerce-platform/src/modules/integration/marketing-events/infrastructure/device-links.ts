@@ -23,16 +23,16 @@ const RECENT_MS = 60 * 60_000; // = TRIGGER_RECENT_MINUTES
  * covers ([its time, next link) — from -∞ when it is the first link). Fact columns are never written. Returns the
  * re-attributed events of the last hour (to re-check triggers) and whether the user is usable.
  */
-export async function linkDevice(m: EntityManager, l: { deviceId: string; userId: string; platform: string; linkedAt: Date }): Promise<{ recentEventIds: string[]; usable: boolean }> {
+export async function linkDevice(m: EntityManager, l: { deviceId: string; userId: string; platform: string; linkedAt: Date }): Promise<{ recentEventIds: string[]; usable: boolean; linked: boolean; isStaff: boolean }> {
   const [prev] = await m.query(`SELECT user_id FROM marketing_device_links WHERE device_id = $1 AND linked_at <= $2 ORDER BY linked_at DESC LIMIT 1`, [l.deviceId, l.linkedAt]);
-  if (prev?.user_id === l.userId) return { recentEventIds: [], usable: false };
+  if (prev?.user_id === l.userId) return { recentEventIds: [], usable: false, linked: false, isStaff: false };
   const [staff] = await m.query(`SELECT EXISTS (SELECT 1 FROM josh_staff WHERE id = $1 AND user_type IS DISTINCT FROM 'customer') AS hit`, [l.userId]);
   const isStaff = !!staff?.hit;
   await m.query(`INSERT INTO marketing_device_links (device_id, user_id, platform, linked_at, is_staff) VALUES ($1, $2, $3, $4, $5)
     ON CONFLICT (device_id, linked_at) DO NOTHING`, [l.deviceId, l.userId, l.platform, l.linkedAt, isStaff]);
   const links = await linksOf(m, l.deviceId);
   const i = links.findIndex((x) => x.linkedAt.getTime() === l.linkedAt.getTime() && x.userId === l.userId);
-  if (i < 0) return { recentEventIds: [], usable: false };
+  if (i < 0) return { recentEventIds: [], usable: false, linked: false, isStaff };
   const usable = !isStaff && (await usableUsers(m, [l.userId])).has(l.userId);
   const [userId, attribution] = isStaff ? [null, 'staff'] : usable ? [l.userId, 'device_link'] : [null, 'no_consent'];
   // TypeORM (postgres) resolves UPDATE … RETURNING to [rows, affectedCount].
@@ -40,7 +40,7 @@ export async function linkDevice(m: EntityManager, l: { deviceId: string; userId
     WHERE device_id = $1 AND ($4::timestamptz IS NULL OR occurred_at >= $4) AND ($5::timestamptz IS NULL OR occurred_at < $5)
     RETURNING event_id, occurred_at`, [l.deviceId, userId, attribution, i === 0 ? null : links[i].linkedAt, links[i + 1]?.linkedAt ?? null])) as [{ event_id: string; occurred_at: Date }[], number];
   const since = Date.now() - RECENT_MS;
-  return { usable, recentEventIds: userId ? rows.filter((r) => new Date(r.occurred_at).getTime() >= since).map((r) => r.event_id) : [] };
+  return { usable, linked: true, isStaff, recentEventIds: userId ? rows.filter((r) => new Date(r.occurred_at).getTime() >= since).map((r) => r.event_id) : [] };
 }
 
 /** Consent withdrawn (spec §5.1): the customer's attributed events go; later events from their devices stay unattributed. */

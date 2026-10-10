@@ -10,6 +10,8 @@ export const MAX_STRING = 500;
 export const MAX_FUTURE_MS = 5 * 60_000;
 export const MAX_AGE_MS = 7 * 86_400_000;
 const TYPES = ['string', 'number', 'boolean', 'date'];
+/** A date Postgres timestamptz can hold (years 0001–9999); `Date` also parses e.g. "+010000-01-01". */
+export const isStorableDate = (v: string) => { const ms = Date.parse(v); return !Number.isNaN(ms) && /^\d{4}-/.test(new Date(ms).toISOString()); };
 const PII = new Set(['email', 'phone', 'tel', 'mobile', 'name', 'first_name', 'last_name', 'address', 'id_card', 'citizen_id', 'password', 'token']);
 
 export const isPiiKey = (key: string) => PII.has(key.toLowerCase().replace(/-/g, '_'));
@@ -59,7 +61,7 @@ export function normalizeEvent(def: EventDefinition | undefined, raw: { occurred
     if (a.type === 'string' && typeof v === 'string' && v.length <= MAX_STRING) attributes[a.key] = v;
     else if (a.type === 'number' && typeof v === 'number' && Number.isFinite(v)) attributes[a.key] = v;
     else if (a.type === 'boolean' && typeof v === 'boolean') attributes[a.key] = v;
-    else if (a.type === 'date' && typeof v === 'string' && !Number.isNaN(Date.parse(v))) attributes[a.key] = new Date(v).toISOString();
+    else if (a.type === 'date' && typeof v === 'string' && isStorableDate(v)) attributes[a.key] = new Date(v).toISOString();
     else return { ok: false, reason: 'bad_attribute_type' };
   }
   return { ok: true, occurredAt: at, attributes };

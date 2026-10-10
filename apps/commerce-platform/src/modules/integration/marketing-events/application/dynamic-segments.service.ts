@@ -24,17 +24,27 @@ export class DynamicSegmentsService {
     return this.toDto(await this.rows.save({ ...input, createdBy: actor }) as MarketingDynamicSegmentRow);
   }
 
+  /** A segment an active workflow uses is evaluated live: an edit must stay valid (coverage, catalog) — like an active workflow. */
   async update(id: string, input: DynamicSegmentInput): Promise<DynamicSegment> {
     const row = await this.row(id);
+    const users = await this.activeUsers(id);
+    if (users.length) {
+      const issues = ruleIssues(input.rule, { ...(await this.rules.context()), segmentIds: null });
+      if (issues.length) throw new ConflictException({ message: 'workflow ที่เปิดใช้อยู่ใช้ segment นี้ — แก้ให้ไม่มีปัญหาก่อนบันทึก', issues, users });
+    }
     return this.toDto(await this.rows.save({ ...row, ...input }) as MarketingDynamicSegmentRow);
   }
 
   async remove(id: string): Promise<void> {
     await this.row(id);
-    const users = (await this.db.query(`SELECT id, name, steps FROM marketing_workflows WHERE status = 'active'`))
-      .filter((w: { steps: unknown }) => JSON.stringify(w.steps).includes(id)).map((w: { name: string }) => w.name);
+    const users = await this.activeUsers(id);
     if (users.length) throw new ConflictException({ message: 'workflow ที่เปิดใช้อยู่ยังใช้ segment นี้', users });
     await this.rows.delete({ id });
+  }
+
+  private async activeUsers(id: string): Promise<string[]> {
+    return (await this.db.query(`SELECT id, name, steps FROM marketing_workflows WHERE status = 'active'`))
+      .filter((w: { steps: unknown }) => JSON.stringify(w.steps).includes(id)).map((w: { name: string }) => w.name);
   }
 
   async preview(rule: EventRule): Promise<{ count: number | null; issues: string[] }> {

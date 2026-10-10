@@ -8,7 +8,7 @@ import { Row, toHead, toLine } from '../orders/josh-order-copy';
 import { JoshCatalogProduct } from '../josh-catalog-product.entity';
 import { JoshCustomerCopy } from './josh-customer-copy.entity';
 import { OrderStockService } from '../../../../commerce/inventory/application/order-stock.service';
-import { adoptGuestEnrollments, stopEnrollmentsForCustomer, stopMarketingForCustomer } from '../../../marketing-workflow/infrastructure/workflow.store';
+import { adoptGuestEnrollments, endGuestEnrollments, stopEnrollmentsForCustomer, stopMarketingForCustomer } from '../../../marketing-workflow/infrastructure/workflow.store';
 import { deleteMarketingEventsForCustomer, linkDevice, withdrawConsent } from '../../../marketing-events/infrastructure/device-links';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,6 +116,7 @@ export class JoshEventsService {
       const linked = await linkDevice(m, { deviceId: d.individual_id, userId: d.user_id, platform: String(d.platform ?? 'web'),
         linkedAt: new Date(d.last_seen_at ?? e.occurredAt) });
       if (linked.usable) await adoptGuestEnrollments(m, d.individual_id, d.user_id);
+      else if (linked.linked) await endGuestEnrollments(m, d.individual_id, linked.isStaff ? 'staff_device' : 'consent_missing');
       return linked.recentEventIds;
     });
     if (recent.length) this.emitter?.emit('marketing-trigger.events', { eventIds: recent });

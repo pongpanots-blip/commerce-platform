@@ -24,4 +24,12 @@ describe('DynamicSegmentsService', () => {
     await expect(svc.remove(S)).rejects.toBeInstanceOf(ConflictException);
     expect(rows.delete).not.toHaveBeenCalled();
   });
+
+  it('an edit that leaves issues is refused while an active workflow uses the segment (rules are evaluated live)', async () => {
+    const { svc, rows } = setup([[{ type: 'audience', dynamicSegmentIds: [S] }]]);
+    await expect(svc.update(S, { name: 'Cart', description: null, rule: rule as never })).rejects.toBeInstanceOf(ConflictException);
+    expect(rows.save).not.toHaveBeenCalled();
+    const unused = setup([]);
+    await expect(unused.svc.update(S, { name: 'Cart', description: null, rule: rule as never })).resolves.toMatchObject({ issues: ['ไม่มี event "add_to_cart" ใน catalog'] });
+  });
 });

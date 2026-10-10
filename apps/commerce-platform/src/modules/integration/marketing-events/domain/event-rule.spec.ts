@@ -57,4 +57,10 @@ describe('event rules', () => {
     expect([...refs.keys()].sort()).toEqual(['add_to_cart', 'login']);
     expect([...refs.get('add_to_cart')!].sort()).toEqual(['item_id', 'price']);
   });
+
+  it('expands segment references one level only — a self-referencing segment cannot recurse', () => {
+    const self: EventRule = { op: 'OR', children: [{ kind: 'segment', segmentId: 's1' }, leaf()] };
+    const sql = compileRule({ kind: 'segment', segmentId: 's1' }, { catalog, segments: new Map([['s1', self]]) }, '$1::uuid', ['user']);
+    expect(sql.startsWith('(FALSE OR ')).toBe(true);
+  });
 });

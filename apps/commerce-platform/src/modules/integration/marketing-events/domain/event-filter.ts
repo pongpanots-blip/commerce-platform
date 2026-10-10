@@ -1,4 +1,5 @@
 import type { EventAttributeType, EventFilter, FilterOp, FilterValue } from '@cp/marketing-workflow';
+import { isStorableDate } from './event-catalog';
 
 export type Types = Record<string, EventAttributeType>;
 export const MAX_FILTERS = 10;
@@ -40,7 +41,7 @@ function valueFits(type: EventAttributeType, op: FilterOp, v: FilterValue): bool
   if (type === 'string') return typeof v === 'string' && v.length <= 500;
   if (type === 'number') return typeof v === 'number' && Number.isFinite(v);
   if (type === 'boolean') return typeof v === 'boolean';
-  return typeof v === 'string' && !Number.isNaN(Date.parse(v));
+  return typeof v === 'string' && isStorableDate(v);
 }
 
 /** All filters pass (AND). A missing attribute — or a fromTrigger value the trigger event lacks — fails the filter. */

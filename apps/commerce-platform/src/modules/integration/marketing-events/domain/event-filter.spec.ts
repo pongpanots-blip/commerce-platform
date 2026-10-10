@@ -30,6 +30,7 @@ describe('event filters', () => {
     expect(filterIssues([{ key: 'nope', op: 'eq', value: 'x' }], types, null)).toEqual(['ไม่มี attribute "nope"']);
     expect(filterIssues([{ key: 'price', op: 'contains', value: 1 }], types, null)).toEqual(['"price" ใช้ contains ไม่ได้']);
     expect(filterIssues([{ key: 'price', op: 'gt', value: '1' }], types, null)).toEqual(['"price": ค่าไม่ถูกต้อง']);
+    expect(filterIssues([{ key: 'deliver_on', op: 'before', value: '+010000-01-01' }], types, null)).toEqual(['"deliver_on": ค่าไม่ถูกต้อง']);
     expect(filterIssues([{ key: 'order_id', op: 'eq', value: { fromTrigger: 'order_id' } }], types, null))
       .toEqual(['"order_id": ค่าจาก event ที่ trigger ใช้ได้เฉพาะ workflow ที่เริ่มด้วย event']);
     expect(filterIssues([{ key: 'order_id', op: 'eq', value: { fromTrigger: 'price' } }], types, { price: 'number' }))

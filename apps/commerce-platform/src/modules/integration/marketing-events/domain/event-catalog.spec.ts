@@ -33,6 +33,7 @@ describe('event catalog', () => {
 
   it.each([
     [{ price: '199' }, 'bad_attribute_type'],
+    [{ deliver_on: '+010000-01-01T00:00:00Z' }, 'bad_attribute_type'], // Postgres timestamptz cannot hold it
     [{ price: { $gt: 1 } }, 'bad_attribute_type'],
     [{ item_id: "x'); DROP TABLE marketing_events;--".padEnd(501, 'x') }, 'bad_attribute_type'],
     [Object.fromEntries(Array.from({ length: 21 }, (_, i) => [`k${i}`, 1])), 'too_large'],

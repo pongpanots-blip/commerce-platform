@@ -54,6 +54,6 @@ Spec: `docs/superpowers/specs/2026-10-10-marketing-event-layer-design.md` · Pla
 ## Rollout (order matters)
 1. Deploy commerce-platform + migration `1796400000000` with `MARKETING_EVENTS_INGEST_ENABLED=false`.
 2. Deploy josh (migration `1792480000000`, builder, notify device path). Then backfill: `POST /api/reports/order-copy/backfill {"group":"device"}`.
-3. Set `MARKETING_EVENTS_INGEST_ENABLED=true`, add the shop domain to `COMMERCE_CORS_ORIGINS`, and deploy shop-web with `NEXT_PUBLIC_COMMERCE_EVENTS_URL`.
+3. Set `MARKETING_EVENTS_INGEST_ENABLED=true`, `TRUST_PROXY_HOPS` (e.g. 1 behind nginx), add the shop domain to `COMMERCE_CORS_ORIGINS`, and deploy shop-web with `NEXT_PUBLIC_COMMERCE_EVENTS_URL`.
 4. Deploy commerce-admin. Test with a tester before activating any event workflow. Use `includeGuests` only after DPO sign-off.
 5. Give the mobile team `docs/event-contract.md` §7.

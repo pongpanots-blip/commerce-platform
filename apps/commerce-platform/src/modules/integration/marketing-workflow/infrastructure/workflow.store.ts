@@ -244,3 +244,9 @@ export async function adoptGuestEnrollments(m: EntityManager, deviceId: string, 
   await m.query(`UPDATE marketing_workflow_enrollments SET status = 'skipped', end_reason = 'merged', completed_at = now(), current_step_id = NULL,
     resume_at = NULL, waiting_for = NULL WHERE device_id = $1 AND user_id IS NULL AND status IN ('pending', 'running')`, [deviceId]);
 }
+
+/** The device turned out to be staff or a customer without consent (spec §5, §5.1): its guest journeys stop. */
+export async function endGuestEnrollments(m: EntityManager, deviceId: string, reason: 'staff_device' | 'consent_missing'): Promise<void> {
+  await m.query(`UPDATE marketing_workflow_enrollments SET status = 'skipped', end_reason = $2, completed_at = now(), current_step_id = NULL,
+    resume_at = NULL, waiting_for = NULL WHERE device_id = $1 AND user_id IS NULL AND status IN ('pending', 'running')`, [deviceId, reason]);
+}

@@ -111,7 +111,7 @@ const url = process.env.MARKETING_TEST_DATABASE_URL;
     await db.query(`UPDATE marketing_workflows SET exit_on_goal = '{"kind":"event","eventName":"purchase","filters":[]}', conversion_window_days = 7 WHERE id = $1`, [wf]);
     const g = await store.insertEnrollment({ workflowId: wf, userId: null, deviceId: D, occurrenceKey: 'goal', entryStepId: 's1', holdout: false, test: false, skipWaits: false });
     await db.query(`INSERT INTO marketing_events (schema_version, event_id, device_id, platform, source, environment, name, attributes, occurred_at)
-      VALUES (1, $1, $2, 'web', 'shop_browser', 'development', 'purchase', '{"order_id":"O1"}', now())`, [E, D]);
+      VALUES (1, $1, $2, 'web', 'shop_browser', 'development', 'purchase', '{"order_id":"O1"}', now() + interval '1 second')`, [E, D]);
     const [ev] = await store.eventsByIds([E]);
     expect(ev).toMatchObject({ eventId: E, deviceId: D, name: 'purchase', attributes: { order_id: 'O1' }, attributedUserId: null });
     expect((await store.eventGoalCandidates({ userId: null, deviceId: D }, 'purchase', new Date(ev.occurredAt))).map((c) => c.id)).toEqual([g]);

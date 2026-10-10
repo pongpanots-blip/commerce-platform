@@ -77,9 +77,10 @@ const NUM_CMP: Record<string, string> = { eq: '=', neq: '<>', gt: '>', gte: '>='
 export function compileRule(rule: EventRule, refs: { catalog: Map<string, EventDefinition>; segments: Map<string, EventRule> },
   userSql: '$1::uuid' | 'u.id', params: unknown[]): string {
   const p = (v: unknown, cast = '') => { params.push(v); return `$${params.length}${cast}`; };
-  const node = (n: EventRule): string => {
-    if (isGroup(n)) return `(${n.children.map(node).join(n.op === 'AND' ? ' AND ' : ' OR ')})`;
-    if (n.kind === 'segment') { const r = refs.segments.get(n.segmentId); return r ? node(r) : 'FALSE'; }
+  // `inSegment`: segment references expand one level only (a segment inside a segment — or itself — is FALSE).
+  const node = (n: EventRule, inSegment = false): string => {
+    if (isGroup(n)) return `(${n.children.map((c) => node(c, inSegment)).join(n.op === 'AND' ? ' AND ' : ' OR ')})`;
+    if (n.kind === 'segment') { const r = inSegment ? undefined : refs.segments.get(n.segmentId); return r ? node(r, true) : 'FALSE'; }
     const def = refs.catalog.get(n.name);
     if (!def) return 'FALSE';
     const types = typesOf(def);

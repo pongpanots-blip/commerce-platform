@@ -1,0 +1,112 @@
+{
+  "updatedAt": "2026-10-09T15:17:32.452134+00:00",
+  "sourceOfTruth": {
+    "branch": "feature/commerce-preview-assistants-20261009",
+    "head": "314d7c3e92d9c177e91a72b85c3351ad6a8f652d",
+    "uncommitted": true
+  },
+  "missingAPIvsData": {
+    "contracts": [
+      "Today queue normalization",
+      "Pack-and-price planning and durable evidence selection",
+      "Competitor observation history/basis extensions",
+      "Objectives definitions and persistence",
+      "Sales reviewed reorder/follow-up drafts"
+    ],
+    "upstreamData": [
+      "Authoritative effective COGS/cost history",
+      "Stock-to-selling-unit mapping",
+      "Source freshness guarantees",
+      "Promotion caps/current reservations and full priority context",
+      "Marketing attribution model and advertising spend",
+      "Graphic authorized coverage aggregates",
+      "CS total workload aggregates with existing scope"
+    ],
+    "policy": [
+      "MER competitor permission unapproved; no expansion",
+      "Pack planning/profit/objective owner rules unresolved"
+    ]
+  },
+  "fileOwnership": {
+    "codexInProgress": [
+      "apps/commerce-admin/**",
+      "apps/commerce-platform/src/modules/integration/promotion-planning/**",
+      "apps/commerce-platform/src/modules/integration/connector/josh/role-home*",
+      "apps/commerce-platform/src/modules/integration/connector/josh/shop-reports.controller.ts",
+      "apps/commerce-platform/src/modules/integration/connector/josh/josh.module.ts",
+      "apps/commerce-platform/src/migrations/1796200000000-CommercePromotionDrafts.ts",
+      "apps/commerce-platform/src/modules/integration/connector/josh/josh-push-campaigns*"
+    ],
+    "preserve": [
+      "apps/commerce-platform/src/modules/integration/commerce-previews/**",
+      "Existing price engine and backend auth",
+      "Protected welcome page and dependencies",
+      "Live JoshBackofficeActions functions"
+    ],
+    "futureIndependentClaudeSlice": {
+      "task": "Pack-and-price planning contract review from requirements only",
+      "status": "Unstarted; actual coding requires verified authentication and integration handoff",
+      "proposedFiles": [
+        "docs/pack-price-planning-contract.json"
+      ],
+      "restriction": "No private source transfer, shared-file edits, integration, role change or execution; physical repack is obsolete."
+    }
+  },
+  "implementedVerifiedDevelopment": [
+    {
+      "path": "GET /api/reports/home",
+      "authorization": "Admin and existing marketing/MER/sale/manager/BA report readers only; CS/graphic retain existing report restrictions and their homes explain unavailable summaries.",
+      "inputs": "Period/date only; no role/user override.",
+      "response": "Versioned metric definitions, null/unavailable/partial reasons, source IDs, sourceAsOf null, capturedAt read time, authoritative role scope.",
+      "sourceLimits": [
+        "Read timestamp is not source freshness.",
+        "Push overview is limited to the latest 200 campaigns; absent or invalid counters yield null, including when the legacy total is zero.",
+        "CS and Graphic retain existing report access restrictions."
+      ]
+    },
+    {
+      "path": "/api/reports/promotion-planning",
+      "authorization": "Existing admin-only preview default; actor from authenticated staff.",
+      "routes": [
+        "GET inputs/:sku",
+        "POST preview",
+        "GET drafts",
+        "POST drafts",
+        "GET drafts/:id",
+        "PATCH drafts/:id",
+        "GET requests/:id"
+      ],
+      "response": "Observed catalog/owned price/master/rule metadata; unknown cost/stock/freshness/capacity; isolated arithmetic; transactional draft receipts with idempotency and revision checks.",
+      "migration": "1796200000000-CommercePromotionDrafts.ts; not applied to production.",
+      "limits": [
+        "No full checkout priority/coupon/capacity assembly.",
+        "Admin-only draft/recovery UI integrated; see commerce-proposal-ui-contracts.json. Production draft migration remains unapplied.",
+        "No authoritative COGS, stock selling-unit mapping or upstream freshness."
+      ]
+    }
+  ],
+  "verification": {
+    "newApiTests": {
+      "passed": 64,
+      "files": 6,
+      "receipt": "/workspace/commerce-ui-audit-20261009/new-api-test-results.json",
+      "realScratchPostgreSQLCases": 5
+    },
+    "regressionTests": {
+      "passed": 223,
+      "files": 12,
+      "receipt": "/workspace/commerce-ui-audit-20261009/backend-regression-test-results.json"
+    },
+    "latestPushCoverageTests": {
+      "passed": 24,
+      "files": 3,
+      "receipt": "/workspace/commerce-ui-audit-20261009/push-coverage-corrected-results.json",
+      "overlapsNewApiTests": true
+    },
+    "backendTypecheckExitCode": 0,
+    "productionMigrations": 0,
+    "productionReadsOrWrites": 0
+  },
+  "proposalUiHandoff": "docs/commerce-proposal-ui-contracts.json",
+  "scopeCancellation": "OCR purchase orders into cart was cancelled explicitly by the user. No OCR-to-cart contract or implementation is queued. Current bounded financial work is documented in commerce-financial-analysis-contracts.json."
+}

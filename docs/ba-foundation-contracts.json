@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-09T15:47:14.406481+00:00",
+  "scope": "Unregistered typed backend foundation and synthetic guided-preview functions. No event producer/collector, application route, live projection, tracking destination or production migration is implemented.",
+  "sourceDirectory": "apps/commerce-platform/src/modules/integration/analytics-foundation",
+  "events": {
+    "schemaVersion": 1,
+    "implementedNames": [
+      "branch_selected",
+      "checkout_started",
+      "order_accepted"
+    ],
+    "omittedName": {
+      "name": "account_application_approved",
+      "reason": "No authoritative branch/customer approval transition was found. Credit, KYC, staff and developer approvals are separate scopes."
+    },
+    "requiredEnvelope": [
+      "eventId",
+      "occurredAt",
+      "receivedAt",
+      "source",
+      "environment",
+      "tenant/company/branch occurrence context",
+      "subject customer versus actor identity",
+      "consent status/policy version",
+      "acceptance evidence"
+    ],
+    "acceptance": "order_accepted requires canonical order ID and committed_confirmation from commerce_server, or explicitly synthetic confirmation; browser purchase/checkout and unverified Josh acceptance are excluded. Schema validation does not prove sender authenticity.",
+    "identity": "Occurrence context is immutable across login/logout/branch switching. Shared devices/accounts never alias people. Unknown branch/company IDs prevent zero-order claims. Unknown people can still participate in a known branch operational count.",
+    "deduplication": "Exact tenant/event replay keeps first receipt; accepted order count uses canonical tenant/order identity. A late duplicate of an already-observed canonical order does not invalidate complete history. Conflicting event/order identity or occurrence time is rejected for reconciliation.",
+    "sensitiveFields": "No arbitrary payload, personal contact/address/tax/search fields or credentials are accepted."
+  },
+  "segments": {
+    "schemaVersion": 1,
+    "ruleVersion": "Positive integer included in responses.",
+    "syntax": [
+      "AND",
+      "OR",
+      "NOT",
+      "eligible boolean equality",
+      "region equality/inequality",
+      "approval age comparison",
+      "bounded count of the three allowlisted event names"
+    ],
+    "unknownSemantics": "SQL three-valued logic: NOT unknown remains unknown; false AND unknown is false; true OR unknown is true. Only true membership is included. Unknown count is separate from excluded count.",
+    "historyGate": "Every event-count predicate needs complete-from/through identity-complete coverage asserted by evaluation time. Known late new occurrences, unresolved branch/company identities, absent or future/inconsistent profile/coverage proof produce unknown. Empty pages or latest-state snapshots never establish zero.",
+    "interval": "[evaluation minus window, evaluation); start is included, evaluation time excluded. UTC instants with explicit offsets normalize. Receipt must not precede occurrence. Known arrivals after evaluation remain unverified until received and coverage catches up.",
+    "lifetime": "First-order preview covers full branch history from branch creation, including pre-approval orders, bounded to at most 365 days. Missing or older branch birth cannot establish never ordered.",
+    "scope": "Separate FixtureScope authority from developer-owned synthetic grant registry supplies tenant and permitted branches. Business rules cannot override scope. This registry is not a production authentication/authorization adapter.",
+    "compiler": "Validator, parameterized fixed-relation SQL compiler and executor are separate. No arbitrary SQL, field paths, table names, operator extensions or current clock expressions are accepted.",
+    "limits": {
+      "depth": 6,
+      "nodes": 32,
+      "children": 8,
+      "windowDays": 365,
+      "branches": 100,
+      "countThreshold": 10000,
+      "sqlBytes": 65536,
+      "statementTimeoutMs": 1500,
+      "lockTimeoutMs": 500
+    },
+    "execution": "Only explicitly configured 127.0.0.1/commerce_analytics_foundation_test PostgreSQL. Driver route overrides/replication are rejected. REPEATABLE READ transaction, READ ONLY, statement and lock timeouts. Safe retryable errors never return empty success.",
+    "response": [
+      "schema/rule version",
+      "fixed evaluatedAt",
+      "matched/excluded/unknown counts",
+      "scoped branch membership and condition reasons",
+      "observed counts or null",
+      "source completeness watermarks and profile evidence age",
+      "synthetic mode, activationAllowed=false, liveIntegrationComplete=false"
+    ]
+  },
+  "guidedPreviews": [
+    {
+      "id": "approved_without_order",
+      "title": "Approved branches still waiting for their first order",
+      "plainInputs": [
+        {
+          "label": "Approved at least how many days ago?",
+          "default": 7,
+          "minimum": 7
+        },
+        {
+          "label": "How many days of complete branch history can be checked?",
+          "default": 365,
+          "maximum": 365
+        }
+      ],
+      "criteria": "Eligible, approval at least seven days old, no confirmed order over complete bounded branch lifetime. Approval is synthetic until real transition proof exists."
+    },
+    {
+      "id": "repeat_buyers_inactive",
+      "title": "Repeat buyers who have not ordered recently",
+      "plainInputs": [
+        {
+          "label": "At least how many confirmed orders?",
+          "default": 3,
+          "minimum": 3
+        },
+        {
+          "label": "Over how many days?",
+          "default": 90
+        },
+        {
+          "label": "No confirmed orders in the last how many days?",
+          "default": 14
+        }
+      ],
+      "criteria": "Eligible, at least three confirmed orders in ninety days, none in fourteen days; both intervals require complete history. Describes inactivity, not predicted churn."
+    }
+  ],
+  "previewUX": "Two/three inputs with defaults; invalid windows and scope overrides fail before query. Guided responses contain readable evidence and unknown/retry states, with AST/SQL/parameters hidden. These are functions/form contracts, not integrated application screens.",
+  "verificationReceipts": {
+    "tests": "/workspace/commerce-ui-audit-20261009/ba-foundation-test-results.json",
+    "measurements": "/workspace/commerce-ui-audit-20261009/ba-foundation-tests-measurement.json",
+    "guidedResults": "/workspace/commerce-ui-audit-20261009/ba-foundation-guided-previews.json",
+    "syntheticDataset": "/workspace/commerce-ui-audit-20261009/ba-foundation-synthetic-fixtures.json"
+  },
+  "integrationChecklist": [
+    "Obtain authoritative approved branch/account transition, branch birth and eligibility policy; do not repurpose credit/KYC/staff/developer approvals.",
+    "Define canonical order acceptance across internal, Josh/credit and assisted flows; preserve source IDs, occurrences and one canonical order identity. Do not count browser purchase or checkout attempts.",
+    "Implement an authenticated producer/collector and verified outbox ID/time mapping only after a separate authorized scope. Schema source labels are not authentication.",
+    "Map nullable organization/company/branch identities to server-derived tenant and branch grants using existing authorization; do not accept client tenant/branch/principal grant registries.",
+    "Verify actual storefront SPA/GTM installation, triggers, dedup and consent behavior. This repository audit does not verify production configuration.",
+    "Approve analytics purpose/basis, consent-version handling, sensitive-field minimization, retention/deletion propagation and logout identity reset; no consent or permission grant is included here.",
+    "Provide trustworthy interval completeness and identity watermarks including late data and history backfill. Raw ninety-day traffic or latest order snapshots cannot prove lifetime completeness.",
+    "Design projection/cache invalidation and re-evaluation for time expiry, late events, profile changes, deleted entities and scope changes; preserve fixed time plus source version evidence.",
+    "Integrate guided app pages with loading, retry, useful unknown/empty states and accessible mobile/keyboard interactions only after the authorized source adapters exist.",
+    "Keep audiences, campaign activation, messages, tracking destinations and production migrations/deployment separately authorized. This foundation enables none of them."
+  ],
+  "commerceBacklogPreserved": "docs/commerce-workflow-backlog.json and the completed Commerce batch files remain unchanged by this slice.",
+  "verification": {
+    "testsPassed": 77,
+    "failed": 0,
+    "skipped": 0,
+    "contractTests": 44,
+    "actualLocalPostgreSQLTests": 33,
+    "fixtureContainerStopped": true,
+    "productionIntegrationTested": false
+  }
+}

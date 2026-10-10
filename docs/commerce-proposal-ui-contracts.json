@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "scope": "Admin-only promotion rehearsal/draft UI and read-only order evidence UI in the existing application. Development branch only; no production data, deployment, activation, repair or permission changes.",
+  "canonicalEntries": [
+    { "section": "marketing", "path": "/planning/promotions", "task": "Rehearse and save promotion drafts" },
+    { "section": "orders", "path": "/review/orders", "task": "Review orders and send evidence" }
+  ],
+  "navigation": {
+    "adminSidebarMaximum": 9,
+    "legacyFeaturesAndDeepLinks": "Preserved; live promotion assignment, pricing, campaign and order actions have different scope from these proposal/review pages.",
+    "protectedWelcome": "Uses the unchanged legacy navigation; new entries are added only to the scoped task navigation and command search outside welcome.",
+    "permissions": "Admin-only frontend guard before reads; existing backend StaffAuthGuard remains authoritative. No new role grants. Draft owners come from authenticated staff rows. Browser owner keys only partition local recovery data."
+  },
+  "routes": [
+    { "url": "/planning/promotions?after=<uuid>", "action": "List this account's saved drafts", "api": "GET /api/reports/promotion-planning/drafts?after=<uuid>", "notes": "Twenty-item UUID cursor; displayed item count is not a global total or completed-work count." },
+    { "url": "/planning/promotions/new", "action": "Choose product, set offer, rehearse and save a proposal", "apis": ["GET /api/reports/promotion-planning/inputs/:sku", "POST /api/reports/promotion-planning/preview", "POST /api/reports/promotion-planning/drafts"], "previewBody": "Direct PromotionScenario DTO, without a scenario wrapper", "saveBody": "{requestId: UUID, scenario: PromotionScenario}" },
+    { "url": "/planning/promotions/drafts/:draftId", "action": "Read saved proposal and captured evidence", "api": "GET /api/reports/promotion-planning/drafts/:draftId", "notes": "A saved=requestId query triggers GET /requests/:requestId and identity validation before showing action success; the query alone is never proof." },
+    { "url": "/planning/promotions/drafts/:draftId/edit", "action": "Edit from a known revision", "apis": ["GET /api/reports/promotion-planning/drafts/:draftId", "GET /api/reports/promotion-planning/inputs/:sku", "POST /api/reports/promotion-planning/preview", "PATCH /api/reports/promotion-planning/drafts/:draftId"], "saveBody": "{requestId: UUID, revision: positive integer, scenario: PromotionScenario}" },
+    { "url": "/planning/promotions/requests/:requestId", "action": "Check or safely retry an interrupted save", "apis": ["GET /api/reports/promotion-planning/requests/:requestId", "POST /api/reports/promotion-planning/drafts or PATCH /drafts/:draftId using the original immutable packet"], "notes": "Only a verified 404 permits the same-key retry. Read failure blocks retry; known conflict requires latest-version review. Missing browser packet cannot invent a retry." },
+    { "url": "/review/orders", "action": "Look up an order with optional review window", "api": "None until a valid order UUID is submitted" },
+    { "url": "/review/orders/:orderId?pendingSyncAfterMs=<integer>", "action": "Read comparison, observed findings and coverage", "api": "GET /api/reports/commerce-previews/orders/:orderId/review?pendingSyncAfterMs=<integer>", "notes": "Optional caller-selected pending-send review setting; it is not evidence of a system SLA. Absent setting is not fabricated." },
+    { "url": "/review/orders/:orderId/findings/:encodedFindingId", "action": "Inspect stable finding evidence", "api": "GET /api/reports/commerce-previews/orders/:orderId/review", "notes": "URL policy survives finding links and history. Render whitelisted evidence fields and local existing order link; never navigate to an untrusted proposal link. Missing finding after refresh has a useful empty state." }
+  ],
+  "interactionInvariants": [
+    "Name, SKU, source-derived selling unit, quantity and offer are validated inline. Count quantities must be whole; measured quantities allow four decimal places. Tier ranges must increase without overlaps.",
+    "Fixed discount applies once to the entire line total. Buy/get quantities include buy and get items. Existing tier unit/badge labels and optional minimum margin survive edits.",
+    "A changed selling unit resets quantity and requires re-entry; unavailable selling unit prevents rehearsal. No unit conversion or UNKNOWN unit is invented.",
+    "Preview is read-only and never treated as saved. A changed form invalidates the previous preview. Cost, stock, capacity, upstream freshness, checkout priorities and stacking remain unknown/incomplete.",
+    "Save uses a synchronous click lock and a verified durable per-actor/per-request local journal before dispatch. Storage failure blocks sending. The original key/body/revision is retained for response-loss recovery.",
+    "Persisted success requires saved=true, persisted=true, operationalWrites=false, activationAllowed=false, matching scenario/identity and expected revision. Invalid HTTP-200 envelopes are not successful saves.",
+    "Back/forward and reload preserve tab-local input; this backup is explicitly not a server draft. A backup from another revision is retained until an explicit latest-version/copy decision.",
+    "Observed risks coexist with partial coverage. Unknown sources and empty scopes never establish full order safety. Finding counts reflect returned findings; suggested reviewers are not assignments or completed work.",
+    "Labels, inline aria-invalid guidance, loading skeletons, visible sanitized errors/retry, empty/unavailable states, keyboard navigation and mobile task navigation use shared controls and scoped styling."
+  ],
+  "browserVerification": {
+    "harness": "/workspace/commerce-ui-audit-20261009/verify-proposal-ui-browser.cjs",
+    "mode": "Built application, native planning controller/input/draft services and native order-review service, fresh owned localhost PostgreSQL tables. Shop snapshot and local identity are synthetic. Real production authentication is not exercised by this harness; separate repository HTTP tests cover guards.",
+    "data": "Synthetic only; migration applied solely to the owned fixture database. No .env or other-task credentials loaded.",
+    "screenshots": "Not taken, per user instruction. Geometry/semantic checks do not claim pixel-perfect Stitch matching.",
+    "receipts": ["/workspace/commerce-ui-audit-20261009/proposal-ui-browser-results.json", "/workspace/commerce-ui-audit-20261009/proposal-ui-verification.json"]
+  },
+  "remaining": [
+    "Authoritative effective cost/COGS, selling-unit stock mapping, capacity, upstream freshness and customer checkout priority/stacking assembly remain missing; this is an incomplete proposal tool, not a profit guarantee or activation flow.",
+    "Order source change times, complete shipment/business deadlines and additional authoritative milestones remain unavailable; review findings require humans and do not repair orders.",
+    "The draft migration is not applied to production. Production migration/deployment/integration are outside this authorization.",
+    "Today inbox, MER comparison/ACL resolution, pack-and-price planning, profit tools, sales/readiness and BA integration remain separate queue items. No additional queue work was started in this slice."
+  ],
+  "scopeCancellation": "OCR purchase orders into cart was cancelled explicitly by the user and is absent from the current future queue. See commerce-workflow-backlog.json; existing code is unchanged."
+}

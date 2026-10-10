@@ -1,0 +1,1380 @@
+{
+  "capturedAt": "2026-10-10T04:02:48.205596+00:00",
+  "headAtStart": "e5849b25e1ad9c2daaa89da086a6ec073612e325",
+  "method": "TypeScript JSX Route literal inventory; wildcard workspaces expand action paths internally; not a tested-page count",
+  "counts": {
+    "raw": 195,
+    "byRouter": {
+      "apps/commerce-admin/src/app/app.tsx": 95,
+      "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx": 92,
+      "apps/commerce-portal/src/app/app.tsx": 8
+    }
+  },
+  "routes": [
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/",
+      "normalized": "/",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 192
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/login",
+      "normalized": "/login",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 193
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/home",
+      "normalized": "/home",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 194
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/today",
+      "normalized": "/today",
+      "status": "accepted prior Today slice; source unchanged",
+      "line": 195
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/planning/sales-work/*",
+      "normalized": "/planning/sales-work/*",
+      "status": "accepted commercial planning workspace; source unchanged",
+      "line": 196
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/planning/marketing-readiness/*",
+      "normalized": "/planning/marketing-readiness/*",
+      "status": "accepted commercial planning workspace; source unchanged",
+      "line": 197
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/analysis/financial/*",
+      "normalized": "/analysis/financial/*",
+      "status": "bounded financial source coverage/recorded variance workspace; internal actions in commerce-financial-analysis-contracts.json",
+      "line": 198
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/planning/profit-goals/*",
+      "normalized": "/planning/profit-goals/*",
+      "status": "accepted private goal planning workspace; source unchanged",
+      "line": 199
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/planning/pack-prices/*",
+      "normalized": "/planning/pack-prices/*",
+      "status": "accepted Pack slice with additive validated comparison handoff; original flow regression-tested",
+      "line": 200
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/tasks/:sectionId",
+      "normalized": "/tasks/:sectionId",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 201
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/planning/promotions/*",
+      "normalized": "/planning/promotions/*",
+      "status": "accepted promotion rehearsal with additive validated comparison handoff; original flow regression-tested",
+      "line": 202
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/review/orders/*",
+      "normalized": "/review/orders/*",
+      "status": "accepted order-review slice; source unchanged",
+      "line": 203
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/workspaces/:workspaceId",
+      "normalized": "/workspaces/:workspaceId",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 205
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/settings/staff",
+      "normalized": "/settings/staff",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 206
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/settings/staff/new",
+      "normalized": "/settings/staff/new",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 207
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/settings/josh-staff",
+      "normalized": "/settings/josh-staff",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 208
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/account/password",
+      "normalized": "/account/password",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 209
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/orders",
+      "normalized": "/reports/orders",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 210
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/orders/:id",
+      "normalized": "/reports/orders/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 211
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/josh/:view",
+      "normalized": "/josh/:view",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 212
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/josh-api-logs",
+      "normalized": "/josh-api-logs",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 213
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/price-shadow",
+      "normalized": "/reports/price-shadow",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 214
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/prices/staff",
+      "normalized": "/prices/staff",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 215
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/customers",
+      "normalized": "/reports/customers",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 216
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/customers/:id",
+      "normalized": "/reports/customers/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 217
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/prices",
+      "normalized": "/reports/prices",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 218
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/products",
+      "normalized": "/reports/products",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 219
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/products/:id",
+      "normalized": "/reports/products/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 220
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/cs/sales-assignment/*",
+      "normalized": "/cs/sales-assignment",
+      "status": "bounded native assignment selection/review/request recovery implemented; internal action URLs documented in docs/commerce-sales-assignment-contracts.json",
+      "line": 221
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/winback/opportunities/*",
+      "normalized": "/reports/winback/opportunities/*",
+      "status": "accepted read-only Sales worklist/action workspace; source unchanged",
+      "line": 222
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/winback/my/*",
+      "normalized": "/reports/winback/my/*",
+      "status": "accepted read-only Sales worklist/action workspace; source unchanged",
+      "line": 223
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/sales",
+      "normalized": "/reports/sales",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 224
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/traffic",
+      "normalized": "/reports/traffic",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 225
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/health",
+      "normalized": "/reports/health",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 226
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/winback",
+      "normalized": "/reports/winback",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 227
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reports/order-targetgroup",
+      "normalized": "/reports/order-targetgroup",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 228
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/workflows",
+      "normalized": "/marketing/workflows",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 229
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/analyst",
+      "normalized": "/marketing/analyst",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 230
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/growth",
+      "normalized": "/marketing/growth",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 231
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/growth/plans",
+      "normalized": "/marketing/growth/plans",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 232
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/growth/plans/new",
+      "normalized": "/marketing/growth/plans/new",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 233
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/growth/plans/:id",
+      "normalized": "/marketing/growth/plans/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 234
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/growth/results/:workflowId",
+      "normalized": "/marketing/growth/results/:workflowId",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 235
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/growth/companies/:companyId",
+      "normalized": "/marketing/growth/companies/:companyId",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 236
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/workflows/new",
+      "normalized": "/marketing/workflows/new",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 237
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/workflows/:id/edit",
+      "normalized": "/marketing/workflows/:id/edit",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 238
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/workflows/:id/enrollments",
+      "normalized": "/marketing/workflows/:id/enrollments",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 239
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/workflows/:id/scheduled-runs",
+      "normalized": "/marketing/workflows/:id/scheduled-runs",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 240
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/j/*",
+      "normalized": "/j/*",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 241
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/j/marketing/competitor-prices/*",
+      "normalized": "/j/marketing/competitor-prices/*",
+      "status": "bounded typed competitor action workspace; internal URLs in commerce-competitor-comparison-contracts.json",
+      "line": 242
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/j/payment-transactions",
+      "normalized": "/j/payment-transactions",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 243
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/j/payment-transactions/:transactionId",
+      "normalized": "/j/payment-transactions/:transactionId",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 244
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/j/cs/sample-requests",
+      "normalized": "/j/cs/sample-requests",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 245
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/cs",
+      "normalized": "/cs",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 246
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/cs/orders/new",
+      "normalized": "/cs/orders/new",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 247
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/cs/samples",
+      "normalized": "/cs/samples",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 248
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/cs/samples/:id/:decision",
+      "normalized": "/cs/samples/:id/:decision",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 249
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/cs/accounts/merge",
+      "normalized": "/cs/accounts/merge",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 250
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/livechat",
+      "normalized": "/livechat",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 251
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/restaurants",
+      "normalized": "/marketing/restaurants",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 252
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/research",
+      "normalized": "/marketing/research",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 253
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/scraping-sources",
+      "normalized": "/marketing/scraping-sources",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 255
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/scraped-catalog",
+      "normalized": "/marketing/scraped-catalog",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 256
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/marketing/competitor-prices",
+      "normalized": "/marketing/competitor-prices",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 257
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/ai/connectors",
+      "normalized": "/ai/connectors",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 258
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp/josh-logs",
+      "normalized": "/erp/josh-logs",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 259
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp/inbound-log",
+      "normalized": "/erp/inbound-log",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 260
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp/webhook-dead-letter",
+      "normalized": "/erp/webhook-dead-letter",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 261
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp/webhook-platforms",
+      "normalized": "/erp/webhook-platforms",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 262
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp/inventory-warehouse",
+      "normalized": "/erp/inventory-warehouse",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 263
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp/jagota-shadow",
+      "normalized": "/erp/jagota-shadow",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 264
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp/simulator",
+      "normalized": "/erp/simulator",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 265
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/integrations",
+      "normalized": "/integrations",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 266
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/integrations/new",
+      "normalized": "/integrations/new",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 267
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/webhooks",
+      "normalized": "/webhooks",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 268
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/subscriptions",
+      "normalized": "/subscriptions",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 269
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/sync-jobs",
+      "normalized": "/sync-jobs",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 270
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/customers",
+      "normalized": "/customers",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 271
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/customers/new",
+      "normalized": "/customers/new",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 272
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/customers/:id",
+      "normalized": "/customers/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 273
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/products",
+      "normalized": "/products",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 274
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/products/new",
+      "normalized": "/products/new",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 275
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/products/:id",
+      "normalized": "/products/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 276
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/stock-moves",
+      "normalized": "/stock-moves",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 277
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/stock-moves/:task",
+      "normalized": "/stock-moves/:task",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 278
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/product-prices",
+      "normalized": "/product-prices",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 279
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/product-master-queue",
+      "normalized": "/product-master-queue",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 280
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/order-periods",
+      "normalized": "/order-periods",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 281
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/inventory",
+      "normalized": "/inventory",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 282
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/orders",
+      "normalized": "/orders",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 283
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/orders/:id",
+      "normalized": "/orders/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 284
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/reservations",
+      "normalized": "/reservations",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 285
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp-stock",
+      "normalized": "/erp-stock",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 286
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "/erp-ingest",
+      "normalized": "/erp-ingest",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 287
+    },
+    {
+      "file": "apps/commerce-admin/src/app/app.tsx",
+      "path": "*",
+      "normalized": "*",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 288
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "batch-sticker",
+      "normalized": "/j/batch-sticker",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 110
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing-links",
+      "normalized": "/j/marketing-links",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 111
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/queue",
+      "normalized": "/j/marketing/queue",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 112
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/journey-funnel",
+      "normalized": "/j/marketing/journey-funnel",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 113
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/notify-templates",
+      "normalized": "/j/marketing/notify-templates",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 114
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/settings",
+      "normalized": "/j/marketing/settings",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 115
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/competitor-prices",
+      "normalized": "/j/marketing/competitor-prices",
+      "status": "retained legacy declaration shadowed by canonical comparison workspace",
+      "line": 116
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/scraping-sources",
+      "normalized": "/j/marketing/scraping-sources",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 117
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/scraped-catalog",
+      "normalized": "/j/marketing/scraped-catalog",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 118
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/welcome-lead-email",
+      "normalized": "/j/marketing/welcome-lead-email",
+      "status": "protected; no redesign authorized",
+      "line": 119
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/offers-check",
+      "normalized": "/j/marketing/offers-check",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 120
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "smart-links",
+      "normalized": "/j/smart-links",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 121
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "smart-links/create",
+      "normalized": "/j/smart-links/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 122
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "smart-links/analytics",
+      "normalized": "/j/smart-links/analytics",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 123
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "smart-links/analytics/:id",
+      "normalized": "/j/smart-links/analytics/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 124
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "smart-links/edit/:id",
+      "normalized": "/j/smart-links/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 125
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "order",
+      "normalized": "/j/order",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 126
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "order/import",
+      "normalized": "/j/order/import",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 127
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "order/:ordersId",
+      "normalized": "/j/order/:ordersId",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 128
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "shipments",
+      "normalized": "/j/shipments",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 129
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "shipments/:shipmentId",
+      "normalized": "/j/shipments/:shipmentId",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 130
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "payment-transactions",
+      "normalized": "/j/payment-transactions",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 131
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "allusers",
+      "normalized": "/j/allusers",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 132
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "allusers/:userId",
+      "normalized": "/j/allusers/:userId",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 133
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "membership-tiers",
+      "normalized": "/j/membership-tiers",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 134
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "brands",
+      "normalized": "/j/brands",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 135
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "categories",
+      "normalized": "/j/categories",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 136
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "categories/create",
+      "normalized": "/j/categories/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 137
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "categories/edit/:id",
+      "normalized": "/j/categories/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 138
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "kbank/testing-console",
+      "normalized": "/j/kbank/testing-console",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 139
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "invoices",
+      "normalized": "/j/invoices",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 140
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "credit-notes",
+      "normalized": "/j/credit-notes",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 141
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "credit-backs",
+      "normalized": "/j/credit-backs",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 142
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "credit-terms",
+      "normalized": "/j/credit-terms",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 143
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "kyc",
+      "normalized": "/j/kyc",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 144
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotion-pages",
+      "normalized": "/j/promotion-pages",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 145
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotion-pages/create",
+      "normalized": "/j/promotion-pages/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 146
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotion-pages/:id/edit",
+      "normalized": "/j/promotion-pages/:id/edit",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 147
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/intent-rules",
+      "normalized": "/j/bot/intent-rules",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 148
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/intent-rules/create",
+      "normalized": "/j/bot/intent-rules/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 149
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/intent-rules/edit/:id",
+      "normalized": "/j/bot/intent-rules/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 150
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/workflows",
+      "normalized": "/j/bot/workflows",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 151
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/workflows/create",
+      "normalized": "/j/bot/workflows/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 152
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/workflows/edit/:id",
+      "normalized": "/j/bot/workflows/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 153
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/templates",
+      "normalized": "/j/bot/templates",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 154
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/templates/create",
+      "normalized": "/j/bot/templates/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 155
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "bot/templates/edit/:id",
+      "normalized": "/j/bot/templates/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 156
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "marketing/push-campaigns",
+      "normalized": "/j/marketing/push-campaigns",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 157
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "company",
+      "normalized": "/j/company",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 158
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "company/create",
+      "normalized": "/j/company/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 159
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "company/edit/:id",
+      "normalized": "/j/company/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 160
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "refunds",
+      "normalized": "/j/refunds",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 161
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "segments",
+      "normalized": "/j/segments",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 162
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "segments/create",
+      "normalized": "/j/segments/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 163
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "segments/edit/:id",
+      "normalized": "/j/segments/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 164
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "segments/builder",
+      "normalized": "/j/segments/builder",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 165
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "segments/builder/:id",
+      "normalized": "/j/segments/builder/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 166
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "cs/sample-requests",
+      "normalized": "/j/cs/sample-requests",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 167
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "cs/delivery-schedule",
+      "normalized": "/j/cs/delivery-schedule",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 168
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "cs/cart-move-categories",
+      "normalized": "/j/cs/cart-move-categories",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 169
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "allproducts",
+      "normalized": "/j/allproducts",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 170
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "product/create",
+      "normalized": "/j/product/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 171
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "product/video-upload",
+      "normalized": "/j/product/video-upload",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 172
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "product/bulk-image-upload",
+      "normalized": "/j/product/bulk-image-upload",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 173
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "product/edit/:id",
+      "normalized": "/j/product/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 174
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "product/:id",
+      "normalized": "/j/product/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 175
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "suppliers",
+      "normalized": "/j/suppliers",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 176
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "supplier/create",
+      "normalized": "/j/supplier/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 177
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "supplier/edit/:id",
+      "normalized": "/j/supplier/edit/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 178
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "price-requests",
+      "normalized": "/j/price-requests",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 179
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "active-offers",
+      "normalized": "/j/active-offers",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 180
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "coupons",
+      "normalized": "/j/coupons",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 181
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "coupon/create",
+      "normalized": "/j/coupon/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 182
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "coupon/:id",
+      "normalized": "/j/coupon/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 183
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotion-product-sets",
+      "normalized": "/j/promotion-product-sets",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 184
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotion-product-sets/create",
+      "normalized": "/j/promotion-product-sets/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 185
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotion-product-sets/:id/edit",
+      "normalized": "/j/promotion-product-sets/:id/edit",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 186
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotions-mechanic",
+      "normalized": "/j/promotions-mechanic",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 187
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotions-mechanic/create",
+      "normalized": "/j/promotions-mechanic/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 188
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotions-mechanic/:id/edit",
+      "normalized": "/j/promotions-mechanic/:id/edit",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 189
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotions/campaigns",
+      "normalized": "/j/promotions/campaigns",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 190
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotions/campaigns/create",
+      "normalized": "/j/promotions/campaigns/create",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 191
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "promotions/campaigns/:id",
+      "normalized": "/j/promotions/campaigns/:id",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 192
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "cs/notification-log",
+      "normalized": "/j/cs/notification-log",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 193
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "cs/notification-stats",
+      "normalized": "/j/cs/notification-stats",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 194
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "cs/notification-catalog",
+      "normalized": "/j/cs/notification-catalog",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 195
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "cs/product-notify-funnel",
+      "normalized": "/j/cs/product-notify-funnel",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 196
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "jagota/payment-testing",
+      "normalized": "/j/jagota/payment-testing",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 197
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "erp/webhook-simulator",
+      "normalized": "/j/erp/webhook-simulator",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 198
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "billing",
+      "normalized": "/j/billing",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 199
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "admin-access",
+      "normalized": "/j/admin-access",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 200
+    },
+    {
+      "file": "apps/commerce-admin/src/josh-admin/JoshAdminApp.tsx",
+      "path": "*",
+      "normalized": "/j/*",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 201
+    },
+    {
+      "file": "apps/commerce-portal/src/app/app.tsx",
+      "path": "/login",
+      "normalized": "/login",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 86
+    },
+    {
+      "file": "apps/commerce-portal/src/app/app.tsx",
+      "path": "/register",
+      "normalized": "/register",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 87
+    },
+    {
+      "file": "apps/commerce-portal/src/app/app.tsx",
+      "path": "/*",
+      "normalized": "/*",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 88
+    },
+    {
+      "file": "apps/commerce-portal/src/app/app.tsx",
+      "path": "/",
+      "normalized": "/",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 111
+    },
+    {
+      "file": "apps/commerce-portal/src/app/app.tsx",
+      "path": "/keys",
+      "normalized": "/keys",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 112
+    },
+    {
+      "file": "apps/commerce-portal/src/app/app.tsx",
+      "path": "/webhooks",
+      "normalized": "/webhooks",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 113
+    },
+    {
+      "file": "apps/commerce-portal/src/app/app.tsx",
+      "path": "/docs",
+      "normalized": "/docs",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 114
+    },
+    {
+      "file": "apps/commerce-portal/src/app/app.tsx",
+      "path": "*",
+      "normalized": "*",
+      "status": "retained route; page-level redesign not claimed",
+      "line": 115
+    }
+  ]
+}

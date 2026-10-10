@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "scope": "Bounded pack-and-sale-price planning in the existing commerce-admin app. Select own product, inspect multiple recorded competitor packs/prices, propose own pack/price options, compare side by side, retain a private reviewable draft. No physical repacking, stock/lot transformations, price updates, campaign activation, messages, production migration/data access, role grants, push or deployment.",
+  "mapping": [
+    {
+      "feature": "Recorded competitor observations and identity mapping",
+      "canonicalEntry": "/j/marketing/competitor-prices",
+      "preserved": "Existing catalog, manual capture (full-pack THB VAT-inclusive contract), matching, public/member observations and unique actions remain available. This slice only reads these sources."
+    },
+    {
+      "feature": "Pack-and-price planning",
+      "canonicalEntry": "/planning/pack-prices",
+      "taskEntry": "Existing marketing task section and command navigation; one planning link for existing competitor-authorized roles. Sidebar remains at most nine entries; protected welcome navigation stays original."
+    },
+    {
+      "feature": "Promotion rehearsal",
+      "canonicalEntry": "/planning/promotions",
+      "distinct": "Existing admin-only campaign-value rehearsal remains distinct from pack format/price proposals. Draft/request readers filter kind so each feature and Today sees only its own records."
+    }
+  ],
+  "routes": {
+    "/planning/pack-prices": "Private persisted-draft index with bounded cursor pagination, actual draft status, empty/error/retry states and pending-request recovery.",
+    "/planning/pack-prices/new/{product,observations,scenarios,review}": "Separate reloadable steps, browser history, recoverable unsaved input; deep review requires a new verified calculation.",
+    "/planning/pack-prices/drafts/:id": "Retained original evidence and latest saved revision; ?saved=:requestId requires a matching durable server receipt before request success.",
+    "/planning/pack-prices/drafts/:id/edit/{product,observations,scenarios,review}": "Revision-protected editing; stale local input requires explicit use-latest or copy-values choice, followed by recapture and review.",
+    "/planning/pack-prices/requests/:id": "Recover immutable original request before retry. Confirmed missing receipt allows the same packet; unknown lookup blocks retries; 409 requires current review."
+  },
+  "access": {
+    "readAndPreview": [
+      "admin",
+      "marketing",
+      "business_analyst"
+    ],
+    "saveAndEdit": [
+      "admin",
+      "marketing"
+    ],
+    "MER": "Unresolved existing competitor ACL gap; merchandising remains excluded. No broader permission granted.",
+    "BA": "Existing global GET/HEAD-only rule remains; preview uses bounded GET, never a write exception. BA saving/editing remains unavailable.",
+    "ownership": "Actor from authenticated server staff identity; no caller-selected owner/team/scope. Drafts and durable receipts are private to that actor."
+  },
+  "readContracts": [
+    "Reuse CompetitorPricesService.catalog(sku,true) and list(). Read-only local active catalog copy must be unique; never pull/sync Josh, scrape or capture observations during planning.",
+    "Preserve original decimal price, pack min/max/count, dimensional UOM, currency, VAT basis, public/member tier, date, mapping and source-configuration status. Maximum 200 recorded pairs/20 selected pairs/6 own proposals; incomplete coverage visible.",
+    "Manual observations inherit the existing explicit THB inclusive full-pack contract. Automatic currency/tax/source revision comes from existing configured source. Unknown or non-THB currency is excluded; no FX.",
+    "Fixed explicit catalog pack dimensions only. Gram/kg and ml/l normalize exactly, count requires whole pieces. No midpoint of ranges, guesses from names, count-to-weight without net quantity, or weight-to-volume conversion.",
+    "Mapping, dimensions, pack quantity/count, currency, tax, observed date, current source and freshness must support comparison. Missing, failed, future, stale or changed observations are excluded with visible reasons. Existing freshness interval is reused; upstream catalog freshness remains unverified.",
+    "No delivery/region equivalence is claimed; available public/member evidence remains distinct and market coverage is unverified."
+  ],
+  "calculation": {
+    "arithmetic": "BigInt rational decimals; half-up money 2 places, unit rate 6 places, percentages 4 places. Compare proposed minus competitor for the same pack quantity; no ranking/recommended selling price.",
+    "cost": "The connected catalog has no authoritative internal cost. Connected cost is always null; extra per-pack cost assumptions cannot replace base cost. Competitor price is never internal cost; no caller-provided cost API.",
+    "futureAttestedCost": "Shared deterministic calculation supports compatible SKU/UOM and effective-date internal cost only. Margin = gross profit / net revenue; markup = gross profit / cost. Zero cost has unavailable markup. Synthetic unit fixtures verify these formulas; this is not connected cost availability.",
+    "assumptions": "Additional ex-VAT per-pack cost defaults to zero and requires a label when positive. Proposal prices are hypothetical, THB inclusive of known product VAT.",
+    "module": "Browser-safe pure pack-price.ts inside the existing backend planning module; frontend imports the same code. Fits existing Nx app rootDir and Docker src/main.js without build-output or deployment configuration changes."
+  },
+  "persistence": {
+    "existingStorage": "Existing commerce_promotion_drafts and commerce_promotion_draft_requests tables, scenario.kind=pack_price. No new table or migration file in app source; existing migration applied only to fresh owned synthetic local PostgreSQL fixture namespaces. Test reruns isolate a generated fixture namespace and preserve earlier test rows.",
+    "protocol": "Advisory request lock, actor+request durable immutable receipt, canonical request hash, duplicate replay/different-intent conflict, row lock and expected revision CAS. Draft and receipt commit in one transaction. Save recaptures sources and requires matching fingerprint; original committed replay stays immutable.",
+    "browserRecovery": "Owner-scoped session form backup and local immutable request journal verified before dispatch. Storage failure sends no write. Same-page duplicate clicks locked. Receipt shape, identity, expected revision, scenario and arithmetic verified before success.",
+    "operationalBoundary": "Only private planning draft/receipt writes. Source SKU price and promotion rules remain unchanged. No physical stock, lot, warehouse, order repair, campaign or messaging writes."
+  },
+  "interaction": "Thai-first fluid cards, English locale, progressive additional assumptions, labeled inputs/selects, keyboard links, route-backed steps, visible inline errors, skeletons, server-persisted success, source retry and interrupted-flow recovery. No global CSS/font/welcome edits; no screenshots requested.",
+  "verification": {
+    "receipt": "/workspace/commerce-ui-audit-20261009/pack-price-verification.json",
+    "browserHarness": "/workspace/commerce-ui-audit-20261009/verify-pack-price-browser.cjs",
+    "fixtureMode": "Built actual app, native existing competitor/catalog readers and pack controllers/services with owned localhost PostgreSQL. Synthetic repository evidence and local identity; real Nest authentication/role guards checked separately in HTTP tests.",
+    "protected": "Existing welcome source/style/font/API hashes, 20 welcome browser combinations, accepted Today and BA foundation rechecked. No fabricated screenshots or production claim."
+  },
+  "remaining": [
+    "MER competitor access needs an explicit ACL/source-contract decision; do not silently grant access.",
+    "BA remains read-only; saving needs a separate explicitly approved policy change.",
+    "No authoritative connected internal cost; profit/margin/markup remain unavailable in actual connected preview.",
+    "No FX, variable/range pack evaluation, weight/volume conversion, delivery normalization or authoritative market/price recommendation.",
+    "Catalog copy sourceVersion/freshness and comprehensive product picker remain unavailable in reused source contract; exact SKU entry reads the existing active local copy.",
+    "Production deployment/storage readiness and production-authenticated full-stack E2E are outside this bounded development slice; this is not the entire app redesign."
+  ]
+}

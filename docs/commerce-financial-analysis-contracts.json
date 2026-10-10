@@ -1,0 +1,165 @@
+{
+  "capturedAt": "2026-10-10T01:16:03.479738+00:00",
+  "acceptedStartingHead": "0074a41fb302c2bf68bf386e1cc41a0a4de9a326",
+  "scope": "Bounded existing-app financial source coverage and recorded-month variance; not completed accounting integration or whole BA/app redesign.",
+  "canonicalEntry": {
+    "taskIndex": "/tasks/reports",
+    "feature": "/analysis/financial",
+    "roles": [
+      "admin",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "oneEntry": true,
+    "sidebarMaximum": 9
+  },
+  "featureMapping": [
+    {
+      "feature": "Recorded financial coverage and source differences",
+      "entry": "/analysis/financial",
+      "actions": [
+        "/analysis/financial/period",
+        "/analysis/financial/coverage",
+        "/analysis/financial/variance",
+        "/analysis/financial/months/:month/orders/:id",
+        "/analysis/financial/months/:month/refunds/:orderId/:id"
+      ],
+      "scope": "Existing native team report readers. Evidence paths keep both comparison months and timezone in query; record month must be one of them. Refund identity is composite order+refund, preserving copies with equal refund IDs on different orders."
+    },
+    {
+      "feature": "Private profit/cost target and hypothetical planning",
+      "entry": "/planning/profit-goals",
+      "scope": "Accepted owner-private planner preserved. Only existing admin can persist; manager/BA GET-only. Goal draft context requires the verified actor; other owners are unavailable without revealing metadata. Selected target is a private draft, not an active team target or actual result."
+    },
+    {
+      "feature": "Existing sales report and Winback/BI dashboards",
+      "entry": "Existing routes retained",
+      "scope": "Different scopes and metrics, not assumed duplicate. Sale retains own-rep Sales report and no new team financial access. Existing BI/events/segments and live back-office actions remain unchanged."
+    }
+  ],
+  "api": {
+    "base": "GET /api/reports/financial-analysis",
+    "query": {
+      "month": "2000–2099 YYYY-MM, started calendar month",
+      "compare": "distinct started calendar month",
+      "timezone": [
+        "UTC",
+        "Asia/Bangkok"
+      ],
+      "goalId": "optional private draft UUID"
+    },
+    "evidence": [
+      "GET /api/reports/financial-analysis/orders/:id?month=YYYY-MM&timezone=...",
+      "GET /api/reports/financial-analysis/refunds/:orderId/:id?month=YYYY-MM&timezone=..."
+    ],
+    "strict": true,
+    "cache": "private, no-store",
+    "authorization": "Original global StaffAuthGuard and @StaffRoles(manager, BA), implicit admin; verified active database user, password reset gate, BA remains GET-only. No source/actor/rep/date/scope override or public/readonly-write exception. No assignment or outbound action.",
+    "writes": false
+  },
+  "sourceAudit": [
+    {
+      "source": "Existing team financial report and order-detail authorization",
+      "paths": [
+        "apps/commerce-platform/src/modules/integration/connector/josh/shop-reports.controller.ts:20",
+        "apps/commerce-platform/src/modules/integration/connector/josh/shop-reports.controller.ts:96",
+        "apps/commerce-platform/src/modules/integration/connector/josh/shop-reports.controller.ts:241",
+        "apps/commerce-platform/src/modules/integration/connector/josh/shop-reports.controller.ts:245"
+      ],
+      "available": "Admin/manager/BA already have team Sales reports and order list/detail reads; Sale is limited to resolved rep scope. New financial projection narrows to team readers and order/refund monetary/date/identity evidence; no customer PII, CS refund workflow, ownership action or new operational permission. Original routes/roles/filters remain unchanged."
+    },
+    {
+      "source": "JoshInsights native sales contract",
+      "paths": [
+        "apps/commerce-platform/src/modules/integration/connector/josh/josh-insights.ts:10",
+        "apps/commerce-platform/src/modules/integration/connector/josh/josh-insights.ts:19",
+        "apps/commerce-platform/src/modules/integration/connector/josh/josh-insights.ts:124",
+        "apps/commerce-platform/src/modules/integration/connector/josh/josh-insights.ts:233"
+      ],
+      "available": "SALES_SOURCE copies/replica. paid/preparing/shipped/delivered AND successful non-test direct OR checkout-batch payment; copies use snapshot-computed paid. Credit-term success at checkout counts and does not prove cash received. Native declared THB incl VAT after discounts before refunds; no per-row currency field. Counts and SUM numeric::text are read directly, not rounded legacy float projections."
+    },
+    {
+      "source": "Order copy amount and lifecycle contract",
+      "paths": [
+        "apps/commerce-platform/src/modules/integration/connector/josh/orders/josh-order-copy.entity.ts:24",
+        "apps/commerce-platform/src/modules/integration/connector/josh/events/josh-events.service.spec.ts:84",
+        "apps/commerce-platform/src/modules/integration/connector/josh/events/josh-events.service.spec.ts:99"
+      ],
+      "available": "Five separately recorded nullable monetary fields: total_price, subtotal_ex_vat, vat_amount, discount_inc_vat, delivery_fee. Amount rows can be missing/zero/negative. Preserve exact signed cents and count known/missing/negative rows. Never divide all totals by 1.07 or subtract discounts again. source_version=0 is legacy; copied_at means a local write, not upstream freshness. Old snapshots omitting refunds retain existing children; presence of order rows does not prove refund backfill."
+    },
+    {
+      "source": "Refund record timing and copied composite identity",
+      "paths": [
+        "apps/commerce-platform/src/modules/integration/connector/josh/josh-insights.ts:127",
+        "apps/commerce-platform/src/migrations/1795200000000-JoshReportCopies.ts:53"
+      ],
+      "available": "Record status refunded, created_at in selected calendar month; copies FK orders_id/composite(orders_id,id), replica projection FK order_id. Amount/created_at/processed_at are source fields. Processed time shown only as evidence. Ticket-created date differs from accounting recognition and underlying order date; missing/negative amounts, unlinked order dates and order dates outside the month are visible. Never subtract refund totals from this order-created-month total. Replica columns/availability remain subject to deployment contract confirmation; query failure yields unavailable instead of zero. Migration source was read, never executed."
+    },
+    {
+      "source": "Existing profit-goal context",
+      "paths": [
+        "apps/commerce-platform/src/modules/integration/financial-goals/goal-inputs.service.ts:11",
+        "apps/commerce-platform/src/modules/integration/financial-goals/goal-drafts.service.ts:55"
+      ],
+      "available": "Existing Winback team GMV and GMV-target context uses its own configured source and full UTC month. Keep separate from financial source, net sales and actual profit. Bangkok boundary mismatch is explicit. Owner-private selected target/metric/revision shown; actual, variance and attainment remain null even for matching UTC months."
+    }
+  ],
+  "calculationContract": {
+    "windows": "Half-open [month start, next month start). UTC or original fixed UTC+7 Bangkok rule. Each month may have a different number of calendar days; no daily-rate normalization. Current open month flagged; no closed-month completeness claim.",
+    "precision": "PostgreSQL numeric::text; exact BigInt signed cents; delta=current minus reference; percentage=delta/reference*100 half-up four places only for positive reference. Zero/negative reference permits signed delta with percentage null and reason.",
+    "eligibility": "Compare only compatible source, timezone, declared currency/native currency evidence and order-header monetary basis; missing required field value blocks that field only. No combining SKU quantities or UOM, currencies or different sources.",
+    "partial": "Known sum is explicitly partial when any field rows are missing; comparison value null. A successful empty local query can report zero eligible order sum but never complete business absence. Empty refunds have knownAmount null. Outage/malformed source yields null availability and reasons. Whole upstream coverage always partial/unavailable.",
+    "snapshot": "Each order summary and its sample is one statement snapshot. Order/refund and two period reads are independent local statements, not a globally consistent accounting ledger or sync watermark.",
+    "drilldown": "Only eligible source records in the selected month; max20 linked samples with actual total counts/hasMore; no inferred cause, product contribution ranking, owner assignment or outbound workflow.",
+    "actualNetSalesExVat": null,
+    "actualCOGS": null,
+    "actualProfit": null,
+    "actualMargin": null,
+    "actualTargetVariance": null,
+    "actualAttainment": null,
+    "roas": null,
+    "causalExplanation": null
+  },
+  "requiredNextContracts": [
+    "Order-line net revenue ex VAT with discount/tax/delivery allocation and linked returns/credit notes on a confirmed accounting recognition date.",
+    "Effective dated order-line COGS, selling UOM conversions, currency/VAT and returns-cost reversals; catalog buying_price is not order COGS.",
+    "Operating expenses, payment/shipping fees and allocation on the same period basis.",
+    "Per-row currency and FX policy if mixed currency; monetary/UOM eligibility and scope boundaries.",
+    "Order/refund backfill watermarks, replica lag and period close/correction semantics.",
+    "Confirmed deployment source/schema availability, indexes/performance and an authorized live read-only integration check. No live/production data probes in this pass."
+  ],
+  "interactionStates": [
+    "Loading skeleton replaces prior evidence while reads resolve.",
+    "Independent unavailable/malformed order/refund sources with refresh/retry; sanitised HTTP access/missing/outage errors.",
+    "Verified empty local reads and unknown completeness are separate.",
+    "Authoritative eligible-record counts and missing/negative row counts; no feature count or financial completion badge.",
+    "Latest request wins across duplicate refresh/interruption/unmount; strict payload query/record/window identity validation.",
+    "Labeled month/timezone/optional private goal controls, focused validation errors, keyboard links, aria-current steps, fluid responsive layout and scrollable tables.",
+    "Evidence detail displays the selected half-open month/timezone interval and raw ISO UTC source/read/copy timestamps; no local-calendar date ambiguity at Bangkok boundaries."
+  ],
+  "businessReferencesContextOnly": [
+    {
+      "url": "https://docs.google.com/spreadsheets/d/14bvyVYq0NCAsNKeZYVJlo_UGe0gkvdGwz4tMdoarhR0/edit#gid=0&range=N2:Q6",
+      "authority": "Verified contextual contents supplied by coordinating thread; no new external fetch or target seeding.",
+      "definitions": "October2026 THB10.3M GMV/revenue plan (7M existing +3.3M acquisition), November11.3M, December11.08M, Merch20% GP target. Applicable version requires user confirmation before target seeding. Marketing [X] remains unspecified. These figures are absent from application metrics/fixtures/default targets."
+    },
+    {
+      "url": "https://docs.google.com/spreadsheets/d/1fVh8bTJ5e09AEzNDSai4ClATTusC5UarDPfpjHB2Ric/edit#gid=980156618&range=A1:AK65",
+      "authority": "Verified historical contextual contents supplied by coordinating thread.",
+      "definitions": "Historical Jan2024–Jun2026,3493 accounts vs3260 deduplicated customers; JGT Value40/Loyalty30/Scale30, RFM/category gaps. Observed Jan–Jun2026 sales89.82M; approximately179M is annualisation, never actual annual revenue or October live metrics. No imports."
+    },
+    {
+      "artifact": "gtm-tracking-spec.html July2026",
+      "authority": "Prior tracking spec known to exist; current artifact/runtime implementation unverified.",
+      "definitions": "Do not assume instrumentation starts from scratch; accepted analytics foundation/event/segment semantics unchanged."
+    }
+  ],
+  "verification": {
+    "summary": "/workspace/commerce-ui-audit-20261009/ba-finance-verification.json",
+    "screenshotsCaptured": 0,
+    "migrationExecution": false,
+    "productionDataAccess": false,
+    "liveIntegrationClaim": false,
+    "boundedNativeIntegration": "Actual SQL/controller/service contracts run against owned local synthetic PostgreSQL; browser renders real production-built commerce-admin with native readers/private owner lookup and explicit synthetic identity/upstream context. Native StaffAuthGuard verified separately by HTTP tests."
+  }
+}

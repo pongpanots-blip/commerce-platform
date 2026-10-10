@@ -1,7 +1,7 @@
 // Where a staff member lands after sign-in, and which deep links they may be sent to. Pure (unit-tested).
 // One source each: the per-role page list is navigation.ts ROLE_ACCESS (the sidebar uses it too), the role
 // homes are role-home.ts ROLE_HOME.
-import { ROLE_ACCESS, workspaceTarget } from '../app/navigation';
+import { ROLE_ACCESS, workspaceTarget, sectionNavFor, SECTIONS } from '../app/navigation';
 import { normalizeRole, ROLE_HOME } from './role-home';
 
 export { ROLE_HOME as ROLE_LANDING } from './role-home';
@@ -46,7 +46,16 @@ export function isRouteAllowed(roleRaw: string | null | undefined, path: string)
   const pathname = pathnameOf(normalized);
   if (pathname === '/login') return false;
   if (role === 'admin') return true;
+  // The inbox inherits the existing role-home page scope; its readers retain their own API permissions.
+  if (pathname === '/today') return isRouteAllowed(role, '/home');
+  if(pathname==='/planning/sales-work'||pathname.startsWith('/planning/sales-work/'))return ['sale','sales_manager'].includes(role);
+  if(pathname==='/planning/marketing-readiness'||pathname.startsWith('/planning/marketing-readiness/'))return role==='marketing';
+  if(pathname==='/analysis/financial'||pathname.startsWith('/analysis/financial/'))return ['sales_manager','business_analyst'].includes(role);
+  if (pathname === '/planning/profit-goals' || pathname.startsWith('/planning/profit-goals/')) return isRouteAllowed(role, '/reports/winback');
+  if (pathname === '/planning/pack-prices' || pathname.startsWith('/planning/pack-prices/')) return isRouteAllowed(role, '/j/marketing/competitor-prices');
   if (pathname === '/') return false;
+  const task = /^\/tasks\/([^/]+)$/.exec(pathname);
+  if (task) return SECTIONS.some(section => section.id === task[1] && !!sectionNavFor(role, section.id));
   // old workspace overview pages redirect to the replacing section: allowed when the role has a page there
   const workspace = /^\/workspaces\/([^/]+)$/.exec(pathname);
   if (workspace) return workspaceTarget(role, workspace[1]) !== null;

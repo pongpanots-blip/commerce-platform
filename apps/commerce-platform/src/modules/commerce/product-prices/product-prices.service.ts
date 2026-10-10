@@ -73,7 +73,13 @@ export class ProductPricesService {
   /** MER approves: the pending fields become the live price (others stay), the queue row goes, josh gets the snapshot. */
   async approve(skus: string[], staffId: string): Promise<{ approved: number }> {
     this.assertOwned();
-    return this.db.transaction(async (m) => {
+    return this.db.transaction(m => this.approveWithin(m, skus, staffId));
+  }
+
+  /** Native operation, also used by the reviewed receipt coordinator in its existing transaction. */
+  async approveWithin(m: EntityManager, skus: string[], staffId: string): Promise<{ approved: number }> {
+      this.assertOwned();
+      await m.query('SELECT product_inventory_sku FROM product_price_pending WHERE product_inventory_sku=ANY($1::text[]) ORDER BY product_inventory_sku FOR UPDATE', [skus]);
       // TypeORM pg: DELETE … RETURNING resolves to [rows, affectedCount].
       const [rows]: [Row[], number] = await m.query(`DELETE FROM product_price_pending WHERE product_inventory_sku = ANY($1) RETURNING *`, [skus]);
       for (const r of rows) {
@@ -83,13 +89,18 @@ export class ProductPricesService {
         }, 'erp', staffId);
       }
       return { approved: rows.length };
-    });
+  }
+
+  async rejectWithin(m: EntityManager, skus: string[]): Promise<{ rejected: number }> {
+    this.assertOwned();
+    await m.query('SELECT product_inventory_sku FROM product_price_pending WHERE product_inventory_sku=ANY($1::text[]) ORDER BY product_inventory_sku FOR UPDATE', [skus]);
+    const [, n] = await m.query(`DELETE FROM product_price_pending WHERE product_inventory_sku = ANY($1)`, [skus]);
+    return { rejected: Number(n ?? 0) };
   }
 
   async reject(skus: string[]): Promise<{ rejected: number }> {
     this.assertOwned();
-    const [, n] = await this.db.query(`DELETE FROM product_price_pending WHERE product_inventory_sku = ANY($1)`, [skus]);
-    return { rejected: Number(n ?? 0) };
+    return this.db.transaction(m => this.rejectWithin(m, skus));
   }
 
   /** Staff edit (commerce-admin price page, or the product form's price fields). */
@@ -106,6 +117,7 @@ export class ProductPricesService {
 
   /** Upsert the given fields (null clears, undefined keeps) and publish the resulting row. */
   private async write(m: EntityManager, sku: string, patch: PricePatch, source: string, staffId: string) {
+    await m.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`product-price:${sku}`]);
     const set = COLS.filter(([k]) => patch[k] !== undefined);
     if (!set.length) throw new BadRequestException(`ไม่มีราคาให้บันทึกสำหรับ ${sku}`);
     const [row]: Row[] = await m.query(

@@ -5,12 +5,15 @@ import { getUiLocale as __dateLocale } from '@cp/ui';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowLink, Button, Chip, Empty, ErrorText, Icon, Loading, Page, PageHeader, Panel, PanelHead, SectionTitle,
+  ArrowLink, Button, Empty, ErrorText, Icon, Loading, PageHeader, Panel, PanelHead, SectionTitle,
   StatGrid, StatTile, StatusChip, TBody, TD, TH, THead, TR, Table, fmt, useNavigation,
 } from '@cp/ui';
 import { AdminStats, Integration, SyncJob, api, webhookApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { SECTIONS } from '../navigation';
+import { CommercePage as Page } from '../CommercePage';
+import { commerceText as text } from '../commerce-copy';
+import { WorkspaceMetric, WorkspaceLink } from '../WorkspaceParts';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -64,18 +67,21 @@ export function Dashboard() {
           </>
         }
       />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {[['การพยายามชำระ', 'Payment attempts'], ['รับเงินเข้าบัญชี', 'Settlement'], ['คืนเงิน', 'Refund records'], ['ข้อพิพาท', 'Disputes']].map(([th, en]) => <WorkspaceMetric key={en} label={text(th, en)} reason={text('สัญญาภาพรวมนี้ไม่มีข้อมูลสำหรับสรุปดังกล่าว เปิดรายการที่เกี่ยวข้องเพื่อตรวจหลักฐาน', 'This overview contract has no summary for this domain. Inspect related records for evidence.')} />)}
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2"><WorkspaceLink to="/j/payment-transactions">{text('ตรวจการพยายามชำระและข้อจำกัดของข้อมูลรับเงิน', 'Inspect payment attempts and settlement data gaps')}</WorkspaceLink><WorkspaceLink to="/j/refunds">{text('ตรวจรายการคืนสินค้าและคืนเงิน', 'Inspect return and refund records')}</WorkspaceLink></div>
       <section aria-label={__uiText("เลือกหมวดงาน")}>
         <div className="mb-3 flex items-center gap-2"><h2 className="font-semibold">{__uiText("เลือกหมวดงาน")}</h2><span className="text-xs text-on-surface-variant">{__uiText("ทุกเครื่องมือ จัดตามงานที่คุณทำ")}</span></div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {SECTIONS.map(section => ({ section, links: nav.find(group => group.group === section.title)?.links ?? [] })).filter(({ links }) => links.length > 0).map(({ section, links }) => <Link key={section.id} to={links[0].to} className="group rounded-xl border border-secondary-container bg-white p-4 transition-colors hover:border-primary/50 hover:bg-primary-container/20 focus-visible:outline-2 focus-visible:outline-primary">
+          {SECTIONS.map(section => ({ section, links: nav.find(group => group.group === section.title)?.links ?? [] })).filter(({ links }) => links.length > 0).map(({ section }) => <Link key={section.id} to={`/tasks/${section.id}`} className="group rounded-xl border border-secondary-container bg-white p-4 transition-colors hover:border-primary/50 hover:bg-primary-container/20 focus-visible:outline-2 focus-visible:outline-primary">
             <div className="flex items-center justify-between"><span className="flex size-9 items-center justify-center rounded-lg bg-surface-container-low text-primary"><Icon name={section.icon} size={21} /></span><Icon name="arrow_forward" size={17} className="text-outline group-hover:text-primary" /></div>
             <h3 className="mt-3 text-sm font-semibold">{__uiText(section.title)}</h3><p className="mt-1 text-xs leading-relaxed text-on-surface-variant">{__uiText(section.description)}</p>
-            <p className="mt-3 text-[11px] text-outline">{links.length} {__uiText(" เมนู")}</p>
           </Link>)}
         </div>
       </section>
 
-      <ErrorText error={stats.error} />
+      <ErrorText error={stats.error} onRetry={stats.reload} />
       {stats.loading && !s ? (
         <Loading />
       ) : s && d ? (
@@ -163,8 +169,8 @@ export function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-4">
         <Panel className="overflow-hidden">
-          <PanelHead title={__uiText("Recent sync jobs")} badge={<Chip tone="muted">{__uiText("Live Feed")}</Chip>} actions={<ArrowLink to="/sync-jobs">{__uiText("View all jobs")}</ArrowLink>} />
-          <ErrorText error={jobs.error} />
+          <PanelHead title={__uiText("Recent sync jobs")} actions={<ArrowLink to="/sync-jobs">{__uiText("View all jobs")}</ArrowLink>} />
+          <ErrorText error={jobs.error} onRetry={jobs.reload} />
           <Table>
             <THead>
               <TH>{__uiText("Job")}</TH>
@@ -190,7 +196,7 @@ export function Dashboard() {
               ))}
             </TBody>
           </Table>
-          {jobs.loading && !jobs.data ? <Loading /> : recentJobs.length === 0 && <Empty icon="sync">{__uiText("No sync jobs yet")}</Empty>}
+          {jobs.loading && !jobs.data ? <Loading /> : !jobs.error && jobs.data && recentJobs.length === 0 && <Empty icon="sync">{__uiText("No sync jobs yet")}</Empty>}
         </Panel>
 
         <Panel className="overflow-hidden">
@@ -202,10 +208,10 @@ export function Dashboard() {
             }
             actions={<ArrowLink to="/erp/webhook-dead-letter">{__uiText("Open dead letter")}</ArrowLink>}
           />
-          <ErrorText error={deliveries.error} />
+          <ErrorText error={deliveries.error} onRetry={deliveries.reload} />
           {deliveries.loading && !deliveries.data ? (
             <Loading />
-          ) : failures.length === 0 ? (
+          ) : !deliveries.error && deliveries.data && failures.length === 0 ? (
             <Empty icon="task_alt">{__uiText("No failed deliveries")}</Empty>
           ) : (
             <ul className="divide-y divide-secondary-container/70">

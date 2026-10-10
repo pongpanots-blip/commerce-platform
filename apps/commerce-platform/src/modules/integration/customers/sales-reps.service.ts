@@ -34,6 +34,7 @@ export class SalesRepsService {
   async assign(companyId: string, salesUserId: string | null) {
     if (!ownsSalesReps()) throw new ConflictException('sales reps are still assigned in josh (COMMERCE_OWNS_SALES_REPS is not true)');
     return this.db.transaction(async (m) => {
+      await m.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`company-sales-rep:${companyId.toLowerCase()}`]);
       const [company] = await m.query(
         `SELECT 1 FROM company_sales_reps WHERE id::text = $1
          UNION ALL SELECT 1 FROM josh_customers WHERE data->>'company_id' = $1 AND deleted_at IS NULL LIMIT 1`, [companyId]);

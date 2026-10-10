@@ -1,0 +1,68 @@
+{
+  "scope": "Backend/domain MVP. No frontend changes; approved Stitch images still need authorized materialization and inspection.",
+  "authorization": {
+    "staffAccess": "Existing global StaffAuthGuard admin-only default. No MER, BA, Sales or other role grants added.",
+    "operationalWrites": false,
+    "activation": false,
+    "automaticRetriesOrRepairs": false,
+    "draftStorage": "In-memory request/result only; no database persistence."
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/reports/commerce-previews/promotions/rehearsal",
+      "successHttpStatus": 200,
+      "inputType": "PromotionRehearsalInput",
+      "outputType": "PromotionRehearsalResult",
+      "authority": "caller_attested_snapshots: inputs are not fetched or independently verified by this endpoint",
+      "semantics": "complete means calculation inputs were complete for this preview; activationAllowed is always false",
+      "supported": ["One SKU line", "One SKU-scoped fixed, percentage, tiered or BOGO value", "Known fixed selling-unit price basis", "Explicit THB VAT basis/rate", "Same SKU/currency/UOM authoritative unit cost", "Available stock after reservations", "Uncapped or known remaining mechanic units", "Minimum gross margin constraint"],
+      "reuse": ["resolvePromotionValue", "validatePromotionValue", "validatePromotionRules", "roundOrderUnitPrice"],
+      "rounding": "Josh's existing resolved-unit rounding first; preview line, cost and tax totals half-up to satang. Nominal engine total and unit-rounding adjustment are exposed. Fractional-measure line/tax policies remain preview policies, not a new checkout contract.",
+      "unsupported": ["Cart/group predicates", "Multiple rules or coupon stacking", "Overriding customer/contract/existing promotion priority", "Approximate weight-priced packs", "Implicit UOM or currency conversion", "Supplier/retailer prices or current metadata treated as actual cost", "Historical COGS or actual net profit", "Commercial activation or persisted draft"],
+      "missingData": "Missing, stale, mismatched or unversioned required inputs never become zero cost/stock or an activation-ready result. Unsupported data produces incomplete/rejected with reason codes."
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/commerce-previews/orders/:id/review",
+      "input": "Stable Josh order UUID only; no caller-supplied URL, source, SQL, table or credential",
+      "queryPolicyDefaultsMs": {"consistencyGraceMs": 30000, "maxEvidenceAgeMs": 300000, "maxCaptureSkewMs": 30000, "pendingSyncAfterMs": null},
+      "semantics": "Policy thresholds guide review, not proof of an SLA breach or a certain business failure. Suggestions name the admin role; they do not assign an owner.",
+      "sources": ["Read-only Josh replica orders and existing paidOrderSql predicate", "josh_orders copy using source_version", "jagota_order_sync_history using stable attempt/order/shipment IDs, source_version and imported_at", "josh_order_lines joined to recorded josh_order_stock_moves"],
+      "boundedScopes": "At most 100 sync rows and 100 stock lines; fetch 101 to flag truncation. Partial scopes are explicit.",
+      "supportedFindings": ["Stable-ID mismatch or missing record", "Same aggregate version lag/ahead", "Same-version projected field conflict", "Invalid/missing sequence or time", "Capture skew/stale evidence", "Per-shipment latest failed or overdue pending sync attempt", "Settled status without successful payment evidence", "Recorded stock-deduction shortfall or returned deduction for a settled order"],
+      "limits": ["Compares Josh order identity to its Commerce copy; core platform orders are a different scope", "Version zero is unversioned", "Source change time is unavailable in these schemas; read time cannot restart grace", "Replica lag from Josh primary is not measured", "A newly read sync row retains its original imported_at", "Missing sync attempt has no known paid/send due time", "Recorded deductions are not live inventory availability", "Shipping deadlines and repack costs are not inferred", "No automatic retry, resend, copy, inventory adjustment, customer message or repair"]
+    }
+  ],
+  "promotionExample": {
+    "at": "2026-10-09T12:00:00Z",
+    "line": {"sku": "SYNTHETIC-SKU-1", "quantity": 1, "unit": "PC", "quantityKind": "count"},
+    "price": {
+      "kind": "selling_price", "sku": "SYNTHETIC-SKU-1", "unit": "PC", "currency": "THB", "unitPrice": "107.00",
+      "pricingSource": "base", "pricingBasis": "fixed_selling_unit",
+      "source": {"id": "fixture-selling-price", "version": "1", "asOf": "2026-10-09T11:59:00Z", "validUntil": "2026-10-09T13:00:00Z"},
+      "tax": {"basis": "inclusive", "rateBasisPoints": 700}
+    },
+    "cost": {
+      "kind": "authoritative_unit_cost", "sku": "SYNTHETIC-SKU-1", "unit": "PC", "currency": "THB", "unitCostExVat": "60.00",
+      "source": {"id": "fixture-authoritative-cost", "version": "1", "asOf": "2026-10-09T11:59:00Z", "validUntil": "2026-10-09T13:00:00Z"},
+      "effectiveFrom": "2026-10-01T00:00:00Z", "effectiveUntil": null
+    },
+    "stock": {
+      "sku": "SYNTHETIC-SKU-1", "warehouseId": "fixture-warehouse", "unit": "PC", "quantity": 10, "reserved": 2,
+      "source": {"id": "fixture-stock", "version": "1", "asOf": "2026-10-09T11:59:00Z", "validUntil": "2026-10-09T13:00:00Z"}
+    },
+    "rules": [{
+      "source": {"id": "fixture-proposal-rule", "version": "1", "asOf": "2026-10-09T11:59:00Z", "validUntil": "2026-10-09T13:00:00Z"},
+      "scope": "sku", "value": {"type": "percentage", "percent": 10}, "capacity": {"kind": "uncapped"}
+    }],
+    "stacking": "none", "minimumGrossMarginPercent": 20
+  },
+  "nextIntegrations": [
+    "Map authorized real selling-price and stock snapshots with explicit UOM, tax, capacity and freshness provenance.",
+    "Provide an effective-dated authoritative cost source; current buying_price metadata is insufficient. Until then real cost/margin remains unavailable.",
+    "Retain preview requests/results as a reviewed proposal only; any persisted draft storage is a separate contract.",
+    "Add source-change/event time and approved milestone deadlines for meaningful lag grace and overdue shipping rules.",
+    "Render the approved Stitch surfaces only after actual image bytes are inspected; preserve welcome-lead-email and existing ACLs."
+  ]
+}

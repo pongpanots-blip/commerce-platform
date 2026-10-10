@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "acceptedParent": "196d3af915cb2da7a1977209ac2f7280c1c79328",
+  "scope": "Bounded canonical competitor source URL reassignment and explicit existing-pair batch decisions. Local implementation/test fixtures only; not the entire legacy source/batch redesign.",
+  "canonicalHome": "/j/marketing/competitor-prices",
+  "routes": [
+    "/products/:sku/pairs/:id/reassign",
+    "/products/:sku/pairs/:id/reassign/review",
+    "/products/:sku/batch",
+    "/products/:sku/batch/review",
+    "/requests/:requestId"
+  ],
+  "routePrefix": "/j/marketing/competitor-prices",
+  "featureMapping": [
+    {
+      "legacy": "CompetitorPricesPage local edit sourceUrl; PUT /competitor-prices/:id",
+      "now": "Separate same-pair reassign and review URLs, native revision/fingerprint and durable outcome/recovery. Original PUT remains unchanged, including its wider legacy payload scope."
+    },
+    {
+      "legacy": "Category review/finish POST /competitor-prices/review/cell and /review/finish",
+      "now": "Existing recorded pairs of one SKU may be explicitly selected for same-product, uncertain, substitute or removal decisions. Uses the existing 1–20-command workspace API. No suggestions inferred, no automatic selections, no SKU reviewed marker change. Cross-SKU proposal acceptance/rejection and finish semantics remain legacy."
+    }
+  ],
+  "authority": {
+    "read": ["admin", "marketing", "business_analyst"],
+    "write": ["admin", "marketing"],
+    "businessAnalyst": "Original GET-only policy; no batch or source change POST.",
+    "merchandising": "No new access.",
+    "sourceManagement": "Original scraping source CRUD/catalog/reader permissions unchanged; this slice does not configure or run sources."
+  },
+  "api": {
+    "endpoint": "POST /competitor-prices/workspace/actions",
+    "compatibleAddition": "reassign operation in strict existing packet; request/revision/fingerprint/actor protocol unchanged. Native publicUrl and source-origin/fallback-retailer validation reused. Original routes and DTOs unchanged.",
+    "sourceChange": "Same pair/product identity, reviewed new public URL and stable source ID. Empty reason, unchanged normalized URL/source, wrong source, unsupported URL and duplicate native URL cannot become applied outcomes. Shared source locks include new source ID. No network read for reassign.",
+    "consequences": "Original raw quote and its money/tax/pack/context/date/actor remain archived. Current native price/match/VAT/collection permission/automatic collection are cleared. Existing observedAt is retained for raw history identity; sourceChanged annotation excludes the old quote even after reverting to the original URL. Actual new capture/valid collection replaces the quote annotation.",
+    "batch": "One SKU, 1–20 distinct existing pair IDs and native revisions. Explicit notes and decisions; confirmation starts unchecked on every review mount. Selection is not a completion badge.",
+    "partialOrStale": "Global source/revision conflict rejects stale packet. Expected per-item failures use original native savepoints and immutable partial/failed receipts; only applied outcomes count. Unrecognized SQL/persistence failures roll back all changes. No failure is silently treated as successful or automatically retried."
+  },
+  "interaction": [
+    "Canonical links from product/pair detail, not another sidebar feature.",
+    "Shared owner-private request hook/journal, duplicate lock, no dispatch unless journal roundtrip verified.",
+    "Source and batch forms have loading/retry, missing/empty, validation and useful current-evidence links.",
+    "Batch choice backups bind SKU/fingerprint/pair revision; stale values remain visible but cannot send, and discard is explicit.",
+    "No-storage pre-dispatch failure stays on review; only a retained dispatched intent opens recovery.",
+    "Lost replies reconcile authoritative original receipt; confirmed absent request may retry only exact original packet. Conflict requires current review.",
+    "Back-forward preserves draft choices but requires fresh consequence confirmation. Interrupted saves cannot redirect newer navigation.",
+    "Plain Thai/English, shared accessible fields, keyboard checkboxes, fluid cards, mobile canonical navigation.",
+    "A validated response clears the submitted batch backup. An interrupted or unverified outcome retains recovery data until authoritative reconciliation/current review."
+  ],
+  "schema": {
+    "newTables": false,
+    "newMigrations": false,
+    "migrationExecution": false,
+    "storage": "Existing native competitor tables and commerce_promotion_drafts/request receipt journal. sourceChanged is an additive JSON provenance annotation, not a schema migration.",
+    "rollbackDependency": "Older clients/services do not understand the new reassign command. Coordinate app/API versions, retain request journals/receipts and recover new operations with a compatible version; do not delete receipts or use draft-table down migration. No rollback or deployment executed."
+  },
+  "verification": {
+    "status": "Passed bounded final-code local matrix",
+    "evidenceRoot": "/workspace/commerce-competitor-closure-20261010",
+    "browserIdentity": "Synthetic local identity/transport; original real StaffAuthGuard tested separately in HTTP cases.",
+    "partialBrowserFixture": "One expected per-pair business rejection is fixture-injected into native apply; native SQL/savepoint/receipt path executes. Not claimed as an established new production rule.",
+    "verifiedAt": "2026-10-10T05:24:22.883337+00:00",
+    "receipt": "/workspace/commerce-competitor-closure-20261010/source-batch-verification.json",
+    "automated": {
+      "passed": 1447,
+      "failed": 0,
+      "skipped": 0,
+      "admin": 618,
+      "portal": 34,
+      "selectedBackend": 795,
+      "backendSourceSpecs": "58 of 255 selected; 197 unselected, not a full backend suite",
+      "nativeSql": 125,
+      "nativeSqlIncludedInBackendTotal": true
+    },
+    "browser": {
+      "passedChecksOrViews": 330,
+      "newSourceBatch": 29,
+      "protectedWelcomeGeometryStyleSemanticComparisons": 20,
+      "screenshots": 0,
+      "pixelComparison": false
+    },
+    "typechecksAndBuilds": "All three apps passed; final artifacts hash-verified unchanged after browser matrix",
+    "protected": "126 of 131 selected protected files and 1521 of 1526 accepted app/library files byte-unchanged; the same five authorized comparison files changed. Welcome, ACL, navigation, shared layout, financial contract and unrelated accepted slices unchanged. Prior public local fixture 83 drafts/99 requests/1 catalog/1 rule byte-equivalent; owned labelled fixture stopped and retained.",
+    "resources": "Heavy jobs serial, one test worker, 3072MB Node heap; zero OOM deltas in shared 16GiB cgroup",
+    "attempts": "Earlier failed assertion/harness attempts retained and excluded from final totals; current final matrix has no failures or skips."
+  },
+  "remaining": [
+    "Cross-SKU proposed-item acceptance/rejection and legacy review/finish automatic matching need a separate reviewed scope with durable per-SKU outcomes; no bulk-all-filtered or guessed identity acceptance in this slice.",
+    "Full source CRUD, scheduled collection, reader/login configuration and collected-catalog editing retain legacy pages/APIs.",
+    "Production schema/identity/source flags, copy completeness, private receipt retention/index/query budgets and real downstream integration remain unverified.",
+    "MER access remains unresolved; no grant made.",
+    "Product master/price approval and remaining CS/credit journeys remain next bounded UI work."
+  ],
+  "exclusions": [
+    "No production source changes, scraping or production access",
+    "No production writes or migrations",
+    "No screenshots",
+    "No push/PR/merge/deploy",
+    "Protected welcome and accepted unrelated slices unchanged",
+    "OCR cancelled; no Claude login"
+  ],
+  "legacyApiAudit": {
+    "source": "CompetitorPricesService.save accepts revision, URL and metadata updates; native publicUrl/findOrigin/fallback retailer checks used. Existing PUT and native changes remain unchanged.",
+    "batch": "CompetitorReviewService.finish loops inferred matches, treats duplicate links specially, may partially save and marks nonfailed SKU products reviewed. It lacks the typed workspace immutable request/revision protocol and uses source display names in the grid. Kept compatible; this slice does not silently replace those semantics.",
+    "newBatchScope": "Existing packet is one SKU with up to 20 explicit commands. Cross-SKU proposal orchestration needs separately defined per-SKU request/review/recovery coordination; no bulk-all-filtered scope is introduced."
+  }
+}

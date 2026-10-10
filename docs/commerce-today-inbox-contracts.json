@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "scope": "Read-only Today inbox in the existing commerce-admin application. No messages, assignments, completed-work writes, new data permissions, live prices/campaigns, order repair, deployment or production access.",
+  "route": "/today",
+  "navigation": "One canonical Today entry replaces the existing role-home slot in the scoped sidebar and command navigation. Sidebar stays at at most nine entries. /home remains an existing overview action and post-login landing. The protected welcome route retains its original legacy navigation.",
+  "pageAccess": "The /today UI route inherits existing /home role eligibility. Each reader retains its existing backend role guard and authenticated server scope; caller role/user/scope parameters never select wider API data.",
+  "roleReaders": [
+    { "roles": ["admin", "marketing", "merchandising", "sale", "sales_manager", "business_analyst"], "api": "GET /api/reports/home?period=today", "data": "Original role-authorized summary. Only positive supported exception/awaiting-payment counts become queue-review signals. /today preserves each metric's scope and time definition; awaiting_payment is all-time, not due-today evidence." },
+    { "roles": ["admin", "merchandising"], "apis": ["GET /api/product-prices/pending?page=1&limit=5", "GET /api/product-masters/pending?page=1&limit=5"], "data": "Pending ERP change queues, with returned SKU evidence and source-reported queue count. Five records are sampled for evidence; no approval/rejection is performed." },
+    { "roles": ["cs"], "api": "Read-only GET /cs-admin/sample-requests?status=pending through the existing POST /api/josh/admin-call relay with method=GET", "data": "Returned pending requests only; identical duplicates collapse by request ID. Conflicting copies or invalid identities fail the source. No sample decision is submitted." },
+    { "roles": ["admin"], "api": "GET /api/reports/promotion-planning/drafts", "data": "Authenticated owner's first page, up to twenty persisted drafts; existing receipt validation establishes saved state. Private draft ownership is not a persistent task assignment." },
+    { "roles": ["admin"], "api": "GET /api/reports/commerce-previews/orders/:orderId/review", "condition": "A valid order UUID explicitly selected via /today?orderId=:uuid", "data": "One selected order's existing read-only findings, using the same vetted Thai/English finding labels as the canonical review page. No scanning of other orders, no repair, no retries or owner assignment. Other roles do not call or link these private review/draft APIs." },
+    { "roles": ["graphic"], "api": "None", "data": "An authorized queue aggregate is unavailable. Explain the gap and link only existing authorized catalog and brand actions; those links are not counted as work." }
+  ],
+  "taskLinks": [
+    { "evidence": "missing_images or missing_category", "url": "/j/allproducts", "scope": "Summary signal; individual records are not inferred." },
+    { "evidence": "stock_exceptions", "url": "/erp/inventory-warehouse", "scope": "Existing report definition includes missing/nonpositive values; not verified live stock." },
+    { "evidence": "awaiting_payment", "url": "/reports/orders", "scope": "Original authorized all-time order scope; no invented deadline filter." },
+    { "evidence": "pending ERP price/attribute changes", "urls": ["/product-prices", "/product-master-queue"] },
+    { "evidence": "pending sample request", "url": "/cs/samples/:requestId/approved", "scope": "Existing separate review/decision page; navigation does not approve." },
+    { "evidence": "persisted private proposal draft", "url": "/planning/promotions/drafts/:draftId" },
+    { "evidence": "selected order finding", "url": "/review/orders/:orderId/findings/:encodedFindingId" }
+  ],
+  "filters": {
+    "group": ["all", "review", "pending", "gap"],
+    "owner": ["all", "account", "unassigned", "unknown"],
+    "q": "Search the already returned evidence; no additional source reads or scope expansion.",
+    "limit": "6 by default, bounded to 24; this is a returned-item display limit, not total workload.",
+    "orderId": "Admin-only selected-order context. A valid query on another role does not cause a private read or expose private links.",
+    "history": "Filters are URL-backed and reloadable; selection changes preserve back/forward. Text search replaces its history entry. Invalid filters block readers and offer clear/retry."
+  },
+  "evidenceRules": [
+    "Sort observed findings, then recorded pending queues, then evidence gaps. This is a review order without fabricated urgency, SLA breaches or due dates.",
+    "Positive summary counts are queue signals, not individually assigned tasks. Zero produces no signal; unknown is never zero. Missing required role metrics, wrong role/scope, malformed counts and business-failed envelopes fail validation.",
+    "Actual source read times are labeled as capture times. Imported/created timestamps are not used as proof of live source freshness. Freshness is unknown except a supported snapshot_stale finding, which means the backend review age policy was exceeded.",
+    "Missing assignment evidence stays explicitly unknown. Private drafts identify this account as owner without implying task assignment. Unassigned is a distinct supported filter state; no current reader fabricates it from a missing field.",
+    "Deduplicate the same stable entity/intent; retain differently scoped tasks. Conflicting copies are withheld or fail a source. All task URLs must be safe internal paths and role-allowed canonical destinations.",
+    "Independent read failures retain usable sources and expose retry. A stalled source attempt is bounded to fifteen seconds; late results do not replace a failed attempt. This transport timeout never determines business urgency. Empty/partial results never certify the whole app or all workflows as clear. Completed badges or assignments are not persisted by this page.",
+    "Shared labeled inputs/selects, skeletons, visible sanitized errors, live status, focusable links and scoped fluid styling support keyboard/mobile work. No global CSS/font or welcome-page changes."
+  ],
+  "checkpoint": {
+    "acceptedCompletedWorkCommit": "ac15c4ff985079bd91f9c3ef0133645590282561",
+    "parent": "314d7c3e92d9c177e91a72b85c3351ad6a8f652d",
+    "files": 72,
+    "manifest": "/workspace/commerce-ui-audit-20261009/completed-work-checkpoint-manifest.json",
+    "receipt": "/workspace/commerce-ui-audit-20261009/completed-work-local-checkpoint.json",
+    "scope": "Exact union of accepted Commerce, BA foundation and proposal/order UI source/test/doc manifests. Excludes runtime artifacts, credentials and unrelated user work. Local commit only; no push."
+  },
+  "verification": {
+    "receipt": "/workspace/commerce-ui-audit-20261009/today-verification.json",
+    "browserHarness": "/workspace/commerce-ui-audit-20261009/verify-today-browser.cjs",
+    "browserMode": "Built app with strict synthetic read fixtures; native role-summary/order-review/promotion arithmetic builders. No real database persistence, production authentication, external requests or screenshots in this Today harness.",
+    "existingGuardTests": "Existing native Nest HTTP role-home and admin-only promotion/order guards rerun separately; API/backend code is unchanged.",
+    "protectedRoute": "/j/marketing/welcome-lead-email",
+    "BAFoundation": "Preserved by source hashes; no app/event/live integration."
+  },
+  "remaining": [
+    "No authoritative unified assignment or due-date contract. Unknown assignment/freshness remains visible; no persistent inbox actions are supported.",
+    "CS sees returned sample requests rather than an aggregate service-workload total. Graphic queue aggregates remain unavailable. Sales summary does not provide individual due-today tasks.",
+    "The inbox is a bounded read of existing sources, not a complete workload registry. Missing work cannot establish no work, and summary signals require inspection in their canonical feature.",
+    "Today does not change the previously documented promotion cost/stock/capacity/freshness gaps or order milestone gaps. MER comparison/ACL, pack-and-price, profit, sales/readiness and BA live integration remain queued. No further slice starts automatically."
+  ],
+  "scopeCancellation": "OCR purchase orders into cart was cancelled explicitly by the user and is absent from the current future queue. See commerce-workflow-backlog.json; existing code is unchanged."
+}

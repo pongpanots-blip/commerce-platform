@@ -1,0 +1,261 @@
+{
+  "updatedAt": "2026-10-10T06:00:20.028834+00:00",
+  "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
+  "designGuidance": {
+    "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
+    "interaction": [
+      "One dominant next action per step.",
+      "Require only necessary inputs; display safe defaults.",
+      "Reveal advanced options progressively.",
+      "Explain inline errors and recovery in context.",
+      "Show loading, persisted success and the next useful action.",
+      "Use canonical feature homes with action URLs, not additional duplicate menus.",
+      "Validate keyboard and mobile task completion, empty data and unavailable source guidance."
+    ],
+    "visualReference": "Reviewed Stitch specification; no locally inspected reference pixels and no pixel-perfect claim.",
+    "protectedRoute": "/j/marketing/welcome-lead-email"
+  },
+  "queue": [
+    {
+      "priority": 1,
+      "task": "Finish promotion rehearsal and order-risk review",
+      "status": "Admin-only guided promotion draft/recovery and read-only order/finding UI implemented; locally verified with native services and owned PostgreSQL. Cost, stock-unit, freshness, capacity and milestone gaps remain explicit; production migration/deployment excluded.",
+      "dependencies": [
+        "Existing rehearsal/order-review MVP",
+        "Authoritative cost and compatible stock selling-unit mapping remain missing",
+        "Local draft migration only; production application excluded"
+      ],
+      "acceptance": [
+        "Preview never activates campaigns or applies prices.",
+        "Save success follows committed draft plus durable request receipt.",
+        "Same key/body replays, different body conflicts; version preconditions protect concurrent editors.",
+        "Interrupted writes recover by request ID before retry.",
+        "Unknown freshness/cost/capacity remains incomplete; no fabricated profit.",
+        "Order source identity/version/lag/partial evidence remains honest."
+      ]
+    },
+    {
+      "priority": 2,
+      "task": "Role-based Today work inbox",
+      "status": "Today read-only inbox implemented at /today using existing role-scoped summaries and queues, private admin drafts and explicitly selected order findings. Unknown assignment/freshness and missing CS/graphic aggregate coverage remain explicit. No persistent actions, new permissions or additional feature slice.",
+      "dependencies": [
+        "Source-backed role home API",
+        "Existing authorized queues and owner/freshness definitions"
+      ],
+      "acceptance": [
+        "Every item has a reason, source age or unknown freshness, owner or unassigned, and existing feature/action deep link.",
+        "Completed badges reflect persisted actions, never menu counts.",
+        "No broader data or role access."
+      ]
+    },
+    {
+      "priority": 3,
+      "task": "MER compare, manual observations, matching and promotion planning",
+      "status": "Accepted canonical typed comparison now includes reviewed retailer URL/source reassignment and explicit 1–20 existing-pair decisions for one SKU, durable native outcomes/recovery and unchanged admin/marketing writes, BA GET-only, MER exclusion. Source CRUD/reader settings and cross-SKU inferred proposal batches remain legacy.",
+      "dependencies": [
+        "Existing competitor review/manual capture services",
+        "Outstanding ACL decision",
+        "Evidence history, currency/tax/tier/freshness rules"
+      ],
+      "acceptance": [
+        "One canonical comparison entry with navigable matrix/manual-entry/planning actions.",
+        "Unknown/stale/substitute observations do not produce comparable ranking or savings.",
+        "Preserve approved identity mappings until material identity changes.",
+        "Do not remove unique or differently scoped actions."
+      ],
+      "implementationContract": "docs/commerce-competitor-comparison-contracts.json",
+      "remainingDependencies": [
+        "Production availability/permissions of existing typed competitor columns, catalog/source copies, commerce_promotion_drafts and request tables have not been verified; unavailable storage remains a retriable error, never success.",
+        "The raw observation journal uses existing JSON storage with per-pair lookups; production volume, indexing, retention and query budgets need follow-up using approved production read access.",
+        "Native pack observations cap at 200 and history at 20; coverage is explicitly truncated. Legacy source names in retained overview filters are not stable vendor IDs; typed per-product comparison uses stable IDs.",
+        "Upstream copy freshness remains unverified; member eligibility, delivery/region/minimum-order/quantity tiers and FX normalization need authoritative contracts. No delivered-price, recommendation, profit, ATP or activation readiness is claimed.",
+        "Cross-SKU inferred proposal acceptance/rejection and legacy finish batch semantics remain outside the bounded explicit existing-pair review. Original endpoints unchanged; new pair review requires explicit decisions and confirmation.",
+        "Retailer URL reassignment and selected existing-pair review are implemented in canonical action URLs. Full source CRUD/reader/login/collection and collected-catalog editing remain on legacy pages; cross-SKU proposal batches still need a separate bounded flow.",
+        "MER competitor grant remains blocked pending an explicit permission decision; OCR-to-cart is cancelled.",
+        "Actual Claude/Cursor review is unrun and must occur on dot cloud computer through an authorized same-revision handoff. No credentials were copied and no transfer workaround was used."
+      ],
+      "sourceBatchClosureContract": "docs/commerce-competitor-source-batch-contracts.json"
+    },
+    {
+      "priority": 3,
+      "task": "Pack-and-price planning",
+      "status": "Bounded /planning/pack-prices action pages implement explicit own-product pack/price scenarios, comparable recorded observations, private reviewed drafts, persisted receipts and interrupted-save recovery. Comparison handoff validates SKU/source/selected observations. Existing product prices, stock and campaign rules remain operationally unchanged; this is a planning slice, not physical repacking or the whole app redesign.",
+      "dependencies": [
+        "Existing read-only active catalog copy and recorded verified competitor pair evidence",
+        "MER permission remains unresolved; no grant",
+        "Existing private versioned draft/request tables; no new migration",
+        "Authoritative internal cost remains unavailable; actual margin/profit null"
+      ],
+      "acceptance": [
+        "Separate planning page using reviewed design system; no stock-transformation/lot/reversal execution.",
+        "Offer source, date, currency, tax, region/tier, pack/UOM, mapping confidence and freshness are visible.",
+        "Six 500g items normalize to 3kg; related packs may compare without same SKU; substitutes stay separate.",
+        "No count-to-weight without net quantity or weight-to-volume without verified conversion.",
+        "Missing FX, tax or delivery basis excludes claims that need it.",
+        "Alternative own packs and proposed prices retain evidence and assumptions.",
+        "Packaging/labor/waste assumptions are explicitly entered; competitor prices never become costs.",
+        "Missing required cost/basis gives null margin plus a reason; hypothetical assumptions are labeled.",
+        "Versioned drafts only; never apply canonical price or stock."
+      ],
+      "implementedContracts": "docs/commerce-pack-price-planning-contracts.json",
+      "remaining": [
+        "MER ACL decision",
+        "Authoritative internal cost/UOM/effective-date source",
+        "FX/tax/delivery scope and variable pack contracts where needed",
+        "Production readiness outside this slice"
+      ],
+      "implementationContract": "docs/commerce-pack-price-planning-contracts.json",
+      "remainingDependencies": [
+        "MER competitor access needs an explicit ACL/source-contract decision; do not silently grant access.",
+        "BA remains read-only; saving needs a separate explicitly approved policy change.",
+        "No authoritative connected internal cost; profit/margin/markup remain unavailable in actual connected preview.",
+        "No FX, variable/range pack evaluation, weight/volume conversion, delivery normalization or authoritative market/price recommendation.",
+        "Catalog copy sourceVersion/freshness and comprehensive product picker remain unavailable in reused source contract; exact SKU entry reads the existing active local copy.",
+        "Production deployment/storage readiness and production-authenticated full-stack E2E are outside this bounded development slice; this is not the entire app redesign."
+      ]
+    },
+    {
+      "priority": 3,
+      "task": "Profit, cost and objective planning",
+      "status": "Bounded /planning/profit-goals action pages implement owner-private hypothetical objectives and assumptions, UTC month identity, checked arithmetic, persisted receipt/recovery and revision conflicts. Admin saves; sales_manager and business_analyst retain read/preview access. Existing monthly GMV target stays separate. Connected accounting actuals and attainment remain unavailable.",
+      "dependencies": [
+        "Compatible net sales and effective COGS",
+        "Objective owner/period/scope rules",
+        "Current monthly GMV target stays distinct"
+      ],
+      "acceptance": [
+        "GP = compatible net sales minus COGS; margin uses net sales, markup uses cost.",
+        "Aggregate margin uses aggregate revenue/cost, not mean percentages.",
+        "Unknown actuals show null and no attainment; net profit requires expenses."
+      ],
+      "implementedContracts": "docs/commerce-goals-sales-contracts.json",
+      "implementationContract": "docs/commerce-goals-sales-contracts.json",
+      "remainingDependencies": [
+        "Authoritative compatible accounting net sales ex VAT, effective COGS/internal cost, expenses and completeness are required before actual profit or attainment.",
+        "Organization objective ownership, approval, scope and periods are not established by owner-private drafts.",
+        "Production storage/retention/indexing and authenticated deployed E2E remain unverified; local acceptance does not authorize release."
+      ]
+    },
+    {
+      "priority": 4,
+      "task": "Sales reorder and follow-up workspace",
+      "status": "Bounded private company follow-up/reorder proposal pages implemented; original assigned-company/paid-order readers, incomplete history and missing UOM/current price/ATP remain explicit. Sale previews GET-only, admin/manager retain private drafts. Existing opportunity/lead readers and operational activities retained; no outbound contact or order.",
+      "dependencies": [
+        "Existing assigned-company identity mapping",
+        "Prior orders and authorized inventory",
+        "Reviewable draft persistence"
+      ],
+      "acceptance": [
+        "Own assigned customers only; no user-selected team override.",
+        "Reorders use current source availability/prices, with unresolved items visible.",
+        "Follow-ups remain reviewable drafts; no live customer messages."
+      ],
+      "implementedContracts": "docs/commerce-commercial-work-contracts.json",
+      "remaining": [
+        "Sale persistence remains unavailable under global GET-only policy; any future scope decision must be explicit.",
+        "Operational assignment workflow audit remains separate.",
+        "Authoritative historical-to-selling UOM, current customer price and ATP required before any reviewed cart.",
+        "Individual CRM follow-up history/company-account mapping still unverified."
+      ]
+    },
+    {
+      "priority": 5,
+      "task": "Marketing readiness and BA variance drilldown",
+      "status": "Accepted Marketing single-SKU readiness/private brief remains unchanged. Bounded BA recorded financial coverage/variance and source-record drilldown implemented, GET-only admin/manager/BA. Accounting net sales/COGS/expenses/completeness remain unavailable; no actual profit/ROAS/attainment, assignment or outbound actions.",
+      "dependencies": [
+        "Stock/age/cost coverage definitions",
+        "Attribution/spend currently unavailable",
+        "Existing reports and assignment permissions"
+      ],
+      "acceptance": [
+        "Show campaign blockers and evidence, not invented ROAS or profit.",
+        "BA recorded variance links eligible source order/refund records and explicit coverage reasons; no causal explanation or assignment action without established evidence/access.",
+        "No campaign activation or ACL expansion."
+      ],
+      "implementedContracts": "docs/commerce-commercial-work-contracts.json",
+      "remaining": [
+        "Multi-product campaign readiness and time/budget rules",
+        "Confirmed inventory/stock-age/effective-cost/attribution/spend contracts",
+        "Existing live campaign orchestration remains outside this pass",
+        "Confirm BA accounting net revenue ex VAT/linked return recognition, effective COGS/UOM/currency, expenses and completeness watermarks before actual profit/target variance. Recorded header/refund coverage/variance is implemented; preserve GET-only."
+      ]
+    },
+    {
+      "priority": 6,
+      "task": "Review and recover customer sales assignments",
+      "status": "Bounded /cs/sales-assignment selection/review/request recovery verified locally: native CAS, all-or-none assignments and original outbox persistence; 1,041 selected automated checks and 115 current-build browser checks/views passed. Production and whole-app scope remain excluded.",
+      "contract": "docs/commerce-sales-assignment-contracts.json",
+      "dependencies": [
+        "Production availability/permissions of existing company_sales_reps, customer copies, staff roster/link tables, outbox and private request storage remain unverified. No production connection or application migration was used.",
+        "Company identities and imported customer account counts depend on existing copies/read replica; upstream freshness is not established. A committed native receipt does not prove downstream Josh delivery.",
+        "Request journal uses existing private draft storage with a customer_assignment discriminator. Production retention, indexing and throughput budgets need approved follow-up.",
+        "Review intentionally caps at 20 selected companies. Full-catalog selection, bulk-all-filtered assignment, reassignment of separate winback opportunity owners, branch ownership, notifications and permissions changes are outside this slice.",
+        "Other legacy menus and pages remain in the route inventory. This checkpoint does not complete the overall navigation redesign."
+      ],
+      "acceptance": [
+        "Company must exist in native assignment import or nondeleted customer copy, as in the original service. Original narrow replica confirms selected company identity.",
+        "Recorded same-owner companies remain visible with previous/new owner evidence during review and disable confirmation; the save independently rejects them rather than manufacturing completed assignments. An absent Commerce row is labeled explicitly and never presented as verified upstream unassigned ownership.",
+        "Every selected native version and customer-copy scope is revalidated under sorted company locks before any assignment.",
+        "Any invalid/stale member, unavailable source, event insert failure or receipt persistence failure rolls the entire batch back.",
+        "Native company assignments, original company.sales_rep transactional outbox events and durable receipt commit together. Outbox delivery is explicitly unverified.",
+        "Same actor/request/body returns original persisted receipt without repeating assignments/events. Different packet or cross-kind request collision conflicts.",
+        "Actor-private recovery does not infer save success from current owner equality, counters, generic responses or a missing receipt.",
+        "Immutable owner-scoped local recovery journal is verified before dispatch; storage failure prevents sending. Repeated clicks are synchronously locked.",
+        "Known absent receipt plus matching current review permits only explicitly confirmed original retry. Stale/ineligible evidence blocks retry. Known rejected requests can return to fresh selection after confirmed receipt absence.",
+        "Cancellation/back navigation does not dispatch; a late response cannot redirect a newer navigation. Already dispatched operations are reconciled through their original request."
+      ],
+      "validationEvidence": "/workspace/commerce-ui-audit-20261009/assignment-verification.json"
+    },
+    {
+      "priority": 7,
+      "task": "Review incoming ERP prices",
+      "status": "Bounded canonical existing-admin/MER review, approval/rejection and durable native outcomes implemented. Exact original ownership, value and snapshot semantics retained; local acceptance only. Product-master approval and current-price manual editor recovery remain outside this slice.",
+      "contract": "docs/commerce-price-approval-contracts.json",
+      "acceptance": [
+        "Exact current and proposed raw fields and scope before explicit decision.",
+        "Changed evidence blocks the entire batch; native price/outbox/audit receipt commit atomically.",
+        "Duplicates and interrupted flows recover the immutable actor-private receipt before a confirmed exact retry.",
+        "Completion counts reflect native committed outcomes; downstream delivery remains unverified."
+      ],
+      "remaining": [
+        "Product-master approval slice",
+        "Native manual price editor review/recovery",
+        "Production storage, schema coordination, retention and downstream delivery readiness"
+      ]
+    }
+  ],
+  "approvedEnterpriseAnalyticsFoundation": {
+    "status": "Prior approved staged synthetic foundation is preserved byte-for-byte. No runtime tracking, GTM, identity-source or activation integration in this pass.",
+    "nextBoundedSlice": [
+      "Read-only repository audit of instrumentation, identity sources, consent/sensitive payloads, accepted-order authority and login/logout/branch-switch/assisted-order behavior; cite code and mark inaccessible GTM configuration unverified.",
+      "Versioned schemas and synthetic fixtures for branch_selected, checkout_started and order_accepted; account_application_approved only if an actual transition exists. Preserve event-time identity without shared-device identity merging.",
+      "Branch-scoped typed AND/OR/NOT segment validator, compiler and read-only parameterized execution on owned local fixtures; three-valued unknown handling, fixed evaluation time and bounded windows/query/timeout.",
+      "Two plain-language synthetic previews: approved eligible branches at least seven days old with no accepted orders only when history is complete, and repeat buyers with at least three accepted orders in ninety days and none in fourteen days.",
+      "Boundary, deduplication, identity/tenant isolation, attempted-versus-accepted, late/incomplete history, missing-trait, time-expiry and SQL-injection tests with hand-calculated membership; integration checklist."
+    ],
+    "excluded": [
+      "New tracking destinations",
+      "Production GTM changes",
+      "Audience or campaign activation",
+      "Paid APIs",
+      "New consent or role grants",
+      "Production migrations/data extraction",
+      "Push/deployment",
+      "Protected welcome changes"
+    ],
+    "notCompletionClaim": "This is an analytics foundation with synthetic previews, not a completed analytics platform."
+  },
+  "capturedAt": "2026-10-10T01:16:03.479738+00:00",
+  "cancelledScope": {
+    "tasks": [
+      "All remaining CS/credit implementation and investigation",
+      "OCR purchase orders into cart"
+    ],
+    "status": "Explicitly cancelled by user. Accepted sales assignment and existing code retained. No further CS/credit or OCR-to-cart slice; no unrelated deletion."
+  },
+  "financialSourceCoverage": {
+    "contracts": "docs/commerce-financial-analysis-contracts.json",
+    "state": "Bounded recorded source coverage/variance implemented; actual accounting/goal integration pending required source contracts."
+  },
+  "consolidatedAcceptance": "docs/commerce-pre-release-acceptance-2026-10-10.json"
+}

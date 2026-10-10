@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron } from '@nestjs/schedule';
 import { createHash } from 'node:crypto';
@@ -209,6 +209,12 @@ export function describeOurOffer(product: InventoryShape) {
 }
 
 const freshForHours = (row: Pair) => row.scrapingSource ? Math.max(24, row.scrapingSource.config.intervalHours + 24) : 24;
+const planningValidUntil = (row: Pair) => {
+  const observed = row.observedAt?.getTime(), hours = freshForHours(row);
+  if (observed == null || !Number.isFinite(observed) || !Number.isFinite(hours)) return null;
+  const value = new Date(observed + hours * 3600000);
+  return Number.isFinite(value.getTime()) ? value.toISOString() : null;
+};
 /** `no_data` = paired but not comparable yet (waiting for confirmation / price); `unmatched` = no competitor pair at all. */
 export type OverviewPosition = 'we_cheaper' | 'we_pricier' | 'same' | 'no_data' | 'unmatched';
 /** `matched` = every SKU that has at least one pair (any position except `unmatched`). */
@@ -224,6 +230,10 @@ export function productView(product: InventoryShape) {
     storage: product.storage_temperature, packSize: product.pack_size,
     sellingUnit: product.selling_unit, sellingUnitPriceIncVat: Number(product.selling_unit_price),
     updatedAt: product.updated_at, syncedAt: product.synced_at, removed: !!product.removed_at,
+    // Additive planning evidence; the original fields and price semantics stay unchanged.
+    weightPerUnit: product.weight_per_unit, unitsPerBox: product.units_per_box,
+    packagingType: product.packaging_type, vatType: product.vat_type,
+    originalPriceIncVat: product.selling_unit_price == null ? null : String(product.selling_unit_price),
   };
 }
 
@@ -243,8 +253,14 @@ export class CompetitorPricesService {
     return (await this.products.findBy({ status: 'active', removedAt: IsNull() })).map(toInventoryShape);
   }
 
-  async product(sku: string) {
+  async product(sku: string, readOnlyCopy = false) {
     const code = sku.trim();
+    if (readOnlyCopy) {
+      const copies = await this.products.find({ where: { sku: code, status: 'active', removedAt: IsNull() }, take: 2 });
+      if (!copies.length) throw new NotFoundException('SKU not found in the active catalog copy');
+      if (copies.length !== 1) throw new ConflictException('SKU identity is ambiguous');
+      return toInventoryShape(copies[0]);
+    }
     const copy = await this.products.findOneBy({ sku: code, removedAt: IsNull() });
     if (copy) return toInventoryShape(copy);
     // Only where a josh replica is configured (dev); in prod the copy is kept current by catalog.snapshot events.
@@ -260,7 +276,7 @@ export class CompetitorPricesService {
 
   catalogItem(id: string) { return this.scraping.item(id); }
 
-  async catalog(sku: string) { return productView(await this.product(sku)); }
+  async catalog(sku: string, readOnlyCopy = false) { return productView(await this.product(sku, readOnlyCopy)); }
 
   /**
    * Top 3 active Josh SKUs for a collected competitor item: similar name (TH or EN), then matching weight.
@@ -306,8 +322,8 @@ export class CompetitorPricesService {
   }
 
   /** The same SKU on the other sites: top 3 collected items per site, so one Josh SKU can be paired with every site. */
-  async siteCandidates(sku: string) {
-    const product = await this.product(sku);
+  async siteCandidates(sku: string, readOnlyCopy = false) {
+    const product = await this.product(sku, readOnlyCopy);
     const paired = await this.prices.find({ where: { productId: product.product_inventory_id }, select: { id: true, sourceUrl: true } });
     return this.candidatesFor(product, new Set(paired.map(row => row.sourceUrl)));
   }
@@ -342,18 +358,23 @@ export class CompetitorPricesService {
 
   private view(row: Pair) {
     const ourRate = catalogPricePerKg(row.product, Number(row.ourWeightKg));
-    const theirRate = row.priceIncVat == null ? null : Number(row.priceIncVat) / Number(row.competitorWeightKg);
+    const unsupportedLegacyKgBasis = (row.competitorUnit ?? 'kg') !== 'kg' || row.competitorQtyMin != null && row.competitorQtyMax != null && Number(row.competitorQtyMin) !== Number(row.competitorQtyMax);
+    const theirRate = unsupportedLegacyKgBasis || row.priceIncVat == null ? null : Number(row.priceIncVat) / Number(row.competitorWeightKg);
     const verified = !!row.verifiedFingerprint && row.verifiedFingerprint === this.fingerprint(row);
     const reason = row.product.removed_at ? 'สินค้านี้ไม่อยู่ในแค็ตตาล็อก Josh แล้ว'
       : !verified ? 'รอตรวจและยืนยันคู่สินค้า'
       : !row.vatIncluded ? 'ยังไม่ยืนยันว่าราคาคู่แข่งรวม VAT'
+      : unsupportedLegacyKgBasis ? 'หน่วยหรือช่วงขนาดนี้ไม่ใช่ฐานราคาต่อกก. ตรวจฐานหน่วยในหน้าเทียบสินค้า'
+      : row.captureMethod === 'automatic' && row.scrapingSource?.config.currency !== 'THB' ? 'สกุลเงินต่างกันหรือยังไม่ยืนยัน ไม่ใช้เทียบราคาบาท'
       : ourRate == null ? 'ตรวจหน่วยขายและราคาของเราในแค็ตตาล็อก'
       : theirRate == null ? 'ยังไม่มีราคาคู่แข่ง'
       : row.captureMethod === 'automatic' && (!row.scrapingSource || row.capturedSourceVersion !== scrapingVersion(row.scrapingSource.config)) ? 'ตั้งค่าตัวอ่านเว็บเปลี่ยน กรุณาดึงราคาใหม่'
       // A collected price stays usable for its source's own cycle + 1 day (daily run → 48 h); manual pairs 24 h.
-      : !row.observedAt || Date.now() - row.observedAt.getTime() > freshForHours(row) * 3600000 ? `ราคาเกิน ${freshForHours(row)} ชั่วโมง กรุณาอัปเดต`
+      : row.observedAt && row.observedAt.getTime() > Date.now() ? 'เวลาที่พบราคาอยู่ในอนาคต'
+      : !row.observedAt || !Number.isFinite(freshForHours(row)) || Date.now() - row.observedAt.getTime() > freshForHours(row) * 3600000 ? `ราคาเกินอายุข้อมูลหรือยังไม่ทราบอายุ กรุณาอัปเดต`
       : row.lastError ? 'ดึงครั้งล่าสุดไม่สำเร็จ กรุณาตรวจแหล่งที่มา' : null;
     const refreshReason = !row.scrapingSource ? 'ตั้งค่าเว็บต้นทาง แล้วบันทึกคู่สินค้านี้อีกครั้งเพื่อเปิดตัวดึงราคา'
+      : unsupportedLegacyKgBasis ? 'ตัวรวบรวมเดิมรองรับน้ำหนักกก. คงที่เท่านั้น บันทึกราคาหน่วยอื่นด้วยตนเอง'
       : !row.scrapingSource.config.collectionAllowed ? 'เว็บต้นทางยังไม่ยืนยันสิทธิ์ดึงข้อมูล'
       : !row.scrapingSource.config.vatIncluded || row.scrapingSource.config.currency !== 'THB' ? 'ตั้งค่าฐานราคาเว็บเป็น THB รวม VAT ก่อนเทียบ'
       : !row.collectionAllowed ? 'ยังไม่ยืนยันสิทธิ์ดึงข้อมูลจากแหล่งนี้'
@@ -380,6 +401,19 @@ export class CompetitorPricesService {
       vatIncluded: row.vatIncluded, collectionAllowed: row.collectionAllowed, autoRefresh: row.autoRefresh,
       canRefresh: refreshReason == null, refreshReason, observedAt: row.observedAt,
       captureMethod: row.captureMethod, lastError: row.lastError,
+      // Original decimal values and dimensions, before legacy floating-point display normalization.
+      planningEvidence: {
+        originalPriceIncVat: row.priceIncVat == null ? null : String(row.priceIncVat),
+        unit: row.competitorUnit ?? 'kg',
+        min: row.competitorQtyMin == null ? (row.competitorUnit ?? 'kg') === 'kg' ? String(row.competitorWeightKg) : null : String(row.competitorQtyMin),
+        max: row.competitorQtyMax == null ? row.competitorQtyMin == null ? (row.competitorUnit ?? 'kg') === 'kg' ? String(row.competitorWeightKg) : null : String(row.competitorQtyMin) : String(row.competitorQtyMax),
+        count: row.competitorQtyMin == null ? 1 : row.competitorPackCount,
+        // The existing manual capture UI/contract explicitly records baht inclusive of VAT.
+        currency: row.captureMethod === 'manual' ? 'THB' : row.captureMethod === 'automatic' ? row.scrapingSource?.config.currency ?? null : null,
+        taxIncluded: row.vatIncluded && (row.captureMethod !== 'automatic' || !!row.scrapingSource?.config.vatIncluded),
+        sourceCurrent: row.captureMethod !== 'automatic' || !!row.scrapingSource && row.capturedSourceVersion === scrapingVersion(row.scrapingSource.config),
+        validUntil: planningValidUntil(row),
+      },
     };
   }
 
@@ -517,8 +551,8 @@ export class CompetitorPricesService {
     return Buffer.from(await workbook.xlsx.writeBuffer());
   }
 
-  async list() {
-    const rows = (await this.prices.find({ relations: ['product', 'scrapingSource'], order: { createdAt: 'DESC' } })).map(shaped);
+  async list(sku?: string) {
+    const rows = (await this.prices.find({ ...(sku ? { where: { product: { sku } } } : {}), relations: ['product', 'scrapingSource'], order: { createdAt: 'DESC' } })).map(shaped);
     return rows.map(row => this.view(row));
   }
 
@@ -536,6 +570,27 @@ export class CompetitorPricesService {
       if (revision != null && row.revision !== revision) throw new BadRequestException('ข้อมูลเปลี่ยนระหว่างทำรายการ กรุณาโหลดใหม่');
       mutate(row);
       await repository.save(row);
+    });
+    return this.view(await this.read(id));
+  }
+
+  /** Compatibility path: replace typed dimensions in place; never delete a pair before recreating it. */
+  async replacePack(id: string, productId: string, size: PackSize, revision: number, actor: string) {
+    await this.prices.manager.transaction(async manager => {
+      const repository = manager.getRepository(CompetitorPrice);
+      const row = await repository.findOne({ where: { id }, lock: { mode: 'pessimistic_write' } });
+      if (!row || row.productId !== productId) throw new NotFoundException('Pair unavailable');
+      if (row.revision !== revision) throw new ConflictException('Pair changed. Reload before replacing its pack.');
+      const before = JSON.parse(JSON.stringify(row));
+      row.competitorUnit = size.unit; row.competitorQtyMin = size.min; row.competitorQtyMax = size.max;
+      row.competitorPackCount = size.packCount; row.competitorWeightKg = size.min * size.packCount;
+      row.verifiedFingerprint = null; row.verifiedBy = null; row.verifiedAt = null;
+      row.priceIncVat = null;
+      row.matchNote = 'Uncertain: Pack changed; review the match and record a price for this pack.';
+      const saved = await repository.save(row);
+      // The original observation and dimensions stay archived atomically with the replacement.
+      await manager.query(`INSERT INTO commerce_promotion_drafts(id,actor_id,revision,scenario,evidence,preview)
+        VALUES(gen_random_uuid(),$1,1,$2,$3,$4)`, [actor, JSON.stringify({kind:'competitor_legacy_archive',pairId:id}),JSON.stringify(before),JSON.stringify(saved)]);
     });
     return this.view(await this.read(id));
   }

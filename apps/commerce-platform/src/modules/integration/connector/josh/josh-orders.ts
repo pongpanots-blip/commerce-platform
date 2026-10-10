@@ -95,6 +95,13 @@ export class JoshOrders {
     return this.source === 'copies' ? this.db.query(sql, params) : this.replica.query<R>(sql, params);
   }
 
+  /** Bounded planning evidence using the original paid-order rule, without inferring payment from status. */
+  async planningOrders(companyId: string, repIds?: string[]) {
+    const t=T[this.source], {where,params}=orderWhere({companyId,repIds},t.paid,this.source==='copies');
+    const rows=await this.q(`SELECT o.orders_id,o.order_number,o.status::text AS status,o.create_date,${t.paid} AS paid FROM ${t.orders} o LEFT JOIN ${t.company} c ON c.id=o.company_id ${where} ORDER BY o.create_date DESC,o.orders_id LIMIT 21`,params);
+    return {items:rows.slice(0,20),hasMore:rows.length>20};
+  }
+
   async summary(f: OrderFilters = {}) {
     const t = T[this.source];
     const { where, params } = orderWhere(f, t.paid, this.source === 'copies');

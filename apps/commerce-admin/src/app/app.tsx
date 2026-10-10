@@ -2,12 +2,15 @@ import { SalesAssignment } from './pages/SalesAssignment';
 import { MyWinback } from './pages/MyWinback';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { AppShell, CommandMenu, ErrorText, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, NavProvider, currentNavItem, useUiLocale } from '@cp/ui';
+import { CommandMenu, ErrorText, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, currentNavItem, useUiLocale } from '@cp/ui';
 import { navFor } from './navigation';
 import { FeatureActions } from './FeatureActions';
 import { TaskRoute } from './TaskRoute';
 import { Workspace } from './pages/Workspace';
 import { RoleHome } from './pages/RoleHome';
+import { CommerceWorkspace } from './CommerceWorkspace';
+import { TaskSection } from './pages/TaskSection';
+import PaymentWorkspace from './pages/PaymentWorkspace';
 import { AdminStats, api, logout, reportsApi, restoreSession, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
 import { initialAuthState } from '../lib/auth';
 import { landingFor, loginPathFor, redirectParam, resolvePostLoginPath } from '../lib/landing';
@@ -67,6 +70,15 @@ import { GrowthResults, GrowthTimeline } from './pages/growth/Results';
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const MarketingAnalyst = lazy(() => import('./pages/MarketingAnalyst'));
+const PromotionWorkspace = lazy(() => import('./pages/planning/PromotionWorkspace'));
+const OrderReviewWorkspace = lazy(() => import('./pages/planning/OrderReviewWorkspace'));
+const TodayInbox = lazy(() => import('./pages/today/TodayInbox'));
+const SalesWorkWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlanningWorkspace').then(m=>({default:m.SalesWorkWorkspace})));
+const MarketingReadinessWorkspace=lazy(()=>import('./pages/commercial-work/CommercialPlanningWorkspace').then(m=>({default:m.MarketingReadinessWorkspace})));
+const FinancialAnalysisWorkspace=lazy(()=>import('./pages/financial-analysis/FinancialAnalysisWorkspace'));
+const ComparisonWorkspace=lazy(()=>import('./pages/competitor-comparison/ComparisonWorkspace'));
+const GoalPlanningWorkspace = lazy(() => import('./pages/financial-goals/GoalPlanningWorkspace'));
+const PackPlanningWorkspace = lazy(() => import('./pages/pack-price/PackPlanningWorkspace'));
 
 /** Route context and a single page-search entry point across every category. */
 function AdminTopBar({ role }: { role?: string }) {
@@ -151,7 +163,6 @@ export function App() {
 
   const claims = session.claims();
   const role = claims?.role;
-  const nav = navFor(role);
 
   async function signOut() {
     await logout();
@@ -164,14 +175,13 @@ export function App() {
 
   return (
     <BrowserRouter>
-      <NavProvider nav={nav}>
-      <AppShell
-        sidebar={
+      <CommerceWorkspace role={role}
+        sidebar={displayNav =>
           <Sidebar
             showDestinationCounts={false}
             brand={{ title: __uiText('ระบบหลังบ้าน'), subtitle: 'สำหรับทีมงาน' }}
             env={<><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block" />{import.meta.env.MODE === 'production' ? __uiText("Prod") : __uiText("Local dev")}</>}
-            nav={nav}
+            nav={displayNav}
             searchable
             user={{ name: claims?.email?.split('@')[0] ?? 'Staff', detail: claims ? `${claims.email} · ${__uiText(STAFF_ROLE_LABEL[role as StaffRole] ?? role ?? '')}` : undefined, onSignOut: signOut }}
           />
@@ -182,6 +192,15 @@ export function App() {
             <Route path="/" element={role === 'admin' ? <Dashboard /> : <Navigate to={landingFor(role)} replace />} />
             <Route path="/login" element={<LoginRedirect role={role} />} />
             <Route path="/home" element={<RoleHome role={role} />} />
+            <Route path="/today" element={<Suspense fallback={<Loading variant="table" />}><TodayInbox role={role} /></Suspense>} />
+            <Route path="/planning/sales-work/*" element={<Suspense fallback={<Loading variant="detail" />}><SalesWorkWorkspace role={role}/></Suspense>}/>
+            <Route path="/planning/marketing-readiness/*" element={<Suspense fallback={<Loading variant="detail" />}><MarketingReadinessWorkspace role={role}/></Suspense>}/>
+            <Route path="/analysis/financial/*" element={<Suspense fallback={<Loading variant="detail" />}><FinancialAnalysisWorkspace role={role}/></Suspense>}/>
+            <Route path="/planning/profit-goals/*" element={<Suspense fallback={<Loading variant="detail" />}><GoalPlanningWorkspace role={role} /></Suspense>} />
+            <Route path="/planning/pack-prices/*" element={<Suspense fallback={<Loading variant="detail" />}><PackPlanningWorkspace role={role} /></Suspense>} />
+            <Route path="/tasks/:sectionId" element={<TaskSection role={role} />} />
+            <Route path="/planning/promotions/*" element={<Suspense fallback={<Loading variant="detail" />}><PromotionWorkspace role={role} /></Suspense>} />
+            <Route path="/review/orders/*" element={<Suspense fallback={<Loading variant="detail" />}><OrderReviewWorkspace role={role} /></Suspense>} />
             {/* #80 workspace overview pages: old links open the replacing section */}
             <Route path="/workspaces/:workspaceId" element={<Workspace role={role} />} />
             <Route path="/settings/staff" element={<TaskRoute role={role}><StaffAccounts /></TaskRoute>} />
@@ -199,9 +218,9 @@ export function App() {
             <Route path="/reports/prices" element={<JoshPricesPage />} />
             <Route path="/reports/products" element={<JoshProducts />} />
             <Route path="/reports/products/:id" element={<JoshProductDetail />} />
-            <Route path="/cs/sales-assignment" element={<SalesAssignment />} />
-            <Route path="/reports/winback/opportunities" element={<MyWinback />} />
-            <Route path="/reports/winback/my" element={<MyWinback />} />
+            <Route path="/cs/sales-assignment/*" element={<SalesAssignment role={role} />} />
+            <Route path="/reports/winback/opportunities/*" element={<MyWinback role={role} />} />
+            <Route path="/reports/winback/my/*" element={<MyWinback role={role} />} />
             <Route path="/reports/sales" element={<SalesReport />} />
             <Route path="/reports/traffic" element={<TrafficReport />} />
             <Route path="/reports/health" element={<HealthReportPage />} />
@@ -220,6 +239,9 @@ export function App() {
             <Route path="/marketing/workflows/:id/enrollments" element={<WorkflowEnrollments />} />
             <Route path="/marketing/workflows/:id/scheduled-runs" element={<WorkflowScheduledRuns />} />
             <Route path="/j/*" element={<JoshAdminApp />} />
+            <Route path="/j/marketing/competitor-prices/*" element={<Suspense fallback={<Loading variant="detail" />}><ComparisonWorkspace role={role}/></Suspense>}/>
+            <Route path="/j/payment-transactions" element={<PaymentWorkspace role={role} />} />
+            <Route path="/j/payment-transactions/:transactionId" element={<PaymentWorkspace role={role} />} />
             <Route path="/j/cs/sample-requests" element={<SampleRequestsRedirect role={role} />} />
             <Route path="/cs" element={<CsDesk role={role} />} />
             <Route path="/cs/orders/new" element={<CsDesk role={role} />} />
@@ -254,7 +276,7 @@ export function App() {
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/stock-moves" element={<TaskRoute role={role}><StockMoves /></TaskRoute>} />
             <Route path="/stock-moves/:task" element={<TaskRoute role={role}><StockMoves /></TaskRoute>} />
-            <Route path="/product-prices" element={<ProductPrices />} />
+            <Route path="/product-prices/*" element={<TaskRoute role={role}><ProductPrices role={role} /></TaskRoute>} />
             <Route path="/product-master-queue" element={<TaskRoute role={role}><ProductMasterQueue /></TaskRoute>} />
             <Route path="/order-periods" element={<SupplierOrderPeriods />} />
             <Route path="/inventory" element={<Navigate to="/stock-moves" replace />} />
@@ -265,8 +287,7 @@ export function App() {
             <Route path="/erp-ingest" element={<ErpIngest />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-      </AppShell>
-      </NavProvider>
+      </CommerceWorkspace>
     </BrowserRouter>
   );
 }

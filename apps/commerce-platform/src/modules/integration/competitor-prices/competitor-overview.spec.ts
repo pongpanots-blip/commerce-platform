@@ -53,7 +53,7 @@ it('overview keeps one row per SKU with the cheapest ready competitor, and expor
 it('keeps member (logged-in) prices out of the public position and reports them separately', async () => {
   const pork = product('PORK', 200);
   const memberSource = { id: 's1', name: 'Club Shop', loginUsername: 'buyer@josh', config: { mode: 'html', itemSelector: '', fields: [], currency: 'THB', vatIncluded: true,
-    priceContext: 'member', collectionAllowed: true, selectedFields: undefined } };
+    priceContext: 'member', intervalHours:24, collectionAllowed: true, selectedFields: undefined } };
   const memberPair = { ...pair('m', pork, 'club.example', 150), scrapingSource: memberSource };
   const { scrapingVersion } = require('../../platform/scraping/infrastructure/public-web.reader');
   const { createHash } = require('node:crypto');

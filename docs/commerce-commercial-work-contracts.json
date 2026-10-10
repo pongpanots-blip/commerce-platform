@@ -1,0 +1,162 @@
+{
+  "updatedAt": "2026-10-10T00:44:38.624660+00:00",
+  "acceptedStartingHead": "e53b2f21911682c4c88647af17b5d1648d3a33dc",
+  "scope": "Development-only bounded source-backed Sales follow-up/reorder proposals and single-SKU Marketing readiness evidence; not a whole-app redesign or executable cart/campaign.",
+  "featureMapping": [
+    {
+      "existing": "/reports/winback/{my|opportunities} and /leads",
+      "canonical": "unchanged",
+      "scope": "Native opportunity/lead entities; Sale own+unassigned versus existing team scope. Existing CRM activities are retained. Company identity is not guessed from a lead/account."
+    },
+    {
+      "existing": "/reports/customers and /reports/orders",
+      "canonical": "unchanged",
+      "scope": "Native Josh companies and orders, same assignment predicate/payment rule. New narrow read-only planning projections add no contact/credit/KYC fields."
+    },
+    {
+      "existing": "No persisted company planning workflow",
+      "canonical": "/planning/sales-work",
+      "actions": [
+        "new/source",
+        "new/proposal",
+        "new/review",
+        "drafts/:id",
+        "drafts/:id/edit/{source|proposal|review}",
+        "requests/:requestId"
+      ],
+      "scope": "One canonical task-index entry. A private human-reviewed proposal using company/order evidence; no contact completion or order placement."
+    },
+    {
+      "existing": "/reports/products, /marketing/growth and /marketing/growth/plans",
+      "canonical": "unchanged",
+      "scope": "Native catalog and existing live campaign planning/execution capabilities retained. They are not removed as duplicate single-SKU evidence reviews."
+    },
+    {
+      "existing": "No private readiness-evidence workflow",
+      "canonical": "/planning/marketing-readiness",
+      "actions": [
+        "new/source",
+        "new/proposal",
+        "new/review",
+        "drafts/:id",
+        "drafts/:id/edit/{source|proposal|review}",
+        "requests/:requestId"
+      ],
+      "scope": "One canonical task-index entry; recorded single-SKU readiness findings and a private campaign brief. No campaign activation."
+    }
+  ],
+  "navigation": {
+    "sidebarMaximum": 9,
+    "legacyNavUnchanged": true,
+    "existingDeepLinksPreserved": true,
+    "inventory": "docs/commerce-remaining-route-inventory.json",
+    "testedPageCountIsNotInventoryCount": true
+  },
+  "permissions": {
+    "SalesReadPreview": [
+      "admin",
+      "sale",
+      "sales_manager"
+    ],
+    "SalesSaveEdit": [
+      "admin",
+      "sales_manager"
+    ],
+    "MarketingReadPreviewSaveEdit": [
+      "admin",
+      "marketing"
+    ],
+    "BAReadOnlyUnchanged": true,
+    "MERExcludedAndDecisionUnresolved": true,
+    "noReadOnlyWriteException": true,
+    "noPublicGuardBypass": true,
+    "serverAuthority": "Original global StaffAuthGuard verifies active database account and password state on each request. New routes derive actor/scope from req.staff, never body/JWT role claim or a client rep override.",
+    "SalesOwnScope": "Original SalesRepIdentity and repScopeSql company assignment; empty identity never broadens to team. Admin/manager use their existing team company scope. This differs from native Winback own+unassigned opportunity/lead authority.",
+    "SalesRetainedEvidence": "Private read/list/request/committed replay rechecks current company authorization. Reassignment cannot expose old company/order evidence. An inaccessible source 404 is not a missing receipt."
+  },
+  "sales": {
+    "source": "Replica-only narrow company projection, original copies/replica order readers. planningOrders uses paidOrderSql or copied o.paid plus current company assignment, not status alone.",
+    "coverage": "Latest returned history page, bounded 20 rows; hasMore explicitly indicates incomplete coverage. Selected detail must match authorized company and be in that page. No cadence, complete history or suggested interval inferred.",
+    "eligibility": "Confirmed assignment for follow-up. Reorder requires source-paid true AND paid/preparing/shipped/delivered status, correct company/order identity and unambiguous positive-quantity historical lines. Duplicate SKUs and invalid quantities excluded with reasons; >50 lines blocks instead of silent truncation.",
+    "proposal": "Reviewer explicitly enters quantity. Historical unit absent; current customer price, available-to-promise and current total null. Historical amounts never become execution prices. Proposal is not an executable cart.",
+    "reasons": "Human-entered source-based reason and optional chosen UTC review date; no automatic cadence/date/assignment/margin recommendations.",
+    "remaining": [
+      "Sale persistence remains unavailable under global GET-only policy; any future scope decision must be explicit.",
+      "Operational assignment workflow audit remains separate.",
+      "Authoritative historical-to-selling UOM, current customer price and ATP required before any reviewed cart.",
+      "Individual CRM follow-up history/company-account mapping still unverified."
+    ]
+  },
+  "marketing": {
+    "source": "Existing JoshProducts list/detail, including original owned overlays and copies/replica selection. Projection excludes buying_price/cost and private contact fields.",
+    "recordedChecks": [
+      "active catalog status",
+      "recorded positive sale amount",
+      "recorded image count",
+      "category identity",
+      "recorded stock or backorder flag"
+    ],
+    "knownIssues": "Inactive/missing-price/image/category/empty-stock/unknown-stock/backorder confirmation recorded as review findings. A private brief may retain blocked evidence.",
+    "criticalUnknowns": [
+      "current available-to-promise",
+      "stock age",
+      "effective internal cost",
+      "spend",
+      "attribution",
+      "upstream freshness"
+    ],
+    "readiness": "Only blocked or needs_confirmation. Never ready-to-activate. Actual margin/ROAS/current order total remain null. Source changed-at and capture time do not establish upstream synchronization or live inventory.",
+    "remaining": [
+      "Multi-product campaign readiness and time/budget rules",
+      "Confirmed inventory/stock-age/effective-cost/attribution/spend contracts",
+      "Existing live campaign orchestration remains outside this pass"
+    ]
+  },
+  "persistence": {
+    "tables": [
+      "commerce_promotion_drafts",
+      "commerce_promotion_draft_requests"
+    ],
+    "partition": "scenario.kind sales_work or marketing_readiness plus authenticated actor. Promotion/Pack/Goal records stay isolated.",
+    "protocol": [
+      "Same actor/request advisory lock as existing draft kinds",
+      "Strict immutable request hash; different packet conflicts",
+      "Source recapture/fingerprint before fresh save",
+      "Revision CAS for edits",
+      "Draft and durable receipt in one transaction",
+      "Committed replay keeps original revision/evidence but still checks current company authorization"
+    ],
+    "migrationExecution": false,
+    "newTables": false,
+    "unknownStorage": "503 plus recovery guidance if existing tables or source unavailable. No production setup attempted."
+  },
+  "interaction": {
+    "components": "Shared factory workspace, evidence panel, form backup and immutable owner/kind request journal using existing @cp/ui controls and CommercePage.",
+    "URLs": "Source, proposal, review, saved detail/edit and request recovery are distinct navigable actions. Step back/forward retains forms.",
+    "success": "Validated persisted receipt or current persisted draft read establishes saved badge. Counts are returned persisted rows, never completed contacts/messages/orders/campaigns.",
+    "recovery": "Verified local request storage before dispatch; synchronous duplicate lock; reconcile original request. Only PLAN_REQUEST_ABSENT permits same-body/key retry. 400/403/404/409 failed intents require fresh review. Unknown/revoked-source reads never enable blind retry.",
+    "interrupted": "Late preview ignored after input/source intent change; navigation interruption does not force redirect. Stale backups require explicit latest/copy choice with latest revision and freshly matching source fingerprint.",
+    "accessibility": "Labeled controls, inline validation, aria-current step navigation, keyboard focus/action links, status announcements, skeletons, useful empty/error/retry states, fluid Thai/English mobile/desktop layout."
+  },
+  "protected": {
+    "welcome": "/j/marketing/welcome-lead-email including legacy nav, CSS, fonts, API retained. App/landing have additive routes only.",
+    "acceptedBAFoundation": "unchanged",
+    "TodayPackGoalPromotionOrder": "unchanged source in this pass",
+    "excluded": [
+      "push",
+      "PR",
+      "merge",
+      "deployment",
+      "production data",
+      "migration execution",
+      "outbound messages",
+      "automatic orders",
+      "campaign activation",
+      "stock/lot/reversal",
+      "new role grants",
+      "screenshots/reference downloads"
+    ],
+    "Claude": "Official CLI authentication remains unavailable; no review run or authentication retry."
+  },
+  "verification": "/workspace/commerce-ui-audit-20261009/commercial-verification.json; final native/built-browser receipts distinguish synthetic upstream/transport from actual guards and PostgreSQL."
+}

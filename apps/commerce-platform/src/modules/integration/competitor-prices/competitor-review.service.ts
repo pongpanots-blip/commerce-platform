@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ScrapingService } from '../../platform/scraping/application/scraping.service';
@@ -141,9 +141,12 @@ export class CompetitorReviewService {
       if (dto.on && !size) return this.rowFor(dto.sku);
       const item = dto.on && pair.scrapingSourceId ? await this.scraping.itemByUrl(pair.scrapingSourceId, pair.sourceUrl) : null;
       if (dto.on && !item) throw new BadRequestException('คู่นี้กรอกเอง แก้ขนาดได้ที่หน้าผลเทียบราคา');
-      await this.prices.delete(pair.id);
-      if (dto.on && item) await this.competitor.match(item.id, dto.sku, actor, size);
-      else await this.reject(product.product_inventory_id, pair.sourceUrl, actor);
+      if (dto.on && item && size) await this.competitor.replacePack(pair.id, product.product_inventory_id, size, pair.revision, actor);
+      else await this.prices.manager.transaction(async manager => {
+        await manager.getRepository(CompetitorMatchRejection).createQueryBuilder().insert().values({ productId: product.product_inventory_id, sourceUrl: pair.sourceUrl, createdBy: actor }).orIgnore().execute();
+        const removed = await manager.getRepository(CompetitorPrice).delete({ id: pair.id, revision: pair.revision });
+        if (removed.affected !== 1) throw new ConflictException('คู่สินค้าเปลี่ยนไปแล้ว อ่านข้อมูลใหม่ก่อนทำรายการ');
+      });
       return this.rowFor(dto.sku);
     }
     if (!dto.itemId) throw new BadRequestException('ระบุสินค้าคู่แข่ง');
@@ -168,7 +171,9 @@ export class CompetitorReviewService {
         if (!duplicate) failed.push({ ...accept, message: error instanceof Error ? error.message : 'บันทึกไม่สำเร็จ' });
       }
     }
-    const products = dto.skus.length ? await this.products.find({ where: { sku: In(dto.skus) }, select: { id: true } }) : [];
+    const failedSkus = new Set(failed.map(f => f.sku));
+    const reviewedSkus = dto.skus.filter(sku => !failedSkus.has(sku));
+    const products = reviewedSkus.length ? await this.products.find({ where: { sku: In(reviewedSkus) }, select: { id: true } }) : [];
     if (products.length) {
       await this.reviews.upsert(products.map(p => ({ productId: p.id, reviewedBy: actor, reviewedAt: new Date() })), ['productId']);
     }

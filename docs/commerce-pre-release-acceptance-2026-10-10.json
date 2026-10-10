@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 1,
+  "acceptedApplicationCheckpoint": "95d95347811d718612a891e720b1802016eda0df",
+  "branch": "feature/commerce-preview-assistants-20261009",
+  "scope": "Consolidated local/test-fixture pre-release acceptance of already accepted slices. No release, production access or migration authorization. Application runtime source remains unchanged.",
+  "status": "All selected current local acceptance checks passed; production/release readiness remains unverified. No runtime regressions found in this matrix.",
+  "changesThisPass": [
+    "Added six native SQL integration cases across five proposal kinds, competitor receipts and assignment/outbox boundaries.",
+    "Corrected pack/profit backlog descriptions that incorrectly repeated competitor status.",
+    "Recorded one final-build serial regression matrix and read-only readiness/remaining UI audit."
+  ],
+  "evidenceRoot": "/workspace/commerce-ui-acceptance-20261010",
+  "sourceProof": "/workspace/commerce-ui-acceptance-20261010/protected-source-proof.json",
+  "buildManifest": "/workspace/commerce-ui-acceptance-20261010/final-build-manifest.json",
+  "countsPolicy": "Current executions only. SQL cases are a subset of selected backend cases. Browser checks/views are heterogeneous cases, not unique pages or full-stack authenticated E2E. Historical results remain separately attributed and are not added to totals.",
+  "automated": {
+    "admin": {
+      "passed": 601,
+      "sourceSpecFiles": 32,
+      "selection": "All commerce-admin/src .spec.ts/.spec.tsx files; does not claim whole monorepo coverage."
+    },
+    "portal": {
+      "passed": 34,
+      "sourceSpecFiles": 3,
+      "selection": "All commerce-portal/src .spec.ts/.spec.tsx files."
+    },
+    "backend": {
+      "passed": 788,
+      "sourceSpecFiles": 58,
+      "availableSourceSpecFiles": 255,
+      "selection": "Explicit accepted-slice, auth unit/HTTP, shared-kernel, analytics foundation and native SQL matrix; not all backend tests.",
+      "unselectedFiles": "/workspace/commerce-ui-acceptance-20261010/backend-unselected-files.json"
+    },
+    "combinedPassed": 1423,
+    "failed": 0,
+    "skipped": 0,
+    "nativeSqlSubset": {
+      "passed": 118,
+      "comparison": 26,
+      "assignment": 22,
+      "goals": 6,
+      "commercial": 7,
+      "financial": 10,
+      "analyticsFoundation": 33,
+      "sqlLikeEscaping": 8,
+      "crossSlice": 6
+    }
+  },
+  "checks": {
+    "typechecks": ["commerce-admin", "commerce-platform", "commerce-portal"],
+    "builds": ["commerce-admin", "commerce-platform", "commerce-portal"],
+    "testWorkers": 1,
+    "heavyJobs": "Serialized; 3072 MB Node heap per measured command.",
+    "memoryEvidence": "*-memory.json; cgroup metrics are shared-container observations, not app performance benchmarks.",
+    "sampledPeakCgroupBytes": 7104049152,
+    "cgroupMemoryLimitBytes": 17179869184,
+    "oomEventsDelta": 0
+  },
+  "integrationMatrix": [
+    {
+      "slice": "Today/task navigation",
+      "routes": ["/today", "/tasks/:sectionId"],
+      "scope": "Eight original staff roles; at most nine sidebar links. Canonical aliases/deep links preserve role scope. Pending items are returned evidence, never action completion. Source errors recover independently.",
+      "evidence": [
+        "admin-tests-results.json",
+        "today-browser-results.json",
+        "legacy-browser/verification.json"
+      ]
+    },
+    {
+      "slice": "Competitor comparison",
+      "routes": ["/j/marketing/competitor-prices/*"],
+      "scope": "Admin/marketing existing typed writes; BA GET-only; MER excluded. Explicit units, range/type/currency/terms eligibility, native revisions/receipts, original observation provenance retained.",
+      "evidence": [
+        "backend-tests-results.json",
+        "competitor-browser-results.json"
+      ]
+    },
+    {
+      "slice": "Pack planning",
+      "routes": ["/planning/pack-prices/*"],
+      "scope": "Admin/marketing private planning drafts; BA preview/GET-only. Validated comparison handoff and native source fingerprints; no operational pricing/stock transformation.",
+      "evidence": [
+        "competitor-handoff-browser-results.json",
+        "competitor-pack-browser-results.json"
+      ]
+    },
+    {
+      "slice": "Promotion rehearsal/order review",
+      "routes": ["/planning/promotions/*", "/review/orders/*"],
+      "scope": "Admin private draft rehearsal and read-only order evidence; no promotion activation/order repair. Authoritative receipts establish private persistence; stale/partial order evidence remains explicit.",
+      "evidence": [
+        "competitor-promotion-browser-results.json",
+        "legacy-browser/verification.json"
+      ]
+    },
+    {
+      "slice": "Profit goals",
+      "routes": ["/planning/profit-goals/*"],
+      "scope": "Admin private save/edit; manager/BA preview/GET-only. UTC full month and hypothetical ex-VAT arithmetic; unknown actuals/attainment remain null. GMV target is context only.",
+      "evidence": ["ba-finance-goals-browser-results.json"]
+    },
+    {
+      "slice": "Sales/Marketing workflows",
+      "routes": [
+        "/reports/winback/{opportunities|my}/*",
+        "/planning/sales-work/*",
+        "/planning/marketing-readiness/*"
+      ],
+      "scope": "Team/own Winback readers remain distinct. Sales private writes admin/manager; sale GET-only. Marketing private writes admin/marketing. Assigned-company scope is separate from Winback own+unassigned opportunities. No customer contact/order/campaign dispatch.",
+      "evidence": [
+        "ba-finance-commercial-browser-results.json",
+        "legacy-browser/verification.json"
+      ]
+    },
+    {
+      "slice": "Financial coverage/variance",
+      "routes": ["/analysis/financial/*"],
+      "scope": "Admin/manager/BA GET-only. Strict month/timezone and eligible order/refund detail; recorded header sums/coverage are not accounting net revenue or profit. Private goal remains actor-owned; UTC goal compatibility is false for Bangkok analysis.",
+      "evidence": ["ba-finance-browser-results.json"]
+    },
+    {
+      "slice": "Sales assignment",
+      "routes": ["/cs/sales-assignment/*"],
+      "scope": "Original admin/manager role and active staff/roster rules. 1–20 companies; native CAS/all-or-none assignment/outbox/receipt; shared locks with original PATCH. Receipt proves enqueue, not downstream delivery. No-op review visible and cannot confirm.",
+      "evidence": [
+        "assignment-browser-results.json",
+        "backend-tests-results.json"
+      ]
+    },
+    {
+      "slice": "Shared controls/roles/fluid layout/protected welcome",
+      "routes": [
+        "Existing shared table/pager/forms/error/skeleton components",
+        "/j/marketing/welcome-lead-email"
+      ],
+      "scope": "Admin aggregate covers navigation, hooks, table interactions and shared control behavior. Explicit browser widths/locales/roles are recorded per case. Native identity remains synthetic; protected welcome source/style/fonts/API plus geometry/semantics checked without screenshots.",
+      "evidence": [
+        "admin-tests-results.json",
+        "legacy-browser/verification.json",
+        "protected-source-proof.json"
+      ]
+    }
+  ],
+  "authBoundary": {
+    "browser": "Actual built commerce-admin, Playwright, isolated PostgreSQL/services for persistence-bearing flows; synthetic token/identity and narrowly stubbed sources where stated in each harness. No real login or production session.",
+    "http": "Original StaffAuthGuard/role policy executes with synthetic active-user/identity repositories. Backend unit policy and token/session cases selected separately. No production directory, deployed proxy/cookie/token refresh or downstream Josh proof.",
+    "analytics": "33 native SQL synthetic foundation cases, staged contract validators/segments preserved; no production instrumentation, identity merge, consent validation or GTM activation."
+  },
+  "behaviorCoverage": [
+    "Deep-link/query identity and back-forward, legacy aliases and action URLs.",
+    "Existing allowed/denied roles, GET-only readers and no added grants.",
+    "Duplicate clicks, immutable owner journal before dispatch, receipt validation and success only after native commit.",
+    "Loading skeletons, empty/partial/malformed data, failure/retry, stale source/revision conflicts.",
+    "Lost replies/confirmed missing receipt, explicit same-intent retry, interrupted flows and late navigation protection.",
+    "Keyboard/labels/live status and explicit fluid/mobile navigation cases; no broad assistive-technology certification."
+  ],
+  "readOnlySchemaAudit": {
+    "newMigrations": false,
+    "migrationsExecuted": false,
+    "productionInspected": false,
+    "dependencies": [
+      {
+        "source": "apps/commerce-platform/src/migrations/1796200000000-CommercePromotionDrafts.ts",
+        "requires": "commerce_promotion_drafts and requests; positive revision, actor/request PK, immutable JSON receipt and FK to draft. Original actor(updated_at,id) index. Runtime partition: null-kind promotion, pack_price, financial_goal, sales_work, marketing_readiness, competitor_action/archive, customer_assignment."
+      },
+      {
+        "source": "apps/commerce-platform/src/migrations/1794200000000-CompetitorOwnership.ts",
+        "requires": "Existing typed competitor unit/range/count checks, matches/rejections/reviews and versioned local catalog; original base catalog/scraping migrations plus live entity-compatible columns. Typed g/ml evidence is normalized through existing native unit storage; raw observations retained."
+      },
+      {
+        "source": "apps/commerce-platform/src/migrations/1794400000000-CompanySalesReps.ts",
+        "requires": "Native company_sales_reps plus nondeleted josh_customers, original active staff/roster/link tables, narrow company read replica and existing outbox_messages. COMMERCE_OWNS_SALES_REPS must match existing ownership policy."
+      },
+      {
+        "source": "apps/commerce-platform/src/modules/integration/financial-analysis/financial-reader.service.ts",
+        "requires": "Configured copies or Josh read replica, compatible orders/refunds columns and paid/settled contract; source freshness/completeness remain unverified."
+      }
+    ],
+    "transactionEvidence": "Shared promotion-draft:actor:request advisory lock prevents cross-kind key races. Native SQL tests verify atomic private receipts, revision conflicts and rollback; assignment additionally locks sorted company IDs shared with original legacy writer and commits original transactional event.",
+    "productionPrerequisites": [
+      "Confirm applied schema/table permissions, indexes and compatible deployed app versions using separately authorized access.",
+      "Verify JWT issuer/session/active staff mapping, original role aliases and source ownership flags in deployed environment.",
+      "Validate copy/replica health and data completeness, catalog selling-UOM/VAT/source versions, customer identity/roster and outbox relay acknowledgement.",
+      "Define private receipt retention/recovery window, operational backup/restore, monitoring and request/query budgets.",
+      "Resolve accounting net sales/returns/tax recognition, effective COGS/UOM/currency, expenses/spend/completeness and objective ownership before actual profit/attainment.",
+      "MER competitor access and sale persistence remain separate explicit policy decisions."
+    ],
+    "rollback": "Read-only plan: preserve private drafts/immutable request receipts and native outbox/assignment data across app rollback. Original draft migration down() drops both recovery tables and must not be used as a routine UI rollback. Existing accepted request IDs may already have committed; reverting code or deleting receipts does not undo native assignments/competitor actions or delivered events. Any business reversal requires separately approved compensating operations and downstream reconciliation. No rollback executed."
+  },
+  "performanceAudit": {
+    "method": "Static repository inspection and local cgroup sampling only; no production query probes, EXPLAIN, load/stress tests or latency/SLA claim.",
+    "observations": [
+      "Comparison workspace performs per-pair JSON journal/archive lookups; native planning observations cap at 200 and history at 20. Full collection still needs production query/index/retention review.",
+      "Private lists paginate at 20 by UUID with actor/kind JSON filters; original actor(updated_at,id) index does not establish efficient actor/kind/id lookup at production scale.",
+      "Financial reads limit displayed order/refund samples to 20 but monthly eligible aggregates still scan all eligible records; production date/payment/refund join indexing and query budgets are unverified.",
+      "Goal/commercial saves recapture source readers within request/draft transaction locks; remote delay can extend lock/connection occupancy. Configured Josh replica pool max=2, statement timeout=120 seconds, connection timeout=5 seconds; no production latency measured.",
+      "Assignment caps 20 and uses sorted company locks with current-copy/version checks. Replica/outbox throughput and retention remain unmeasured.",
+      "Current admin build includes 1215.60 kB index and 1211.90 kB shared source chunks before gzip; portal index 1375.49 kB. Build chunk-size warnings remain. Browser fixture rendering does not prove mobile network performance."
+    ],
+    "followUp": "With separate release/read-access authorization, measure representative bounded volumes and deployed network behavior, inspect query plans/indexes and monitor lock/outbox recovery; design compatible optimizations only after evidence."
+  },
+  "prioritizedLegacyUi": [
+    {
+      "priority": 1,
+      "work": "Finish competitor source configuration and batch review ergonomics",
+      "routes": [
+        "/j/marketing/scraping-sources",
+        "/j/marketing/scraped-catalog",
+        "Retained legacy competitor URL reassignment/batch actions"
+      ],
+      "preserve": "Admin/marketing native source/catalog/review actions and raw provenance; BA remains GET-only, MER excluded. Use the accepted canonical competitor home, separate action URLs and native receipts; do not manufacture a second comparison feature."
+    },
+    {
+      "priority": 2,
+      "work": "Product data/price approval and stock task journeys",
+      "routes": [
+        "/products",
+        "/product-master-queue",
+        "/product-prices",
+        "/stock-moves/*",
+        "/j/allproducts",
+        "/reports/products"
+      ],
+      "preserve": "Existing merchandising/admin operational approval/stock rules; sale/graphic product readers and BA legacy catalog/report scopes are distinct. Audit writes and native confirmation/recovery before extending accepted patterns. Do not merge catalog copies, master records and analytics as duplicates."
+    },
+    {
+      "priority": 3,
+      "work": "Customer service native order/sample/merge and customer financial actions",
+      "routes": [
+        "/cs/orders/new",
+        "/cs/samples",
+        "/cs/samples/:id/:decision",
+        "/cs/accounts/merge",
+        "/j/order",
+        "/j/order/import",
+        "/j/credit-terms",
+        "/j/credit-notes",
+        "/j/credit-backs"
+      ],
+      "preserve": "Canonical sample home and old /j/cs/sample-requests deep link already retained. CS order/sample grants, admin-only merge/import and credit action ownership remain separate. Full operational source/command contract audit needed; preserve existing unique live actions."
+    },
+    {
+      "priority": 4,
+      "work": "Live marketing campaigns, offers, coupons, suppliers and internal documents",
+      "routes": [
+        "/j/marketing/push-campaigns",
+        "/j/marketing/offers-check",
+        "/j/coupons",
+        "/j/suppliers",
+        "/josh/internal_docs",
+        "/josh/{credit_terms|admin_access|coupons|suppliers}"
+      ],
+      "preserve": "JoshBackofficeActions performs live credit/access/coupon/supplier/document operations and must remain discoverable within canonical feature homes. Existing store-native and Commerce proposal scopes are different. Protected welcome untouched; no activation/ACL expansion authorized."
+    },
+    {
+      "priority": 5,
+      "work": "Operational settings, connections and delivery recovery",
+      "routes": [
+        "/settings/staff",
+        "/settings/josh-staff",
+        "/integrations",
+        "/webhooks",
+        "/subscriptions",
+        "/sync-jobs",
+        "/erp/webhook-dead-letter",
+        "/erp/inbound-log"
+      ],
+      "preserve": "Existing staff/security/connection/API-key and webhook scopes; admin-only mutations and existing marketing readers. Build task-specific error/retry/action receipts without exposing secrets or claiming delivery from enqueue counters."
+    }
+  ],
+  "remainingBreadth": "195 literal JSX Route declarations are an inventory, not 195 distinct tested pages. Wildcard workspaces contain additional action URLs. Canonical navigation and accepted slices do not redesign every legacy page or state.",
+  "notRunOrUnverified": [
+    "Production-authenticated deployed E2E, production schema/data prerequisites, real downstream Josh delivery and performance/load acceptance.",
+    "Unselected backend suites listed in backend-unselected-files.json; external/Josh/ERP/provider and production-dependent workflows not part of this matrix.",
+    "Screen reader/assistive-technology certification and all browser/device/legacy page states.",
+    "Actual Claude/Cursor independent review remains unrun; no login, credential copying or transfer workaround."
+  ],
+  "historicalEvidence": {
+    "root": "/workspace/commerce-ui-audit-20261009",
+    "policy": "Historical counts are not relabeled or summed. Prior summary/log evidence and protected geometry baseline retained. One historical raw promotion result was overwritten by a copied harness output-path error; no backup is available and no original result was fabricated. Corrected current rerun will generate fresh evidence.",
+    "correction": "/workspace/commerce-ui-acceptance-20261010/historical-evidence-correction.json"
+  },
+  "exclusions": [
+    "No push/PR/merge/deploy/release",
+    "No production probes/writes/assignment/migration execution",
+    "No screenshots",
+    "No Claude login",
+    "OCR-to-cart cancelled"
+  ],
+  "completedAt": "2026-10-10T04:44:02.524139+00:00",
+  "appLibrarySourceManifest": "/workspace/commerce-ui-acceptance-20261010/accepted-app-library-source-manifest.json",
+  "allAcceptedAppLibraryFilesByteUnchanged": 1525,
+  "readinessGaps": [
+    {
+      "priority": "P0 before release",
+      "gap": "Production prerequisites and deployed authenticated E2E remain unverified; this task grants no release authorization.",
+      "nextStep": "Authorized environment owner confirms schema/source flags/permissions/active staff/session and safe deployment/rollback; exercise deployed recovery and downstream outbox acknowledgement."
+    },
+    {
+      "priority": "P1 before operational scale claims",
+      "gap": "Query/index/retention/lock/outbox budgets and large frontend bundles lack representative performance evidence.",
+      "nextStep": "Separately authorized measurement and query-plan review; preserve receipt semantics when optimizing."
+    },
+    {
+      "priority": "P1 before financial/action expansion",
+      "gap": "Accounting COGS/net revenue/expenses/completeness, objective ownership and current order UOM/ATP contracts unavailable.",
+      "nextStep": "Establish authoritative compatible contracts; retain explicit unknowns and private proposal boundaries."
+    },
+    {
+      "priority": "P2 evidence limitation",
+      "gap": "Earlier raw promotion result overwritten by copied output-path error; earlier immutable summary/log retained, original raw file unavailable.",
+      "nextStep": "Use corrected fresh acceptance result and correction record; do not present the overwritten file as earlier evidence."
+    }
+  ],
+  "browserMatrix": [
+    {
+      "slice": "today",
+      "passedChecksOrViews": 23,
+      "result": "/workspace/commerce-ui-acceptance-20261010/today-browser-results.json",
+      "resultSha256": "905a5b22206e08c673a5d75cc5e7d7a943cef6ff25cdb9a9d2c6aa88543d66f2",
+      "nativeSqlOrServices": false,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "competitor",
+      "passedChecksOrViews": 27,
+      "result": "/workspace/commerce-ui-acceptance-20261010/competitor-browser-results.json",
+      "resultSha256": "b380a3abde26cf4956e3018fb9b0c80b3e79d5985c248850d2cdf8bd635c1c20",
+      "nativeSqlOrServices": true,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "handoff",
+      "passedChecksOrViews": 4,
+      "result": "/workspace/commerce-ui-acceptance-20261010/competitor-handoff-browser-results.json",
+      "resultSha256": "502a34891a25e0a539bbd8305346a97ceac8466769381ba0bffd32faccd28b00",
+      "nativeSqlOrServices": true,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "pack",
+      "passedChecksOrViews": 21,
+      "result": "/workspace/commerce-ui-acceptance-20261010/competitor-pack-browser-results.json",
+      "resultSha256": "15ca034bd48a3bc4a5b19dd979069fffd6981c40eb82dda19b9446871f03d8f1",
+      "nativeSqlOrServices": true,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "promotion",
+      "passedChecksOrViews": 21,
+      "result": "/workspace/commerce-ui-acceptance-20261010/competitor-promotion-browser-results.json",
+      "resultSha256": "282866b9931034977d1c6c3d66b98a999c81acff61a19f51f3b0d04ee400afb1",
+      "nativeSqlOrServices": true,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "goals",
+      "passedChecksOrViews": 34,
+      "result": "/workspace/commerce-ui-acceptance-20261010/ba-finance-goals-browser-results.json",
+      "resultSha256": "77d84ec6183726326daa2c19ff9b3bcc47e3a70b769710533ed8b4c70fa9c96a",
+      "nativeSqlOrServices": true,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "commercial",
+      "passedChecksOrViews": 31,
+      "result": "/workspace/commerce-ui-acceptance-20261010/ba-finance-commercial-browser-results.json",
+      "resultSha256": "03e9e4a610f686b8227b9ec17c92fedb428fc9801670b5e37dd6b577c492086e",
+      "nativeSqlOrServices": true,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "financial",
+      "passedChecksOrViews": 25,
+      "result": "/workspace/commerce-ui-acceptance-20261010/ba-finance-browser-results.json",
+      "resultSha256": "971a27627640bf244fa6a4645b9fb1e69387d205ceb33ce9b6857889c9618524",
+      "nativeSqlOrServices": true,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "assignment",
+      "passedChecksOrViews": 30,
+      "result": "/workspace/commerce-ui-acceptance-20261010/assignment-browser-results.json",
+      "resultSha256": "07f1cc775c9feb9dbe7ffc16542fd0cd0039e4cecf2e187eedac143f0456ce8f",
+      "nativeSqlOrServices": true,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    },
+    {
+      "slice": "legacy",
+      "passedChecksOrViews": 85,
+      "result": "/workspace/commerce-ui-acceptance-20261010/legacy-browser/verification.json",
+      "resultSha256": "534b7500ace215ca78eeab5175d00ada1fb4899aa997d099ed830c288b48c76c",
+      "nativeSqlOrServices": false,
+      "syntheticIdentityOrTransport": true,
+      "screenshots": 0
+    }
+  ],
+  "currentBrowserChecksOrViews": 301,
+  "protectedWelcomeViewsCompared": 20,
+  "acceptedFixtureRecordsPreserved": "/workspace/commerce-ui-acceptance-20261010/protected-public-fixture-proof.json",
+  "sameFinalBuildProof": "/workspace/commerce-ui-acceptance-20261010/final-build-unchanged-proof.json"
+}

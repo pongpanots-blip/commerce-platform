@@ -67,7 +67,10 @@ export class JoshPushCampaigns {
       totalClicked += row.stats?.clicked ?? 0;
       if (row.sent_at && new Date(row.sent_at) >= todayStart) sentToday += row.stats?.sent ?? 0;
     }
+    const observedSendCounters = rows.filter(row => typeof row.stats?.sent === 'number' && Number.isSafeInteger(row.stats.sent) && row.stats.sent >= 0).length;
     return { campaigns: rows.length, scheduled, sentToday, totalQueued, totalSent, totalClicked,
+      // Additive read metadata. Keep legacy counters unchanged; new consumers can distinguish unknown from zero.
+      sendCounterCoverage: { scope: 'latest_200_campaigns' as const, observed: observedSendCounters, records: rows.length },
       clickRate: totalSent > 0 ? Number((totalClicked / totalSent).toFixed(4)) : 0 };
   }
 

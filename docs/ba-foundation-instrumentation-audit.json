@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-10-09T15:44:30.949676+00:00",
+  "repositoryHead": "314d7c3e92d9c177e91a72b85c3351ad6a8f652d",
+  "method": "Read-only source search and inspection; no runtime/customer/database/production configuration access. No external GTM account queried.",
+  "instrumentation": [
+    {
+      "finding": "Traffic reader counts search, view_item, add_to_cart, begin_checkout and purchase from Josh analytics_events, plus sessions/device/user IDs; analytics_funnel_daily and user_search_history are separate aggregate readers. These are not verified accepted orders.",
+      "references": [
+        {
+          "path": "apps/commerce-platform/src/modules/integration/connector/josh/josh-insights.ts",
+          "line": 132,
+          "anchor": "const TRAFFIC_TOTALS_SQL"
+        }
+      ]
+    },
+    {
+      "finding": "Reader documents ninety-day raw retention and older funnel-only coverage. No-event/never-ordered claims cannot use this truncated raw source. Actual live retention and completeness remain unverified.",
+      "references": [
+        {
+          "path": "apps/commerce-platform/src/modules/integration/connector/josh/josh-insights.ts",
+          "line": 277,
+          "anchor": "note: 'sessions = visits"
+        }
+      ]
+    },
+    {
+      "finding": "Repository searches of apps/libs found no GTM container installation, gtag/dataLayer producer or implementation of the three new event names. This does not prove absence on the separate Josh storefront or in production.",
+      "searchPatterns": [
+        "dataLayer",
+        "gtag(",
+        "GTM-",
+        "googletagmanager",
+        "branch_selected",
+        "checkout_started",
+        "order_accepted"
+      ],
+      "status": "GTM container/tag/consent configuration inaccessible and unverified"
+    },
+    {
+      "finding": "Potential SPA duplicate risk if future GTM History Change tags and application events both fire. No measured duplicate incident is claimed; audit actual trigger/tag configuration before any collector integration.",
+      "status": "Risk hypothesis, not observed behavior"
+    }
+  ],
+  "acceptedOrderAuthority": {
+    "verifiedInternalCandidate": "OrderCheckoutSaga conditionally moves pending_payment to confirmed and publishes order.confirmed in the same transaction. Checkout itself can return pending_payment or fail; it is not acceptance. The v1 proposed order_accepted basis is committed internal confirmation only.",
+    "references": [
+      {
+        "path": "apps/commerce-platform/src/storefront/checkout/storefront-checkout.service.ts",
+        "line": 16,
+        "anchor": "async checkout("
+      },
+      {
+        "path": "apps/commerce-platform/src/modules/commerce/order/application/order-checkout.saga.ts",
+        "line": 134,
+        "anchor": "async onPaymentPaid("
+      },
+      {
+        "path": "apps/commerce-platform/src/modules/commerce/order/domain/events/order-confirmed.event.ts",
+        "line": 4,
+        "anchor": "readonly type = 'order.confirmed'"
+      }
+    ],
+    "identityGap": "Storefront DTO has customerId and lines but no branch/company identity; order.confirmed payload is only id. Do not fabricate branch mapping or equate this with all Josh credit/assisted-order acceptance semantics.",
+    "outboxGap": "DomainEvent declares eventId and occurredAt, but EventEmitterBus persists type/aggregateId/payload/metadata without those fields. Relay emits eventId=row.id and occurredAt=row.createdAt (outbox insert time). Those are stable delivery identifiers/times, not automatically the original domain occurrence fields; an adapter must define and verify its mapping.",
+    "outboxReferences": [
+      {
+        "path": "apps/commerce-platform/src/shared-kernel/domain/domain-event.ts",
+        "line": 9,
+        "anchor": "readonly eventId:"
+      },
+      {
+        "path": "apps/commerce-platform/src/shared-kernel/infrastructure/event-emitter.bus.ts",
+        "line": 31,
+        "anchor": "repo.create({"
+      },
+      {
+        "path": "apps/commerce-platform/src/shared-kernel/infrastructure/outbox-relay.worker.ts",
+        "line": 107,
+        "anchor": "await this.emitter.emitAsync"
+      }
+    ],
+    "joshSource": "order.snapshot is latest-state replication with aggregate/version guards; it is not an immutable order-accepted event history. Josh copied user/company/branch/order IDs are nullable and create_date/copied_at have different meanings.",
+    "joshReferences": [
+      {
+        "path": "apps/commerce-platform/src/modules/integration/connector/josh/events/josh-events.service.ts",
+        "line": 50,
+        "anchor": "case 'order.snapshot'"
+      },
+      {
+        "path": "apps/commerce-platform/src/modules/integration/connector/josh/orders/josh-order-copy.entity.ts",
+        "line": 19,
+        "anchor": "name: 'user_id'"
+      }
+    ],
+    "liveAdapterComplete": false
+  },
+  "identity": [
+    {
+      "finding": "Customer AuthMe declares customer id, company id, branches and active_branch_id; postSwitchBranch declares /auth/switch-branch. Only API declarations are present here; upstream membership and event emission enforcement are unverified. Preserve occurrence branch before later switches.",
+      "references": [
+        {
+          "path": "apps/commerce-admin/src/josh-admin/libs/shared-api/lib/auth/auth.api.ts",
+          "line": 70,
+          "anchor": "export type AuthMe ="
+        },
+        {
+          "path": "apps/commerce-admin/src/josh-admin/libs/shared-api/lib/auth/auth.api.ts",
+          "line": 170,
+          "anchor": "export const postSwitchBranch"
+        }
+      ]
+    },
+    {
+      "finding": "Checkout prepare declarations carry cartId, branchId and userId. Assisted-order UI separately chooses company/customer/branch, then authenticated staff is forwarded as actor. Keep subject customer separate from staff actor; do not infer customer identity from staff login.",
+      "references": [
+        {
+          "path": "apps/commerce-admin/src/josh-admin/libs/shared-api/lib/checkout/checkout.api.ts",
+          "line": 232,
+          "anchor": "export type PrepareCheckoutPayload"
+        },
+        {
+          "path": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+          "line": 93,
+          "anchor": "function CustomerPick"
+        },
+        {
+          "path": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+          "line": 186,
+          "anchor": "'/cs-admin/orders/place-on-behalf'"
+        },
+        {
+          "path": "apps/commerce-platform/src/modules/integration/connector/josh/josh-admin-call.controller.ts",
+          "line": 105,
+          "anchor": "export async function joshAdminCall"
+        }
+      ]
+    },
+    {
+      "finding": "Developer portal accounts and commerce staff sessions are different from storefront customer accounts. Portal tokens use shared localStorage and logout clears/revokes; admin tokens use sessionStorage. No tracking identity reset/alias producer was found. Shared devices/tabs/accounts cannot establish person identity.",
+      "references": [
+        {
+          "path": "apps/commerce-platform/src/modules/core/auth/application/portal-auth.service.ts",
+          "line": 90,
+          "anchor": "async login("
+        },
+        {
+          "path": "apps/commerce-portal/src/lib/api.ts",
+          "line": 11,
+          "anchor": "const TOKEN_KEY = 'portal_token'"
+        },
+        {
+          "path": "apps/commerce-portal/src/lib/api.ts",
+          "line": 292,
+          "anchor": "async logout()"
+        },
+        {
+          "path": "apps/commerce-admin/src/lib/auth.ts",
+          "line": 8,
+          "anchor": "sessionStorage"
+        }
+      ]
+    },
+    {
+      "finding": "Canonical organizationId is nullable tenant scope; Josh copied company/branch UUIDs use another identity family. No authoritative server branch-to-tenant grant adapter is implemented for this foundation. Synthetic grant map is not production authorization.",
+      "references": [
+        {
+          "path": "apps/commerce-platform/src/shared-kernel/domain/base.entity.ts",
+          "line": 22,
+          "anchor": "organizationId:"
+        },
+        {
+          "path": "apps/commerce-platform/src/modules/integration/connector/josh/orders/josh-order-copy.entity.ts",
+          "line": 19,
+          "anchor": "name: 'user_id'"
+        }
+      ]
+    },
+    {
+      "finding": "Existing customer_metrics groups by user_id and includes payment_pending in active statuses. It cannot be reused as branch-level confirmed-order evidence.",
+      "references": [
+        {
+          "path": "apps/commerce-platform/src/modules/integration/customers/customer-metrics.service.ts",
+          "line": 26,
+          "anchor": "GROUP BY o.user_id"
+        }
+      ]
+    }
+  ],
+  "approvalTransition": {
+    "finding": "No authoritative branch/customer account-application approval transition and timestamp were found in this repository. Credit review, KYC documents, staff admin access and environment-based developer key-mint approval are distinct scopes. Do not rename them account_application_approved.",
+    "references": [
+      {
+        "path": "apps/commerce-platform/src/modules/integration/connector/josh/josh-actions.controller.ts",
+        "line": 84,
+        "anchor": "@Post('credit-applications/:id/review')"
+      },
+      {
+        "path": "apps/commerce-platform/src/modules/integration/connector/josh/josh-actions.controller.ts",
+        "line": 90,
+        "anchor": "@Post('admin-access/:id/approve')"
+      },
+      {
+        "path": "apps/commerce-platform/src/portal/keys/key-mint-approval.ts",
+        "line": 3,
+        "anchor": "PORTAL_KEY_MINT_ACCOUNT_IDS"
+      }
+    ],
+    "account_application_approved_contract_added": false,
+    "guidedPreviewApproval": "Synthetic approvedAt trait only; real adapter and policy are blocked on authoritative transition proof."
+  },
+  "consentAndSensitivePayloads": {
+    "finding": "AuthMe exposes pdpa_consent and privacy API declares marketing_consent. Neither proves an analytics processing basis or production GTM consent enforcement. New contract records granted/denied/unknown plus policy version; it grants nothing.",
+    "references": [
+      {
+        "path": "apps/commerce-admin/src/josh-admin/libs/shared-api/lib/auth/auth.api.ts",
+        "line": 70,
+        "anchor": "export type AuthMe ="
+      },
+      {
+        "path": "apps/commerce-admin/src/josh-admin/libs/shared-api/lib/profile/privacy.api.ts",
+        "line": 4,
+        "anchor": "export type PrivacyConsent"
+      }
+    ],
+    "excludeFromNewContracts": [
+      "Email",
+      "Phone",
+      "Names",
+      "Postal/billing addresses",
+      "Tax/registration numbers",
+      "Tokens/passwords/API keys",
+      "Payment/gateway secrets",
+      "Free-form search text",
+      "Order remarks/PO documents",
+      "Device-to-person aliasing"
+    ],
+    "retentionGap": "Existing customer.deleted wipes copied customer data, customer_metrics and segment_members. A future branch projection needs an approved retention/deletion policy and propagation tests; no new persistence or migration is registered.",
+    "referencesForDeletion": [
+      {
+        "path": "apps/commerce-platform/src/modules/integration/connector/josh/events/josh-events.service.ts",
+        "line": 55,
+        "anchor": "case 'customer.deleted'"
+      }
+    ],
+    "productionConsentVerified": false
+  },
+  "integrationStatus": {
+    "collector": false,
+    "browserProducer": false,
+    "appRegistration": false,
+    "liveProjection": false,
+    "productionMigration": false,
+    "GTMChanges": false,
+    "audienceActivation": false
+  },
+  "sourceProof": [
+    {
+      "path": "apps/commerce-admin/src/app/pages/CsDesk.tsx",
+      "sha256": "ae75155af8c011ba836680785e6eeb00ffb6dfd3789127842c4862f4af73ade3"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/libs/shared-api/lib/auth/auth.api.ts",
+      "sha256": "422d769bca617ceef8ec064c2765cb5554c5a7738dd996a95dffb62581a38d75"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/libs/shared-api/lib/checkout/checkout.api.ts",
+      "sha256": "d6c412c824c2b12938ee53c24d482abeb23f58dc1a9f9ecc6b1ca18208b3b382"
+    },
+    {
+      "path": "apps/commerce-admin/src/josh-admin/libs/shared-api/lib/profile/privacy.api.ts",
+      "sha256": "d9c45f23d00420317660535dfcabf4a39b93275a7055de16b871e232873c1830"
+    },
+    {
+      "path": "apps/commerce-admin/src/lib/auth.ts",
+      "sha256": "e38a32560f5b97c22f857ef30e3ab651504dbca99bf025c5638422fb66084e4b"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/commerce/order/application/order-checkout.saga.ts",
+      "sha256": "21ce986e7410e320973b6a38ac6851dd2facfa6f5d843d226c7ecd373734e0b9"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/commerce/order/domain/events/order-confirmed.event.ts",
+      "sha256": "3272a93bbfbc19235ebc85a8ebf9eff4f2371ab5e910dadfe23e26f797c20d70"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/core/auth/application/portal-auth.service.ts",
+      "sha256": "bff0ba9c9f44574b7d30e89969e68e375eec550cfcc1b4cb4001b36cdfb43509"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/integration/connector/josh/events/josh-events.service.ts",
+      "sha256": "44ddc700825f3e0639ba1a4ad25d8bd5b523a862a5d96be6688da73d2c14888c"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/integration/connector/josh/josh-actions.controller.ts",
+      "sha256": "e295f61552df8f53b847c918c659863cf36330b1e92bf8676ce8898b27c64a33"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/integration/connector/josh/josh-admin-call.controller.ts",
+      "sha256": "7b66a74d1726dfd2df0af2341092f9d5286f80f1c8f526c71bdeb1d906fc62a2"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/integration/connector/josh/josh-insights.ts",
+      "sha256": "7753fda76f518089c9cda1507adcea3e78d68dbed1d702eed848b6d9d3d1e809"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/integration/connector/josh/orders/josh-order-copy.entity.ts",
+      "sha256": "aabc1a9998be651e41d0e73b6cbab2eaaa692b70d1f1f9871d1775a92a4abb95"
+    },
+    {
+      "path": "apps/commerce-platform/src/modules/integration/customers/customer-metrics.service.ts",
+      "sha256": "c8f74a5c17c51bdb31f1a13dec0fad47f4b4cd1e0f341a8e7f0a956851701845"
+    },
+    {
+      "path": "apps/commerce-platform/src/portal/keys/key-mint-approval.ts",
+      "sha256": "0c6066ca0dcc3f5d91e9b39a6679605c136ff5c1eac1d7261edf5e77ef909916"
+    },
+    {
+      "path": "apps/commerce-platform/src/shared-kernel/domain/base.entity.ts",
+      "sha256": "3492aec1fa4eb35ef0b7ae8e0ca7813550af8aba3a15a8cb08c23df69b3d0b26"
+    },
+    {
+      "path": "apps/commerce-platform/src/shared-kernel/domain/domain-event.ts",
+      "sha256": "a7abd0dfe8186f93b65b4af616c61a5ff5165a778413459d972ab82283751824"
+    },
+    {
+      "path": "apps/commerce-platform/src/shared-kernel/infrastructure/event-emitter.bus.ts",
+      "sha256": "5c438a393cb8475da673e8b461c1b79b9d9974e617c7ea84384e1b1ebe19a5ac"
+    },
+    {
+      "path": "apps/commerce-platform/src/shared-kernel/infrastructure/outbox-relay.worker.ts",
+      "sha256": "9ab9e8bb6b7c0240af8341c4830578a467f7ce09647b83ef8fcde8f2165d7994"
+    },
+    {
+      "path": "apps/commerce-platform/src/storefront/checkout/dto/storefront-checkout.dto.ts",
+      "sha256": "435703b55f6d750ff149505c1b5887b8e8d076ba3b41c83e69a510539a92af47"
+    },
+    {
+      "path": "apps/commerce-platform/src/storefront/checkout/storefront-checkout.service.ts",
+      "sha256": "217e10b344977080ae878095f4b736fd417da9e7dd5e2daffb7b0a137a208b46"
+    },
+    {
+      "path": "apps/commerce-portal/src/lib/api.ts",
+      "sha256": "2acbec69201eda55c7772724f75313b0d1db0adb864795bad3e9a8458fe14e91"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+import { expect, it } from 'vitest';
+import { isRouteAllowed, resolvePostLoginPath } from './landing';
+it.each(['admin', 'sales_manager', 'business_analyst'])('%s retains financial-report access for every goal action URL', role => { for (const path of ['/planning/profit-goals', '/planning/profit-goals/new/target', '/planning/profit-goals/new/assumptions', '/planning/profit-goals/new/review', '/planning/profit-goals/drafts/00000000-0000-4000-8000-000000000001']) { expect(isRouteAllowed(role, path)).toBe(true); expect(resolvePostLoginPath(role, path)).toBe(path); } });
+it.each(['marketing', 'merchandising', 'sale', 'cs', 'graphic'])('%s cannot acquire team financial-report access through goals', role => { expect(isRouteAllowed(role, '/planning/profit-goals/new/target')).toBe(false); expect(resolvePostLoginPath(role, '/planning/profit-goals/new/target')).toBe('/home'); });

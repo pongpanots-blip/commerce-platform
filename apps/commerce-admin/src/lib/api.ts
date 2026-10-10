@@ -855,6 +855,18 @@ export const salesAssignmentApi = {
   assign: (companyId: string, salesUserId: string | null) => api.patch<{ data: { assigned_sales_user_id: string | null } }>('/cs-admin/sales-assignment', { company_id: companyId, sales_user_id: salesUserId }),
 };
 
+export interface AuditLogRow { id: string; at: string; action: string; entityType: string; entityId: string | null; actorId: string | null; actorEmail: string | null;
+  before: unknown; after: unknown; context: Record<string, unknown> | null }
+export interface AuditLogFilter { action?: string; entityType?: string; entityId?: string; actorId?: string; from?: string; to?: string; includeReads?: boolean; page?: number; pageSize?: number }
+export const auditLogsApi = {
+  list: (f: AuditLogFilter) => {
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(f)) if (v !== undefined && v !== '') p.set(k, String(v));
+    return api.get<Paginated<AuditLogRow>>(`/audit-logs?${p}`);
+  },
+  facets: () => api.get<{ actions: { value: string; count: number }[]; entityTypes: { value: string; count: number }[] }>('/audit-logs/facets'),
+};
+
 export interface ScheduledTaskRow {
   name: string; kind: 'cron' | 'interval'; expression: string | null; timeZone: string | null; intervalMs: number | null;
   enabled: boolean; running: number; runs: number; problems: number; nextRunAt: string | null; lastSuccessAt: string | null;

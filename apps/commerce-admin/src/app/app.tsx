@@ -46,6 +46,7 @@ import { WebhookDeadLetter } from './pages/WebhookDeadLetter';
 import { WebhookPlatforms } from './pages/WebhookPlatforms';
 import { InventoryPerWarehouse } from './pages/InventoryPerWarehouse';
 import { AiConnectors } from './pages/AiConnectors';
+import { AuditLogs } from './pages/AuditLogs';
 import { ScheduledTasks } from './pages/ScheduledTasks';
 import { ErpSimulator } from './pages/ErpSimulator';
 import { HealthReportPage, SalesReport, TrafficReport } from './pages/ShopReports';
@@ -264,6 +265,7 @@ export function App() {
             <Route path="/marketing/scraped-catalog" element={<Navigate to="/j/marketing/scraped-catalog" replace />} />
             <Route path="/marketing/competitor-prices" element={<Navigate to="/j/marketing/competitor-prices" replace />} />
             <Route path="/ai/connectors" element={<AiConnectors />} />
+            <Route path="/settings/activity-log" element={<AuditLogs />} />
             <Route path="/scheduled-tasks" element={<ScheduledTasks />} />
             <Route path="/erp/josh-logs" element={<JoshErpLogs />} />
             <Route path="/erp/inbound-log" element={<InboundLog />} />

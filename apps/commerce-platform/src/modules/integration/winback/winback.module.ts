@@ -1,3 +1,6 @@
+import { GoalPlanningController } from '../financial-goals/goal-planning.controller';
+import { GoalInputsService } from '../financial-goals/goal-inputs.service';
+import { GoalDraftsService } from '../financial-goals/goal-drafts.service';
 import { WinbackStaffIdentityService } from './shared/winback-staff-identity.service';
 import { AuthModule } from '../../core/auth/auth.module';
 import { Module, UseGuards } from '@nestjs/common';
@@ -71,8 +74,9 @@ for (const c of [WinbackController, WinbackAppController, WinbackRestaurantPlace
     ApiKeyModule,
     TypeOrmModule.forFeature([WinbackAccount, WinbackActivity, WinbackContact, WinbackSalesTarget, WinbackStageHistory, WinbackMeetingAck, WinbackAppRecord, ...JOSH_COPY_TABLES]),
   ],
-  controllers: [WinbackController, WinbackAppController, WinbackRestaurantPlaceController, WinbackIntakeController, WinbackLoginController, WinbackReportsController],
+  controllers: [WinbackController, WinbackAppController, WinbackRestaurantPlaceController, WinbackIntakeController, WinbackLoginController, WinbackReportsController, GoalPlanningController],
   providers: [
+    GoalInputsService, GoalDraftsService,
     AdminWriteGuard,
     WinbackStaffIdentityService,
     WinbackAppRoleGuard,

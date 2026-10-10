@@ -3,7 +3,7 @@ import { DASHBOARD, HOME, SECTIONS, navFor } from './navigation';
 import { normalizeRole } from '../lib/role-home';
 import { commerceText as text } from './commerce-copy';
 
-/** Admin-only proposal/review homes; the legacy navigation used by welcome is unchanged. */
+/** Canonical authorized task homes; the legacy navigation used by welcome is unchanged. */
 export function taskFeatureNavFor(role?: string): NavGroup[] {
   const existing = navFor(role).map(group => ({ ...group, links: group.links.map(link => link.to === HOME.to ? {
     ...link, to: '/today', label: text('งานที่ทบทวนวันนี้', 'Today work inbox'), icon: 'checklist',
@@ -12,7 +12,9 @@ export function taskFeatureNavFor(role?: string): NavGroup[] {
   const normalized = normalizeRole(role);
   return existing.map(group => {
     const section = SECTIONS.find(s => s.title === group.group);
-    const links = [...group.links];
+    // Admin's legacy own link used these same team readers. Keep the deep link, expose one team home.
+    const links = group.links.filter(link => normalized !== 'admin' || link.to !== '/reports/winback/my').map(link => normalized === 'admin' && link.to === '/reports/winback/opportunities' ? { ...link, activeFor: [...(link.activeFor ?? []), '/reports/winback/my'] } : link);
+    if (section?.id === 'reports' && ['admin', 'sales_manager', 'business_analyst'].includes(normalized)) links.push({ to: '/planning/profit-goals', label: text('ตั้งเป้ากำไรและต้นทุน', 'Plan profit and cost goals'), icon: 'flag', description: text('แยกเป้าและสมมติฐานจากผลจริงที่ยังไม่มีข้อมูลครบ', 'Separate targets and assumptions from incomplete actuals.') });
     if (section?.id === 'marketing' && ['admin', 'marketing', 'business_analyst'].includes(normalized)) links.push({ to: '/planning/pack-prices', label: text('วางแผนแพ็กและราคาขาย', 'Plan packs and sale prices'), icon: 'compare', description: text('เทียบหลายแพ็กที่บันทึกไว้แล้วเก็บทางเลือกเพื่อทบทวน', 'Compare recorded packs and retain sale options for review.') });
     if (normalized === 'admin' && section?.id === 'marketing') links.push({ to: '/planning/promotions', label: text('ทดลองและเก็บร่างโปรโมชัน', 'Rehearse and save promotion drafts'), icon: 'science', description: text('ตรวจส่วนลดและหลักฐานก่อนเก็บร่าง', 'Review discounts and evidence before saving a draft.') });
     if (normalized === 'admin' && section?.id === 'orders') links.push({ to: '/review/orders', label: text('ตรวจออเดอร์และหลักฐานส่งข้อมูล', 'Review orders and send evidence'), icon: 'fact_check', description: text('เทียบสองแหล่งและอ่านประเด็นที่ต้องตรวจ', 'Compare sources and inspect findings.') });

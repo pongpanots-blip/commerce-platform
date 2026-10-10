@@ -5,10 +5,10 @@ import { isRouteAllowed, resolvePostLoginPath } from '../lib/landing';
 const roles = ['admin', 'marketing', 'merchandising', 'cs', 'sale', 'sales_manager', 'business_analyst', 'graphic'];
 describe('canonical task indexes', () => {
   it.each(roles)('%s preserves every authorized canonical feature with fewer sidebar destinations', role => {
-    const original = navFor(role).filter(group => group.group).flatMap(group => group.links.map(link => link.to));
+    const original = navFor(role).filter(group => group.group).flatMap(group => group.links.filter(link => role !== 'admin' || link.to !== '/reports/winback/my').map(link => link.to));
     const indexes = taskSectionsFor(role);
     const destinations = indexes.flatMap(section => section.links.map(link => link.to));
-    expect(destinations.sort()).toEqual([...original, ...(['admin', 'marketing', 'business_analyst'].includes(role) ? ['/planning/pack-prices'] : []), ...(role === 'admin' ? ['/planning/promotions', '/review/orders'] : [])].sort());
+    expect(destinations.sort()).toEqual([...original, ...(['admin', 'sales_manager', 'business_analyst'].includes(role) ? ['/planning/profit-goals'] : []), ...(['admin', 'marketing', 'business_analyst'].includes(role) ? ['/planning/pack-prices'] : []), ...(role === 'admin' ? ['/planning/promotions', '/review/orders'] : [])].sort());
     expect(new Set(destinations).size).toBe(destinations.length);
     const sidebar = taskSidebarFor(role).flatMap(group => group.links);
     expect(new Set(sidebar.map(link => link.to)).size).toBe(sidebar.length);
@@ -18,6 +18,15 @@ describe('canonical task indexes', () => {
       expect(resolvePostLoginPath(role, `${section.to}?q=price#tasks`)).toBe(`${section.to}?q=price#tasks`);
       for (const link of section.links) expect(isRouteAllowed(role, link.to)).toBe(true);
     }
+  });
+  it('admin has one Sales home while legacy own/team URLs and sale scope remain available', () => {
+    const admin = taskFeatureNavFor('admin').flatMap(g => g.links);
+    expect(admin.filter(l => l.to === '/reports/winback/my')).toEqual([]);
+    expect(admin.filter(l => l.to === '/reports/winback/opportunities')).toHaveLength(1);
+    expect(admin.find(l => l.to === '/reports/winback/opportunities')?.activeFor).toContain('/reports/winback/my');
+    expect(navFor('admin').flatMap(g => g.links).some(l => l.to === '/reports/winback/my')).toBe(true);
+    expect(isRouteAllowed('admin', '/reports/winback/my/leads')).toBe(true);
+    expect(taskFeatureNavFor('sale').flatMap(g => g.links).filter(l => l.to === '/reports/winback/my')).toHaveLength(1);
   });
   it('does not grant inaccessible indexes or expand feature permissions', () => {
     expect(isRouteAllowed('cs', '/tasks/catalog')).toBe(false);

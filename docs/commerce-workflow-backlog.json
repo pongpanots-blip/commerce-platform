@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-09T18:14:21.471667+00:00",
+  "updatedAt": "2026-10-09T23:57:11.649162+00:00",
   "scope": "Development only: no push, deployment, production migration/data writes, messages, activation, stock transformations or new role grants.",
   "designGuidance": {
     "language": "Plain Thai task language with English locale support; users should be able to complete work without system expertise.",
@@ -96,7 +96,7 @@
     {
       "priority": 3,
       "task": "Profit, cost and objective planning",
-      "status": "Queued; source data and ownership definitions unresolved",
+      "status": "Bounded private monthly target/hypothetical planner implemented; original authorized team GMV context stays distinct, all verified actual profit/cost/attainment remain null. Admin alone can persist owner-private versioned drafts using existing tables; manager and BA remain read/GET-preview only. Actual financial/ownership source integration remains queued.",
       "dependencies": [
         "Compatible net sales and effective COGS",
         "Objective owner/period/scope rules",
@@ -106,12 +106,13 @@
         "GP = compatible net sales minus COGS; margin uses net sales, markup uses cost.",
         "Aggregate margin uses aggregate revenue/cost, not mean percentages.",
         "Unknown actuals show null and no attainment; net profit requires expenses."
-      ]
+      ],
+      "implementedContracts": "docs/commerce-goals-sales-contracts.json"
     },
     {
       "priority": 4,
       "task": "Sales reorder and follow-up workspace",
-      "status": "Queued",
+      "status": "Read-only opportunities/leads list and returned-record action URLs implemented with original native own-and-unassigned or team readers, strict URL filters and recorded owner/status. Reorder/follow-up drafting and operational assignment remain queued; this reader does not send messages or claim completed contact.",
       "dependencies": [
         "Existing assigned-company identity mapping",
         "Prior orders and authorized inventory",
@@ -121,7 +122,8 @@
         "Own assigned customers only; no user-selected team override.",
         "Reorders use current source availability/prices, with unresolved items visible.",
         "Follow-ups remain reviewable drafts; no live customer messages."
-      ]
+      ],
+      "implementedContracts": "docs/commerce-goals-sales-contracts.json"
     },
     {
       "priority": 5,
@@ -154,7 +156,7 @@
     }
   ],
   "approvedEnterpriseAnalyticsFoundation": {
-    "status": "Approved staged work; current verification handoff comes first. No foundation implementation files edited yet.",
+    "status": "Prior approved staged synthetic foundation is preserved byte-for-byte. No runtime tracking, GTM, identity-source or activation integration in this pass.",
     "nextBoundedSlice": [
       "Read-only repository audit of instrumentation, identity sources, consent/sensitive payloads, accepted-order authority and login/logout/branch-switch/assisted-order behavior; cite code and mark inaccessible GTM configuration unverified.",
       "Versioned schemas and synthetic fixtures for branch_selected, checkout_started and order_accepted; account_application_approved only if an actual transition exists. Preserve event-time identity without shared-device identity merging.",

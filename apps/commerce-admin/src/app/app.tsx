@@ -73,6 +73,7 @@ const MarketingAnalyst = lazy(() => import('./pages/MarketingAnalyst'));
 const PromotionWorkspace = lazy(() => import('./pages/planning/PromotionWorkspace'));
 const OrderReviewWorkspace = lazy(() => import('./pages/planning/OrderReviewWorkspace'));
 const TodayInbox = lazy(() => import('./pages/today/TodayInbox'));
+const GoalPlanningWorkspace = lazy(() => import('./pages/financial-goals/GoalPlanningWorkspace'));
 const PackPlanningWorkspace = lazy(() => import('./pages/pack-price/PackPlanningWorkspace'));
 
 /** Route context and a single page-search entry point across every category. */
@@ -188,6 +189,7 @@ export function App() {
             <Route path="/login" element={<LoginRedirect role={role} />} />
             <Route path="/home" element={<RoleHome role={role} />} />
             <Route path="/today" element={<Suspense fallback={<Loading variant="table" />}><TodayInbox role={role} /></Suspense>} />
+            <Route path="/planning/profit-goals/*" element={<Suspense fallback={<Loading variant="detail" />}><GoalPlanningWorkspace role={role} /></Suspense>} />
             <Route path="/planning/pack-prices/*" element={<Suspense fallback={<Loading variant="detail" />}><PackPlanningWorkspace role={role} /></Suspense>} />
             <Route path="/tasks/:sectionId" element={<TaskSection role={role} />} />
             <Route path="/planning/promotions/*" element={<Suspense fallback={<Loading variant="detail" />}><PromotionWorkspace role={role} /></Suspense>} />
@@ -210,8 +212,8 @@ export function App() {
             <Route path="/reports/products" element={<JoshProducts />} />
             <Route path="/reports/products/:id" element={<JoshProductDetail />} />
             <Route path="/cs/sales-assignment" element={<SalesAssignment />} />
-            <Route path="/reports/winback/opportunities" element={<MyWinback />} />
-            <Route path="/reports/winback/my" element={<MyWinback />} />
+            <Route path="/reports/winback/opportunities/*" element={<MyWinback role={role} />} />
+            <Route path="/reports/winback/my/*" element={<MyWinback role={role} />} />
             <Route path="/reports/sales" element={<SalesReport />} />
             <Route path="/reports/traffic" element={<TrafficReport />} />
             <Route path="/reports/health" element={<HealthReportPage />} />

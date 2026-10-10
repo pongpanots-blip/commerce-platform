@@ -1,0 +1,130 @@
+{
+  "updatedAt": "2026-10-09T23:57:11.649162+00:00",
+  "startingHead": "498b2686788155d64f88087cde8aaadbf69718fd",
+  "scope": "Development-only bounded Sales reader and private financial goal planning; not a whole-app redesign.",
+  "navigation": {
+    "inventory": "docs/commerce-remaining-route-inventory.json",
+    "method": "191 literal JSX Route records (183 admin, 8 portal); wildcard workspaces expand actions internally. Inventory is not a tested-page count.",
+    "canonical": {
+      "adminSales": "/reports/winback/opportunities",
+      "saleSales": "/reports/winback/my",
+      "goals": "/planning/profit-goals"
+    },
+    "adminDuplicate": "Legacy /reports/winback/my already used team readers for admin. Retained as a deep link and sidebar-active alias, removed from the task index for admin only. Protected welcome legacy nav stays unchanged.",
+    "distinctScopes": "Sale own+unassigned native visibility is not the same capability as manager/BA/admin team source; no scope is removed.",
+    "sidebarLimit": 9
+  },
+  "sales": {
+    "actionURLs": [
+      "/reports/winback/{opportunities|my}",
+      "/reports/winback/{opportunities|my}/:id",
+      "/reports/winback/{opportunities|my}/leads",
+      "/reports/winback/{opportunities|my}/leads/:id"
+    ],
+    "filters": [
+      "q",
+      "page"
+    ],
+    "originalReaders": {
+      "sale": [
+        "GET /reports/winback/my/opportunities",
+        "GET /reports/winback/my/pool"
+      ],
+      "team": [
+        "GET /reports/winback/opportunities",
+        "GET /reports/winback/pool"
+      ]
+    },
+    "permissions": {
+      "own": [
+        "admin",
+        "sale"
+      ],
+      "team": [
+        "admin",
+        "sales_manager",
+        "business_analyst"
+      ]
+    },
+    "recordCoverage": "Only original returned page, preserving q/page; absent ID is unavailable, never replaced with guessed detail. Existing team pool respects WINBACK_REPORTS_SOURCE; opportunity and my readers use commerce native tables.",
+    "statuses": "Recorded stage/owner and returned page/total counts, not completed actions. Candidate-cap warning and unverified upstream freshness.",
+    "remaining": [
+      "Individual-record authoritative detail and follow-up history contract",
+      "Reviewable assignment/reorder/follow-up action flow",
+      "Customer/account identity mapping and current availability/prices"
+    ],
+    "writes": false
+  },
+  "goals": {
+    "actionURLs": [
+      "/planning/profit-goals",
+      "/planning/profit-goals/new/{target|assumptions|review}",
+      "/planning/profit-goals/drafts/:id",
+      "/planning/profit-goals/drafts/:id/edit/{target|assumptions|review}",
+      "/planning/profit-goals/requests/:requestId"
+    ],
+    "readPreview": [
+      "admin",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "saveEdit": [
+      "admin"
+    ],
+    "noNewRoleGrants": true,
+    "ownerScope": "Authenticated owner-private review drafts, not operational organization objectives. Existing PUT winback targets is admin-only, so no manager write grant.",
+    "period": "Full UTC calendar month; target is nonnegative THB ex VAT up to 2 decimals, or margin 0–100% up to 4 decimals.",
+    "metrics": [
+      "gross_profit_ex_vat",
+      "gross_margin_percent",
+      "total_cost_ceiling_ex_vat",
+      "net_profit_ex_vat"
+    ],
+    "source": "Existing WinbackReports.dashboard monthly authorized team GMV inc VAT and existing GMV target as context only, copies or replica as configured. Capture time is not upstream freshness. Failed/malformed context remains nullable partial.",
+    "actuals": "Compatible net sales ex VAT, effective COGS/internal cost and expenses unavailable; actuals and achievement always null. No GMV substitution, actual profit, ROAS or accounting net-profit claim.",
+    "hypothetical": "Optional explicitly labeled complete net sales/internal cost/operating expenses, all ex VAT. No implicit unknown cost=0. Integer cents; gross profit=sales-cost; margin=gross profit/sales rounded half-up 4 places; cost ceiling=cost+expenses; profit after entered expenses=gross profit-expenses. Zero sales gives null margin; losses retained.",
+    "storage": "Existing commerce_promotion_drafts + commerce_promotion_draft_requests partitioned scenario.kind=financial_goal. No new table/migration or migration execution. Durable actor/request lock; body hash, immutable committed replay, revision CAS, source fingerprint recapture and atomic receipt. Promotion and Pack kinds/owners isolated.",
+    "recovery": "Browser owner journal verified before dispatch; duplicate clicks one intent; unresolved/lost reply reconciles original request before same-body retry; confirmed 404 only; 409 requires review. Persisted validated receipt establishes success. Stale backups require explicit latest/copy choice and fresh source/revision. Late preview after changed month is discarded; both stale-backup choices keep the current matching-period source identity."
+  },
+  "protection": {
+    "welcome": "/j/marketing/welcome-lead-email preserved, including existing legacy nav/CSS/fonts/API",
+    "BAFoundation": "Accepted 10 foundation files unchanged",
+    "TodayPackPromotionOrder": "Accepted behavior and source retained; original controllers/contracts unchanged.",
+    "MER": "Competitor ACL decision remains unresolved; no access grant.",
+    "Claude": "Official CLI authentication unavailable; no review performed, no authentication retry.",
+    "excluded": [
+      "push",
+      "PR",
+      "merge",
+      "deployment",
+      "production data",
+      "migration execution",
+      "live messages",
+      "campaign activation",
+      "stock/lot/reversal",
+      "new role grants",
+      "screenshots/reference downloads"
+    ]
+  },
+  "verification": "Local verification receipt: /workspace/commerce-ui-audit-20261009/goals-sales-verification.json. Tests and source proofs there distinguish native PostgreSQL/guards from synthetic source/transport coverage.",
+  "nextSlices": [
+    {
+      "priority": 1,
+      "role": "Sales",
+      "task": "Reviewable assignment, reorder and follow-up drafts",
+      "conditions": "Preserve native own+unassigned authority, assigned account identity, current product price/availability/UOM; no live customer messages. Existing SalesAssignment optimistic-success and duplicate handling need a bounded write-contract audit."
+    },
+    {
+      "priority": 2,
+      "role": "Marketing",
+      "task": "Readiness blockers and reviewable campaign plans",
+      "conditions": "Source-backed inventory/date/cost/attribution/spend coverage. No ROAS/profit without authoritative basis, no activation. MER ACL requires explicit scope decision."
+    },
+    {
+      "priority": 3,
+      "role": "BA",
+      "task": "Financial source contracts and variance/record drilldown",
+      "conditions": "Compatible net revenue ex VAT, effective COGS, expenses, owner/period/source completeness; preserve GET-only. Existing Winback dashboard attainment/risk defaults remain outside this pass. Connect synthetic foundation only after instrumentation/identity/consent audit."
+    }
+  ]
+}

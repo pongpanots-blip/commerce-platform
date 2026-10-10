@@ -16,6 +16,8 @@ ENV VITE_COMMERCE_API_URL=$VITE_COMMERCE_API_URL
 COPY nx.json tsconfig.base.json ./
 COPY libs libs
 COPY apps/commerce-admin apps/commerce-admin
+# Admin pages import pure contract / fixture modules (zod + TS only) straight from the platform source.
+COPY apps/commerce-platform/src apps/commerce-platform/src
 
 RUN npx nx build commerce-admin
 

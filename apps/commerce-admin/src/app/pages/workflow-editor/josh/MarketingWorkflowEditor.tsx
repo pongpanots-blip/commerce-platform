@@ -2,6 +2,7 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { marketingTestersApi, type MarketingTester } from '../../../../lib/api';
 import { LoadError } from '../../../../josh-admin/app/components/LoadError';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -741,6 +742,10 @@ function EditWorkflowScreen({ id }: { id: string }) {
   const conversionWindowInputId = useId();
   const exitOnGoalSelectId = useId();
   const testUserIdInputId = useId();
+  // A real run ("ส่งจริง") reaches only commerce's testers; dry runs may use any user.
+  const testersListId = useId();
+  const [testers, setTesters] = useState<MarketingTester[]>([]);
+  useEffect(() => { marketingTestersApi.list().then(setTesters, () => setTesters([])); }, []);
   const testSecondaryInputId = useId();
   const testOptionalUserIdInputId = useId();
 
@@ -1180,7 +1185,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
         setErrorMsg(null);
       }
     } catch (error: any) {
-      setErrorMsg(error?.response?.data?.message || 'ทดสอบไม่สำเร็จ');
+      setErrorMsg(error?.response?.data?.message || error?.message || 'ทดสอบไม่สำเร็จ');
     } finally {
       setTestLoading(false);
     }
@@ -1405,6 +1410,9 @@ function EditWorkflowScreen({ id }: { id: string }) {
               </li>
             </ol>
           </div>
+          <datalist id={testersListId}>
+            {testers.map((t) => <option key={t.userId} value={t.userId}>{t.name ? `${t.name} · ${t.email}` : t.email}</option>)}
+          </datalist>
           <div className="flex flex-wrap items-end gap-2">
             {!deviceScopedTrigger && (
               <div>
@@ -1413,6 +1421,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
                 <input
                   id={testUserIdInputId}
                   type="text"
+                  list={testersListId}
                   placeholder={__uiText("User ID ที่จะทดสอบ")}
                   value={testUserId}
                   onChange={(event) => setTestUserId(event.target.value)}
@@ -1449,6 +1458,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
                   {__uiText("รหัสผู้ใช้ (User ID) — ไม่บังคับ")}</label>
                 <input
                   id={testOptionalUserIdInputId}
+                  list={testersListId}
                   type="text"
                   placeholder={__uiText("User ID (optional ถ้าอยากทดสอบแบบมี login)")}
                   value={testUserId}

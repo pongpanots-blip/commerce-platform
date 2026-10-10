@@ -24,4 +24,13 @@ export class ProductMastersController {
   reject(@Body() dto: SkusDto) { return this.masters.reject(dto.skus); }
 
   @Get(':sku') get(@Param('sku') sku: string) { return this.masters.get(sku); }
+
+  /** ERP extras (Aging, min prices, substitutes, FDA album). MKT / graphic read the FDA album; min prices stay with MER. */
+  @Get(':sku/extras') @StaffRoles('merchandising', 'marketing', 'graphic')
+  async extras(@Param('sku') sku: string, @Req() req: StaffRequest) {
+    const row = await this.masters.extras(sku);
+    if (req.staff.role === 'admin' || req.staff.role === 'merchandising') return row;
+    const { min_price: _min, min_selling_unit_price: _minUnit, ...rest } = row;
+    return rest;
+  }
 }

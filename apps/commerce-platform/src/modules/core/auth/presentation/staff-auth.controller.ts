@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post, Req } from '@nestjs/common';
 import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { Throttle } from '../../../integration/winback/shared/throttle';
+import { Throttle } from '../../../../shared-kernel/presentation/throttle';
 import { PortalAuthService } from '../application/portal-auth.service';
 import { MIN_PASSWORD, StaffAccountsService } from '../application/staff-accounts.service';
 import { AllowPendingPassword, AllowReadOnlyWrite, AnyStaff, Public } from '../../../../shared-kernel/presentation/auth.decorators';

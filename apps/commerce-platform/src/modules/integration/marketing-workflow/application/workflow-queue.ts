@@ -25,6 +25,10 @@ export class WorkflowQueue {
     this.jobs.add('trigger', { kind, userId }, { ...KEEP, attempts: 3, backoff: { type: 'exponential', delay: 5000 } })
       .catch((e) => this.logger.warn(`enqueue trigger ${kind} ${userId}: ${e}`));
   }
+  events(eventIds: string[]): void {
+    this.jobs.add('events', { eventIds }, { ...KEEP, attempts: 3, backoff: { type: 'exponential', delay: 5000 } })
+      .catch((e) => this.logger.warn(`enqueue events ${eventIds.length}: ${e}`));
+  }
   /** `again`: a re-queue of a row whose earlier job may still be kept by BullMQ (sweep) — needs its own jobId. */
   webhook(deliveryId: string, again = false): void {
     this.webhooks.add('deliver', { deliveryId }, { ...MARKETING_WEBHOOK_JOB_OPTIONS, jobId: again ? `wh_${deliveryId}_${Date.now()}` : `wh_${deliveryId}` })

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DEFAULT_MARKETING_TIMEZONE, isScheduledFireDue, localDateKey } from '../domain/schedule';
-import type { OrderMilestoneTriggerConfig, ScheduledTriggerConfig } from '../domain/workflow.types';
+import type { EventTriggerConfig, OrderMilestoneTriggerConfig, ScheduledTriggerConfig } from '../domain/workflow.types';
+import { matchesFilters } from '../../marketing-events/domain/event-filter';
+import { EventRuleService } from '../../marketing-events/application/event-rule.service';
 import { MarketingWorkflowRow } from '../infrastructure/marketing-workflow.entity';
 import { WorkflowStore } from '../infrastructure/workflow.store';
 import { WorkflowEngine } from './workflow-engine.service';
@@ -15,7 +17,7 @@ export const TRIGGER_RECENT_MINUTES = 60;
 /** Which commerce workflows a josh snapshot (or the clock) enrolls a customer into (spec §3.3). */
 @Injectable()
 export class WorkflowTriggers {
-  constructor(private readonly store: WorkflowStore, private readonly engine: WorkflowEngine) {}
+  constructor(private readonly store: WorkflowStore, private readonly engine: WorkflowEngine, private readonly rules: EventRuleService) {}
 
   async handle(kind: 'customer' | 'order', userId: string, now = new Date()): Promise<void> {
     if (kind === 'order') await this.store.markConverted(userId);
@@ -23,6 +25,42 @@ export class WorkflowTriggers {
     for (const wf of workflows) {
       const key = await this.occurrence(wf, userId, now);
       if (key) await this.engine.enroll(wf, userId, key);
+    }
+  }
+
+  /**
+   * New / newly attributed events (spec §7–9), in order: wake waits, mark event-goal conversions, then enroll. Staff and
+   * no-consent events do nothing. Guests: only workflows with includeGuests, only devices that accept push (spec §5.1).
+   */
+  async handleEvents(eventIds: string[], now = new Date()): Promise<void> {
+    const events = await this.store.eventsByIds(eventIds);
+    if (!events.length) return;
+    const workflows = await this.store.activeWorkflows(['event']);
+    const recent = now.getTime() - TRIGGER_RECENT_MINUTES * 60_000;
+    for (const ev of events) {
+      if (ev.attribution === 'staff' || ev.attribution === 'no_consent' || ev.actorKind === 'staff') continue;
+      const who = ev.attributedUserId ? { userId: ev.attributedUserId, deviceId: null } : { userId: null, deviceId: ev.deviceId };
+      const at = new Date(ev.occurredAt);
+      const types = await this.rules.typesOf(ev.name);
+      for (const w of await this.store.waitingFor(who, ev.name, at)) {
+        if (matchesFilters(ev.attributes, w.waitingFor.filters ?? [], types, w.triggerEvent?.attributes ?? null, now)) await this.engine.resumeFromEvent(w.id, w.waitingFor.stepId, ev.eventId);
+      }
+      for (const g of await this.store.eventGoalCandidates(who, ev.name, at)) {
+        if (matchesFilters(ev.attributes, g.goal.filters ?? [], types, g.triggerEvent?.attributes ?? null, now)) await this.store.markConvertedAt(g.id, at);
+      }
+      if (at.getTime() < recent) continue;
+      let guestOk: boolean | null = null;
+      for (const wf of workflows) {
+        const cfg = wf.triggerConfig as EventTriggerConfig;
+        if (!wf.activatedAt || at < wf.activatedAt || cfg.eventName !== ev.name) continue;
+        if (!who.userId) {
+          if (!cfg.includeGuests) continue;
+          guestOk ??= !!(await this.store.devicePush(this.store.manager, ev.deviceId))?.pushSubscriptionId;
+          if (!guestOk) continue;
+        }
+        if (!matchesFilters(ev.attributes, cfg.filters ?? [], types, null, now)) continue;
+        await this.engine.enroll(wf, who, ev.eventId, { triggerEvent: { eventId: ev.eventId, name: ev.name, attributes: ev.attributes } });
+      }
     }
   }
 

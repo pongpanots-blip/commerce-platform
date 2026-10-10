@@ -158,6 +158,19 @@ export class WorkflowStore {
     await this.db.query(`UPDATE marketing_workflow_enrollments SET converted_at = $2 WHERE id = $1 AND converted_at IS NULL`, [id, at]);
   }
 
+  /** Events to act on (spec §7). Bounded to the last 8 days so partition pruning applies (ingest refuses older events). */
+  async eventsByIds(ids: string[]): Promise<{ eventId: string; deviceId: string; name: string; attributes: Record<string, unknown>; occurredAt: string;
+    attributedUserId: string | null; attribution: string | null; actorKind: string | null }[]> {
+    if (!ids.length) return [];
+    const rows = await this.db.query(`SELECT event_id, device_id, name, attributes, occurred_at, attributed_user_id, attribution, actor_kind FROM marketing_events
+      WHERE event_id = ANY($1::uuid[]) AND occurred_at >= now() - interval '8 days' ORDER BY occurred_at`, [ids]);
+    return rows.map((r: Row) => ({ eventId: r.event_id as string, deviceId: r.device_id as string, name: r.name as string,
+      attributes: (r.attributes as Record<string, unknown>) ?? {}, occurredAt: new Date(r.occurred_at as string).toISOString(),
+      attributedUserId: (r.attributed_user_id as string | null) ?? null, attribution: (r.attribution as string | null) ?? null, actorKind: (r.actor_kind as string | null) ?? null }));
+  }
+
+  get manager(): EntityManager { return this.db.manager; }
+
   activeWorkflows(types: TriggerType[]): Promise<MarketingWorkflowRow[]> {
     return this.db.getRepository(MarketingWorkflowRow).createQueryBuilder('w')
       .where(`w.status = 'active'`).andWhere('w.trigger_type IN (:...types)', { types }).getMany();

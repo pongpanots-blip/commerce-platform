@@ -2,15 +2,14 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job, UnrecoverableError } from 'bullmq';
 import { Repository } from 'typeorm';
-import { deliveryBackoff, QUEUES } from '../../../../config/redis.config';
+import { deliveryBackoff, MARKETING_WEBHOOK_MAX_ATTEMPTS, QUEUES } from '../../../../config/redis.config';
 import { WebhookDelivery } from '../../webhook-subscription/infrastructure/webhook-delivery.entity';
 import { secretIdsOf } from '../domain/template';
 import type { WebhookMethod } from '../domain/workflow.types';
 import { sendWebhook, WebhookSendError } from './webhook-send';
 import { WebhookSecretsService } from './webhook-secrets.service';
 
-/** ~15 minutes with deliveryBackoff (1s doubling, capped 60s) — external endpoints, not a platform catching up. */
-export const MARKETING_WEBHOOK_MAX_ATTEMPTS = 20;
+export { MARKETING_WEBHOOK_MAX_ATTEMPTS };
 
 @Processor(QUEUES.MARKETING_WEBHOOK, { settings: { backoffStrategy: deliveryBackoff } })
 export class MarketingWebhookWorker extends WorkerHost {

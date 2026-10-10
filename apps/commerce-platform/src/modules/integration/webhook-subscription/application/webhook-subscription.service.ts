@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { Repository } from 'typeorm';
-import { DELIVERY_JOB_OPTIONS, QUEUES } from '../../../../config/redis.config';
+import { DELIVERY_JOB_OPTIONS, MARKETING_WEBHOOK_JOB_OPTIONS, QUEUES } from '../../../../config/redis.config';
 import { WebhookSubscription } from '../infrastructure/webhook-subscription.entity';
 import { DeliveryStatus, WebhookDelivery } from '../infrastructure/webhook-delivery.entity';
 import { PORTAL_EVENT_TYPES } from '../../../../portal/webhooks/event-catalog';
@@ -17,6 +17,8 @@ export class WebhookSubscriptionService {
     @InjectRepository(WebhookDelivery)
     private readonly deliveries: Repository<WebhookDelivery>,
     @InjectQueue(QUEUES.WEBHOOK_OUT) private readonly queue: Queue,
+    /** Marketing workflow webhook rows (kind = marketing) have their own queue and worker. */
+    @InjectQueue(QUEUES.MARKETING_WEBHOOK) private readonly marketingQueue: Queue,
   ) {}
 
   list(): Promise<WebhookSubscription[]> {
@@ -76,7 +78,12 @@ export class WebhookSubscriptionService {
     if (delivery.status !== 'failed') throw new BadRequestException(`Only failed deliveries can be retried (this one is ${delivery.status})`);
     Object.assign(delivery, { status: 'pending', attempts: 0, error: null });
     const saved = await this.deliveries.save(delivery);
-    await this.queue.add('deliver', { deliveryId: id }, DELIVERY_JOB_OPTIONS);
+    if (delivery.kind === 'marketing') {
+      // Fresh jobId: BullMQ keeps the failed job (removeOnFail) and would ignore an add with the same id.
+      await this.marketingQueue.add('deliver', { deliveryId: id }, { ...MARKETING_WEBHOOK_JOB_OPTIONS, jobId: `wh_${id}_${Date.now()}` });
+    } else {
+      await this.queue.add('deliver', { deliveryId: id }, DELIVERY_JOB_OPTIONS);
+    }
     return saved;
   }
 }

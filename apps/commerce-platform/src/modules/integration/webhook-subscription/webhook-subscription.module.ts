@@ -14,7 +14,7 @@ import { QUEUES } from '../../../config/redis.config';
 @Module({
   imports: [
     TypeOrmModule.forFeature([WebhookSubscription, WebhookDelivery]),
-    BullModule.registerQueue({ name: QUEUES.WEBHOOK_OUT }),
+    BullModule.registerQueue({ name: QUEUES.WEBHOOK_OUT }, { name: QUEUES.MARKETING_WEBHOOK }),
   ],
   controllers: [WebhookSubscriptionController, DeliveryHealthController],
   providers: [WebhookSubscriptionService, WebhookDispatcher, WebhookDeliveryWorker, DeliveryMonitor],

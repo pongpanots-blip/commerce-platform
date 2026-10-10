@@ -19,7 +19,7 @@ describe('WorkflowSweep', () => {
     s.release();
     await first;
     expect(s.queue.step.mock.calls.map((c) => c[0])).toEqual(['e1', 'e2']);
-    expect(s.queue.webhook).toHaveBeenCalledWith('d1');
+    expect(s.queue.webhook).toHaveBeenCalledWith('d1', true); // fresh jobId: the old job may still be kept by BullMQ
     expect(s.triggers.runScheduled).toHaveBeenCalledTimes(1);
   });
 

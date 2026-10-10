@@ -1,8 +1,7 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bullmq';
-import { QUEUES } from '../../../../config/redis.config';
-import { MARKETING_WEBHOOK_MAX_ATTEMPTS } from './marketing-webhook.worker';
+import { MARKETING_WEBHOOK_JOB_OPTIONS, QUEUES } from '../../../../config/redis.config';
 
 const KEEP = { removeOnComplete: 1000, removeOnFail: 5000 } as const;
 
@@ -26,8 +25,9 @@ export class WorkflowQueue {
     this.jobs.add('trigger', { kind, userId }, { ...KEEP, attempts: 3, backoff: { type: 'exponential', delay: 5000 } })
       .catch((e) => this.logger.warn(`enqueue trigger ${kind} ${userId}: ${e}`));
   }
-  webhook(deliveryId: string): void {
-    this.webhooks.add('deliver', { deliveryId }, { ...KEEP, jobId: `wh_${deliveryId}`, attempts: MARKETING_WEBHOOK_MAX_ATTEMPTS, backoff: { type: 'custom' } })
+  /** `again`: a re-queue of a row whose earlier job may still be kept by BullMQ (sweep) — needs its own jobId. */
+  webhook(deliveryId: string, again = false): void {
+    this.webhooks.add('deliver', { deliveryId }, { ...MARKETING_WEBHOOK_JOB_OPTIONS, jobId: again ? `wh_${deliveryId}_${Date.now()}` : `wh_${deliveryId}` })
       .catch((e) => this.logger.warn(`enqueue webhook ${deliveryId}: ${e}`));
   }
 }

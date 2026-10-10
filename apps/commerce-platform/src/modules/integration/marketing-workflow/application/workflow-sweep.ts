@@ -20,7 +20,7 @@ export class WorkflowSweep {
     this.running = true;
     try {
       for (const id of await this.store.dueEnrollmentIds(500)) this.queue.step(id);
-      for (const id of await this.store.stalePendingWebhookIds(200)) this.queue.webhook(id);
+      for (const id of await this.store.stalePendingWebhookIds(200)) this.queue.webhook(id, true);
       await this.triggers.runScheduled();
     } catch (e) {
       this.logger.error(`marketing workflow sweep: ${e instanceof Error ? e.stack : e}`);

@@ -1,7 +1,6 @@
 import { JoshAdminCallController } from '../../../integration/connector/josh/josh-admin-call.controller';
 import { McpConnectionsController } from '../../../../mcp/mcp-connections.controller';
 import { AuditLogsController } from '../../audit/presentation/audit-logs.controller';
-  });
 import { ScheduledTasksController } from '../../scheduled-tasks/scheduled-tasks.controller';
 import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';

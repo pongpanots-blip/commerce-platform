@@ -7,6 +7,7 @@ import {
 } from '@cp/ui';
 import { joshActionsApi, joshCustomerApi, JoshRow, session } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { CompanyTermsPrices } from './CompanyTermsPrices';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -118,10 +119,12 @@ export function JoshCustomerDetail() {
                 id={d.id}
                 label={__uiText("บริษัท {0}", {"0": d.name})}
                 onDone={() => detail.reload()}
-                fields={[['name', 'ชื่อบริษัท', d.name], ['credit_limit', 'วงเงิน (บาท)', d.credit_limit, 'number'], ['credit_term_days', 'เครดิต (วัน)', d.credit_term_days, 'number'], ['address', 'ที่อยู่', null], ['phone', 'โทร', null]]}
+                fields={[['name', 'ชื่อบริษัท', d.name], ['credit_limit', 'วงเงิน (บาท)', d.credit_limit, 'number'], ['address', 'ที่อยู่', null], ['phone', 'โทร', null]]}
               />
             </DetailSection>
           </Panel>
+
+          <CompanyTermsPrices company={d} onSaved={() => detail.reload()} />
 
           <Panel className="p-4">
             <DetailSection title={__uiText("สาขา")} icon="store">

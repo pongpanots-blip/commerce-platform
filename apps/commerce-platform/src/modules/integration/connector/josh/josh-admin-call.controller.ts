@@ -55,6 +55,8 @@ const AREAS: { path: RegExp; roles: StaffRole[]; methods?: string[] }[] = [
   { path: /^\/(cs-admin\/|admin\/cart-move-allowed-categories$)/, roles: ADMIN }, // account merge, users, branches, credit, billing, …
   { path: exact(`/(credit-notes|credit-backs)(/${SEG})?`), roles: CS, methods: ['GET'] },
   { path: /^\/(credit-notes|credit-backs)(\/|$)/, roles: ADMIN },
+  // josh refund requests (new refund flow): admin only — bank account numbers and bookbank images are PII.
+  { path: new RegExp(`^/admin/refund-requests(/${ID}(/(approve|reject|request-changes|retry|resolve|transfer))?)?$`), roles: ADMIN, methods: ['GET', 'PATCH', 'POST'] },
   { path: /^\/(supplier|promotion-mechanics)(\/|$)/, roles: MER },
   { path: /^\/product$/, roles: MER },
   { path: /^\/admin\/(push-campaigns|notifications|product-notify-funnel|audit-logs)(\/|$)/, roles: M },

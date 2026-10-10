@@ -95,6 +95,25 @@ describe('JoshAdminCallController', () => {
     ['POST', '/admin/cart-move-allowed-categories'],
   ];
 
+  /** josh refund requests (new refund flow): bank account numbers and bookbank images are PII → admin only. */
+  const REFUND_ADMIN_CALLS: [string, string][] = [
+    ['GET', '/admin/refund-requests'], ['GET', `/admin/refund-requests/${U}`],
+    ['PATCH', `/admin/refund-requests/${U}/approve`], ['PATCH', `/admin/refund-requests/${U}/reject`],
+    ['PATCH', `/admin/refund-requests/${U}/request-changes`], ['PATCH', `/admin/refund-requests/${U}/retry`],
+    ['PATCH', `/admin/refund-requests/${U}/resolve`], ['POST', `/admin/refund-requests/${U}/transfer`],
+  ];
+
+  it('refund requests: admin only', async () => {
+    const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
+    const c = new JoshAdminCallController(josh as never, {} as never);
+    for (const [method, path] of REFUND_ADMIN_CALLS) {
+      await expect(c.call({ method, path }, req('cs'))).rejects.toThrow('admin only');
+      await expect(c.call({ method, path }, req('admin'))).resolves.toBeDefined();
+    }
+    expect(josh.run).toHaveBeenCalledTimes(REFUND_ADMIN_CALLS.length);
+    await expect(c.call({ method: 'DELETE', path: `/admin/refund-requests/${U}` }, req('admin'))).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
   it('cs reaches exactly the calls its pages make', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
     const c = new JoshAdminCallController(josh as never, {} as never);

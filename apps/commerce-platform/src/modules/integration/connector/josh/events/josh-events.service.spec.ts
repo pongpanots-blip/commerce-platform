@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { JoshEventsService } from './josh-events.service';
 
-function makeService(storedVersion: string | null) {
+function makeService(storedVersion: string | null, emitter?: { emit: jest.Mock }) {
   const calls: Array<[string, unknown[] | undefined]> = [];
   const repo = { upsert: jest.fn(), delete: jest.fn(), insert: jest.fn(), save: jest.fn() };
   const manager = {
@@ -13,7 +13,7 @@ function makeService(storedVersion: string | null) {
     getRepository: jest.fn(() => repo),
   };
   const dataSource = { transaction: jest.fn(async (fn: (m: unknown) => unknown) => fn(manager)) };
-  return { svc: new JoshEventsService(dataSource as never), repo, calls };
+  return { svc: new JoshEventsService(dataSource as never, undefined, undefined, emitter as never), repo, calls };
 }
 
 const ORDER = '11111111-1111-1111-1111-111111111111';
@@ -23,6 +23,21 @@ const order = (version: string) => ({
 });
 
 describe('JoshEventsService', () => {
+  it('signals marketing triggers after an applied customer / order snapshot, not after a stale one', async () => {
+    const U = '22222222-2222-4222-8222-222222222222';
+    const emitter = { emit: jest.fn() };
+    await makeService(null, emitter).svc.apply({ type: 'customer.snapshot', aggregateId: U, version: '5', occurredAt: '', data: {} });
+    expect(emitter.emit).toHaveBeenCalledWith('marketing-trigger.customer', { userId: U });
+    const withUser = { ...order('6'), data: { ...order('6').data, order: { ...order('6').data.order, user_id: U } } };
+    await makeService('5', emitter).svc.apply(withUser);
+    expect(emitter.emit).toHaveBeenCalledWith('marketing-trigger.order', { userId: U });
+    await makeService(null, emitter).svc.apply({ type: 'customer.deleted', aggregateId: U, version: '7', occurredAt: '', data: {} });
+    expect(emitter.emit).toHaveBeenCalledWith('marketing-trigger.customer-deleted', { userId: U });
+    const stale = { emit: jest.fn() };
+    await makeService('9', stale).svc.apply({ type: 'customer.snapshot', aggregateId: U, version: '5', occurredAt: '', data: {} });
+    expect(stale.emit).not.toHaveBeenCalled();
+  });
+
   it('applies a newer order snapshot: locks the aggregate, upserts head with source_version, replaces lines', async () => {
     const { svc, calls, repo } = makeService('5');
     expect(await svc.apply(order('6'))).toBe('applied');

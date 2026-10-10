@@ -44,6 +44,40 @@ const url = process.env.MARKETING_TEST_DATABASE_URL;
     await db.query(`DELETE FROM webhook_deliveries WHERE id = $1`, [d1]);
   });
 
+  it('trigger SQL: login times, milestone crossing, conversion, PDPA stop', async () => {
+    const C = '22222222-2222-4222-8222-222222222222';
+    const activated = new Date(Date.now() - 24 * 3600_000);
+    const order = (total: number, at: Date) => db.query(`INSERT INTO josh_orders (orders_id, status, paid, user_id, total_price, create_date, source_version)
+      VALUES (uuid_generate_v4(), 'paid', true, $1, $2, $3, 1)`, [C, total, at]);
+    try {
+      await db.query(`INSERT INTO josh_customers (id, data, source_version) VALUES ($1, $2::jsonb, 1)`,
+        [C, JSON.stringify({ first_app_login_at: '2026-10-10T05:00:00Z', last_app_login_at: '2026-10-10T06:00:00Z' })]);
+      expect((await store.customerTime(C, 'first_app_login_at'))?.toISOString()).toBe('2026-10-10T05:00:00.000Z');
+
+      await order(600, new Date(activated.getTime() - 3600_000));
+      await order(500, new Date());
+      const spend = (value: number) => store.milestoneCrossed(C, { metric: 'lifetime_spend', operator: '>=', value }, activated);
+      expect(await spend(1000)).toBe(true);   // 600 before + 500 after crosses 1000 after activation
+      expect(await spend(500)).toBe(false);   // already ≥ 500 before activation
+      expect(await store.milestoneCrossed(C, { metric: 'single_order_total', operator: '>=', value: 500 }, activated)).toBe(true);
+      expect(await store.milestoneCrossed(C, { metric: 'lifetime_order_count', operator: '>=', value: 2 }, activated)).toBe(true);
+
+      const eid = await store.insertEnrollment({ workflowId: wf, userId: C, occurrenceKey: 'conv', entryStepId: 's1', holdout: false, test: false, skipWaits: false });
+      await db.query(`UPDATE marketing_workflow_enrollments SET started_at = $2 WHERE id = $1`, [eid, activated]);
+      await store.markConverted(C);
+      const [conv] = await db.query(`SELECT converted_at IS NOT NULL AS converted FROM marketing_workflow_enrollments WHERE id = $1`, [eid]);
+      expect(conv.converted).toBe(true);
+
+      const live = await store.insertEnrollment({ workflowId: wf, userId: C, occurrenceKey: 'pdpa', entryStepId: 's1', holdout: false, test: false, skipWaits: false });
+      await store.customerDeleted(C);
+      const [gone] = await db.query(`SELECT status, end_reason FROM marketing_workflow_enrollments WHERE id = $1`, [live]);
+      expect(gone).toEqual({ status: 'skipped', end_reason: 'customer_deleted' });
+    } finally {
+      await db.query(`DELETE FROM josh_orders WHERE user_id = $1`, [C]);
+      await db.query(`DELETE FROM josh_customers WHERE id = $1`, [C]);
+    }
+  });
+
   it('counts queued notifies today and logs actions', async () => {
     const id = await store.insertEnrollment({ workflowId: wf, userId: U, occurrenceKey: 'cap', entryStepId: null, holdout: false, test: false, skipWaits: false });
     await db.transaction(async (m) => {

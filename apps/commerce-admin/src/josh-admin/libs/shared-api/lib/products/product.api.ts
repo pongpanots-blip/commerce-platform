@@ -247,12 +247,15 @@ export const getAdminProducts = async (params: {
   page: number;
   limit: number;
   search?: string;
+  /** Exact product codes (josh `skus`, comma-separated); josh applies it before `search`. */
+  skus?: string;
   status?: 'active' | 'inactive' | 'draft' | 'all';
 }): Promise<any> => {
   const searchParams = new URLSearchParams();
   searchParams.set('page', String(params.page));
   searchParams.set('limit', String(params.limit));
   if (params.search) searchParams.set('search', params.search);
+  if (params.skus) searchParams.set('skus', params.skus);
   if (params.status) searchParams.set('status', params.status);
 
   const response = await apiClient.get<any>(

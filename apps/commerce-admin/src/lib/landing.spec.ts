@@ -32,7 +32,7 @@ describe('role landing (commerce-admin)', () => {
 
   it.each([
     ['admin', null, '/'], // Dashboard, outside the sections
-    ['merchandising', 'catalog', '/products'],
+    ['merchandising', 'catalog', '/j/allproducts'],
     ['graphic', 'catalog', '/j/product/bulk-image-upload'],
     ['marketing', 'marketing', '/marketing/growth'],
     ['sales_manager', 'reports', '/reports/sales'],

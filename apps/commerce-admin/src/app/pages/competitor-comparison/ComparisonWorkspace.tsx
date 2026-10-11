@@ -9,13 +9,24 @@ import {
 import {
   Alert,
   Button,
+  ButtonLink,
   Chip,
   Empty,
+  FilterBar,
+  fmt,
   Loading,
   PageHeader,
   Panel,
   PanelHead,
+  StatTile,
+  Table,
+  TableEmpty,
   TableViewport,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
   TaskInput,
   TaskSelect,
   useUiLocale,
@@ -141,7 +152,7 @@ export default function ComparisonWorkspace({
   role?: string;
 }) {
   useUiLocale();
-  const { pathname } = useLocation(),
+  const { pathname, search } = useLocation(),
     [params] = useSearchParams();
   if (!canReadComparison(role))
     return (
@@ -169,15 +180,17 @@ export default function ComparisonWorkspace({
       <Navigate to={`${home}/collected/${params.get("catalogItem")}`} replace />
     );
   if (path === home && params.get("step") === "results")
-    return <Navigate to={`${home}/overview`} replace />;
+    return <Navigate to={home} replace />;
   if (path === home && params.get("sku"))
     return <Navigate to={productUrl(params.get("sku")!)} replace />;
   if (path === home && ["sources", "add"].includes(params.get("step") ?? ""))
     return <Navigate to={`${home}/sources`} replace />;
   if (path === `${home}/sources`) return <LegacySources role={role} />;
-  if (path === home || path === `${home}/matching`)
-    return <ChooseProduct owner={owner} role={role} />;
-  if (path === `${home}/overview`) return <ProductIndex />;
+  // The old report URL now opens the comparison table on the home.
+  if (path === `${home}/overview`)
+    return <Navigate to={home + search} replace />;
+  if (path === `${home}/matching`) return <MatchingQueue />;
+  if (path === home) return <ProductIndex owner={owner} role={role} />;
   const collected = path.match(
     /^\/j\/marketing\/competitor-prices\/collected\/([^/]+)$/,
   );
@@ -259,204 +272,6 @@ function LegacySources({ role }: { role: string }) {
           )}
         </Alert>
       )}
-    </CommercePage>
-  );
-}
-function ChooseProduct({ owner, role }: { owner: string; role: string }) {
-  const [sku, setSku] = useState(""),
-    [error, setError] = useState(""),
-    navigate = useNavigate();
-  const [params, setParams] = useSearchParams();
-  const category = params.get("category") ?? "",
-    page = params.get("page") ?? "1",
-    show = params.get("show") === "done" ? "done" : "todo";
-  const queue = useAsync(async () => {
-    const raw = await api.get<{
-      data: {
-        rows: { sku: string; name: string }[];
-        categories: { name: string; total: number; reviewed: number }[];
-        total: number;
-        counts: { total: number; reviewed: number };
-      };
-      message: string;
-    }>(
-      `/competitor-prices/review?category=${encodeURIComponent(category)}&page=${encodeURIComponent(page)}&show=${show}`,
-    );
-    if (raw.message) throw Error(raw.message);
-    if (!raw.data || !Array.isArray(raw.data.rows))
-      throw Error("Invalid matching queue");
-    return raw.data;
-  }, [category, page, show]);
-  return (
-    <CommercePage>
-      <PageHeader
-        title={text("เทียบราคาหลายร้าน", "Compare prices across vendors")}
-        subtitle={text(
-          "เลือกสินค้าของเรา ตรวจคู่สินค้า แล้วเทียบฐานหน่วยที่ตรงกัน",
-          "Choose our product, review its matches, then compare compatible unit bases.",
-        )}
-        actions={
-          <WorkspaceLink to={`${home}/sources`}>
-            {text("แหล่งราคา", "Price sources")}
-          </WorkspaceLink>
-        }
-      />
-      <Pending owner={owner} />
-      <WorkspaceLink to={`${home}/overview`}>
-        {text(
-          "ค้นหาสินค้าและส่งออกรายงานเดิม",
-          "Browse products and export existing report",
-        )}
-      </WorkspaceLink>
-      <Panel>
-        <div className="p-4">
-          <form
-            className="flex flex-wrap items-end gap-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!sku.trim()) {
-                setError(text("กรอกรหัสสินค้า", "Enter a SKU."));
-                setTimeout(
-                  () =>
-                    document
-                      .querySelector<HTMLElement>('[aria-invalid="true"]')
-                      ?.focus(),
-                  0,
-                );
-                return;
-              }
-              navigate(productUrl(sku.trim()));
-            }}
-          >
-            <TaskInput
-              label={text("รหัสสินค้าของเรา", "Our product SKU")}
-              value={sku}
-              error={error || undefined}
-              onChange={(e) => {
-                setSku(e.target.value);
-                setError("");
-              }}
-            />
-            <Button type="submit">
-              {text("อ่านคู่สินค้าและราคา", "Read product pairs and prices")}
-            </Button>
-          </form>
-        </div>
-      </Panel>
-      <Alert tone="muted">
-        {text(
-          "ตัวเลขมาจากข้อมูลที่บันทึกไว้ อายุสำเนาต้นทางยังไม่ยืนยัน ราคาสมาชิกแยกจากราคาสาธารณะ",
-          "Figures come from recorded evidence. Upstream freshness is unverified. Member prices stay separate from public prices.",
-        )}
-      </Alert>
-      <Panel>
-        <PanelHead
-          title={text("งานจับคู่ตามหมวดสินค้า", "Matching work by category")}
-        />
-        <div className="p-4 space-y-3">
-          <ErrorText error={queue.error} onRetry={queue.reload} />
-          {queue.loading ? (
-            <Loading variant="table" />
-          ) : queue.data && !queue.error ? (
-            <>
-              <TaskSelect
-                label={text("หมวดสินค้า", "Product category")}
-                value={
-                  queue.data.categories.some((c) => c.name === category)
-                    ? category
-                    : (queue.data.categories[0]?.name ?? "")
-                }
-                onChange={(e) =>
-                  setParams({ category: e.target.value, page: "1", show })
-                }
-              >
-                {queue.data.categories.map((c) => (
-                  <option key={c.name} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </TaskSelect>
-              <TaskSelect
-                label={text("สถานะการทบทวน", "Review marker")}
-                value={show}
-                onChange={(e) =>
-                  setParams({ category, page: "1", show: e.target.value })
-                }
-              >
-                <option value="todo">
-                  {text("ยังไม่ทำเครื่องหมายทบทวน", "Not marked reviewed")}
-                </option>
-                <option value="done">
-                  {text("ทำเครื่องหมายทบทวนแล้ว", "Marked reviewed")}
-                </option>
-              </TaskSelect>
-              <p role="status">
-                {text("ทำเครื่องหมายทบทวนแล้ว", "Marked reviewed")}:{" "}
-                {queue.data.counts.reviewed} / {queue.data.counts.total}.{" "}
-                {text(
-                  "ไม่ใช่จำนวนคู่สินค้าที่ตรวจยืนยันแล้ว",
-                  "This is not a verified-match count.",
-                )}
-              </p>
-              {!queue.data.rows.length ? (
-                <Empty>
-                  {text(
-                    "ไม่มีสินค้าในหน้านี้ เปลี่ยนหมวดหรือกลับหน้าแรก",
-                    "No products on this page. Change category or return to the first page.",
-                  )}
-                </Empty>
-              ) : (
-                <div className="grid gap-3 md:grid-cols-2">
-                  {queue.data.rows.map((r) => (
-                    <Panel key={r.sku}>
-                      <div className="p-3">
-                        <WorkspaceLink to={`${productUrl(r.sku)}/match`}>
-                          {r.name} · {r.sku}
-                        </WorkspaceLink>
-                      </div>
-                    </Panel>
-                  ))}
-                </div>
-              )}
-              <div className="flex gap-3">
-                <Button
-                  disabled={Number(page) <= 1}
-                  onClick={() =>
-                    setParams({
-                      category,
-                      page: String(Number(page) - 1),
-                      show,
-                    })
-                  }
-                >
-                  {text("ก่อนหน้า", "Previous")}
-                </Button>
-                <Button
-                  disabled={Number(page) * 20 >= queue.data.total}
-                  onClick={() =>
-                    setParams({
-                      category,
-                      page: String(Number(page) + 1),
-                      show,
-                    })
-                  }
-                >
-                  {text("ถัดไป", "Next")}
-                </Button>
-              </div>
-            </>
-          ) : null}
-        </div>
-      </Panel>
-      {!canPerformComparison(role, "capture") && (
-        <Alert tone="muted">
-          {text(
-            "บัญชีนี้อ่านอย่างเดียว",
-            "This account retains read-only access.",
-          )}
-        </Alert>
-      )}
-      {role === "merchandising" && <MerComparisonAccess />}
     </CommercePage>
   );
 }
@@ -2280,7 +2095,170 @@ function CollectedProduct({ id, role }: { id: string; role: string }) {
     </CommercePage>
   );
 }
-function ProductIndex() {
+type Position = "we_pricier" | "we_cheaper" | "same" | "no_data" | "unmatched";
+type Overview = {
+  rows: {
+    sku: string;
+    name: string;
+    category: string;
+    ourPricePerKgIncVat: number | null;
+    cheapest: {
+      sourceName: string;
+      sourceUrl: string;
+      pricePerKgIncVat: number;
+      observedAt: string | null;
+    } | null;
+    differencePercent: number | null;
+    position: Position;
+    readyPairs: number;
+  }[];
+  total: number;
+  pageSize: number;
+  categories: string[];
+  sites: string[];
+  totals: Record<
+    "weCheaper" | "wePricier" | "same" | "noData" | "unmatched",
+    number
+  >;
+};
+// [position URL value, tone, totals key, Thai, English]
+const POSITIONS = [
+  ["we_pricier", "danger", "wePricier", "เราแพงกว่า", "We cost more"],
+  ["we_cheaper", "ok", "weCheaper", "เราถูกกว่า", "We cost less"],
+  ["same", "muted", "same", "ราคาเท่ากัน", "Same price"],
+  ["no_data", "warn", "noData", "ยังเทียบไม่ได้", "Not comparable yet"],
+  ["unmatched", "muted", "unmatched", "ยังไม่จับคู่", "Not matched yet"],
+] as const;
+function Difference({ row }: { row: Overview["rows"][number] }) {
+  const pct = `${Math.abs(row.differencePercent ?? 0)}%`;
+  if (row.position === "we_pricier")
+    return <Chip tone="danger">{text(`แพงกว่า ${pct}`, `${pct} dearer`)}</Chip>;
+  if (row.position === "we_cheaper")
+    return <Chip tone="ok">{text(`ถูกกว่า ${pct}`, `${pct} cheaper`)}</Chip>;
+  if (row.position === "same")
+    return <Chip tone="muted">{text("เท่ากัน", "Same")}</Chip>;
+  if (row.position === "no_data")
+    return <Chip tone="warn">{text("ยังเทียบไม่ได้", "Not comparable yet")}</Chip>;
+  return <Chip tone="muted">{text("ยังไม่จับคู่", "Not matched yet")}</Chip>;
+}
+/** Work through matching category by category; "reviewed" is the team's own marker, not a verified-pair count. */
+function MatchingQueue() {
+  const [params, setParams] = useSearchParams();
+  const category = params.get("category") ?? "",
+    page = Math.max(1, Number(params.get("page")) || 1),
+    show = params.get("show") === "done" ? "done" : "todo";
+  const queue = useAsync(async () => {
+    const raw = await api.get<{
+      data: {
+        rows: { sku: string; name: string }[];
+        categories: { name: string; total: number; reviewed: number }[];
+        total: number;
+        counts: { total: number; reviewed: number };
+      };
+      message: string;
+    }>(
+      `/competitor-prices/review?category=${encodeURIComponent(category)}&page=${page}&show=${show}`,
+    );
+    if (raw.message) throw Error(raw.message);
+    if (!raw.data || !Array.isArray(raw.data.rows))
+      throw Error("Invalid matching queue");
+    return raw.data;
+  }, [category, page, show]);
+  const set = (next: Record<string, string>) =>
+    setParams({ category, show, page: "1", ...next });
+  const current =
+    queue.data?.categories.some((c) => c.name === category)
+      ? category
+      : (queue.data?.categories[0]?.name ?? "");
+  return (
+    <CommercePage>
+      <PageHeader
+        back={{ to: home, label: text("เทียบราคาคู่แข่ง", "Competitor prices") }}
+        title={text("ไล่จับคู่ตามหมวด", "Match by category")}
+        subtitle={text(
+          "เลือกหมวด แล้วเปิดสินค้าทีละตัวเพื่อจับคู่กับสินค้าของร้านอื่น",
+          "Pick a category, then open products one by one to match them with other stores' products.",
+        )}
+      />
+      <ErrorText error={queue.error} onRetry={queue.reload} />
+      {queue.loading && !queue.data ? (
+        <Loading variant="table" />
+      ) : queue.data && !queue.error ? (
+        <>
+          <FilterBar>
+            <TaskSelect
+              label={text("หมวดสินค้า", "Product category")}
+              value={current}
+              onChange={(e) => set({ category: e.target.value })}
+            >
+              {queue.data.categories.map((c) => (
+                <option key={c.name} value={c.name}>
+                  {c.name} ({fmt.num(c.reviewed)}/{fmt.num(c.total)})
+                </option>
+              ))}
+            </TaskSelect>
+            <TaskSelect
+              label={text("แสดง", "Show")}
+              value={show}
+              onChange={(e) => set({ show: e.target.value })}
+            >
+              <option value="todo">{text("ยังไม่ได้ตรวจ", "Not checked yet")}</option>
+              <option value="done">{text("ตรวจแล้ว", "Checked")}</option>
+            </TaskSelect>
+            <p role="status" className="text-sm text-on-surface-variant">
+              {text("ตรวจแล้ว", "Checked")} {fmt.num(queue.data.counts.reviewed)} /{" "}
+              {fmt.num(queue.data.counts.total)}
+            </p>
+          </FilterBar>
+          <Panel>
+            {!queue.data.rows.length ? (
+              <TableEmpty title={text("ไม่มีสินค้าในหมวดนี้", "No products in this category")}>
+                {text("เลือกหมวดอื่น หรือดูรายการที่ตรวจแล้ว", "Pick another category or show checked products.")}
+              </TableEmpty>
+            ) : (
+            <TableViewport>
+              <Table>
+                <THead>
+                  <TH>{text("สินค้า", "Product")}</TH>
+                  <TH />
+                </THead>
+                <TBody>
+                  {queue.data.rows.map((r) => (
+                      <TR key={r.sku}>
+                        <TD>
+                          <span className="block font-medium">{r.name}</span>
+                          <span className="font-mono text-xs text-on-surface-variant">{r.sku}</span>
+                        </TD>
+                        <TD kind="actions">
+                          <ButtonLink to={`${productUrl(r.sku)}/match`}>
+                            {text("จับคู่", "Match")}
+                          </ButtonLink>
+                        </TD>
+                      </TR>
+                  ))}
+                </TBody>
+              </Table>
+            </TableViewport>
+            )}
+          </Panel>
+          <div className="flex items-center gap-3">
+            <Button disabled={page <= 1} onClick={() => set({ page: String(page - 1) })}>
+              {text("ก่อนหน้า", "Previous")}
+            </Button>
+            <Button
+              disabled={page * 20 >= queue.data.total}
+              onClick={() => set({ page: String(page + 1) })}
+            >
+              {text("ถัดไป", "Next")}
+            </Button>
+          </div>
+        </>
+      ) : null}
+    </CommercePage>
+  );
+}
+
+function ProductIndex({ owner, role }: { owner: string; role: string }) {
   const [params, setParams] = useSearchParams(),
     [query, setQuery] = useState(params.get("search") ?? ""),
     [downloading, setDownloading] = useState(false),
@@ -2297,25 +2275,17 @@ function ProductIndex() {
     const requestFilters = new URLSearchParams(filters);
     if (requestFilters.get("position") === "all")
       requestFilters.delete("position");
-    const raw = await api.get<{
-      message: string;
-      data: {
-        rows: {
-          sku: string;
-          name: string;
-          category: string;
-          pairs: unknown[];
-        }[];
-        total: number;
-        pageSize: number;
-        categories: string[];
-        sites: string[];
-      };
-    }>(`/competitor-prices/overview?${requestFilters}`);
+    const raw = await api.get<{ message: string; data: Overview }>(
+      `/competitor-prices/overview?${requestFilters}`,
+    );
     if (raw.message) throw Error(raw.message);
     if (!Array.isArray(raw.data?.rows)) throw Error("Invalid product index");
     return raw.data;
   }, [filters.toString()]);
+  // Keep tiles and filter options on screen while the next page loads.
+  const last = useRef<Overview | null>(null);
+  if (source.data) last.current = source.data;
+  const shown = source.data ?? last.current;
   async function download() {
     if (downloading) return;
     setDownloading(true);
@@ -2344,170 +2314,211 @@ function ProductIndex() {
   function change(key: string, value: string) {
     setParams({ ...Object.fromEntries(filters), [key]: value, page: "1" });
   }
+  const position = filters.get("position")!;
+  const pages = source.data
+    ? Math.max(1, Math.ceil(source.data.total / source.data.pageSize))
+    : 1;
   return (
     <CommercePage>
-      <WorkspaceLink to={home}>
-        {text("กลับไปเลือกสินค้า", "Back to product selection")}
-      </WorkspaceLink>
       <PageHeader
-        title={text(
-          "ค้นหาสินค้าและรายงานเดิม",
-          "Browse products and existing report",
+        title={text("เทียบราคาคู่แข่ง", "Competitor prices")}
+        subtitle={text(
+          "ราคาต่อกิโลกรัมของเรา เทียบกับร้านที่ถูกที่สุด รวม VAT",
+          "Our price per kilogram against the cheapest store, VAT included.",
         )}
-      />
-      <Alert tone="muted">
-        {text(
-          "รายงานเดิมใช้ฐานกิโลกรัมและตัวกรองเดิม แสดงเฉพาะฐานที่รองรับ เปิดสินค้าเพื่อตรวจราคาหลายร้านพร้อมหน่วยและหลักฐานต้นทาง",
-          "Existing report retains kilogram bases and legacy filters, restricted to supported bases. Open a product to review multiple vendors with units and provenance.",
-        )}
-      </Alert>
-      <form
-        className="flex flex-wrap gap-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          change("search", query);
-        }}
-      >
-        <TaskInput
-          label={text("ค้นชื่อหรือ SKU", "Search name or SKU")}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <Button type="submit">{text("ค้นหา", "Search")}</Button>
-      </form>
-      <ErrorText error={source.error || error} onRetry={source.reload} />
-      {source.loading ? (
-        <Loading variant="table" />
-      ) : source.data && !source.error ? (
-        <>
-          <div className="flex flex-wrap gap-3">
-            {(["category", "site"] as const).map((key) => (
-              <TaskSelect
-                key={key}
-                label={
-                  key === "category"
-                    ? text("หมวดสินค้า", "Product category")
-                    : text(
-                        "ชื่อร้านตามรายงานเดิม",
-                        "Vendor display name in existing report",
-                      )
-                }
-                value={filters.get(key)!}
-                onChange={(e) => change(key, e.target.value)}
-              >
-                <option value="">{text("ทั้งหมด", "All")}</option>
-                {(key === "category"
-                  ? source.data!.categories
-                  : source.data!.sites
-                ).map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </TaskSelect>
-            ))}
-            <TaskSelect
-              label={text("ตัวกรองสถานะเดิม", "Existing status filter")}
-              value={filters.get("position")!}
-              onChange={(e) => change("position", e.target.value)}
-            >
-              {[
-                "all",
-                "matched",
-                "unmatched",
-                "no_data",
-                "we_pricier",
-                "we_cheaper",
-                "same",
-              ].map((value) => (
-                <option key={value} value={value}>
-                  {text(
-                    ...(
-                      {
-                        all: ["ทั้งหมด", "All products"],
-                        matched: ["มีคู่สินค้า", "Has product pairs"],
-                        unmatched: ["ยังไม่มีคู่", "No pairs yet"],
-                        no_data: [
-                          "ยังเทียบไม่ได้",
-                          "No comparable kilogram basis",
-                        ],
-                        we_pricier: [
-                          "ฐานกก. เราสูงกว่า",
-                          "Our kilogram basis is higher",
-                        ],
-                        we_cheaper: [
-                          "ฐานกก. เราต่ำกว่า",
-                          "Our kilogram basis is lower",
-                        ],
-                        same: ["ฐานกก. เท่ากัน", "Equal kilogram basis"],
-                      } as Record<string, [string, string]>
-                    )[value],
-                  )}
-                </option>
-              ))}
-            </TaskSelect>
-          </div>
-          <p>
-            {text(
-              "สินค้าที่อ่านได้ในหน้าค้นหา",
-              "Products returned by this search",
-            )}
-            : {source.data.total}
-          </p>
-          {!source.data.rows.length ? (
-            <Empty>
-              {text(
-                "ไม่พบสินค้า เปลี่ยนตัวกรองหรือคำค้น",
-                "No products found. Change filters or search.",
-              )}
-            </Empty>
-          ) : (
-            <div className="grid gap-3 md:grid-cols-2">
-              {source.data.rows.map((r) => (
-                <Panel key={r.sku}>
-                  <div className="p-3">
-                    <WorkspaceLink to={productUrl(r.sku)}>
-                      {r.name} · {r.sku}
-                    </WorkspaceLink>
-                    <p>
-                      {r.category} ·{" "}
-                      {text("คู่สินค้าที่บันทึก", "Recorded pairs")}:{" "}
-                      {r.pairs.length}
-                    </p>
-                  </div>
-                </Panel>
-              ))}
-            </div>
-          )}
-          <div className="flex flex-wrap gap-3">
-            <Button
-              disabled={page <= 1}
-              onClick={() =>
-                setParams({
-                  ...Object.fromEntries(filters),
-                  page: String(page - 1),
-                })
-              }
-            >
-              {text("ก่อนหน้า", "Previous")}
-            </Button>
-            <Button
-              disabled={page * source.data.pageSize >= source.data.total}
-              onClick={() =>
-                setParams({
-                  ...Object.fromEntries(filters),
-                  page: String(page + 1),
-                })
-              }
-            >
-              {text("ถัดไป", "Next")}
-            </Button>
+        actions={
+          <>
             <Button disabled={downloading} onClick={download}>
-              {text("ส่งออกรายงาน XLSX เดิม", "Export existing XLSX report")}
+              {text("ส่งออก Excel", "Export Excel")}
             </Button>
-          </div>
-        </>
-      ) : null}
+            <ButtonLink to={`${home}/matching`}>
+              {text("ไล่จับคู่ตามหมวด", "Match by category")}
+            </ButtonLink>
+            <ButtonLink to={`${home}/sources`}>
+              {text("แหล่งราคา", "Price sources")}
+            </ButtonLink>
+          </>
+        }
+      />
+      <Pending owner={owner} />
+      {shown && (
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+          {POSITIONS.map(([value, tone, key, th, en]) => (
+            <StatTile
+              key={value}
+              label={text(th, en)}
+              value={fmt.num(shown.totals[key])}
+              tone={tone}
+              selected={position === value}
+              onClick={() =>
+                change("position", position === value ? "all" : value)
+              }
+            />
+          ))}
+        </div>
+      )}
+      <Panel>
+        <FilterBar>
+          <form
+            role="search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              change("search", query.trim());
+            }}
+          >
+            <TaskInput
+              type="search"
+              label={text("ค้นหาชื่อหรือรหัสสินค้า", "Search name or product code")}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </form>
+          <TaskSelect
+            label={text("หมวดสินค้า", "Category")}
+            value={filters.get("category")!}
+            onChange={(e) => change("category", e.target.value)}
+          >
+            <option value="">{text("ทุกหมวด", "All categories")}</option>
+            {shown?.categories.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </TaskSelect>
+          <TaskSelect
+            label={text("ร้าน", "Store")}
+            value={filters.get("site")!}
+            onChange={(e) => change("site", e.target.value)}
+          >
+            <option value="">{text("ทุกร้าน", "All stores")}</option>
+            {shown?.sites.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </TaskSelect>
+        </FilterBar>
+        <ErrorText error={source.error || error} onRetry={source.reload} />
+        {source.loading ? (
+          <Loading variant="table" />
+        ) : source.data && !source.error ? (
+          !source.data.rows.length ? (
+            <TableEmpty title={text("ไม่พบสินค้า", "No products found")}>
+              {text(
+                "ลองค้นด้วยคำอื่น หรือเลือก “ทุกหมวด” และ “ทุกร้าน”",
+                "Try another search, or choose all categories and all stores.",
+              )}
+            </TableEmpty>
+          ) : (
+            <>
+              <Table>
+                <THead>
+                  <TH>{text("สินค้า", "Product")}</TH>
+                  <TH right>{text("ราคาเรา/กก.", "Our price/kg")}</TH>
+                  <TH>{text("ร้านที่ถูกที่สุด", "Cheapest store")}</TH>
+                  <TH>{text("ส่วนต่าง", "Difference")}</TH>
+                  <TH right>{text("ร้านที่เทียบแล้ว", "Stores compared")}</TH>
+                  <TH kind="actions">
+                    <span className="sr-only">{text("เปิด", "Open")}</span>
+                  </TH>
+                </THead>
+                <TBody>
+                  {source.data.rows.map((r) => (
+                    <TR key={r.sku}>
+                      <TD>
+                        <div className="font-medium">{r.name}</div>
+                        <div className="font-mono text-[11px] text-on-surface-variant">
+                          {r.sku}
+                        </div>
+                        {r.category && (
+                          <div className="text-[11px] text-on-surface-variant">
+                            {r.category}
+                          </div>
+                        )}
+                      </TD>
+                      <TD kind="money">{fmt.baht(r.ourPricePerKgIncVat)}</TD>
+                      <TD>
+                        {r.cheapest ? (
+                          <>
+                            <a
+                              href={r.cheapest.sourceUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="font-medium text-primary hover:underline"
+                            >
+                              {r.cheapest.sourceName}
+                            </a>
+                            <div className="font-mono tabular-nums">
+                              {fmt.baht(r.cheapest.pricePerKgIncVat)}
+                              {text("/กก.", "/kg")}
+                            </div>
+                            <div className="text-[11px] text-on-surface-variant">
+                              {fmt.date(r.cheapest.observedAt)}
+                            </div>
+                          </>
+                        ) : (
+                          "—"
+                        )}
+                      </TD>
+                      <TD>
+                        <Difference row={r} />
+                      </TD>
+                      <TD kind="num">{fmt.num(r.readyPairs)}</TD>
+                      <TD kind="actions">
+                        {r.position === "unmatched" ? (
+                          <ButtonLink to={`${productUrl(r.sku)}/match`}>
+                            {text("จับคู่", "Match")}
+                          </ButtonLink>
+                        ) : (
+                          <ButtonLink to={productUrl(r.sku)}>
+                            {text("เปิด", "Open")}
+                          </ButtonLink>
+                        )}
+                      </TD>
+                    </TR>
+                  ))}
+                </TBody>
+              </Table>
+              <div className="flex flex-wrap items-center justify-end gap-3 p-4">
+                <Button
+                  disabled={page <= 1}
+                  onClick={() =>
+                    setParams({
+                      ...Object.fromEntries(filters),
+                      page: String(page - 1),
+                    })
+                  }
+                >
+                  {text("ก่อนหน้า", "Previous")}
+                </Button>
+                <span className="text-sm tabular-nums">
+                  {text(`หน้า ${page} จาก ${pages}`, `Page ${page} of ${pages}`)}
+                </span>
+                <Button
+                  disabled={page >= pages}
+                  onClick={() =>
+                    setParams({
+                      ...Object.fromEntries(filters),
+                      page: String(page + 1),
+                    })
+                  }
+                >
+                  {text("ถัดไป", "Next")}
+                </Button>
+              </div>
+            </>
+          )
+        ) : null}
+      </Panel>
+      {!canPerformComparison(role, "capture") && (
+        <Alert tone="muted">
+          {text(
+            "บัญชีนี้อ่านอย่างเดียว",
+            "This account retains read-only access.",
+          )}
+        </Alert>
+      )}
+      {role === "merchandising" && <MerComparisonAccess />}
     </CommercePage>
   );
 }

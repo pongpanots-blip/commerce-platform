@@ -1,7 +1,7 @@
 // ui-metadata-migration: static labels and UI notices only
 import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { Alert, Button, ErrorText, Hint, Icon, Loading, Page, PageHeader, Panel, PanelHead, TaskForm, TaskInput, TaskSelect, TaskMasterDataSelect, useTaskFormState, useUnsavedChanges, type TaskFieldErrors } from '@cp/ui';
+import { Alert, Button, ButtonLink, Empty, ErrorText, Hint, Icon, Loading, Page, PageHeader, Panel, PanelHead, TaskForm, TaskInput, TaskSelect, TaskMasterDataSelect, useTaskFormState, useUnsavedChanges, type TaskFieldErrors } from '@cp/ui';
 import { stockApi, inventoryOverviewApi, StockWarehouse, StockAdjustResult } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { InterruptedAction, requireSaved, taskMessages, useActionDraft, writeFailure } from '../task-forms';
@@ -90,11 +90,19 @@ function StockTask({ tab }: { tab: Tab }) {
       <ErrorText error={warehouses.error} onRetry={warehouses.reload} />
       {warehouses.loading && !warehouses.data && <Loading variant="form" />}
       {warehouses.data && own.length === 0 && (
-        <Hint>{__uiText("ยังไม่มีคลังที่ปรับยอดผ่านแพลตฟอร์มได้ หากเป็นคลังจาก ERP ให้บันทึกใน ERP แล้วรอซิงก์ยอดเข้ามา")}</Hint>
+        // Every warehouse still takes its stock from the ERP: nothing here can be recorded yet, so say so instead of a dead form.
+        <Panel>
+          <Empty icon="warehouse"><div className="flex flex-col items-center gap-3 text-center">
+            <span className="block text-sm font-semibold text-on-surface">{__uiText("ยังไม่มีคลังที่บันทึกสต็อกในระบบนี้ได้")}</span>
+            <span className="block max-w-md">{__uiText("ทุกคลังรับยอดสต็อกจากระบบหลัก (ERP) ให้รับเข้า ปรับ หรือโอนใน ERP แล้วยอดจะซิงก์มาเอง หน้านี้จะใช้ได้เมื่อมีคลังที่ระบบนี้ดูแลเอง")}</span>
+            <ButtonLink to="/erp/inventory-warehouse" variant="primary" icon="inventory_2">{__uiText("ดูสต็อกแต่ละคลัง")}</ButtonLink>
+          </div></Empty>
+        </Panel>
       )}
       {draft.recovered && !draft.interrupted && <Hint>{__uiText('กู้คืนข้อมูลที่ยังไม่บันทึกแล้ว ตรวจข้อมูลก่อนบันทึก')}</Hint>}
       {draft.interrupted && <InterruptedAction onCheck={checkLatest} onContinue={draft.acknowledge} outstanding={draft.outstanding} />}
       {done && <Alert tone="ok" title={__uiText("บันทึกสต็อกเรียบร้อย")} onClose={() => setDone(null)}>{(typeof done === 'string' ? __uiText(done) : done)}</Alert>}
+      {!(warehouses.data && own.length === 0) && <>
       <div role="group" aria-label={__uiText("ประเภทการเคลื่อนไหวสต็อก")} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {TASKS.map(item => <button key={item.id} type="button" aria-pressed={item.id === tab} disabled={draft.pending} onClick={() => { if (item.id !== tab) void requestLeave(() => navigate(`/stock-moves/${item.id}${location.search}${location.hash}`)); }}
           className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60 ${item.id === tab ? 'border-primary bg-primary-container/40' : 'border-secondary-container bg-white hover:border-primary/50'}`}>
@@ -138,6 +146,7 @@ function StockTask({ tab }: { tab: Tab }) {
           </div>
         </TaskForm>
       </Panel>
+      </>}
     </Page>
   );
 }

@@ -11,18 +11,15 @@ const CategoryList = lazy(() => import('./app/page/category/CategoryList'));
 const CreateCategory = lazy(() => import('./app/page/category/CreateCategory'));
 const EditCategory = lazy(() => import('./app/page/category/EditCategory'));
 const KbankTestingConsole = lazy(() => import('./app/page/kbank/KbankTestingConsole'));
-const InvoicesOverdue = lazy(() => import('./app/page/CS/InvoicesOverdue'));
 const CreditTermsAdmin = lazy(() => import('./app/page/CS/CreditTermsAdmin'));
 const CreditNotesAdmin = lazy(() => import('./app/page/accounting/CreditNotesAdmin'));
 const CreditBacksAdmin = lazy(() => import('./app/page/accounting/CreditBacksAdmin'));
 const MarketingJourneyFunnel = lazy(() => import('./app/page/marketing/MarketingJourneyFunnel'));
-const MarketingLinksPage = lazy(() => import('./app/page/marketing/MarketingLinksPage'));
 const MarketingNotifyTemplates = lazy(() => import('./app/page/marketing/MarketingNotifyTemplates'));
 const MarketingOfferCheckPage = lazy(() => import('./app/page/marketing/MarketingOfferCheckPage'));
 const MarketingQueueDashboard = lazy(() => import('./app/page/marketing/MarketingQueueDashboard'));
 const MarketingSettingsPage = lazy(() => import('./app/page/marketing/MarketingSettingsPage'));
 // Competitor prices + scraping: josh's pages verbatim, talking to commerce's own API (commerce-client).
-const CompetitorPricesPage = lazy(() => import('./app/page/marketing/CompetitorPricesPage'));
 const ScrapingSourcesPage = lazy(() => import('./app/page/marketing/ScrapingSourcesPage'));
 const ScrapedCatalogPage = lazy(() => import('./app/page/marketing/ScrapedCatalogPage'));
 const MembershipTierConfig = lazy(() => import('./app/page/membership-tier/MembershipTierConfig'));
@@ -72,7 +69,6 @@ const SupplierList = lazy(() => import('./app/page/supplier/SupplierList'));
 const CreateSupplier = lazy(() => import('./app/page/supplier/CreateSupplier'));
 const EditSupplier = lazy(() => import('./app/page/supplier/EditSupplier'));
 const PriceRequestsAdmin = lazy(() => import('./app/page/CS/PriceRequestsAdmin'));
-const ActiveOffersAdmin = lazy(() => import('./app/page/CS/ActiveOffersAdmin'));
 const CouponList = lazy(() => import('./app/page/coupon/CouponList'));
 const CreateCoupon = lazy(() => import('./app/page/coupon/CreateCoupon'));
 const CouponDetail = lazy(() => import('./app/page/coupon/CouponDetail'));
@@ -109,12 +105,10 @@ export function JoshAdminApp() {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="batch-sticker" element={<BatchSticker />} />
-            <Route path="marketing-links" element={<MarketingLinksPage />} />
             <Route path="marketing/queue" element={<MarketingQueueDashboard />} />
             <Route path="marketing/journey-funnel" element={<MarketingJourneyFunnel />} />
             <Route path="marketing/notify-templates" element={<MarketingNotifyTemplates />} />
             <Route path="marketing/settings" element={<MarketingSettingsPage />} />
-            <Route path="marketing/competitor-prices" element={<CompetitorPricesPage />} />
             <Route path="marketing/scraping-sources" element={<ScrapingSourcesPage />} />
             <Route path="marketing/scraped-catalog" element={<ScrapedCatalogPage />} />
             <Route path="marketing/welcome-lead-email" element={<WelcomeLeadEmailPage />} />
@@ -138,7 +132,6 @@ export function JoshAdminApp() {
             <Route path="categories/create" element={<CreateCategory />} />
             <Route path="categories/edit/:id" element={<EditCategory />} />
             <Route path="kbank/testing-console" element={<KbankTestingConsole />} />
-            <Route path="invoices" element={<InvoicesOverdue />} />
             <Route path="credit-notes" element={<CreditNotesAdmin />} />
             <Route path="credit-backs" element={<CreditBacksAdmin />} />
             <Route path="credit-terms" element={<CreditTermsAdmin />} />
@@ -179,7 +172,6 @@ export function JoshAdminApp() {
             <Route path="supplier/create" element={<CreateSupplier />} />
             <Route path="supplier/edit/:id" element={<EditSupplier />} />
             <Route path="price-requests" element={<PriceRequestsAdmin />} />
-            <Route path="active-offers" element={<ActiveOffersAdmin />} />
             <Route path="coupons" element={<CouponList />} />
             <Route path="coupon/create" element={<CreateCoupon />} />
             <Route path="coupon/:id" element={<CouponDetail />} />
@@ -200,6 +192,12 @@ export function JoshAdminApp() {
             <Route path="erp/webhook-simulator" element={<ErpWebhookSimulator />} />
             <Route path="billing" element={<Billing />} />
             <Route path="admin-access" element={<AdminAccessQueue />} />
+            {/* Merged into another page (duplicates removed); old links still land there. */}
+            <Route path="invoices" element={<Navigate to="/j/billing" replace />} />
+            <Route path="active-offers" element={<Navigate to="/prices/staff" replace />} />
+            <Route path="marketing-links" element={<Navigate to="/j/smart-links" replace />} />
+            {/* ADMIN_ROUTES.marketingWorkflows (josh's path + /j) points here; the list is commerce's /marketing/workflows. */}
+            <Route path="marketing/workflows" element={<Navigate to="/marketing/workflows" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

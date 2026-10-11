@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Button, Chip, DetailSection, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FilterChip, FormPanel, Hint, Icon, Input, KeyValueGrid, Loading,
   Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Segmented, Select, SectionTitle, Span, Stack2, StatGrid, StatTile, StatusChip, StatusDot,
-  TBody, TD, TH, THead, TR, Table, TitleBadge, fmt, RowLink } from '@cp/ui';
+  TBody, TD, TH, THead, TR, Table, TitleBadge, fmt, RowLink, downloadCsv } from '@cp/ui';
 import { joshActionsApi, JoshRow, joshCustomerApi, joshOrderApi, joshPriceApi, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -37,16 +37,8 @@ const PAYMENT_TONE = (p: string | null | undefined) => (!p ? 'muted' : /success|
 const ORDER_TONE: Record<string, 'ok' | 'warn' | 'danger' | 'info' | 'muted'> = { payment_pending: 'warn', paid: 'ok', preparing: 'info', shipped: 'info', delivered: 'ok', cancelled: 'muted', refunded: 'danger' };
 const SYNC_DOT: Record<string, 'ok' | 'warn' | 'danger' | 'muted'> = { sent: 'ok', confirmed: 'ok', reserved: 'ok', skipped: 'muted', pending: 'warn', failed: 'danger' };
 
-function csv(rows: JoshRow[]) {
-  const cols = ['order_number', 'create_date', 'company_name', 'branch_name', 'customer_code', 'total_price', 'status', 'payment_status', 'jagota_sync_status', 'doc_book', 'doc_no'];
-  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const blob = new Blob(['﻿' + [cols.join(','), ...rows.map((r) => cols.map((c) => esc(r[c])).join(','))].join('\n')], { type: 'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `josh-orders-${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
+const CSV_COLUMNS = ['order_number', 'create_date', 'company_name', 'branch_name', 'customer_code', 'total_price', 'status', 'payment_status', 'jagota_sync_status', 'doc_book', 'doc_no'].map((key) => ({ key }));
+const csv = (rows: JoshRow[]) => downloadCsv(rows, CSV_COLUMNS, `josh-orders-${new Date().toISOString().slice(0, 10)}.csv`);
 
 export function JoshOrdersPage() {
   __useUiLocale();

@@ -10,8 +10,11 @@ import { ADMIN_ROUTES } from '../config/admin-routes';
 import { roleCanWrite } from '../../../app/role-can';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { PageHeader, downloadCsv, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_SIZE = 20;
+const EXPORT_PAGE_SIZE = 100;
+// ponytail: client-side paging over the list API; ask josh for a server export if 5000 rows is not enough.
+const EXPORT_MAX_ROWS = 5000;
 
 const ORDER_STATUS_LABELS: Record<AdminOrderUiStatus, string> = {
   get pending(){return __uiText("รอชำระเงิน");},
@@ -47,6 +50,7 @@ const Order = () => {
   const [orders, setOrders] = useState<OrderData[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const orderStatusOptions = [
     { value: 'all', label: __uiText("คำสั่งซื้อทั้งหมด") },
@@ -100,6 +104,41 @@ const Order = () => {
     setSortOrder(v.sortOrder ?? 'DESC');
     setCurrentPage(1);
   });
+
+  /** Every order matching the current filters and sort (not just this page), in the visible columns. */
+  const exportCsv = async () => {
+    setExporting(true);
+    try {
+      const rows: OrderData[] = [];
+      let total = 0;
+      for (let page = 1; rows.length < EXPORT_MAX_ROWS; page++) {
+        const response: any = await getOrders({
+          page,
+          limit: EXPORT_PAGE_SIZE,
+          status: statusFilter === 'all' ? undefined : statusFilter,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          sortKey,
+          sortOrder,
+        });
+        const payload = response?.data?.data;
+        const batch: OrderData[] = payload?.data ?? [];
+        total = Number(payload?.meta?.total ?? 0);
+        rows.push(...batch);
+        if (!batch.length || rows.length >= total) break;
+      }
+      const exported = rows.slice(0, EXPORT_MAX_ROWS).map((r) => ({ ...r, status: ORDER_STATUS_LABELS[r.status] ?? r.status }));
+      const cols = columns.filter((c) => c.key !== 'actions' && !views.hidden.includes(c.key));
+      downloadCsv(exported, cols, `orders-${new Date().toISOString().slice(0, 10)}.csv`);
+      if (total > exported.length) {
+        window.alert(__uiText('ส่งออก {0} จาก {1} รายการ (สูงสุด {2}) ใช้ตัวกรองให้แคบลงเพื่อส่งออกส่วนที่เหลือ', { 0: exported.length, 1: total, 2: EXPORT_MAX_ROWS }));
+      }
+    } catch (error: any) {
+      window.alert(__uiText('ส่งออกไม่สำเร็จ: {0}', { 0: error?.message ?? String(error) }));
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -323,7 +362,7 @@ const Order = () => {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <TableViewBar views={views} columns={columns} />
-          <Button text={__uiText("export CSV")} />
+          <Button text={exporting ? __uiText("กำลังส่งออก…") : __uiText("export CSV")} disabled={exporting || loading || !totalItems} onClick={exportCsv} />
         </div>
       </div>
       <div>

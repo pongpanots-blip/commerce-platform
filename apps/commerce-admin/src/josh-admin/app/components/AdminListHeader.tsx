@@ -6,6 +6,8 @@ type Props = {
   subtitle?: string;
   createLabel?: string;
   createPath?: string;
+  /** Detail and form pages: link back to the list. */
+  back?: { to: string; label: string };
   children?: ReactNode;
 };
 
@@ -14,10 +16,11 @@ export function AdminListHeader({
   subtitle,
   createLabel = 'Create New',
   createPath,
+  back,
   children,
 }: Props) {
   useUiLocale();
-  return <PageHeader title={title} subtitle={subtitle} actions={<>
+  return <PageHeader title={title} subtitle={subtitle} back={back} actions={<>
     {children}
     {createPath && <ButtonLink to={createPath} variant="primary" icon="add">{uiText(createLabel)}</ButtonLink>}
   </>} />;

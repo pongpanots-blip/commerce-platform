@@ -217,8 +217,9 @@ export function Select({ className, children, ...rest }: SelectHTMLAttributes<HT
   );
 }
 
-export function Textarea({ className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className={cx(inputCls, 'font-mono text-[11px] leading-relaxed', className)} {...rest} />;
+/** Mono by default (JSON, payloads, codes); `mono={false}` for prose such as notes and addresses. */
+export function Textarea({ className, mono = true, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement> & { mono?: boolean }) {
+  return <textarea className={cx(inputCls, mono ? 'font-mono text-[11px] leading-relaxed' : 'leading-relaxed', className)} {...rest} />;
 }
 
 /** Search box with leading magnifier icon. */
@@ -1396,7 +1397,8 @@ export function Modal({ title, onClose, children, footer, width = 480 }: { title
   useEffect(() => {
     const node = dialog.current;
     const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    node?.showModal();
+    // jsdom (and very old browsers) have no showModal: fall back to a plain open dialog.
+    if (typeof node?.showModal === 'function') node.showModal(); else node?.setAttribute('open', '');
     return () => {
       node?.close();
       // React removes the dialog before passive cleanup, so native focus restoration
@@ -1407,13 +1409,13 @@ export function Modal({ title, onClose, children, footer, width = 480 }: { title
   return (
     <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} onClick={event => { if (event.target === event.currentTarget) void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} className={cx(panelCls, 'm-auto w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto p-0 shadow-xl backdrop:bg-inverse-surface/40')} style={{ maxWidth: width }}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-secondary-container">
-          <h2 id={titleId} className="min-w-0 text-sm font-semibold break-words [overflow-wrap:anywhere]">{title}</h2>
+          <h2 id={titleId} className="min-w-0 text-[15px] font-semibold break-words [overflow-wrap:anywhere]">{title}</h2>
           <div className="flex shrink-0 items-center gap-2"><LanguageSelector />
           <button type="button" onClick={() => { void confirmLeaveIfDirty().then((ok) => { if (ok) onClose(); }); }} aria-label={__uiText("ปิด")} className="text-outline hover:text-on-surface">
             <Icon name="close" size={18} />
           </button></div>
         </div>
-        <div className="p-4 space-y-3 text-xs">{children}</div>
+        <div className="p-4 space-y-3 text-[13px]">{children}</div>
         {footer && <div className="px-4 py-3 border-t border-secondary-container flex justify-end gap-2">{footer}</div>}
     </dialog>
   );

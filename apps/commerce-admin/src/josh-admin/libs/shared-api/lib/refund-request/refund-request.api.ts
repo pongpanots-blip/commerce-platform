@@ -56,6 +56,8 @@ export type RefundRequestDetail = RefundRequestRow & {
   changesRequestedReason: string | null;
   rejectReason: string | null;
   adminNote: string | null;
+  /** What approve would pay now for a cash method (null for credit or once past review). */
+  approvalPreview: { cashIncVat: number; creditIncVat: number } | null;
 };
 
 type ActionResult = ApiSuccess<{ refundRequestId: string; status: RefundRequestStatus | null; gatewayStatus: string | null }>;

@@ -56,6 +56,7 @@ const detail = (over: Partial<RefundRequestDetail> = {}): RefundRequestDetail =>
   changesRequestedReason: null,
   rejectReason: null,
   adminNote: null,
+  approvalPreview: null,
   ...over,
 });
 
@@ -140,4 +141,13 @@ it('REVIEW I1: a card payout stuck in pending for over 10 minutes can be resolve
 it('a payout pending for a moment shows no resolve buttons', async () => {
   await openWith(detail({ status: 'processing', gatewayStatus: 'pending', approvedAt: new Date().toISOString() }));
   expect(button('ทำเครื่องหมายว่าสำเร็จ')).toBeUndefined();
+});
+
+it('REVIEW M8: the approve confirmation shows how much goes back as cash and as a Credit Note', async () => {
+  await openWith(detail({ amountIncVat: 900, approvalPreview: { cashIncVat: 700, creditIncVat: 200 } }));
+  await act(async () => button('อนุมัติ')?.click());
+  const text = vi.mocked(window.confirm).mock.calls[0][0] as string;
+  expect(text).toContain('฿700.00');
+  expect(text).toContain('฿200.00');
+  expect(text).toContain('Credit Note');
 });

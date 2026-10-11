@@ -297,7 +297,12 @@ export default function RefundRequestsAdmin() {
                     className={`${btn} bg-blue-600 text-white`}
                     onClick={() => {
                       const method = d.method ? METHOD_LABEL[d.method]?.() : '';
-                      if (window.confirm(`${__uiText('อนุมัติคืนเงิน')} ${money(d.amountIncVat)} (${method})?`)) {
+                      const p = d.approvalPreview;
+                      const split =
+                        p && p.creditIncVat > 0
+                          ? `\n${__uiText('เงินสด')} ${money(p.cashIncVat)} + Credit Note ${money(p.creditIncVat)}`
+                          : '';
+                      if (window.confirm(`${__uiText('อนุมัติคืนเงิน')} ${money(d.amountIncVat)} (${method})?${split}`)) {
                         void run(() => approveRefundRequest(d.refundRequestId, undefined));
                       }
                     }}

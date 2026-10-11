@@ -134,7 +134,7 @@ export function PromotionQuantityRuleFields({ value, onChange, compact }: Props)
                     type="button"
                     onClick={() => removeRule(rule.id)}
                     disabled={value.rules.length <= 1}
-                    className="text-xs text-red-500 hover:underline disabled:cursor-not-allowed disabled:text-gray-300"
+                    className="text-xs text-danger hover:underline disabled:cursor-not-allowed disabled:text-gray-300"
                   >
                     {__uiText("ลบ")}</button>
                 </td>

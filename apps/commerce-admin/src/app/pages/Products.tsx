@@ -16,8 +16,8 @@ export function Products() {
   __useUiLocale();
   return (
     <ResourcePage<Product>
-      title={__uiText("แคตตาล็อกแพลตฟอร์ม")}
-      subtitle={__uiText("ดูและจัดการสินค้าในแพลตฟอร์ม ใช้รหัสสินค้าเพื่อแยกรายการ")}
+      title={__uiText("ค้นหาสินค้าตามรหัส")}
+      subtitle={__uiText("ค้นหาสินค้าทุกรายการตามรหัสสินค้า เปิดดูรายละเอียดและสต็อกแต่ละคลัง")}
       endpoint="/products"
       columns={columns}
       fields={productFields}
@@ -25,7 +25,7 @@ export function Products() {
       saveLabel={__uiText("บันทึกสินค้า")}
       readOnly={['sale', 'graphic'].includes(session.claims()?.role ?? '')}
       searchText={row => `${row.sku} ${row.name}`}
-      searchPlaceholder="ค้นหารหัสหรือชื่อสินค้า…"
+      searchPlaceholder={__uiText("ค้นหารหัสหรือชื่อสินค้า…")}
     />
   );
 }

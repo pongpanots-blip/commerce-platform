@@ -10,7 +10,7 @@ import PromotionProductSetPicker from '../coupon/PromotionProductSetPicker';
 
 /** A legacy mechanic's own SKU (name from GET :id). */
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type MechanicSku = { sku: string; name: string | null };
 
 // The coupon picker's snapshot chips are fed by coupon-shaped snapshots (SKU ids + set_updated_at)
@@ -32,12 +32,10 @@ function SkuRows({ title, rows }: { title: string; rows: SkuRow[] }) {
       <div className="max-h-40 space-y-1 overflow-y-auto">
         {rows.map((row) => (
           <div key={row.sku} className="flex items-center gap-2 text-xs">
-            <span className="text-gray-400">{row.sku}</span>
+            <span className="font-mono text-gray-400">{row.sku}</span>
             <span className="truncate text-gray-700">{row.name ?? ''}</span>
             {row.label && (
-              <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500">
-                {row.label}
-              </span>
+              <Chip>{row.label}</Chip>
             )}
           </div>
         ))}
@@ -65,13 +63,13 @@ function SetItemsView({ skus }: { skus: string[] }) {
     };
   }, [skuKey]);
 
-  const title = `SKU ในชุดนี้ (${skus.length.toLocaleString('th-TH')} รายการ)`;
+  const title = __uiText("สินค้าในชุดนี้ ({0} รายการ)", {"0": skus.length.toLocaleString('th-TH')});
   if (state === 'loading') return <p className="mt-2 text-xs text-gray-400">{__uiText("กำลังโหลดรายการ...")}</p>;
   if (state === 'error') {
     return (
       <>
         <SkuRows title={title} rows={skus.map((sku) => ({ sku }))} />
-        <p className="mt-1 text-xs text-red-600">{__uiText("โหลดชื่อสินค้าไม่สำเร็จ")}</p>
+        <p className="mt-1 text-xs text-danger">{__uiText("โหลดชื่อสินค้าไม่สำเร็จ")}</p>
       </>
     );
   }
@@ -103,7 +101,7 @@ function ChangedNotice({
   const radioName = React.useId();
   const { added_skus: added, removed_skus: removed } = latest;
   return (
-    <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+    <div className="mt-2 rounded-lg border border-warn/20 bg-warn-container p-2 text-xs text-warn">
       <p className="font-medium">{__uiText("ชุดนี้ถูกแก้ไขหลังบันทึกโปร")}</p>
       {added.length > 0 && <p>{__uiText("+ เพิ่ม: ")}{added.join(', ')}</p>}
       {removed.length > 0 && <p>{__uiText("− ลบ: ")}{removed.join(', ')}</p>}
@@ -148,7 +146,7 @@ function SavedSetChip({
   return (
     <div
       className={`rounded-lg border p-2.5 text-xs ${
-        set.set_inactive ? 'border-amber-200 bg-amber-50' : 'border-gray-200 bg-gray-50'
+        set.set_inactive ? 'border-warn/20 bg-warn-container' : 'border-gray-200 bg-gray-50'
       }`}
     >
       <div className="flex items-center justify-between gap-2">
@@ -160,7 +158,7 @@ function SavedSetChip({
           type="button"
           aria-label={__uiText("นำ {0} ออก", {"0": set.name})}
           onClick={onRemove}
-          className="shrink-0 text-gray-400 hover:text-red-500"
+          className="shrink-0 text-gray-400 hover:text-alert"
         >
           ×
         </button>
@@ -169,10 +167,10 @@ function SavedSetChip({
         {__uiText("บันทึกรายการเมื่อ ")}{formatBangkokDateTime(set.snapshotted_at, 'th')}
       </p>
       {set.set_deleted && (
-        <p className="mt-1 text-rose-600">{__uiText("ชุดต้นทางถูกลบแล้ว — ใช้รายการที่บันทึกไว้")}</p>
+        <p className="mt-1 text-danger">{__uiText("ชุดต้นทางถูกลบแล้ว — ใช้รายการที่บันทึกไว้")}</p>
       )}
       {set.set_inactive && (
-        <p className="mt-1 text-amber-700">{__uiText("ชุดต้นทางปิดใช้งาน — โปรยังใช้รายการที่บันทึกไว้")}</p>
+        <p className="mt-1 text-warn">{__uiText("ชุดต้นทางปิดใช้งาน — โปรยังใช้รายการที่บันทึกไว้")}</p>
       )}
       <button
         type="button"
@@ -248,13 +246,13 @@ export default function PromotionMechanicProductSets({
   return (
     <div className="space-y-2">
       {legacy && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-          <p className="font-medium">{__uiText("โปรนี้สร้างแบบเดิม — เลือก Product set เพื่อแปลง")}</p>
+        <div className="rounded-lg border border-warn/20 bg-warn-container p-3 text-xs text-warn">
+          <p className="font-medium">{__uiText("โปรนี้สร้างแบบเดิม เลือกชุดสินค้าเพื่อเปลี่ยนเป็นแบบใหม่")}</p>
           <p className="mt-1">
-            {__uiText("ยังใช้งานตามเดิมได้ แก้ชื่อ วันที่ สถานะ และ Campaign ได้โดยไม่ต้องเลือก Product set แต่ถ้าเลือก Product set ตอนบันทึก SKU และส่วนลดเดิมทั้งหมดจะถูกแทนที่ด้วยชุดที่เลือก")}</p>
+            {__uiText("ยังใช้งานตามเดิมได้ แก้ชื่อ วันที่ สถานะ และแคมเปญได้โดยไม่ต้องเลือกชุดสินค้า แต่ถ้าเลือกชุดสินค้า ตอนบันทึกสินค้าและส่วนลดเดิมทั้งหมดจะถูกแทนที่ด้วยชุดที่เลือก")}</p>
           {legacySkus.length > 0 && (
             <SkuRows
-              title={__uiText("SKU ของโปรนี้ ({0} รายการ)", {"0": legacySkus.length.toLocaleString('th-TH')})}
+              title={__uiText("สินค้าของโปรนี้ ({0} รายการ)", {"0": legacySkus.length.toLocaleString('th-TH')})}
               rows={legacySkus}
             />
           )}
@@ -288,8 +286,8 @@ export default function PromotionMechanicProductSets({
       )}
 
       <PromotionProductSetPicker
-        title={__uiText("เลือก Product set")}
-        hint={__uiText("ทุก SKU ในชุดที่เลือกได้ส่วนลดเดียวกัน — ระบบคัดลอกรายการ SKU ไว้ตอนกดบันทึก")}
+        title={__uiText("เลือกชุดสินค้า")}
+        hint={__uiText("ทุกสินค้าในชุดที่เลือกได้ส่วนลดเดียวกัน ระบบเก็บรายการสินค้าไว้ตอนกดบันทึก")}
         selectedIds={newIds}
         lockedIds={keptSavedIds}
         onChange={handlePick}

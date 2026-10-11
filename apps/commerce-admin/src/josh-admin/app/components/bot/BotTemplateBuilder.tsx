@@ -8,14 +8,14 @@ import CardTemplatePreview from './CardTemplatePreview';
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const TYPE_OPTIONS = [
   { value: 'card', get label(){return __uiText("card");} },
-  { value: 'card_list', get label(){return __uiText("card_list");} },
+  { value: 'card_list', get label(){return __uiText("การ์ดหลายใบ");} },
   { value: 'text', get label(){return __uiText("text");} },
-  { value: 'rich_text', get label(){return __uiText("rich_text");} },
+  { value: 'rich_text', get label(){return __uiText("ข้อความจัดรูปแบบ");} },
 ];
 
 const FORMAT_OPTIONS = [
   { value: 'text', get label(){return __uiText("text");} },
-  { value: 'image', get label(){return __uiText("image");} },
+  { value: 'image', get label(){return __uiText("รูปภาพ");} },
   { value: 'price', get label(){return __uiText("price");} },
   { value: 'badge', get label(){return __uiText("badge");} },
   { value: 'date', get label(){return __uiText("date");} },
@@ -29,8 +29,8 @@ const IMAGE_SIZE_OPTIONS = [
 ];
 
 const CTA_TYPE_OPTIONS = [
-  { value: 'navigate', get label(){return __uiText("navigate (ลิงก์)");} },
-  { value: 'action', get label(){return __uiText("action");} },
+  { value: 'navigate', get label(){return __uiText("เปิดลิงก์");} },
+  { value: 'action', get label(){return __uiText("สั่งงาน");} },
 ];
 
 export interface BotTemplateFormValue {

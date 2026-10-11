@@ -2,7 +2,7 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 import { ReactNode, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button, CodeBlock, DetailPanel, DetailSection, Empty, ErrorText, Field, Hint, Icon, Input, KeyValueGrid, Loading, Page, PageHeader, Panel, PanelHead, SearchInput, Segmented, Span, StatusChip, Table, TBody, TD, TH, THead, TR, Textarea, fmt } from '@cp/ui';
+import { Button, Chip, CodeBlock, DetailPanel, DetailSection, Empty, ErrorText, Field, Hint, Icon, Input, KeyValueGrid, Loading, Page, PageHeader, Panel, PanelHead, SearchInput, Segmented, Select, Span, StatusChip, Table, TBody, TD, TH, THead, TR, Textarea, Tone, fmt } from '@cp/ui';
 import { erpSimulatorApi, ErpSimulatorResult, JoshOrderResult, JoshOrderTrace, SimProduct, webhookApi, WebhookDeliveryFull } from '../../lib/api';
 import { useAsync, statusBadgeClass } from '../hooks';
 
@@ -181,7 +181,7 @@ function ErpToJosh() {
               <ErrorText error={error} />
               <div className="flex justify-between gap-2">
                 <Button size="sm" variant="secondary" onClick={() => setEdited((p) => { const n = { ...p }; delete n[route]; return n; })}>{__uiText("รีเซ็ตเป็น template")}</Button>
-                <Button variant="primary" disabled={sending || !info} onClick={send}>{sending ? __uiText("กำลังยิง…") : __uiText("Send as ERP →")}</Button>
+                <Button variant="primary" disabled={sending || !info} onClick={send}>{sending ? __uiText("กำลังยิง…") : __uiText("ส่งในนามระบบหลัก (ERP)")}</Button>
               </div>
             </div>
           </Panel>
@@ -236,9 +236,15 @@ function Flow({ nodes }: { nodes: { name: string; state: NodeState; detail: Reac
   __useUiLocale();
   const borderColor: Record<NodeState, string> = {
     idle: 'border-secondary-container',
-    wait: 'border-amber-400',
-    ok: 'border-emerald-500',
-    fail: 'border-rose-500',
+    wait: 'border-warn',
+    ok: 'border-ok',
+    fail: 'border-danger',
+  };
+  const stateChip: Record<NodeState, [Tone, string]> = {
+    idle: ['muted', 'ยังไม่เริ่ม'],
+    wait: ['warn', 'รอ'],
+    ok: ['ok', 'สำเร็จ'],
+    fail: ['danger', 'ไม่สำเร็จ'],
   };
 
   return (
@@ -249,13 +255,13 @@ function Flow({ nodes }: { nodes: { name: string; state: NodeState; detail: Reac
             <Icon
               name="arrow_forward"
               size={18}
-              className={n.state === 'ok' ? 'text-emerald-500' : 'text-outline'}
+              className={n.state === 'ok' ? 'text-ok' : 'text-outline'}
             />
           )}
-          <div className={`flex-1 min-w-fit border-2 rounded-lg p-3 ${borderColor[n.state]}`}>
+          <div className={`flex-1 min-w-fit border-2 rounded-lg bg-surface-container-lowest p-3 ${borderColor[n.state]}`}>
             <div className="flex items-center justify-between gap-2 font-semibold text-sm mb-1">
               {n.name}
-              <StatusChip status={n.state === 'ok' ? 'ok' : n.state === 'fail' ? 'error' : n.state === 'wait' ? 'pending' : 'draft'} />
+              <Chip tone={stateChip[n.state][0]} dot>{__uiText(stateChip[n.state][1])}</Chip>
             </div>
             <div className="text-xs text-on-surface-variant">{typeof n.detail === 'string' ? __uiText(n.detail) : n.detail}</div>
           </div>
@@ -288,8 +294,8 @@ export function ErpSimulator() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("ERP simulator")}
-        subtitle={__uiText("{0} · ทุกขั้นวิ่งผ่าน HTTP จริงของ commerce", {"0": current.hint})}
+        title={__uiText("ทดสอบเชื่อมต่อระบบหลัก (ERP)")}
+        subtitle={__uiText("จำลองข้อมูลจากระบบหลัก (ERP) เพื่อทดสอบการเชื่อมต่อ")}
       />
 
       <Segmented
@@ -297,6 +303,7 @@ export function ErpSimulator() {
         value={dir}
         onChange={(v) => setParams(v === 'erp' ? {} : { dir: v })}
       />
+      <Hint>{__uiText("{0} · ทุกขั้นวิ่งผ่าน HTTP จริงของ commerce", {"0": current.hint})}</Hint>
 
       {dir === 'erp' ? <ErpToJosh /> : <JoshToErp />}
     </Page>
@@ -449,16 +456,16 @@ function JoshToErp() {
             )}
 
             <Field label={__uiText("หลังสั่งซื้อ josh แจ้งว่า")}>
-              <select value={payment} onChange={(e) => setPayment(e.target.value as typeof payment)} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs">
+              <Select value={payment} onChange={(e) => setPayment(e.target.value as typeof payment)}>
                 <option value="paid">{__uiText("จ่ายแล้ว → commerce ยืนยัน order → ส่งไป ERP")}</option>
                 <option value="failed">{__uiText("จ่ายไม่สำเร็จ → ไม่ส่ง ERP")}</option>
                 <option value="none">{__uiText("ยังไม่จ่าย (ค้างรอจ่าย)")}</option>
-              </select>
+              </Select>
             </Field>
 
             <ErrorText error={error} />
             <div className="flex justify-end">
-              <Button variant="primary" disabled={sending || !lines.length || !customer.name.trim()} type="submit">{sending ? __uiText("กำลังส่ง…") : __uiText("Send as josh →")}</Button>
+              <Button variant="primary" disabled={sending || !lines.length || !customer.name.trim()} type="submit">{sending ? __uiText("กำลังส่ง…") : __uiText("ส่งในนามร้านค้า")}</Button>
             </div>
           </form>
         </Panel>
@@ -473,7 +480,7 @@ function JoshToErp() {
                 <TH>{__uiText("ขั้น")}</TH>
                 <TH>{__uiText("Call")}</TH>
                 <TH>{__uiText("Status")}</TH>
-                <TH right>{__uiText("ms")}</TH>
+                <TH right>{__uiText("เวลาที่ใช้ (มิลลิวินาที)")}</TH>
                 <TH>{__uiText("คำตอบ")}</TH>
               </THead>
               <TBody>
@@ -481,7 +488,7 @@ function JoshToErp() {
                   <TR key={s.step}>
                     <TD>{s.step}</TD>
                     <TD kind="mono" className="text-[11px]">{s.call}</TD>
-                    <TD><StatusChip status={s.status < 300 ? 'ok' : 'error'} /></TD>
+                    <TD>{s.status < 300 ? <Chip tone="ok" dot>{__uiText('สำเร็จ')} {s.status}</Chip> : <Chip tone="danger" dot>{__uiText('ไม่สำเร็จ')} {s.status}</Chip>}</TD>
                     <TD kind="num">{s.ms}</TD>
                     <TD className="text-[11px]"><pre className="overflow-x-auto whitespace-pre-wrap break-words">{JSON.stringify(s.response, null, 2).slice(0, 120)}</pre></TD>
                   </TR>
@@ -524,7 +531,7 @@ function JoshToErp() {
                     {trace.events.map((e, i) => (
                       <TR key={i}>
                         <TD kind="mono">{e.type}</TD>
-                        <TD>{e.status}</TD>
+                        <TD><StatusChip status={e.status} /></TD>
                         <TD kind="time">{new Date(e.created_at).toLocaleTimeString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}</TD>
                       </TR>
                     ))}

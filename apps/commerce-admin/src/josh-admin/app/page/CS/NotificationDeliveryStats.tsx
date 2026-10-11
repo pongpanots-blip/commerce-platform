@@ -8,15 +8,15 @@ import {
 import { Select, Table, TableColumn } from '@josh/shared-ui-web';
 import { useCallback, useEffect, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
-import NotificationDeliveryLogTab from './NotificationDeliveryLogTab';
+import NotificationDeliveryLogTab, { channelLabel, describeReason } from './NotificationDeliveryLogTab';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Chip, StatTile } from "@cp/ui";
 const CHANNEL_OPTIONS = [
   { value: '', get label(){return __uiText("ทุกช่องทาง");} },
-  { value: 'push', get label(){return __uiText("Push");} },
-  { value: 'inapp', get label(){return __uiText("In-app");} },
-  { value: 'email', get label(){return __uiText("Email");} },
+  { value: 'push', get label(){return __uiText("แจ้งเตือนบนมือถือ");} },
+  { value: 'inapp', get label(){return __uiText("ในแอป");} },
+  { value: 'email', get label(){return __uiText("อีเมล");} },
 ] as const;
 
 const EMPTY_TOTALS: NotificationDeliveryStats['totals'] = {
@@ -34,15 +34,7 @@ const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
 
 const toDateInput = (date: Date) => date.toISOString().slice(0, 10);
 
-function Tile({ label, value, hint }: { label: string; value: string; hint?: string }) {
-  return (
-    <div className="rounded-xl border border-gray-100 bg-white p-5">
-      <p className="text-xs font-semibold text-gray-500">{label}</p>
-      <p className="mt-1 text-2xl font-semibold">{value}</p>
-      {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
-    </div>
-  );
-}
+const num = (value: number) => value.toLocaleString();
 
 /**
  * สรุปผลการส่งแจ้งเตือนจาก delivery log บน Mongo — ส่งถึงกี่ใบ ล้มเหลวเพราะอะไร
@@ -52,7 +44,7 @@ type Tab = 'summary' | 'log';
 
 const TABS: { key: Tab; label: string; hint: string }[] = [
   { key: 'summary', get label(){return __uiText("ภาพรวม");}, get hint(){return __uiText("อัตราส่งถึงและอัตราการกด แยกตามประเภท");} },
-  { key: 'log', get label(){return __uiText("Log ดิบ");}, get hint(){return __uiText("ไล่ทีละแถวว่าใครได้/ไม่ได้รับ และเพราะอะไร");} },
+  { key: 'log', get label(){return __uiText("รายการส่งทีละรายการ");}, get hint(){return __uiText("ไล่ทีละแถวว่าใครได้/ไม่ได้รับ และเพราะอะไร");} },
 ];
 
 export default function NotificationDeliveryStatsPage() {
@@ -96,31 +88,29 @@ export default function NotificationDeliveryStatsPage() {
 
   const totals = stats?.totals ?? EMPTY_TOTALS;
 
+  const numCell = (value: number) => <span className="tabular-nums">{num(value)}</span>;
+  const pctCell = (value: number) => <span className="tabular-nums">{percent(value)}</span>;
   const columns: TableColumn<NotificationDeliveryStatsRow>[] = [
-    { key: 'type', label: __uiText("ประเภท") },
-    { key: 'channel', label: __uiText("ช่องทาง") },
-    { key: 'attempted', label: __uiText("ตั้งใจส่ง") },
-    { key: 'sent', label: __uiText("ส่งสำเร็จ") },
-    { key: 'failed', label: __uiText("ล้มเหลว") },
-    { key: 'skipped', label: __uiText("ไม่ได้ส่ง") },
     {
-      key: 'deliveryRate',
-      label: __uiText("อัตราส่งถึง"),
-      render: (value: number) => percent(value),
+      key: 'type',
+      label: __uiText("ประเภท"),
+      render: (value: string) => <Chip className="font-mono">{value}</Chip>,
     },
-    { key: 'clicked', label: __uiText("กดเปิด") },
-    {
-      key: 'clickRate',
-      label: __uiText("อัตราการกด"),
-      render: (value: number) => percent(value),
-    },
+    { key: 'channel', label: __uiText("ช่องทาง"), render: (value: string) => channelLabel(value) },
+    { key: 'attempted', label: __uiText("ตั้งใจส่ง"), align: 'right', render: numCell },
+    { key: 'sent', label: __uiText("ส่งสำเร็จ"), align: 'right', render: numCell },
+    { key: 'failed', label: __uiText("ล้มเหลว"), align: 'right', render: numCell },
+    { key: 'skipped', label: __uiText("ไม่ได้ส่ง"), align: 'right', render: numCell },
+    { key: 'deliveryRate', label: __uiText("อัตราส่งถึง"), align: 'right', render: pctCell },
+    { key: 'clicked', label: __uiText("กดเปิด"), align: 'right', render: numCell },
+    { key: 'clickRate', label: __uiText("อัตราการกด"), align: 'right', render: pctCell },
   ];
 
   return (
     <div className="p-6">
       <AdminListHeader
-        title={__uiText("Notification Delivery Stats")}
-        subtitle={__uiText("ผลการส่งแจ้งเตือนแยกตามประเภทและช่องทาง รวมใบที่ไม่ได้ส่งเพราะผู้ใช้ปิดรับ (อ่านอย่างเดียว)")}
+        title={__uiText("สถิติการส่งแจ้งเตือน")}
+        subtitle={__uiText("สถิติการส่งแจ้งเตือนที่สำเร็จและไม่สำเร็จ")}
       />
 
       <div className="mb-4 flex gap-1 border-b border-gray-200">
@@ -204,21 +194,21 @@ export default function NotificationDeliveryStatsPage() {
 
       {!loading && !error && stats && <>
       <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Tile
+        <StatTile
           label={__uiText("ส่งสำเร็จ")}
-          value={String(totals.sent)}
-          hint={__uiText("จากที่ตั้งใจส่ง {0} · {1}", {"0": totals.attempted, "1": percent(totals.deliveryRate)})}
+          value={num(totals.sent)}
+          foot={__uiText("จากที่ตั้งใจส่ง {0} · {1}", {"0": num(totals.attempted), "1": percent(totals.deliveryRate)})}
         />
-        <Tile label={__uiText("ล้มเหลว")} value={String(totals.failed)} hint={__uiText("ดูสาเหตุด้านล่าง")} />
-        <Tile
+        <StatTile label={__uiText("ล้มเหลว")} value={num(totals.failed)} tone={totals.failed > 0 ? 'danger' : undefined} foot={__uiText("ดูสาเหตุด้านล่าง")} />
+        <StatTile
           label={__uiText("ไม่ได้ส่ง")}
-          value={String(totals.skipped)}
-          hint={__uiText("ส่วนใหญ่คือผู้ใช้ปิดรับเอง")}
+          value={num(totals.skipped)}
+          foot={__uiText("ส่วนใหญ่คือผู้ใช้ปิดรับเอง")}
         />
-        <Tile
+        <StatTile
           label={__uiText("กดเปิด")}
-          value={String(totals.clicked)}
-          hint={__uiText("{0} ของที่ส่งสำเร็จ", {"0": percent(totals.clickRate)})}
+          value={num(totals.clicked)}
+          foot={__uiText("{0} ของที่ส่งสำเร็จ", {"0": percent(totals.clickRate)})}
         />
       </div>
       </>}
@@ -231,11 +221,9 @@ export default function NotificationDeliveryStatsPage() {
             columns={columns}
             data={stats?.byTypeChannel ?? []}
             idKey={'type' as never}
+            emptyTitle={__uiText("ยังไม่มีข้อมูลการส่งในช่วงนี้")}
+            emptyDescription={__uiText("ลองเลือกช่วงวันที่หรือตัวกรองอื่น ระบบเก็บข้อมูลการส่งย้อนหลัง 90 วัน")}
           />
-          {!stats?.byTypeChannel.length && (
-            <p className="mt-3 text-sm text-gray-400">
-              {__uiText("ยังไม่มีข้อมูลในช่วงนี้ — delivery log เริ่มเก็บตั้งแต่วันที่เปิดใช้งานฟีเจอร์นี้ และเก็บย้อนหลัง 90 วัน")}</p>
-          )}
 
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             <div className="rounded-xl border border-gray-100 bg-white p-5">
@@ -243,9 +231,9 @@ export default function NotificationDeliveryStatsPage() {
               {stats?.topSkipAndFailReasons.length ? (
                 <ul className="space-y-1 text-sm">
                   {stats.topSkipAndFailReasons.map((row) => (
-                    <li key={row.reason} className="flex justify-between">
-                      <span className="font-mono text-xs text-gray-600">{row.reason}</span>
-                      <span>{row.count}</span>
+                    <li key={row.reason} className="flex justify-between gap-3">
+                      <span className="text-xs text-gray-600" title={row.reason}>{describeReason(row.reason)}</span>
+                      <span className="tabular-nums">{num(row.count)}</span>
                     </li>
                   ))}
                 </ul>
@@ -260,8 +248,8 @@ export default function NotificationDeliveryStatsPage() {
                 <ul className="space-y-1 text-sm">
                   {stats.byDay.map((row) => (
                     <li key={row.date} className="flex justify-between">
-                      <span className="text-gray-600">{row.date}</span>
-                      <span>
+                      <span className="tabular-nums text-gray-600">{row.date}</span>
+                      <span className="tabular-nums">
                         {__uiText("ส่ง ")}{row.sent} {__uiText(" · ล้มเหลว ")}{row.failed} {__uiText(" · กด ")}{row.clicked}
                       </span>
                     </li>

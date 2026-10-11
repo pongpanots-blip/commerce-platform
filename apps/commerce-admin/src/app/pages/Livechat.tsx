@@ -21,9 +21,9 @@ export function Livechat() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("Live chat")}
-        subtitle={__uiText("ข้อความแชตหน้าร้านที่วิ่งผ่าน commerce (ลูกค้า → CS-CRM และคำตอบ → ลูกค้า) · CS ยังตอบใน CS-CRM")}
-        actions={<Button icon="refresh" onClick={list.reload}>{__uiText("Refresh")}</Button>}
+        title={__uiText("แชตกับลูกค้า")}
+        subtitle={__uiText("ประวัติข้อความแชตระหว่างลูกค้ากับทีมบริการลูกค้า ทีมยังตอบแชตในระบบบริการลูกค้าเหมือนเดิม")}
+        actions={<Button icon="refresh" onClick={list.reload}>{__uiText("รีเฟรช")}</Button>}
       />
       {visitor && (
         <div className="flex items-center gap-2 text-[11px] text-on-surface-variant">
@@ -39,17 +39,17 @@ export function Livechat() {
             <Table maxHeight="calc(100vh - 280px)">
               <THead>
                 <TH>{__uiText("เวลา")}</TH>
-                <TH>{__uiText("ทาง")}</TH>
+                <TH>{__uiText("ผู้ส่ง")}</TH>
                 <TH>{__uiText("ผู้เยี่ยมชม")}</TH>
                 <TH>{__uiText("ข้อความ")}</TH>
-                <TH>{__uiText("ผล")}</TH>
+                <TH>{__uiText("การส่ง")}</TH>
               </THead>
               <TBody>
                 {list.data.items.map((r) => (
                   <TR key={r.id}>
                     <TD kind="time">{fmt.when(r.createdAt)}</TD>
                     <TD>
-                      <Chip tone={r.direction === 'to_cs_crm' ? 'info' : 'primary'}>{r.direction === 'to_cs_crm' ? __uiText("ลูกค้า → CS") : __uiText("CS → ลูกค้า")}</Chip>
+                      <Chip tone={r.direction === 'to_cs_crm' ? 'info' : 'primary'}>{r.direction === 'to_cs_crm' ? __uiText("ลูกค้าส่งมา") : __uiText("ทีมงานตอบ")}</Chip>
                     </TD>
                     <TD>
                       {r.visitorId ? (
@@ -61,7 +61,7 @@ export function Livechat() {
                       )}
                     </TD>
                     <TD className="max-w-[520px] whitespace-pre-wrap break-words">{r.text ?? '—'}</TD>
-                    <TD><Chip tone={r.status < 300 ? 'ok' : 'danger'}>{r.status}</Chip></TD>
+                    <TD title={String(r.status)}><Chip tone={r.status < 300 ? 'ok' : 'danger'} dot>{r.status < 300 ? __uiText("ส่งสำเร็จ") : __uiText("ส่งไม่สำเร็จ")}</Chip></TD>
                   </TR>
                 ))}
               </TBody>
@@ -69,7 +69,7 @@ export function Livechat() {
             <Pager page={page} pageSize={PAGE_SIZE} total={list.data.total} onPage={setPage} />
           </>
         ) : (
-          <Empty icon="forum">{__uiText("ยังไม่มีข้อความผ่าน commerce")}</Empty>
+          <Empty icon="forum">{visitor ? __uiText("ไม่มีข้อความของผู้เยี่ยมชมนี้ ลองล้างตัวกรอง") : __uiText("ยังไม่มีข้อความแชต เมื่อลูกค้าเริ่มแชตจะเห็นที่นี่")}</Empty>
         )}
       </Panel>
     </Page>

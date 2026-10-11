@@ -58,11 +58,8 @@ function PageEditor({
       >
         <CouponFormErrorBanner error={state.saveError} />
         {state.saved && (
-          <div
-            role="status"
-            className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700"
-          >
-            {__uiText("บันทึกแล้ว")}</div>
+          <p role="status" className="text-sm font-medium text-ok">
+            {__uiText("บันทึกแล้ว")}</p>
         )}
         <PageFormFields state={state} campaigns={campaigns} />
         {page && (

@@ -11,6 +11,7 @@ import { useAsync } from '../hooks';
 /** 0 = cash. Shopify's net-terms presets; any other day count can still be typed. */
 export const TERM_PRESETS = [0, 7, 15, 30, 45, 60, 90];
 const OPEN_APPLICATION = ['PENDING', 'REVIEW', 'REQUEST_DOC'];
+const APPLICATION_LABEL: Record<string, string> = { PENDING: 'รอพิจารณา', REVIEW: 'กำลังตรวจ', REQUEST_DOC: 'รอเอกสารเพิ่ม' };
 export const termLabel = (days: unknown) => (Number(days) > 0 ? __uiText('{0} วัน', { 0: Number(days) }) : __uiText('เงินสด'));
 
 /** Company credit term (edit, admin) + the company's and its branches' own prices (commerce-owned staff_prices). */
@@ -25,7 +26,7 @@ export function CompanyTermsPrices({ company, onSaved }: { company: JoshRow; onS
         <TermEditor companyId={company.id} current={Number(company.credit_term_days) || 0} canEdit={role === 'admin'} onSaved={onSaved} />
         {openApplication && (
           <p className="mt-2 text-xs text-on-surface-variant">
-            {__uiText('มีคำขอเครดิตที่ยังไม่ปิด ({0}) ถ้าอนุมัติ เทอมจะถูกเปลี่ยนตามคำขอ', { 0: openApplication.status })}
+            {__uiText('มีคำขอเครดิตที่ยังไม่ปิด ({0}) ถ้าอนุมัติ เทอมจะถูกเปลี่ยนตามคำขอ', { 0: __uiText(APPLICATION_LABEL[String(openApplication.status)]) })}
           </p>
         )}
         {branches.length > 0 && (
@@ -108,14 +109,14 @@ function CompanyPrices({ companyId, branches }: { companyId: string; branches: J
       {prices.loading && !data ? <Loading /> : !data?.rows.length ? <Empty>{__uiText('ยังไม่มีราคาเฉพาะของบริษัทนี้')}</Empty> : (
         <Table>
           <THead>
-            <TH>{__uiText('สินค้า')}</TH><TH>{__uiText('ใช้กับ')}</TH><TH>{__uiText('ราคา')}</TH><TH>{__uiText('ช่วงวันที่')}</TH><TH>{__uiText('สถานะ')}</TH>
+            <TH>{__uiText('สินค้า')}</TH><TH>{__uiText('ใช้กับ')}</TH><TH kind="money">{__uiText('ราคา')}</TH><TH>{__uiText('ช่วงวันที่')}</TH><TH>{__uiText('สถานะ')}</TH>
           </THead>
           <TBody>
             {data.rows.map((p: StaffPriceRow) => (
               <TR key={p.id}>
                 <TD kind="code">{p.sku ?? p.productInventoryId.slice(0, 8)}</TD>
                 <TD>{p.kind === 'customer' ? __uiText('ทั้งบริษัท') : __uiText('สาขา {0}', { 0: branchName(p.branchId) })}</TD>
-                <TD kind="num">{fmt.baht(p.price)}</TD>
+                <TD kind="money">{fmt.baht(p.price)}</TD>
                 <TD kind="time">{p.startDate}{' – '}{p.endDate ?? __uiText('ไม่มีกำหนด')}</TD>
                 <TD><StatusChip status={p.status} /></TD>
               </TR>

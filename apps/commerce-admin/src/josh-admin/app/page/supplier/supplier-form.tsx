@@ -25,8 +25,8 @@ export function SupplierFields({ value, onChange, nameError }: { value: Supplier
   const set = (key: keyof SupplierFormValue) => (event: ChangeEvent<HTMLInputElement>) => onChange({ ...value, [key]: event.target.value });
   return (
     <>
-      <FormSection title="ข้อมูลผู้จัดจำหน่าย" description="ชื่อที่ทีมใช้เรียกมาก่อน">
-        <Input label={__uiText('ชื่อผู้จัดจำหน่าย')} required error={nameError} placeholder={__uiText('เช่น บริษัท ตัวอย่าง จำกัด')} hint={__uiText('ใช้ชื่อที่ทีมเรียกจริง')} value={value.supplier_name} onChange={set('supplier_name')} />
+      <FormSection title="ข้อมูลซัพพลายเออร์" description="ชื่อที่ทีมใช้เรียกมาก่อน">
+        <Input label={__uiText('ชื่อซัพพลายเออร์')} required error={nameError} placeholder={__uiText('เช่น บริษัท ตัวอย่าง จำกัด')} hint={__uiText('ใช้ชื่อที่ทีมเรียกจริง')} value={value.supplier_name} onChange={set('supplier_name')} />
         <Input label={__uiText('ชื่อผู้ติดต่อ')} placeholder={__uiText('เช่น คุณสมชาย')} hint={__uiText('ไม่จำเป็น เว้นว่างได้')} value={value.contact_name} onChange={set('contact_name')} />
       </FormSection>
       <FormSection title="ช่องทางติดต่อ" description="ไม่จำเป็นตอนบันทึกครั้งแรก" collapsed>

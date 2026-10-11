@@ -89,7 +89,7 @@ function LegacyDiscountApplyNotice({ legacyMinEligible }: { legacyMinEligible: n
   __useUiLocale();
   if (legacyMinEligible == null) return null;
   return (
-    <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+    <p className="rounded-lg border border-warn/20 bg-warn-container px-3 py-2 text-xs text-warn">
       {__uiText("คูปองนี้เคยตั้ง \"ขั้นต่ำสินค้าเข้าเงื่อนไข ฿")}{legacyMinEligible.toLocaleString()}{__uiText("\" ไว้ — ตัวเลือกนี้ถูกยกเลิกแล้ว เมื่อบันทึกจะใช้ขั้นต่ำตะกร้าเท่านั้น")}</p>
   );
 }
@@ -241,7 +241,7 @@ export function CouponRedemptionRuleFields({
         )}
       </div>
 
-      <div className="space-y-3 rounded-xl border border-amber-100 bg-amber-50/40 p-4">
+      <div className="space-y-3 rounded-xl border border-warn/20 bg-warn-container p-4">
         <div className="text-sm font-semibold text-gray-800">{__uiText("สินค้าที่ไม่รวมในเงื่อนไข")}</div>
         {excludeExpanded ? (
           <>
@@ -297,7 +297,7 @@ export function CouponRedemptionRuleFields({
             type="button"
             disabled={disabled}
             onClick={() => setExcludeExpanded(true)}
-            className="rounded-lg border border-dashed border-amber-300 px-3 py-2 text-sm text-amber-700 hover:bg-amber-50"
+            className="rounded-lg border border-dashed border-warn/20 px-3 py-2 text-sm text-warn hover:bg-surface-container-low"
           >
             {__uiText("+ กำหนดสินค้า/หมวดที่ไม่รวม")}</button>
         )}

@@ -19,7 +19,7 @@ const CreateBotIntentRule = () => {
 
   const handleSubmit = async () => {
     if (!form.pattern) {
-      alert(__uiText("กรุณากรอก Pattern"));
+      alert(__uiText("กรุณากรอกรูปแบบคำที่ใช้จับ"));
       return false;
     }
     setSaving(true);
@@ -38,8 +38,8 @@ const CreateBotIntentRule = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่มกติกาที่บอทใช้ตอบ")}
-      subtitle={__uiText("บอกคำที่ลูกค้าพิมพ์ แล้วเลือกรูปแบบคำตอบที่บอทใช้")}
+      title={__uiText("เพิ่มกติกาให้แชตบอตเข้าใจคำถาม")}
+      subtitle={__uiText("บอกคำที่ลูกค้าพิมพ์ แล้วเลือกว่าลูกค้าต้องการอะไร")}
       saveLabel="บันทึกกติกา"
       backPath={ADMIN_ROUTES.botIntentRules}
       saving={saving}

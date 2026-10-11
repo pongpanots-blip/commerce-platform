@@ -40,7 +40,7 @@ export function ChangePassword({ forced, onDone, onSignOut }: { forced?: boolean
     <>
       <PageHeader
         title={forced ? __uiText("ตั้งรหัสผ่านใหม่ก่อนใช้งาน") : __uiText("เปลี่ยนรหัสผ่าน")}
-        subtitle={forced ? __uiText("{0} · รหัสผ่านนี้ admin ตั้งให้ ต้องเปลี่ยนเป็นรหัสของคุณเองก่อน", {"0": session.claims()?.email ?? ''}) : session.claims()?.email}
+        subtitle={forced ? __uiText("{0} · ผู้ดูแลระบบตั้งรหัสผ่านนี้ให้ เปลี่ยนเป็นรหัสของคุณเองก่อนใช้งาน", {"0": session.claims()?.email ?? ''}) : session.claims()?.email}
         actions={forced ? <><LanguageSelector />{onSignOut && <Button icon="logout" onClick={onSignOut}>{__uiText("ออกจากระบบ")}</Button>}</> : undefined}
       />
       {done && <Alert tone="ok" onClose={() => setDone(false)}>{__uiText("เปลี่ยนรหัสผ่านแล้ว · ครั้งหน้าใช้รหัสใหม่")}</Alert>}

@@ -64,7 +64,7 @@ export default function CreateCampaign() {
       onSave={() => handleSave()}
     >
       <CouponFormErrorBanner error={saveError} />
-      <Section title={__uiText("ข้อมูล Campaign")}>
+      <Section title={__uiText("ข้อมูลแคมเปญ")}>
         <Input
           label={__uiText("ชื่อแคมเปญ")}
           required

@@ -1,6 +1,6 @@
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useState } from 'react';
-import { Button, Chip, Empty, ErrorText, Field, FormPanel, Hint, Input, Loading, Page, PageHeader, Panel, PanelHead, SearchInput, Segmented, StatGrid, StatTile, StatusChip, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
+import { Button, Chip, Empty, ErrorText, Field, FormPanel, Hint, Input, Loading, Page, PageHeader, Panel, PanelHead, SearchInput, Segmented, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
 import { joshPriceApi, JoshRow, staffPricesApi, StaffPriceRow } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -9,7 +9,7 @@ import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __us
 type Kind = 'customer' | 'contract';
 const KIND: Record<Kind, string> = { get customer(){return __uiText("ราคาลูกค้า (ต่อบริษัท)");}, get contract(){return __uiText("ราคาสัญญา (ต่อสาขา)");} };
 const STATUS: Record<string, [string, 'ok' | 'warn' | 'danger' | 'info' | 'muted' | 'primary']> = {
-  synced: ['josh ใช้แล้ว', 'ok'],
+  synced: ['ร้านค้าใช้แล้ว', 'ok'],
   pending: ['กำลังส่ง', 'warn'],
   failed: ['ส่งไม่สำเร็จ', 'danger'],
 };
@@ -31,6 +31,8 @@ export function StaffPrices() {
   const [editing, setEditing] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
+  const [syncFailed, setSyncFailed] = useState(false);
+  const [adding, setAdding] = useState(false);
   const summary = useAsync(() => staffPricesApi.summary(), []);
   const branches = useAsync(() => (branchQ ? joshPriceApi.branches(branchQ) : Promise.resolve([] as JoshRow[])), [branchQ]);
   const scopeId = scope ? (kind === 'customer' ? scope.company_id : scope.branch_id) : undefined;
@@ -39,30 +41,32 @@ export function StaffPrices() {
   const reload = () => { summary.reload(); list.reload(); };
 
   async function run(label: string | ((r: never) => string), fn: () => Promise<unknown>) {
-    setBusy(true); setMsg('');
+    setBusy(true); setMsg(''); setSyncFailed(false);
     try {
       const r = await fn() as Partial<StaffPriceRow> | undefined;
-      setMsg(r?.status === 'failed' ? __uiMessage("บันทึกใน commerce แล้ว แต่ josh ยังไม่รับ: {0}", {"0": r.syncError}) : typeof label === 'function' ? label(r as never) : label);
-      setForm({}); setEditing(null); reload();
+      setSyncFailed(r?.status === 'failed');
+      setMsg(r?.status === 'failed' ? __uiMessage("บันทึกแล้ว แต่ร้านค้ายังไม่รับราคานี้: {0}", {"0": r.syncError}) : typeof label === 'function' ? label(r as never) : label);
+      setForm({}); setEditing(null); setAdding(false); reload();
     } catch (e) { setMsg(e instanceof Error ? e.message : String(e)); } finally { setBusy(false); }
   }
 
   function save() {
     const body = { price: Number(form.price), startDate: form.startDate || undefined, endDate: form.endDate || null, ...(kind === 'contract' ? { contractRef: form.contractRef || undefined } : {}) };
-    if (editing) return run('แก้ไขแล้ว และ josh ใช้ราคานี้แล้ว', () => staffPricesApi.update(editing, body));
+    if (editing) return run('แก้ไขแล้ว และร้านค้าใช้ราคานี้แล้ว', () => staffPricesApi.update(editing, body));
     if (!scope) { setMsg(kind === 'customer' ? __uiMessage("เลือกบริษัทก่อน (ค้นหาสาขาแล้วกดเลือก)") : __uiMessage("เลือกสาขาก่อน")); return; }
-    return run('เพิ่มแล้ว และ josh ใช้ราคานี้แล้ว', () => staffPricesApi.create({ kind, ...(kind === 'customer' ? { companyId: scope.company_id } : { branchId: scope.branch_id }), sku: form.sku, ...body }));
+    return run('เพิ่มแล้ว และร้านค้าใช้ราคานี้แล้ว', () => staffPricesApi.create({ kind, ...(kind === 'customer' ? { companyId: scope.company_id } : { branchId: scope.branch_id }), sku: form.sku, ...body }));
   }
 
   return (
     <Page>
       <PageHeader
-        title={__uiText("ราคาลูกค้า / ราคาสัญญา")}
-        subtitle={__uiText("commerce เป็นที่เก็บหลัก · ทุกการแก้ไขจะส่งให้ josh บันทึกผ่านโค้ดของ josh และล้าง cache ราคาให้ · ราคาที่ josh สร้างเอง (ใบเสนอราคาจาก ERP, คำขอราคาจาก CS) จะถูกดึงเข้ามาด้วยปุ่มดึงจาก josh")}
+        title={__uiText("ราคาเฉพาะลูกค้าและราคาสัญญา")}
+        subtitle={__uiText("ราคาที่บันทึกที่นี่จะส่งไปใช้บนร้านค้าทันที ราคาที่ร้านค้าสร้างเอง เช่น ใบเสนอราคาหรือคำขอราคาจากลูกค้า ให้กดดึงราคาจากร้านค้า")}
         actions={
           <>
-            <Button size="sm" variant="secondary" disabled={busy} onClick={() => run((r: { added: number; changedInJosh: number; removedInJosh: number }) => `ดึงจาก josh: ใหม่ ${r.added} · josh แก้ ${r.changedInJosh} · josh ลบ ${r.removedInJosh}`, staffPricesApi.importFromJosh)}>{__uiText("ดึงจาก josh")}</Button>
-            <Button icon="refresh" onClick={reload}>{__uiText("Refresh")}</Button>
+            <Button variant="secondary" disabled={busy} onClick={() => run((r: { added: number; changedInJosh: number; removedInJosh: number }) => __uiMessage("ดึงราคาจากร้านค้าแล้ว: ใหม่ {0} · ร้านค้าแก้ {1} · ร้านค้าลบ {2}", { 0: r.added, 1: r.changedInJosh, 2: r.removedInJosh }), staffPricesApi.importFromJosh)}>{__uiText("ดึงราคาจากร้านค้า")}</Button>
+            <Button icon="refresh" onClick={reload}>{__uiText("รีเฟรช")}</Button>
+            <Button variant="primary" icon="add" onClick={() => { setEditing(null); setForm({}); setAdding(true); }}>{__uiText("เพิ่มราคา")}</Button>
           </>
         }
       />
@@ -121,29 +125,29 @@ export function StaffPrices() {
         </div>
       </Panel>
 
-      {editing || !list.loading ? (
+      {editing || adding ? (
         <FormPanel
           title={editing ? __uiText("แก้ไขราคา") : __uiText("เพิ่ม{0}", {"0": KIND[kind]})}
           icon={editing ? 'edit' : 'add_circle'}
           cols={kind === 'contract' ? 4 : 3}
-          error={msg && msg.includes('commerce') ? msg : undefined}
+          error={msg && syncFailed ? msg : undefined}
           busy={busy}
           onSubmit={save}
-          onCancel={editing ? () => { setEditing(null); setForm({}); } : undefined}
+          onCancel={() => { setEditing(null); setAdding(false); setForm({}); }}
           submitLabel={editing ? __uiText("บันทึก") : __uiText("เพิ่ม")}
         >
           {!editing && (
-            <Field label={__uiText("SKU")}>
+            <Field label={__uiText("รหัสสินค้า")}>
               <Input required value={form.sku ?? ''} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
             </Field>
           )}
           <Field label={__uiText("ราคา (บาท)")}>
             <Input required type="number" min={0} step="0.01" value={form.price ?? ''} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           </Field>
-          <Field label={__uiText("เริ่ม")}>
+          <Field label={__uiText("วันเริ่ม")}>
             <Input type="date" value={form.startDate ?? ''} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
           </Field>
-          <Field label={__uiText("สิ้นสุด")}>
+          <Field label={__uiText("วันสิ้นสุด")}>
             <Input type="date" value={form.endDate ?? ''} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
           </Field>
           {kind === 'contract' && (
@@ -158,7 +162,7 @@ export function StaffPrices() {
         <PanelHead title={__uiText("รายการ")} />
         <div className="px-4 py-3 border-b border-secondary-container flex flex-wrap items-center gap-3">
           <SearchInput
-            placeholder={__uiText("ค้น SKU")}
+            placeholder={__uiText("ค้นหารหัสสินค้า")}
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           />
@@ -167,7 +171,7 @@ export function StaffPrices() {
               { value: '', label: __uiText("ทั้งหมด") },
               { value: 'failed', label: __uiText("ส่งไม่สำเร็จ"), count: count('customer', 'failed') + count('contract', 'failed') },
               { value: 'pending', label: __uiText("กำลังส่ง"), count: count('customer', 'pending') + count('contract', 'pending') },
-              { value: 'synced', label: __uiText("josh ใช้แล้ว") },
+              { value: 'synced', label: __uiText("ร้านค้าใช้แล้ว") },
             ]}
             value={status}
             onChange={(s) => { setStatus(s); setPage(1); }}
@@ -177,12 +181,12 @@ export function StaffPrices() {
         {list.loading && !list.data ? (
           <Loading />
         ) : !list.data?.items.length ? (
-          <Empty>{__uiText("ยังไม่มีราคา · กด \"ดึงจาก josh\" เพื่อนำราคาปัจจุบันของ josh เข้ามาครั้งแรก")}</Empty>
+          <Empty>{__uiText("ยังไม่มีราคา กด \"ดึงราคาจากร้านค้า\" เพื่อนำราคาปัจจุบันเข้ามาครั้งแรก หรือกด \"เพิ่มราคา\"")}</Empty>
         ) : (
           <>
             <Table>
               <THead>
-                <TH>{__uiText("SKU")}</TH>
+                <TH>{__uiText("รหัสสินค้า")}</TH>
                 <TH right>{__uiText("ราคา")}</TH>
                 <TH>{__uiText("ช่วงเวลา")}</TH>
                 {kind === 'contract' && <TH>{__uiText("เลขสัญญา")}</TH>}
@@ -198,7 +202,7 @@ export function StaffPrices() {
                     <TD className="text-xs">{r.startDate} – {r.endDate ?? __uiText("ไม่มีกำหนด")}</TD>
                     {kind === 'contract' && <TD className="text-xs">{r.contractRef ?? '—'}</TD>}
                     <TD>
-                      <StatusChip status={STATUS[r.status]?.[0] ?? r.status} />
+                      <Chip tone={STATUS[r.status]?.[1] ?? 'muted'} statusCode={r.status} dot>{STATUS[r.status] ? __uiText(STATUS[r.status][0]) : r.status}</Chip>
                       {r.syncError && <div className="text-[10px] text-error mt-1">{r.syncError}</div>}
                     </TD>
                     <TD className="text-xs">
@@ -206,7 +210,7 @@ export function StaffPrices() {
                       <div className="text-on-surface-variant">{fmt.when(r.updatedAt)}</div>
                     </TD>
                     <TD kind="actions" className="space-x-1">
-                      <Button size="sm" variant="ghost" onClick={() => { setEditing(r.id); setForm({ price: String(r.price), startDate: r.startDate, endDate: r.endDate ?? '', contractRef: r.contractRef ?? '' }); }}>{__uiText("แก้")}</Button>
+                      <Button size="sm" variant="ghost" onClick={() => { setAdding(false); setEditing(r.id); setForm({ price: String(r.price), startDate: r.startDate, endDate: r.endDate ?? '', contractRef: r.contractRef ?? '' }); }}>{__uiText("แก้ไข")}</Button>
                       {r.status !== 'synced' && (
                         <Button size="sm" variant="ghost" disabled={busy} onClick={() => run('ส่งซ้ำแล้ว', () => staffPricesApi.retry(r.id))}>{__uiText("ส่งซ้ำ")}</Button>
                       )}
@@ -214,7 +218,7 @@ export function StaffPrices() {
                         size="sm"
                         variant="danger-ghost"
                         disabled={busy}
-                        onClick={() => window.confirm(__uiText("ลบราคา {0} {1}? josh จะเลิกใช้ราคานี้ทันที", {"0": r.sku, "1": fmt.baht(r.price)})) && run('ลบแล้ว', () => staffPricesApi.remove(r.id))}
+                        onClick={() => window.confirm(__uiText("ลบราคา {0} {1}? ร้านค้าจะเลิกใช้ราคานี้ทันที", {"0": r.sku, "1": fmt.baht(r.price)})) && run('ลบแล้ว', () => staffPricesApi.remove(r.id))}
                       >
                         {__uiText("ลบ")}</Button>
                     </TD>

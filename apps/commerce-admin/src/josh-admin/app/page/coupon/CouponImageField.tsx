@@ -53,7 +53,7 @@ export default function CouponImageField({
           {pendingFile && !disabled && (
             <button
               type="button"
-              className="mt-2 text-xs text-red-600 hover:underline"
+              className="mt-2 text-xs text-danger hover:underline"
               onClick={() => onPendingFileChange(null)}
             >
               {__uiText("ลบรูปที่เลือก")}</button>

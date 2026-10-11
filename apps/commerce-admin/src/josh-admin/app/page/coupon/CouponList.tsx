@@ -19,6 +19,10 @@ const DISCOUNT_SCOPE_LABELS: Record<string, string> = {
   get brand(){return __uiText("เฉพาะแบรนด์");},
   get category(){return __uiText("เฉพาะหมวดหมู่");},
 };
+const DISCOUNT_TYPE_LABELS: Record<string, string> = {
+  get PERCENTAGE(){return __uiText("เปอร์เซ็นต์ (%)");},
+  get FIXED_AMOUNT(){return __uiText("จำนวนเงินคงที่ (บาท)");},
+};
 
 const CouponList = () => {
   __useUiLocale();
@@ -85,17 +89,23 @@ const CouponList = () => {
       render: (value: string, row) => (
         <Link
           to={ADMIN_ROUTES.couponDetail(row.id)}
-          className="font-semibold text-blue-600 hover:underline"
+          className="font-mono font-semibold text-primary hover:underline"
         >
           {value}
         </Link>
       ),
     },
     { key: 'title', label: __uiText("ชื่อ") },
-    { key: 'discount_type', label: __uiText("ประเภทส่วนลด") },
+    {
+      key: 'discount_type',
+      label: __uiText("ประเภทส่วนลด"),
+      render: (value: string) => DISCOUNT_TYPE_LABELS[value] ?? value,
+    },
     {
       key: 'discount_value',
       label: __uiText("มูลค่า"),
+      align: 'right',
+      className: 'tabular-nums whitespace-nowrap',
       render: (value: number, row) =>
         row.discount_type === 'PERCENTAGE' ? `${value}%` : `${Number(value).toLocaleString()} บาท`,
     },
@@ -108,17 +118,21 @@ const CouponList = () => {
     {
       key: 'minimum_order_amount',
       label: __uiText("ยอดขั้นต่ำ"),
+      align: 'right',
+      className: 'tabular-nums whitespace-nowrap',
       render: (value: number | string | null | undefined) =>
         Number(value) > 0 ? `${Number(value).toLocaleString()} บาท` : '-',
     },
     {
       key: 'start_date',
       label: __uiText("เริ่ม"),
+      className: 'tabular-nums whitespace-nowrap',
       render: (value: string) => formatBangkokDateTime(value, 'th'),
     },
     {
       key: 'end_date',
       label: __uiText("สิ้นสุด"),
+      className: 'tabular-nums whitespace-nowrap',
       render: (value: string) => formatBangkokDateTime(value, 'th'),
     },
     {
@@ -149,7 +163,7 @@ const CouponList = () => {
           </button>
           <button
             onClick={() => handleDelete(row.id)}
-            className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-1.5 text-gray-500 hover:text-alert hover:bg-danger-container rounded-lg transition-colors"
             title={__uiText("ลบ")}
             aria-label={__uiText("ลบ")}
           >
@@ -163,15 +177,15 @@ const CouponList = () => {
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
-        title={__uiText("Coupons")}
-        subtitle={__uiText("Promotions → จัดการรายชื่อและแจ้งเตือนได้ที่หน้ารายละเอียดคูปอง")}
+        title={__uiText("คูปองส่วนลด")}
+        subtitle={__uiText("รหัสส่วนลดที่ลูกค้าใช้ตอนสั่งซื้อ เปิดคูปองเพื่อดูผู้ได้รับสิทธิ์และส่งแจ้งเตือน")}
         createLabel={__uiText("เพิ่มคูปอง")}
         createPath={ADMIN_ROUTES.couponCreate}
       />
       {error ? (
         <div
           role="alert"
-          className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700"
+          className="rounded-lg border border-danger/20 bg-danger-container px-4 py-3 text-sm text-danger"
         >
           {(typeof error === 'string' ? __uiText(error) : error)}
         </div>
@@ -184,6 +198,8 @@ const CouponList = () => {
         currentPage={Number(apiResponse?.meta?.page || 1)}
         totalPages={Number(apiResponse?.meta?.totalPages || 1)}
         onPageChange={(newPage) => setCurrentPage(newPage)}
+        emptyTitle={__uiText("ยังไม่มีคูปอง")}
+        emptyDescription={__uiText("กด \"เพิ่มคูปอง\" เพื่อสร้างคูปองแรก")}
       />
       <CouponConfirmDialog
         open={duplicateSource !== null}

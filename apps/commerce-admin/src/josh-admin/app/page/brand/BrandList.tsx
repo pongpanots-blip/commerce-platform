@@ -47,7 +47,11 @@ export default function BrandList() {
     setEditEn(row.brand_name_en ?? '');
   };
   const columns: TableColumn<BrandRow>[] = [
-    { key: 'brand_code', label: uiText('โค้ด') },
+    {
+      key: 'brand_code',
+      label: uiText('รหัสแบรนด์'),
+      render: (value) => <span className="font-mono">{value}</span>,
+    },
     {
       key: 'brand_name_th',
       label: uiText('ชื่อไทย'),
@@ -61,7 +65,7 @@ export default function BrandList() {
           />
         ) : (
           value || (
-            <span className="text-gray-400">{uiText('ยังไม่มีชื่อ')}</span>
+            <span className="text-on-surface-variant">{uiText('ยังไม่มีชื่อ')}</span>
           )
         ),
     },
@@ -130,7 +134,7 @@ export default function BrandList() {
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <PageHeader
-        title={uiText('Brand Management')}
+        title={uiText('แบรนด์')}
         subtitle={uiText('ตรวจชื่อแบรนด์ภาษาไทยและอังกฤษ แก้ไขได้จากรายการ')}
         actions={
           <Button
@@ -162,7 +166,7 @@ export default function BrandList() {
         </span>
       </div>
       {save.isError && (
-        <ErrorText error="บันทึกไม่สำเร็จ ข้อมูลที่แก้ไขยังอยู่ ลองบันทึกอีกครั้ง" />
+        <ErrorText error={uiText('บันทึกไม่สำเร็จ ข้อมูลที่แก้ไขยังอยู่ ลองบันทึกอีกครั้ง')} />
       )}
       {isError ? (
         <div className="cp-list-error" role="alert">
@@ -177,7 +181,8 @@ export default function BrandList() {
           data={data}
           loading={isFetching}
           idKey="id"
-          emptyTitle="ยังไม่มีแบรนด์ในรายการนี้"
+          emptyTitle={uiText('ยังไม่มีแบรนด์ในรายการนี้')}
+          emptyDescription={onlyMissingName ? uiText('ทุกแบรนด์มีชื่อแล้ว ยกเลิกตัวกรองเพื่อดูทั้งหมด') : undefined}
         />
       )}
     </div>

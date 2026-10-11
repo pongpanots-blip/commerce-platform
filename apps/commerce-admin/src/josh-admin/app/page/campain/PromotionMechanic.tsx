@@ -107,7 +107,7 @@ const PromotionMechanic = () => {
     },
     {
       key: 'campaign_id',
-      label: __uiText("Campaign"),
+      label: __uiText("แคมเปญ"),
       render: (value: string | null) =>
         value && campaignName.has(value) ? (
           <Link to={ADMIN_ROUTES.campaignDetail(value)} className="text-blue-600 hover:underline">
@@ -124,8 +124,8 @@ const PromotionMechanic = () => {
       render: (_value, row) => {
         const audience = audiences.get(row.id);
         return audience?.audience === 'companies'
-          ? `${audience.company_count.toLocaleString('th-TH')} บริษัท`
-          : 'ทุกคน';
+          ? __uiText("{0} บริษัท", {"0": audience.company_count.toLocaleString('th-TH')})
+          : __uiText("ทุกคน");
       },
     },
     {
@@ -136,6 +136,8 @@ const PromotionMechanic = () => {
     {
       key: 'remaining_units',
       label: __uiText("เหลือ"),
+      align: 'right',
+      className: 'tabular-nums whitespace-nowrap',
       // computed by the server (`remaining_units`) — null / no row = no cap
       render: (_value, row) => {
         const remaining = caps.get(row.id)?.remaining_units;
@@ -149,12 +151,15 @@ const PromotionMechanic = () => {
     },
     {
       key: 'skuItems',
-      label: __uiText("จำนวน SKU"),
+      label: __uiText("จำนวนสินค้า"),
+      align: 'right',
+      className: 'tabular-nums',
       render: (value: PromotionMechanicRecord['skuItems']) => (value?.length ?? 0).toLocaleString('th-TH'),
     },
     {
       key: 'start_date',
       label: __uiText("ช่วงเวลา"),
+      className: 'tabular-nums whitespace-nowrap',
       render: (_value, row) => formatBangkokRange(row.start_date, row.end_date, 'th'),
     },
     {
@@ -193,9 +198,9 @@ const PromotionMechanic = () => {
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
-        title={__uiText("Promotion Mechanics")}
-        subtitle={__uiText("ส่วนลดระดับสินค้า — SKU มาจาก Product set, วันที่ตาม Campaign")}
-        createLabel={__uiText("สร้าง Promotion Mechanic")}
+        title={__uiText("กติกาส่วนลด")}
+        subtitle={__uiText("ส่วนลดระดับสินค้า เช่น ซื้อครบลด หรือซื้อ X แถม Y สินค้ามาจากชุดสินค้า วันที่ตามแคมเปญ")}
+        createLabel={__uiText("เพิ่มกติกาส่วนลด")}
         createPath={ADMIN_ROUTES.promotionsMechanicCreate}
       />
 
@@ -226,14 +231,20 @@ const PromotionMechanic = () => {
               onChange={(event) => setSearch(event.target.value)}
             />
           </div>
-          <Table columns={columns} data={visible} idKey="id" />
+          <Table
+            columns={columns}
+            data={visible}
+            idKey="id"
+            emptyTitle={search.trim() ? __uiText("ไม่พบโปรที่ตรงกับคำค้น") : __uiText("ยังไม่มีกติกาส่วนลด")}
+            emptyDescription={search.trim() ? __uiText("ลองค้นด้วยชื่ออื่น") : __uiText("กด \"เพิ่มกติกาส่วนลด\" เพื่อสร้างโปรแรก")}
+          />
         </>
       )}
 
       <CouponConfirmDialog
         open={!!pendingDelete}
-        title={__uiText("ลบ Promotion Mechanic นี้?")}
-        body={`“${pendingDelete?.name ?? ''}” — การลบไม่สามารถย้อนกลับได้`}
+        title={__uiText("ลบกติกาส่วนลดนี้?")}
+        body={__uiText("“{0}” ลบแล้วย้อนกลับไม่ได้", {"0": pendingDelete?.name ?? ''})}
         confirmLabel="ลบ"
         tone="danger"
         busy={deleting}

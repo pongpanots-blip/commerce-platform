@@ -1,10 +1,10 @@
-import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
-/** `coupons.status` (server-derived) → pill label/color. */
-const COUPON_STATUS_PILLS: Record<string, { label: string; className: string }> = {
-  scheduled: { get label() { return __uiText("รอใช้งาน"); }, className: 'bg-amber-50 text-amber-700' },
-  active: { get label() { return __uiText("ใช้งานอยู่"); }, className: 'bg-green-50 text-green-700' },
-  expired: { get label() { return __uiText("หมดเวลา"); }, className: 'bg-gray-100 text-gray-500' },
-  disabled: { get label() { return __uiText("ปิดโดยแอดมิน"); }, className: 'bg-red-50 text-red-700' },
+import { Chip, type Tone, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+/** `coupons.status` (server-derived) → chip label/tone. */
+const COUPON_STATUS_PILLS: Record<string, { label: string; tone: Tone }> = {
+  scheduled: { get label() { return __uiText("รอใช้งาน"); }, tone: 'warn' },
+  active: { get label() { return __uiText("ใช้งานอยู่"); }, tone: 'ok' },
+  expired: { get label() { return __uiText("หมดเวลา"); }, tone: 'muted' },
+  disabled: { get label() { return __uiText("ปิดโดยแอดมิน"); }, tone: 'danger' },
 };
 
 /**
@@ -37,11 +37,5 @@ export default function CouponStatusPill({ coupon }: { coupon: CouponStatusPillC
   __useUiLocale();
   const status = coupon.status ?? fallbackCouponStatus(coupon);
   const pill = COUPON_STATUS_PILLS[status] ?? COUPON_STATUS_PILLS.active;
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${pill.className}`}
-    >
-      {pill.label}
-    </span>
-  );
+  return <Chip tone={pill.tone} statusCode={status} dot>{pill.label}</Chip>;
 }

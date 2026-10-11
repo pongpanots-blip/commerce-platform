@@ -31,9 +31,9 @@ export function GrowthPlans() {
   }
   const statusOptions: GrowthStatus[] = ['draft', 'review', 'approved', 'ready', 'exporting', 'export_unknown'];
   return <Page>
-    <PageHeader crumbs={[__uiText("Marketing"), __uiText("Growth"), __uiText("แผน")]} back={{ to: '/marketing/growth', label: 'Growth Workspace' }} title={__uiText("แผนและปฏิทิน")}
+    <PageHeader back={{ to: '/marketing/growth', label: 'วางแผนการเติบโต' }} title={__uiText("แผนและปฏิทิน")}
       subtitle={__uiText("เตรียมข้อความ กำหนดวัน และติดตามการตรวจของทีม")}
-      actions={<><Button onClick={() => setRefresh((value) => value + 1)} icon="refresh">{__uiText("Refresh")}</Button><ButtonLink to="/marketing/growth/plans/new" variant="primary" icon="add">{__uiText("สร้างแผน")}</ButtonLink></>} />
+      actions={<><Button onClick={() => setRefresh((value) => value + 1)} icon="refresh">{__uiText("โหลดใหม่")}</Button><ButtonLink to="/marketing/growth/plans/new" variant="primary" icon="add">{__uiText("สร้างแผน")}</ButtonLink></>} />
     <Panel className="p-4"><div className="flex flex-wrap items-end gap-3">
       <Field label={__uiText("ค้นแผน")}><SearchInput aria-label={__uiText("ค้นแผน")} value={search} onChange={(event) => filter('q', event.target.value)} placeholder={__uiText("ชื่อแผนหรือเจ้าของงาน")} /></Field>
       <Field label={__uiText("สถานะ")}><Select aria-label={__uiText("สถานะ")} value={status} onChange={(event) => filter('status', event.target.value)}><option value="">{__uiText("ทั้งหมด")}</option>{statusOptions.map((value) => <option key={value} value={value}>{({ draft: 'ร่าง', review: 'รอตรวจ', approved: 'อนุมัติแล้ว', ready: 'สร้างร่าง workflow แล้ว', exporting: 'กำลังสร้างร่าง workflow', export_unknown: 'ต้องตรวจ workflow' })[value]}</option>)}</Select></Field>
@@ -61,7 +61,7 @@ function PlanItems({ query, view, month, onPage }: { query: string; view: string
       {!items.length ? <Empty icon="edit_calendar">{__uiText("ยังไม่มีแผนที่ตรงกับตัวกรอง")}</Empty> : view === 'list' ? <>
         <Table><THead><TH>{__uiText("แผน")}</TH><TH>{__uiText("ประเภท")}</TH><TH>{__uiText("เจ้าของงาน")}</TH><TH>{__uiText("กำหนดวัน (ไทย)")}</TH><TH kind="money">{__uiText("งบ")}</TH><TH>{__uiText("สถานะ")}</TH></THead><TBody>
           {items.map((item) => <TR key={item.id}>
-            <TD><RowLink to={`/marketing/growth/plans/${encodeURIComponent(item.id)}`} mono={false}>{item.title}</RowLink><div className="text-[10px] text-outline">{__uiText("revision ")}{item.version}</div></TD>
+            <TD><RowLink to={`/marketing/growth/plans/${encodeURIComponent(item.id)}`} mono={false}>{item.title}</RowLink><div className="text-[10px] text-outline">{__uiText("ฉบับที่ ")}{item.version}</div></TD>
             <TD kind="muted">{templateLabels[item.template]}</TD><TD>{item.owner || __uiText("ยังไม่ระบุ")}</TD><TD kind="time">{item.scheduleAt ? bangkokWhen.format(new Date(item.scheduleAt)) : __uiText("ยังไม่กำหนด")}</TD><TD kind="money">{fmt.baht(item.budgetThb)}</TD><TD><PlanStatus status={item.status} /></TD>
           </TR>)}
         </TBody></Table>

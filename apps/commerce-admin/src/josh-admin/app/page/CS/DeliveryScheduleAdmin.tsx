@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, KeyValueGrid, Panel, PanelHead, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type TimeSlot = {
   time_slot_id: string;
   slot_name: string;
@@ -42,40 +42,47 @@ export default function DeliveryScheduleAdmin() {
 
   const columns: TableColumn<TimeSlot>[] = [
     { key: 'slot_name', label: __uiText("ชื่อรอบ") },
-    { key: 'start_time', label: __uiText("เริ่ม") },
-    { key: 'end_time', label: __uiText("สิ้นสุด") },
+    { key: 'start_time', label: __uiText("เริ่ม"), render: (v) => <span className="tabular-nums">{String(v)}</span> },
+    { key: 'end_time', label: __uiText("สิ้นสุด"), render: (v) => <span className="tabular-nums">{String(v)}</span> },
   ];
 
   return (
-    <div className="cp-management-page">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
-        title={__uiText("Delivery Schedule")}
-        subtitle={__uiText("รอบจัดส่งและเกณฑ์จาก CS admin API")}
+        title={__uiText("ตารางรอบส่ง")}
+        subtitle={__uiText("รอบเวลาจัดส่งที่เปิดใช้ และเกณฑ์ยอดสั่งซื้อขั้นต่ำและส่งฟรี")}
       />
 
       {loading ? (
         <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : error ? (
-        <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>
+        <Alert tone="danger">{(typeof error === 'string' ? __uiText(error) : error)}</Alert>
       ) : !info ? (
         <p className="text-sm text-gray-500">{__uiText("ไม่มีข้อมูล")}</p>
       ) : (
         <div className="space-y-5">
-          <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 text-sm text-gray-700">
-            <p>{info.description}</p>
-            <p className="mt-2 text-gray-600">{info.minimum_order_note}</p>
-            <p className="mt-2 font-medium">
-              {__uiText("Free delivery threshold (ex VAT): ฿")}{Number(info.free_delivery_threshold_ex_vat).toLocaleString()}
-            </p>
-          </div>
+          <Panel>
+            <PanelHead title={__uiText("เกณฑ์การจัดส่ง")} />
+            <div className="p-5">
+              <KeyValueGrid
+                cols={3}
+                items={[
+                  { label: "ยอดขั้นต่ำสำหรับส่งฟรี (ก่อน VAT)", value: `฿${Number(info.free_delivery_threshold_ex_vat).toLocaleString()}` },
+                  { label: "ยอดสั่งซื้อขั้นต่ำ", value: info.minimum_order_note, wide: true },
+                  { label: "รายละเอียด", value: info.description, wide: true },
+                ]}
+              />
+            </div>
+          </Panel>
 
           <div>
-            <h2 className="mb-2 text-sm font-semibold text-gray-800">
+            <h2 className="mb-2 text-[15px] font-semibold text-on-surface">
               {__uiText("รอบเวลาจัดส่งที่เปิดใช้")}</h2>
             <Table
               columns={columns}
               data={info.time_slots ?? []}
               idKey="time_slot_id"
+              emptyTitle={__uiText("ยังไม่มีรอบเวลาจัดส่งที่เปิดใช้")}
             />
           </div>
         </div>

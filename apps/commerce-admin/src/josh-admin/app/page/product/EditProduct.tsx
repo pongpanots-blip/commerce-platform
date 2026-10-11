@@ -239,7 +239,7 @@ const EditProduct = () => {
   };
 
   const handleDeleteReplaced = async (logId: string) => {
-    if (!window.confirm(__uiText("ยืนยันลบรูปเก่าออกจาก S3? การลบนี้ไม่สามารถย้อนกลับได้"))) return;
+    if (!window.confirm(__uiText("ยืนยันลบรูปเก่านี้ถาวร? การลบนี้ย้อนกลับไม่ได้"))) return;
     setDeletingLogId(logId);
     setReplacedError(null);
     try {
@@ -310,7 +310,7 @@ const EditProduct = () => {
   const handleSubmit = async () => {
     if (!id) return false;
     if (!form.product_inventory_sku || (!contentOwned && (!form.product_name_th || !form.product_name_en))) {
-      alert(__uiText("กรุณากรอก SKU และชื่อสินค้าทั้ง 2 ภาษา"));
+      alert(__uiText("กรุณากรอกรหัสสินค้าและชื่อสินค้าทั้ง 2 ภาษา"));
       return false;
     }
 
@@ -414,8 +414,8 @@ const EditProduct = () => {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
-          label={__uiText("รหัสสินค้า (SKU) *")}
-          hint={__uiText("มาจาก ERP — แก้ที่นี่ไม่ได้")}
+          label={__uiText("รหัสสินค้า *")}
+          hint={__uiText("มาจากระบบหลัก (ERP) แก้ที่นี่ไม่ได้")}
           value={form.product_inventory_sku}
           disabled
           readOnly
@@ -471,7 +471,7 @@ const EditProduct = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label={__uiText("ราคาต่อหน่วยขาย (฿) *")}
-          hint={__uiText("เรทต่อหน่วยขาย (ERP SELLING_UNIT_PRICE) ไม่ใช่ราคากล่องที่ลูกค้าจ่าย")}
+          hint={__uiText("ราคาต่อหน่วยขายจากระบบหลัก ไม่ใช่ราคากล่องที่ลูกค้าจ่าย")}
           type="number"
           value={form.selling_unit_price}
           onChange={(e) => handleInput('selling_unit_price', e.target.value)}
@@ -480,8 +480,8 @@ const EditProduct = () => {
           label={__uiText("ราคากล่อง / หน่วยสั่ง (฿)")}
           hint={
             orderingPrice
-              ? __uiText("ERP PRICE — ราคาที่ลูกค้าจ่ายจริง แก้ที่ ERP เท่านั้น")
-              : __uiText("ยังไม่มีค่าจาก ERP และคำนวณจาก pack ไม่ได้")
+              ? __uiText("ราคาที่ลูกค้าจ่ายจริง แก้ได้ที่ระบบหลัก (ERP) เท่านั้น")
+              : __uiText("ยังไม่มีราคาจากระบบหลัก และคำนวณจากขนาดแพ็กไม่ได้")
           }
           value={orderingPrice}
           disabled
@@ -496,9 +496,9 @@ const EditProduct = () => {
 
       <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
         <h3 className="mb-2 text-sm font-semibold text-gray-800">
-          {__uiText("ราคาตามจำนวนซื้อ (Tier)")}</h3>
+          {__uiText("ราคาตามจำนวนซื้อ")}</h3>
         <p className="mb-3 text-xs text-gray-500">
-          {__uiText("ขั้นต่ำ qty ต้องไม่ทับซ้อน — เป็นราคาโปรระดับสินค้า ไม่เปลี่ยนราคาขายฐาน (แก้ราคาฐานที่ช่อง “ราคาต่อหน่วยขาย”)")}</p>
+          {__uiText("จำนวนขั้นต่ำแต่ละขั้นต้องไม่ทับกัน เป็นราคาโปรของสินค้านี้ ไม่เปลี่ยนราคาขายปกติ (แก้ราคาปกติที่ช่อง “ราคาต่อหน่วยขาย”)")}</p>
         {rulesLockedBy ? (
           <PromotionRulesLockedNotice
             lockedBy={rulesLockedBy}
@@ -511,11 +511,11 @@ const EditProduct = () => {
 
       <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
         <h3 className="mb-2 text-sm font-semibold text-gray-800">
-          {__uiText("Cuisine (Shop by Cuisine)")}</h3>
+          {__uiText("ประเภทอาหาร")}</h3>
         <p className="mb-3 text-xs text-gray-500">
-          {__uiText("เลือก taxonomy ที่ SKU นี้อยู่ — บันทึกแล้วจะแทนที่ชุดเดิมทั้งหมด (replace)")}</p>
+          {__uiText("เลือกประเภทอาหารของสินค้านี้ บันทึกแล้วจะแทนที่ชุดเดิมทั้งหมด")}</p>
         {cuisineOptions.length === 0 ? (
-          <p className="text-xs text-gray-400">{__uiText("ไม่พบรายการ cuisine")}</p>
+          <p className="text-xs text-gray-400">{__uiText("ไม่พบรายการประเภทอาหาร")}</p>
         ) : (
           <div className="max-h-64 space-y-3 overflow-y-auto">
             {cuisineOptions.map(({ parent, children }) => (
@@ -679,7 +679,7 @@ const EditProduct = () => {
           {showReplaced && (
             <div className="mt-3 space-y-3">
               {replacedError && (
-                <div className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">
+                <div className="rounded-lg bg-danger-container px-3 py-2 text-xs text-danger">
                   {(typeof (replacedError) === 'string' ? __uiText(replacedError) : replacedError)}
                 </div>
               )}
@@ -715,9 +715,9 @@ const EditProduct = () => {
                         type="button"
                         onClick={() => handleDeleteReplaced(log.logId)}
                         disabled={deletingLogId === log.logId}
-                        className="text-xs text-red-500 hover:underline disabled:opacity-50"
+                        className="text-xs text-danger hover:underline disabled:opacity-50"
                       >
-                        {deletingLogId === log.logId ? __uiText("กำลังลบ...") : __uiText("ลบออกจาก S3")}
+                        {deletingLogId === log.logId ? __uiText("กำลังลบ...") : __uiText("ลบรูปนี้ถาวร")}
                       </button>
                     </div>
                   </div>
@@ -748,7 +748,7 @@ function MediaCard({
         <button
           type="button"
           onClick={onRemove}
-          className="text-xs text-red-500 hover:underline"
+          className="text-xs text-danger hover:underline"
         >
           {__uiText("ลบ")}</button>
       </div>

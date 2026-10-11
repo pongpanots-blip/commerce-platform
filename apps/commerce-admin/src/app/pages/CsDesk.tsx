@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
-  Alert, Button, CodeBlock, DetailSection, Empty, ErrorText, Field, FormPanel, Hint, Input, Loading, Page, PageHeader, Panel, PanelHead,
+  Alert, Button, CodeBlock, DetailSection, Empty, ErrorText, Field, FormPanel, Hint, Input, KeyValueGrid, Loading, Page, PageHeader, Panel, PanelHead,
   SearchInput, Segmented, Select, StatusChip, TBody, TD, TH, THead, TR, Table, Textarea, Chip, EmptyState, useUnsavedChanges, TaskPanelForm, TaskInput, TaskSelect, TaskTextarea, toneOf, fmt,
 } from '@cp/ui';
 import { joshAdmin, joshCustomerApi, joshProductApi, JoshRow, session, joshOrderApi } from '../../lib/api';
@@ -48,6 +48,7 @@ function rowsOf(answer: unknown): Row[] {
 
 const PAYMENT = [['credit', 'เครดิตเทอม'], ['qr', 'QR'], ['cod', 'เก็บปลายทาง'], ['payment_link', 'ลิงก์ชำระเงิน'], ['customer_credit', 'เครดิตลูกค้า']];
 const SAMPLE_STATUS: Record<string, string> = { pending: 'รอพิจารณา', approved: 'อนุมัติแล้ว', rejected: 'ไม่อนุมัติแล้ว', fulfilled: 'ส่งแล้ว' };
+const paymentLabel = (code: string) => __uiText(PAYMENT.find(([k]) => k === code)?.[1] ?? code);
 const SAMPLE_DECISION: Record<string, string> = { approved: 'อนุมัติ', rejected: 'ไม่อนุมัติ', fulfilled: 'บันทึกการส่ง' };
 const show = (v: unknown) => (v == null ? '—' : typeof v === 'object' ? JSON.stringify(v) : String(v));
 /** Backend rejects a CS search shorter than 2 characters. */
@@ -81,7 +82,7 @@ export function CsDesk({ role = session.claims()?.role }: { role?: string }) {
   if (!isRouteAllowed(role, pathname)) return <Page><PageHeader title={__uiText('งานบริการลูกค้า')} /><Alert tone="danger">{__uiText('คุณไม่มีสิทธิ์ทำงานนี้')}</Alert></Page>;
   if (pathname === '/cs') return <Navigate to={`/cs/orders/new${search}${hash}`} replace />;
   return <Page>
-    <PageHeader title={__uiText("งาน CS (josh)")} subtitle={__uiText("สั่งของแทนลูกค้า · คำขอสินค้าตัวอย่าง · รวมบัญชีซ้ำ — josh ทำจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit")} />
+    <PageHeader title={__uiText("งานบริการลูกค้า")} subtitle={__uiText("สั่งของแทนลูกค้า ตรวจคำขอสินค้าตัวอย่าง และรวมบัญชีซ้ำ ระบบบันทึกอีเมลของคุณไว้ในประวัติทุกครั้ง")} />
     <div className="overflow-x-auto"><Segmented value={task?.to ?? ''} onChange={to => navigate(to)} options={CS_TASKS.filter(item => isRouteAllowed(role, item.to)).map(item => ({ value: item.to, label: __uiText(item.label) }))} /></div>
     {task?.to === '/cs/orders/new' && <OrderOnBehalf />}
     {task?.to === '/cs/samples' && <Samples key={pathname} />}
@@ -180,7 +181,7 @@ function OrderOnBehalf() {
   const getQuote = () => { if (!busy && who && items.length) { setQuote(null); return run(() => joshAdmin.call('POST', '/cs-admin/orders/quote', body()), (r) => setQuote(r)); } };
   async function place(_data: FormData, signal: AbortSignal) {
     if (busy || !who || !items.length || quote == null || draft.interrupted) return { ok: false as const, formError: __uiText('ตรวจข้อมูลก่อนบันทึก') };
-    if (!window.confirm(__uiText('สั่ง {0} รายการให้ {1} ({2})?\n\njosh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ', { 0: items.length, 1: who.company.name, 2: pay.payment_method }))) return { ok: false as const, formError: __uiText('ยกเลิกการบันทึกแล้ว') };
+    if (!window.confirm(__uiText('สั่ง {0} รายการให้ {1} ({2})?\n\njosh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ', { 0: items.length, 1: who.company.name, 2: paymentLabel(pay.payment_method) }))) return { ok: false as const, formError: __uiText('ยกเลิกการบันทึกแล้ว') };
     if (!draft.begin(signal)) return { ok: false as const, formError: __uiText('ยังยืนยันผลการบันทึกไม่ได้') };
     try {
       return { ok: true as const, receipt: orderReceipt(await joshAdmin.call('POST', '/cs-admin/orders/place-on-behalf', { ...body(), payment_method: pay.payment_method, ...(pay.coupon_code.trim() ? { coupon_code: pay.coupon_code.trim() } : {}), ...(pay.delivery_date ? { delivery_date: pay.delivery_date } : {}) })) };
@@ -206,7 +207,7 @@ function OrderOnBehalf() {
         {who && (
           <DetailSection title={__uiText("2 · สินค้า")} icon="inventory_2">
             <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); setSkuSearch(skuQ.trim()); }}>
-              <SearchInput className="flex-1" aria-label={__uiText("ค้นหาสินค้า")} placeholder={__uiText("SKU / ชื่อสินค้า")} value={skuQ} onChange={(e) => setSkuQ(e.target.value)} />
+              <SearchInput className="flex-1" aria-label={__uiText("ค้นหาสินค้า")} placeholder={__uiText("รหัสสินค้าหรือชื่อสินค้า")} value={skuQ} onChange={(e) => setSkuQ(e.target.value)} />
               <Button type="submit" icon="search">{__uiText("ค้นหาสินค้า")}</Button>
             </form>
             {skuQ.trim().length > 0 && skuQ.trim().length < 2 && <Hint>{__uiText("พิมพ์อย่างน้อย 2 ตัวอักษร")}</Hint>}
@@ -229,7 +230,7 @@ function OrderOnBehalf() {
               <div className="rounded-lg border border-secondary-container overflow-hidden">
                 <Table scrollLabel={__uiText("รายการทั้งหมด")}>
                   <THead>
-                    <TH>{__uiText("SKU")}</TH>
+                    <TH>{__uiText("รหัสสินค้า")}</TH>
                     <TH>{__uiText("สินค้า")}</TH>
                     <TH right>{__uiText("จำนวน")}</TH>
                     <TH />
@@ -257,10 +258,10 @@ function OrderOnBehalf() {
 
       {quote != null && (
         <>
-          <CodeBlock title={__uiText("ราคาจาก josh")} value={JSON.stringify(quote, null, 2).slice(0, 4000)} />
-          <TaskPanelForm title={__uiText("3 · สั่งซื้อ")} icon="shopping_cart_checkout" cols={3} submitLabel={__uiText("สั่งซื้อ")} messages={taskMessages()} disabled={draft.interrupted || mutation.busy || draft.outstanding} onSubmit={place} onSuccess={r => { draft.clear(); setMsg({ tone: 'ok', text: __uiText('สร้างคำสั่งซื้อแล้ว') + ': ' + JSON.stringify(r).slice(0,200) }); setItems([]); setQuote(null); }}>
+          <CodeBlock title={__uiText("รายละเอียดราคาที่คำนวณได้")} value={JSON.stringify(quote, null, 2).slice(0, 4000)} />
+          <TaskPanelForm title={__uiText("3 · สั่งซื้อ")} icon="shopping_cart_checkout" cols={3} submitLabel={__uiText("สั่งซื้อ")} messages={taskMessages()} disabled={draft.interrupted || mutation.busy || draft.outstanding} onSubmit={place} onSuccess={r => { draft.clear(); setMsg({ tone: 'ok', text: __uiText('สร้างคำสั่งซื้อแล้ว') + ': ' + ((Array.isArray(r.orderNumbers) ? r.orderNumbers : r.orderIds) as unknown[]).join(', ') }); setItems([]); setQuote(null); }}>
               <TaskSelect name="payment_method" label={__uiText("ชำระด้วย")} value={pay.payment_method} onChange={(e) => setPay({ ...pay, payment_method: e.target.value })}>
-                {PAYMENT.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+                {PAYMENT.map(([k, l]) => <option key={k} value={k}>{__uiText(l)}</option>)}
               </TaskSelect>
             <TaskInput name="coupon_code" label={__uiText("คูปอง")} value={pay.coupon_code} onChange={(e) => setPay({ ...pay, coupon_code: e.target.value })} />
             <TaskInput name="delivery_date" label={__uiText("วันส่ง (ว่าง = ตามรอบ)")} type="date" value={pay.delivery_date} onChange={(e) => setPay({ ...pay, delivery_date: e.target.value })} />
@@ -321,12 +322,12 @@ export function Samples() {
     const current = fresh.find(row => String(row.id) === id); list.reload();
     return current ? __uiText('สถานะล่าสุด: {0}', { 0: SAMPLE_STATUS[String(current.status)] ?? show(current.status) }) : __uiText('ไม่พบคำขอนี้');
   }
-  const requestSummary = (r: Row) => <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-sm">
-    <div><dt className="text-on-surface-variant">{__uiText('ลูกค้า')}</dt><dd>{show((r.company as JoshRow)?.name ?? r.company_name ?? r.user_id)}</dd></div>
-    <div><dt className="text-on-surface-variant">{__uiText('สินค้า')}</dt><dd>{show((r.product as JoshRow)?.product_inventory_sku ?? r.sku ?? r.product_inventory_id)}</dd></div>
-    <div><dt className="text-on-surface-variant">{__uiText('จำนวน')}</dt><dd>{show(r.quantity)}</dd></div>
-    <div><dt className="text-on-surface-variant">{__uiText('สถานะ')}</dt><dd><Chip tone={toneOf(String(r.status))} statusCode={String(r.status)}>{__uiText(SAMPLE_STATUS[String(r.status)] ?? show(r.status))}</Chip></dd></div>
-  </dl>;
+  const requestSummary = (r: Row) => <KeyValueGrid cols={2} items={[
+    { label: __uiText('ลูกค้า'), value: show((r.company as JoshRow)?.name ?? r.company_name ?? r.user_id) },
+    { label: __uiText('สินค้า'), value: show((r.product as JoshRow)?.product_inventory_sku ?? r.sku ?? r.product_inventory_id), mono: true },
+    { label: __uiText('จำนวน'), value: show(r.quantity) },
+    { label: __uiText('สถานะ'), value: <Chip tone={toneOf(String(r.status))} statusCode={String(r.status)} dot>{__uiText(SAMPLE_STATUS[String(r.status)] ?? show(r.status))}</Chip> },
+  ]} />;
   const decisionLinks = (r: Row) => <div className="inline-flex gap-1">{sampleDecisions(String(r.status)).map(next => <Button key={next} size="sm" variant={next === 'approved' ? 'primary' : next === 'rejected' ? 'danger-ghost' : 'secondary'} onClick={() => navigate(`/cs/samples/${encodeURIComponent(String(r.id))}/${next}${suffix}`)}>{__uiText(SAMPLE_DECISION[next])}</Button>)}</div>;
 
   return <Panel className="overflow-hidden">
@@ -355,11 +356,11 @@ export function Samples() {
             <TD>{show((r.company as JoshRow)?.name ?? r.company_name ?? r.user_id)}</TD>
             <TD kind="mono">{show((r.product as JoshRow)?.product_inventory_sku ?? r.sku ?? r.product_inventory_id)}</TD>
             <TD kind="num">{show(r.quantity)}</TD>
-            <TD><Chip tone={toneOf(String(r.status))} statusCode={String(r.status)}>{__uiText(SAMPLE_STATUS[String(r.status)] ?? show(r.status))}</Chip></TD>
+            <TD><Chip tone={toneOf(String(r.status))} statusCode={String(r.status)} dot>{__uiText(SAMPLE_STATUS[String(r.status)] ?? show(r.status))}</Chip></TD>
             <TD kind="muted">{show(r.cs_note)}</TD>
             <TD kind="actions">{decisionLinks(r)}</TD>
           </TR>)}</TBody></Table>
-        : <EmptyState icon="science" title={__uiText('ไม่มีคำขอ')} description={__uiText('ไม่มีคำขอที่ตรงกับตัวกรองนี้')} action={status ? <Button onClick={() => filter('')}>{__uiText('ล้างตัวกรอง')}</Button> : <Button onClick={list.reload}>{__uiText('Refresh')}</Button>} />}
+        : <EmptyState icon="science" title={__uiText('ไม่มีคำขอ')} description={__uiText('ไม่มีคำขอที่ตรงกับตัวกรองนี้')} action={status ? <Button onClick={() => filter('')}>{__uiText('ล้างตัวกรอง')}</Button> : <Button icon="refresh" onClick={list.reload}>{__uiText('รีเฟรช')}</Button>} />}
       </>}
     </div>
   </Panel>;
@@ -387,8 +388,8 @@ function Merge() {
     {msg && <Alert tone="ok" onClose={() => setMsg('')}>{msg}</Alert>}
     {draft.recovered && !draft.interrupted && <Hint>{__uiText('กู้คืนข้อมูลที่ยังไม่บันทึกแล้ว ตรวจข้อมูลก่อนบันทึก')}</Hint>}
     {draft.interrupted && <InterruptedAction outstanding={draft.outstanding} onCheck={checkAccounts} onContinue={draft.acknowledge} />}
-    <TaskPanelForm title={__uiText('รวมบัญชีซ้ำ')} icon="merge" description={__uiText('หา user id ได้จาก รายงานร้าน › ลูกค้า (รายละเอียด) · ต้องเป็น admin · ย้อนกลับไม่ได้')} cols={1} messages={taskMessages()} submitLabel={__uiText('รวมบัญชี')} disabled={draft.interrupted || draft.outstanding} onSubmit={submit}
-      validate={() => ({ ...(!uuid.test(v.primary_user_id) ? { primary_user_id: __uiText('กรอก user id แบบ UUID') } : {}), ...(!uuid.test(v.duplicate_user_id) || v.primary_user_id.toLowerCase() === v.duplicate_user_id.toLowerCase() ? { duplicate_user_id: __uiText('ใส่ user id (uuid) สองบัญชีที่ต่างกัน') } : {}) })}
+    <TaskPanelForm title={__uiText('รวมบัญชีซ้ำ')} icon="merge" description={__uiText('ดูรหัสผู้ใช้ได้ในหน้ารายละเอียดลูกค้า ใช้ได้เฉพาะผู้ดูแลระบบ และย้อนกลับไม่ได้')} cols={1} messages={taskMessages()} submitLabel={__uiText('รวมบัญชี')} disabled={draft.interrupted || draft.outstanding} onSubmit={submit}
+      validate={() => ({ ...(!uuid.test(v.primary_user_id) ? { primary_user_id: __uiText('กรอกรหัสผู้ใช้ให้ครบตามรูปแบบ') } : {}), ...(!uuid.test(v.duplicate_user_id) || v.primary_user_id.toLowerCase() === v.duplicate_user_id.toLowerCase() ? { duplicate_user_id: __uiText('ใส่รหัสผู้ใช้ของสองบัญชีที่ต่างกัน') } : {}) })}
       onSuccess={r => { draft.clear(); setMsg(__uiMessage('รวมแล้ว: {0}', { 0: JSON.stringify(r).slice(0,200) })); }}>
       <TaskInput name="primary_user_id" label={__uiText('บัญชีหลัก (เก็บไว้)')} required className="font-mono" value={v.primary_user_id} onChange={e => draft.set(current => ({ ...current, primary_user_id: e.target.value.trim() }))} />
       <TaskInput name="duplicate_user_id" label={__uiText('บัญชีซ้ำ (รวมเข้า)')} required className="font-mono" value={v.duplicate_user_id} onChange={e => draft.set(current => ({ ...current, duplicate_user_id: e.target.value.trim() }))} />

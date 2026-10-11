@@ -45,7 +45,7 @@ it('shows the term, branch terms, the open-application warning and merged compan
   const text = host.textContent ?? '';
   expect(text).toContain('30 วัน');
   expect(text).toContain('สาขาหนึ่ง: ตามบริษัท');
-  expect(text).toContain('PENDING');
+  expect(text).toContain('รอพิจารณา');
   expect(api.list).toHaveBeenCalledWith({ kind: 'customer', scopeId: 'c1', page: 1 });
   expect(api.list).toHaveBeenCalledWith({ kind: 'contract', scopeId: 'b1', page: 1 });
   expect(text).toContain('SKU-1');

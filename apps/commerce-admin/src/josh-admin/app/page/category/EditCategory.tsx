@@ -11,7 +11,7 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { isAllCategory } from './category-all';
 import { CATEGORY_ROWS_QUERY_KEY, Field, levelLabel } from './category-form';
 
-import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { ErrorText, Loading, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 
 const EditCategory = () => {
   __useUiLocale();
@@ -101,20 +101,20 @@ const EditCategory = () => {
   };
 
   if (isLoading) {
-    return <div className="cp-management-page text-sm text-gray-500">{__uiText('กำลังโหลด...')}</div>;
+    return <div className="cp-management-page"><Loading variant="form" /></div>;
   }
 
   return (
     <AdminInsertLayout
       title={__uiText('แก้ไขหมวดหมู่สินค้า')}
-      subtitle={__uiText('แก้ชื่อ ไอคอน ลำดับ และการแสดงผลบนหน้าแรก — ตำแหน่งในโครงสร้างมาจาก seed ย้ายที่นี่ไม่ได้')}
+      subtitle={__uiText('แก้ชื่อ ไอคอน ลำดับ และการแสดงบนหน้าแรก ตำแหน่งของหมวดในโครงสร้างย้ายที่นี่ไม่ได้')}
       backPath={ADMIN_ROUTES.categories}
       saving={saving}
       saveLabel="บันทึกหมวดหมู่"
       steps={['ตรวจชื่อหมวด', 'แก้ชื่อหรือรูป', 'บันทึก']}
       onSave={handleSubmit}
     >
-      {error && <p className="text-sm text-alert">{__uiText(error)}</p>}
+      {error && <ErrorText error={__uiText(error)} />}
 
       <div className="rounded-lg bg-primary-soft px-4 py-3 text-sm text-ink-secondary">
         <div className="mb-1 flex items-center gap-2">
@@ -128,7 +128,7 @@ const EditCategory = () => {
             className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
           >
             <HiOutlineExternalLink size={16} />
-            {__uiText('ดูใน shop')}
+            {__uiText('ดูบนร้านค้า')}
           </a>
         </div>
         <span className="font-medium text-ink">{__uiText('ตำแหน่งในโครงสร้าง:')}</span>{' '}
@@ -188,7 +188,7 @@ const EditCategory = () => {
       </Field>
 
       <Field
-        label="ตัวเลือกการเรียงเฉพาะหมวดนี้ (Sort options — JSON)"
+        label="ตัวเลือกการเรียงเฉพาะหมวดนี้ (JSON)"
         hint={'รูปแบบ [{"key":"a1","label":"A1","order":1}] · order น้อยแสดงก่อน'}
       >
         <Textarea
@@ -210,7 +210,7 @@ const EditCategory = () => {
         <span>
           <span className="font-medium text-ink">{__uiText('แสดงบนหน้าแรก')}</span>
           <span className="block text-xs text-ink-muted">
-            {__uiText('แถวไอคอนหน้าแรกดึงเฉพาะหมวด Level 1 — ติ๊กที่ Level อื่นจะยังไม่มีผล')}
+            {__uiText('แถวไอคอนหน้าแรกแสดงเฉพาะหมวดหน้าแรก ติ๊กที่หมวดชั้นอื่นจะยังไม่มีผล')}
           </span>
         </span>
       </label>

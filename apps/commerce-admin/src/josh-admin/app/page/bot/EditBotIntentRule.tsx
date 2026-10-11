@@ -45,7 +45,7 @@ const EditBotIntentRule = () => {
 
   const handleSubmit = async () => {
     if (!id || !form.pattern) {
-      alert(__uiText("กรุณากรอก Pattern"));
+      alert(__uiText("กรุณากรอกรูปแบบคำที่ใช้จับ"));
       return false;
     }
     setSaving(true);

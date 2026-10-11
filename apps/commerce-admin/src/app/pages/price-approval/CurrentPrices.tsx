@@ -20,6 +20,7 @@ import {
   TR,
   useUiLocale,
   useUnsavedChanges,
+  fmt,
 } from "@cp/ui";
 import { z } from "zod";
 import { api, productPricesApi, session } from "../../../lib/api";
@@ -77,6 +78,14 @@ const label = (k: (typeof keys)[number]) =>
     : k === "orderingPrice"
       ? text("ราคาต่อหน่วยสั่ง", "Price per ordering unit")
       : text("จำนวนขั้นต่ำ", "Minimum order quantity");
+const sourceLabel = (s: string) =>
+  s === "staff"
+    ? text("ทีมงาน", "Staff")
+    : s === "import"
+      ? text("นำเข้าข้อมูล", "Import")
+      : s === "erp"
+        ? text("ระบบหลัก (ERP)", "ERP")
+        : s;
 const show = (v: unknown) =>
   v == null ? text("ยังไม่มีข้อมูล", "Not recorded") : String(v);
 function Scope() {
@@ -84,7 +93,7 @@ function Scope() {
     <Alert tone="info">
       <p>
         {text(
-          "แก้เฉพาะราคาต่อหน่วยและจำนวนขั้นต่ำของ SKU นี้ ค่าไม่ได้ระบุจะคงเดิม ล้างค่าจะบันทึกเป็นไม่มีค่า ข้อเสนอ ERP และราคาสัญญาลูกค้าไม่เปลี่ยน",
+          "แก้เฉพาะราคาต่อหน่วยและจำนวนขั้นต่ำของสินค้านี้ ค่าที่ไม่ได้ระบุจะคงเดิม ล้างค่าจะบันทึกเป็นไม่มีค่า ข้อเสนอจากระบบหลักและราคาสัญญาลูกค้าไม่เปลี่ยน",
           "Edit only this SKU’s unit prices and minimum quantity. Omitted fields keep their values; Clear stores no value. ERP proposals and customer contract prices remain unchanged.",
         )}
       </p>
@@ -203,7 +212,7 @@ function Inspect({ owner, sku }: { owner: string; sku: string }) {
           {source.data.ownership !== "commerce" ? (
             <Alert tone="warn">
               {text(
-                "Josh ยังเป็นเจ้าของราคา ค่า Commerce ที่เก็บไว้อาจไม่ใช่ราคาปัจจุบันของ Josh ยังแก้ที่นี่ไม่ได้",
+                "ร้านค้ายังดูแลราคาเอง ค่าที่เก็บไว้ในระบบนี้อาจไม่ใช่ราคาปัจจุบันของร้านค้า ยังแก้ที่นี่ไม่ได้",
                 "Josh still owns prices. Retained commerce values may differ from the current Josh price. Editing is unavailable here.",
               )}
             </Alert>
@@ -280,7 +289,7 @@ function List({ owner }: { owner: string }) {
         title={
           source.data?.owned === false
             ? text(
-                "ตรวจราคา Commerce ที่เก็บไว้",
+                "ตรวจราคาที่เก็บไว้ในระบบนี้",
                 "Inspect retained commerce prices",
               )
             : text("ตรวจและแก้ราคาปัจจุบัน", "Inspect and edit current prices")
@@ -288,7 +297,7 @@ function List({ owner }: { owner: string }) {
         subtitle={
           source.data?.owned === false
             ? text(
-                "ตรวจค่าที่เก็บไว้ใน Commerce ผู้ดูแลราคา Josh อาจมีค่าปัจจุบันต่างจากนี้",
+                "ตรวจค่าที่เก็บไว้ในระบบนี้ ราคาปัจจุบันบนร้านค้าอาจต่างจากนี้",
                 "Inspect values retained in commerce. The price owner Josh may have different current values.",
               )
             : text(
@@ -298,7 +307,7 @@ function List({ owner }: { owner: string }) {
         }
       />
       <WorkspaceLink to="/product-prices">
-        {text("เปิดข้อเสนอราคาจาก ERP", "Open ERP price proposals")}
+        {text("เปิดราคาที่ระบบหลักเสนอ", "Open ERP price proposals")}
       </WorkspaceLink>
       <PriceRequestLinks owner={owner} />
       <form
@@ -310,7 +319,7 @@ function List({ owner }: { owner: string }) {
       >
         <div className="min-w-0 flex-1">
           <TaskInput
-            label={text("ค้นหา SKU", "Search SKU")}
+            label={text("ค้นหารหัสสินค้า", "Search SKU")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -325,7 +334,7 @@ function List({ owner }: { owner: string }) {
           {!source.data.owned && (
             <Alert tone="warn">
               {text(
-                "Josh ยังเป็นเจ้าของราคา ตรวจข้อมูลได้แต่ยังแก้ที่นี่ไม่ได้",
+                "ร้านค้ายังดูแลราคาเอง ตรวจข้อมูลได้แต่ยังแก้ที่นี่ไม่ได้",
                 "Josh still owns prices. Retained commerce values may differ from the current Josh price. Editing is unavailable here.",
               )}
             </Alert>
@@ -338,9 +347,9 @@ function List({ owner }: { owner: string }) {
             <Panel>
               <Table>
                 <THead>
-                  <TH>SKU</TH>
+                  <TH>{text("รหัสสินค้า", "SKU")}</TH>
                   {keys.map((k) => (
-                    <TH key={k}>{label(k)}</TH>
+                    <TH key={k} right>{label(k)}</TH>
                   ))}
                   <TH>{text("ที่มา", "Source")}</TH>
                   <TH>{text("แก้ล่าสุด", "Last updated")}</TH>
@@ -350,11 +359,11 @@ function List({ owner }: { owner: string }) {
                   {source.data.page.items.map((r) => (
                     <TR key={r.sku}>
                       <TD kind="mono">{r.sku}</TD>
-                      <TD>{show(r.selling_unit_price)}</TD>
-                      <TD>{show(r.ordering_price)}</TD>
-                      <TD>{show(r.moq)}</TD>
-                      <TD>{r.source}</TD>
-                      <TD>{r.updated_at}</TD>
+                      <TD kind="money">{r.selling_unit_price == null ? show(null) : fmt.baht(r.selling_unit_price)}</TD>
+                      <TD kind="money">{r.ordering_price == null ? show(null) : fmt.baht(r.ordering_price)}</TD>
+                      <TD kind="num">{r.moq == null ? show(null) : fmt.num(r.moq)}</TD>
+                      <TD>{sourceLabel(r.source)}</TD>
+                      <TD kind="time">{fmt.when(r.updated_at)}</TD>
                       <TD>
                         <WorkspaceLink to={manualPriceViewUrl(r.sku)}>
                           {text("ตรวจราคา", "Inspect price")}
@@ -369,7 +378,7 @@ function List({ owner }: { owner: string }) {
             <Empty>
               {search
                 ? text(
-                    "ไม่พบ SKU ลองค้นหาใหม่",
+                    "ไม่พบรหัสสินค้า ลองค้นหาใหม่",
                     "No matching SKU. Try another search.",
                   )
                 : text(
@@ -379,7 +388,7 @@ function List({ owner }: { owner: string }) {
               {search.trim() && Array.from(search.trim()).length <= 64 && (
                 <WorkspaceLink to={manualPriceViewUrl(search.trim())}>
                   {text(
-                    "ตรวจ SKU นี้จากรายการสินค้าที่ระบบรู้จัก",
+                    "ตรวจสินค้านี้จากรายการสินค้าที่ระบบรู้จัก",
                     "Inspect this exact SKU in known products",
                   )}
                 </WorkspaceLink>
@@ -551,7 +560,7 @@ function Edit({ owner, sku }: { owner: string; sku: string }) {
           {source.data.ownership !== "commerce" && (
             <Alert tone="warn">
               {text(
-                "Josh ยังเป็นเจ้าของราคา บันทึกที่นี่ไม่ได้",
+                "ร้านค้ายังดูแลราคาเอง บันทึกที่นี่ไม่ได้",
                 "Josh still owns prices. Retained commerce values may differ from the current Josh price. Saving is unavailable here.",
               )}
             </Alert>
@@ -810,7 +819,7 @@ function Review({ owner, sku }: { owner: string; sku: string }) {
           {review.ownership !== "commerce" && (
             <Alert tone="warn">
               {text(
-                "Josh ยังเป็นเจ้าของราคา บันทึกที่นี่ไม่ได้",
+                "ร้านค้ายังดูแลราคาเอง บันทึกที่นี่ไม่ได้",
                 "Josh still owns prices. Saving is unavailable here.",
               )}
             </Alert>
@@ -863,7 +872,7 @@ function Receipt({ receipt }: { receipt: ManualPriceReceipt }) {
     <>
       <Alert tone="ok">
         <strong>
-          {text("บันทึกการแก้ราคาแล้ว 1 SKU", "Saved price edit for 1 SKU")}
+          {text("บันทึกการแก้ราคาแล้ว 1 รายการ", "Saved price edit for 1 SKU")}
         </strong>
         <p>
           {text(
@@ -889,7 +898,7 @@ function Receipt({ receipt }: { receipt: ManualPriceReceipt }) {
       <p className="break-words">
         {text("ผู้บันทึก: ", "Saved by: ")}
         {receipt.updatedBy} · {receipt.savedAt} ·{" "}
-        {text("ที่มา: staff", "Source: staff")}
+        {text("ที่มา: ทีมงาน", "Source: staff")}
       </p>
       <Alert tone="info">
         {text(

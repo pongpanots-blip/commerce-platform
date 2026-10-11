@@ -233,7 +233,7 @@ export function ConditionRow({ leaf, fields, options, onChange, onRemove }: Prop
       <button
         type="button"
         onClick={onRemove}
-        className="ml-auto shrink-0 text-xs text-red-500 hover:underline"
+        className="ml-auto shrink-0 text-xs text-danger hover:underline"
       >
         {__uiText("ลบเงื่อนไข")}</button>
     </div>

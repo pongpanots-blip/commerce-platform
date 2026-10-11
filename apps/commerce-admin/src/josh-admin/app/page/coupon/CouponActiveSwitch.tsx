@@ -8,7 +8,7 @@ type Props = {
   disabled?: boolean;
 };
 
-/** Green/red on-off switch for `coupons.is_active`, shown in the page header on create/edit. */
+/** On-off switch for `coupons.is_active`, shown in the page header on create/edit. */
 export function CouponActiveSwitch({ checked, onChange, disabled }: Props) {
   __useUiLocale();
   return (
@@ -19,16 +19,16 @@ export function CouponActiveSwitch({ checked, onChange, disabled }: Props) {
       aria-label={__uiText("เปิดใช้งานคูปอง")}
       disabled={disabled}
       onClick={() => onChange(!checked)}
-      className={`inline-flex h-10 items-center gap-2 rounded-full border px-3 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+      className={`inline-flex h-10 items-center gap-2 rounded-full border px-3 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${
         checked
-          ? 'border-emerald-200 bg-emerald-50 text-emerald-700 focus-visible:ring-emerald-500'
-          : 'border-red-200 bg-red-50 text-red-700 focus-visible:ring-red-500'
+          ? 'border-ok/20 bg-ok-container text-ok'
+          : 'border-outline-variant bg-surface-container text-on-surface-variant'
       }`}
     >
       <span
         aria-hidden
         className={`relative inline-block h-6 w-11 shrink-0 rounded-full shadow-inner transition-colors duration-200 ${
-          checked ? 'bg-emerald-500' : 'bg-red-500'
+          checked ? 'bg-ok' : 'bg-outline-variant'
         }`}
       >
         <span

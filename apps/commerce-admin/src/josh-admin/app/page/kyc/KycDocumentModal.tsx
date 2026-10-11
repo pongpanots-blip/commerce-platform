@@ -2,10 +2,10 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 import { useState } from 'react';
 import { KYC_DOCUMENT_TYPES, KycQueueEntry } from './kyc.types';
-import { KycStatusBadge } from './KycStatusBadge';
+import { KycStatusBadge, customerTypeLabel } from './KycStatusBadge';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Modal, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Props = {
   entry: KycQueueEntry;
   onClose: () => void;
@@ -36,7 +36,7 @@ function DocumentThumbnail({ thumbnailUrl, label, placeholderLabel, isNone }: Th
       <img
         src={thumbnailUrl}
         alt={label}
-        className="h-[72px] w-[72px] flex-none rounded-lg border border-gray-200 object-cover"
+        className="h-[72px] w-[72px] flex-none rounded-lg border border-secondary-container object-cover"
         onError={() => setImageFailed(true)}
       />
     );
@@ -44,8 +44,8 @@ function DocumentThumbnail({ thumbnailUrl, label, placeholderLabel, isNone }: Th
 
   return (
     <div
-      className={`flex h-[72px] w-[72px] flex-none items-center justify-center rounded-lg border border-gray-200 text-center text-[11px] font-semibold ${
-        isNone ? 'bg-gray-50 text-gray-400' : 'bg-gradient-to-br from-gray-200 to-gray-300 text-gray-600'
+      className={`flex h-[72px] w-[72px] flex-none items-center justify-center rounded-lg border border-secondary-container text-center text-[11px] font-semibold ${
+        isNone ? 'bg-surface-container-low text-outline' : 'bg-surface-container text-on-surface-variant'
       }`}
     >
       {placeholderLabel}
@@ -57,27 +57,9 @@ function DocumentThumbnail({ thumbnailUrl, label, placeholderLabel, isNone }: Th
 export default function KycDocumentModal({ entry, onClose }: Props) {
   __useUiLocale();
   return (
-    <div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="max-h-[88vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-1 flex items-start justify-between">
-          <h2 className="text-base font-bold text-gray-800">{__uiText("เอกสารยืนยันตัวตน")}</h2>
-          <button
-            type="button"
-            aria-label={__uiText("ปิด")}
-            className="text-gray-400 hover:text-gray-600"
-            onClick={onClose}
-          >
-            ✕
-          </button>
-        </div>
-        <p className="mb-4 text-xs text-gray-400">
-          {entry.companyName} · {entry.customerType}
+    <Modal title={__uiText("เอกสารยืนยันตัวตน")} onClose={onClose} width={520}>
+        <p className="text-xs text-on-surface-variant">
+          {entry.companyName} · {customerTypeLabel(entry.customerType)}
         </p>
 
         <div className="flex flex-col gap-3">
@@ -87,19 +69,19 @@ export default function KycDocumentModal({ entry, onClose }: Props) {
             const decidedText = formatTimestamp(doc.decidedAt);
 
             return (
-              <div key={docType.key} className="rounded-lg border border-gray-200 p-3">
+              <div key={docType.key} className="rounded-lg border border-secondary-container p-3">
                 <div className="mb-2.5 flex items-center justify-between gap-2">
-                  <span className="text-sm font-bold text-gray-700">{docType.label}</span>
+                  <span className="text-sm font-semibold text-on-surface">{docType.label}</span>
                   <KycStatusBadge status={doc.status} />
                 </div>
                 <div className="flex items-start gap-3">
                   <DocumentThumbnail
                     thumbnailUrl={doc.thumbnailUrl}
                     label={docType.label}
-                    placeholderLabel={doc.status === 'none' ? 'ไม่มีไฟล์' : docType.thumbnailLabel}
+                    placeholderLabel={doc.status === 'none' ? __uiText('ไม่มีไฟล์') : docType.thumbnailLabel}
                     isNone={doc.status === 'none'}
                   />
-                  <div className="min-w-0 flex-1 text-xs leading-relaxed text-gray-500">
+                  <div className="min-w-0 flex-1 text-xs leading-relaxed text-on-surface-variant">
                     {doc.status === 'none' ? (
                       <span>{__uiText("ยังไม่มีการส่งเอกสารนี้")}</span>
                     ) : (
@@ -110,7 +92,7 @@ export default function KycDocumentModal({ entry, onClose }: Props) {
                       </>
                     )}
                     {doc.status === 'rejected' && doc.rejectionReason && (
-                      <div className="mt-2 rounded-md border border-red-200 bg-red-50 px-2.5 py-2 text-xs text-red-800">
+                      <div className="mt-2 rounded-md bg-danger-container px-2.5 py-2 text-xs text-danger">
                         <strong>{__uiText("เหตุผลที่ปฏิเสธ:")}</strong> {doc.rejectionReason}
                       </div>
                     )}
@@ -121,9 +103,8 @@ export default function KycDocumentModal({ entry, onClose }: Props) {
           })}
         </div>
 
-        <p className="mt-4 border-t border-gray-100 pt-3 text-[11px] text-gray-400">
-          {__uiText("การอนุมัติ/ปฏิเสธคำขอนี้ทำในระบบ CS-CRM แยกต่างหาก หน้านี้ใช้สำหรับดูเอกสารเท่านั้น")}</p>
-      </div>
-    </div>
+        <p className="border-t border-secondary-container pt-3 text-[11px] text-on-surface-variant">
+          {__uiText("หน้านี้ใช้ดูเอกสารอย่างเดียว การอนุมัติหรือปฏิเสธทำในระบบบริการลูกค้า (CS-CRM)")}</p>
+    </Modal>
   );
 }

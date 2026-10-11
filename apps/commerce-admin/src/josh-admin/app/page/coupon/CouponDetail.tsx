@@ -76,7 +76,16 @@ import {
 } from './coupon-form-draft.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, StatusChip } from "@cp/ui";
+const DISTRIBUTION_TYPE_LABELS: Record<string, string> = {
+  get public(){return __uiText("ทุกคนใช้ได้");},
+  get assigned(){return __uiText("เฉพาะรายชื่อที่กำหนด");},
+  get unique_per_user(){return __uiText("โค้ดเฉพาะของแต่ละคน");},
+};
+const COUPON_TYPE_LABELS: Record<string, string> = {
+  get discount(){return __uiText("ส่วนลดทันที");},
+  get cashback(){return __uiText("คืนเงิน/เครดิต");},
+};
 type EntitlementRow = {
   id: string;
   user_id: string;
@@ -682,7 +691,7 @@ const CouponDetail = () => {
     }
     return (
       <div className="cp-management-page space-y-3">
-        <p className="text-red-600">{loadError || __uiText("โหลดคูปองไม่สำเร็จ")}</p>
+        <p className="text-danger">{loadError || __uiText("โหลดคูปองไม่สำเร็จ")}</p>
         <ActionButton
           variant="secondary"
           onClick={() => {
@@ -752,21 +761,13 @@ const CouponDetail = () => {
     {
       key: 'status',
       label: __uiText("สถานะ"),
-      render: (value) => (
-        <span
-          className={`rounded-full px-2 py-0.5 text-xs ${
-            value === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-          }`}
-        >
-          {value}
-        </span>
-      ),
+      render: (value) => <StatusChip status={value} />,
     },
     {
       key: 'notified_at',
       label: __uiText("แจ้งแล้ว"),
       render: (value) => (
-        <span className="text-xs text-gray-600">
+        <span className="whitespace-nowrap text-xs tabular-nums text-gray-600">
           {value ? new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) : __uiText("ยังไม่แจ้ง")}
         </span>
       ),
@@ -808,9 +809,10 @@ const CouponDetail = () => {
   const discountSummary =
     coupon.discount_type === 'PERCENTAGE'
       ? `${coupon.discount_value}%`
-      : `${coupon.discount_value} บาท`;
+      : `${Number(coupon.discount_value).toLocaleString()} บาท`;
   const subtitle =
-    `${coupon.distribution_type} · ${coupon.coupon_type} · ${discountSummary} · ` +
+    `${DISTRIBUTION_TYPE_LABELS[coupon.distribution_type] ?? coupon.distribution_type} · ` +
+    `${COUPON_TYPE_LABELS[coupon.coupon_type] ?? coupon.coupon_type} · ${discountSummary} · ` +
     `ใช้ได้ ${formatBangkokRange(coupon.start_date, coupon.end_date, 'th')} (เวลาไทย) · ` +
     describeCouponAudience(audience);
 
@@ -879,7 +881,7 @@ const CouponDetail = () => {
       <CouponFormErrorBanner error={pageError} />
 
       {redemptionLoadFailed && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warn/20 bg-warn-container px-4 py-3 text-sm text-warn">
           <span>
             {__uiText("โหลดเงื่อนไขใช้โค้ดไม่สำเร็จ — บันทึกตอนนี้จะเขียนทับเงื่อนไขเดิมด้วยค่าว่าง กดโหลดใหม่ก่อนบันทึก")}</span>
           <ActionButton variant="secondary" disabled={busy} onClick={() => void loadCoupon()}>
@@ -1007,12 +1009,12 @@ const CouponDetail = () => {
                 {audienceSegmentId &&
                   entitlements.length === 0 &&
                   audience.mode === 'segment' && (
-                    <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                    <div className="rounded-xl border border-warn/20 bg-warn-container px-4 py-3 text-sm text-warn">
                       {__uiText("มีกลุ่มเป้าหมายแล้วแต่ยังไม่มีรายชื่อ — ระบบจะสร้างให้อัตโนมัติ")}{segmentMemberCount != null ? __uiText(" (ประมาณ {0} คน)", {"0": segmentMemberCount}) : ''}
                       {' · '}
                       <button
                         type="button"
-                        className="font-medium text-amber-950 underline"
+                        className="font-medium text-warn underline"
                         disabled={busy}
                         onClick={() => void handleGenerateFromSegment()}
                       >

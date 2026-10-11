@@ -27,7 +27,7 @@ import { ProcessingResult, type ProcessingResultData } from '../../components/ba
 import type { StickerAsset, StickerPreset } from '../../types/batch-sticker';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button, PageHeader, Panel, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function BatchSticker() {
   __useUiLocale();
   const [state, dispatch] = useReducer(batchStickerReducer, initialBatchState);
@@ -159,11 +159,10 @@ export function BatchSticker() {
 
   return (
     <div className="cp-management-page space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-gray-800">{__uiText("Batch Sticker")}</h1>
-      </div>
-      <p className="text-xs text-gray-400">
-        {__uiText("Images are processed locally in your browser. Your files are not uploaded.")}</p>
+      <PageHeader
+        title={__uiText("พิมพ์สติกเกอร์")}
+        subtitle={__uiText("ติดสติกเกอร์ลงรูปหลายรูปพร้อมกัน รูปถูกประมวลผลในเบราว์เซอร์ของคุณ ไม่มีการอัปโหลดไฟล์")}
+      />
 
       {result ? (
         <ProcessingResult result={result} onDownload={handleDownload} onStartNewLot={handleStartNewLot} />
@@ -172,33 +171,29 @@ export function BatchSticker() {
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-3">
-            <div className="rounded-md border border-gray-200 bg-white p-4">
-              <div className="mb-2 text-sm font-medium text-gray-700">{__uiText("LOT")}</div>
+            <Panel className="p-4">
+              <h2 className="mb-2 text-[15px] font-semibold text-on-surface">{__uiText("ชุดรูป")}</h2>
               <BatchUploader
                 imageCount={state.images.length}
                 onImagesAdded={(images) => dispatch({ type: 'ADD_IMAGES', images })}
               />
               {resolutionCheck.status === 'consistent' && (
-                <p className="mt-2 text-sm text-green-600">
+                <p className="mt-2 text-sm text-ok">
                   {__uiText("✓ All images: ")}{resolutionCheck.width} × {resolutionCheck.height}
                 </p>
               )}
               {resolutionCheck.status === 'mixed' && (
-                <p className="mt-2 text-sm text-amber-600">{__uiText("⚠ Mixed image resolutions detected")}</p>
+                <p className="mt-2 text-sm text-warn">{__uiText("⚠ Mixed image resolutions detected")}</p>
               )}
-            </div>
+            </Panel>
 
             {state.images.length === 0 ? null : state.layers.length === 0 && !showStickerUploader ? (
-              <div className="rounded-md border border-gray-200 bg-white p-4 text-sm text-gray-500">
-                {state.images.length} {__uiText(" images loaded — upload a sticker to continue.")}<div className="mt-2">
-                  <button
-                    type="button"
-                    className="rounded-md border border-gray-200 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
-                    onClick={() => setShowStickerUploader(true)}
-                  >
-                    {__uiText("Upload Sticker")}</button>
+              <Panel className="p-4 text-sm text-on-surface-variant">
+                {__uiText("โหลดรูปแล้ว {0} รูป อัปโหลดสติกเกอร์เพื่อทำต่อ", { 0: state.images.length })}<div className="mt-2">
+                  <Button variant="primary" icon="upload" onClick={() => setShowStickerUploader(true)}>
+                    {__uiText("อัปโหลดสติกเกอร์")}</Button>
                 </div>
-              </div>
+              </Panel>
             ) : (
               <>
                 <PreviewCanvas
@@ -235,14 +230,14 @@ export function BatchSticker() {
 
           <div className="space-y-3">
             {showStickerUploader && (
-              <div className="rounded-md border border-gray-200 bg-white p-4">
-                <div className="mb-2 text-sm font-medium text-gray-700">{__uiText("Add Sticker")}</div>
+              <Panel className="p-4">
+                <h2 className="mb-2 text-[15px] font-semibold text-on-surface">{__uiText("เพิ่มสติกเกอร์")}</h2>
                 <StickerUploader onAsset={handleAddStickerLayer} />
-              </div>
+              </Panel>
             )}
 
             {state.layers.length > 0 && (
-              <div className="rounded-md border border-gray-200 bg-white p-4">
+              <Panel className="p-4">
                 <LayerList
                   layers={state.layers}
                   selectedLayerId={state.selectedLayerId}
@@ -251,13 +246,13 @@ export function BatchSticker() {
                   onMove={(id, direction) => dispatch({ type: 'MOVE_LAYER', layerId: id, direction })}
                   onAddLayerClick={() => setShowStickerUploader(true)}
                 />
-              </div>
+              </Panel>
             )}
 
             {selectedLayer && (
               <>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">{__uiText("Sticker Settings")}</span>
+                  <span className="text-[15px] font-semibold text-on-surface">{__uiText("ตั้งค่าสติกเกอร์")}</span>
                   <UndoRedoControls
                     canUndo={state.history.past.length > 0}
                     canRedo={state.history.future.length > 0}

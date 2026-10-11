@@ -26,7 +26,7 @@ export function PromotionRulesLockedNotice({
   const editHref = ADMIN_ROUTES.promotionsMechanicEdit(lockedBy.mechanic_id);
   return (
     <div data-testid="promotion-rules-locked" className="space-y-3">
-      <p className="text-sm text-amber-800">
+      <p className="text-sm text-warn">
         {__uiText("ราคาตามจำนวนของสินค้านี้มาจากโปรโมชัน ")}<b>{lockedBy.mechanic_name}</b> {__uiText(" — แก้ที่นี่ไม่ได้")}</p>
       {rules.length > 0 ? (
         <>
@@ -36,15 +36,15 @@ export function PromotionRulesLockedNotice({
           <TableViewport><table className="cp-data-table min-w-full text-sm text-gray-600">
             <thead className="text-left text-xs text-gray-500">
               <tr>
-                <th className="px-2 py-1 font-medium" scope="col">{__uiText("ซื้อขั้นต่ำ")}</th>
-                <th className="px-2 py-1 font-medium" scope="col">{__uiText("ราคา/หน่วย (฿)")}</th>
+                <th className="px-2 py-1 font-medium text-right" scope="col">{__uiText("ซื้อขั้นต่ำ")}</th>
+                <th className="px-2 py-1 font-medium text-right" scope="col">{__uiText("ราคา/หน่วย (฿)")}</th>
               </tr>
             </thead>
             <tbody>
               {rules.map((rule) => (
                 <tr key={rule.id} className="border-t border-gray-100">
-                  <td className="px-2 py-1">{rule.minQty}</td>
-                  <td className="px-2 py-1">{rule.promotionPrice}</td>
+                  <td className="px-2 py-1 text-right tabular-nums">{rule.minQty}</td>
+                  <td className="px-2 py-1 text-right tabular-nums">{rule.promotionPrice}</td>
                 </tr>
               ))}
             </tbody>

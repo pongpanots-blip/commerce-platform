@@ -10,7 +10,7 @@ import AdminListHeader from '../../components/AdminListHeader';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Button, Chip, KeyValueGrid, Panel, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type CompanySearchRow = {
   id: string;
   name: string;
@@ -159,34 +159,29 @@ export default function Billing() {
   };
 
   const columns: TableColumn<InvoiceRow>[] = [
-    { key: 'invoice_number', label: __uiText("Invoice #") },
-    { key: 'order_number', label: __uiText("Order"), render: (v) => v ?? '-' },
+    { key: 'invoice_number', label: __uiText("เลขที่ใบแจ้งหนี้"), render: (v) => <span className="font-mono">{v}</span> },
+    { key: 'order_number', label: __uiText("เลขที่ออเดอร์"), render: (v) => (v ? <span className="font-mono">{v}</span> : '-') },
     {
       key: 'order_user_email',
       label: __uiText("ลูกค้า"),
       render: (v) => v ?? '-',
     },
     { key: 'due_date', label: __uiText("ครบกำหนด"), render: (v) => new Date(v).toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) },
-    { key: 'total', label: __uiText("มูลค่า"), render: (v) => Number(v).toLocaleString() },
+    { key: 'total', label: __uiText("มูลค่า"), align: 'right', render: (v) => <span className="tabular-nums">{__uiText("฿")}{Number(v).toLocaleString()}</span> },
     {
       key: 'status',
       label: __uiText("สถานะ"),
       render: (_v, row) => (
         <div className="flex flex-wrap items-center gap-1.5">
-          <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              row.status === 'paid'
-                ? 'bg-emerald-100 text-emerald-700'
-                : row.status === 'overdue'
-                ? 'bg-red-100 text-red-700'
-                : 'bg-amber-100 text-amber-700'
-            }`}
+          <Chip
+            tone={row.status === 'paid' ? 'ok' : row.status === 'overdue' ? 'danger' : 'warn'}
+            statusCode={row.status}
+            dot
           >
             {row.status === 'paid' ? __uiText("ชำระแล้ว") : row.status === 'overdue' ? __uiText("เลยกำหนด") : __uiText("ยังไม่ชำระ")}
-          </span>
+          </Chip>
           {row.erp_invoice_cancelled && (
-            <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600">
-              {__uiText("ERP ยกเลิก")}</span>
+            <Chip tone="muted">{__uiText("ยกเลิกในระบบหลัก (ERP)")}</Chip>
           )}
         </div>
       ),
@@ -205,32 +200,28 @@ export default function Billing() {
   ];
 
   const overdueColumns: TableColumn<OverdueRow>[] = [
-    { key: 'invoice_number', label: __uiText("Invoice #") },
-    { key: 'order', label: __uiText("Order"), render: (_v, row) => row.order?.order_number ?? '-' },
+    { key: 'invoice_number', label: __uiText("เลขที่ใบแจ้งหนี้"), render: (v) => <span className="font-mono">{v}</span> },
+    { key: 'order', label: __uiText("เลขที่ออเดอร์"), render: (_v, row) => (row.order?.order_number ? <span className="font-mono">{row.order.order_number}</span> : '-') },
     { key: 'order', label: __uiText("ลูกค้า"), render: (_v, row) => row.order?.user?.email ?? '-' },
-    { key: 'due_date', label: __uiText("ครบกำหนด") },
+    { key: 'due_date', label: __uiText("ครบกำหนด"), render: (v) => (v ? new Date(v).toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) : '-') },
   ];
 
   return (
-    <div className="cp-management-page">
-      <AdminListHeader title={__uiText("Billing")} subtitle={__uiText("ค้นหาบริษัท ดู credit และใบแจ้งหนี้ทั้งหมด")} />
+    <div className="cp-management-page flex flex-col gap-4">
+      <AdminListHeader title={__uiText("วางบิล")} subtitle={__uiText("ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ หรือดูใบแจ้งหนี้ค้างชำระของทุกบริษัท")} />
 
-      <div className="mb-6 max-w-md">
+      <div className="max-w-md">
         <Input
           label={__uiText("ค้นหาบริษัท")}
-          placeholder={__uiText("ชื่อบริษัท, เลขจดทะเบียน หรือ ERP customer code")}
+          placeholder={__uiText("ชื่อบริษัท เลขจดทะเบียน หรือรหัสลูกค้าในระบบหลัก (ERP)")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         {searchError && (
-          <div className="mt-2 flex items-center justify-between rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
-            <span>{(typeof (searchError) === 'string' ? __uiText(searchError) : searchError)}</span>
-            <button
-              type="button"
-              onClick={() => void runSearch(query)}
-              className="font-semibold underline"
-            >
-              {__uiText("ลองใหม่")}</button>
+          <div className="mt-2">
+            <Alert tone="danger" actions={<Button size="sm" onClick={() => void runSearch(query)}>{__uiText("ลองใหม่")}</Button>}>
+              {(typeof (searchError) === 'string' ? __uiText(searchError) : searchError)}
+            </Alert>
           </div>
         )}
         {query.trim().length > 0 && (
@@ -251,7 +242,7 @@ export default function Billing() {
                 >
                   <div className="font-medium text-gray-800">{row.name}</div>
                   <div className="text-xs text-gray-400">
-                    {row.register_number ?? '-'} {row.erp_customer_code ? __uiText("· ERP: {0}", {"0": row.erp_customer_code}) : ''}
+                    {row.register_number ?? '-'} {row.erp_customer_code ? __uiText("· รหัสลูกค้า (ERP): {0}", {"0": row.erp_customer_code}) : ''}
                   </div>
                 </button>
               ))
@@ -261,56 +252,40 @@ export default function Billing() {
       </div>
 
       {billingError && (
-        <div className="mb-4 flex items-center justify-between rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
-          <span>{(typeof (billingError) === 'string' ? __uiText(billingError) : billingError)}</span>
-          {(company || selectedCompanyId) && (
-            <button type="button" onClick={retryBilling} className="font-semibold underline">
-              {__uiText("ลองใหม่")}</button>
-          )}
-        </div>
+        <Alert
+          tone="danger"
+          actions={(company || selectedCompanyId) ? <Button size="sm" onClick={retryBilling}>{__uiText("ลองใหม่")}</Button> : undefined}
+        >
+          {(typeof (billingError) === 'string' ? __uiText(billingError) : billingError)}
+        </Alert>
       )}
 
       {loadingCompany && !company && (
-        <div className="mb-4 text-sm text-gray-400">{__uiText("กำลังโหลดข้อมูลบริษัท...")}</div>
+        <div className="text-sm text-gray-400">{__uiText("กำลังโหลดข้อมูลบริษัท...")}</div>
       )}
 
       {company && (
         <>
-          <div className="mb-6 grid gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:grid-cols-5">
-            <div>
-              <div className="text-xs text-gray-400">{__uiText("บริษัท")}</div>
-              <div className="text-sm font-semibold text-gray-800">{company.name}</div>
+          <Panel className="p-5">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-[15px] font-semibold text-on-surface">{company.name}</h2>
               <Link
                 to={ADMIN_ROUTES.companyEdit(company.id)}
-                className="text-xs text-primary underline"
+                className="text-xs font-medium text-primary hover:underline"
               >
-                {__uiText("แก้ไข credit limit")}</Link>
+                {__uiText("แก้ไขวงเงินเครดิต")}</Link>
             </div>
-            <div>
-              <div className="text-xs text-gray-400">{__uiText("Credit Limit")}</div>
-              <div className="text-sm font-semibold text-gray-800">
-                {company.credit_limit.toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">{__uiText("Credit Used")}</div>
-              <div className="text-sm font-semibold text-gray-800">
-                {company.credit_used.toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">{__uiText("Credit Available")}</div>
-              <div className="text-sm font-semibold text-gray-800">
-                {company.credit_available.toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">{__uiText("Credit Term (วัน)")}</div>
-              <div className="text-sm font-semibold text-gray-800">{company.credit_term_days}</div>
-            </div>
-          </div>
+            <KeyValueGrid
+              items={[
+                { label: "วงเงินเครดิต", value: <span className="tabular-nums">{company.credit_limit.toLocaleString()}</span> },
+                { label: "ใช้ไปแล้ว", value: <span className="tabular-nums">{company.credit_used.toLocaleString()}</span> },
+                { label: "เครดิตคงเหลือ", value: <span className="tabular-nums">{company.credit_available.toLocaleString()}</span> },
+                { label: "เครดิตเทอม (วัน)", value: company.credit_term_days },
+              ]}
+            />
+          </Panel>
 
-          <div className="mb-4 max-w-xs">
+          <div className="max-w-xs">
             <Select
               label={__uiText("สถานะใบแจ้งหนี้")}
               data={STATUS_OPTIONS}
@@ -319,19 +294,30 @@ export default function Billing() {
             />
           </div>
 
-          <Table columns={columns} data={invoices} loading={loadingInvoices || loadingCompany} />
+          <Table
+            columns={columns}
+            data={invoices}
+            loading={loadingInvoices || loadingCompany}
+            emptyTitle={__uiText("บริษัทนี้ยังไม่มีใบแจ้งหนี้")}
+            emptyDescription={__uiText("ลองเลือกสถานะอื่น")}
+          />
         </>
       )}
 
       {!company && !loadingCompany && (
         <>
-          <div className="mb-4 text-sm text-gray-400">
-            {__uiText("ค้นหาและเลือกบริษัทเพื่อดู credit และใบแจ้งหนี้")}</div>
-          <h2 className="mb-2 text-sm font-semibold text-gray-800">{__uiText("ใบแจ้งหนี้เลยกำหนดชำระ")}</h2>
+          <div className="text-sm text-gray-400">
+            {__uiText("ค้นหาและเลือกบริษัทเพื่อดูเครดิตและใบแจ้งหนี้")}</div>
+          <h2 className="text-[15px] font-semibold text-on-surface">{__uiText("ใบแจ้งหนี้เลยกำหนดชำระ")}</h2>
           {overdueError ? (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">{__uiText(overdueError)}</div>
+            <Alert tone="danger">{__uiText(overdueError)}</Alert>
           ) : (
-            <Table columns={overdueColumns} data={overdue} loading={loadingOverdue} />
+            <Table
+              columns={overdueColumns}
+              data={overdue}
+              loading={loadingOverdue}
+              emptyTitle={__uiText("ไม่มีใบแจ้งหนี้เลยกำหนดชำระ")}
+            />
           )}
         </>
       )}

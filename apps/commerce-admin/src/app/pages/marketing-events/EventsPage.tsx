@@ -1,6 +1,6 @@
 // ui-copy-migration: only literal UI copy and notification templates
 import { useState } from 'react';
-import { Alert, Button, Checkbox, Empty, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Segmented, Select, Table, TBody, TD, TH, THead, TR,
+import { Alert, Button, Checkbox, Chip, confirmAction, Empty, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Segmented, Select, Table, TBody, TD, TH, THead, TR,
   uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import type { EventAttributeDef, EventAttributeType, EventDefinition, EventDefinitionInput } from '@cp/marketing-workflow';
 import { eventsApi } from '../../../lib/api';
@@ -11,6 +11,9 @@ const errorText = (e: unknown) => {
   return [d?.message, ...(d?.issues ?? []), ...(d?.users ?? [])].filter(Boolean).join(' · ') || (e instanceof Error ? e.message : String(e));
 };
 const TYPES: EventAttributeType[] = ['string', 'number', 'boolean', 'date'];
+const typeLabel = (type: string) => ({ string: __uiText('ข้อความ'), number: __uiText('ตัวเลข'), boolean: __uiText('ใช่/ไม่ใช่'), date: __uiText('วันที่') } as Record<string, string>)[type] ?? type;
+const attributionLabel = (value: string | null) => value === null ? __uiText('ผู้เยี่ยมชม')
+  : ({ device_link: __uiText('อุปกรณ์ที่ผูกกับบัญชี'), staff: __uiText('พนักงาน'), no_consent: __uiText('ไม่ได้ยินยอม') } as Record<string, string>)[value] ?? value;
 const day = (offset: number) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
 
 /** /marketing/events: catalog (what ingest accepts), recent events, daily totals (spec §14). */
@@ -19,7 +22,7 @@ export function EventsPage() {
   const [tab, setTab] = useState<'catalog' | 'recent' | 'daily'>('catalog');
   return (
     <Page>
-      <PageHeader title={__uiText('Event ลูกค้า')} />
+      <PageHeader title={__uiText('Event ลูกค้า')} subtitle={__uiText('event ที่เว็บและแอปส่งมา และรายการ event ที่ระบบรับ')} />
       <Alert tone="info">{__uiText('ห้ามประกาศ attribute ที่เป็นข้อมูลส่วนบุคคล (อีเมล เบอร์โทร ชื่อ ที่อยู่) — ระบบจะปฏิเสธ')}</Alert>
       <Segmented value={tab} onChange={setTab} options={[{ value: 'catalog', label: __uiText('รายการ event') },
         { value: 'recent', label: __uiText('Event ล่าสุด') }, { value: 'daily', label: __uiText('รายวัน') }]} />
@@ -43,18 +46,18 @@ function Catalog() {
       {editing ? <DefinitionEditor value={editing === 'new' ? null : editing} onDone={() => { setEditing(null); data.reload(); }} /> : (
         <Panel>
           <PanelHead title={__uiText('รายการ event')} actions={<Button size="sm" icon="add" onClick={() => setEditing('new')}>{__uiText('สร้าง event')}</Button>} />
-          <Table>
+          {!(data.data?.definitions ?? []).length ? <Empty>{__uiText('ยังไม่มี event กด "สร้าง event" เพื่อประกาศ event แรก')}</Empty> : <Table>
             <THead><TH>{__uiText('ชื่อ')}</TH><TH>{__uiText('แสดงเป็น')}</TH><TH>{__uiText('Attribute')}</TH><TH>{__uiText('หลักฐาน')}</TH><TH>{__uiText('สถานะ')}</TH><TH kind="actions" /></THead>
             <TBody>{(data.data?.definitions ?? []).map((d) => (
               <TR key={d.name}>
                 <TD kind="mono">{d.name}</TD><TD>{d.label}</TD>
-                <TD>{d.attributes.filter((a) => !a.archived).map((a) => `${a.key}:${a.type}`).join(', ') || '—'}</TD>
+                <TD>{d.attributes.filter((a) => !a.archived).map((a) => `${a.key} (${typeLabel(a.type)})`).join(', ') || '—'}</TD>
                 <TD>{d.evidence === 'browser' ? __uiText('จากหน้าเว็บ / แอป') : __uiText('จากเซิร์ฟเวอร์')}</TD>
-                <TD>{d.status === 'active' ? __uiText('ใช้งาน') : __uiText('เก็บถาวร')}</TD>
+                <TD>{d.status === 'active' ? <Chip tone="ok" dot>{__uiText('ใช้งาน')}</Chip> : <Chip dot>{__uiText('เก็บถาวร')}</Chip>}</TD>
                 <TD kind="actions"><Button size="sm" variant="ghost" onClick={() => setEditing(d)}>{__uiText('แก้ไข')}</Button></TD>
               </TR>
             ))}</TBody>
-          </Table>
+          </Table>}
         </Panel>
       )}
     </div>
@@ -72,7 +75,10 @@ function DefinitionEditor({ value, onDone }: { value: EventDefinition | null; on
     try { if (value) await eventsApi.updateDefinition(value.name, d); else await eventsApi.createDefinition(d); onDone(); }
     catch (e) { setError(errorText(e)); }
   };
-  const archive = async () => { setError(null); try { await eventsApi.archive(value!.name); onDone(); } catch (e) { setError(errorText(e)); } };
+  const archive = async () => {
+    const ok = await confirmAction({ title: __uiText('เก็บถาวร event นี้?'), body: __uiText('ระบบจะไม่รับ event ชื่อนี้อีก ข้อมูลที่เก็บไว้แล้วยังอยู่'), confirmLabel: __uiText('เก็บถาวร'), danger: true });
+    if (!ok) return;
+    setError(null); try { await eventsApi.archive(value!.name); onDone(); } catch (e) { setError(errorText(e)); } };
   return (
     <Panel>
       <PanelHead title={value ? value.name : __uiText('สร้าง event')} />
@@ -94,7 +100,7 @@ function DefinitionEditor({ value, onDone }: { value: EventDefinition | null; on
               <div key={i} className="grid grid-cols-[1fr_120px_1fr_auto] items-center gap-2">
                 <Input value={a.key} disabled={known.has(a.key)} placeholder="item_id" onChange={(e) => setAttr(i, { key: e.target.value })} />
                 <Select value={a.type} disabled={known.has(a.key)} onChange={(e) => setAttr(i, { type: e.target.value as EventAttributeType })}>
-                  {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                  {TYPES.map((t) => <option key={t} value={t}>{typeLabel(t)}</option>)}
                 </Select>
                 <Input value={a.label} placeholder={__uiText('แสดงเป็น')} onChange={(e) => setAttr(i, { label: e.target.value })} />
                 {known.has(a.key)
@@ -105,10 +111,10 @@ function DefinitionEditor({ value, onDone }: { value: EventDefinition | null; on
             <Button size="sm" icon="add" onClick={() => setD({ ...d, attributes: [...d.attributes, { key: '', type: 'string', label: '' }] })}>{__uiText('เพิ่ม attribute')}</Button>
           </div>
         </Field>
-        <div className="flex gap-2">
-          <Button variant="primary" onClick={save}>{__uiText('บันทึก')}</Button>
-          <Button onClick={onDone}>{__uiText('ยกเลิก')}</Button>
-          {value?.status === 'active' && <Button variant="danger-ghost" onClick={archive}>{__uiText('เก็บถาวร event นี้')}</Button>}
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {value?.status === 'active' && <Button variant="danger-ghost" className="mr-auto" onClick={archive}>{__uiText('เก็บถาวร event นี้')}</Button>}
+          <Button variant="ghost" onClick={onDone}>{__uiText('ยกเลิก')}</Button>
+          <Button variant="primary" icon="check" onClick={save}>{__uiText('บันทึก')}</Button>
         </div>
       </div>
     </Panel>
@@ -123,20 +129,20 @@ function Recent() {
   return (
     <Panel>
       <div className="flex flex-wrap items-end gap-2 p-4">
-        <Field label={__uiText('Device')}><Input value={q.deviceId} onChange={(e) => setQ({ ...q, deviceId: e.target.value.trim() })} /></Field>
-        <Field label={__uiText('User')}><Input value={q.userId} onChange={(e) => setQ({ ...q, userId: e.target.value.trim() })} /></Field>
-        <Field label={__uiText('Event')}><Input value={q.name} onChange={(e) => setQ({ ...q, name: e.target.value.trim() })} /></Field>
+        <Field label={__uiText('อุปกรณ์')}><Input value={q.deviceId} onChange={(e) => setQ({ ...q, deviceId: e.target.value.trim() })} /></Field>
+        <Field label={__uiText('ผู้ใช้')}><Input value={q.userId} onChange={(e) => setQ({ ...q, userId: e.target.value.trim() })} /></Field>
+        <Field label={__uiText('ชื่อ event')}><Input value={q.name} onChange={(e) => setQ({ ...q, name: e.target.value.trim() })} /></Field>
         <Button onClick={() => setApplied({ ...q, page: 1 })}>{__uiText('ค้นหา')}</Button>
       </div>
       {list.error && <Alert tone="danger">{list.error}</Alert>}
       {list.loading && !list.data ? <Loading /> : list.data?.rows.length ? (
         <Table>
-          <THead><TH kind="time">{__uiText('เวลา')}</TH><TH>{__uiText('Event')}</TH><TH>{__uiText('Device')}</TH><TH>{__uiText('User')}</TH><TH>{__uiText('ระบุตัวจาก')}</TH><TH>{__uiText('Attribute')}</TH></THead>
+          <THead><TH kind="time">{__uiText('เวลา')}</TH><TH>{__uiText('ชื่อ event')}</TH><TH>{__uiText('อุปกรณ์')}</TH><TH>{__uiText('ผู้ใช้')}</TH><TH>{__uiText('ระบุตัวจาก')}</TH><TH>{__uiText('Attribute')}</TH></THead>
           <TBody>{list.data.rows.map((r) => (
             <TR key={r.eventId}>
               <TD kind="time">{new Date(r.occurredAt).toLocaleString()}</TD><TD kind="mono">{r.name}</TD>
               <TD kind="mono">{r.deviceId.slice(0, 10)} · {r.platform}</TD><TD kind="mono">{r.attributedUserId?.slice(0, 8) ?? '—'}</TD>
-              <TD>{r.attribution ?? __uiText('guest')}</TD><TD kind="mono">{JSON.stringify(r.attributes)}</TD>
+              <TD>{attributionLabel(r.attribution)}</TD><TD kind="mono">{JSON.stringify(r.attributes)}</TD>
             </TR>
           ))}</TBody>
         </Table>
@@ -163,10 +169,10 @@ function Daily() {
       </div>
       {rows.loading && !rows.data ? <Loading /> : rows.data?.length ? (
         <Table>
-          <THead><TH>{__uiText('วันที่')}</TH><TH>{__uiText('Event')}</TH><TH>{__uiText('แพลตฟอร์ม')}</TH><TH kind="num">{__uiText('จำนวน')}</TH><TH kind="num">{__uiText('ลูกค้า')}</TH><TH kind="num">{__uiText('อุปกรณ์')}</TH></THead>
+          <THead><TH kind="time">{__uiText('วันที่')}</TH><TH>{__uiText('ชื่อ event')}</TH><TH>{__uiText('แพลตฟอร์ม')}</TH><TH kind="num">{__uiText('จำนวน')}</TH><TH kind="num">{__uiText('ลูกค้า')}</TH><TH kind="num">{__uiText('อุปกรณ์')}</TH></THead>
           <TBody>{rows.data.map((r) => (
-            <TR key={`${r.date}:${r.name}:${r.platform}`}><TD>{r.date}</TD><TD kind="mono">{r.name}</TD><TD>{r.platform}</TD>
-              <TD kind="num">{r.events}</TD><TD kind="num">{r.users}</TD><TD kind="num">{r.devices}</TD></TR>
+            <TR key={`${r.date}:${r.name}:${r.platform}`}><TD kind="time">{r.date}</TD><TD kind="mono">{r.name}</TD><TD>{r.platform}</TD>
+              <TD kind="num">{r.events.toLocaleString()}</TD><TD kind="num">{r.users.toLocaleString()}</TD><TD kind="num">{r.devices.toLocaleString()}</TD></TR>
           ))}</TBody>
         </Table>
       ) : <Empty>{__uiText('ยังไม่มีสรุปรายวันในช่วงนี้ (สรุปทุกคืนตี 3)')}</Empty>}

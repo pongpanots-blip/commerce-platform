@@ -26,7 +26,7 @@ import {
 } from './builder/segment-definition.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button, PageHeader, Panel, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const EMPTY_OPTIONS: SegmentFieldsResponse['options'] = {
   tiers: [],
   cuisine: [],
@@ -242,22 +242,12 @@ export function SegmentBuilder() {
 
   return (
     <div className="cp-management-page flex flex-col gap-5">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <button
-            type="button"
-            onClick={() => navigate(ADMIN_ROUTES.segments)}
-            className="mb-2 text-sm text-gray-500 hover:text-gray-800"
-          >
-            {__uiText("← กลับ")}</button>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {routeId ? __uiText("แก้ไข Segment (Visual Builder)") : __uiText("สร้าง Segment ใหม่ (Visual Builder)")}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {__uiText("สร้างกลุ่มลูกค้าด้วยเงื่อนไข AND/OR แบบไม่ต้องเขียนโค้ด")}</p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <div className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700">
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.segments, label: 'กลับไปรายการกลุ่มลูกค้า' }}
+        title={routeId ? __uiText("แก้ไขกลุ่มลูกค้า (หลายเงื่อนไข)") : __uiText("สร้างกลุ่มลูกค้าแบบหลายเงื่อนไข")}
+        subtitle={__uiText("รวมหลายเงื่อนไขด้วย “และ” หรือ “หรือ” โดยไม่ต้องเขียนโค้ด")}
+        actions={
+          <div className="rounded-full border border-secondary-container bg-white px-3 py-1.5 text-sm tabular-nums text-gray-700">
             {locked ? (
               freezing ? (
                 'กำลังคำนวณ...'
@@ -275,30 +265,16 @@ export function SegmentBuilder() {
               '— ลูกค้า'
             )}
           </div>
-          <button
-            type="button"
-            onClick={() => navigate(ADMIN_ROUTES.segments)}
-            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-          >
-            {__uiText("ยกเลิก")}</button>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="rounded-lg bg-primary px-4 py-2 text-sm text-white hover:bg-primary-light disabled:opacity-50"
-          >
-            {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
-          </button>
-        </div>
-      </div>
+        }
+      />
 
-      {previewError && <p className="text-sm text-red-500">{(typeof (previewError) === 'string' ? __uiText(previewError) : previewError)}</p>}
+      {previewError && <p className="text-sm text-danger">{(typeof (previewError) === 'string' ? __uiText(previewError) : previewError)}</p>}
 
-      <div className="flex flex-col gap-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <Panel className="flex flex-col gap-5 p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Input
-              label={__uiText("Slug{0}", {"0": !routeId ? ' *' : ''})}
+              label={__uiText("รหัสอ้างอิง{0}", {"0": !routeId ? ' *' : ''})}
               value={slug}
               disabled={Boolean(routeId)}
               onChange={(e) =>
@@ -309,7 +285,7 @@ export function SegmentBuilder() {
           </div>
           <div>
             <Input
-              label={__uiText("ชื่อ Segment *")}
+              label={__uiText("ชื่อกลุ่มลูกค้า *")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={__uiText("เช่น ลูกค้า VIP")}
@@ -332,11 +308,11 @@ export function SegmentBuilder() {
             checked={isActive}
             onChange={(e) => setIsActive(e.target.checked)}
           />
-          {__uiText("เปิดใช้งาน Segment นี้ (Active)")}</label>
+          {__uiText("เปิดใช้กลุ่มนี้")}</label>
 
         {locked ? (
           <p className="text-xs text-gray-500">
-            {__uiText("เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ — ต้องการรายชื่อใหม่? สร้าง segment ใหม่")}</p>
+            {__uiText("เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ ต้องการรายชื่อใหม่? สร้างกลุ่มลูกค้าใหม่")}</p>
         ) : (
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -355,7 +331,7 @@ export function SegmentBuilder() {
 
             {fields.length === 0 ? (
               <p className="text-sm text-gray-400">
-                {__uiText("ไม่พบ field registry — ตรวจสอบ backend `/user-segments/fields`")}</p>
+                {__uiText("โหลดรายการเงื่อนไขไม่ได้ ลองรีเฟรชหน้า หรือแจ้งทีมระบบ")}</p>
             ) : (
               <ConditionGroup
                 branch={tree}
@@ -367,13 +343,21 @@ export function SegmentBuilder() {
           </div>
         )}
 
-        <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-3.5 text-sm text-gray-700">
-          <span className="font-semibold text-blue-800">{__uiText("สรุปเงื่อนไข: ")}</span>
+        <div className="rounded-lg border border-info/20 bg-info-container p-3.5 text-sm text-on-surface">
+          <span className="font-semibold text-info">{__uiText("สรุปเงื่อนไข: ")}</span>
           {summary}
         </div>
+      </Panel>
+
+      <div className="sticky bottom-0 z-20 flex flex-wrap items-center justify-end gap-3 rounded-xl border border-secondary-container bg-white/95 p-3 shadow-sm backdrop-blur-sm">
+        <Button variant="ghost" onClick={() => navigate(ADMIN_ROUTES.segments)}>
+          {__uiText("ยกเลิก")}</Button>
+        <Button variant="primary" icon="check" onClick={handleSave} disabled={saving}>
+          {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
+        </Button>
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <Panel className="p-6">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-800">{__uiText("รายชื่อลูกค้าที่ตรงเงื่อนไข")}</h2>
           {segmentId && (
@@ -389,13 +373,13 @@ export function SegmentBuilder() {
 
         {!segmentId ? (
           <p className="text-sm text-gray-400">
-            {__uiText("บันทึก Segment ก่อน เพื่อดูรายชื่อลูกค้าแบบแบ่งหน้า (ตอนนี้แสดงได้แค่จำนวนโดยประมาณด้านบน)")}</p>
+            {__uiText("บันทึกกลุ่มก่อน จึงจะดูรายชื่อลูกค้าได้ (ตอนนี้แสดงได้แค่จำนวนโดยประมาณด้านบน)")}</p>
         ) : showMembers ? (
           <MembersPanel segmentId={segmentId} />
         ) : (
           <p className="text-sm text-gray-400">{__uiText("กด \"ดูรายชื่อ\" เพื่อแสดงตาราง")}</p>
         )}
-      </div>
+      </Panel>
     </div>
   );
 }

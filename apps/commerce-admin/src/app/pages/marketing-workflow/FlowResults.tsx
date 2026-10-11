@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button, Empty, ErrorText, Loading, Panel, PanelHead, StatusChip, Table, TBody, TD, TH, THead, TR, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import { flowsApi } from '../../../lib/api';
 import { useAsync } from '../../hooks';
+import { itemOf } from './palette-items';
 
 const pct = (a: number, b: number) => (b ? `${((a / b) * 100).toFixed(1)}%` : '—');
 const when = (v: string | null) => (v ? new Date(v).toLocaleString() : '—');
@@ -33,7 +34,7 @@ export function FlowResults({ id }: { id: string }) {
         <Panel key={sp.stepId}>
           <PanelHead title={__uiText('A/B Split')} />
           <Table>
-            <THead><TH>{__uiText('กิ่ง')}</TH><TH kind="num">{__uiText('เข้า')}</TH><TH kind="num">{__uiText('Converted')}</TH><TH kind="num">%</TH></THead>
+            <THead><TH>{__uiText('กิ่ง')}</TH><TH kind="num">{__uiText('เข้า')}</TH><TH kind="num">{__uiText('ซื้อ')}</TH><TH kind="num">%</TH></THead>
             <TBody>{sp.branches.map((b) => <TR key={b.branchId}><TD>{b.label}</TD><TD kind="num">{b.entered}</TD><TD kind="num">{b.converted}</TD><TD kind="num">{pct(b.converted, b.entered)}</TD></TR>)}</TBody>
           </Table>
         </Panel>
@@ -43,7 +44,7 @@ export function FlowResults({ id }: { id: string }) {
         {s.actions.length ? (
           <Table>
             <THead><TH>{__uiText('ประเภท')}</TH><TH>{__uiText('สถานะ')}</TH><TH kind="num">{__uiText('จำนวน')}</TH></THead>
-            <TBody>{s.actions.map((a) => <TR key={`${a.kind}:${a.status}`}><TD>{a.kind}</TD><TD><StatusChip status={a.status} /></TD><TD kind="num">{a.count}</TD></TR>)}</TBody>
+            <TBody>{s.actions.map((a) => <TR key={`${a.kind}:${a.status}`}><TD>{itemOf(a.kind)?.label ?? a.kind}</TD><TD><StatusChip status={a.status} /></TD><TD kind="num">{a.count}</TD></TR>)}</TBody>
           </Table>
         ) : <Empty>{__uiText('ยังไม่มีการส่ง')}</Empty>}
       </Panel>
@@ -54,9 +55,9 @@ export function FlowResults({ id }: { id: string }) {
             <THead><TH>{__uiText('ลูกค้า')}</TH><TH>{__uiText('สถานะ')}</TH><TH kind="time">{__uiText('เริ่ม')}</TH><TH>{__uiText('เหตุผล')}</TH><TH kind="actions" /></THead>
             <TBody>{list.data.rows.map((r) => (
               <TR key={r.id}>
-                <TD kind="mono">{r.userId ? r.userId.slice(0, 8) : `guest ${(r.deviceId ?? '').slice(0, 8)}`}{r.isTest ? ' (test)' : ''}{r.isHoldout ? ' (holdout)' : ''}</TD>
+                <TD kind="mono">{r.userId ? r.userId.slice(0, 8) : `guest ${(r.deviceId ?? '').slice(0, 8)}`}{r.isTest ? __uiText(' (ทดสอบ)') : ''}{r.isHoldout ? __uiText(' (กลุ่มที่ไม่ส่ง เพื่อเทียบผล)') : ''}</TD>
                 <TD><StatusChip status={r.status} /></TD><TD kind="time">{when(r.startedAt)}</TD><TD>{r.endReason ?? ''}</TD>
-                <TD kind="actions"><Button size="sm" variant="ghost" onClick={() => setOpen(open === r.id ? null : r.id)}>{__uiText('log')}</Button></TD>
+                <TD kind="actions"><Button size="sm" variant="ghost" onClick={() => setOpen(open === r.id ? null : r.id)}>{__uiText('ดูบันทึก')}</Button></TD>
               </TR>
             ))}</TBody>
           </Table>

@@ -2,7 +2,6 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { useEffect, useId, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   MARKETING_TEMPLATE_VARIABLES,
   createMarketingNotifyTemplate,
@@ -40,7 +39,7 @@ import {
 } from './creative-editor/element-factory';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type CouponOption = { id: string; coupon_code: string; title: string };
 
 const INPUT_CLASS =
@@ -730,6 +729,7 @@ export default function MarketingNotifyTemplates() {
 
   const handleDelete = async (template: MarketingNotifyTemplate) => {
     if (template.is_system) return;
+    if (!window.confirm(__uiText("ลบแม่แบบ \"{0}\"? ขั้นตอนที่ใช้แม่แบบนี้จะส่งข้อความไม่ได้", {"0": template.name}))) return;
     setBusy(true);
     setError(null);
     try {
@@ -804,13 +804,11 @@ export default function MarketingNotifyTemplates() {
 
   return (
     <div className="cp-management-page flex flex-col gap-4">
-      <div>
-        <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-          {__uiText("&larr; Marketing Workflows")}</Link>
-        <h1 className="mt-1 text-xl font-bold text-gray-800">{__uiText("Notify · Email · Popup Templates")}</h1>
-        <p className="mt-1 text-xs text-gray-500">
-          {__uiText("สร้าง template แจ้งเตือน (push/in-app) · อีเมล HTML · หรือ popup · ใส่ตัวแปรได้ · popup ทำ variant ตาม segment ได้ — ใช้ใน step \"แจ้งเตือน\" / \"แสดง Offer\"")}</p>
-      </div>
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.marketingWorkflows, label: 'ข้อความอัตโนมัติ' }}
+        title={__uiText("แม่แบบข้อความ")}
+        subtitle={__uiText("แม่แบบข้อความแจ้งเตือน อีเมล และป๊อปอัป ที่ข้อความอัตโนมัติเลือกใช้ ใส่ชื่อลูกค้าหรือข้อมูลอื่นแทนได้")}
+      />
 
       {/* popup: 2 cols — PopupCreativeEditor มี panel ของตัวเองอยู่แล้ว ไม่จองคอลัมน์ขวา 300px ทิ้งไว้ */}
       <div
@@ -825,21 +823,21 @@ export default function MarketingNotifyTemplates() {
           <button
             type="button"
             onClick={() => openTemplate(null, 'notify')}
-            className="w-full rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
           >
-            {__uiText("+ Template แจ้งเตือน")}</button>
+            {__uiText("+ แม่แบบแจ้งเตือน")}</button>
           <button
             type="button"
             onClick={() => openTemplate(null, 'notify', 'email')}
-            className="w-full rounded-lg border border-sky-700 bg-white px-3 py-2 text-sm font-medium text-sky-800 hover:bg-sky-50"
+            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
           >
-            {__uiText("+ Template Email (HTML layout)")}</button>
+            {__uiText("+ แม่แบบอีเมล")}</button>
           <button
             type="button"
             onClick={() => openTemplate(null, 'popup')}
-            className="w-full rounded-lg border border-gray-900 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50"
+            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
           >
-            {__uiText("+ Template Popup (มีปุ่ม action)")}</button>
+            {__uiText("+ แม่แบบป๊อปอัป (มีปุ่มให้กด)")}</button>
           {templates.map((template) => (
             <div
               key={template.id}
@@ -853,40 +851,31 @@ export default function MarketingNotifyTemplates() {
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-gray-800">{template.name}</p>
-                  <p className="truncate text-[11px] text-gray-400">
-                    <span
-                      className={`mr-1 rounded px-1 py-px text-[9px] font-semibold ${
-                        template.template_type === 'popup'
-                          ? 'bg-violet-100 text-violet-600'
-                          : 'bg-sky-100 text-sky-600'
-                      }`}
-                    >
+                  <div className="mt-1 flex flex-wrap items-center gap-1">
+                    <Chip>
                       {template.template_type === 'popup'
-                        ? __uiText("POPUP")
+                        ? __uiText("ป๊อปอัป")
                         : template.channels?.email
-                          ? __uiText("แจ้งเตือน+EMAIL")
+                          ? __uiText("แจ้งเตือน + อีเมล")
                           : __uiText("แจ้งเตือน")}
-                    </span>
+                    </Chip>
                     {template.is_system && (
-                      <span
-                        className="mr-1 rounded bg-emerald-100 px-1 py-px text-[9px] font-semibold text-emerald-700"
-                        title={__uiText("เทมเพลตระบบ — ใช้แจ้งเตือนออเดอร์/สต๊อกจริง แก้ข้อความได้ แต่ลบไม่ได้")}
-                      >
-                        {__uiText("ระบบ")}</span>
+                      <span title={__uiText("เทมเพลตระบบ — ใช้แจ้งเตือนออเดอร์/สต๊อกจริง แก้ข้อความได้ แต่ลบไม่ได้")}>
+                        <Chip>{__uiText("ระบบ")}</Chip>
+                      </span>
                     )}
                     {(template.variants?.length ?? 0) > 0 && (
-                      <span className="mr-1 rounded bg-amber-100 px-1 py-px text-[9px] font-semibold text-amber-600">
-                        {template.variants!.length} {__uiText(" variant")}</span>
+                      <Chip>{__uiText("{0} แบบตามกลุ่มลูกค้า", {"0": template.variants!.length})}</Chip>
                     )}
-                    {template.title}
-                  </p>
+                  </div>
+                  {template.title && <p className="mt-1 truncate text-[11px] text-gray-400">{template.title}</p>}
                 </div>
                 <button
                   type="button"
                   title={
                     template.is_system
                       ? __uiText("เทมเพลตระบบลบไม่ได้ — ระบบแจ้งเตือนต้องใช้ key นี้เสมอ (แก้ข้อความได้)")
-                      : __uiText("ลบ template")
+                      : __uiText("ลบแม่แบบ")
                   }
                   disabled={template.is_system}
                   onClick={(event) => {
@@ -906,13 +895,13 @@ export default function MarketingNotifyTemplates() {
             </div>
           ))}
           {templatesLoading && (
-            <p className="px-1 text-[11px] text-gray-400">{__uiText("กำลังโหลด template...")}</p>
+            <p className="px-1 text-[11px] text-gray-400">{__uiText("กำลังโหลดแม่แบบ...")}</p>
           )}
           {error && templates.length === 0 && !templatesLoading && (
             <p className="px-1 text-[11px] text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>
           )}
           {templates.length === 0 && !error && !templatesLoading && (
-            <p className="px-1 text-[11px] text-gray-400">{__uiText("ยังไม่มี template — กดสร้างอันแรกเลย")}</p>
+            <p className="px-1 text-[11px] text-gray-400">{__uiText("ยังไม่มีแม่แบบ — กดปุ่มด้านบนเพื่อสร้างอันแรก")}</p>
           )}
         </div>
 

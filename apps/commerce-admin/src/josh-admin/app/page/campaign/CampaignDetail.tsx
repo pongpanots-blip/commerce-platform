@@ -175,7 +175,7 @@ function CampaignHub({ id }: { id: string }) {
   if (loadError || !detail) {
     return (
       <div className="cp-management-page space-y-4">
-        <CouponFormErrorBanner error={loadError || __uiText("ไม่พบ Campaign")} />
+        <CouponFormErrorBanner error={loadError || __uiText("ไม่พบแคมเปญ")} />
         <Button
           variant="secondary"
           text={__uiText("ลองใหม่")}
@@ -208,7 +208,9 @@ function CampaignHub({ id }: { id: string }) {
     },
     {
       key: 'sku_count',
-      label: __uiText("จำนวน SKU"),
+      label: __uiText("จำนวนสินค้า"),
+      align: 'right',
+      className: 'tabular-nums',
       render: (value: number) => value.toLocaleString('th-TH'),
     },
     {
@@ -231,9 +233,9 @@ function CampaignHub({ id }: { id: string }) {
     <LeaveGuardContext.Provider value={guard.context}>
       <AdminInsertLayout
         title={detail.name}
-        subtitle={__uiText("ปุ่มบันทึกด้านบนบันทึกเฉพาะข้อมูล Campaign — คูปองบันทึกทันทีที่เพิ่ม/ถอด และหน้าโปรมีปุ่มบันทึกของตัวเอง")}
+        subtitle={__uiText("ปุ่มบันทึกด้านบนเก็บเฉพาะข้อมูลแคมเปญ คูปองบันทึกทันทีที่เพิ่มหรือถอด หน้าโปรมีปุ่มบันทึกของตัวเอง")}
         saving={saving}
-        saveLabel={__uiText("บันทึกข้อมูล Campaign")}
+        saveLabel={__uiText("บันทึกข้อมูลแคมเปญ")}
         onBack={() =>
           guard.requestLeave(() => navigate(ADMIN_ROUTES.campaigns))
         }
@@ -241,17 +243,14 @@ function CampaignHub({ id }: { id: string }) {
         headerActions={<CampaignStatusPill status={detail.status} />}
         onSave={() => handleSave()}
       >
-        <Section title={__uiText("ข้อมูล Campaign")}>
+        <Section title={__uiText("ข้อมูลแคมเปญ")}>
           <CouponFormErrorBanner error={saveError} />
           {saved && (
-            <div
-              role="status"
-              className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700"
-            >
-              {__uiText("บันทึกแล้ว")}</div>
+            <p role="status" className="text-sm font-medium text-ok">
+              {__uiText("บันทึกแล้ว")}</p>
           )}
           <Input
-            label={__uiText("ชื่อ Campaign")}
+            label={__uiText("ชื่อแคมเปญ")}
             required
             value={form.name}
             error={errors.name}
@@ -278,26 +277,26 @@ function CampaignHub({ id }: { id: string }) {
               </p>
             )}
             <p className="mt-1 text-xs text-ink-muted">
-              {__uiText("แก้วันที่แล้วบันทึก = ระบบเขียนวันที่ใหม่ทับทุกโปร หน้าโปร และแบนเนอร์ใน Campaign นี้")}</p>
+              {__uiText("แก้วันที่แล้วบันทึก ระบบจะใช้วันที่ใหม่กับทุกโปร หน้าโปร และแบนเนอร์ในแคมเปญนี้")}</p>
           </div>
           <SwitchField
-            label={__uiText("เปิดใช้งาน Campaign")}
-            description={__uiText("ปิด = สถานะรวมของ Campaign เป็น “ปิดใช้งาน” — ไม่ได้ปิดโปร หน้าโปร หรือคูปองทีละตัว (ปิดได้ที่หน้าของแต่ละอัน)")}
+            label={__uiText("เปิดใช้งานแคมเปญ")}
+            description={__uiText("ปิดแล้วสถานะรวมของแคมเปญเป็น “ปิดใช้งาน” แต่โปร หน้าโปร และคูปองแต่ละตัวยังเปิดอยู่ ปิดได้ที่หน้าของแต่ละอัน")}
             checked={form.isActive}
             onChange={(checked) => patch({ isActive: checked })}
           />
           <div>
             <Button
               variant="secondaryAlert"
-              text={__uiText("ลบ Campaign")}
+              text={__uiText("ลบแคมเปญ")}
               onClick={() => setConfirmDelete(true)}
             />
           </div>
         </Section>
 
         <Section
-          title={__uiText("โปรอัตโนมัติ (Promotion mechanics)")}
-          description={__uiText("ส่วนลดระดับสินค้า — ใช้วันที่ของ Campaign และ SKU จาก Product set")}
+          title={__uiText("โปรอัตโนมัติ")}
+          description={__uiText("ส่วนลดระดับสินค้า ใช้วันที่ของแคมเปญ และสินค้าจากชุดสินค้าโปรโมชัน")}
         >
           <div>
             <GuardedLink
@@ -307,7 +306,13 @@ function CampaignHub({ id }: { id: string }) {
               <AiOutlinePlus size={20} />
               {__uiText("เพิ่มโปร")}</GuardedLink>
           </div>
-          <Table columns={mechanicColumns} data={detail.mechanics} idKey="id" />
+          <Table
+            columns={mechanicColumns}
+            data={detail.mechanics}
+            idKey="id"
+            emptyTitle={__uiText("ยังไม่มีโปรอัตโนมัติ")}
+            emptyDescription={__uiText("กด \"เพิ่มโปร\" เพื่อเพิ่มส่วนลดสินค้าในแคมเปญนี้")}
+          />
         </Section>
 
         <CampaignCouponsSection campaign={detail} onChange={applyDetail} />
@@ -332,8 +337,8 @@ function CampaignHub({ id }: { id: string }) {
 
         <CouponConfirmDialog
           open={confirmDelete}
-          title={__uiText("ลบ Campaign นี้?")}
-          body={`“${detail.name}” — หน้าโปร แบนเนอร์ และคูปองที่ผูกอยู่จะคงอยู่แต่หลุดจาก Campaign (ลบไม่ได้ถ้ายังมีโปรอัตโนมัติ)`}
+          title={__uiText("ลบแคมเปญนี้?")}
+          body={__uiText("“{0}” หน้าโปร แบนเนอร์ และคูปองที่ผูกอยู่จะยังอยู่ แต่ไม่อยู่ในแคมเปญนี้แล้ว (ลบไม่ได้ถ้ายังมีโปรอัตโนมัติ)", {"0": detail.name})}
           confirmLabel="ลบ"
           tone="danger"
           busy={deleting}

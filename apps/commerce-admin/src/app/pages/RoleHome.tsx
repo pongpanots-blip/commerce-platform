@@ -30,7 +30,7 @@ export function RoleHome({ role }: { role?: string }) {
       <RoleOverview role={normalizeRole(role)} />
       <section aria-label={__uiText("วันนี้ต้องการทำอะไร")}>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {shortcuts.map(shortcut => <Link key={shortcut.to} to={shortcut.to} className="group rounded-xl border border-secondary-container bg-white p-4 transition-colors hover:border-primary/50 hover:bg-primary-container/20 focus-visible:outline-2 focus-visible:outline-primary">
+          {shortcuts.map(shortcut => <Link key={shortcut.to} to={shortcut.to} className="group rounded-xl border border-secondary-container bg-surface-container-lowest p-4 shadow-card transition-[color,background-color,border-color,box-shadow] hover:border-primary/50 hover:shadow-raised focus-visible:outline-2 focus-visible:outline-primary">
             <div className="flex items-center justify-between"><span className="flex size-9 items-center justify-center rounded-lg bg-surface-container-low text-primary"><Icon name={shortcut.icon} size={21} /></span><Icon name="arrow_forward" size={17} className="text-outline group-hover:text-primary" /></div>
             <h3 className="mt-3 text-sm font-semibold">{__uiText(shortcut.label)}</h3>{shortcut.description && <p className="mt-1 text-xs leading-relaxed text-on-surface-variant">{__uiText(shortcut.description)}</p>}
           </Link>)}

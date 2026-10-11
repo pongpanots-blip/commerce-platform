@@ -18,7 +18,7 @@ import { useStashCouponDraftOnClick } from './coupon-form-draft.helpers';
 import { diffProductSetItems, hasProductSetChanged } from './coupon-redemption.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const API_BASE_URL =
   import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? 'https://joshapp.io/api';
 
@@ -140,12 +140,10 @@ function SnapshotItemsView({
             ) : (
               <span className="h-6 w-6 shrink-0 rounded border bg-gray-50" />
             )}
-            <span className="text-gray-400">{displaySku(item)}</span>
+            <span className="font-mono text-gray-400">{displaySku(item)}</span>
             <span className="truncate text-gray-700">{found?.name ?? displaySku(item)}</span>
             {label && (
-              <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500">
-                {label}
-              </span>
+              <Chip>{label}</Chip>
             )}
           </div>
         );
@@ -193,7 +191,7 @@ function ProductSetChangedNotice({
   };
 
   return (
-    <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+    <div className="mt-2 rounded-lg border border-warn/20 bg-warn-container p-2 text-xs text-warn">
       <p className="font-medium">{__uiText("ชุดนี้ถูกแก้ไขหลังบันทึกคูปอง")}</p>
       {diff.added.length > 0 && (
         <p>
@@ -262,7 +260,7 @@ function SelectedSetCard({
       <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-500">
         <span>{loading ? __uiText("กำลังโหลด…") : __uiText("ชุดสินค้า {0}…", {"0": entry.id.slice(0, 8)})}</span>
         {!disabled && (
-          <button type="button" onClick={onRemove} className="ml-1 text-gray-400 hover:text-red-500">
+          <button type="button" onClick={onRemove} className="ml-1 text-gray-400 hover:text-alert">
             ×
           </button>
         )}
@@ -272,10 +270,10 @@ function SelectedSetCard({
 
   if (entry.kind === 'missing') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs text-red-600">
+      <span className="inline-flex items-center gap-1 rounded-full bg-danger-container px-2.5 py-1 text-xs text-danger">
         <span>{__uiText("ไม่พบชุดสินค้า (ถูกลบ?)")}</span>
         {!disabled && (
-          <button type="button" onClick={onRemove} className="ml-1 text-red-400 hover:text-red-600">
+          <button type="button" onClick={onRemove} className="ml-1 text-alert/70 hover:text-alert">
             ×
           </button>
         )}
@@ -296,14 +294,14 @@ function SelectedSetCard({
             <span className="ml-1.5 text-gray-400">({snapshot.items.length} {__uiText(" รายการ)")}</span>
           </div>
           {!disabled && (
-            <button type="button" onClick={onRemove} className="shrink-0 text-gray-400 hover:text-red-500">
+            <button type="button" onClick={onRemove} className="shrink-0 text-gray-400 hover:text-alert">
               ×
             </button>
           )}
         </div>
         <p className="mt-1 text-gray-500">{__uiText("บันทึกรายการเมื่อ ")}{formatDateTime(snapshot.snapshotted_at)}</p>
         {confirmedDeleted && (
-          <p className="mt-1 text-rose-600">{__uiText("ชุดต้นทางถูกลบแล้ว — ใช้รายการที่บันทึกไว้")}</p>
+          <p className="mt-1 text-danger">{__uiText("ชุดต้นทางถูกลบแล้ว — ใช้รายการที่บันทึกไว้")}</p>
         )}
         <button
           type="button"
@@ -324,7 +322,7 @@ function SelectedSetCard({
   return (
     <div
       className={`rounded-lg border p-2.5 text-xs ${
-        liveSet.isActive ? 'border-gray-200 bg-gray-50' : 'border-amber-200 bg-amber-50'
+        liveSet.isActive ? 'border-gray-200 bg-gray-50' : 'border-warn/20 bg-warn-container'
       }`}
     >
       <div className="flex items-center justify-between gap-2">
@@ -334,7 +332,7 @@ function SelectedSetCard({
             ({snapshot ? snapshot.items.length : liveSet.itemCount} {__uiText(" รายการ)")}</span>
         </div>
         {!disabled && (
-          <button type="button" onClick={onRemove} className="shrink-0 text-gray-400 hover:text-red-500">
+          <button type="button" onClick={onRemove} className="shrink-0 text-gray-400 hover:text-alert">
             ×
           </button>
         )}
@@ -343,7 +341,7 @@ function SelectedSetCard({
       {/* ข้อความ "คูปองยังใช้รายการที่บันทึกไว้" มีความหมายเฉพาะตอนมี snapshot จริง — ชุดที่ปิดใช้งานแต่ยังไม่เคย
           บันทึกเลย (เพิ่งเลือกใหม่) ให้ปล่อยให้ข้อความ "จะบันทึกรายการเมื่อกดบันทึก" ด้านล่างสื่อความหมายพอ */}
       {!liveSet.isActive && snapshot && (
-        <p className="mt-1 text-amber-700">{__uiText("ชุดต้นทางปิดใช้งาน — คูปองยังใช้รายการที่บันทึกไว้")}</p>
+        <p className="mt-1 text-warn">{__uiText("ชุดต้นทางปิดใช้งาน — คูปองยังใช้รายการที่บันทึกไว้")}</p>
       )}
 
       {snapshot ? (
@@ -371,12 +369,12 @@ function SelectedSetCard({
                 disabled={disabled}
               />
             ) : changedError ? (
-              <p className="mt-1 text-red-600">
+              <p className="mt-1 text-danger">
                 {__uiText("ตรวจสอบการเปลี่ยนแปลงไม่สำเร็จ")}{' '}
                 <button
                   type="button"
                   onClick={onRetryChanged}
-                  className="underline hover:text-red-700"
+                  className="underline hover:text-alert"
                 >
                   {__uiText("ลองใหม่")}</button>
               </p>
@@ -572,7 +570,7 @@ export function PromotionProductSetPicker({
       )}
 
       {loadError && (
-        <p className="text-xs text-red-600">
+        <p className="text-xs text-danger">
           {__uiText("โหลดรายการ Promotion Product Set ไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง")}</p>
       )}
 
@@ -620,8 +618,7 @@ export function PromotionProductSetPicker({
                       <span className="text-xs text-gray-400">{set.itemCount} {__uiText(" รายการ")}</span>
                       {isLocked && <span className="text-[10px] text-gray-400">{__uiText("เลือกไว้แล้ว")}</span>}
                       {!set.isActive && (
-                        <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-700">
-                          {__uiText("ปิดใช้งาน")}</span>
+                        <Chip tone="warn">{__uiText("ปิดใช้งาน")}</Chip>
                       )}
                     </label>
                   );

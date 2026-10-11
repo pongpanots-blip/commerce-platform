@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { scheduledTasksApi, ScheduledTaskRow } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { Page, PageHeader, Panel, Table, THead, TH, TBody, TR, TD, ErrorText, Empty, Loading, Button, Chip, Tone, fmt } from '@cp/ui';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ErrorText, Empty, Loading, Button, Chip, Tone, fmt } from '@cp/ui';
 import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 
 /** Task name (backend decorator) → what it does, in staff words. Unknown names show the raw name. */
@@ -14,7 +14,7 @@ const LABELS: Record<string, string> = {
   'josh-catalog-sync': 'คัดลอกแค็ตตาล็อกสินค้าจากร้านค้า',
   'josh-customer-metrics': 'คำนวณยอดสั่งซื้อของลูกค้า',
   'josh-order-copy': 'คัดลอกออเดอร์จากร้านค้า',
-  'marketing-research': 'รันโจทย์ research ที่ถึงคิว',
+  'marketing-research': 'รันโจทย์วิจัยการตลาดที่ถึงคิว',
   'marketing-workflow-sweep': 'เดินขั้นตอนข้อความอัตโนมัติ',
   'mcp-oauth-purge': 'ลบสิทธิ์ผู้ช่วย AI ที่หมดอายุ',
   'outbox-relay': 'ส่งเหตุการณ์ที่รอส่ง',
@@ -65,10 +65,11 @@ export function ScheduledTasks() {
     <Page>
       <PageHeader
         title={__uiText('งานอัตโนมัติตามเวลา')}
-        subtitle={data ? __uiText('ข้อมูลการรันนับตั้งแต่ระบบเริ่มทำงานเมื่อ {0}', { 0: fmt.when(data.since) }) : undefined}
+        subtitle={__uiText('งานที่ระบบรันเองตามเวลา ผลการรันล่าสุด และสั่งรันทันที')}
         actions={<Button icon="refresh" onClick={reload}>{__uiText('รีเฟรช')}</Button>}
       />
       <Panel>
+        <PanelHead title={__uiText('งานทั้งหมด')} sub={data ? __uiText('ข้อมูลการรันนับตั้งแต่ระบบเริ่มทำงานเมื่อ {0}', { 0: fmt.when(data.since) }) : undefined} />
         <ErrorText error={error} />
         <ErrorText error={actionError} />
         {loading && !data ? <Loading /> : !data?.tasks.length ? <Empty>{__uiText('ไม่มีงานอัตโนมัติ')}</Empty> : (
@@ -87,7 +88,7 @@ export function ScheduledTasks() {
                       <div className="font-mono text-[11px] text-on-surface-variant">{t.name}</div>
                     </TD>
                     <TD kind="mono" className="whitespace-nowrap">{t.kind === 'interval' ? __uiText('ทุก {0} วินาที', { 0: (t.intervalMs ?? 0) / 1000 }) : t.expression}</TD>
-                    <TD><Chip tone={tone}>{__uiText(status)}</Chip></TD>
+                    <TD><Chip tone={tone} dot>{__uiText(status)}</Chip></TD>
                     <TD kind="time">
                       {t.last ? fmt.when(t.last.startedAt) : '—'}
                       {t.last?.manual && <span className="ml-1 text-on-surface-variant">{__uiText('(สั่งเอง)')}</span>}

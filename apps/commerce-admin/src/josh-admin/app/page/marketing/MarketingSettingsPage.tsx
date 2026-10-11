@@ -1,5 +1,4 @@
-import { useEffect, useId, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import {
   MARKETING_TEMPLATE_VARIABLES,
   getGlobalFrequencyCap,
@@ -12,12 +11,7 @@ import {
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-const INPUT_CLASS =
-  'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none';
-
-const SAVE_BUTTON_CLASS =
-  'rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50';
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Button, Checkbox, FormField, Hint, Input, Loading, PageHeader, Panel, PanelHead } from "@cp/ui";
 
 /** Admin-editable template vars — `today` is excluded since it's auto-computed. */
 const TEMPLATE_VAR_FALLBACK_KEYS = [
@@ -50,7 +44,6 @@ export default function MarketingSettingsPage() {
   const [fallbacksSaving, setFallbacksSaving] = useState(false);
   const [fallbacksResult, setFallbacksResult] = useState<string>('');
   const [fallbacks, setFallbacks] = useState<TemplateVarFallbackSetting>({});
-  const maxPerUserInputId = useId();
 
   useEffect(() => {
     getGlobalFrequencyCap()
@@ -93,106 +86,93 @@ export default function MarketingSettingsPage() {
 
   return (
     <div className="cp-management-page space-y-6">
-      <div>
-        <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-          {__uiText("&larr; Marketing Workflows")}</Link>
-        <h1 className="mt-1 text-2xl font-bold text-gray-900">{__uiText("Marketing Settings")}</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          {__uiText("ตั้งค่าที่มีผลกับ marketing ทุก workflow — ไม่ผูกกับ workflow ใดเป็นการเฉพาะ")}</p>
-      </div>
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.marketingWorkflows, label: 'ข้อความอัตโนมัติ' }}
+        title={__uiText("ตั้งค่าการตลาด")}
+        subtitle={__uiText("ค่าที่มีผลกับข้อความอัตโนมัติทั้งหมด")}
+      />
 
-      <section className="space-y-4 rounded-2xl border bg-white p-6">
-        <div>
-          <h2 className="font-bold text-gray-800">{__uiText("Global Frequency Cap")}</h2>
-          <p className="mt-1 text-xs text-gray-500">
-            {__uiText("จำกัดจำนวนข้อความ marketing (notify + show_offer รวมกัน) ที่ผู้ใช้ 1 คนจะได้รับต่อวัน — นับรวมทุก workflow ไม่ใช่แค่ cooldown ของแคมเปญเดียว")}</p>
-        </div>
-        {capLoading ? (
-          <p className="text-sm text-gray-400">{__uiText("กำลังโหลด...")}</p>
-        ) : (
-          <>
-            <label className="flex items-center gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
+      <Panel>
+        <PanelHead
+          title={__uiText("จำกัดจำนวนข้อความต่อวัน")}
+          sub={__uiText("นับรวมข้อความและข้อเสนอจากข้อความอัตโนมัติทุกชุดที่ลูกค้า 1 คนได้รับใน 1 วัน")}
+        />
+        <div className="space-y-4 p-5">
+          {capLoading ? (
+            <Loading />
+          ) : (
+            <>
+              <Checkbox
+                label={__uiText("เปิดใช้การจำกัดจำนวนข้อความต่อวัน")}
                 checked={cap.enabled}
                 onChange={(event) => setCap((prev) => ({ ...prev, enabled: event.target.checked }))}
               />
-              {__uiText("เปิดใช้ Global Frequency Cap")}</label>
-            <div className="max-w-xs">
-              <label htmlFor={maxPerUserInputId} className="mb-1 block text-xs font-medium text-gray-500">
-                {__uiText("จำนวนข้อความสูงสุดต่อคนต่อวัน")}</label>
-              <input
-                id={maxPerUserInputId}
-                type="number"
-                min={1}
-                className={INPUT_CLASS}
-                value={cap.maxPerUserPerDay}
-                onChange={(event) =>
-                  setCap((prev) => ({
-                    ...prev,
-                    maxPerUserPerDay: Math.max(1, Number(event.target.value) || 1),
-                  }))
-                }
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                disabled={capSaving}
-                onClick={saveCap}
-                className={SAVE_BUTTON_CLASS}
-              >
-                {capSaving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
-              </button>
-              {capResult && <p className="text-xs text-gray-500">{capResult}</p>}
-            </div>
-          </>
-        )}
-      </section>
-
-      <section className="space-y-4 rounded-2xl border bg-white p-6">
-        <div>
-          <h2 className="font-bold text-gray-800">{__uiText("Template Variable Fallbacks")}</h2>
-          <p className="mt-1 text-xs text-gray-500">
-            {__uiText("ข้อความสำรองที่ใช้แทน เช่น ")}{__uiText("{{user_name}}")} {__uiText(" เมื่อไม่มีค่าจริง (เช่น guest checkout หรือไม่มีข้อมูลบริษัท)")}</p>
+              <FormField label={__uiText("จำนวนข้อความสูงสุดต่อคนต่อวัน")} className="max-w-xs">
+                <Input
+                  type="number"
+                  min={1}
+                  className="text-right tabular-nums"
+                  value={cap.maxPerUserPerDay}
+                  onChange={(event) =>
+                    setCap((prev) => ({
+                      ...prev,
+                      maxPerUserPerDay: Math.max(1, Number(event.target.value) || 1),
+                    }))
+                  }
+                />
+              </FormField>
+              <div className="flex items-center gap-3">
+                <Button variant="primary" disabled={capSaving} onClick={saveCap}>
+                  {capSaving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
+                </Button>
+                {capResult && <Hint>{capResult}</Hint>}
+              </div>
+            </>
+          )}
         </div>
-        {fallbacksLoading ? (
-          <p className="text-sm text-gray-400">{__uiText("กำลังโหลด...")}</p>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {TEMPLATE_VAR_FALLBACK_KEYS.map((key) => (
-                <div key={key}>
-                  <label htmlFor={`fallback-${key}`} className="mb-1 block text-xs font-medium text-gray-500">
-                    {templateVarLabel(key)}{' '}
-                    <span className="font-mono text-[10px] text-gray-300">{`{{${key}}}`}</span>
-                  </label>
-                  <input
-                    id={`fallback-${key}`}
-                    type="text"
-                    className={INPUT_CLASS}
-                    value={fallbacks[key] ?? ''}
-                    onChange={(event) =>
-                      setFallbacks((prev) => ({ ...prev, [key]: event.target.value }))
+      </Panel>
+
+      <Panel>
+        <PanelHead
+          title={__uiText("คำแทนเมื่อไม่มีข้อมูลลูกค้า")}
+          sub={__uiText("คำที่ใส่แทนช่องข้อมูลในข้อความ เมื่อลูกค้ายังไม่ได้ให้ข้อมูลนั้น เช่น ยังไม่สมัครสมาชิกหรือไม่มีข้อมูลบริษัท")}
+        />
+        <div className="space-y-4 p-5">
+          {fallbacksLoading ? (
+            <Loading />
+          ) : (
+            <>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {TEMPLATE_VAR_FALLBACK_KEYS.map((key) => (
+                  <FormField
+                    key={key}
+                    label={
+                      <>
+                        {templateVarLabel(key)}{' '}
+                        <span className="font-mono text-[10px] text-outline">{`{{${key}}}`}</span>
+                      </>
                     }
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                disabled={fallbacksSaving}
-                onClick={saveFallbacks}
-                className={SAVE_BUTTON_CLASS}
-              >
-                {fallbacksSaving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
-              </button>
-              {fallbacksResult && <p className="text-xs text-gray-500">{fallbacksResult}</p>}
-            </div>
-          </>
-        )}
-      </section>
+                  >
+                    <Input
+                      type="text"
+                      value={fallbacks[key] ?? ''}
+                      onChange={(event) =>
+                        setFallbacks((prev) => ({ ...prev, [key]: event.target.value }))
+                      }
+                    />
+                  </FormField>
+                ))}
+              </div>
+              <div className="flex items-center gap-3">
+                <Button variant="primary" disabled={fallbacksSaving} onClick={saveFallbacks}>
+                  {fallbacksSaving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
+                </Button>
+                {fallbacksResult && <Hint>{fallbacksResult}</Hint>}
+              </div>
+            </>
+          )}
+        </div>
+      </Panel>
     </div>
   );
 }

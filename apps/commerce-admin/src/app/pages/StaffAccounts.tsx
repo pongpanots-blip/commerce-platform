@@ -75,7 +75,7 @@ export function StaffAccounts() {
     && run(`reset:${a.id}`, async () => requireSaved(await staffApi.resetPassword(a.id), r => typeof r.temporaryPassword === 'string' && !!r.temporaryPassword), (r) => setHandOver({ email: a.email, password: r.temporaryPassword, what: __uiText('รีเซ็ตรหัสผ่านแล้ว') }));
   const toggle = (a: StaffAccount) => window.confirm(__uiText(a.status === 'active' ? 'ปิดบัญชี {0}?\n\nออกจากระบบทันทีทุกเครื่อง' : 'เปิดบัญชี {0}?', { '0': a.email }))
     && run(`status:${a.id}`, async () => requireSaved(await staffApi.update(a.id, { status: a.status === 'active' ? 'disabled' : 'active' }), r => r.id === a.id && r.status === (a.status === 'active' ? 'disabled' : 'active')));
-  const setRole = (a: StaffAccount, role: StaffRole) => role !== a.role && window.confirm(__uiText("เปลี่ยน {0} เป็น {1}?", {"0": a.email, "1": role}))
+  const setRole = (a: StaffAccount, role: StaffRole) => role !== a.role && window.confirm(__uiText("เปลี่ยน {0} เป็น {1}?", {"0": a.email, "1": __uiText(STAFF_ROLE_LABEL[role] ?? role)}))
     && run(`role:${a.id}`, async () => requireSaved(await staffApi.update(a.id, { role }), r => r.id === a.id && r.role === role));
 
   useUnsavedChanges(!!busy || draft.outstanding);

@@ -99,19 +99,19 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
       {initialLoad?.status === 'error' && (
         <div
           role="alert"
-          className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-700"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-danger/20 bg-danger-container px-3 py-2 text-xs text-danger"
         >
           <span>{__uiText("โหลดรายชื่อเดิมไม่สำเร็จ — กดลองใหม่")}</span>
           <button
             type="button"
             onClick={initialLoad.onRetry}
-            className="font-medium text-red-700 underline hover:text-red-800"
+            className="font-medium text-danger underline hover:text-red-800"
           >
             {__uiText("ลองใหม่")}</button>
         </div>
       )}
       {initialLoad?.status === 'loaded' && manualUsersNotFoundWarning(initialLoad.notFoundCount) && (
-        <p className="text-xs text-amber-700">
+        <p className="text-xs text-warn">
           {manualUsersNotFoundWarning(initialLoad.notFoundCount)}
         </p>
       )}
@@ -144,7 +144,7 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
       <p className="text-xs text-gray-500">
         {__uiText("คอลัมน์ ")}<code>{__uiText("user_id")}</code>, <code>{__uiText("email")}</code>, <code>{__uiText("custcode")}</code> {__uiText(" — ไม่บังคับทุกช่อง แต่ละแถวใส่อย่างน้อย 1 ช่อง (ไม่มีหัวคอลัมน์ก็ได้ ระบบเดาจากรูปแบบ)")}</p>
       {fileError && (
-        <p role="alert" className="text-xs text-red-600">
+        <p role="alert" className="text-xs text-danger">
           {(typeof (fileError) === 'string' ? __uiText(fileError) : fileError)}
         </p>
       )}
@@ -165,7 +165,7 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
         {checking ? __uiText("กำลังตรวจสอบ...") : __uiText("ตรวจสอบรายชื่อ")}
       </button>
       {checkError && (
-        <p role="alert" className="text-xs text-red-600">
+        <p role="alert" className="text-xs text-danger">
           {(typeof (checkError) === 'string' ? __uiText(checkError) : checkError)}
         </p>
       )}
@@ -189,7 +189,7 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
             <button
               type="button"
               onClick={() => onChange([])}
-              className="text-xs text-red-500 hover:underline"
+              className="text-xs text-danger hover:underline"
             >
               {__uiText("ล้างรายการ")}</button>
           )}
@@ -205,7 +205,7 @@ export function SegmentCustomerListField({ value, onChange, initialLoad }: Props
                   type="button"
                   onClick={() => removeUser(user.id)}
                   aria-label={__uiText("นำ {0} ออก", {"0": user.email})}
-                  className="text-gray-400 hover:text-red-500"
+                  className="text-gray-400 hover:text-alert"
                 >
                   ×
                 </button>

@@ -49,7 +49,7 @@ export function PriceRequestLinks({
           to={"/product-prices/requests/" + j.packet.requestId}
         >
           <span className="break-words">
-            {text("ตรวจคำขอ ERP: ", "Check ERP request: ") +
+            {text("ตรวจคำขอจากระบบหลัก: ", "Check ERP request: ") +
               j.packet.changes.map((c) => c.sku).join(", ")}
           </span>
         </WorkspaceLink>

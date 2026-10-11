@@ -51,6 +51,14 @@ import {
 const outcome = (id: string) => `${home}/requests/${id}`;
 const show = (v: unknown) =>
   v == null ? text("ยังไม่มีข้อมูล", "Not recorded") : String(v);
+const sourceLabel = (s: string | null) =>
+  s === "staff"
+    ? text("ทีมงาน", "Staff")
+    : s === "import"
+      ? text("นำเข้าข้อมูล", "Import")
+      : s === "erp"
+        ? text("ระบบหลัก (ERP)", "ERP")
+        : show(s);
 const date = (v: string | null) =>
   v ? new Date(v).toLocaleString() : text("ไม่ทราบ", "Unknown");
 const decisionLabel = (d: string) =>
@@ -88,7 +96,7 @@ function PriceEvidence({
                   : {show(item.current[k])}
                 </p>
                 <p>
-                  {text("ERP เสนอ", "ERP proposed")}:{" "}
+                  {text("ระบบหลักเสนอ", "ERP proposed")}:{" "}
                   {item.proposed[k] == null
                     ? text("คงค่าเดิม", "Keep current value")
                     : show(item.proposed[k])}
@@ -109,12 +117,12 @@ function PriceEvidence({
           })}
         </div>
         <p>
-          {text("ERP เปลี่ยนเมื่อ", "ERP changed at")}: {date(item.changedAt)} ·{" "}
+          {text("ระบบหลักเปลี่ยนเมื่อ", "ERP changed at")}: {date(item.changedAt)} ·{" "}
           {text("รับเข้าคิว", "Queue received at")}: {date(item.receivedAt)}
         </p>
         <p>
           {text("ที่มาราคาปัจจุบัน", "Current price source")}:{" "}
-          {show(item.currentSource)} · {text("แก้ล่าสุดโดย", "Last changed by")}
+          {sourceLabel(item.currentSource)} · {text("แก้ล่าสุดโดย", "Last changed by")}
           : {show(item.currentUpdatedBy)}
         </p>
         <details>
@@ -128,7 +136,7 @@ function PriceEvidence({
         {!item.currentRecorded && !historical && (
           <Alert tone="warn">
             {text(
-              "ไม่มีแถวราคาปัจจุบัน การอนุมัติจะสร้างแถวจากค่าที่ ERP ส่งมาเท่านั้น",
+              "ยังไม่มีราคาปัจจุบัน การอนุมัติจะสร้างราคาจากค่าที่ระบบหลัก (ERP) ส่งมาเท่านั้น",
               "No current commerce price row. Approval creates one using only the supplied ERP fields.",
             )}
           </Alert>
@@ -142,18 +150,18 @@ function Scope({ decision, count }: { decision: string; count: number }) {
     <Alert tone="warn">
       <p>
         {text(
-          `ตัดสินใจเฉพาะ ${count} SKU ที่แสดง`,
+          `ตัดสินใจเฉพาะ ${count} รายการที่แสดง`,
           `This decision covers only the ${count} displayed SKU(s).`,
         )}
       </p>
       <p>
         {decision === "approve"
           ? text(
-              "ค่า ERP ที่ส่งมาจะเป็นราคาปัจจุบัน ค่าที่ไม่ได้ส่งคงเดิม ระบบเข้าคิว snapshot ไปยังร้าน แต่ยังไม่ยืนยันการส่งถึงปลายทาง",
+              "ค่าที่ระบบหลักส่งมาจะเป็นราคาปัจจุบัน ค่าที่ไม่ได้ส่งคงเดิม ระบบจะส่งราคาไปที่ร้านค้า แต่ยังไม่ยืนยันว่าร้านค้าได้รับ",
               "Supplied ERP values become current prices; unspecified fields stay unchanged. A snapshot is queued for the shop; downstream delivery is unverified.",
             )
           : text(
-              "ลบข้อเสนอเหล่านี้จากคิว ราคาปัจจุบันคงเดิม ไม่ส่ง snapshot ราคา",
+              "ลบข้อเสนอเหล่านี้ออกจากรายการรอ ราคาปัจจุบันคงเดิม และไม่ส่งราคาไปที่ร้านค้า",
               "Remove these proposals from the queue. Current prices stay unchanged; no price snapshot is sent.",
             )}
       </p>
@@ -267,9 +275,9 @@ function Queue({ owner }: { owner: string }) {
   return (
     <>
       <PageHeader
-        title={text("ทบทวนราคาที่ ERP ส่งมา", "Review incoming ERP prices")}
+        title={text("ตรวจราคาที่ระบบหลัก (ERP) ส่งมา", "Review incoming ERP prices")}
         subtitle={text(
-          "ตรวจค่าปัจจุบันและข้อเสนอ ก่อนตัดสินใจ",
+          "เทียบราคาปัจจุบันกับราคาใหม่ แล้วอนุมัติหรือปฏิเสธ",
           "Inspect current and proposed values before deciding.",
         )}
       />
@@ -287,7 +295,7 @@ function Queue({ owner }: { owner: string }) {
       >
         <div className="min-w-0 flex-1">
           <TaskInput
-            label={text("ค้นหา SKU ในคิว", "Search queue by SKU")}
+            label={text("ค้นหารหัสสินค้าที่รออนุมัติ", "Search queue by SKU")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -303,14 +311,14 @@ function Queue({ owner }: { owner: string }) {
           {source.data.ownership !== "commerce" && (
             <Alert tone="warn">
               {text(
-                "Josh ยังเป็นเจ้าของราคา จึงยังตัดสินใจที่นี่ไม่ได้",
+                "ร้านค้ายังดูแลราคาเอง จึงยังตัดสินใจที่นี่ไม่ได้",
                 "Josh still owns prices. Commerce decisions are unavailable.",
               )}
             </Alert>
           )}
           <PanelHead
             title={text(
-              `รอพิจารณา ${source.data.total} SKU`,
+              `รอพิจารณา ${source.data.total} รายการ`,
               `Pending: ${source.data.total} SKU(s)`,
             )}
           />
@@ -328,7 +336,7 @@ function Queue({ owner }: { owner: string }) {
           <div className="flex flex-wrap gap-3">
             <p>
               {text(
-                `เลือก ${selected.length} SKU ยังไม่ได้ตัดสินใจ`,
+                `เลือก ${selected.length} รายการ ยังไม่ได้ตัดสินใจ`,
                 `${selected.length} selected; no decisions saved`,
               )}
             </p>
@@ -357,7 +365,7 @@ function Queue({ owner }: { owner: string }) {
                     "The queue changed. Refresh this page.",
                   )
                 : search
-                  ? text("ไม่พบ SKU ตามคำค้น", "No matching pending SKU")
+                  ? text("ไม่พบรหัสสินค้าตามคำค้น", "No matching pending SKU")
                   : text("ไม่มีราคาที่รอพิจารณา", "No pending price changes")}
             </Empty>
           ) : (
@@ -451,7 +459,7 @@ function Detail({ sku, owner }: { sku: string; owner: string }) {
           <Scope decision="approve" count={1} />
           {source.data.ownership !== "commerce" && (
             <Alert tone="warn">
-              {text("Josh ยังเป็นเจ้าของราคา", "Josh still owns prices")}
+              {text("ร้านค้ายังดูแลราคาเอง", "Josh still owns prices")}
             </Alert>
           )}
           <div className="flex flex-wrap gap-3">
@@ -649,7 +657,7 @@ function Review({ owner, sku }: { owner: string; sku?: string }) {
           {emptyNativePatch && (
             <Alert tone="danger">
               {text(
-                "ข้อเสนอบาง SKU ไม่มีค่า ERP ให้บันทึก อนุมัติไม่ได้ ตรวจคิวอีกครั้งหรือพิจารณาปฏิเสธ",
+                "ข้อเสนอบางรายการไม่มีค่าจากระบบหลักให้บันทึก อนุมัติไม่ได้ ตรวจรายการรออีกครั้งหรือพิจารณาปฏิเสธ",
                 "An ERP proposal contains no price fields to apply. Approval is unavailable. Review the queue or consider rejection.",
               )}
             </Alert>
@@ -657,7 +665,7 @@ function Review({ owner, sku }: { owner: string; sku?: string }) {
           {review.ownership !== "commerce" && (
             <Alert tone="warn">
               {text(
-                "Josh ยังเป็นเจ้าของราคา ยังบันทึกที่นี่ไม่ได้",
+                "ร้านค้ายังดูแลราคาเอง ยังบันทึกที่นี่ไม่ได้",
                 "Josh still owns prices. No decision can be saved here.",
               )}
             </Alert>
@@ -706,11 +714,11 @@ function Receipt({ receipt }: { receipt: PriceApprovalReceipt }) {
         <strong>
           {receipt.packet.decision === "approve"
             ? text(
-                `อนุมัติแล้ว ${receipt.appliedCount} SKU`,
+                `อนุมัติแล้ว ${receipt.appliedCount} รายการ`,
                 `Approved ${receipt.appliedCount} SKU(s)`,
               )
             : text(
-                `ปฏิเสธแล้ว ${receipt.appliedCount} SKU`,
+                `ปฏิเสธแล้ว ${receipt.appliedCount} รายการ`,
                 `Rejected ${receipt.appliedCount} SKU(s)`,
               )}
         </strong>
@@ -719,11 +727,11 @@ function Receipt({ receipt }: { receipt: PriceApprovalReceipt }) {
       <p>
         {receipt.outboxEnqueued
           ? text(
-              "บันทึกและเข้าคิว snapshot แล้ว ยังไม่ยืนยันว่าร้านได้รับ",
+              "บันทึกแล้ว และกำลังส่งราคาไปที่ร้านค้า ยังไม่ยืนยันว่าร้านค้าได้รับ",
               "Saved and snapshot queued. Shop delivery remains unverified.",
             )
           : text(
-              "ข้อเสนอถูกลบ ราคาปัจจุบันคงเดิม ไม่ส่ง snapshot",
+              "ลบข้อเสนอแล้ว ราคาปัจจุบันคงเดิม และไม่ส่งราคาไปที่ร้านค้า",
               "Proposals removed. Current prices unchanged; no snapshot sent.",
             )}
       </p>

@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { AiOutlineEdit, AiOutlineSearch } from 'react-icons/ai';
 import { HiOutlineExternalLink } from 'react-icons/hi';
 import { MdDragIndicator } from 'react-icons/md';
-import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { Chip, ErrorText, Loading, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import AdminListHeader from '../../components/AdminListHeader';
 import { CopyIdButton } from '../../components/CopyIdButton';
@@ -74,10 +74,10 @@ function RowActions({ row }: { row: CategoryRow }) {
         target="_blank"
         rel="noreferrer"
         className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-        title={__uiText("ดูใน shop")}
+        title={__uiText("ดูบนร้านค้า")}
       >
         <HiOutlineExternalLink size={16} />
-        {__uiText("ดูใน shop")}
+        {__uiText("ดูบนร้านค้า")}
       </a>
     </div>
   );
@@ -202,7 +202,7 @@ const CategoryList = () => {
   };
 
   if (isLoading) {
-    return <div className="p-6 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
+    return <div className="cp-management-page"><Loading variant="table" /></div>;
   }
 
   const shownOnHome = level1.filter(
@@ -210,26 +210,24 @@ const CategoryList = () => {
   ).length;
 
   const listCaption = isHome
-    ? __uiText("Level 1 ทั้งหมด {0} หมวด · ติ๊กแสดงบนหน้าแรก {1} หมวด — ลากเรียงได้ทั้งชั้น ข้าม Division", { "0": order.length, "1": shownOnHome })
+    ? __uiText("หมวดหน้าแรกทั้งหมด {0} หมวด · แสดงบนหน้าแรก {1} หมวด ลากเพื่อเรียงลำดับ", { "0": order.length, "1": shownOnHome })
     : parentId === null
-      ? __uiText("Division ชั้นบนสุด {0} หมวด — ลำดับของ Division มาจาก seed จัดที่นี่ไม่ได้", { "0": order.length })
+      ? __uiText("กลุ่มบนสุด {0} กลุ่ม ลำดับของกลุ่มบนสุดตั้งไว้ในระบบ จัดที่นี่ไม่ได้", { "0": order.length })
       : childrenAreLevel1
-        ? __uiText("หมวด Level 1 {0} หมวดใต้ {1} — ลำดับของชั้นนี้จัดรวมทั้งชั้นที่ Home category", { "0": order.length, "1": currentNode?.category_name_en ?? '' })
-        : __uiText("หมวดย่อย {0} หมวด — ลากเพื่อจัดลำดับ แล้วกดบันทึก", { "0": order.length });
+        ? __uiText("หมวดหน้าแรก {0} หมวดใต้ {1} ลำดับของหมวดชั้นนี้จัดรวมกันที่หมวดหน้าแรก", { "0": order.length, "1": currentNode?.category_name_en ?? '' })
+        : __uiText("หมวดย่อย {0} หมวด ลากเพื่อจัดลำดับ แล้วกดบันทึก", { "0": order.length });
 
   return (
     <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
         title={__uiText("จัดการหมวดหมู่")}
-        subtitle={__uiText("หน้าแรกของ shop แสดงหมวด Level 1 ทั้งชั้น — ลากเรียงลำดับและติ๊กเลือกว่าหมวดไหนขึ้นหน้าแรกได้ที่นี่")}
-        createLabel="สร้างหมวดหมู่"
+        subtitle={__uiText("จัดลำดับหมวดหมู่ เลือกหมวดที่แสดงบนหน้าแรกของร้าน และแก้ชื่อหรือรูป")}
+        createLabel="เพิ่มหมวดหมู่"
         createPath={ADMIN_ROUTES.categoryCreate}
       />
 
       {error && (
-        <p className="rounded-lg border border-alert/30 bg-alert-soft px-4 py-2 text-sm text-alert">
-          {__uiText(error)}
-        </p>
+        <ErrorText error={__uiText(error)} />
       )}
 
       {/* การ์ดเนื้อหา — toolbar ค้นหาด้านบน ตามด้วยตาราง/breadcrumb ของมุมมองปัจจุบัน */}
@@ -238,7 +236,7 @@ const CategoryList = () => {
           <Input
             icon={<AiOutlineSearch size={20} />}
             className="md:w-[296px]"
-            placeholder="ค้นหาทุกชั้น — ชื่อ EN / TH / path / รหัส / วาง id มาเลยก็ได้"
+            placeholder={__uiText("ค้นหาด้วยชื่อไทย ชื่ออังกฤษ หรือรหัสหมวด")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -247,7 +245,7 @@ const CategoryList = () => {
         {search.trim() ? (
           <div>
             <p className="border-b border-line px-4 py-2 text-xs text-ink-muted">
-              {__uiText("ผลค้นหา {0} หมวด — ล้างคำค้นเพื่อจัดลำดับ / เปิด-ปิดแสดงบนหน้าแรก", { "0": results.length })}
+              {__uiText("ผลค้นหา {0} หมวด ล้างคำค้นเพื่อจัดลำดับหรือเลือกหมวดที่แสดงบนหน้าแรก", { "0": results.length })}
             </p>
             {results.length === 0 ? (
               <p className="px-4 py-6 text-center text-sm text-ink-muted">{__uiText("ไม่พบหมวดที่ตรงกับคำค้น")}</p>
@@ -262,7 +260,7 @@ const CategoryList = () => {
                           <span className="ml-2 text-ink-secondary">{row.category_name_th}</span>
                         ) : null}
                         <span className="ml-2 text-xs text-ink-muted">
-                          {__uiText("Level {0}", { "0": row.category_level ?? '—' })}
+                          {__uiText("ชั้น {0}", { "0": row.category_level ?? '—' })}
                           {row.parent_id_uuid
                             ? ` · ${__uiText("ใต้ {0}", { "0": byId.get(row.parent_id_uuid)?.category_name_en ?? '—' })}`
                             : ''}
@@ -308,7 +306,7 @@ const CategoryList = () => {
                 onClick={openHome}
                 className={isHome ? 'font-semibold text-ink' : 'text-primary hover:underline'}
               >
-                {__uiText("Home category (Level 1)")}
+                {__uiText("หมวดหน้าแรก")}
               </button>
               <span className="text-ink-disabled">·</span>
               <button
@@ -320,7 +318,7 @@ const CategoryList = () => {
                     : 'text-primary hover:underline'
                 }
               >
-                {__uiText("Division ทั้งหมด")}
+                {__uiText("กลุ่มบนสุดทั้งหมด")}
               </button>
               {trail.map((node) => (
                 <React.Fragment key={node.category_id_uuid}>
@@ -363,7 +361,7 @@ const CategoryList = () => {
                   <p className="text-xs text-ink-muted">{listCaption}</p>
                   {isHome && (
                     <p className="mt-0.5 text-xs text-ink-muted">
-                      {__uiText("หน้าแรกยังซ่อนหมวดที่ไม่มีสินค้า active ให้อีกชั้นหนึ่ง — ติ๊กแล้วอาจยังไม่ขึ้น ถ้าหมวดนั้นยังไม่มีสินค้า")}
+                      {__uiText("หน้าแรกซ่อนหมวดที่ยังไม่มีสินค้าเปิดขาย ติ๊กแล้วอาจยังไม่ขึ้นจนกว่าหมวดนั้นจะมีสินค้า")}
                     </p>
                   )}
                   {childrenAreLevel1 && (
@@ -372,7 +370,7 @@ const CategoryList = () => {
                       onClick={openHome}
                       className="mt-0.5 text-xs text-primary hover:underline"
                     >
-                      {__uiText("ไปจัดลำดับที่ Home category →")}
+                      {__uiText("ไปจัดลำดับที่หมวดหน้าแรก")}
                     </button>
                   )}
                 </div>
@@ -388,8 +386,8 @@ const CategoryList = () => {
               {order.length === 0 ? (
                 <p className="px-4 py-8 text-center text-sm text-ink-muted">
                   {isHome
-                    ? __uiText('ยังไม่มีหมวด Level 1')
-                    : __uiText('หมวดนี้ไม่มีหมวดย่อย — เป็นหมวดปลายกิ่งที่สินค้าผูกอยู่')}
+                    ? __uiText('ยังไม่มีหมวดหน้าแรก กด "เพิ่มหมวดหมู่" เพื่อเพิ่ม')
+                    : __uiText('หมวดนี้ไม่มีหมวดย่อย สินค้าผูกกับหมวดนี้โดยตรง')}
                 </p>
               ) : (
                 <>
@@ -472,6 +470,9 @@ const CategoryList = () => {
                                             › {__uiText("{0} หมวดย่อย", { "0": childCount })}
                                           </span>
                                         )}
+                                        {row.is_active === false && (
+                                          <Chip tone="muted" className="ml-2">{__uiText('ปิดใช้งาน')}</Chip>
+                                        )}
                                       </p>
                                       <p className="truncate font-mono text-xs text-ink-muted">
                                         {/* Home view ไม่ได้จัดกลุ่มตาม Division แล้ว — แต่ละแถวจึงต้องบอกเองว่ามาจากไหน */}
@@ -481,14 +482,13 @@ const CategoryList = () => {
                                           </span>
                                         )}
                                         {__uiText("รหัส {0}", { "0": row.category_code ?? '—' })}
-                                        {row.is_active === false ? __uiText(' · ปิดใช้งาน') : ''}
                                       </p>
                                     </button>
 
                                     {row.category_level === 1 && (
                                       <label
                                         className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-ink-secondary"
-                                        title={__uiText("ติ๊กแล้วหมวดนี้จะขึ้นบนแถวไอคอนหน้าแรกของ shop")}
+                                        title={__uiText("ติ๊กแล้วหมวดนี้จะขึ้นบนแถวไอคอนหน้าแรกของร้าน")}
                                       >
                                         <input
                                           type="checkbox"

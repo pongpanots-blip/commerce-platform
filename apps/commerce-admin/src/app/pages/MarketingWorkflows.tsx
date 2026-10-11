@@ -2,15 +2,28 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { Fragment, useState } from 'react';
-import { Alert, Button, Checkbox, CodeBlock, StatusChip, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, TogglePill, fmt, ButtonLink } from '@cp/ui';
+import { Alert, Button, Checkbox, Chip, CodeBlock, StatusChip, Empty, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, Textarea, TogglePill, fmt, ButtonLink, statusLabel, toneOf } from '@cp/ui';
 import { flowsApi, WorkflowRow, workflowsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { MarketingTestersPanel } from './MarketingTestersPanel';
+import { itemOf } from './marketing-workflow/palette-items';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS: Record<WorkflowRow['status'], 'ok' | 'warn' | 'muted'> = { active: 'ok', paused: 'warn', draft: 'muted' };
 const STATUS_LABEL: Record<WorkflowRow['status'], string> = { get active(){return __uiText("ทำงาน");}, get paused(){return __uiText("หยุด");}, get draft(){return __uiText("ร่าง");} };
+/** What starts a workflow, for display only; unknown codes show as they are. */
+const TRIGGER_LABEL: Record<string, () => string> = {
+  cart_idle: () => __uiText("ทิ้งของไว้ในตะกร้า"),
+  page_affinity: () => __uiText("ดูหน้าเดิมซ้ำ ๆ"),
+  session_in_window: () => __uiText("เข้าใช้งานในช่วงเวลาที่กำหนด"),
+  first_login: () => __uiText("เข้าแอปครั้งแรก"),
+  first_visit: () => __uiText("เข้าเว็บครั้งแรก"),
+  custom: () => __uiText("กำหนดเอง"),
+  order_milestone: () => __uiText("ยอดสั่งซื้อถึงเป้า"),
+  scheduled: () => __uiText("ตามเวลา"),
+};
+const triggerText = (code: string) => TRIGGER_LABEL[code]?.() ?? itemOf(code)?.label ?? code;
 const when = (v: string | null) => (v ? new Date(v).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { dateStyle: 'short', timeStyle: 'short' }) : '—');
 const EDITABLE = ['name', 'trigger_type', 'trigger_config', 'steps', 'schedule', 'cooldown_days', 'holdout_percent', 'conversion_window_days', 'exit_on_goal'];
 
@@ -37,15 +50,15 @@ export function MarketingWorkflows() {
   }
   const toggle = (w: WorkflowRow) => {
     const action = w.status === 'active' ? 'pause' : 'activate';
-    if (!window.confirm(__uiText("{0} workflow \"{1}\"?\n\n{2}", {"0": action === 'pause' ? 'หยุด' : 'เปิด', "1": w.name, "2": action === 'activate' ? 'josh จะเริ่มส่งข้อความให้ลูกค้าที่เข้าเงื่อนไขตามรอบของ josh' : 'ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่'}))) return;
+    if (!window.confirm(__uiText("{0} \"{1}\"?\n\n{2}", {"0": action === 'pause' ? __uiText('หยุดข้อความอัตโนมัติ') : __uiText('เปิดข้อความอัตโนมัติ'), "1": w.name, "2": action === 'activate' ? __uiText('ระบบจะเริ่มส่งข้อความให้ลูกค้าที่เข้าเงื่อนไขในรอบถัดไป') : __uiText('ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่')}))) return;
     run(`${action === 'pause' ? 'หยุด' : 'เปิด'} "${w.name}" แล้ว`, () => workflowsApi.setState(w.id, action));
   };
 
   return (
     <Page>
       <PageHeader
-        title={__uiText("Marketing workflows")}
-        subtitle={__uiText("ระบบส่งข้อความอัตโนมัติของ josh · เปิด/หยุด/แก้ที่นี่ → josh บันทึกเอง (ตรวจเงื่อนไข เก็บประวัติแก้ไข) · การส่งจริงยังเป็นรอบของ josh")}
+        title={__uiText("ข้อความอัตโนมัติ")}
+        subtitle={__uiText("ข้อความที่ส่งถึงลูกค้าเองตามพฤติกรรม เปิด หยุด หรือแก้ได้ที่นี่ ระบบส่งจริงตามรอบและเก็บประวัติการแก้ไว้ให้")}
         actions={
           <div className="flex items-center gap-2">
             <label className="flex items-center gap-1.5 text-xs">
@@ -54,7 +67,7 @@ export function MarketingWorkflows() {
                 {[7, 30, 90].map((d) => <option key={d} value={d}>{d} {__uiText(" วัน")}</option>)}
               </Select>
             </label>
-            <ButtonLink variant="primary" icon="add" to="/marketing/flows/new">{__uiText("สร้าง workflow")}</ButtonLink>
+            <ButtonLink variant="primary" icon="add" to="/marketing/flows/new">{__uiText("สร้างข้อความอัตโนมัติ")}</ButtonLink>
           </div>
         }
       />
@@ -66,17 +79,17 @@ export function MarketingWorkflows() {
 
       {list.data && (
         <Panel className="overflow-hidden">
-          <PanelHead title={__uiText("Workflow ของ josh")} sub={__uiText("รันใน josh · แก้ด้วย editor เดิม")} />
+          <PanelHead title={__uiText("ข้อความอัตโนมัติชุดเดิม")} sub={__uiText("ทำงานในระบบหลังบ้านเดิม แก้ด้วยหน้าจอแบบกราฟ")} />
           {list.data.length ? (
             <Table>
               <THead>
-                <TH>{__uiText("Workflow")}</TH>
+                <TH>{__uiText("ชื่อ")}</TH>
                 <TH>{__uiText("สถานะ")}</TH>
                 <TH>{__uiText("เริ่มเมื่อ")}</TH>
-                <TH right>{__uiText("เข้า")}</TH>
-                <TH right>{__uiText("กำลังไป")}</TH>
+                <TH right>{__uiText("ลูกค้าที่เข้า")}</TH>
+                <TH right>{__uiText("อยู่ระหว่างขั้นตอน")}</TH>
                 <TH right>{__uiText("ล้มเหลว")}</TH>
-                <TH right>{__uiText("ซื้อ (conversion)")}</TH>
+                <TH right>{__uiText("ซื้อ")}</TH>
                 <TH>{__uiText("รอบล่าสุด")}</TH>
                 <TH className="w-24" />
               </THead>
@@ -86,25 +99,23 @@ export function MarketingWorkflows() {
                     <TR>
                       <TD>{w.name}</TD>
                       <TD>
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${STATUS[w.status] === 'ok' ? 'bg-[#e7f5ec] text-[#157347]' : STATUS[w.status] === 'warn' ? 'bg-[#fef7e0] text-[#b08900]' : 'bg-surface-container text-on-surface-variant'}`}>
-                          {STATUS_LABEL[w.status] ?? w.status}
-                        </span>
+                        <Chip tone={STATUS[w.status] ?? 'muted'} statusCode={w.status} dot>{STATUS_LABEL[w.status] ?? w.status}</Chip>
                       </TD>
-                      <TD kind="mono">{w.trigger_type}</TD>
-                      <TD kind="num">{w.enrolled ?? 0}</TD>
-                      <TD kind="num">{w.running ?? 0}</TD>
-                      <TD kind="num" className={w.failed ? 'text-[#c2333f]' : ''}>{w.failed ?? 0}</TD>
-                      <TD kind="num">{w.converted ?? 0}{w.enrolled ? ` (${Math.round(((w.converted ?? 0) / w.enrolled) * 100)}%)` : ''}</TD>
+                      <TD>{triggerText(w.trigger_type)}</TD>
+                      <TD kind="num">{fmt.num(w.enrolled ?? 0)}</TD>
+                      <TD kind="num">{fmt.num(w.running ?? 0)}</TD>
+                      <TD kind="num" className={w.failed ? 'text-danger' : ''}>{fmt.num(w.failed ?? 0)}</TD>
+                      <TD kind="num">{fmt.num(w.converted ?? 0)}{w.enrolled ? ` (${Math.round(((w.converted ?? 0) / w.enrolled) * 100)}%)` : ''}</TD>
                       <TD kind="time">
                         {when(w.last_run_at)}
-                        {w.failed_runs ? <div className="text-[10px] text-[#c2333f]">{__uiText("ล้มเหลว ")}{w.failed_runs} {__uiText(" รอบ")}</div> : null}
+                        {w.failed_runs ? <div className="text-[10px] text-danger">{__uiText("ล้มเหลว ")}{w.failed_runs} {__uiText(" รอบ")}</div> : null}
                       </TD>
                       <TD kind="actions">
                         <div className="inline-flex items-center gap-1">
                         <ExpandToggle open={open === w.id} onClick={() => setOpen(open === w.id ? null : w.id)} label={__uiText("ดู")} />
                         <ButtonLink variant="ghost" icon="account_tree" className="!px-2 !py-1 !text-[11px]" to={`/marketing/workflows/${w.id}/edit`}>{__uiText("กราฟ")}</ButtonLink>
                         <Button variant="ghost" size="sm" disabled={busy} onClick={() => { setOpen(w.id); setEditing(w.id); }}>{__uiText("แก้ JSON")}</Button>
-                        <Button variant={w.status === 'active' ? 'ghost' : 'primary'} size="sm" disabled={busy} onClick={() => toggle(w)}>{w.status === 'active' ? __uiText("หยุด") : __uiText("เปิด")}</Button>
+                        <Button variant={w.status === 'active' ? 'danger-ghost' : 'secondary'} size="sm" disabled={busy} onClick={() => toggle(w)}>{w.status === 'active' ? __uiText("หยุด") : __uiText("เปิด")}</Button>
                         </div>
                       </TD>
                     </TR>
@@ -119,12 +130,12 @@ export function MarketingWorkflows() {
                         ) : (
                           <div className="space-y-4">
                             <div>
-                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">{__uiText("Enrollment")}</div>
+                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">{__uiText("ลูกค้าในแต่ละสถานะ")}</div>
                               <div className="flex flex-wrap gap-2">
                                 {detail.data.enrollmentsByStatus.map((s) => (
-                                  <span key={s.status} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-on-surface">
-                                    {s.status}: {fmt.num(s.n)}
-                                  </span>
+                                  <Chip key={s.status} tone={toneOf(s.status)} statusCode={s.status} dot>
+                                    {statusLabel(s.status)}: {fmt.num(s.n)}
+                                  </Chip>
                                 ))}
                               </div>
                             </div>
@@ -156,15 +167,15 @@ export function MarketingWorkflows() {
                                   <THead>
                                     <TH>{__uiText("เวลา")}</TH>
                                     <TH>{__uiText("สถานะ")}</TH>
-                                    <TH>{__uiText("ผู้ใช้")}</TH>
+                                    <TH right>{__uiText("ลูกค้าที่เข้า / ทั้งหมด")}</TH>
                                     <TH>{__uiText("ข้อความ")}</TH>
                                   </THead>
                                   <TBody>
                                     {detail.data.recentRuns.map((r, i) => (
                                       <TR key={i}>
                                         <TD kind="time">{when(r.fired_at)}</TD>
-                                        <TD kind="muted">{r.status}</TD>
-                                        <TD kind="num">{r.enrolled_count ?? 0} / {r.audience_count ?? 0}</TD>
+                                        <TD><StatusChip status={r.status} /></TD>
+                                        <TD kind="num">{fmt.num(r.enrolled_count ?? 0)} / {fmt.num(r.audience_count ?? 0)}</TD>
                                         <TD kind="muted">{r.error_message ?? r.skip_reason ?? '—'}</TD>
                                       </TR>
                                     ))}
@@ -173,7 +184,7 @@ export function MarketingWorkflows() {
                               </div>
                             )}
                             <div>
-                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">{__uiText("ขั้นตอน (steps)")}</div>
+                              <div className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wide">{__uiText("ขั้นตอน")}</div>
                               <CodeBlock value={detail.data.steps} />
                             </div>
                           </div>
@@ -185,7 +196,7 @@ export function MarketingWorkflows() {
               </TBody>
             </Table>
           ) : (
-            <div className="px-4 py-8"><Empty icon="automation">{__uiText("ยังไม่มี workflow")}</Empty></div>
+            <div className="px-4 py-8"><Empty icon="automation">{__uiText("ยังไม่มีข้อความอัตโนมัติชุดเดิม")}</Empty></div>
           )}
         </Panel>
       )}
@@ -203,21 +214,21 @@ function EditJson({ initial, busy, onSave, onCancel }: { initial: string; busy: 
     let v: unknown;
     try { v = JSON.parse(text); } catch { return setErr('JSON ไม่ถูกต้อง'); }
     if (!v || typeof v !== 'object' || Array.isArray(v)) return setErr('ต้องเป็น object');
-    if (!window.confirm(__uiText("บันทึกการแก้ workflow นี้ไปที่ josh? (josh เก็บฉบับเดิมไว้ใน revisions)"))) return;
+    if (!window.confirm(__uiText("บันทึกการแก้ข้อความอัตโนมัตินี้? ระบบเก็บฉบับเดิมไว้ให้ย้อนกลับได้"))) return;
     onSave(v as Record<string, unknown>);
   }
   return (
     <FormPanel
-      title={__uiText("แก้ Workflow")}
+      title={__uiText("แก้ข้อความอัตโนมัติ")}
       icon="edit"
       cols={1}
-      description={__uiText("รูปแบบเดียวกับ josh · josh ตรวจเงื่อนไขก่อนบันทึก")}
+      description={__uiText("ระบบตรวจเงื่อนไขก่อนบันทึก และเก็บฉบับเดิมไว้ย้อนกลับได้")}
       busy={busy}
       error={err}
       onSubmit={save}
       onCancel={onCancel}
     >
-      <Field label={__uiText("ข้อมูล Workflow (JSON)")}>
+      <Field label={__uiText("ข้อมูลข้อความอัตโนมัติ (JSON)")}>
         <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={16} />
       </Field>
     </FormPanel>
@@ -231,23 +242,23 @@ function CommerceFlowsPanel() {
   const flows = useAsync(() => flowsApi.list(), []);
   return (
     <Panel className="overflow-hidden">
-      <PanelHead title={__uiText("Workflow ของ commerce (ใหม่)")} sub={__uiText("รันใน commerce · ลากวาง Webhook / A/B Split ได้")} />
+      <PanelHead title={__uiText("ข้อความอัตโนมัติชุดใหม่")} sub={__uiText("สร้างด้วยการลากวางขั้นตอน แบ่งกลุ่มทดลองได้")} />
       <ErrorText error={flows.error} onRetry={flows.reload} />
       {flows.loading && !flows.data ? <Loading variant="table" /> : flows.data?.length ? (
         <Table>
-          <THead><TH>{__uiText("Workflow")}</TH><TH>{__uiText("สถานะ")}</TH><TH>{__uiText("เริ่มเมื่อ")}</TH>
-            <TH kind="num">{__uiText("เข้า 30 วัน")}</TH><TH kind="num">{__uiText("Converted")}</TH><TH kind="time">{__uiText("แก้ล่าสุด")}</TH><TH kind="actions" /></THead>
+          <THead><TH>{__uiText("ชื่อ")}</TH><TH>{__uiText("สถานะ")}</TH><TH>{__uiText("เริ่มเมื่อ")}</TH>
+            <TH kind="num">{__uiText("ลูกค้าที่เข้า 30 วัน")}</TH><TH kind="num">{__uiText("ซื้อ")}</TH><TH kind="time">{__uiText("แก้ล่าสุด")}</TH><TH kind="actions" /></THead>
           <TBody>
             {flows.data.map((w) => (
               <TR key={w.id}>
-                <TD>{w.name}</TD><TD><StatusChip status={w.status} /></TD><TD kind="mono">{w.triggerType}</TD>
-                <TD kind="num">{w.enrolled30d}</TD><TD kind="num">{w.converted30d}</TD><TD kind="time">{when(w.updatedAt)}</TD>
+                <TD>{w.name}</TD><TD><StatusChip status={w.status} /></TD><TD>{triggerText(w.triggerType)}</TD>
+                <TD kind="num">{fmt.num(w.enrolled30d)}</TD><TD kind="num">{fmt.num(w.converted30d)}</TD><TD kind="time">{when(w.updatedAt)}</TD>
                 <TD kind="actions"><ButtonLink to={`/marketing/flows/${w.id}`} icon="edit">{__uiText("เปิด")}</ButtonLink></TD>
               </TR>
             ))}
           </TBody>
         </Table>
-      ) : <div className="px-4 py-8"><Empty icon="automation">{__uiText("ยังไม่มี — กดสร้าง workflow ใหม่")}</Empty></div>}
+      ) : <div className="px-4 py-8"><Empty icon="automation">{__uiText("ยังไม่มีข้อความอัตโนมัติชุดใหม่ — กด \"สร้างข้อความอัตโนมัติ\" เพื่อเริ่ม")}</Empty></div>}
     </Panel>
   );
 }

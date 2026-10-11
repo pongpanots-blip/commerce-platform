@@ -52,19 +52,19 @@ import { TriggerRuleBuilder } from './TriggerRuleBuilder';
 import { defaultTriggerConfigFor } from './trigger-rule.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, PageHeader, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type CouponOption = { id: string; coupon_code: string; title: string };
 
 const STATUS_LABEL: Record<MarketingWorkflow['status'], string> = {
-  get draft(){return __uiText("ร่าง (Draft)");},
-  get active(){return __uiText("ใช้งานอยู่ (Active)");},
-  get paused(){return __uiText("หยุดชั่วคราว (Paused)");},
+  get draft(){return __uiText("ร่าง");},
+  get active(){return __uiText("ใช้งานอยู่");},
+  get paused(){return __uiText("หยุดชั่วคราว");},
 };
 
-const STATUS_STYLE: Record<MarketingWorkflow['status'], string> = {
-  draft: 'bg-gray-100 text-gray-500',
-  active: 'bg-green-100 text-green-700',
-  paused: 'bg-amber-100 text-amber-700',
+const STATUS_TONE: Record<MarketingWorkflow['status'], Tone> = {
+  draft: 'muted',
+  active: 'ok',
+  paused: 'warn',
 };
 
 /** Shared shell for the header's settings row so every chip lines up. */
@@ -111,7 +111,7 @@ function HeaderButton({
   __useUiLocale();
   const styles =
     variant === 'primary'
-      ? 'bg-gray-900 text-white hover:bg-gray-800'
+      ? 'bg-primary text-white hover:opacity-90'
       : variant === 'secondary'
         ? 'bg-white border border-gray-300 text-gray-800 hover:bg-gray-50'
         : 'text-primary hover:underline bg-transparent';
@@ -442,7 +442,7 @@ function AnalyticsPanel({ workflowId }: { workflowId: string }) {
   return (
     <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs font-semibold text-gray-700">{__uiText("Analytics")}</p>
+        <p className="text-xs font-semibold text-gray-700">{__uiText("ผลลัพธ์")}</p>
         <div className="flex items-center gap-1">
           {[7, 30, 90].map((range) => (
             <button
@@ -671,14 +671,14 @@ function CreateWorkflowScreen() {
   return (
     <div className="cp-editor-layout w-full max-w-4xl flex flex-col gap-5">
       <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-        {__uiText("&larr; กลับไปหน้ารายการ Workflow")}</Link>
+        {__uiText("← กลับไปรายการข้อความอัตโนมัติ")}</Link>
       <PageHeader
-        title={__uiText("สร้าง Marketing Workflow ใหม่")}
-        subtitle={__uiText("ตั้งชื่อ แล้วสร้างเงื่อนไขเริ่มต้นเอง (เลือกประเภท + ปรับค่า) — Audience ไม่บังคับ (ทุกคนที่เข้าเงื่อนไข trigger ได้) · ขั้นตอน action แก้ต่อใน canvas ได้หลังสร้าง")}
+        title={__uiText("สร้างข้อความอัตโนมัติ")}
+        subtitle={__uiText("ตั้งชื่อและเลือกว่าจะเริ่มส่งเมื่อไร ส่วนขั้นตอนการส่งแก้ต่อได้หลังสร้าง")}
       />
 
       <section className="space-y-2">
-        <h2 className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("1 · ชื่อ Workflow")}</h2>
+        <h2 className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("1 · ชื่อ")}</h2>
         <div>
           <label htmlFor={nameInputId} className={FIELD_LABEL}>{__uiText("ชื่อ")}</label>
           <input
@@ -705,9 +705,12 @@ function CreateWorkflowScreen() {
       </section>
 
       {error && <p className="text-xs text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
+      <div className="flex justify-end gap-2">
+      <HeaderButton variant="secondary" onClick={() => navigate(ADMIN_ROUTES.marketingWorkflows)}>{__uiText("ยกเลิก")}</HeaderButton>
       <HeaderButton variant="primary" onClick={handleCreate} disabled={creating}>
-        {creating ? __uiText("กำลังสร้าง...") : __uiText("สร้าง Workflow")}
+        {creating ? __uiText("กำลังสร้าง...") : __uiText("สร้างข้อความอัตโนมัติ")}
       </HeaderButton>
+      </div>
     </div>
   );
 }
@@ -1115,6 +1118,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
   };
 
   const handlePause = async () => {
+    if (!window.confirm(__uiText("หยุดข้อความอัตโนมัตินี้ชั่วคราว? ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่"))) return;
     setErrorMsg(null);
     try {
       const response = await pauseMarketingWorkflow(id);
@@ -1193,8 +1197,8 @@ function EditWorkflowScreen({ id }: { id: string }) {
 
   if (loadedId !== id && loadError) {
     return <div className="cp-management-page space-y-4">
-      <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-sm text-primary hover:underline">{__uiText('&larr; กลับไปหน้ารายการ Workflow')}</Link>
-      <LoadError title={__uiText('Marketing Workflow')} error={loadError} onRetry={() => void loadWorkflow()} />
+      <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-sm text-primary hover:underline">{__uiText("← กลับไปรายการข้อความอัตโนมัติ")}</Link>
+      <LoadError title={__uiText('ข้อความอัตโนมัติ')} error={loadError} onRetry={() => void loadWorkflow()} />
     </div>;
   }
 
@@ -1205,7 +1209,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
   return (
     <div className="cp-management-page flex flex-col gap-4">
       <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-        {__uiText("&larr; กลับไปหน้ารายการ Workflow")}</Link>
+        {__uiText("← กลับไปรายการข้อความอัตโนมัติ")}</Link>
 
       {/* Two rows on purpose: cramming identity + 6 settings + 7 buttons onto
           one line squeezed the buttons into a vertical stack and wrapped every
@@ -1215,7 +1219,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
           <div className="flex min-w-0 items-end gap-2">
             <div className="min-w-0">
               <label htmlFor={nameInputId} className="mb-0.5 block text-[10px] font-medium text-gray-400">
-                {__uiText("ชื่อ Workflow")}</label>
+                {__uiText("ชื่อ")}</label>
               <input
                 id={nameInputId}
                 type="text"
@@ -1224,33 +1228,31 @@ function EditWorkflowScreen({ id }: { id: string }) {
                 className="w-full max-w-md rounded-lg border border-gray-200 px-3 py-2 text-base font-semibold text-gray-800 focus:border-primary focus:outline-none sm:w-72"
               />
             </div>
-            <span
-              className={`w-fit shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[status]}`}
-            >
-              {STATUS_LABEL[status]}
-            </span>
+            <Chip tone={STATUS_TONE[status] ?? 'muted'} statusCode={status} dot className="w-fit shrink-0">
+              {STATUS_LABEL[status] ?? status}
+            </Chip>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 lg:justify-end">
             <HeaderButton onClick={() => setSelectedNodeId(TRIGGER_NODE_ID)}>
               {__uiText("แก้เงื่อนไขเริ่มต้น")}</HeaderButton>
             <HeaderButton onClick={handlePreview} disabled={previewLoading}>
-              {previewLoading ? __uiText("กำลังพรีวิว...") : __uiText("Preview")}
+              {previewLoading ? __uiText("กำลังพรีวิว...") : __uiText("ดูตัวอย่าง")}
             </HeaderButton>
             {/* commerce: no Test here — it can send a real message; test in josh admin. */}
             <HeaderButton onClick={() => setStatsOpen((prev) => !prev)}>{__uiText("สถิติ")}</HeaderButton>
-            <HeaderButton onClick={() => setAnalyticsOpen((prev) => !prev)}>{__uiText("Analytics")}</HeaderButton>
+            <HeaderButton onClick={() => setAnalyticsOpen((prev) => !prev)}>{__uiText("ผลลัพธ์")}</HeaderButton>
             <HeaderButton onClick={() => setHistoryOpen((prev) => !prev)}>{__uiText("ประวัติ")}</HeaderButton>
             <span className="mx-1 hidden h-5 w-px bg-gray-200 sm:block" aria-hidden />
             {status === 'active' ? (
-              <HeaderButton onClick={handlePause}>{__uiText("Pause")}</HeaderButton>
+              <HeaderButton onClick={handlePause}>{__uiText("หยุดชั่วคราว")}</HeaderButton>
             ) : (
               <HeaderButton onClick={handleActivate} disabled={activating}>
-                {activating ? __uiText("กำลังเปิดใช้งาน...") : __uiText("Activate")}
+                {activating ? __uiText("กำลังเปิดใช้งาน...") : __uiText("เปิดใช้งาน")}
               </HeaderButton>
             )}
             <HeaderButton variant="primary" onClick={handleSaveClick} disabled={saving}>
-              {saving ? __uiText("กำลังบันทึก...") : __uiText("Save")}
+              {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
             </HeaderButton>
           </div>
         </div>
@@ -1398,7 +1400,7 @@ function EditWorkflowScreen({ id }: { id: string }) {
               {deviceScopedTrigger ? (
                 <li>
                   {__uiText("Trigger")}{' '}
-                  <strong>{triggerType === 'first_visit' ? __uiText("เข้าเว็บครั้งแรก") : __uiText("กำหนดเอง (Custom)")}</strong>{__uiText(": ใส่ Device ID (หรือปล่อยว่างให้ระบบสร้าง) แล้วปิด Dry run เพื่อสร้าง offer จริง — ต้อง ")}<strong>{__uiText("Activate")}</strong> {__uiText(" ก่อนถึงจะขึ้น popup บน shop จาก traffic จริง")}{triggerType === 'custom' ? __uiText(" (custom: ทุกคนที่เข้าเว็บระหว่าง Active)") : ''}
+                  <strong>{triggerType === 'first_visit' ? __uiText("เข้าเว็บครั้งแรก") : __uiText("กำหนดเอง (Custom)")}</strong>{__uiText(": ใส่ Device ID (หรือปล่อยว่างให้ระบบสร้าง) แล้วปิด Dry run เพื่อสร้าง offer จริง — ต้อง ")}<strong>{__uiText("เปิดใช้งาน")}</strong> {__uiText(" ก่อนถึงจะขึ้น popup บน shop จาก traffic จริง")}{triggerType === 'custom' ? __uiText(" (custom: ทุกคนที่เข้าเว็บระหว่าง Active)") : ''}
                 </li>
               ) : (
                 <li>{__uiText("ใส่ ")}<code className="rounded bg-white px-1">{__uiText("user_id")}</code> {__uiText(" จริงจากระบบ")}</li>

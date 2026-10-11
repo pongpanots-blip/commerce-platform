@@ -81,6 +81,9 @@ const fieldLabel = (f: FinanceField) =>
   );
 const unavailable = () =>
   text("ยังไม่ยืนยัน / ไม่มีข้อมูล", "Unavailable / unverified");
+/** Thousands separators on a source decimal string, without rounding it through a float. */
+const grouped = (v: string | number) =>
+  String(v).replace(/^-?\d+/, (m) => m.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 const reasonLabel = (reason: string | null) =>
   reason
     ? text(
@@ -628,25 +631,25 @@ function Analysis({
                   <Table>
                     <THead>
                       <TH>{text("ฟิลด์ที่บันทึก", "Recorded field")}</TH>
-                      <TH>{q.month}</TH>
-                      <TH>{q.compare}</TH>
-                      <TH>
+                      <TH kind="num">{q.month}</TH>
+                      <TH kind="num">{q.compare}</TH>
+                      <TH kind="num">
                         {text(
                           "ผลต่าง THB ตามสัญญารายงาน",
                           "Difference in source-declared THB",
                         )}
                       </TH>
-                      <TH>%</TH>
+                      <TH kind="num">%</TH>
                       <TH>{text("ฐานและข้อจำกัด", "Basis and limits")}</TH>
                     </THead>
                     <TBody>
                       {v.variance.fields.map((x) => (
                         <TR key={x.field}>
                           <TD>{fieldLabel(x.field)}</TD>
-                          <TD>{x.current ?? unavailable()}</TD>
-                          <TD>{x.previous ?? unavailable()}</TD>
-                          <TD>{x.delta ?? unavailable()}</TD>
-                          <TD>
+                          <TD kind="num">{x.current == null ? unavailable() : grouped(x.current)}</TD>
+                          <TD kind="num">{x.previous == null ? unavailable() : grouped(x.previous)}</TD>
+                          <TD kind="num">{x.delta == null ? unavailable() : grouped(x.delta)}</TD>
+                          <TD kind="num">
                             {x.percent === null
                               ? unavailable()
                               : x.percent + "%"}
@@ -708,21 +711,21 @@ function Coverage({
               </p>
               <p>
                 {text(
-                  "สถานะชำระ/ส่งแล้ว แต่ไม่ผ่านกฎ payment success ที่ไม่ใช่ test",
+                  "สถานะชำระหรือส่งแล้ว แต่ไม่มีการชำระเงินจริงที่สำเร็จ (ไม่นับรายการทดสอบ)",
                   "Settled-status orders excluded by the successful non-test payment rule",
                 )}
                 : {orders.excludedWithoutPayment}
               </p>
               <p>
                 {text(
-                  "นับตาม order.create_date ไม่ใช่วันที่รับชำระหรือวันรับรู้รายได้",
+                  "นับตามวันที่สร้างออเดอร์ ไม่ใช่วันที่รับชำระหรือวันรับรู้รายได้",
                   "Uses order.create_date, not cash-receipt or accounting recognition date.",
                 )}
               </p>
               {orders.legacyCopyOrders !== null && (
                 <p>
                   {text(
-                    "ออเดอร์สำเนาเดิม source_version=0 (ไม่พิสูจน์ backfill ของ refunds)",
+                    "ออเดอร์ที่คัดลอกมาจากระบบเดิม (ยังไม่ยืนยันว่าข้อมูลคืนเงินย้อนหลังครบ)",
                     "Legacy copy orders with source_version=0 (does not establish refund backfill)",
                   )}
                   : {orders.legacyCopyOrders}
@@ -741,18 +744,18 @@ function Coverage({
               <Table>
                 <THead>
                   <TH>{text("ฟิลด์", "Field")}</TH>
-                  <TH>{text("ผลรวมของค่าที่มี", "Sum of known values")}</TH>
-                  <TH>
+                  <TH kind="num">{text("ผลรวมของค่าที่มี", "Sum of known values")}</TH>
+                  <TH kind="num">
                     {text("แถวที่มีค่า / ขาดค่า", "Known / missing rows")}
                   </TH>
-                  <TH>{text("แถวค่าติดลบ", "Negative-value rows")}</TH>
+                  <TH kind="num">{text("แถวค่าติดลบ", "Negative-value rows")}</TH>
                 </THead>
                 <TBody>
                   {fields.map((f) => (
                     <TR key={f}>
                       <TD>{fieldLabel(f)}</TD>
-                      <TD>
-                        {orders.values[f].knownSum ??
+                      <TD kind="num">
+                        {orders.values[f].knownSum != null ? grouped(orders.values[f].knownSum) :
                           (orders.paidOrders === 0
                             ? text(
                                 "ไม่พบแถวที่เข้าเกณฑ์ในการอ่านนี้",
@@ -760,11 +763,11 @@ function Coverage({
                               )
                             : unavailable())}
                       </TD>
-                      <TD>
+                      <TD kind="num">
                         {orders.values[f].knownRows} /{" "}
                         {orders.values[f].missingRows}
                       </TD>
-                      <TD>{orders.values[f].negativeRows}</TD>
+                      <TD kind="num">{orders.values[f].negativeRows}</TD>
                     </TR>
                   ))}
                 </TBody>

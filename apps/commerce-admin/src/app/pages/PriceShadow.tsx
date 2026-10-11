@@ -1,7 +1,7 @@
 // ui-metadata-migration: static labels and UI notices only
 import { Fragment, useState } from 'react';
 import {
-  Button, Empty, ErrorText, ExpandRow, ExpandToggle, Hint, Loading, Page, PageHeader, Panel, Segmented, StatGrid, StatTile, StatusChip, Table, TBody, TD, TH, THead, TR, fmt,
+  Button, Chip, Empty, ErrorText, ExpandRow, ExpandToggle, Hint, Loading, Page, PageHeader, Panel, Segmented, Select, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, fmt,
 } from '@cp/ui';
 import { priceShadowApi } from '../../lib/api';
 import { useAsync } from '../hooks';
@@ -34,16 +34,17 @@ export function PriceShadow() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("ราคา · commerce คิดคู่กับ josh (ทดลอง)")}
-        subtitle={__uiText("ทุกบรรทัดใน order ใหม่ของ josh · commerce คิดราคาใหม่ด้วยโค้ดราคาของ josh (สำเนา) ตามบริษัท สาขา จำนวน และเวลาที่สั่ง แล้วเทียบกับที่ josh เก็บจริง · ไม่แก้อะไรใน josh")}
+        title={__uiText("เทียบราคาที่คำนวณใหม่")}
+        subtitle={__uiText("เทียบราคาที่ระบบใหม่คำนวณกับราคาที่ร้านค้าใช้อยู่")}
         actions={
           <>
-            <Button variant="primary" disabled={!!busy} onClick={() => act('run', priceShadowApi.run, (r: { checked: number }) => `ตรวจเพิ่ม ${r.checked} บรรทัด`)}>{busy === 'run' ? __uiText("กำลังตรวจ…") : __uiText("ตรวจตอนนี้")}</Button>
+            <Button variant="primary" disabled={!!busy} onClick={() => act('run', priceShadowApi.run, (r: { checked: number }) => __uiText('ตรวจเพิ่ม {0} บรรทัด', { 0: r.checked }))}>{busy === 'run' ? __uiText("กำลังตรวจ…") : __uiText("ตรวจตอนนี้")}</Button>
             <Button icon="refresh" onClick={refresh}>{__uiText("Refresh")}</Button>
           </>
         }
       />
 
+      <Hint>{__uiText("ระบบใหม่คำนวณราคาของทุกบรรทัดในออเดอร์ใหม่ตามบริษัท สาขา จำนวน และเวลาที่สั่ง แล้วเทียบกับราคาที่ร้านค้าเก็บจริง หน้านี้เทียบอย่างเดียว ไม่แก้ราคาในร้านค้า")}</Hint>
       {msg && <Hint>{(typeof msg === 'string' ? __uiText(msg) : msg)}</Hint>}
       <ErrorText error={summary.error || list.error} />
 
@@ -63,23 +64,23 @@ export function PriceShadow() {
               tone={s.mismatched ? 'warn' : 'ok'}
             />
             <StatTile
-              label={__uiText("commerce คิดไม่ได้")}
+              label={__uiText("ระบบใหม่คำนวณไม่ได้")}
               value={fmt.num(s.could_not_price)}
               tone={s.could_not_price ? 'danger' : 'ok'}
             />
             <StatTile
               label={__uiText("ช่วงที่ตรวจ")}
               value={
-                <select value={days} onChange={(e) => setDays(Number(e.target.value))} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface border border-secondary-container rounded-lg text-xs">
+                <Select aria-label={__uiText("ช่วงที่ตรวจ")} value={days} onChange={(e) => setDays(Number(e.target.value))}>
                   {[1, 7, 30].map((d) => <option key={d} value={d}>{d} {__uiText(" วัน")}</option>)}
-                </select>
+                </Select>
               }
               foot={__uiText("{0} – {1}",{'0':fmt.date(s.first_at),'1':fmt.date(s.last_at)})}
             />
           </StatGrid>
 
           {!!s?.mismatchBySource.length && (
-            <Hint>{__uiText("ไม่ตรงบ่อย: ")}{s.mismatchBySource.map((m) => `josh ${m.josh_source ?? '—'} → commerce ${m.commerce_source ?? '—'} (${m.n})`).join(' · ')}</Hint>
+            <Hint>{__uiText("ไม่ตรงบ่อย: ")}{s.mismatchBySource.map((m) => __uiText('ร้านค้าใช้ {0} แต่ระบบใหม่ใช้ {1} ({2} บรรทัด)', { 0: m.josh_source ?? '—', 1: m.commerce_source ?? '—', 2: fmt.num(m.n) })).join(' · ')}</Hint>
           )}
         </>
       )}
@@ -103,12 +104,12 @@ export function PriceShadow() {
           ) : (
             <Table>
               <THead>
-                <TH>{__uiText("Order")}</TH>
-                <TH>{__uiText("SKU")}</TH>
-                <TH>{__uiText("จำนวน")}</TH>
+                <TH>{__uiText("เลขออเดอร์")}</TH>
+                <TH>{__uiText("รหัสสินค้า")}</TH>
+                <TH right>{__uiText("จำนวน")}</TH>
                 <TH>{__uiText("สั่งเมื่อ")}</TH>
-                <TH right>{__uiText("josh")}</TH>
-                <TH right>{__uiText("commerce")}</TH>
+                <TH right>{__uiText("ราคาร้านค้า")}</TH>
+                <TH right>{__uiText("ราคาที่คำนวณใหม่")}</TH>
                 <TH>{__uiText("ผล")}</TH>
                 <TH></TH>
               </THead>
@@ -118,16 +119,18 @@ export function PriceShadow() {
                     <TR>
                       <TD kind="mono">{r.orderNumber}</TD>
                       <TD kind="mono">{r.sku}</TD>
-                      <TD>{r.quantity}</TD>
+                      <TD kind="num">{fmt.num(r.quantity)}</TD>
                       <TD kind="time">{fmt.when(r.orderedAt)}</TD>
-                      <TD kind="money">{fmt.baht(r.joshUnitPrice)} <span className="text-[10px] text-on-surface-variant">{r.joshSource ?? '—'}</span></TD>
-                      <TD kind="money">{fmt.baht(r.commerceUnitPrice)} <span className="text-[10px] text-on-surface-variant">{r.commerceSource ?? '—'}</span></TD>
+                      <TD kind="money">{fmt.baht(r.joshUnitPrice)} <span className="font-mono text-[10px] text-on-surface-variant">{r.joshSource ?? '—'}</span></TD>
+                      <TD kind="money">{fmt.baht(r.commerceUnitPrice)} <span className="font-mono text-[10px] text-on-surface-variant">{r.commerceSource ?? '—'}</span></TD>
                       <TD>
-                        <StatusChip status={r.matched ? 'ok' : r.diffs.map((d) => DIFF[d] ?? d).join(', ') || 'error'} />
+                        {r.matched ? <Chip tone="ok" dot>{__uiText('ตรง')}</Chip>
+                          : r.diffs.length ? <Chip tone="warn" dot>{__uiText('ไม่ตรง: {0}', { 0: r.diffs.map((d) => (DIFF[d] ? __uiText(DIFF[d]) : d)).join(', ') })}</Chip>
+                          : <Chip tone="danger" dot>{__uiText('คำนวณไม่ได้')}</Chip>}
                         {r.note && <div className="text-[10px] text-on-surface-variant">{r.note}</div>}
                       </TD>
                       <TD kind="actions">
-                        <button type="button" className="text-xs text-primary hover:underline font-medium" disabled={!!busy} onClick={() => act(r.id, () => priceShadowApi.recheck(r.joshOrderItemId), (x: { matched: boolean }) => `ตรวจซ้ำ: ${x.matched ? 'ตรง' : 'ยังไม่ตรง'}`)}>{__uiText("ตรวจซ้ำ")}</button>
+                        <Button size="sm" disabled={!!busy} onClick={() => act(r.id, () => priceShadowApi.recheck(r.joshOrderItemId), (x: { matched: boolean }) => __uiText(x.matched ? 'ตรวจซ้ำแล้ว: ตรง' : 'ตรวจซ้ำแล้ว: ยังไม่ตรง'))}>{__uiText("ตรวจซ้ำ")}</Button>
                       </TD>
                     </TR>
                   </Fragment>

@@ -23,21 +23,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-const STATUS_BADGE: Record<string, string> = {
-  pending: 'bg-gray-100 text-gray-600',
-  processing: 'bg-amber-100 text-amber-700',
-  success: 'bg-emerald-100 text-emerald-700',
-  failed: 'bg-red-100 text-red-700',
-};
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Button, Chip, StatusChip } from "@cp/ui";
 
-function StatusBadge({ status }: { status: string }) {
-  __useUiLocale();
-  const cls = STATUS_BADGE[status] ?? 'bg-gray-100 text-gray-600';
-  return (
-    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>{status}</span>
-  );
-}
+/** ป้ายผลการทดสอบ — ค่าที่บันทึกยังเป็นรหัสเดิม */
+const RESULT_LABEL: Record<string, string> = {
+  get not_tested(){return __uiText("ยังไม่ทดสอบ");},
+  get pass(){return __uiText("ผ่าน");},
+  get fail(){return __uiText("ไม่ผ่าน");},
+  get na(){return __uiText("ไม่เกี่ยวข้อง");},
+};
 
 function unwrap<T>(res: any): T {
   return (res?.data?.data ?? res?.data ?? res) as T;
@@ -66,20 +60,20 @@ const NOTIFY_PRESETS: {
   /** ต้องมีแถวที่เลือกไว้ก่อน — ใช้คำนวณ amount ที่ตั้งใจให้ไม่ตรงกับแถวนั้น */
   requiresSelectedRow?: boolean;
 }[] = [
-  { label: __uiText("สำเร็จ (Authorized + success)"), patch: { transaction_state: 'Authorized', status: 'success', tamper: '' } },
+  { get label() { return __uiText("สำเร็จ (Authorized + success)"); }, patch: { transaction_state: 'Authorized', status: 'success', tamper: '' } },
   {
-    label: 'Pre-Authorized + success',
-    note: 'ห้ามถือว่าจ่ายแล้ว — แค่ authorize ยังไม่ capture',
+    get label() { return __uiText("อนุมัติล่วงหน้า (Pre-Authorized)"); },
+    get note() { return __uiText("ห้ามถือว่าจ่ายแล้ว — แค่อนุมัติวงเงิน ยังไม่ตัดเงินจริง"); },
     patch: { transaction_state: 'Pre-Authorized', status: 'success', tamper: '' },
   },
-  { label: 'Declined', patch: { transaction_state: 'Declined', status: 'fail', tamper: '' } },
-  { label: 'Voided', patch: { transaction_state: 'Voided', status: 'fail', tamper: '' } },
-  { label: __uiText("checksum ผิด"), patch: { transaction_state: 'Authorized', status: 'success', tamper: 'bad-checksum' } },
-  { label: __uiText("ไม่มี checksum"), patch: { transaction_state: 'Authorized', status: 'success', tamper: 'no-checksum' } },
-  { label: __uiText("livemode ไม่ตรง"), patch: { transaction_state: 'Authorized', status: 'success', livemode: true, tamper: '' } },
+  { get label() { return __uiText("ถูกปฏิเสธ (Declined)"); }, patch: { transaction_state: 'Declined', status: 'fail', tamper: '' } },
+  { get label() { return __uiText("ยกเลิกรายการ (Voided)"); }, patch: { transaction_state: 'Voided', status: 'fail', tamper: '' } },
+  { get label() { return __uiText("checksum ผิด"); }, patch: { transaction_state: 'Authorized', status: 'success', tamper: 'bad-checksum' } },
+  { get label() { return __uiText("ไม่มี checksum"); }, patch: { transaction_state: 'Authorized', status: 'success', tamper: 'no-checksum' } },
+  { get label() { return __uiText("livemode ไม่ตรง"); }, patch: { transaction_state: 'Authorized', status: 'success', livemode: true, tamper: '' } },
   {
-    label: __uiText("ยอดไม่ตรง"),
-    note: `ต้องเลือกแถวก่อน — จะยิงยอด = ยอดแถวนั้น + ${AMOUNT_MISMATCH_DELTA}`,
+    get label() { return __uiText("ยอดไม่ตรง"); },
+    get note() { return __uiText("ต้องเลือกแถวก่อน — จะส่งยอด = ยอดแถวนั้น + {0}", { "0": AMOUNT_MISMATCH_DELTA }); },
     patch: { transaction_state: 'Authorized', status: 'success', tamper: '' },
     requiresSelectedRow: true,
   },
@@ -285,15 +279,15 @@ export default function KbankTestingConsole() {
 
   const handleReconcile = async () => {
     setReconcileIsError(false);
-    setReconcileMessage('กำลังรัน...');
+    setReconcileMessage(__uiText('กำลังรัน...'));
     try {
       await reconcileKbankNow();
       setReconcileIsError(false);
-      setReconcileMessage('รันเสร็จแล้ว — ดูสถานะแถวทดสอบด้านบนเพื่อยืนยันผล');
+      setReconcileMessage(__uiText('รันเสร็จแล้ว — ดูสถานะแถวทดสอบด้านบนเพื่อยืนยันผล'));
       await loadRows();
     } catch (err: any) {
       setReconcileIsError(true);
-      setReconcileMessage(err?.response?.data?.message ?? err?.message ?? 'reconcile ไม่สำเร็จ');
+      setReconcileMessage(err?.response?.data?.message ?? err?.message ?? __uiText('กระทบยอดไม่สำเร็จ'));
     }
   };
 
@@ -325,21 +319,21 @@ export default function KbankTestingConsole() {
   const columns: TableColumn<KbankTestTransaction>[] = [
     {
       key: 'gateway_charge_id',
-      label: __uiText("Reference"),
+      label: __uiText("รหัสอ้างอิง"),
       render: (v, row) => (
         <button
           type="button"
-          className="text-left text-primary underline-offset-2 hover:underline"
+          className="text-left font-mono text-xs text-primary underline-offset-2 hover:underline"
           onClick={() => selectRowIntoNotify(row)}
-          title={__uiText("เลือกแถวนี้เข้า Simulate notify")}
+          title={__uiText("เลือกแถวนี้ไปใช้จำลองการแจ้งผล")}
         >
           {String(v)}
         </button>
       ),
     },
-    { key: 'amount', label: __uiText("จำนวน"), render: (v) => Number(v).toLocaleString() },
-    { key: 'status', label: __uiText("สถานะ"), render: (v) => <StatusBadge status={String(v)} /> },
-    { key: 'created_at', label: __uiText("สร้างเมื่อ"), render: (v) => new Date(String(v)).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) },
+    { key: 'amount', label: __uiText("จำนวน"), align: 'right', render: (v) => <span className="tabular-nums">{Number(v).toLocaleString()}</span> },
+    { key: 'status', label: __uiText("สถานะ"), render: (v) => <StatusChip status={String(v)} /> },
+    { key: 'created_at', label: __uiText("สร้างเมื่อ"), render: (v) => <span className="whitespace-nowrap tabular-nums">{new Date(String(v)).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}</span> },
     { key: 'created_at', label: __uiText("อายุ"), render: (v) => ageLabel(String(v)) },
     {
       key: 'id',
@@ -354,40 +348,28 @@ export default function KbankTestingConsole() {
             value={backdateMinutes[String(id)] ?? ''}
             onChange={(e) => setBackdateMinutes((m) => ({ ...m, [String(id)]: e.target.value }))}
           />
-          <button
-            type="button"
-            className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
-            onClick={() => void handleBackdate(String(id))}
-          >
-            {__uiText("Backdate")}</button>
-          <button
-            type="button"
-            className="rounded bg-amber-100 px-2 py-1 text-xs text-amber-700 hover:bg-amber-200"
-            onClick={() => void handleForceProcessing(String(id))}
-          >
-            {__uiText("Force processing")}</button>
-          <button
-            type="button"
-            className="rounded bg-emerald-600 px-2 py-1 text-xs text-white hover:bg-emerald-700"
-            onClick={() => void oneClickSuccessNotify(row)}
-          >
-            {__uiText("Simulate success notify")}</button>
+          <Button size="sm" onClick={() => void handleBackdate(String(id))}>
+            {__uiText("ย้อนเวลา")}</Button>
+          <Button size="sm" onClick={() => void handleForceProcessing(String(id))}>
+            {__uiText("บังคับเป็นกำลังดำเนินการ")}</Button>
+          <Button size="sm" onClick={() => void oneClickSuccessNotify(row)}>
+            {__uiText("จำลองแจ้งผลสำเร็จ")}</Button>
         </div>
       ),
     },
   ];
 
   const checklistColumns = (): TableColumn<KbankTestCase>[] => [
-    { key: 'code', label: __uiText("Code") },
+    { key: 'code', label: __uiText("รหัส"), render: (v) => <span className="font-mono text-xs">{String(v)}</span> },
     {
       key: 'title',
-      label: __uiText("Title"),
+      label: __uiText("หัวข้อ"),
       render: (v, row) =>
         !row.exercisable ? (
           <span>
             {String(v)}{' '}
-            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500" title={__uiText("ต้องมีขา 'สร้างรายการชำระเงิน' ก่อน — รอรอบถัดไป")}>
-              {__uiText("ไล่ไม่ได้ในรอบ 1")}</span>
+            <span title={__uiText("ต้องมีขา 'สร้างรายการชำระเงิน' ก่อน — รอรอบถัดไป")}>
+              <Chip>{__uiText("ไล่ไม่ได้ในรอบ 1")}</Chip></span>
           </span>
         ) : (
           String(v)
@@ -405,17 +387,17 @@ export default function KbankTestingConsole() {
               value={String(v)}
               onChange={(e) => void handleChecklistResultChange(row, e.target.value as KbankTestCaseResult)}
             >
-              <option value="not_tested">{__uiText("not_tested")}</option>
-              {!restricted && <option value="pass">{__uiText("pass")}</option>}
-              {!restricted && <option value="fail">{__uiText("fail")}</option>}
-              <option value="na">{__uiText("na")}</option>
+              <option value="not_tested">{RESULT_LABEL.not_tested}</option>
+              {!restricted && <option value="pass">{RESULT_LABEL.pass}</option>}
+              {!restricted && <option value="fail">{RESULT_LABEL.fail}</option>}
+              <option value="na">{RESULT_LABEL.na}</option>
             </Select>
             {restricted && (
               <span
                 className="text-[11px] text-gray-400"
-                title={__uiText("ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ not_tested หรือ na, ห้ามตั้ง pass/fail จนกว่าจะไล่ได้จริง")}
+                title={__uiText("ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ ยังไม่ทดสอบ หรือ ไม่เกี่ยวข้อง จนกว่าจะไล่ได้จริง")}
               >
-                {__uiText("จำกัดผลได้แค่ not_tested/na")}</span>
+                {__uiText("เลือกได้แค่ ยังไม่ทดสอบ / ไม่เกี่ยวข้อง")}</span>
             )}
           </div>
         );
@@ -423,7 +405,7 @@ export default function KbankTestingConsole() {
     },
     {
       key: 'note',
-      label: __uiText("Note"),
+      label: __uiText("บันทึก"),
       render: (_v, row) => (
         <input
           type="text"
@@ -439,26 +421,26 @@ export default function KbankTestingConsole() {
 
   return (
     <div className="cp-management-page">
-      <AdminListHeader title={__uiText("KBank Testing Console")} subtitle={__uiText("Manual QA console สำหรับไล่ checklist เซอร์ทิฟาย K-Payment Gateway")} />
+      <AdminListHeader title={__uiText("ทดสอบชำระเงิน KBank")} subtitle={__uiText("ทดสอบการชำระเงินผ่าน KBank")} />
 
       <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
         {__uiText("Console นี้ปิดอยู่บน production เสมอ ยกเว้นตั้ง ")}<code>{__uiText("KBANK_TESTING_CONSOLE=true")}</code> {__uiText(" — และทุก endpoint ปฏิเสธแถวที่ไม่ใช่รายการทดสอบ (is_test) เสมอ")}</div>
 
       {/* Region 1 — Test transactions */}
       <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">{__uiText("1. Test transactions")}</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">{__uiText("1. รายการทดสอบ")}</h2>
         <form
           className="mb-4 grid max-w-xl gap-3 rounded-lg border border-gray-100 p-4 md:grid-cols-3"
           onSubmit={(e) => void handleCreate(e)}
         >
           <Input label={__uiText("จำนวนเงิน")} type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
-          <Input label={__uiText("Reference (ไม่บังคับ)")} value={reference} onChange={(e) => setReference(e.target.value)} />
-          <button type="submit" className="rounded-lg bg-primary px-4 py-2 text-sm text-white">
-            {__uiText("สร้างรายการทดสอบ")}</button>
+          <Input label={__uiText("รหัสอ้างอิง (ไม่บังคับ)")} value={reference} onChange={(e) => setReference(e.target.value)} />
+          <Button type="submit" variant="primary" className="self-end">
+            {__uiText("สร้างรายการทดสอบ")}</Button>
           {createError && <p className="md:col-span-3 text-xs text-red-600">{(typeof (createError) === 'string' ? __uiText(createError) : createError)}</p>}
         </form>
         {rowActionError && <p className="mb-2 text-xs text-red-600">{(typeof (rowActionError) === 'string' ? __uiText(rowActionError) : rowActionError)}</p>}
-        {rowsError ? <p role="alert" className="text-sm text-red-600">{(typeof (rowsError) === 'string' ? __uiText(rowsError) : rowsError)}</p> : <Table columns={columns} data={rows} loading={loadingRows} />}
+        {rowsError ? <p role="alert" className="text-sm text-red-600">{(typeof (rowsError) === 'string' ? __uiText(rowsError) : rowsError)}</p> : <Table columns={columns} data={rows} loading={loadingRows} emptyTitle={__uiText("ยังไม่มีรายการทดสอบ")} emptyDescription={__uiText("กรอกจำนวนเงินด้านบน แล้วกดสร้างรายการทดสอบ")} />}
 
         <form
           className="mt-4 flex max-w-xl flex-wrap items-end gap-3 rounded-lg border border-gray-100 p-4"
@@ -471,13 +453,9 @@ export default function KbankTestingConsole() {
             onChange={(e) => setQrOrderAmount(e.target.value)}
             required
           />
-          <button
-            type="submit"
-            disabled={qrOrderSubmitting}
-            className="rounded-lg bg-primary px-4 py-2 text-sm text-white disabled:opacity-50"
-          >
+          <Button type="submit" disabled={qrOrderSubmitting}>
             {qrOrderSubmitting ? __uiText("กำลังสร้าง...") : __uiText("สร้าง QR order จริง (sandbox)")}
-          </button>
+          </Button>
           <span className="text-xs text-gray-500">
             {__uiText("เรียกธนาคาร sandbox จริง — ใช้เพื่อสแกนจ่ายด้วย Test Simulator สำหรับปิด KPG [1]")}</span>
           {qrOrderError && <p className="w-full text-xs text-red-600">{(typeof (qrOrderError) === 'string' ? __uiText(qrOrderError) : qrOrderError)}</p>}
@@ -487,11 +465,11 @@ export default function KbankTestingConsole() {
           <div className="mt-3 max-w-xl rounded-lg border border-gray-100 bg-gray-50 p-4 text-xs text-gray-700">
             <div className="mb-1 flex items-center gap-2">
               <span className="font-medium">{__uiText("orderId:")}</span>
-              <code className="select-all rounded bg-white px-2 py-0.5">{qrOrderResult.orderId}</code>
+              <code className="select-all rounded bg-white px-2 py-0.5 font-mono">{qrOrderResult.orderId}</code>
             </div>
             <div className="flex items-center gap-2">
               <span className="font-medium">{__uiText("referenceOrder:")}</span>
-              <code className="select-all rounded bg-white px-2 py-0.5">{qrOrderResult.referenceOrder}</code>
+              <code className="select-all rounded bg-white px-2 py-0.5 font-mono">{qrOrderResult.referenceOrder}</code>
             </div>
           </div>
         )}
@@ -499,7 +477,7 @@ export default function KbankTestingConsole() {
 
       {/* Region 2 — Simulate notify */}
       <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">{__uiText("2. Simulate notify")}</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">{__uiText("2. จำลองการแจ้งผลจากธนาคาร")}</h2>
         <div className="mb-3 flex flex-wrap gap-2">
           {NOTIFY_PRESETS.map((preset) => (
             <button
@@ -516,14 +494,14 @@ export default function KbankTestingConsole() {
             type="button"
             className="rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
             onClick={() => void submitNotify({ preventDefault: () => {} } as any)}
-            title={__uiText("ยิง payload เดิมซ้ำอีกครั้ง (notify ซ้ำ)")}
+            title={__uiText("ส่งข้อมูลชุดเดิมซ้ำอีกครั้ง (แจ้งผลซ้ำ)")}
           >
-            {__uiText("notify ซ้ำ (resend เดิม)")}</button>
+            {__uiText("ส่งซ้ำค่าเดิม")}</button>
         </div>
         {presetError && <p className="mb-2 text-xs text-red-600">{(typeof (presetError) === 'string' ? __uiText(presetError) : presetError)}</p>}
 
         <form className="grid gap-3 rounded-lg border border-gray-100 p-4 md:grid-cols-3" onSubmit={(e) => void submitNotify(e)}>
-          <Input label={__uiText("Reference")} value={notifyForm.reference} onChange={(e) => setNotifyForm((f) => ({ ...f, reference: e.target.value }))} required />
+          <Input label={__uiText("รหัสอ้างอิง")} value={notifyForm.reference} onChange={(e) => setNotifyForm((f) => ({ ...f, reference: e.target.value }))} required />
           <Input label={__uiText("สถานะธุรกรรม (transaction_state)")} value={notifyForm.transaction_state} onChange={(e) => setNotifyForm((f) => ({ ...f, transaction_state: e.target.value }))} />
           <Input label={__uiText("สถานะ (status)")} value={notifyForm.status} onChange={(e) => setNotifyForm((f) => ({ ...f, status: e.target.value }))} />
           <Input label={__uiText("จำนวนเงิน (ไม่บังคับ)")} type="number" value={notifyForm.amount} onChange={(e) => setNotifyForm((f) => ({ ...f, amount: e.target.value }))} />
@@ -537,8 +515,8 @@ export default function KbankTestingConsole() {
               value={notifyForm.objectType}
               onChange={(e) => setNotifyForm((f) => ({ ...f, objectType: e.target.value as 'charge' | 'qr' }))}
             >
-              <option value="charge">{__uiText("charge")}</option>
-              <option value="qr">{__uiText("qr")}</option>
+              <option value="charge">{__uiText("ตัดบัตร (charge)")}</option>
+              <option value="qr">{__uiText("QR (qr)")}</option>
             </Select>
           </div>
           <div className="flex flex-col gap-1 md:col-span-3">
@@ -549,15 +527,15 @@ export default function KbankTestingConsole() {
               onChange={(e) => setNotifyForm((f) => ({ ...f, tamper: e.target.value as KbankSimulateNotifyTamper | '' }))}
             >
               <option value="">{__uiText("tamper: ไม่มี (payload ถูกต้อง)")}</option>
-              <option value="bad-checksum">{__uiText("bad-checksum")}</option>
-              <option value="no-checksum">{__uiText("no-checksum")}</option>
-              <option value="no-reference">{__uiText("no-reference")}</option>
-              <option value="string-livemode">{__uiText("string-livemode")}</option>
+              <option value="bad-checksum">{__uiText("checksum ผิด (bad-checksum)")}</option>
+              <option value="no-checksum">{__uiText("ไม่มี checksum (no-checksum)")}</option>
+              <option value="no-reference">{__uiText("ไม่มีรหัสอ้างอิง (no-reference)")}</option>
+              <option value="string-livemode">{__uiText("livemode เป็นข้อความ (string-livemode)")}</option>
             </Select>
           </div>
-          <button type="submit" disabled={notifySubmitting} className="md:col-span-3 rounded-lg bg-primary px-4 py-2 text-sm text-white disabled:opacity-50">
-            {notifySubmitting ? __uiText("กำลังส่ง...") : __uiText("ยิง Simulate notify")}
-          </button>
+          <Button type="submit" variant="primary" disabled={notifySubmitting} className="md:col-span-3">
+            {notifySubmitting ? __uiText("กำลังส่ง...") : __uiText("ส่งการแจ้งผลจำลอง")}
+          </Button>
         </form>
 
         {notifyOutcome && (
@@ -567,20 +545,20 @@ export default function KbankTestingConsole() {
                 {__uiText("httpStatus: ")}{notifyOutcome.httpStatus}
                 {notifyOutcome.error ? ` — ${notifyOutcome.error.name}: ${notifyOutcome.error.message}` : ''}
               </span>
-              <button type="button" className="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700 hover:bg-gray-300" onClick={() => void copyPayload()}>
-                {__uiText("Copy JSON")}</button>
+              <Button size="sm" onClick={() => void copyPayload()}>
+                {__uiText("คัดลอก JSON")}</Button>
             </div>
-            <pre className="max-h-96 overflow-auto rounded bg-white p-3 text-xs text-gray-700">{JSON.stringify(notifyOutcome, null, 2)}</pre>
+            <pre className="max-h-96 overflow-auto rounded bg-white p-3 font-mono text-xs text-gray-700">{JSON.stringify(notifyOutcome, null, 2)}</pre>
           </div>
         )}
       </section>
 
       {/* Region 3 — Certification checklist */}
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">{__uiText("3. Certification checklist")}</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">{__uiText("3. รายการตรวจรับรอง")}</h2>
         <div className="mb-3 flex items-center gap-3">
-          <button type="button" className="rounded-lg bg-gray-800 px-4 py-2 text-sm text-white" onClick={() => void handleReconcile()}>
-            {__uiText("Reconcile now")}</button>
+          <Button onClick={() => void handleReconcile()}>
+            {__uiText("กระทบยอดตอนนี้")}</Button>
           <span className="text-xs text-gray-500">
             {__uiText("รัน reconciler sweep ทันที เฉพาะแถวทดสอบเท่านั้น (is_test=true) ไม่แตะรายการเงินจริง")}</span>
           {reconcileMessage && (

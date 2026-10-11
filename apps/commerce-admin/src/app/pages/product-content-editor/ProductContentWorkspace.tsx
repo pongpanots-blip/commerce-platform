@@ -86,13 +86,13 @@ const value = (stored: string | null | undefined) =>
         : stored;
 const sourceLabel = (item: ProductContentItem) =>
   ({
-    native: text("เนื้อหาที่ Commerce บันทึก", "Recorded commerce content"),
+    native: text("เนื้อหาที่บันทึกในระบบนี้", "Recorded commerce content"),
     archived_native: text(
-      "เนื้อหา Commerce ที่เก็บไว้",
+      "เนื้อหาที่เก็บไว้ในระบบนี้",
       "Archived commerce content",
     ),
     copied_snapshot: text("สำเนาแค็ตตาล็อก", "Catalog snapshot"),
-    unavailable: text("ยังไม่มีแถวเนื้อหาที่บันทึก", "No recorded content row"),
+    unavailable: text("ยังไม่มีเนื้อหาที่บันทึก", "No recorded content row"),
   })[item.evidenceSource];
 function Scope() {
   return (
@@ -307,7 +307,7 @@ function Inspect({
             {item.currentRecorded
               ? text("มีแถวเนื้อหาที่บันทึก", "Content record exists")
               : text(
-                  "ยังไม่มีแถวเนื้อหา Commerce",
+                  "ยังไม่มีเนื้อหาที่บันทึกในระบบนี้",
                   "No commerce content record",
                 )}
           </Chip>
@@ -319,13 +319,13 @@ function Inspect({
           {source.data.ownership !== "commerce" ? (
             <Alert tone="warn">
               {text(
-                "Josh ยังดูแลเนื้อหานี้ สำเนาที่แสดงไม่ยืนยันค่าปัจจุบันของร้าน งานแก้เนื้อหา Commerce ยังบันทึกไม่ได้",
+                "ร้านค้ายังดูแลเนื้อหานี้เอง สำเนาที่แสดงอาจไม่ตรงกับค่าปัจจุบันบนร้านค้า ยังบันทึกการแก้ที่นี่ไม่ได้",
                 "Josh still owns this content. Displayed copies do not verify the shop’s current content. Saving through the commerce content task is unavailable.",
               )}
               {role.trim().toLowerCase() !== "graphic" && (
                 <WorkspaceLink to={"/j/product/edit/" + productId}>
                   {text(
-                    "เปิดงานแก้สินค้าที่ Josh ดูแล",
+                    "เปิดหน้าแก้สินค้าบนร้านค้า",
                     "Edit this Josh-owned product",
                   )}
                 </WorkspaceLink>
@@ -336,7 +336,7 @@ function Inspect({
               {!item.currentRecorded && (
                 <Alert tone="info">
                   {text(
-                    "ระบบรู้จักสินค้านี้ แต่ยังไม่มีเนื้อหา Commerce บันทึกครั้งนี้จะสร้างแถวด้วยเฉพาะช่องที่เลือก โดยไม่เติมจากสำเนา",
+                    "ระบบรู้จักสินค้านี้ แต่ยังไม่มีเนื้อหาที่บันทึกในระบบนี้ บันทึกครั้งนี้จะสร้างเนื้อหาด้วยเฉพาะช่องที่เลือก โดยไม่เติมจากสำเนา",
                     "This product is known but has no commerce content row. Saving creates a row with only selected fields, without copied defaults.",
                   )}
                 </Alert>
@@ -474,7 +474,7 @@ function Edit({ owner, productId }: { owner: string; productId: string }) {
       ) : data && !nativeOwned(data.ownership, data.item) ? (
         <Alert tone="warn">
           {text(
-            "เนื้อหานี้ยังไม่อยู่ภายใต้การดูแลของ Commerce จึงยังแก้ในงานนี้ไม่ได้",
+            "เนื้อหานี้ยังไม่ได้ดูแลในระบบนี้ จึงยังแก้ที่นี่ไม่ได้",
             "Commerce does not own this content. Editing through this task is unavailable.",
           )}
         </Alert>
@@ -776,7 +776,7 @@ function Review({ owner, productId }: { owner: string; productId: string }) {
           {!nativeOwned(review.ownership, review.item) && (
             <Alert tone="warn">
               {text(
-                "Commerce ยังไม่ดูแลเนื้อหานี้ บันทึกในงานนี้ไม่ได้",
+                "ระบบนี้ยังไม่ดูแลเนื้อหานี้ บันทึกที่นี่ไม่ได้",
                 "Commerce does not own this content. Saving is unavailable here.",
               )}
             </Alert>

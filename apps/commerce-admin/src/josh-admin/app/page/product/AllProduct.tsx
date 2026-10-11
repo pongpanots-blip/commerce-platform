@@ -156,7 +156,7 @@ export default function AllProduct() {
     onSuccess: (response: any) => {
       setFeedback({
         tone: 'ok',
-        text: uiText('ปฏิเสธการอัปเดตจาก ERP แล้ว {0} รายการ', {
+        text: uiText('ปฏิเสธข้อมูลใหม่จากระบบหลักแล้ว {0} รายการ', {
           0: response?.data?.data?.rejected ?? 0,
         }),
       });
@@ -166,7 +166,7 @@ export default function AllProduct() {
     onError: () =>
       setFeedback({
         tone: 'danger',
-        text: uiText('ปฏิเสธการอัปเดตจาก ERP ไม่สำเร็จ'),
+        text: uiText('ปฏิเสธข้อมูลใหม่จากระบบหลักไม่สำเร็จ'),
       }),
   });
   const busy = isFetching || approve.isPending || reject.isPending;
@@ -206,8 +206,8 @@ export default function AllProduct() {
   const rejectRows = async (ids: string[]) => {
     if (
       await confirmAction({
-        title: uiText('ปฏิเสธการอัปเดตจาก ERP'),
-        body: uiText('ปฏิเสธการอัปเดตจาก ERP สำหรับ {0} รายการ?', {
+        title: uiText('ปฏิเสธข้อมูลใหม่จากระบบหลัก'),
+        body: uiText('ปฏิเสธข้อมูลใหม่จากระบบหลักสำหรับ {0} รายการ?', {
           0: ids.length,
         }),
         confirmLabel: uiText('ปฏิเสธ'),
@@ -234,7 +234,7 @@ export default function AllProduct() {
           )}
         </Chip>
         {hasErpPending(row) && (
-          <Chip tone="warn">{uiText('รออนุมัติ ERP')}</Chip>
+          <Chip tone="warn">{uiText('รออนุมัติข้อมูลจากระบบหลัก')}</Chip>
         )}
       </div>
     );
@@ -276,7 +276,7 @@ export default function AllProduct() {
       {(row.erp_pending_payload?.selling_unit_price != null ||
         row.erp_pending_payload?.ordering_price != null) && (
         <small>
-          {uiText('ERP →')}{' '}
+          {uiText('ระบบหลักเสนอ')}{' '}
           {formatBaht(
             row.erp_pending_payload.selling_unit_price ??
               row.erp_pending_payload.ordering_price,
@@ -333,7 +333,7 @@ export default function AllProduct() {
           icon="check"
           disabled={busy}
           aria-label={uiText(
-            hasErpPending(row) ? 'อนุมัติการอัปเดตจาก ERP' : 'อนุมัติสินค้า',
+            hasErpPending(row) ? 'อนุมัติข้อมูลใหม่จากระบบหลัก' : 'อนุมัติสินค้า',
           )}
           title={uiText('อนุมัติสินค้า')}
           onClick={() => approve.mutate({ ids: [row.product_inventory_id] })}
@@ -347,8 +347,8 @@ export default function AllProduct() {
           variant="danger-ghost"
           icon="close"
           disabled={busy}
-          aria-label={uiText('ปฏิเสธการอัปเดตจาก ERP')}
-          title={uiText('ปฏิเสธการอัปเดตจาก ERP')}
+          aria-label={uiText('ปฏิเสธข้อมูลใหม่จากระบบหลัก')}
+          title={uiText('ปฏิเสธข้อมูลใหม่จากระบบหลัก')}
           onClick={() => void rejectRows([row.product_inventory_id])}
         />
       )}
@@ -553,7 +553,7 @@ export default function AllProduct() {
               disabled={busy}
               onClick={() => void rejectRows(selectedPendingIds)}
             >
-              {uiText('ปฏิเสธข้อมูล ERP ที่เลือก')}
+              {uiText('ปฏิเสธข้อมูลจากระบบหลักที่เลือก')}
             </Button>
           )}
           <Button variant="ghost" disabled={busy} onClick={resetSelection}>

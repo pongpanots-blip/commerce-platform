@@ -1,7 +1,7 @@
 // ui-copy-migration: only literal UI copy and notification templates
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Button, Empty, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Table, TBody, TD, TH, THead, TR, Textarea,
+import { Alert, Button, Chip, confirmAction, Empty, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Table, TBody, TD, TH, THead, TR, Textarea,
   uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import type { DynamicSegmentInput, EventRule } from '@cp/marketing-workflow';
 import { dynamicSegmentsApi, eventsApi } from '../../../lib/api';
@@ -29,18 +29,19 @@ function List() {
   const names = new Map((defs.data?.definitions ?? []).map((d) => [d.name, d.label]));
   return (
     <Page>
-      <PageHeader title={__uiText('กลุ่มลูกค้าตาม event')} actions={<Button variant="primary" icon="add" onClick={() => navigate('/marketing/dynamic-segments/new')}>{__uiText('สร้างกลุ่ม')}</Button>} />
-      <p className="text-sm text-on-surface-variant">{__uiText('คำนวณสดทุกครั้งที่ workflow ใช้ — ไม่ส่งไป josh ใช้ได้เฉพาะ workflow ของ commerce')}</p>
+      <PageHeader title={__uiText('กลุ่มลูกค้าตาม event')}
+        subtitle={__uiText('คำนวณใหม่ทุกครั้งที่ workflow ใช้ และใช้ได้เฉพาะ workflow ในระบบนี้')}
+        actions={<Button variant="primary" icon="add" onClick={() => navigate('/marketing/dynamic-segments/new')}>{__uiText('เพิ่มกลุ่ม')}</Button>} />
       {list.loading && !list.data ? <Loading /> : list.data?.length ? (
         <Panel><Table>
           <THead><TH>{__uiText('ชื่อ')}</TH><TH>{__uiText('เงื่อนไข')}</TH><TH>{__uiText('สถานะ')}</TH></THead>
           <TBody>{list.data.map((s) => (
             <TR key={s.id} onClick={() => navigate(`/marketing/dynamic-segments/${s.id}`)} className="cursor-pointer">
-              <TD>{s.name}</TD><TD>{describeRule(s.rule, names)}</TD><TD>{s.issues.length ? __uiText('ต้องแก้ {0} จุด', { 0: s.issues.length }) : __uiText('พร้อมใช้')}</TD>
+              <TD>{s.name}</TD><TD>{describeRule(s.rule, names)}</TD><TD>{s.issues.length ? <Chip tone="warn" dot>{__uiText('ต้องแก้ {0} จุด', { 0: s.issues.length })}</Chip> : <Chip tone="ok" dot>{__uiText('พร้อมใช้')}</Chip>}</TD>
             </TR>
           ))}</TBody>
         </Table></Panel>
-      ) : <Empty>{__uiText('ยังไม่มีกลุ่ม')}</Empty>}
+      ) : <Empty>{__uiText('ยังไม่มีกลุ่ม กด "เพิ่มกลุ่ม" เพื่อตั้งเงื่อนไขแรก')}</Empty>}
     </Page>
   );
 }
@@ -62,14 +63,16 @@ function Editor({ id }: { id: string | null }) {
     try { const s = id ? await dynamicSegmentsApi.update(id, value) : await dynamicSegmentsApi.create(value); setDraft(null); navigate(`/marketing/dynamic-segments/${s.id}`, { replace: true }); existing.reload(); }
     catch (e) { setError(errorText(e)); }
   };
-  const remove = async () => { setError(null); try { await dynamicSegmentsApi.remove(id!); navigate('/marketing/dynamic-segments'); } catch (e) { setError(errorText(e)); } };
+  const remove = async () => {
+    const ok = await confirmAction({ title: __uiText('ลบกลุ่มนี้?'), body: __uiText('workflow ที่ใช้กลุ่มนี้จะหาลูกค้าจากกลุ่มนี้ไม่ได้อีก'), confirmLabel: __uiText('ลบ'), danger: true });
+    if (!ok) return;
+    setError(null); try { await dynamicSegmentsApi.remove(id!); navigate('/marketing/dynamic-segments'); } catch (e) { setError(errorText(e)); } };
   const issues = preview?.issues ?? existing.data?.issues ?? [];
   return (
     <Page>
       <PageHeader back={{ to: '/marketing/dynamic-segments', label: __uiText('กลุ่มลูกค้าตาม event') }} title={value.name || __uiText('กลุ่มใหม่')}
         actions={<div className="flex gap-2">
           <Button onClick={async () => setPreview(await dynamicSegmentsApi.preview(value.rule).catch((e) => ({ count: null, issues: [errorText(e)] })))}>{__uiText('นับลูกค้าตอนนี้')}</Button>
-          <Button variant="primary" onClick={save}>{__uiText('บันทึก')}</Button>
           {id && <Button variant="danger-ghost" onClick={remove}>{__uiText('ลบ')}</Button>}
         </div>} />
       {error && <Alert tone="danger">{error}</Alert>}
@@ -85,6 +88,10 @@ function Editor({ id }: { id: string | null }) {
           </Field>
           <p className="text-xs text-on-surface-variant">{(defs.data?.coverage ?? []).map((c) => `${c.platform}: ${new Date(c.collectingSince).toLocaleDateString()}`).join(' · ')
             || __uiText('ยังไม่มี event เข้ามา')} — {__uiText('ช่วงเวลาย้อนก่อนวันที่เริ่มเก็บไม่ได้')}</p>
+        </div>
+        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-secondary-container px-4 py-3">
+          <Button variant="ghost" onClick={() => navigate('/marketing/dynamic-segments')}>{__uiText('ยกเลิก')}</Button>
+          <Button variant="primary" icon="check" onClick={save}>{__uiText('บันทึก')}</Button>
         </div>
       </Panel>
     </Page>

@@ -16,13 +16,13 @@ import {
   type AdminOrderUiStatus,
   type AdminShipmentStatusOption,
 } from '@josh/shared-api';
-import { Button, Input, Select, Table, TableColumn, Text } from '@josh/shared-ui-web';
+import { Button, Input, Select, Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button as CpButton, Chip, KeyValueGrid, PageHeader, Panel, PanelHead, StatusChip, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type RefundRow = {
   id: string;
   order_id: string;
@@ -77,6 +77,40 @@ const ORDER_STATUS_LABELS: Record<AdminOrderUiStatus, string> = {
   get cancelled(){return __uiText("ยกเลิก / คืนเงิน");},
 };
 
+const ORDER_STATUS_TONES: Record<AdminOrderUiStatus, Tone> = {
+  pending: 'warn',
+  paid: 'ok',
+  preparing: 'info',
+  shipped: 'info',
+  complete: 'ok',
+  cancelled: 'muted',
+};
+
+const ITEM_STATUS_TONES: Record<string, Tone> = {
+  pending_pack: 'warn',
+  packed: 'info',
+  shortage: 'danger',
+  completed: 'ok',
+};
+
+/** Display only: request values stay the raw shipment status. */
+const SHIPMENT_STATUS_LABELS: Record<string, string> = {
+  get pending(){return __uiText("รอชำระ");},
+  get preparing(){return __uiText("กำลังเตรียม");},
+  get shipped(){return __uiText("กำลังจัดส่ง");},
+  get delivered(){return __uiText("ส่งแล้ว");},
+  get cancelled(){return __uiText("ยกเลิก");},
+  get refunded(){return __uiText("คืนเงินแล้ว");},
+};
+
+const ERP_SYNC_LABELS: Record<string, string> = {
+  get sent(){return __uiText("ส่งแล้ว");},
+  get pending(){return __uiText("รอส่ง");},
+  get failed(){return __uiText("ส่งไม่สำเร็จ");},
+};
+
+const ERP_SYNC_TONES: Record<string, Tone> = { sent: 'ok', pending: 'warn', failed: 'danger' };
+
 const ORDER_STATUS_OPTIONS = [
   { value: 'pending', label: ORDER_STATUS_LABELS.pending },
   { value: 'paid', label: ORDER_STATUS_LABELS.paid },
@@ -103,7 +137,6 @@ function extractShipmentErrorMessage(err: unknown, fallback: string): string {
 const OrderDetail = () => {
   __useUiLocale();
   const { ordersId } = useParams<{ ordersId: string }>();
-  const navigate = useNavigate();
   const [order, setOrder] = useState<OrderDetailData | null>(null);
   const [statusDraft, setStatusDraft] = useState<OrderDetailData['status']>('pending');
   const [loading, setLoading] = useState(true);
@@ -299,21 +332,24 @@ const OrderDetail = () => {
   };
 
   const itemColumns: TableColumn<OrderItemRow>[] = [
-    { key: 'sku', label: __uiText("SKU") },
+    { key: 'sku', label: __uiText("รหัสสินค้า"), render: (value) => <span className="font-mono">{value}</span> },
     { key: 'product_name', label: __uiText("ชื่อสินค้า") },
     {
       key: 'product_quantity',
       label: __uiText("จำนวน"),
-      render: (value) => <span className="font-mono">{value}</span>,
+      align: 'right',
+      render: (value) => <span className="tabular-nums">{Number(value).toLocaleString()}</span>,
     },
     {
       key: 'product_price',
       label: __uiText("ราคา/หน่วย"),
+      align: 'right',
       render: (value) => <span>{__uiText("฿")}{Number(value).toLocaleString()}</span>,
     },
     {
       key: 'line_total',
       label: __uiText("รวม"),
+      align: 'right',
       render: (value) => (
         <span className="font-medium">{__uiText("฿")}{Number(value).toLocaleString()}</span>
       ),
@@ -322,15 +358,15 @@ const OrderDetail = () => {
       key: 'status',
       label: __uiText("สถานะ"),
       render: (value: string) => (
-        <span className="text-xs text-gray-600">
+        <Chip tone={ITEM_STATUS_TONES[value] ?? 'muted'} statusCode={value} dot>
           {ITEM_STATUS_LABELS[value] ?? value}
-        </span>
+        </Chip>
       ),
     },
   ];
 
   const shipmentColumns: TableColumn<AdminOrderShipmentItem>[] = [
-    { key: 'shipmentNumber', label: __uiText("Shipment #") },
+    { key: 'shipmentNumber', label: __uiText("Shipment #"), render: (value) => <span className="font-mono">{value}</span> },
     {
       key: 'status',
       label: __uiText("สถานะ"),
@@ -342,12 +378,16 @@ const OrderDetail = () => {
 
         // ใบที่จบแล้วแก้ไม่ได้ — backend ก็ปฏิเสธอยู่แล้ว ไม่ต้องหลอกให้กด
         if (settled) {
-          return <span className="text-xs text-gray-500">{row.rawStatus}</span>;
+          return (
+            <Chip tone={row.rawStatus === 'delivered' ? 'ok' : 'muted'} statusCode={row.rawStatus} dot>
+              {SHIPMENT_STATUS_LABELS[row.rawStatus] ?? row.rawStatus}
+            </Chip>
+          );
         }
 
         return (
           <Select
-            aria-label={__uiText("สถานะ shipment {0}", {"0": row.shipmentNumber})}
+            aria-label={__uiText("สถานะการจัดส่ง {0}", {"0": row.shipmentNumber})}
             value={row.rawStatus}
             disabled={statusBusyId === row.shipmentId}
             onChange={(e) =>
@@ -358,13 +398,13 @@ const OrderDetail = () => {
             }
           >
             <option value={row.rawStatus} disabled>
-              {row.rawStatus}
+              {SHIPMENT_STATUS_LABELS[row.rawStatus] ?? row.rawStatus}
             </option>
             {ADMIN_SHIPMENT_STATUS_OPTIONS.filter(
               (option) => option !== row.rawStatus,
             ).map((option) => (
               <option key={option} value={option}>
-                {option}
+                {SHIPMENT_STATUS_LABELS[option] ?? option}
               </option>
             ))}
           </Select>
@@ -384,29 +424,32 @@ const OrderDetail = () => {
     {
       key: 'totalIncVat',
       label: __uiText("ยอด"),
+      align: 'right',
       render: (v) => `฿${Number(v).toLocaleString()}`,
     },
     {
       key: 'erpSyncStatus',
-      label: __uiText("ERP"),
-      render: (v) => (v as string | null) ?? '—',
+      label: __uiText("ส่งเข้าระบบหลัก (ERP)"),
+      render: (v) => {
+        const value = v as string | null;
+        return value ? (
+          <Chip tone={ERP_SYNC_TONES[value] ?? 'muted'} statusCode={value} dot>{ERP_SYNC_LABELS[value] ?? value}</Chip>
+        ) : '—';
+      },
     },
     {
       key: 'shipmentId',
       label: '',
       render: (id, row) =>
         row.erpSyncStatus !== 'sent' ? (
-          <button
-            type="button"
+          <CpButton
+            size="sm"
             disabled={sendingId === id}
-            className="rounded bg-primary px-2 py-1 text-xs text-white disabled:opacity-50"
             onClick={() => void handleSendErp(String(id))}
           >
-            {sendingId === id ? '...' : __uiText("Send ERP")}
-          </button>
-        ) : (
-          <span className="text-xs text-emerald-600">{__uiText("sent")}</span>
-        ),
+            {sendingId === id ? '...' : __uiText("ส่งเข้าระบบหลัก (ERP)")}
+          </CpButton>
+        ) : null,
     },
   ];
 
@@ -419,8 +462,11 @@ const OrderDetail = () => {
   if (error && !order) {
     return (
       <div className="cp-management-page flex flex-col gap-4">
-        <Text text={error || __uiText("ไม่พบคำสั่งซื้อ")} size="base" />
-        <Button text={__uiText("กลับรายการออเดอร์")} onClick={() => navigate(ADMIN_ROUTES.orders)} />
+        <PageHeader
+          back={{ to: ADMIN_ROUTES.orders, label: "กลับรายการออเดอร์" }}
+          title={__uiText("ไม่พบคำสั่งซื้อ")}
+          subtitle={typeof error === 'string' ? __uiText(error) : error}
+        />
       </div>
     );
   }
@@ -433,16 +479,36 @@ const OrderDetail = () => {
 
   return (
     <div className="cp-management-page flex flex-col gap-5">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <PageHeader title={__uiText("Order {0}", {"0": order.order_id})} />
-          <Text text={__uiText("ลูกค้า: {0}", {"0": order.customer_name})} size="sm" />
-        </div>
-        <Button text={__uiText("← กลับ")} onClick={() => navigate(ADMIN_ROUTES.orders)} />
-      </div>
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.orders, label: "กลับรายการออเดอร์" }}
+        title={__uiText("คำสั่งซื้อ {0}", {"0": order.order_id})}
+        badge={<Chip tone={ORDER_STATUS_TONES[order.status] ?? 'muted'} statusCode={order.status} dot>{ORDER_STATUS_LABELS[order.status] ?? order.status}</Chip>}
+        subtitle={__uiText("ลูกค้า: {0}", {"0": order.customer_name})}
+      />
 
-      <div className="bg-white border border-gray-200 rounded-md p-4 shadow-sm flex flex-col gap-4">
-        <Text bold text={__uiText("สถานะออเดอร์")} size="lg" />
+      <Panel className="p-5">
+        <KeyValueGrid
+          items={[
+            { label: "ยอดรวม", value: `฿${Number(order.total_price).toLocaleString()}` },
+            {
+              label: "วันที่สั่งซื้อ",
+              value: order.date
+                ? new Date(order.date).toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                : null,
+            },
+            { label: "วันจัดส่ง", value: order.delivery_slot },
+            { label: "สาขา", value: order.branch },
+          ]}
+        />
+      </Panel>
+
+      <Panel>
+        <PanelHead title={__uiText("สถานะออเดอร์")} />
+        <div className="p-5 flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-end gap-3">
           <div className="w-full sm:w-72">
             <Select
@@ -464,12 +530,9 @@ const OrderDetail = () => {
           />
         </div>
         {saveMessage ? (
-          <p className="text-sm text-emerald-600">{(typeof (saveMessage) === 'string' ? __uiText(saveMessage) : saveMessage)}</p>
+          <p className="text-sm text-ok">{(typeof (saveMessage) === 'string' ? __uiText(saveMessage) : saveMessage)}</p>
         ) : null}
-        {error ? <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p> : null}
-        <p className="text-xs text-gray-500">
-          {__uiText("สถานะปัจจุบัน: ")}{ORDER_STATUS_LABELS[order.status]}
-        </p>
+        {error ? <p className="text-sm text-danger">{(typeof error === 'string' ? __uiText(error) : error)}</p> : null}
         {order.status === 'pending' && (
           <div className="border-t border-gray-100 pt-4">
             <Button
@@ -490,53 +553,21 @@ const OrderDetail = () => {
             )}
           </div>
         )}
-      </div>
+        </div>
+      </Panel>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white border border-gray-200 rounded-md p-4 shadow-sm">
-        <div>
-          <p className="text-xs text-gray-500">{__uiText("ยอดรวม")}</p>
-          <p className="font-semibold text-lg">
-            {__uiText("฿")}{Number(order.total_price).toLocaleString()}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">{__uiText("วันที่สั่งซื้อ")}</p>
-          <p className="font-medium">
-            {order.date
-              ? new Date(order.date).toLocaleDateString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                })
-              : '-'}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">{__uiText("วันจัดส่ง")}</p>
-          <p className="font-medium">{order.delivery_slot}</p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">{__uiText("สาขา")}</p>
-          <p className="font-medium">{order.branch}</p>
-        </div>
-      </div>
-
-      <div>
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <Text bold text={__uiText("Shipments")} size="lg" />
-          <button
-            type="button"
-            className="text-xs text-blue-600 hover:underline"
-            onClick={() => void loadShipments(order.orders_id || ordersId!)}
-          >
-            {__uiText("รีเฟรช")}</button>
-        </div>
+      <Panel>
+        <PanelHead
+          title={__uiText("Shipments")}
+          actions={<CpButton size="sm" variant="ghost" icon="refresh" onClick={() => void loadShipments(order.orders_id || ordersId!)}>{__uiText("รีเฟรช")}</CpButton>}
+        />
+        <div className="p-5">
         {shipmentsLoading ? (
-          <p className="text-sm text-gray-500">{__uiText("กำลังโหลด shipments...")}</p>
+          <p className="text-sm text-on-surface-variant">{__uiText("กำลังโหลดการจัดส่ง…")}</p>
         ) : shipmentsError ? (
-          <p className="text-sm text-red-600">{(typeof (shipmentsError) === 'string' ? __uiText(shipmentsError) : shipmentsError)}</p>
+          <p className="text-sm text-danger">{(typeof (shipmentsError) === 'string' ? __uiText(shipmentsError) : shipmentsError)}</p>
         ) : shipments.length === 0 ? (
-          <p className="text-sm text-gray-500">{__uiText("ยังไม่มี shipment")}</p>
+          <p className="text-sm text-on-surface-variant">{__uiText("ยังไม่มีการจัดส่งของออเดอร์นี้")}</p>
         ) : (
           <Table
             columns={shipmentColumns}
@@ -548,19 +579,21 @@ const OrderDetail = () => {
             totalItems={shipments.length}
           />
         )}
-      </div>
+        </div>
+      </Panel>
 
-      <div className="rounded-md border border-gray-200 bg-white p-4 shadow-sm">
-        <Text bold text={__uiText("Refunds")} size="lg" />
-        <div className="mt-3">
-          <p className="mb-2 text-xs text-gray-500">
+      <Panel>
+        <PanelHead title={__uiText("Refunds")} />
+        <div className="p-5">
+        <div>
+          <p className="mb-2 text-xs text-on-surface-variant">
             {__uiText("เลือกรายการสินค้าที่ต้องการคืนเงิน (แก้ไขจำนวน/ยอดเงินได้)")}</p>
           <TableViewport className="overflow-x-auto rounded-lg border border-gray-100">
             <table className="cp-data-table w-full text-sm">
               <thead className="bg-gray-50 text-left text-xs text-gray-500">
                 <tr>
                   <th className="px-2 py-2" scope="col" />
-                  <th className="px-2 py-2" scope="col">{__uiText("SKU")}</th>
+                  <th className="px-2 py-2" scope="col">{__uiText("รหัสสินค้า")}</th>
                   <th className="px-2 py-2" scope="col">{__uiText("สินค้า")}</th>
                   <th className="px-2 py-2" scope="col">{__uiText("จำนวนคืน")}</th>
                   <th className="px-2 py-2" scope="col">{__uiText("ยอดเงินคืน")}</th>
@@ -628,36 +661,37 @@ const OrderDetail = () => {
               value={refundReason}
               onChange={(e) => setRefundReason(e.target.value)}
             />
-            <button
-              type="button"
+            <CpButton
+              variant="primary"
               disabled={refundBusy}
-              className="self-end rounded-lg bg-primary px-3 py-2 text-sm text-white disabled:opacity-50"
+              className="self-end"
               onClick={() => void handleCreateRefund()}
             >
               {refundBusy ? __uiText("กำลังบันทึก...") : __uiText("สร้างคำขอคืนเงิน")}
-            </button>
+            </CpButton>
           </div>
         </div>
         {refunds.length === 0 ? (
-          <p className="mt-3 text-sm text-gray-500">
+          <p className="mt-3 text-sm text-on-surface-variant">
             {__uiText("ยังไม่มีคำขอคืนเงินสำหรับออเดอร์นี้")}</p>
         ) : (
           <ul className="mt-3 divide-y divide-gray-50 text-sm">
             {refunds.map((r) => (
               <li key={r.id} className="flex justify-between gap-3 py-2">
                 <span>
-                  {__uiText("฿")}{Number(r.amount).toLocaleString()} — {r.reason}
+                  <span className="tabular-nums">{__uiText("฿")}{Number(r.amount).toLocaleString()}</span> — {r.reason}
                 </span>
-                <span className="text-xs text-gray-500">{r.status}</span>
+                <StatusChip status={r.status} />
               </li>
             ))}
           </ul>
         )}
-      </div>
+        </div>
+      </Panel>
 
-      <div>
-        <Text bold text={__uiText("รายการสินค้า (SKU)")} size="lg" />
-        <div className="mt-3">
+      <Panel>
+        <PanelHead title={__uiText("รายการสินค้า")} />
+        <div className="p-5">
           <Table
             columns={itemColumns}
             data={order.items}
@@ -668,7 +702,7 @@ const OrderDetail = () => {
             totalItems={order.items.length}
           />
         </div>
-      </div>
+      </Panel>
     </div>
   );
 };

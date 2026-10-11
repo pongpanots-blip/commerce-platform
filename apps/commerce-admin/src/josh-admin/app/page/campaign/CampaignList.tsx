@@ -62,7 +62,7 @@ const CampaignList = () => {
   const columns: TableColumn<CampaignListItem>[] = [
     {
       key: 'name',
-      label: __uiText("ชื่อ Campaign"),
+      label: __uiText("ชื่อแคมเปญ"),
       render: (value: string, row) => (
         <Link to={ADMIN_ROUTES.campaignDetail(row.id)} className="font-semibold text-blue-600 hover:underline">
           {value}
@@ -77,11 +77,14 @@ const CampaignList = () => {
     {
       key: 'start_at',
       label: __uiText("ช่วงเวลา"),
+      className: 'tabular-nums whitespace-nowrap',
       render: (_value, row) => formatBangkokRange(row.start_at, row.end_at, 'th'),
     },
     {
       key: 'mechanic_count',
       label: __uiText("โปรโมชัน"),
+      align: 'right',
+      className: 'tabular-nums whitespace-nowrap',
       render: (_value, row) => (
         <div>
           <span>{(row.mechanic_count + row.coupon_count).toLocaleString('th-TH')}</span>
@@ -133,9 +136,9 @@ const CampaignList = () => {
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
-        title={__uiText("Campaigns")}
-        subtitle={__uiText("ซองรวมโปรอัตโนมัติ คูปอง และหน้าโปรของงานเดียวกัน — วันที่อยู่ที่ Campaign ที่เดียว")}
-        createLabel={__uiText("สร้าง Campaign")}
+        title={__uiText("แคมเปญโปรโมชัน")}
+        subtitle={__uiText("รวมโปรอัตโนมัติ คูปอง และหน้าโปรของงานเดียวกันไว้ที่เดียว วันเริ่มและวันจบตั้งที่แคมเปญ")}
+        createLabel={__uiText("เพิ่มแคมเปญ")}
         createPath={ADMIN_ROUTES.campaignCreate}
       />
 
@@ -157,14 +160,20 @@ const CampaignList = () => {
         <>
           <div className="rounded-lg bg-white p-3 shadow-level-1">
             <Input
-              label={__uiText("ค้นหาชื่อ Campaign")}
+              label={__uiText("ค้นหาชื่อแคมเปญ")}
               icon={<AiOutlineSearch size={20} />}
               className="md:w-[296px]"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
           </div>
-          <Table columns={columns} data={visible} idKey="id" />
+          <Table
+            columns={columns}
+            data={visible}
+            idKey="id"
+            emptyTitle={search.trim() ? __uiText("ไม่พบแคมเปญที่ตรงกับคำค้น") : __uiText("ยังไม่มีแคมเปญ")}
+            emptyDescription={search.trim() ? __uiText("ลองค้นด้วยชื่ออื่น") : __uiText("กด \"เพิ่มแคมเปญ\" เพื่อเริ่มแคมเปญแรก")}
+          />
         </>
       )}
     </div>

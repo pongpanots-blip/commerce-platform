@@ -54,7 +54,7 @@ const EditBotTemplate = () => {
 
   const handleSubmit = async () => {
     if (!id || !form.name) {
-      alert(__uiText("กรุณากรอกชื่อ Template"));
+      alert(__uiText("กรุณากรอกชื่อข้อความสำเร็จรูป"));
       return false;
     }
     let schema: any;
@@ -93,15 +93,15 @@ const EditBotTemplate = () => {
     return false;
   };
 
-  if (loadError) return <LoadError title={__uiText('แก้ไขเทมเพลตบอต')} error={loadError} onRetry={() => setReload(value => value + 1)} />;
+  if (loadError) return <LoadError title={__uiText('แก้ไขข้อความสำเร็จรูป')} error={loadError} onRetry={() => setReload(value => value + 1)} />;
   if (loading) {
     return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <AdminInsertLayout
-      title={__uiText("แก้ไขรูปแบบคำตอบ")}
-      saveLabel="บันทึกรูปแบบคำตอบ"
+      title={__uiText("แก้ไขข้อความสำเร็จรูป")}
+      saveLabel="บันทึกข้อความสำเร็จรูป"
       backPath={ADMIN_ROUTES.botTemplates}
       saving={saving}
       onSave={handleSubmit}

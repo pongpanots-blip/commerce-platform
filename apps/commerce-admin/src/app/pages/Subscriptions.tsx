@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Chip, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Span, StatusChip, TBody, TD, TH, THead, TR, Table, TogglePill, fmt } from '@cp/ui';
+import { Button, Chip, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Span, StatusChip, TBody, TD, TH, THead, TR, Table, TogglePill, confirmAction, fmt } from '@cp/ui';
 import { api, EVENT_TYPES, webhookApi, WebhookDelivery, WebhookSubscription } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -13,6 +13,7 @@ export function Subscriptions() {
   const [events, setEvents] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -38,6 +39,7 @@ export function Subscriptions() {
       });
       setForm({ name: '', targetUrl: '', secret: '', description: '' });
       setEvents([]);
+      setShowForm(false);
       subs.reload();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : String(err));
@@ -60,8 +62,24 @@ export function Subscriptions() {
     }
   }
 
-  function remove(s: WebhookSubscription) {
-    if (window.confirm(__uiText("Delete this subscription?"))) void act(`delete-${s.id}`, () => webhookApi.deleteSubscription(s.id));
+  async function remove(s: WebhookSubscription) {
+    const ok = await confirmAction({
+      title: __uiText('ลบปลายทาง {0}', { 0: s.name }),
+      body: __uiText('ระบบจะหยุดส่งเหตุการณ์ไปยังปลายทางนี้ และลบออกจากรายการ ย้อนกลับไม่ได้'),
+      confirmLabel: __uiText('Delete'),
+      danger: true,
+    });
+    if (ok) void act(`delete-${s.id}`, () => webhookApi.deleteSubscription(s.id));
+  }
+
+  async function toggleActive(s: WebhookSubscription) {
+    if (s.active && !(await confirmAction({
+      title: __uiText('ปิดปลายทาง {0}', { 0: s.name }),
+      body: __uiText('ระบบจะหยุดส่งเหตุการณ์ไปยังปลายทางนี้จนกว่าจะเปิดอีกครั้ง'),
+      confirmLabel: __uiText('Disable'),
+      danger: true,
+    }))) return;
+    void act(`toggle-${s.id}`, () => webhookApi.updateSubscription(s.id, { active: !s.active }));
   }
 
   function reloadAll() {
@@ -72,12 +90,15 @@ export function Subscriptions() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("Outgoing webhooks")}
-        subtitle={__uiText("Notify external systems when platform events happen — they subscribe, we deliver (signed).")}
-        actions={<Button icon="refresh" variant="secondary" onClick={reloadAll}>{__uiText("Refresh")}</Button>}
+        title={__uiText("การส่งเหตุการณ์ขาออก")}
+        subtitle={__uiText("ปลายทางที่รับเหตุการณ์จากระบบของเรา เพิ่ม เปิด ปิด หรือลบได้")}
+        actions={<>
+          <Button icon="refresh" variant="secondary" onClick={reloadAll}>{__uiText("Refresh")}</Button>
+          <Button icon="add" variant="primary" onClick={() => setShowForm(true)} disabled={showForm}>{__uiText("เพิ่มปลายทาง")}</Button>
+        </>}
       />
 
-      <FormPanel
+      {showForm && <FormPanel
         title={__uiText("New subscription")}
         icon="mail"
         cols={2}
@@ -85,6 +106,7 @@ export function Subscriptions() {
         submitLabel={__uiText("Create subscription")}
         busy={submitting}
         onSubmit={submit}
+        onCancel={() => { setShowForm(false); setFormError(null); }}
       >
         <Field label={__uiText("Name")}>
           <Input
@@ -121,12 +143,12 @@ export function Subscriptions() {
           <div className="flex flex-wrap gap-2">
             {EVENT_TYPES.map((evt) => (
               <TogglePill key={evt} on={events.includes(evt)} onClick={() => toggle(evt)}>
-                {evt}
+                <span className="font-mono">{evt}</span>
               </TogglePill>
             ))}
           </div>
         </Span>
-      </FormPanel>
+      </FormPanel>}
 
       <Panel>
         <PanelHead title={__uiText("Subscriptions")} />
@@ -134,7 +156,7 @@ export function Subscriptions() {
         {subs.loading && !subs.data ? (
           <Loading />
         ) : !subs.data?.length ? (
-          <Empty>{__uiText("No subscriptions yet.")}</Empty>
+          <Empty icon="send">{__uiText("ยังไม่มีปลายทาง กดปุ่ม “เพิ่มปลายทาง” เพื่อเริ่มส่งเหตุการณ์ออกไป")}</Empty>
         ) : (
           <Table>
             <THead>
@@ -153,17 +175,17 @@ export function Subscriptions() {
                   <TD>
                     <div className="flex flex-wrap gap-1">
                       {s.eventTypes.map((e) => (
-                        <Chip key={e} tone="muted">{e}</Chip>
+                        <Chip key={e} tone="muted" className="font-mono">{e}</Chip>
                       ))}
                     </div>
                   </TD>
                   <TD>{s.secret ? <Chip tone="muted">{__uiText("set")}</Chip> : '—'}</TD>
                   <TD><StatusChip status={s.active ? 'active' : 'disabled'} /></TD>
                   <TD kind="actions">
-                    <Button size="sm" disabled={busy !== null} onClick={() => void act(`toggle-${s.id}`, () => webhookApi.updateSubscription(s.id, { active: !s.active }))}>
+                    <Button size="sm" disabled={busy !== null} onClick={() => void toggleActive(s)}>
                       {busy === `toggle-${s.id}` ? '…' : s.active ? __uiText("Disable") : __uiText("Enable")}
                     </Button>{' '}
-                    <Button size="sm" variant="ghost" disabled={busy !== null} onClick={() => remove(s)}>
+                    <Button size="sm" variant="danger-ghost" icon="delete" disabled={busy !== null} onClick={() => void remove(s)}>
                       {busy === `delete-${s.id}` ? '…' : __uiText("Delete")}
                     </Button>
                   </TD>
@@ -194,10 +216,10 @@ export function Subscriptions() {
               {deliveries.data.map((d) => (
                 <TR key={d.id}>
                   <TD kind="time">{fmt.when(d.createdAt)}</TD>
-                  <TD kind="mono">{d.eventType}</TD>
+                  <TD><Chip className="font-mono">{d.eventType}</Chip></TD>
                   <TD kind="mono">{d.targetUrl}</TD>
-                  <TD><StatusChip status={d.status} /></TD>
-                  <TD>{d.statusCode ?? '—'}</TD>
+                  <TD>{d.status === 'superseded' ? <Chip tone="muted" dot>{__uiText('มีรายการใหม่แทนแล้ว')}</Chip> : <StatusChip status={d.status} />}</TD>
+                  <TD kind="mono">{d.statusCode ?? '—'}</TD>
                   <TD kind="num">{d.attempts}</TD>
                 </TR>
               ))}

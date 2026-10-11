@@ -27,7 +27,7 @@ import { roleCanWrite } from '../../../../app/role-can';
 // import { Button, Input, DragDropUpload, DateRangeInput } from '@/components/common';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { MasterDataSelect, PageHeader, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { ButtonLink, MasterDataSelect, PageHeader, toast, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export default function InsertProductForm() {
   __useUiLocale();
   const categoryRows = useCategoryRows();
@@ -187,11 +187,11 @@ export default function InsertProductForm() {
 
   return (
     <div className="cp-page-panel space-y-6 border border-gray-200 bg-white rounded-xl p-4 md:p-6">
-        <PageHeader title={__uiText('เพิ่มสินค้า')} subtitle={__uiText('กรอกชื่อที่ลูกค้าเห็น ราคา และหมวด แล้วบันทึก')} />
+        <PageHeader back={{ to: '/j/allproducts', label: 'กลับรายการสินค้า' }} title={__uiText('เพิ่มสินค้า')} subtitle={__uiText('กรอกชื่อที่ลูกค้าเห็น ราคา และหมวด แล้วบันทึก')} />
 
         {/* 📌 ส่วนที่ 1: ข้อมูลหลักสินค้า (ใช้ Component กลาง <Input />) */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">
+          <h3 className="text-[15px] font-semibold text-on-surface">
             {__uiText('1. ข้อมูลสินค้า')}</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
@@ -267,7 +267,7 @@ export default function InsertProductForm() {
           </div>
         </div>
         <p className="text-xs text-gray-500">
-          {__uiText("ราคาตามจำนวน (ซื้อ 5 ชิ้นลด) ตั้งที่เมนู Promotion Mechanic")}</p>
+          {__uiText("ราคาตามจำนวน (เช่น ซื้อ 5 ชิ้นลด) ตั้งที่หน้าโปรโมชัน")}</p>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
@@ -286,7 +286,7 @@ export default function InsertProductForm() {
 
         <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
           <h3 className="mb-2 text-sm font-semibold text-gray-800">
-            {__uiText("ราคาตามจำนวนซื้อ (Tier)")}</h3>
+            {__uiText("ราคาตามจำนวนซื้อ")}</h3>
           <PromotionQuantityRuleFields value={tierForm} onChange={setTierForm} compact />
         </div>
 
@@ -294,7 +294,7 @@ export default function InsertProductForm() {
 
         {/* 🇹🇭 ส่วนที่ 2: ข้อมูลภาษาไทย (Thai Translation) */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-red-600">
+          <h3 className="text-[15px] font-semibold text-on-surface">
             {__uiText('2. ชื่อและคำอธิบายภาษาไทย')}</h3>
           <Input
             label={__uiText("ชื่อสินค้าภาษาไทย")}
@@ -319,7 +319,7 @@ export default function InsertProductForm() {
 
         {/* 🇺🇸 ส่วนที่ 3: ข้อมูลภาษาอังกฤษ (English Translation) */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">
+          <h3 className="text-[15px] font-semibold text-on-surface">
             {__uiText('3. ชื่อและคำอธิบายภาษาอังกฤษ')}</h3>
           <Input
             label={__uiText("ชื่อสินค้าภาษาอังกฤษ")}
@@ -351,7 +351,7 @@ export default function InsertProductForm() {
 
         {/* 📸 ส่วนที่ 4: ลากวางอัปโหลดไฟล์จริง (Component กลาง <DragDropUpload />) */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-green-600">
+          <h3 className="text-[15px] font-semibold text-on-surface">
             {__uiText('4. รูปสินค้า สูงสุด 3 รูป')}</h3>
 
           {/* เสียบตัวลากวางส่วนกลางของคุณที่นี่ */}
@@ -383,9 +383,9 @@ export default function InsertProductForm() {
                   <button
                     type="button"
                     onClick={() => removeFile(index)}
-                    className="mt-2 text-xs text-red-500 font-semibold hover:text-red-700 hover:underline"
+                    className="mt-2 text-xs text-danger font-semibold hover:underline"
                   >
-                    {__uiText("🛑 ลบรูปนี้")}</button>
+                    {__uiText("ลบรูปนี้")}</button>
                 </div>
               ))}
             </div>
@@ -393,11 +393,12 @@ export default function InsertProductForm() {
         </div>
 
         {/* 🚀 ปุ่มกดบันทึกโดยใช้ Component กลาง <Button /> ของคุณ */}
-        <div className="pt-4">
+        <div className="flex flex-wrap items-center gap-2 pt-4">
           <Button
             text={__uiText("บันทึกสินค้า")}
             onClick={() => handleSubmit()}
           />
+          <ButtonLink to="/j/allproducts" variant="secondary">{__uiText("ยกเลิก")}</ButtonLink>
         </div>
     </div>
   );

@@ -16,7 +16,7 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { appendReturnTo, readReturnTo, withRestoreDraftMarker } from '../../utils/return-to';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { StatusChip, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const EMPTY_RESPONSE: PromotionProductSetListResponse = {
   data: [],
   meta: { total: 0, page: 1, limit: 20, totalPages: 1 },
@@ -64,7 +64,7 @@ const PromotionProductSetList = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(__uiText("ยืนยันการลบ Product Set นี้?"))) return;
+    if (!confirm(__uiText("ยืนยันการลบชุดสินค้านี้?"))) return;
     try {
       await deletePromotionProductSet(id);
       setError('');
@@ -77,30 +77,30 @@ const PromotionProductSetList = () => {
 
   const columns: TableColumn<PromotionProductSetSummary>[] = [
     { key: 'name', label: __uiText("ชื่อ") },
-    { key: 'itemCount', label: __uiText("จำนวนสินค้า") },
+    { key: 'itemCount', label: __uiText("จำนวนสินค้า"), align: 'right', className: 'tabular-nums' },
     {
       key: 'categoryIds',
       label: __uiText("จำนวนหมวดหมู่"),
+      align: 'right',
+      className: 'tabular-nums',
       render: (value: string[]) => value?.length ?? 0,
     },
     {
       key: 'brandIds',
       label: __uiText("จำนวนแบรนด์"),
+      align: 'right',
+      className: 'tabular-nums',
       render: (value: string[]) => value?.length ?? 0,
     },
     {
       key: 'isActive',
       label: __uiText("สถานะ"),
-      render: (value: boolean) =>
-        value ? (
-          <span className="text-green-600 text-xs font-semibold">{__uiText("Active")}</span>
-        ) : (
-          <span className="text-gray-400 text-xs">{__uiText("Inactive")}</span>
-        ),
+      render: (value: boolean) => <StatusChip status={value ? 'active' : 'inactive'} />,
     },
     {
       key: 'updatedAt',
       label: __uiText("แก้ไขล่าสุด"),
+      className: 'tabular-nums whitespace-nowrap',
       render: (value: string) => (value ? new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) : '-'),
     },
     {
@@ -114,12 +114,13 @@ const PromotionProductSetList = () => {
             }
             className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
             title={__uiText("แก้ไข")}
+            aria-label={__uiText("แก้ไข")}
           >
             <AiOutlineEdit size={18} />
           </button>
           <button
             onClick={() => void handleDelete(row.id)}
-            className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-1.5 text-gray-500 hover:text-alert hover:bg-danger-container rounded-lg transition-colors"
             title={__uiText("ลบ")}
             aria-label={__uiText("ลบ")}
           >
@@ -142,19 +143,19 @@ const PromotionProductSetList = () => {
       )}
 
       <AdminListHeader
-        title={__uiText("Promotion Product Set")}
-        subtitle={__uiText("รายการ SKU แบบตั้งชื่อ ใช้เป็นเงื่อนไข include/exclude ของคูปอง")}
-        createLabel={__uiText("สร้าง Product Set")}
+        title={__uiText("ชุดสินค้าโปรโมชัน")}
+        subtitle={__uiText("รวมสินค้าไว้เป็นชุดที่ตั้งชื่อได้ ใช้กำหนดว่าคูปองหรือโปรใช้กับสินค้าไหน หรือไม่ใช้กับสินค้าไหน")}
+        createLabel={__uiText("เพิ่มชุดสินค้า")}
         createPath={withReturnTo(ADMIN_ROUTES.promotionProductSetCreate)}
       />
 
-      {error && <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
+      {error && <p className="text-sm text-danger">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
 
       <div className="rounded-lg bg-white p-3 shadow-level-1">
         <Input
           icon={<AiOutlineSearch size={20} />}
           className="md:w-[296px]"
-          placeholder={__uiText("ค้นหาชื่อ Product Set")}
+          placeholder={__uiText("ค้นหาชื่อชุดสินค้า")}
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
         />
@@ -168,6 +169,8 @@ const PromotionProductSetList = () => {
         currentPage={response.meta.page}
         totalPages={response.meta.totalPages}
         onPageChange={(newPage) => setCurrentPage(newPage)}
+        emptyTitle={search.trim() ? __uiText("ไม่พบชุดสินค้าที่ตรงกับคำค้น") : __uiText("ยังไม่มีชุดสินค้า")}
+        emptyDescription={search.trim() ? __uiText("ลองค้นด้วยชื่ออื่น") : __uiText("กด \"เพิ่มชุดสินค้า\" เพื่อสร้างชุดแรก")}
       />
     </div>
   );

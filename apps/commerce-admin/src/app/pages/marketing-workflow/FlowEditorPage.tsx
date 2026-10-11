@@ -102,7 +102,7 @@ function Editor({ id }: { id: string }) {
   return (
     <Page>
       <PageHeader back={{ to: '/marketing/workflows', label: __uiText('ข้อความอัตโนมัติ') }}
-        title={<Input value={input.name} onChange={(e) => patch({ name: e.target.value })} aria-label={__uiText('ชื่อ workflow')} className="min-w-[280px] text-lg font-semibold" />}
+        title={<Input value={input.name} onChange={(e) => patch({ name: e.target.value })} aria-label={__uiText('ชื่อข้อความอัตโนมัติ')} className="min-w-[280px] text-lg font-semibold" />}
         badge={<StatusChip status={wf.status} />}
         actions={<div className="flex flex-wrap items-center gap-2">
           {dirty && <span className="text-xs text-on-surface-variant">{__uiText('ยังไม่ได้บันทึก')}</span>}
@@ -110,12 +110,12 @@ function Editor({ id }: { id: string }) {
           <Button disabled={busy} onClick={() => setTestOpen(true)}>{__uiText('รันทดสอบ')}</Button>
           <Button variant="ghost" icon="history" onClick={() => setHistoryOpen(true)}>{__uiText('ประวัติ')}</Button>
           {wf.status === 'active'
-            ? <Button variant="ghost" disabled={busy} onClick={() => run(() => flowsApi.pause(id), __uiText('หยุดแล้ว'))}>{__uiText('Pause')}</Button>
-            : <Button variant="primary" disabled={busy} onClick={activate}>{__uiText('Activate')}</Button>}
+            ? <Button variant="ghost" disabled={busy} onClick={() => { if (window.confirm(__uiText('หยุดข้อความอัตโนมัตินี้ชั่วคราว? ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่'))) run(() => flowsApi.pause(id), __uiText('หยุดแล้ว')); }}>{__uiText('หยุดชั่วคราว')}</Button>
+            : <Button variant="primary" disabled={busy} onClick={activate}>{__uiText('เปิดใช้งาน')}</Button>}
         </div>} />
       {error && <Alert tone="danger" onClose={() => setError(null)}>{error}</Alert>}
       {issues.length > 0 && <Alert tone="warn">{__uiText('ยังเปิดใช้ไม่ได้: {0} จุดที่ต้องแก้ (การ์ดขอบแดง)', { 0: issues.length })}</Alert>}
-      <Segmented value={tab} onChange={setTab} options={[{ value: 'flow', label: __uiText('Flow') }, { value: 'results', label: __uiText('ผลลัพธ์') }]} />
+      <Segmented value={tab} onChange={setTab} options={[{ value: 'flow', label: __uiText('ขั้นตอน') }, { value: 'results', label: __uiText('ผลลัพธ์') }]} />
       {tab === 'results' ? <FlowResults id={id} /> : (
         <div className="mt-3 flex h-[72vh] min-h-[560px] gap-3">
           <Palette steps={input.steps} triggerType={input.triggerType} limits={meta.limits} onPick={(item) => pickFromPalette(item.id, item.trigger)} />

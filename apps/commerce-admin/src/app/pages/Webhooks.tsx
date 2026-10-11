@@ -1,10 +1,16 @@
 import { Fragment, useState } from 'react';
 import { api, WebhookEvent } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, DetailSection, Button } from '@cp/ui';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, ErrorText, Empty, Loading, CodeBlock, Chip, StatusChip, Tone, fmt, DetailSection, Button } from '@cp/ui';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+/** Inbound event states the shared status chip has no label for. Others fall back to StatusChip. */
+const EVENT_STATUS: Record<string, [Tone, string]> = {
+  received: ['warn', 'รอประมวลผล'],
+  processed: ['ok', 'ประมวลผลแล้ว'],
+};
+
 export function Webhooks() {
   __useUiLocale();
   const { data, loading, error, reload } = useAsync(() => api.get<WebhookEvent[]>('/webhooks'));
@@ -23,17 +29,17 @@ export function Webhooks() {
 
   return (
     <Page>
-      <PageHeader title={__uiText("Webhook events")} subtitle={__uiText("Inbound webhooks — stored raw, processed asynchronously, replayable.")} actions={<Button icon="refresh" onClick={reload}>{__uiText("Refresh")}</Button>} />
+      <PageHeader title={__uiText("เหตุการณ์ขาเข้า")} subtitle={__uiText("เหตุการณ์ที่ระบบภายนอกส่งเข้ามา")} actions={<Button icon="refresh" onClick={reload}>{__uiText("Refresh")}</Button>} />
 
       <Panel>
         <PanelHead title={__uiText("Recent events")} />
         <ErrorText error={error} />
         {loading ? <Loading /> : !data?.length ? (
-          <Empty>{__uiText("No webhook events yet.")}</Empty>
+          <Empty>{__uiText("ยังไม่มีเหตุการณ์ขาเข้า เหตุการณ์จะแสดงที่นี่เมื่อระบบภายนอกส่งเข้ามา")}</Empty>
         ) : (
           <Table>
             <THead>
-              <TH>{__uiText("Received")}</TH><TH>{__uiText("Integration")}</TH><TH>{__uiText("Signature")}</TH><TH>{__uiText("Status")}</TH><TH>{__uiText("Attempts")}</TH><TH></TH>
+              <TH>{__uiText("Received")}</TH><TH>{__uiText("Integration")}</TH><TH>{__uiText("Signature")}</TH><TH>{__uiText("Status")}</TH><TH right>{__uiText("Attempts")}</TH><TH></TH>
             </THead>
             <TBody>
               {data.map((w) => (
@@ -41,10 +47,10 @@ export function Webhooks() {
                   <TR>
                     <TD kind="time">{fmt.when(w.createdAt)}</TD>
                     <TD kind="mono">{w.integrationId.slice(0, 8)}…</TD>
-                    <TD><StatusChip status={w.signatureValid ? 'valid' : 'invalid'} /></TD>
-                    <TD><StatusChip status={w.status} /></TD>
-                    <TD>{w.attempts}</TD>
-                    <TD kind="actions"><ExpandToggle open={expandedId === w.id} onClick={() => setExpandedId(cur => cur === w.id ? null : w.id)} /> <Button variant="primary" disabled={busy === w.id || !w.signatureValid} onClick={() => replay(w.id)}>{busy === w.id ? '…' : __uiText("Replay")}</Button></TD>
+                    <TD>{w.signatureValid ? <Chip tone="ok" dot>{__uiText("ลายเซ็นถูกต้อง")}</Chip> : <Chip tone="danger" dot>{__uiText("ลายเซ็นไม่ถูกต้อง")}</Chip>}</TD>
+                    <TD>{EVENT_STATUS[w.status] ? <Chip tone={EVENT_STATUS[w.status][0]} dot>{__uiText(EVENT_STATUS[w.status][1])}</Chip> : <StatusChip status={w.status} />}</TD>
+                    <TD kind="num">{w.attempts}</TD>
+                    <TD kind="actions"><ExpandToggle open={expandedId === w.id} onClick={() => setExpandedId(cur => cur === w.id ? null : w.id)} /> <Button size="sm" disabled={busy === w.id || !w.signatureValid} onClick={() => replay(w.id)}>{busy === w.id ? '…' : __uiText("Replay")}</Button></TD>
                   </TR>
                   {expandedId === w.id && (
                     <ExpandRow colSpan={6}>

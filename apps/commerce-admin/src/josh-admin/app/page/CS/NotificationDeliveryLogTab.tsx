@@ -14,10 +14,10 @@ import { Link } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Chip, type Tone } from "@cp/ui";
 const CHANNEL_OPTIONS = [
   { value: '', get label(){return __uiText("ทุกช่องทาง");} },
-  { value: 'push', get label(){return __uiText("Push");} },
+  { value: 'push', get label(){return __uiText("แจ้งเตือนบนมือถือ");} },
   { value: 'inapp', get label(){return __uiText("ในแอป");} },
   { value: 'email', get label(){return __uiText("อีเมล");} },
 ] as const;
@@ -39,10 +39,25 @@ const REASON_LABEL: Record<string, string> = {
   get not_configured(){return __uiText("ยังไม่ได้ตั้งค่า OneSignal");},
 };
 
-const STATUS_STYLE: Record<NotificationDeliveryStatus, string> = {
-  sent: 'bg-green-50 text-green-700',
-  skipped: 'bg-gray-100 text-gray-600',
-  failed: 'bg-red-50 text-red-700',
+/** ป้ายช่องทางสำหรับแสดงผล — ค่าที่ส่งไป API ยังเป็นรหัสเดิม */
+export const CHANNEL_LABEL: Record<string, string> = {
+  get push(){return __uiText("แจ้งเตือนบนมือถือ");},
+  get inapp(){return __uiText("ในแอป");},
+  get email(){return __uiText("อีเมล");},
+};
+
+export const channelLabel = (channel: string) => CHANNEL_LABEL[channel] ?? channel;
+
+const STATUS_TONE: Record<NotificationDeliveryStatus, Tone> = {
+  sent: 'ok',
+  skipped: 'muted',
+  failed: 'danger',
+};
+
+const STATUS_LABEL: Record<NotificationDeliveryStatus, string> = {
+  get sent(){return __uiText("ส่งสำเร็จ");},
+  get skipped(){return __uiText("ไม่ได้ส่ง");},
+  get failed(){return __uiText("ล้มเหลว");},
 };
 
 function formatDateTime(value: string | null): string {
@@ -53,7 +68,7 @@ function formatDateTime(value: string | null): string {
   });
 }
 
-function describeReason(reason: string | null): string {
+export function describeReason(reason: string | null): string {
   if (!reason) return '—';
   return REASON_LABEL[reason] ?? reason;
 }
@@ -116,7 +131,7 @@ export default function NotificationDeliveryLogTab() {
       key: 'sentAt',
       label: __uiText("เวลา"),
       render: (value: string) => (
-        <span className="whitespace-nowrap text-xs">{formatDateTime(value)}</span>
+        <span className="whitespace-nowrap text-xs tabular-nums">{formatDateTime(value)}</span>
       ),
     },
     {
@@ -131,15 +146,19 @@ export default function NotificationDeliveryLogTab() {
         </Link>
       ),
     },
-    { key: 'type', label: __uiText("ประเภท") },
-    { key: 'channel', label: __uiText("ช่องทาง") },
+    {
+      key: 'type',
+      label: __uiText("ประเภท"),
+      render: (value: string) => <Chip className="font-mono">{value}</Chip>,
+    },
+    { key: 'channel', label: __uiText("ช่องทาง"), render: (value: string) => channelLabel(value) },
     {
       key: 'status',
       label: __uiText("สถานะ"),
       render: (value: NotificationDeliveryStatus) => (
-        <span className={`rounded-full px-2 py-1 text-xs font-semibold ${STATUS_STYLE[value]}`}>
-          {value}
-        </span>
+        <Chip tone={STATUS_TONE[value] ?? 'muted'} statusCode={value} dot>
+          {STATUS_LABEL[value] ?? value}
+        </Chip>
       ),
     },
     {
@@ -226,11 +245,13 @@ export default function NotificationDeliveryLogTab() {
         <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : (
         <>
-          <Table columns={columns} data={rows} idKey="id" />
-          {!rows.length && (
-            <p className="mt-3 text-sm text-gray-400">
-              {__uiText("ไม่พบ log ในเงื่อนไขนี้ — log เริ่มเก็บตั้งแต่วันที่เปิดใช้ฟีเจอร์นี้ และเก็บย้อนหลัง 90 วัน")}</p>
-          )}
+          <Table
+            columns={columns}
+            data={rows}
+            idKey="id"
+            emptyTitle={__uiText("ไม่พบรายการส่งในเงื่อนไขนี้")}
+            emptyDescription={__uiText("ลองเปลี่ยนตัวกรอง ระบบเก็บรายการส่งย้อนหลัง 90 วัน นับจากวันที่เริ่มเก็บ")}
+          />
           <div className="mt-4 flex items-center justify-end gap-2 text-sm">
             <button
               type="button"

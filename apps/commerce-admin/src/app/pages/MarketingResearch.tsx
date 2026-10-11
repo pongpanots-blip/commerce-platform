@@ -3,7 +3,7 @@ import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-caption-migration: literal captions only
 // ui-metadata-migration: static labels and UI notices only
 import { Fragment, useState } from 'react';
-import { Alert, Button, ButtonLink, Checkbox, CodeBlock, confirmAction, EmptyState, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, fmt, toast } from '@cp/ui';
+import { Alert, Button, ButtonLink, Checkbox, Chip, CodeBlock, confirmAction, EmptyState, ErrorText, ExpandRow, ExpandToggle, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, Span, Table, TBody, TD, TH, THead, TR, fmt, toast, toneOf } from '@cp/ui';
 import {
   marketingResearchApi, RESEARCH_AREAS, RESEARCH_KINDS, RESEARCH_SECTORS,
   ResearchKind, ResearchRun, ResearchTopic, ResearchTopicInput,
@@ -31,6 +31,7 @@ export function MarketingResearch() {
   const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
   const [open, setOpen] = useState<string | null>(null);
   const [runs, setRuns] = useState<Record<string, ResearchRun[]>>({});
+  const [creating, setCreating] = useState(false);
 
   async function act(key: string, work: () => Promise<unknown>, done: string) {
     setBusy(key); setNote(null);
@@ -56,6 +57,7 @@ export function MarketingResearch() {
     const ok = await act('create', () => marketingResearchApi.create(form), 'บันทึกโจทย์แล้ว');
     if (!ok) return false;
     setForm(blank);
+    setCreating(false);
     toast('บันทึกโจทย์แล้ว');
   }
 
@@ -77,20 +79,24 @@ export function MarketingResearch() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("Marketing Research")}
+        title={__uiText("งานวิจัยตลาด")}
         subtitle={__uiText("ค้นรายชื่อธุรกิจจริงจาก ททท. และ OpenStreetMap ฟรี พร้อมหลักฐานอ้างอิง")}
-        actions={<Button onClick={topics.reload} icon="refresh">{__uiText("Refresh")}</Button>}
+        actions={<>
+          <Button onClick={topics.reload} icon="refresh">{__uiText("โหลดใหม่")}</Button>
+          <Button variant="primary" icon={creating ? 'close' : 'add'} onClick={() => setCreating((value) => !value)}>{creating ? __uiText("ปิดฟอร์ม") : __uiText("เพิ่มโจทย์")}</Button>
+        </>}
       />
 
       {note && <Alert tone={note.ok ? 'ok' : 'danger'}>{__uiText(note.text)}</Alert>}
 
-      <FormPanel
+      {creating && <FormPanel
         title={__uiText("ตั้งโจทย์ใหม่")}
         icon="search"
         cols={3}
         busy={busy === 'create'}
         error={!form.sources.some((s) => ready.has(s)) ? __uiText("ยังไม่มีแหล่งที่พร้อม — โจทย์จะรอจนกว่าแหล่งข้อมูลจะเชื่อม") : undefined}
         onSubmit={submit}
+        onCancel={() => setCreating(false)}
         submitLabel={busy === 'create' ? __uiText("กำลังบันทึก…") : __uiText("บันทึกโจทย์")}
       >
         <Field label={__uiText("หัวข้อ")} required hint={__uiText("เขียนเป็นประโยคที่คนอ่านรู้เรื่อง")}>
@@ -125,7 +131,7 @@ export function MarketingResearch() {
           ))}
           <Checkbox label={__uiText("ติดตามทุกชั่วโมง")} checked={form.followHourly} onChange={(e) => setForm({ ...form, followHourly: e.target.checked })} />
         </Span>
-      </FormPanel>
+      </FormPanel>}
 
       <Panel className="overflow-hidden">
         <PanelHead
@@ -143,7 +149,7 @@ export function MarketingResearch() {
         {topics.loading ? (
           <Loading />
         ) : !topics.data?.items.length ? (
-          <EmptyState icon="search" title={__uiText('ยังไม่มีโจทย์')} description={__uiText('กรอกหัวข้อด้านบน แล้วกดบันทึกโจทย์')} action={<Button variant="primary" onClick={() => document.querySelector<HTMLInputElement>('input[required]')?.focus()}>{__uiText('เริ่มตั้งโจทย์')}</Button>} />
+          <EmptyState icon="search" title={__uiText('ยังไม่มีโจทย์')} description={__uiText('กด "เพิ่มโจทย์" แล้วกรอกหัวข้อที่อยากรู้')} action={<Button variant="primary" onClick={() => setCreating(true)}>{__uiText('เริ่มตั้งโจทย์')}</Button>} />
         ) : (
           <Table>
             <THead>
@@ -191,7 +197,7 @@ export function MarketingResearch() {
                           {(runs[t.id] ?? []).map((r) => (
                             <div key={r.id} className="border-b border-secondary-container/70 pb-4 last:border-0">
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-on-surface">{__uiText({ waiting_configuration: 'รอการตั้งค่า', queued: 'รอคิว', running: 'กำลังรัน', completed: 'เสร็จแล้ว', partial: 'ได้ผลบางส่วน', failed: 'ไม่สำเร็จ', cancelled: 'ยกเลิกแล้ว' }[r.status] ?? r.status)}</span>
+                                <Chip tone={toneOf(r.status)} statusCode={r.status} dot>{__uiText({ waiting_configuration: 'รอการตั้งค่า', queued: 'รอคิว', running: 'กำลังรัน', completed: 'เสร็จแล้ว', partial: 'ได้ผลบางส่วน', failed: 'ไม่สำเร็จ', cancelled: 'ยกเลิกแล้ว' }[r.status] ?? r.status)}</Chip>
                                 <span className="text-xs text-on-surface-variant">{new Date(r.createdAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))} {__uiText(" · พบ ")}{fmt.num(r.findingsCount)} {__uiText(" ข้อ")}</span>
                               </div>
                               {r.message && <div className="text-xs text-on-surface-variant mb-2">{r.message}</div>}

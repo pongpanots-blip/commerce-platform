@@ -2,15 +2,13 @@
 import { getCompany } from '@josh/shared-api';
 import { Input, Table, TableColumn, TableViewBar, useTableViews } from '@josh/shared-ui-web';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import AdminListHeader from '../../components/AdminListHeader';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button, ButtonLink, Chip, Panel, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const Company = () => {
   __useUiLocale();
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -30,10 +28,11 @@ const Company = () => {
 
   const columns: TableColumn<any>[] = [
     { key: 'name', label: __uiText("ชื่อบริษัท / องค์กร") },
-    { key: 'register_number', label: __uiText("เลขทะเบียนพาณิชย์") },
+    { key: 'register_number', label: __uiText("เลขทะเบียนพาณิชย์"), render: (value: any) => <span className="font-mono text-[11px]">{value || '—'}</span> },
     {
       key: 'credit_limit',
       label: __uiText("วงเงินเครดิตสูงสุด"),
+      align: 'right',
       render: (value: any) => (
         <span className="font-semibold">
           {Number(value || 0).toLocaleString()} {__uiText(" บาท")}</span>
@@ -42,18 +41,20 @@ const Company = () => {
     {
       key: 'credit_used',
       label: __uiText("วงเงินที่ใช้ไปแล้ว"),
+      align: 'right',
       render: (value: any) => (
-        <span className="text-gray-600">
+        <span className="text-on-surface-variant">
           {Number(value || 0).toLocaleString()} {__uiText(" บาท")}</span>
       ),
     },
     {
       key: 'credit_term_days',
       label: __uiText("เครดิตเทอม (วัน)"),
+      align: 'right',
       render: (value: any) => {
         const days = Number(value || 0);
         return days === 0 ? (
-          <span className="text-green-600 font-medium">{__uiText("เงินสด / COD")}</span>
+          <span>{__uiText("เงินสดหรือเก็บเงินปลายทาง")}</span>
         ) : (
           <span>{days} {__uiText(" วัน")}</span>
         );
@@ -64,22 +65,17 @@ const Company = () => {
       label: __uiText("สถานะการสั่งซื้อ"),
       render: (value: any) =>
         value ? (
-          <span className="px-2 py-1 text-xs font-bold bg-red-100 text-red-700 rounded-full">
-            {__uiText("โดนระงับสิทธิ์")}</span>
+          <Chip tone="danger" dot>{__uiText("โดนระงับสิทธิ์")}</Chip>
         ) : (
-          <span className="px-2 py-1 text-xs font-bold bg-green-100 text-green-700 rounded-full">
-            {__uiText("ปกติ")}</span>
+          <Chip tone="ok" dot>{__uiText("ปกติ")}</Chip>
         ),
     },
     {
       key: 'id',
       label: __uiText("จัดการ"),
       render: (id: any) => (
-        <button
-          onClick={() => navigate(ADMIN_ROUTES.companyEdit(id))}
-          className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-md font-medium transition-colors"
-        >
-          {__uiText("แก้ไข / ส่องดูสาขา")}</button>
+        <ButtonLink to={ADMIN_ROUTES.companyEdit(id)} icon="edit">
+          {__uiText("แก้ไขและดูสาขา")}</ButtonLink>
       ),
     },
   ];
@@ -97,8 +93,8 @@ const Company = () => {
   return (
     <div className="cp-management-page grid gap-5 w-full">
       <AdminListHeader
-        title={__uiText("Company Management")}
-        subtitle={__uiText("จัดการข้อมูลเครดิตเทอม, ดูสถานะ Overdue และควบคุมสิทธิ์สั่งซื้อรายองค์กร B2B")}
+        title={__uiText("บริษัทลูกค้า")}
+        subtitle={__uiText("ข้อมูลบริษัท เครดิตเทอม วงเงิน และสิทธิ์สั่งซื้อของแต่ละบริษัท")}
         createLabel={__uiText("เพิ่มบริษัทใหม่")}
         createPath={ADMIN_ROUTES.companyCreate}
       />
@@ -117,18 +113,18 @@ const Company = () => {
             }
           }}
         />
-        <button
-          type="button"
-          className="shrink-0 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
+        <Button
+          icon="search"
+          className="shrink-0"
           onClick={() => {
             setSearch(searchInput.trim());
             setCurrentPage(1);
           }}
         >
-          {__uiText("ค้นหา")}</button>
+          {__uiText("ค้นหา")}</Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <Panel className="overflow-hidden">
         <Table
           columns={columns}
           data={apiResponse?.data || []}
@@ -138,8 +134,10 @@ const Company = () => {
           currentPage={Number(apiResponse?.meta?.page || 1)}
           totalPages={Number(apiResponse?.meta?.totalPages || 1)}
           onPageChange={setCurrentPage}
+          emptyTitle={search ? __uiText("ไม่พบบริษัทที่ตรงกับคำค้น") : __uiText("ยังไม่มีบริษัทลูกค้า")}
+          emptyDescription={search ? __uiText("ลองค้นด้วยชื่อหรือเลขทะเบียนอื่น") : __uiText("กดเพิ่มบริษัทใหม่เพื่อเริ่มต้น")}
         />
-      </div>
+      </Panel>
     </div>
   );
 };

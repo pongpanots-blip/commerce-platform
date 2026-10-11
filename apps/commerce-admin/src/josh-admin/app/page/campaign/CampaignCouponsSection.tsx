@@ -16,7 +16,7 @@ import { GuardedLink } from '../promotion-page/useUnsavedChangesGuard';
 import { couponKindLabel, nextCouponIds } from './campaign.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type AttachedCoupon = CampaignDetail['coupons'][number];
 /** Row of `GET /coupon` (the whole entity) — only what the picker reads. */
 type CouponRow = {
@@ -118,7 +118,7 @@ export default function CampaignCouponsSection({
       render: (value: string, row) => (
         <GuardedLink
           to={ADMIN_ROUTES.couponDetail(row.id)}
-          className="font-semibold text-blue-600 hover:underline"
+          className="font-mono font-semibold text-blue-600 hover:underline"
         >
           {value}
         </GuardedLink>
@@ -131,9 +131,7 @@ export default function CampaignCouponsSection({
       render: (_autoApply: boolean, row) => {
         const label = couponKindLabel(row);
         return label === 'ใช้อัตโนมัติ' ? (
-          <span className="inline-flex items-center rounded-full bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
-            {label}
-          </span>
+          <Chip tone="primary">{label}</Chip>
         ) : (
           label
         );
@@ -147,7 +145,7 @@ export default function CampaignCouponsSection({
           type="button"
           onClick={() => setPendingDetach(row)}
           className="rounded-lg p-1.5 text-ink-muted hover:bg-alert-soft hover:text-alert"
-          title={__uiText("ถอดออกจาก Campaign")}
+          title={__uiText("ถอดออกจากแคมเปญ")}
           aria-label={__uiText("ถอด {0}", {"0": row.coupon_code})}
         >
           <AiOutlineMinusCircle size={18} />
@@ -159,10 +157,16 @@ export default function CampaignCouponsSection({
   return (
     <Section
       title={__uiText("คูปอง")}
-      description={__uiText("คูปองที่ผูกกับงานนี้ — คูปองที่อยู่ใน campaign อื่นอยู่แล้วจะถูกย้ายมาที่นี่")}
+      description={__uiText("คูปองที่ผูกกับแคมเปญนี้ ถ้าเลือกคูปองที่อยู่ในแคมเปญอื่น คูปองนั้นจะย้ายมาที่นี่")}
     >
       <CouponFormErrorBanner error={error} />
-      <Table columns={columns} data={campaign.coupons} idKey="id" />
+      <Table
+        columns={columns}
+        data={campaign.coupons}
+        idKey="id"
+        emptyTitle={__uiText("ยังไม่มีคูปองในแคมเปญนี้")}
+        emptyDescription={__uiText("ค้นหาและเลือกคูปองด้านล่าง แล้วกดเพิ่มเข้าแคมเปญ")}
+      />
 
       <div className="flex flex-col gap-3 rounded-lg border-2 border-primary-border p-3">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -190,7 +194,7 @@ export default function CampaignCouponsSection({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button
-            text={busy ? __uiText("กำลังบันทึก...") : __uiText("เพิ่มคูปองเข้า Campaign")}
+            text={busy ? __uiText("กำลังบันทึก...") : __uiText("เพิ่มคูปองเข้าแคมเปญ")}
             disabled={!pick || busy}
             onClick={() => void attach()}
           />
@@ -200,14 +204,14 @@ export default function CampaignCouponsSection({
           >
             {__uiText("สร้างคูปองใหม่")}</GuardedLink>
           <span className="text-xs text-ink-muted">
-            {__uiText("สร้างเสร็จแล้วกลับมาเพิ่มเข้า Campaign ที่นี่")}</span>
+            {__uiText("สร้างเสร็จแล้วกลับมาเพิ่มเข้าแคมเปญที่นี่")}</span>
         </div>
       </div>
 
       <CouponConfirmDialog
         open={!!pendingDetach}
-        title={__uiText("ถอดคูปองออกจาก Campaign?")}
-        body={`“${pendingDetach?.coupon_code ?? ''}” จะยังอยู่ในระบบ แต่ไม่ผูกกับ Campaign นี้อีก`}
+        title={__uiText("ถอดคูปองออกจากแคมเปญ?")}
+        body={__uiText("“{0}” จะยังอยู่ในระบบ แต่ไม่อยู่ในแคมเปญนี้แล้ว", {"0": pendingDetach?.coupon_code ?? ''})}
         confirmLabel="ถอดออก"
         tone="danger"
         busy={busy}

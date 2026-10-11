@@ -1,5 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
-import { TableViewport } from '@cp/ui';
+import { Chip, StatusChip, TableViewport, type Tone } from '@cp/ui';
 import {
   getErpTestingShipment,
   getOrders,
@@ -91,15 +91,15 @@ const DELIVERY_STAGES: Array<{ key: DeliveryStage; label: string; note: string; 
   },
 ];
 
-// shipment/order status enum → Thai label + chip colour (Figma-ish, no token for this page specifically)
-const STATUS_CHIP: Record<string, { label: string; className: string }> = {
-  payment_pending: { get label(){return __uiText("รอชำระเงิน");}, className: 'bg-gray-100 text-gray-700' },
-  paid: { get label(){return __uiText("ชำระแล้ว รอ ERP ยืนยัน");}, className: 'bg-sky-100 text-sky-800' },
-  preparing: { get label(){return __uiText("ERP ยืนยันแล้ว กำลังเตรียม");}, className: 'bg-violet-100 text-violet-800' },
-  shipped: { get label(){return __uiText("ออกจัดส่งแล้ว");}, className: 'bg-amber-100 text-amber-800' },
-  delivered: { get label(){return __uiText("ส่งถึงแล้ว");}, className: 'bg-emerald-100 text-emerald-800' },
-  cancelled: { get label(){return __uiText("ยกเลิก");}, className: 'bg-red-100 text-red-700' },
-  refunded: { get label(){return __uiText("คืนเงินแล้ว");}, className: 'bg-rose-100 text-rose-800' },
+// shipment/order status enum → Thai label + chip tone
+const STATUS_CHIP: Record<string, { label: string; tone: Tone }> = {
+  payment_pending: { get label(){return __uiText("รอชำระเงิน");}, tone: 'warn' },
+  paid: { get label(){return __uiText("ชำระแล้ว รอ ERP ยืนยัน");}, tone: 'info' },
+  preparing: { get label(){return __uiText("ERP ยืนยันแล้ว กำลังเตรียม");}, tone: 'info' },
+  shipped: { get label(){return __uiText("ออกจัดส่งแล้ว");}, tone: 'primary' },
+  delivered: { get label(){return __uiText("ส่งถึงแล้ว");}, tone: 'ok' },
+  cancelled: { get label(){return __uiText("ยกเลิก");}, tone: 'danger' },
+  refunded: { get label(){return __uiText("คืนเงินแล้ว");}, tone: 'muted' },
 };
 
 function invoiceStateLabel(inv: { cancelled: boolean; delivered: boolean }): string {
@@ -111,17 +111,13 @@ function invoiceStateLabel(inv: { cancelled: boolean; delivered: boolean }): str
 function statusChip(status: string | null | undefined) {
   const entry = status ? STATUS_CHIP[status] : undefined;
   if (!entry) {
-    return (
-      <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
-        -
-      </span>
-    );
+    return <Chip tone="muted">{status ? <span className="font-mono">{status}</span> : '-'}</Chip>;
   }
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${entry.className}`}>
+    <Chip tone={entry.tone} statusCode={status} dot>
       {entry.label}
       <span className="font-mono text-[10px] opacity-70">· {status}</span>
-    </span>
+    </Chip>
   );
 }
 
@@ -131,6 +127,7 @@ export default function ErpWebhookSimulator() {
   const [searchInput, setSearchInput] = useState('');
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [searchedOrders, setSearchedOrders] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [selectedOrderNumber, setSelectedOrderNumber] = useState<string | null>(null);
 
@@ -182,6 +179,7 @@ export default function ErpWebhookSimulator() {
       setOrders([]);
     } finally {
       setLoadingOrders(false);
+      setSearchedOrders(true);
     }
   };
 
@@ -370,16 +368,16 @@ export default function ErpWebhookSimulator() {
       }, 0)
     : 0;
 
-  const invBookError = submitAttempted && !invBook.trim() ? 'กรอก INV_BOOK' : undefined;
-  const invNoError = submitAttempted && !invNo.trim() ? 'กรอก INV_NO' : undefined;
+  const invBookError = submitAttempted && !invBook.trim() ? __uiText('กรอก INV_BOOK') : undefined;
+  const invNoError = submitAttempted && !invNo.trim() ? __uiText('กรอก INV_NO') : undefined;
   const deliveryStageError = submitAttempted && deliveryStage === null;
-  const courierNameError = submitAttempted && !courierName.trim() ? 'กรอกชื่อคนขับก่อน' : undefined;
+  const courierNameError = submitAttempted && !courierName.trim() ? __uiText('กรอกชื่อคนขับก่อน') : undefined;
 
   return (
     <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
-        title={__uiText("ERP Webhook Simulator")}
-        subtitle={__uiText("ยิง webhook ERP → Josh จำลอง เข้า service handler ตัวจริง (validation + logic เดียวกับ /api/erp/*) — ไม่ต้องรอ ERP sandbox")}
+        title={__uiText("ทดสอบส่งข้อมูลระบบหลักไปร้านค้า")}
+        subtitle={__uiText("ส่งเหตุการณ์ทดสอบจากระบบหลัก (ERP) ไปยังระบบร้านค้า")}
       />
 
       <div className="flex w-fit gap-1 rounded-lg bg-gray-100 p-1 text-sm">
@@ -388,14 +386,14 @@ export default function ErpWebhookSimulator() {
           onClick={() => setMode('shipment')}
           className={`rounded-md px-4 py-1.5 font-medium ${mode === 'shipment' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
         >
-          {__uiText("Order / Invoice status")}<span className="ml-1.5 text-[11px] font-normal text-gray-400">{__uiText("จาก shipment จริง")}</span>
+          {__uiText("สถานะคำสั่งซื้อ / ใบแจ้งหนี้")}<span className="ml-1.5 text-[11px] font-normal text-gray-400">{__uiText("จากรายการจัดส่งจริง")}</span>
         </button>
         <button
           type="button"
           onClick={() => setMode('payload')}
           className={`rounded-md px-4 py-1.5 font-medium ${mode === 'payload' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
         >
-          {__uiText("Webhook อื่น ๆ")}<span className="ml-1.5 text-[11px] font-normal text-gray-400">{__uiText("quotation · catalog · stock · customer")}</span>
+          {__uiText("ข้อมูลอื่น ๆ")}<span className="ml-1.5 text-[11px] font-normal text-gray-400">{__uiText("ใบเสนอราคา · สินค้า · สต๊อก · ลูกค้า")}</span>
         </button>
       </div>
 
@@ -412,10 +410,10 @@ export default function ErpWebhookSimulator() {
         {/* LEFT: order -> shipment picker */}
         <div className="flex flex-col gap-4">
           <div className="rounded-lg border bg-white p-4">
-            <h3 className="mb-2 text-sm font-semibold text-gray-700">{__uiText("หา order")}</h3>
+            <h3 className="mb-2 text-sm font-semibold text-gray-700">{__uiText("หาคำสั่งซื้อ")}</h3>
             <div className="flex gap-2">
               <Input
-                placeholder={__uiText("เลขที่ order เช่น JOSH-2026-04417")}
+                placeholder={__uiText("เลขที่คำสั่งซื้อ เช่น JOSH-2026-04417")}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && searchOrders()}
@@ -423,6 +421,10 @@ export default function ErpWebhookSimulator() {
               />
               <Button text={loadingOrders ? '...' : __uiText("ค้นหา")} onClick={searchOrders} disabled={loadingOrders} />
             </div>
+
+            {searchedOrders && !loadingOrders && orders.length === 0 && !error && (
+              <p className="mt-3 text-sm text-gray-400">{__uiText("ไม่พบคำสั่งซื้อ — ลองค้นด้วยเลขที่คำสั่งซื้ออื่น")}</p>
+            )}
 
             {orders.length > 0 && (
               <div className="mt-3 flex flex-col gap-1.5">
@@ -449,12 +451,12 @@ export default function ErpWebhookSimulator() {
           {selectedOrderId && (
             <div className="rounded-lg border bg-white p-4">
               <h3 className="mb-2 text-sm font-semibold text-gray-700">
-                {__uiText("Shipment ใน ")}{selectedOrderNumber ?? selectedOrderId}
+                {__uiText("รายการจัดส่งใน ")}<span className="font-mono">{selectedOrderNumber ?? selectedOrderId}</span>
               </h3>
               {loadingShipments ? (
                 <p className="text-sm text-gray-400">{__uiText("กำลังโหลด...")}</p>
               ) : shipments.length === 0 ? (
-                <p className="text-sm text-gray-400">{__uiText("ไม่มี shipment")}</p>
+                <p className="text-sm text-gray-400">{__uiText("คำสั่งซื้อนี้ยังไม่มีรายการจัดส่ง")}</p>
               ) : (
                 <div className="flex flex-col gap-1.5">
                   {shipments.map((s) => (
@@ -479,18 +481,18 @@ export default function ErpWebhookSimulator() {
             <div className="rounded-lg border bg-white p-4 text-sm">
               <h3 className="mb-2 text-sm font-semibold text-gray-700">{__uiText("สถานะปัจจุบัน")}</h3>
               <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between"><span className="text-gray-500">{__uiText("Shipment")}</span><span className="font-mono">{shipment.shipmentNumber}</span></div>
-                <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("Shipment status")}</span>{statusChip(shipment.status)}</div>
-                <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("Order status")}</span>{statusChip(shipment.orderStatus)}</div>
-                <div className="flex justify-between"><span className="text-gray-500">{__uiText("erp_sync_status")}</span><span>{shipment.erpSyncStatus ?? '-'}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">{__uiText("jagota_order_sync")}</span><span>{shipment.sync ? __uiText("มี") : <span className="text-amber-600">{__uiText("ไม่มี (correlate ไม่เจอ)")}</span>}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">{__uiText("รายการจัดส่ง")}</span><span className="font-mono">{shipment.shipmentNumber}</span></div>
+                <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("สถานะการจัดส่ง")}</span>{statusChip(shipment.status)}</div>
+                <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("สถานะคำสั่งซื้อ")}</span>{statusChip(shipment.orderStatus)}</div>
+                <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("สถานะซิงก์ระบบหลัก (ERP)")}</span>{shipment.erpSyncStatus ? <StatusChip status={shipment.erpSyncStatus} /> : <span>-</span>}</div>
+                <div className="flex justify-between"><span className="text-gray-500">{__uiText("ข้อมูลเชื่อมคำสั่งซื้อกับระบบหลัก")}</span><span>{shipment.sync ? __uiText("มี") : <Chip tone="warn">{__uiText("ไม่มี (จับคู่ไม่เจอ)")}</Chip>}</span></div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">{__uiText("คนขับ (courier)")}</span>
                   <span>
                     {shipment.courier ? (
                       <span className="font-mono">{shipment.courier.name} · {shipment.courier.phone || '-'} · {shipment.courier.licensePlate || '-'}</span>
                     ) : (
-                      <span className="text-amber-600">{__uiText("ยังไม่มี")}</span>
+                      <Chip tone="warn">{__uiText("ยังไม่มี")}</Chip>
                     )}
                   </span>
                 </div>
@@ -502,7 +504,7 @@ export default function ErpWebhookSimulator() {
         {/* RIGHT: webhook builder */}
         <div className="rounded-lg border bg-white p-4">
           {!shipment ? (
-            <p className="py-12 text-center text-sm text-gray-400">{__uiText("เลือก order แล้วเลือก shipment ก่อน")}</p>
+            <p className="py-12 text-center text-sm text-gray-400">{__uiText("เลือกคำสั่งซื้อ แล้วเลือกรายการจัดส่งก่อน")}</p>
           ) : (
             <>
               <div className="mb-4 flex gap-1 rounded-lg bg-gray-100 p-1 text-sm">
@@ -511,35 +513,35 @@ export default function ErpWebhookSimulator() {
                   onClick={() => switchTab('order')}
                   className={`flex-1 rounded-md px-3 py-1.5 font-medium ${tab === 'order' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
                 >
-                  {__uiText("Order status ")}<span className="ml-1 font-mono text-[11px] text-gray-400">{__uiText("order.status.changed")}</span>
+                  {__uiText("สถานะคำสั่งซื้อ")}<span className="ml-1 font-mono text-[11px] text-gray-400">{__uiText("order.status.changed")}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchTab('invoice')}
                   className={`flex-1 rounded-md px-3 py-1.5 font-medium ${tab === 'invoice' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
                 >
-                  {__uiText("Invoice status ")}<span className="ml-1 font-mono text-[11px] text-gray-400">{__uiText("invoice.status.changed")}</span>
+                  {__uiText("สถานะใบแจ้งหนี้")}<span className="ml-1 font-mono text-[11px] text-gray-400">{__uiText("invoice.status.changed")}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchTab('3pl')}
                   className={`flex-1 rounded-md px-3 py-1.5 font-medium ${tab === '3pl' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
                 >
-                  {__uiText("3PL delivery ")}<span className="ml-1 font-mono text-[11px] text-gray-400">{__uiText("POST /3pl/delivery-status")}</span>
+                  {__uiText("สถานะขนส่ง")}<span className="ml-1 font-mono text-[11px] text-gray-400">{__uiText("POST /3pl/delivery-status")}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchTab('courier')}
                   className={`flex-1 rounded-md px-3 py-1.5 font-medium ${tab === 'courier' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
                 >
-                  {__uiText("Courier ")}<span className="ml-1 font-mono text-[11px] text-gray-400">{__uiText("GET /drivers/tracking")}</span>
+                  {__uiText("คนขับ")}<span className="ml-1 font-mono text-[11px] text-gray-400">{__uiText("GET /drivers/tracking")}</span>
                 </button>
               </div>
 
               {tab === 'order' ? (
                 <div className="flex flex-col gap-4">
                   <fieldset className="rounded-lg border p-3">
-                    <legend className="px-1 text-xs font-semibold uppercase text-gray-500">{__uiText("orderStatus flags")}</legend>
+                    <legend className="px-1 text-xs font-semibold uppercase text-gray-500">{__uiText("สถานะที่จะส่ง")}</legend>
                     <label className="flex items-start gap-2 rounded-md p-2 hover:bg-gray-50">
                       <input type="radio" checked={orderFlag === 'confirmed'} onChange={() => setOrderFlag('confirmed')} className="mt-1" />
                       <span>
@@ -563,7 +565,7 @@ export default function ErpWebhookSimulator() {
 
                   <div className="flex items-center justify-between border-t pt-3">
                     <span className="font-mono text-xs text-gray-500">{__uiText("POST /api/erp/orders/status")}</span>
-                    <Button text={sending ? __uiText("กำลังยิง...") : __uiText("Send mock webhook →")} onClick={sendOrderStatus} disabled={sending} />
+                    <Button text={sending ? __uiText("กำลังยิง...") : __uiText("ส่งข้อมูลทดสอบ")} onClick={sendOrderStatus} disabled={sending} />
                   </div>
                 </div>
               ) : tab === 'invoice' ? (
@@ -577,16 +579,16 @@ export default function ErpWebhookSimulator() {
 
                   <div>
                     <h4 className="mb-2 text-xs font-semibold uppercase text-gray-500">
-                      {__uiText("SKU บน shipment นี้ — ตั้งจำนวนที่ ERP invoice จริง")}</h4>
+                      {__uiText("สินค้าในรายการจัดส่งนี้ — ตั้งจำนวนที่ออกใบแจ้งหนี้จริง")}</h4>
                     <div className="overflow-hidden rounded-lg border">
                       <TableViewport><table className="cp-data-table w-full text-sm">
                         <thead className="bg-gray-50 text-left text-xs text-gray-500">
                           <tr>
-                            <th className="px-3 py-2 font-medium" scope="col">{__uiText("Product")}</th>
+                            <th className="px-3 py-2 font-medium" scope="col">{__uiText("สินค้า")}</th>
                             <th className="px-3 py-2 text-right font-medium" scope="col">{__uiText("สั่ง")}</th>
                             <th className="px-3 py-2 text-right font-medium" scope="col">{__uiText("ราคา (ex VAT)")}</th>
                             <th className="px-3 py-2 text-right font-medium" scope="col">
-                              {__uiText("Invoice qty")}<span className="text-alert"> *</span>
+                              {__uiText("จำนวนในใบแจ้งหนี้")}<span className="text-alert"> *</span>
                             </th>
                           </tr>
                         </thead>
@@ -665,7 +667,7 @@ export default function ErpWebhookSimulator() {
 
                   <div className="flex items-center justify-between border-t pt-3">
                     <span className="font-mono text-xs text-gray-500">{__uiText("POST /api/erp/invoices/status")}</span>
-                    <Button text={sending ? __uiText("กำลังยิง...") : __uiText("Send mock webhook →")} onClick={sendInvoiceStatus} disabled={sending} />
+                    <Button text={sending ? __uiText("กำลังยิง...") : __uiText("ส่งข้อมูลทดสอบ")} onClick={sendInvoiceStatus} disabled={sending} />
                   </div>
                 </div>
               ) : tab === '3pl' ? (
@@ -673,7 +675,7 @@ export default function ErpWebhookSimulator() {
                   <p className="text-xs text-gray-500">
                     {__uiText("จำลอง ")}<code className="font-mono">{__uiText("POST /api/3pl/delivery-status")}</code> {__uiText(" — คนละเส้นกับ invoice. กด ")}<span className="font-mono">{__uiText("SHIPPING")}</span> {__uiText(" โดยไม่กรอกคนขับ จะได้สถานะปัจจุบันแบบ shipment shipped · order preparing · คนขับยังไม่มี (ถ้ายังไม่มี 3PL status จะยิง PREPARING ให้ก่อน). order เป็น delivered เมื่อทุก shipment ส่งถึง; Credit Back ออกจาก tab invoice (ไม่ต้องรอส่งถึง)")}</p>
                   <fieldset className="rounded-lg border p-3">
-                    <legend className="px-1 text-xs font-semibold uppercase text-gray-500">{__uiText("3PL status")}</legend>
+                    <legend className="px-1 text-xs font-semibold uppercase text-gray-500">{__uiText("สถานะขนส่ง (3PL)")}</legend>
                     {THREE_PL_STAGES.map((s) => (
                       <label key={s.key} className="flex items-start gap-2 rounded-md p-2 hover:bg-gray-50">
                         <input
@@ -703,7 +705,7 @@ export default function ErpWebhookSimulator() {
                   </div>
                   <div className="flex items-center justify-between border-t pt-3">
                     <span className="font-mono text-xs text-gray-500">{__uiText("POST /api/erp/testing/shipments/:id/delivery-status")}</span>
-                    <Button text={sending ? __uiText("กำลังยิง...") : __uiText("Send mock webhook →")} onClick={sendDeliveryStatus} disabled={sending} />
+                    <Button text={sending ? __uiText("กำลังยิง...") : __uiText("ส่งข้อมูลทดสอบ")} onClick={sendDeliveryStatus} disabled={sending} />
                   </div>
                 </div>
               ) : (
@@ -725,7 +727,7 @@ export default function ErpWebhookSimulator() {
 
                   <div className="flex items-center justify-between border-t pt-3">
                     <span className="font-mono text-xs text-gray-500">{__uiText("POST /api/erp/testing/shipments/:id/courier")}</span>
-                    <Button text={sending ? __uiText("กำลังยิง...") : __uiText("Send mock webhook →")} onClick={sendCourier} disabled={sending} />
+                    <Button text={sending ? __uiText("กำลังยิง...") : __uiText("ส่งข้อมูลทดสอบ")} onClick={sendCourier} disabled={sending} />
                   </div>
                 </div>
               )}
@@ -741,10 +743,10 @@ export default function ErpWebhookSimulator() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="rounded-md border p-3 text-sm">
               <div className="mb-1 text-xs font-semibold uppercase text-gray-400">{__uiText("ก่อนยิง")}</div>
-              <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("Shipment")}</span>{statusChip(lastResult.before.status)}</div>
-              <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("Order")}</span>{statusChip(lastResult.before.orderStatus)}</div>
+              <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("รายการจัดส่ง")}</span>{statusChip(lastResult.before.status)}</div>
+              <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("คำสั่งซื้อ")}</span>{statusChip(lastResult.before.orderStatus)}</div>
               <div className="flex justify-between"><span className="text-gray-500">{__uiText("คนขับ")}</span><span className="font-mono">{lastResult.before.courier?.name ?? '-'}</span></div>
-              <div className="mt-2 border-t pt-2 text-gray-500">{__uiText("Invoice")}</div>
+              <div className="mt-2 border-t pt-2 text-gray-500">{__uiText("ใบแจ้งหนี้")}</div>
               {lastResult.before.invoices.length === 0 ? (
                 <div className="font-mono">-</div>
               ) : (
@@ -762,17 +764,17 @@ export default function ErpWebhookSimulator() {
                 lastResult.before.creditBacks.map((cb) => (
                   <div key={cb.cbNumber} className="flex justify-between">
                     <span className="font-mono">{cb.cbNumber} · {cb.cbStatus}</span>
-                    <span className="font-mono">{cb.remainingAmountExVat}/{cb.totalAmountExVat}</span>
+                    <span className="font-mono tabular-nums">{cb.remainingAmountExVat}/{cb.totalAmountExVat}</span>
                   </div>
                 ))
               )}
             </div>
             <div className="rounded-md border p-3 text-sm">
               <div className="mb-1 text-xs font-semibold uppercase text-gray-400">{__uiText("หลังยิง")}</div>
-              <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("Shipment")}</span>{statusChip(lastResult.after.status)}</div>
-              <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("Order")}</span>{statusChip(lastResult.after.orderStatus)}</div>
+              <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("รายการจัดส่ง")}</span>{statusChip(lastResult.after.status)}</div>
+              <div className="flex flex-wrap items-start justify-between gap-2"><span className="text-gray-500">{__uiText("คำสั่งซื้อ")}</span>{statusChip(lastResult.after.orderStatus)}</div>
               <div className="flex justify-between"><span className="text-gray-500">{__uiText("คนขับ")}</span><span className="font-mono">{lastResult.after.courier?.name ?? '-'}</span></div>
-              <div className="mt-2 border-t pt-2 text-gray-500">{__uiText("Invoice")}</div>
+              <div className="mt-2 border-t pt-2 text-gray-500">{__uiText("ใบแจ้งหนี้")}</div>
               {lastResult.after.invoices.length === 0 ? (
                 <div className="font-mono">-</div>
               ) : (
@@ -790,7 +792,7 @@ export default function ErpWebhookSimulator() {
                 lastResult.after.creditBacks.map((cb) => (
                   <div key={cb.cbNumber} className="flex justify-between">
                     <span className="font-mono">{cb.cbNumber} · {cb.cbStatus}</span>
-                    <span className="font-mono">{cb.remainingAmountExVat}/{cb.totalAmountExVat}</span>
+                    <span className="font-mono tabular-nums">{cb.remainingAmountExVat}/{cb.totalAmountExVat}</span>
                   </div>
                 ))
               )}

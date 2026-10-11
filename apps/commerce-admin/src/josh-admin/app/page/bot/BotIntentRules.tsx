@@ -7,7 +7,16 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 import AdminListHeader from '../../components/AdminListHeader';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button, StatusChip, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+
+/** Display labels only; the saved intent stays the code. */
+const INTENT_LABEL: Record<string, () => string> = {
+  order_lookup: () => __uiText("ถามเรื่องคำสั่งซื้อ"),
+  product_search: () => __uiText("หาสินค้า"),
+  faq_general: () => __uiText("คำถามทั่วไป"),
+  escalate: () => __uiText("ขอคุยกับพนักงาน"),
+};
+
 const BotIntentRules = () => {
   __useUiLocale();
   const navigate = useNavigate();
@@ -32,56 +41,48 @@ const BotIntentRules = () => {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm(__uiText("ยืนยันการลบ Intent Rule นี้?"))) return;
+    if (!confirm(__uiText("ลบกติกานี้? แชตบอตจะไม่ใช้กติกานี้อีก"))) return;
     await deleteBotIntentRule(id);
     loadData();
   };
 
   const columns: TableColumn<BotIntentRule>[] = [
-    { key: 'intent', label: __uiText("Intent") },
-    { key: 'pattern', label: __uiText("Pattern (regex)") },
+    { key: 'intent', label: __uiText("ลูกค้าต้องการอะไร"), render: (value: string) => INTENT_LABEL[value]?.() ?? value },
+    { key: 'pattern', label: __uiText("รูปแบบคำที่ใช้จับ"), render: (value: string) => <span className="font-mono text-xs">{value}</span> },
     {
       key: 'active',
       label: __uiText("สถานะ"),
-      render: (value: boolean) =>
-        value ? (
-          <span className="text-green-600 text-xs font-semibold">{__uiText("Active")}</span>
-        ) : (
-          <span className="text-gray-400 text-xs">{__uiText("Inactive")}</span>
-        ),
+      render: (value: boolean) => <StatusChip status={value ? 'active' : 'inactive'} />,
     },
     {
       key: 'actions',
-      label: __uiText("จัดการ"),
+      label: '',
+      align: 'right',
       render: (_, row) => (
-        <div className="flex gap-3">
-          <button
-            onClick={() => navigate(ADMIN_ROUTES.botIntentRuleEdit(row.id))}
-            className="text-xs text-primary hover:underline"
-          >
-            {__uiText("แก้ไข")}</button>
-          <button
-            onClick={() => handleDelete(row.id)}
-            className="text-xs text-red-500 hover:underline"
-          >
-            {__uiText("ลบ")}</button>
+        <div className="flex justify-end gap-1">
+          <Button size="sm" variant="ghost" icon="edit" onClick={() => navigate(ADMIN_ROUTES.botIntentRuleEdit(row.id))}>{__uiText("แก้ไข")}</Button>
+          <Button size="sm" variant="danger-ghost" icon="delete" onClick={() => handleDelete(row.id)}>{__uiText("ลบ")}</Button>
         </div>
       ),
     },
   ];
 
-  if (loading) {
-    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
-  }
-
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
-        title={__uiText("Bot Intent Rules")}
-        createLabel={__uiText("เพิ่ม Intent Rule")}
+        title={__uiText("คำถามที่แชตบอตเข้าใจ")}
+        subtitle={__uiText("กติกาที่ช่วยให้แชตบอตเข้าใจคำถามของลูกค้า")}
+        createLabel={__uiText("เพิ่มกติกา")}
         createPath={ADMIN_ROUTES.botIntentRuleCreate}
       />
-      <Table columns={columns} data={rules} idKey="id" />
+      <Table
+        columns={columns}
+        data={rules}
+        idKey="id"
+        loading={loading}
+        emptyTitle={__uiText("ยังไม่มีกติกา")}
+        emptyDescription={__uiText("กด \"เพิ่มกติกา\" เพื่อสอนแชตบอตให้เข้าใจคำถามแบบใหม่")}
+      />
     </div>
   );
 };

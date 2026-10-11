@@ -12,7 +12,7 @@ import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __us
 const LABEL: Record<string, string> = {
   get product_status(){return __uiText("สถานะ");}, get category_code(){return __uiText("หมวด (รหัส)");}, get brand_name(){return __uiText("แบรนด์");}, get selling_unit(){return __uiText("หน่วยขาย");}, get order_taking_unit(){return __uiText("หน่วยสั่ง");},
   get erp_ordering_units(){return __uiText("หน่วยที่สั่งได้");}, get pack_size(){return __uiText("ขนาดแพ็ก");}, get packaging_type(){return __uiText("ชนิดแพ็ก");}, get units_per_box(){return __uiText("ต่อกล่อง");}, get weight_per_unit(){return __uiText("น้ำหนักต่อหน่วย");},
-  get vat_type(){return __uiText("VAT");}, get marketed_by(){return __uiText("ผู้จัดจำหน่าย");}, get product_type(){return __uiText("ประเภท");}, get order_taking_flag(){return __uiText("สั่งล่วงหน้า");}, get sup_code(){return __uiText("supplier");},
+  get vat_type(){return __uiText("VAT");}, get marketed_by(){return __uiText("ผู้จัดจำหน่าย");}, get product_type(){return __uiText("ประเภท");}, get order_taking_flag(){return __uiText("สั่งล่วงหน้า");}, get sup_code(){return __uiText("ซัพพลายเออร์");},
   get season_start(){return __uiText("เริ่มฤดู");}, get season_end(){return __uiText("จบฤดู");},
 };
 const show = (v: unknown) => (v == null || v === '' ? '—' : Array.isArray(v) ? v.join(', ') : String(v));
@@ -72,8 +72,8 @@ export function ProductMasterQueue() {
 
   return (
     <Page>
-      <PageHeader title={__uiText("คิวข้อมูลสินค้าจาก ERP")} subtitle={__uiText("หน่วย แพ็ก แบรนด์ VAT สถานะ หมวด การสั่งซื้อ ของสินค้าที่ขายอยู่ · ERP เปลี่ยนแล้วรอ MER อนุมัติที่นี่ · สินค้าใหม่ (draft) อนุมัติที่หน้าสินค้า")} />
-      {owned.data && !isOwned && <Hint>{__uiText("ยังไม่ได้สลับ — คิวนี้ยังอยู่ที่ josh (COMMERCE_OWNS_PRODUCT_MASTER)")}</Hint>}
+      <PageHeader title={__uiText("อนุมัติข้อมูลสินค้าที่เปลี่ยน")} subtitle={__uiText("ระบบหลัก (ERP) เปลี่ยนหน่วย แพ็ก แบรนด์ VAT สถานะ หรือหมวดของสินค้าที่ขายอยู่ ตรวจแล้วอนุมัติที่นี่ ส่วนสินค้าใหม่อนุมัติที่หน้าสินค้า")} />
+      {owned.data && !isOwned && <Hint>{__uiText("ยังไม่ได้เปิดใช้หน้านี้ ตอนนี้ยังอนุมัติข้อมูลสินค้าในระบบร้านค้าเดิม")}</Hint>}
       {result && <Alert tone={result.count > 0 ? 'ok' : 'info'} onClose={() => setResult(null)}>{__uiText(result.kind === 'approve' ? 'อนุมัติแล้ว {0} รายการ' : 'ไม่อนุมัติแล้ว {0} รายการ', { 0: result.count })}</Alert>}
       <ErrorText error={mutation.error} />
       {draft.interrupted && <InterruptedAction outstanding={draft.outstanding} onContinue={draft.acknowledge} onCheck={async () => {
@@ -84,7 +84,7 @@ export function ProductMasterQueue() {
       <ErrorText error={owned.error} onRetry={owned.reload} />
       <ErrorText error={pending.error} onRetry={pending.reload} />
       <form className="flex gap-2 items-end" onSubmit={(e) => { e.preventDefault(); setSearch(query.trim()); go(1); }}>
-        <div className="min-w-0 flex-1 max-w-sm"><SearchInput aria-label={__uiText('ค้นหาสินค้า')} disabled={mutation.busy} value={query} onChange={(e) => setQuery(e.target.value)} placeholder={__uiText("SKU")} /></div>
+        <div className="min-w-0 flex-1 max-w-sm"><SearchInput aria-label={__uiText('ค้นหาสินค้า')} disabled={mutation.busy} value={query} onChange={(e) => setQuery(e.target.value)} placeholder={__uiText("รหัสสินค้า")} /></div>
         <Button disabled={mutation.busy} type="submit">{__uiText("ค้นหา")}</Button>
       </form>
       <Panel>
@@ -96,7 +96,7 @@ export function ProductMasterQueue() {
         {pending.loading ? <Loading variant="table" /> : pending.error ? null : pending.data?.items.length ? (
           <>
             <Table scrollLabel={__uiText("รายการทั้งหมด")}>
-              <THead><TH /><TH>{__uiText("SKU")}</TH><TH>{__uiText("ERP เปลี่ยน (ตอนนี้ → ใหม่)")}</TH><TH>{__uiText("ERP ส่งเมื่อ")}</TH></THead>
+              <THead><TH /><TH>{__uiText("รหัสสินค้า")}</TH><TH>{__uiText("ข้อมูลที่เปลี่ยน (ตอนนี้ → ใหม่)")}</TH><TH>{__uiText("ระบบหลักส่งมาเมื่อ")}</TH></THead>
               <TBody>
                 {pending.data.items.map((r: MasterPending) => (
                   <TR key={r.sku} selected={picked.has(r.sku)} onClick={() => toggle(r.sku)}>

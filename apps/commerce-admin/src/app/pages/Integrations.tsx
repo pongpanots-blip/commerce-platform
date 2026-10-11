@@ -43,8 +43,8 @@ export function Integrations() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("การเชื่อมต่อ")}
-        subtitle={__uiText("ดูระบบที่เชื่อมต่อและคัดลอก URL สำหรับรับ Webhook")}
+        title={__uiText("ระบบที่เชื่อมต่อ")}
+        subtitle={__uiText("ระบบภายนอกที่เชื่อมกับเราและสถานะการเชื่อมต่อ")}
         actions={<><Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("รีเฟรช")}</Button><Button icon="add" variant="primary" disabled={draft.pending} onClick={() => { setCreated(null); navigate(`/integrations/new${location.search}${location.hash}`); }}>{__uiText("เพิ่มการเชื่อมต่อ")}</Button></>}
       />
 
@@ -77,7 +77,7 @@ export function Integrations() {
               <TH>{__uiText("ประเภท")}</TH>
               <TH>{__uiText("สถานะ")}</TH>
               <TH>{__uiText("ยืนยันลายเซ็น")}</TH>
-              <TH>{__uiText("Webhook URL")}</TH>
+              <TH>{__uiText("ลิงก์รับข้อมูล")}</TH>
             </THead>
             <TBody>
               {data.map((i) => (

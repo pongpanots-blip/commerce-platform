@@ -1,4 +1,4 @@
-import { uiText as __uiText } from '@cp/ui';
+import { uiText as __uiText, type Tone } from '@cp/ui';
 // ui-static-options-migration: display metadata; identifiers remain unchanged
 import { uiText } from '@cp/ui';
 /** Status filter options for the admin product list `Select`. */
@@ -16,17 +16,17 @@ export function normalizeProductStatus(raw: unknown): 'active' | 'draft' | 'inac
   return 'inactive';
 }
 
-/** Badge label + classes for a normalized product status, matching AllProduct.tsx's style. */
+/** Badge label + chip tone for a normalized product status, matching AllProduct.tsx's style. */
 export function productStatusBadge(
   status: 'active' | 'draft' | 'inactive',
-): { label: string; className: string } {
+): { label: string; tone: Tone } {
   switch (status) {
     case 'active':
-      return { label: __uiText("ใช้งาน"), className: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
+      return { label: __uiText("ใช้งาน"), tone: 'ok' };
     case 'draft':
-      return { label: __uiText("รออนุมัติ"), className: 'bg-amber-50 text-amber-700 border-amber-200' };
+      return { label: __uiText("รออนุมัติ"), tone: 'warn' };
     default:
-      return { label: __uiText("ไม่ได้ใช้งาน"), className: 'bg-rose-50 text-rose-700 border-rose-200' };
+      return { label: __uiText("ไม่ได้ใช้งาน"), tone: 'muted' };
   }
 }
 

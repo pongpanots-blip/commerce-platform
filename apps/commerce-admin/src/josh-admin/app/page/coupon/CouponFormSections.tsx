@@ -36,7 +36,7 @@ export function CouponFormErrorBanner({ error }: { error: string }) {
   return (
     <div
       role="alert"
-      className="mb-4 rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700"
+      className="mb-4 rounded-xl border border-danger/20 bg-danger-container p-4 text-sm text-danger"
     >
       {(typeof error === 'string' ? __uiText(error) : error)}
     </div>

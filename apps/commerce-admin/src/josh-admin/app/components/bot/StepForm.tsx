@@ -97,11 +97,11 @@ export const StepForm: React.FC<StepFormProps> = ({
               value={formData.toolName || ''}
               onChange={(e) => handleChange('toolName', e.target.value)}
             >
-              <option value="">{__uiText("-- Select tool --")}</option>
-              <option value="order_lookup">{__uiText("order_lookup")}</option>
-              <option value="product_search">{__uiText("product_search")}</option>
-              <option value="product_recommend">{__uiText("product_recommend")}</option>
-              <option value="faq">{__uiText("faq")}</option>
+              <option value="">{__uiText("-- เลือกข้อมูลที่จะค้น --")}</option>
+              <option value="order_lookup">{__uiText("ค้นคำสั่งซื้อ")}</option>
+              <option value="product_search">{__uiText("ค้นสินค้า")}</option>
+              <option value="product_recommend">{__uiText("แนะนำสินค้า")}</option>
+              <option value="faq">{__uiText("คำถามที่พบบ่อย")}</option>
             </Select>
           </div>
 

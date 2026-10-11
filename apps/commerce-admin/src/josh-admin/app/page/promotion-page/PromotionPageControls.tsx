@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 /** On/off switch with a label (the coupon one is hard-wired to "เปิดใช้งานคูปอง"). */
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export function SwitchField({
   checked,
   onChange,
@@ -48,13 +48,9 @@ export function SwitchField({
 export function ActivePill({ active }: { active: boolean }) {
   __useUiLocale();
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${
-        active ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-      }`}
-    >
+    <Chip tone={active ? 'ok' : 'danger'} dot>
       {active ? __uiText("เปิดใช้งาน") : __uiText("ปิดใช้งาน")}
-    </span>
+    </Chip>
   );
 }
 

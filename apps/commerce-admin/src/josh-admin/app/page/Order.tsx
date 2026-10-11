@@ -2,15 +2,15 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { getOrderAnalytics, getOrders, type AdminOrderUiStatus, type OrderAnalytics } from '@josh/shared-api';
-import { Button, CardAdmin, DateRangeInput, Select, Table, TableColumn, TableViewBar, Text, useTableViews } from '@josh/shared-ui-web';
+import { Button, CardAdmin, DateRangeInput, Select, Table, TableColumn, TableViewBar, useTableViews } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AiOutlineEdit, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../config/admin-routes';
 import { roleCanWrite } from '../../../app/role-can';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { PageHeader, downloadCsv, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { ButtonLink, Chip, PageHeader, type Tone, downloadCsv, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_SIZE = 20;
 const EXPORT_PAGE_SIZE = 100;
 // ponytail: client-side paging over the list API; ask josh for a server export if 5000 rows is not enough.
@@ -23,6 +23,15 @@ const ORDER_STATUS_LABELS: Record<AdminOrderUiStatus, string> = {
   get shipped(){return __uiText("กำลังจัดส่ง");},
   get complete(){return __uiText("เสร็จสิ้น");},
   get cancelled(){return __uiText("ยกเลิก / คืนเงิน");},
+};
+
+const ORDER_STATUS_TONES: Record<AdminOrderUiStatus, Tone> = {
+  pending: 'warn',
+  paid: 'ok',
+  preparing: 'info',
+  shipped: 'info',
+  complete: 'ok',
+  cancelled: 'muted',
 };
 
 interface OrderData {
@@ -163,12 +172,13 @@ const Order = () => {
   };
 
   const columns: TableColumn<OrderData>[] = [
-    { key: 'order_id', label: __uiText("เลขที่ออเดอร์"), sortable: true },
+    { key: 'order_id', label: __uiText("เลขที่ออเดอร์"), sortable: true, render: (value) => <span className="font-mono">{value}</span> },
     { key: 'customer_name', label: __uiText("ชื่อลูกค้า") },
     {
       key: 'total_price',
       label: __uiText("ยอดรวม"),
       sortable: true,
+      align: 'right',
       render: (value) => (
         <span className="font-medium">{__uiText("฿")}{Number(value).toLocaleString()}</span>
       ),
@@ -177,25 +187,9 @@ const Order = () => {
     {
       key: 'status',
       label: __uiText("สถานะ"),
-      render: (value: OrderData['status']) => {
-        const badgeStyles: Record<AdminOrderUiStatus, string> = {
-          pending: 'bg-amber-50 text-amber-700 border-amber-200',
-          paid: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-          preparing: 'bg-lime-50 text-lime-700 border-lime-200',
-          shipped: 'bg-primary/10 text-primary border-primary/20',
-          complete: 'bg-sky-50 text-sky-700 border-sky-200',
-          cancelled: 'bg-gray-100 text-gray-600 border-gray-200',
-        };
-        const badgeLabels = ORDER_STATUS_LABELS;
-
-        return (
-          <span
-            className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${badgeStyles[value]}`}
-          >
-            {badgeLabels[value]}
-          </span>
-        );
-      },
+      render: (value: OrderData['status']) => (
+        <Chip tone={ORDER_STATUS_TONES[value] ?? 'muted'} statusCode={value} dot>{ORDER_STATUS_LABELS[value] ?? value}</Chip>
+      ),
     },
     {
       key: 'date',
@@ -298,28 +292,14 @@ const Order = () => {
 
   return (
     <div className="cp-management-page flex flex-col gap-4">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-col">
-          <PageHeader title={__uiText("All Orders")} />
-          <Text text={__uiText("Manage and monitor all customer orders")} size="sm" />
-          <Text
-            text={__uiText("Click the edit icon on an order to change its status")}
-            size="sm"
-          />
-        </div>
-        <div className="flex flex-wrap items-start gap-2">
-          {roleCanWrite() && <Link
-            to={ADMIN_ROUTES.orderImport}
-            className="inline-flex h-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-          >
-            {__uiText("Order Import")}</Link>}
-          <Link
-            to={ADMIN_ROUTES.paymentTransactions}
-            className="inline-flex h-fit items-center rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
-          >
-            {__uiText("Payment Transactions")}</Link>
-        </div>
-      </div>
+      <PageHeader
+        title={__uiText("คำสั่งซื้อ")}
+        subtitle={__uiText("ค้นหาและติดตามคำสั่งซื้อ เปิดดูรายละเอียดและสถานะ")}
+        actions={<>
+          {roleCanWrite() && <ButtonLink to={ADMIN_ROUTES.orderImport} icon="upload_file">{__uiText("Order Import")}</ButtonLink>}
+          <ButtonLink to={ADMIN_ROUTES.paymentTransactions} icon="payments">{__uiText("รายการชำระเงิน")}</ButtonLink>
+        </>}
+      />
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {cardData.map((card) => (
@@ -385,6 +365,8 @@ const Order = () => {
             onSelectRow={handleSelectRow}
             onSelectAll={handleSelectAll}
             totalItems={totalItems}
+            emptyTitle={__uiText("ยังไม่มีคำสั่งซื้อ")}
+            emptyDescription={__uiText("ลองเปลี่ยนสถานะหรือช่วงวันที่")}
           />
         )}
       </div>

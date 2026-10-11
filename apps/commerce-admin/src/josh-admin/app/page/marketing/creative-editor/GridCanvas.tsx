@@ -221,7 +221,7 @@ export function GridCanvas({
                     event.stopPropagation();
                     onRemoveElement(it.elementId);
                   }}
-                  className="absolute right-1 top-1 z-10 rounded p-0.5 text-neutral-300 opacity-0 hover:text-red-500 group-hover/cell:opacity-100"
+                  className="absolute right-1 top-1 z-10 rounded p-0.5 text-neutral-300 opacity-0 hover:text-danger group-hover/cell:opacity-100"
                   title={__uiText("ลบองค์ประกอบนี้")}
                 >
                   <MdOutlineClose size={14} />
@@ -264,7 +264,7 @@ export function GridCanvas({
                   event.stopPropagation();
                   onRemoveElement(it.elementId);
                 }}
-                className="absolute right-1 top-1 z-10 rounded p-0.5 text-neutral-300 opacity-0 hover:text-red-500 group-hover/cell:opacity-100"
+                className="absolute right-1 top-1 z-10 rounded p-0.5 text-neutral-300 opacity-0 hover:text-danger group-hover/cell:opacity-100"
                 title={__uiText("ลบองค์ประกอบนี้")}
               >
                 <MdOutlineClose size={14} />

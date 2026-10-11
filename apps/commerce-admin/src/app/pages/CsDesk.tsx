@@ -181,7 +181,7 @@ function OrderOnBehalf() {
   const getQuote = () => { if (!busy && who && items.length) { setQuote(null); return run(() => joshAdmin.call('POST', '/cs-admin/orders/quote', body()), (r) => setQuote(r)); } };
   async function place(_data: FormData, signal: AbortSignal) {
     if (busy || !who || !items.length || quote == null || draft.interrupted) return { ok: false as const, formError: __uiText('ตรวจข้อมูลก่อนบันทึก') };
-    if (!window.confirm(__uiText('สั่ง {0} รายการให้ {1} ({2})?\n\njosh จะสร้าง order จริงและส่งเข้า ERP ตามปกติ', { 0: items.length, 1: who.company.name, 2: paymentLabel(pay.payment_method) }))) return { ok: false as const, formError: __uiText('ยกเลิกการบันทึกแล้ว') };
+    if (!window.confirm(__uiText('สั่ง {0} รายการให้ {1} ({2})?\n\nระบบจะสร้างคำสั่งซื้อจริงและส่งเข้าระบบขายตามปกติ', { 0: items.length, 1: who.company.name, 2: paymentLabel(pay.payment_method) }))) return { ok: false as const, formError: __uiText('ยกเลิกการบันทึกแล้ว') };
     if (!draft.begin(signal)) return { ok: false as const, formError: __uiText('ยังยืนยันผลการบันทึกไม่ได้') };
     try {
       return { ok: true as const, receipt: orderReceipt(await joshAdmin.call('POST', '/cs-admin/orders/place-on-behalf', { ...body(), payment_method: pay.payment_method, ...(pay.coupon_code.trim() ? { coupon_code: pay.coupon_code.trim() } : {}), ...(pay.delivery_date ? { delivery_date: pay.delivery_date } : {}) })) };
@@ -251,7 +251,7 @@ function OrderOnBehalf() {
                 </Table>
               </div>
             )}
-            <div><Button variant="primary" icon="calculate" disabled={busy || !items.length} onClick={getQuote}>{__uiText("คิดราคา (josh)")}</Button></div>
+            <div><Button variant="primary" icon="calculate" disabled={busy || !items.length} onClick={getQuote}>{__uiText("คิดราคา")}</Button></div>
           </DetailSection>
         )}
       </Panel>

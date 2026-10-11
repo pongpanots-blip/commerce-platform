@@ -213,7 +213,7 @@ it('on-behalf order survives interruption and never replays while its original w
   sessionStorage.setItem('cp-action-draft:fixture:cs:order',JSON.stringify({phase:'editing',values:{who:JSON.stringify({company:{id:company.id,name:company.name},userId:'user-1',branchId:'branch-1'}),items:JSON.stringify([{id:'product-1',sku:'SKU-1',name:'Product',quantity:2}]),payment_method:'credit',coupon_code:'',delivery_date:''}}));
   const write=deferred<unknown>();vi.mocked(joshAdmin.call).mockImplementation(async(_method,path)=>path.endsWith('/quote')?{data:{total_inc_vat:20}}:write.promise);
   vi.spyOn(window,'confirm').mockReturnValue(true);
-  await render('/cs/orders/new');await act(async()=>button('Calculate Price (josh)').click());
+  await render('/cs/orders/new');await act(async()=>button(uiText('คิดราคา')).click());
   await act(async()=>[...container.querySelectorAll('form')].at(-1)!.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
   expect(joshAdmin.call).toHaveBeenCalledWith('POST','/cs-admin/orders/place-on-behalf',{user_id:'user-1',branch_id:'branch-1',items:[{product_inventory_id:'product-1',quantity:2}],payment_method:'credit'});
   await act(async()=>root.render(null));await render('/cs/orders/new');

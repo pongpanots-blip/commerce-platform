@@ -322,9 +322,9 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           const missing = (data.missing ?? []) as string[];
 
           if (!found.length) {
-            setCsvImportSummary(`ไม่พบ SKU ในระบบ (${missing.length} รายการ)`);
+            setCsvImportSummary(__uiMessage('ไม่พบรหัสสินค้าในระบบ ({0} รายการ)', { 0: missing.length }));
             setCsvMissingSkus(missing);
-            onMessage?.('ไม่พบ SKU ในระบบ');
+            onMessage?.('ไม่พบรหัสสินค้าในระบบ');
             return;
           }
 
@@ -332,12 +332,12 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           setCsvMissingSkus(missing);
           setCsvImportSummary(
             missing.length
-              ? `นำเข้า ${found.length} SKU สำเร็จ — ไม่พบ ${missing.length} SKU`
-              : `นำเข้า ${found.length} SKU สำเร็จ`,
+              ? __uiMessage('นำเข้า {0} สินค้าแล้ว ไม่พบ {1} รายการ', { 0: found.length, 1: missing.length })
+              : __uiMessage('นำเข้า {0} สินค้าแล้ว', { 0: found.length }),
           );
           onMessage?.(
             missing.length
-              ? `นำเข้า CSV แล้ว — ไม่พบ SKU ${missing.length} รายการ`
+              ? __uiMessage('นำเข้า CSV แล้ว ไม่พบรหัสสินค้า {0} รายการ', { 0: missing.length })
               : 'นำเข้า CSV แล้ว',
           );
         } catch (error: any) {
@@ -418,7 +418,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
 
   if (branches.length === 0) {
     return (
-      <p className="text-sm text-amber-700">
+      <p className="text-sm text-warn">
         {__uiText("ผู้ใช้ไม่มีสาขา — เพิ่มสาขาก่อนสั่งซื้อแทนลูกค้า")}</p>
     );
   }
@@ -451,7 +451,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
 
       <div className="space-y-2 rounded-lg border border-gray-100 p-3">
         <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
-          <div className="text-sm font-medium text-gray-800">{__uiText("ค้นหา SKU / สินค้า")}</div>
+          <div className="text-sm font-medium text-gray-800">{__uiText("ค้นหารหัสสินค้า / ชื่อสินค้า")}</div>
           <div className="flex flex-wrap items-center gap-2">
             <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/20">
               <MdInsertDriveFile size={16} />
@@ -480,7 +480,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
             id="cs-place-order-search"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder={__uiText("พิมพ์ SKU หรือชื่อสินค้า...")}
+            placeholder={__uiText("พิมพ์รหัสสินค้าหรือชื่อสินค้า...")}
           />
         </div>
         {searching && <p className="text-xs text-gray-400">{__uiText("กำลังค้นหา...")}</p>}
@@ -505,11 +505,11 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           </div>
         )}
         {csvImportSummary && (
-          <p className="text-xs text-gray-600">{csvImportSummary}</p>
+          <p className="text-xs text-gray-600">{__uiText(csvImportSummary)}</p>
         )}
         {csvMissingSkus.length > 0 && (
-          <p className="text-xs text-amber-700">
-            {__uiText("SKU ไม่พบ: ")}{csvMissingSkus.join(', ')}
+          <p className="text-xs text-warn">
+            {__uiText("ไม่พบรหัสสินค้า: ")}{csvMissingSkus.join(', ')}
           </p>
         )}
       </div>
@@ -519,7 +519,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           <table className="cp-data-table min-w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs text-gray-500">
               <tr>
-                <th className="px-3 py-2" scope="col">{__uiText("SKU")}</th>
+                <th className="px-3 py-2" scope="col">{__uiText("รหัสสินค้า")}</th>
                 <th className="px-3 py-2" scope="col">{__uiText("สินค้า")}</th>
                 <th className="px-3 py-2" scope="col">{__uiText("ราคา/หน่วย")}</th>
                 <th className="px-3 py-2" scope="col">{__uiText("จำนวน")}</th>
@@ -568,7 +568,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
                     <td className="px-3 py-2">
                       <button
                         type="button"
-                        className="text-xs text-red-500"
+                        className="text-xs text-danger"
                         onClick={() => removeLine(line.product_inventory_id)}
                       >
                         {__uiText("ลบ")}</button>
@@ -581,10 +581,10 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
         </TableViewport>
       )}
 
-      {quoteError && <p className="text-sm text-red-600">{(typeof (quoteError) === 'string' ? __uiText(quoteError) : quoteError)}</p>}
+      {quoteError && <p className="text-sm text-danger">{(typeof (quoteError) === 'string' ? __uiText(quoteError) : quoteError)}</p>}
 
       {quoteTotals && (
-        <div className="rounded-lg border border-emerald-100 bg-emerald-50/60 p-3 text-sm">
+        <div className="rounded-lg border border-ok/20 bg-ok-container/60 p-3 text-sm">
           <div className="flex justify-between text-gray-600">
             <span>{__uiText("ยอดสินค้า (รวม VAT)")}</span>
             <span>{formatCurrency(quoteTotals.subtotal_inc_vat)}</span>
@@ -593,7 +593,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
             <span>{__uiText("ค่าจัดส่ง")}</span>
             <span>{formatCurrency(quoteTotals.delivery_fee)}</span>
           </div>
-          <div className="mt-2 flex justify-between border-t border-emerald-100 pt-2 font-semibold text-gray-900">
+          <div className="mt-2 flex justify-between border-t border-ok/20 pt-2 font-semibold text-gray-900">
             <span>{__uiText("ยอดรวมทั้งหมด")}</span>
             <span>{formatCurrency(quoteTotals.total_inc_vat)}</span>
           </div>
@@ -644,7 +644,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
           ))}
         </div>
         <p className="text-xs text-gray-400">
-          {__uiText("Payment Link สำหรับส่งให้ลูกค้าจะเพิ่มในขั้นตอนถัดไป")}</p>
+          {__uiText("ลิงก์ชำระเงินสำหรับส่งให้ลูกค้าจะเพิ่มในขั้นตอนถัดไป")}</p>
       </div>
 
       <button
@@ -672,7 +672,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
             ))}
           </ul>
           {createdOrder.paymentPending && createdOrder.paymentMethod !== 'qr' && (
-            <p className="text-xs text-amber-700">
+            <p className="text-xs text-warn">
               {__uiText("ออเดอร์รอชำระเงิน — ส่งลิงก์/QR ให้ลูกค้าเมื่อพร้อม")}</p>
           )}
           {createdOrder.paymentMethod === 'qr' && (
@@ -689,7 +689,7 @@ export function CsPlaceOrderPanel({ userId, branches, onMessage }: Props) {
                 <div className="flex flex-col items-start gap-2">
                   <img
                     src={qrUrl}
-                    alt={__uiText("Payment QR")}
+                    alt={__uiText("QR ชำระเงิน")}
                     className="h-40 w-40 rounded border bg-white"
                   />
                   <a

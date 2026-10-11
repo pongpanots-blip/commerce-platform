@@ -81,7 +81,7 @@ export function ProductDetail() {
               {productFields.map((f) => {
                 const key = f.name as keyof Form;
                 const control = f.type === 'textarea'
-                  ? <Textarea rows={3} placeholder={f.placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+                  ? <Textarea mono={false} rows={3} placeholder={f.placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
                   : <Input placeholder={f.placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />;
                 const field = <Field key={f.name} label={f.label} required={f.required} hint={f.hint}>{control}</Field>;
                 return f.type === 'textarea' ? <Span key={f.name}>{field}</Span> : field;

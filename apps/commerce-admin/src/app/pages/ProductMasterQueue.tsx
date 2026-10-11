@@ -50,6 +50,7 @@ export function ProductMasterQueue() {
     if (draft.interrupted || draft.outstanding || !isOwned || owned.loading || owned.error || pending.loading || pending.error || !picked.size || mutation.busy) return;
     const skus = [...picked].filter(sku => pending.data?.items.some(item => item.sku === sku));
     if (!skus.length) return;
+    if (kind === 'reject' && !window.confirm(__uiText("ไม่อนุมัติข้อมูลที่เปลี่ยนของสินค้า {0} รายการ?\n\n{1}", {"0": skus.length, "1": __uiText('ไม่ใช้ค่าที่ระบบขายส่งมา สินค้าคงค่าเดิม')}))) return;
     setResult(null);
     if (!draft.begin()) return;
     const answer = await mutation.run<{ approved: number } | { rejected: number }>(async () => {

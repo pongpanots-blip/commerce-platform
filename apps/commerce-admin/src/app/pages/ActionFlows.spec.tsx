@@ -98,7 +98,7 @@ it('lost stock responses require a successful current-data read and explicit ret
   vi.mocked(inventoryOverviewApi.get).mockResolvedValue({ items: [{ sku: 'SKU-1', warehouseCode: 'A', quantity: 12, reserved: 2, lastStatus: 'applied' }], total: 1 } as never);
   await render(<StockMoves />, '/stock-moves/receive'); await submit();
   expect(button('I checked and want to retry').disabled).toBe(true); await submit(); expect(stockApi.adjust).toHaveBeenCalledOnce();
-  await act(async () => button('Check current data').click()); expect(text()).toContain('12'); expect(text()).toContain('applied');
+  await act(async () => button('Check current data').click()); expect(text()).toContain('12'); expect(text()).toContain('Applied');
   await act(async () => button('I checked and want to retry').click()); await submit(); expect(stockApi.adjust).toHaveBeenCalledTimes(2);
 });
 it('aborted stock form keeps unknown outcome, and a late response cannot clear its draft or announce success', async () => {

@@ -27,10 +27,10 @@ import { TRIGGER_NODE_ID } from './MarketingFlowCanvas';
 import { ADMIN_ROUTES } from './admin-routes';
 import { useBannerLibrary } from './banner-library';
 import { TriggerRuleBuilder } from './TriggerRuleBuilder';
-import { formatDurationLabel } from './trigger-rule.helpers';
+import { formatDurationLabel, marketingChannelLabel } from './trigger-rule.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button, Chip, FormField, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export type MarketingSidePanelSelection =
   | { kind: 'trigger' }
   | { kind: 'step'; step: MarketingStep };
@@ -52,28 +52,39 @@ type Props = {
   onDeleteStep: (stepId: string) => void;
 };
 
-const FIELD_LABEL = 'mb-1 block text-xs font-medium text-gray-500';
+const FIELD_LABEL = 'mb-1 block text-xs font-medium text-on-surface';
 const INPUT_CLASS =
-  'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none';
+  'w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-sm text-on-surface focus:border-primary focus:outline-none';
+const CHOICE_LIST_CLASS = 'max-h-40 space-y-1 overflow-y-auto rounded-lg border border-secondary-container p-2';
+const CHOICE_ROW_CLASS = 'flex items-center gap-2 rounded px-1 py-1 text-sm text-on-surface hover:bg-surface-container-low';
+const HINT_CLASS = 'text-[11px] text-on-surface-variant';
+const LINK_CLASS = 'text-[11px] font-medium text-primary hover:underline';
 
 function SectionTitle({ kind, title }: { kind: string; title: string }) {
   return (
     <div>
-      <div className="text-[10px] font-semibold tracking-wide text-gray-400">{kind}</div>
-      <h3 className="mt-0.5 text-sm font-semibold text-gray-800">{title}</h3>
+      <div className="text-[11px] font-semibold text-on-surface-variant">{kind}</div>
+      <h3 className="mt-0.5 text-[15px] font-semibold text-on-surface">{title}</h3>
     </div>
   );
 }
 
+/** Quiet, separated from the form, and asks before removing (design.md rule 6). */
 function DeleteButton({ onClick }: { onClick: () => void }) {
   __useUiLocale();
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="text-xs font-medium text-red-500 hover:underline"
-    >
-      {__uiText("ลบขั้นตอนนี้")}</button>
+    <div className="border-t border-secondary-container pt-3">
+      <Button
+        variant="danger-ghost"
+        size="sm"
+        icon="delete"
+        onClick={() => {
+          if (window.confirm(__uiText("ลบขั้นตอนนี้? เส้นที่ต่อเข้าและออกจากขั้นตอนนี้จะหายไปด้วย"))) onClick();
+        }}
+      >
+        {__uiText("ลบขั้นตอนนี้")}
+      </Button>
+    </div>
   );
 }
 
@@ -113,14 +124,14 @@ function AudienceFields({
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="AUDIENCE" title={__uiText("กลุ่มเป้าหมาย")} />
+      <SectionTitle kind={__uiText("คัดกลุ่ม")} title={__uiText("กลุ่มเป้าหมาย")} />
 
       <div className="grid grid-cols-1 gap-2">
         <label
           className={`flex cursor-pointer items-start gap-2 rounded-lg border px-3 py-2 text-sm ${
             mode === 'everyone'
               ? 'border-primary bg-primary/5 ring-1 ring-primary'
-              : 'border-gray-200 bg-white'
+              : 'border-secondary-container bg-surface-container-lowest'
           }`}
         >
           <input
@@ -131,16 +142,16 @@ function AudienceFields({
             className="mt-0.5"
           />
           <span>
-            <span className="font-medium text-gray-800">{__uiText("ทุกคนที่เข้าเงื่อนไข trigger")}</span>
-            <span className="mt-0.5 block text-xs text-gray-500">
-              {__uiText("ไม่กรอง include segment (ยัง exclude ได้ด้านล่าง) — หรือลบขั้นตอน Audience ทั้งก้อนได้")}</span>
+            <span className="font-medium text-on-surface">{__uiText("ทุกคนที่เข้าเงื่อนไขเริ่ม")}</span>
+            <span className="mt-0.5 block text-xs text-on-surface-variant">
+              {__uiText("ไม่คัดกลุ่มเพิ่ม แต่ยังเลือกกลุ่มที่ไม่ต้องการส่งได้ด้านล่าง")}</span>
           </span>
         </label>
         <label
           className={`flex cursor-pointer items-start gap-2 rounded-lg border px-3 py-2 text-sm ${
             mode === 'segments'
               ? 'border-primary bg-primary/5 ring-1 ring-primary'
-              : 'border-gray-200 bg-white'
+              : 'border-secondary-container bg-surface-container-lowest'
           }`}
         >
           <input
@@ -151,24 +162,24 @@ function AudienceFields({
             className="mt-0.5"
           />
           <span>
-            <span className="font-medium text-gray-800">{__uiText("เลือก segment")}</span>
-            <span className="mt-0.5 block text-xs text-gray-500">
-              {__uiText("รวมเฉพาะคนที่อยู่ใน segment ที่เลือก")}</span>
+            <span className="font-medium text-on-surface">{__uiText("เลือกกลุ่มลูกค้า")}</span>
+            <span className="mt-0.5 block text-xs text-on-surface-variant">
+              {__uiText("ส่งเฉพาะลูกค้าในกลุ่มที่เลือก")}</span>
           </span>
         </label>
       </div>
 
       {mode === 'segments' && (
         <div>
-          <span className={FIELD_LABEL}>{__uiText("รวมเฉพาะ segment (เลือกได้หลายรายการ)")}</span>
-          <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-gray-200 p-2">
+          <span className={FIELD_LABEL}>{__uiText("ส่งเฉพาะกลุ่ม (เลือกได้หลายกลุ่ม)")}</span>
+          <div className={CHOICE_LIST_CLASS}>
             {activeSegments.length === 0 && (
-              <p className="px-1 py-1 text-xs text-gray-400">{__uiText("ยังไม่มี segment")}</p>
+              <p className="px-1 py-1 text-xs text-on-surface-variant">{__uiText("ยังไม่มีกลุ่มลูกค้า")}</p>
             )}
             {activeSegments.map((segment) => (
               <label
                 key={segment.id}
-                className="flex items-center gap-2 rounded px-1 py-1 text-sm text-gray-700 hover:bg-gray-50"
+                className={CHOICE_ROW_CLASS}
               >
                 <input
                   type="checkbox"
@@ -183,15 +194,15 @@ function AudienceFields({
       )}
 
       <div>
-        <span className={FIELD_LABEL}>{__uiText("ไม่รวม segment (exclude)")}</span>
-        <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-gray-200 p-2">
+        <span className={FIELD_LABEL}>{__uiText("ไม่ส่งให้กลุ่ม")}</span>
+        <div className={CHOICE_LIST_CLASS}>
           {activeSegments.length === 0 && (
-            <p className="px-1 py-1 text-xs text-gray-400">{__uiText("ยังไม่มี segment")}</p>
+            <p className="px-1 py-1 text-xs text-on-surface-variant">{__uiText("ยังไม่มีกลุ่มลูกค้า")}</p>
           )}
           {activeSegments.map((segment) => (
             <label
               key={segment.id}
-              className="flex items-center gap-2 rounded px-1 py-1 text-sm text-gray-700 hover:bg-gray-50"
+              className={CHOICE_ROW_CLASS}
             >
               <input
                 type="checkbox"
@@ -218,17 +229,13 @@ function WaitFields({
   onDeleteStep: () => void;
 }) {
   __useUiLocale();
-  const hoursInputId = useId();
-  const minutesInputId = useId();
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="WAIT" title={__uiText("หน่วงเวลา")} />
+      <SectionTitle kind={__uiText("รอ")} title={__uiText("รอเวลา")} />
       <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label htmlFor={hoursInputId} className={FIELD_LABEL}>{__uiText("ชั่วโมง")}</label>
+        <FormField label={__uiText("ชั่วโมง")}>
           <input
-            id={hoursInputId}
             type="number"
             min={0}
             className={INPUT_CLASS}
@@ -241,11 +248,9 @@ function WaitFields({
               })
             }
           />
-        </div>
-        <div>
-          <label htmlFor={minutesInputId} className={FIELD_LABEL}>{__uiText("นาที")}</label>
+        </FormField>
+        <FormField label={__uiText("นาที")}>
           <input
-            id={minutesInputId}
             type="number"
             min={0}
             max={59}
@@ -259,10 +264,10 @@ function WaitFields({
               })
             }
           />
-        </div>
+        </FormField>
       </div>
-      <p className="text-[11px] text-gray-400">
-        {__uiText("รวม ")}{formatDurationLabel(step.hours, step.minutes)} {__uiText(" ก่อนขั้นตอนถัดไป")}</p>
+      <p className={HINT_CLASS}>
+        {__uiText("รอรวม {0} แล้วจึงทำขั้นตอนถัดไป", { "0": formatDurationLabel(step.hours, step.minutes) })}</p>
       <DeleteButton onClick={onDeleteStep} />
     </div>
   );
@@ -272,9 +277,9 @@ function GateFields({ onDeleteStep }: { onDeleteStep: () => void }) {
   __useUiLocale();
   return (
     <div className="space-y-4">
-      <SectionTitle kind="GATE" title={__uiText("ตรวจเงื่อนไขซ้ำ")} />
-      <p className="text-xs text-gray-500">
-        {__uiText("v1 รองรับเงื่อนไขเดียว: ")}<code>{__uiText("cart_still_open")}</code> {__uiText(" — ตะกร้ายังไม่ว่าง/ยังไม่ชำระเงิน ก่อนดำเนินขั้นตอนถัดไป ถ้าไม่ผ่านจะข้าม (skip) enrollment นี้ทันที")}</p>
+      <SectionTitle kind={__uiText("ตรวจซ้ำ")} title={__uiText("ตรวจซ้ำก่อนทำต่อ")} />
+      <p className="text-xs text-on-surface-variant">
+        {__uiText("ทำขั้นตอนถัดไปเฉพาะเมื่อตะกร้ายังมีของและยังไม่ชำระเงิน ถ้าไม่ใช่ ลูกค้าคนนั้นจะหยุดรับข้อความอัตโนมัตินี้ทันที")}</p>
       <DeleteButton onClick={onDeleteStep} />
     </div>
   );
@@ -300,40 +305,39 @@ export function CouponPicker({
   __useUiLocale();
   const known = coupons.some((c) => c.id === value);
   const hasOrphanValue = Boolean(value) && !known;
-  const couponSelectId = useId();
 
   return (
     <div>
-      <label htmlFor={couponSelectId} className={FIELD_LABEL}>{__uiText("คูปอง")}</label>
+      <FormField label={__uiText("คูปอง")}>
       <Select
-        id={couponSelectId}
         className="w-full"
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value)}
       >
-        <option value="">{__uiText("— เลือกคูปอง —")}</option>
+        <option value="">{__uiText("เลือกคูปอง")}</option>
         {coupons.map((coupon) => (
           <option key={coupon.id} value={coupon.id}>
             {coupon.coupon_code} — {coupon.title}
           </option>
         ))}
         {hasOrphanValue && (
-          <option value={value}>{__uiText("คูปองที่ถูกลบ/ไม่พบในรายการ (")}{value})</option>
+          <option value={value}>{__uiText("คูปองที่ถูกลบหรือไม่พบ")}</option>
         )}
       </Select>
+      </FormField>
       {hasOrphanValue && (
-        <p className="mt-1 text-[11px] text-amber-600">
-          {__uiText("คูปองนี้ไม่อยู่ในรายการแล้ว — เลือกคูปองใหม่ก่อน Activate")}</p>
+        <p className="mt-1 text-[11px] text-warn">
+          {__uiText("คูปองนี้ไม่อยู่ในรายการแล้ว เลือกคูปองใหม่ก่อนเปิดใช้งาน")}</p>
       )}
       {coupons.length === 0 && !hasOrphanValue && (
-        <p className="mt-1 text-[11px] text-gray-500">
-          {__uiText("ยังไม่มีคูปองในระบบ —")}{' '}
+        <p className={`mt-1 ${HINT_CLASS}`}>
+          {__uiText("ยังไม่มีคูปองในระบบ")}{' '}
           <Link
             to={ADMIN_ROUTES.couponCreate}
             target="_blank"
             className="font-medium text-primary hover:underline"
           >
-            {__uiText("สร้างคูปองก่อน →")}</Link>
+            {__uiText("สร้างคูปองก่อน")}</Link>
         </p>
       )}
     </div>
@@ -359,7 +363,7 @@ function GrantCouponFields({
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="ACTION" title={__uiText("แจกคูปอง (Grant Coupon)")} />
+      <SectionTitle kind={__uiText("สิ่งที่ทำ")} title={__uiText("แจกคูปอง")} />
       <CouponPicker
         coupons={coupons}
         value={action.couponId}
@@ -392,18 +396,18 @@ function NotifyFields({
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="ACTION" title={__uiText("แจ้งเตือน (Notify)")} />
+      <SectionTitle kind={__uiText("สิ่งที่ทำ")} title={__uiText("ส่งข้อความหาลูกค้า")} />
       <div>
         <span className={FIELD_LABEL}>{__uiText("ช่องทาง")}</span>
         <div className="flex flex-wrap gap-3">
           {MARKETING_NOTIFY_CHANNELS.map((channel) => (
-            <label key={channel} className="flex items-center gap-1.5 text-sm text-gray-700">
+            <label key={channel} className="flex items-center gap-1.5 text-sm text-on-surface">
               <input
                 type="checkbox"
                 checked={channels.includes(channel)}
                 onChange={() => toggleChannel(channel)}
               />
-              {channel}
+              {marketingChannelLabel(channel)}
             </label>
           ))}
         </div>
@@ -452,13 +456,13 @@ export function NotifyTemplatePicker({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <label htmlFor={templateSelectId} className={FIELD_LABEL.replace('mb-1 ', '')}>{__uiText("เทมเพลตข้อความ (Template)")}</label>
+        <label htmlFor={templateSelectId} className={FIELD_LABEL.replace('mb-1 ', '')}>{__uiText("เทมเพลตข้อความ")}</label>
         <Link
           to={ADMIN_ROUTES.marketingNotifyTemplates}
           target="_blank"
-          className="text-[11px] font-medium text-primary hover:underline"
+          className={LINK_CLASS}
         >
-          {__uiText("สร้าง/แก้ไข template (drag &amp; drop) →")}</Link>
+          {__uiText("สร้างหรือแก้เทมเพลต")}</Link>
       </div>
       <Select
         id={templateSelectId}
@@ -466,26 +470,26 @@ export function NotifyTemplatePicker({
         value={templateKey}
         onChange={(event) => onSelect(event.target.value)}
       >
-        <option value="">{__uiText("— เลือก template —")}</option>
+        <option value="">{__uiText("เลือกเทมเพลต")}</option>
         {MARKETING_NOTIFY_TEMPLATE_KEYS.map((key) => (
           <option key={key} value={key}>
-            {MARKETING_BUILTIN_TEMPLATE_LABELS[key] ?? key}
+            {MARKETING_BUILTIN_TEMPLATE_LABELS[key] ? __uiText(MARKETING_BUILTIN_TEMPLATE_LABELS[key]) : key}
           </option>
         ))}
         {templates.map((template) => (
           <option key={template.template_key} value={template.template_key}>
-            {template.name} {__uiText(" (custom)")}</option>
+            {__uiText("{0} (สร้างเอง)", { "0": template.name })}</option>
         ))}
       </Select>
 
       {selected && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-2.5 space-y-1.5">
-          <p className="text-xs font-semibold text-gray-700">{selected.title}</p>
-          <p className="whitespace-pre-line text-[11px] text-gray-500">{selected.body}</p>
+        <div className="rounded-lg border border-secondary-container bg-surface-container-low p-2.5 space-y-1.5">
+          <p className="text-xs font-semibold text-on-surface">{selected.title}</p>
+          <p className="whitespace-pre-line text-[11px] text-on-surface-variant">{selected.body}</p>
           {selected.image_url && (
             <img
               src={selected.image_url}
-              alt={__uiText("banner")}
+              alt={__uiText("รูปแบนเนอร์")}
               className="max-h-24 w-full rounded-md object-cover"
             />
           )}
@@ -511,15 +515,7 @@ function ShowOfferFields({
   const banners = useBannerLibrary();
   const [popupTemplates, setPopupTemplates] = useState<MarketingNotifyTemplate[]>([]);
   const [popupDefinitions, setPopupDefinitions] = useState<PopupDefinitionSummary[]>([]);
-  const maxPerSessionInputId = useId();
-  const titleInputId = useId();
-  const bodyInputId = useId();
-  const popupTemplateSelectId = useId();
   const popupDefinitionSelectId = useId();
-  const bannerSelectId = useId();
-  const imageUrlInputId = useId();
-  const ctaTextInputId = useId();
-  const ctaUrlInputId = useId();
 
   useEffect(() => {
     const load = () => {
@@ -552,15 +548,15 @@ function ShowOfferFields({
   return (
     <div className="space-y-4">
       <SectionTitle
-        kind="ACTION"
-        title={action.displayOnly ? __uiText("แสดง Popup (โฆษณา)") : __uiText("แสดง Offer บน Shop")}
+        kind={__uiText("สิ่งที่ทำ")}
+        title={action.displayOnly ? __uiText("แสดงป๊อปอัปโฆษณา") : __uiText("แสดงข้อเสนอบนหน้าร้าน")}
       />
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-on-surface-variant">
         {action.displayOnly
-          ? __uiText("เด้ง popup โฆษณาบน shop — ไม่ผูกคูปอง กดปิดแล้วจบใน session (ตั้งจำนวนครั้งได้)")
-          : __uiText("ขึ้น popup บน shop หลัง enroll — แนะนำให้วางหลัง Grant Coupon ใน flow เดียวกัน")}
+          ? __uiText("แสดงป๊อปอัปโฆษณาบนหน้าร้าน ไม่ผูกคูปอง ลูกค้าปิดแล้วจะไม่เห็นอีกในการเข้าเว็บครั้งนั้น")
+          : __uiText("แสดงป๊อปอัปบนหน้าร้านหลังลูกค้าเข้าร่วม ควรวางต่อจากขั้นตอนแจกคูปอง")}
       </p>
-      <label className="flex items-start gap-2 text-xs text-gray-600">
+      <label className="flex items-start gap-2 text-xs text-on-surface">
         <input
           type="checkbox"
           className="mt-0.5"
@@ -575,15 +571,13 @@ function ShowOfferFields({
           }
         />
         <span>
-          {__uiText("โฆษณาอย่างเดียว (ไม่ผูกคูปอง)")}<span className="mt-0.5 block text-[11px] text-gray-400">
-            {__uiText("ไม่ grant entitlement — ปิดแล้วซ่อนแค่ session นี้ ตามจำนวนครั้งด้านล่าง")}</span>
+          {__uiText("โฆษณาอย่างเดียว (ไม่ผูกคูปอง)")}<span className={`mt-0.5 block ${HINT_CLASS}`}>
+            {__uiText("ไม่แจกสิทธิ์ใดๆ ปิดแล้วซ่อนเฉพาะการเข้าเว็บครั้งนี้ ตามจำนวนครั้งด้านล่าง")}</span>
         </span>
       </label>
       {action.displayOnly ? (
-        <div>
-          <label htmlFor={maxPerSessionInputId} className={FIELD_LABEL}>{__uiText("แสดงสูงสุดต่อการเข้าเว็บ (session)")}</label>
+        <FormField label={__uiText("แสดงได้สูงสุดต่อการเข้าเว็บ (ครั้ง)")} hint={__uiText("ค่าเริ่มต้น 1 ครั้ง")}>
           <input
-            id={maxPerSessionInputId}
             type="number"
             min={1}
             className={`${INPUT_CLASS} w-24`}
@@ -594,9 +588,7 @@ function ShowOfferFields({
               })
             }
           />
-          <p className="mt-1 text-[11px] text-gray-400">
-            {__uiText("จำนวนครั้งที่เด้งได้ในแท็บนี้ก่อนหยุด (default 1)")}</p>
-        </div>
+        </FormField>
       ) : (
         <CouponPicker
           coupons={coupons}
@@ -604,28 +596,24 @@ function ShowOfferFields({
           onChange={(couponId) => patch({ couponId })}
         />
       )}
-      <div>
-        <label htmlFor={titleInputId} className={FIELD_LABEL}>{__uiText("หัวข้อ (ไม่บังคับ)")}</label>
+      <FormField label={__uiText("หัวข้อ (ไม่บังคับ)")}>
         <input
-          id={titleInputId}
           type="text"
           className={INPUT_CLASS}
           value={action.title ?? ''}
           onChange={(event) => patch({ title: event.target.value })}
         />
-      </div>
-      <div>
-        <label htmlFor={bodyInputId} className={FIELD_LABEL}>{__uiText("ข้อความ (ไม่บังคับ)")}</label>
+      </FormField>
+      <FormField label={__uiText("ข้อความ (ไม่บังคับ)")}>
         <textarea
-          id={bodyInputId}
           className={INPUT_CLASS}
           rows={3}
           value={action.body ?? ''}
           onChange={(event) => patch({ body: event.target.value })}
         />
-      </div>
+      </FormField>
       {!action.displayOnly ? (
-      <label className="flex items-start gap-2 text-xs text-gray-600">
+      <label className="flex items-start gap-2 text-xs text-on-surface">
         <input
           type="checkbox"
           className="mt-0.5"
@@ -633,51 +621,52 @@ function ShowOfferFields({
           onChange={(event) => patch({ hideCode: event.target.checked })}
         />
         <span>
-          {__uiText("ไม่ต้องโชว์โค้ดใน popup")}<span className="mt-0.5 block text-[11px] text-gray-400">
-            {__uiText("ซ่อนกล่อง &ldquo;โค้ดที่ใช้ได้&rdquo; และปุ่มคัดลอก — เหมาะกับคูปองที่แจกเข้าบัญชีอยู่แล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง")}</span>
+          {__uiText("ไม่ต้องแสดงโค้ดในป๊อปอัป")}<span className={`mt-0.5 block ${HINT_CLASS}`}>
+            {__uiText("ซ่อนกล่องโค้ดและปุ่มคัดลอก เหมาะกับคูปองที่แจกเข้าบัญชีแล้ว ลูกค้าไม่ต้องกรอกโค้ดเอง")}</span>
         </span>
       </label>
       ) : null}
 
-      <div className="space-y-2 rounded-lg border border-dashed border-gray-200 p-2.5">
+      <div className="space-y-3 rounded-lg border border-secondary-container p-2.5">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[10px] font-semibold tracking-wide text-gray-400">
-            {__uiText("หน้าตา POPUP (แก้เองได้)")}</p>
+          <p className="text-xs font-semibold text-on-surface">
+            {__uiText("หน้าตาป๊อปอัป")}</p>
           <Link
             to={ADMIN_ROUTES.marketingNotifyTemplates}
             target="_blank"
-            className="text-[11px] font-medium text-primary hover:underline"
+            className={LINK_CLASS}
           >
-            {__uiText("สร้าง popup แบบลากวาง →")}</Link>
+            {__uiText("สร้างป๊อปอัปแบบลากวาง")}</Link>
         </div>
         <div>
-          <label htmlFor={popupTemplateSelectId} className={FIELD_LABEL}>{__uiText("Popup Template (สร้างจากหน้าลากวาง)")}</label>
+          <FormField label={__uiText("เทมเพลตป๊อปอัป")}>
           <Select
-            id={popupTemplateSelectId}
             className="w-full"
             value={action.popupTemplateKey ?? ''}
             onChange={(event) =>
               patch({ popupTemplateKey: event.target.value || undefined })
             }
           >
-            <option value="">{__uiText("— ใช้หน้าตามาตรฐาน (ตั้งค่าด้านล่าง) —")}</option>
+            <option value="">{__uiText("ใช้หน้าตามาตรฐาน (ตั้งค่าด้านล่าง)")}</option>
             {popupTemplates.map((template) => (
               <option key={template.template_key} value={template.template_key}>
                 {template.name}
               </option>
             ))}
           </Select>
+          </FormField>
           {selectedPopupTemplate && (
-            <p className="mt-1 rounded-md bg-violet-50 px-2 py-1 text-[11px] text-violet-700">
-              {__uiText("ใช้ layout จาก \"")}{selectedPopupTemplate.name}{__uiText("\" — popup จะเรนเดอร์ตามบล็อกที่ลากวางไว้ (การตั้งค่ารูป/ปุ่มด้านล่างจะไม่ถูกใช้)")}</p>
+            <p className="mt-1 rounded-md bg-info-container px-2 py-1 text-[11px] text-info">
+              {__uiText("ใช้หน้าตาจาก \"{0}\" ป๊อปอัปจะแสดงตามที่ลากวางไว้ รูปและปุ่มด้านล่างจะไม่ถูกใช้", { "0": selectedPopupTemplate.name })}</p>
           )}
         </div>
         <div>
-          <label htmlFor={popupDefinitionSelectId} className={FIELD_LABEL}>
-            {__uiText("คลัง Popup")}{' '}
-            <a href="/admin/popups/create" target="_blank" rel="noreferrer" className="text-primary hover:underline">
-              {__uiText("สร้าง popup ใหม่ →")}</a>
-          </label>
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <label htmlFor={popupDefinitionSelectId} className={FIELD_LABEL.replace('mb-1 ', '')}>
+              {__uiText("คลังป๊อปอัป")}</label>
+            <a href="/admin/popups/create" target="_blank" rel="noreferrer" className={LINK_CLASS}>
+              {__uiText("สร้างป๊อปอัปใหม่")}</a>
+          </div>
           <Select
             id={popupDefinitionSelectId}
             className="w-full"
@@ -686,7 +675,7 @@ function ShowOfferFields({
               patch({ popupDefinitionId: e.target.value || undefined, popupTemplateKey: undefined })
             }
           >
-            <option value="">{__uiText("— ใช้ layout inline (popupTemplateKey) —")}</option>
+            <option value="">{__uiText("ไม่ใช้ (ใช้เทมเพลตด้านบน)")}</option>
             {popupDefinitions.map((d) => (
               <option key={d.id} value={d.id}>{d.name}</option>
             ))}
@@ -696,10 +685,8 @@ function ShowOfferFields({
         <>
         <div>
           {banners.length > 0 && (
-            <>
-            <label htmlFor={bannerSelectId} className={FIELD_LABEL}>{__uiText("รูป Banner ของ popup")}</label>
+            <FormField label={__uiText("รูปแบนเนอร์ของป๊อปอัป")} className="mb-1.5">
             <Select
-              id={bannerSelectId}
               className="w-full"
               value={
                 banners.some((b) => b.url === (action.imageUrl ?? '').trim())
@@ -710,49 +697,44 @@ function ShowOfferFields({
                 if (event.target.value) patch({ imageUrl: event.target.value });
               }}
             >
-              <option value="">{__uiText("— เลือกจากคลัง Banner (/admin/banner) —")}</option>
+              <option value="">{__uiText("เลือกจากคลังแบนเนอร์")}</option>
               {banners.map((banner) => (
                 <option key={banner.url} value={banner.url}>
                   {banner.title}
                 </option>
               ))}
             </Select>
-            </>
+            </FormField>
           )}
-          <label htmlFor={imageUrlInputId} className="mb-1 mt-1.5 block text-xs font-medium text-gray-500">
-            {__uiText("หรือวาง URL รูปเอง")}</label>
+          <FormField label={__uiText("หรือวางลิงก์รูปเอง")}>
           <input
-            id={imageUrlInputId}
             type="text"
             className={`${INPUT_CLASS} font-mono text-xs`}
             placeholder={__uiText("ว่าง = ใช้รูปของคูปอง")}
             value={action.imageUrl ?? ''}
             onChange={(event) => patch({ imageUrl: event.target.value || undefined })}
           />
+          </FormField>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label htmlFor={ctaTextInputId} className={FIELD_LABEL}>{__uiText("ข้อความปุ่มหลัก")}</label>
+          <FormField label={__uiText("ข้อความปุ่มหลัก")}>
             <input
-              id={ctaTextInputId}
               type="text"
               className={INPUT_CLASS}
               placeholder={__uiText("ไปใช้ที่ตะกร้า")}
               value={action.ctaText ?? ''}
               onChange={(event) => patch({ ctaText: event.target.value || undefined })}
             />
-          </div>
-          <div>
-            <label htmlFor={ctaUrlInputId} className={FIELD_LABEL}>{__uiText("ลิงก์ปุ่มหลัก")}</label>
+          </FormField>
+          <FormField label={__uiText("ลิงก์ปุ่มหลัก")}>
             <input
-              id={ctaUrlInputId}
               type="text"
               className={`${INPUT_CLASS} font-mono text-xs`}
               placeholder="/cart/placement"
               value={action.ctaUrl ?? ''}
               onChange={(event) => patch({ ctaUrl: event.target.value || undefined })}
             />
-          </div>
+          </FormField>
         </div>
 
         {/* Live preview เลียนแบบ MarketingOfferModal ฝั่ง shop */}
@@ -761,7 +743,7 @@ function ShowOfferFields({
             {(action.imageUrl ?? '').trim() && (
               <img
                 src={(action.imageUrl ?? '').trim()}
-                alt={__uiText("popup banner")}
+                alt={__uiText("รูปแบนเนอร์ป๊อปอัป")}
                 className="h-24 w-full object-cover"
               />
             )}
@@ -789,8 +771,8 @@ function ShowOfferFields({
             </div>
           </div>
         </div>
-        <p className="text-[10px] text-gray-400">
-          {__uiText("พรีวิว popup ที่ลูกค้าเห็นบน shop — ปุ่มหลักลิงก์ไป")}{' '}
+        <p className={HINT_CLASS}>
+          {__uiText("ตัวอย่างป๊อปอัปที่ลูกค้าเห็นบนหน้าร้าน ปุ่มหลักลิงก์ไป")}{' '}
           <span className="font-mono">{action.ctaUrl?.trim() || '/cart/placement'}</span>
         </p>
         </>
@@ -805,19 +787,19 @@ function ShowOfferFields({
 function stepLabel(step: MarketingStep): string {
   switch (step.type) {
     case 'audience':
-      return __uiText("Audience");
+      return __uiText("กลุ่มเป้าหมาย");
     case 'wait':
-      return __uiText("Wait ({0})",{"0":formatDurationLabel(step.hours, step.minutes)});
+      return __uiText("รอ {0}",{"0":formatDurationLabel(step.hours, step.minutes)});
     case 'gate':
-      return __uiText("Gate (cart_still_open)");
+      return __uiText("ตรวจซ้ำก่อนทำต่อ");
     case 'condition':
-      return __uiText("If/Else: {0}",{"0":step.expression.trim() || __uiText("(ยังไม่ตั้งเงื่อนไข)")});
+      return __uiText("แยกเส้นทาง: {0}",{"0":step.expression.trim() || __uiText("(ยังไม่ตั้งเงื่อนไข)")});
     case 'action':
-      if (step.action.kind === 'grant_coupon') return __uiText("Action: แจกคูปอง");
+      if (step.action.kind === 'grant_coupon') return __uiText("แจกคูปอง");
       if (step.action.kind === 'show_offer') {
-        return step.action.displayOnly ? __uiText("Action: แสดง Popup") : __uiText("Action: แสดง Offer");
+        return step.action.displayOnly ? __uiText("แสดงป๊อปอัปโฆษณา") : __uiText("แสดงข้อเสนอบนหน้าร้าน");
       }
-      return __uiText("Action: แจ้งเตือน");
+      return __uiText("ส่งข้อความหาลูกค้า");
   }
 }
 
@@ -937,9 +919,6 @@ function ConditionFields({
 
   const otherSteps = steps.filter((s) => s.id !== step.id);
   const expressionTextareaId = useId();
-  const yesNextSelectId = useId();
-  const noNextSelectId = useId();
-  const clauseIdPrefix = useId();
 
   useEffect(() => {
     const parsed = parseConditionExpression(step.expression);
@@ -1025,14 +1004,14 @@ function ConditionFields({
 
   return (
     <div className="space-y-4">
-      <SectionTitle kind="IF / ELSE" title={__uiText("เงื่อนไขแยกเส้นทาง (Condition)")} />
-      <p className="text-xs text-gray-500">
-        {__uiText("เลือกฟิลด์ / ตัวเปรียบเทียบ / ค่า — ระบบสร้าง expression ให้เอง (whitelist เท่านั้น)")}</p>
+      <SectionTitle kind={__uiText("แยกเส้นทาง")} title={__uiText("แยกตามเงื่อนไข")} />
+      <p className="text-xs text-on-surface-variant">
+        {__uiText("เลือกข้อมูล ตัวเปรียบเทียบ และค่า ระบบสร้างเงื่อนไขให้เอง")}</p>
 
       {advancedMode ? (
-        <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50/60 p-3">
-          <label htmlFor={expressionTextareaId} className="block text-xs text-amber-800">
-            {__uiText("เงื่อนไขนี้มีวงเล็บหรือรูปแบบที่ตัวเลือกยังไม่รองรับ — แก้ไขด้วยข้อความหรือสร้างใหม่ด้วย select")}</label>
+        <div className="space-y-2 rounded-lg bg-warn-container p-3">
+          <label htmlFor={expressionTextareaId} className="block text-xs text-warn">
+            {__uiText("เงื่อนไขนี้ซับซ้อนเกินกว่าตัวเลือกจะแสดงได้ แก้เป็นข้อความ หรือสร้างใหม่ด้วยตัวเลือก")}</label>
           <textarea
             id={expressionTextareaId}
             rows={3}
@@ -1043,12 +1022,8 @@ function ConditionFields({
               onUpdateStep({ ...step, expression: event.target.value });
             }}
           />
-          <button
-            type="button"
-            onClick={resetToBuilder}
-            className="text-xs font-medium text-primary hover:underline"
-          >
-            {__uiText("สร้างใหม่ด้วยตัวเลือก")}</button>
+          <Button size="sm" onClick={resetToBuilder}>
+            {__uiText("สร้างใหม่ด้วยตัวเลือก")}</Button>
         </div>
       ) : (
         <div className="space-y-2">
@@ -1059,27 +1034,23 @@ function ConditionFields({
             return (
               <div key={index} className="space-y-1.5">
                 {index > 0 && (
-                  <div>
-                    <label htmlFor={`${clauseIdPrefix}-${index}-join`} className={FIELD_LABEL}>{__uiText("ตัวเชื่อม")}</label>
+                  <FormField label={__uiText("เชื่อมด้วย")} className="w-28">
                     <Select
-                      id={`${clauseIdPrefix}-${index}-join`}
-                      className="w-24"
+                      className="w-full"
                       value={joins[index - 1] ?? 'AND'}
                       onChange={(event) =>
                         setJoinAt(index - 1, event.target.value as ConditionJoin)
                       }
                     >
-                      <option value="AND">{__uiText("และ (AND)")}</option>
-                      <option value="OR">{__uiText("หรือ (OR)")}</option>
+                      <option value="AND">{__uiText("และ")}</option>
+                      <option value="OR">{__uiText("หรือ")}</option>
                     </Select>
-                  </div>
+                  </FormField>
                 )}
-                <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-2.5 space-y-2">
+                <div className="rounded-lg border border-secondary-container bg-surface-container-low p-2.5 space-y-2">
                   <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[1fr_auto]">
-                    <div>
-                      <label htmlFor={`${clauseIdPrefix}-${index}-field`} className={FIELD_LABEL}>{__uiText("ฟิลด์")}</label>
+                    <FormField label={__uiText("ข้อมูล")}>
                       <Select
-                        id={`${clauseIdPrefix}-${index}-field`}
                         className="w-full"
                         value={clause.field}
                         onChange={(event) =>
@@ -1094,19 +1065,19 @@ function ConditionFields({
                           </option>
                         ))}
                       </Select>
-                    </div>
-                    <button
-                      type="button"
+                    </FormField>
+                    <Button
+                      variant="danger-ghost"
+                      size="sm"
+                      icon="close"
                       onClick={() => removeClause(index)}
-                      className="text-xs text-red-500 hover:underline sm:justify-self-end"
+                      className="sm:justify-self-end"
                     >
-                      {__uiText("ลบ")}</button>
+                      {__uiText("ลบเงื่อนไขนี้")}</Button>
                   </div>
                   <div className="grid grid-cols-[auto_1fr] gap-2">
-                    <div>
-                      <label htmlFor={`${clauseIdPrefix}-${index}-operator`} className={FIELD_LABEL}>{__uiText("ตัวเปรียบเทียบ")}</label>
+                    <FormField label={__uiText("ตัวเปรียบเทียบ")}>
                       <Select
-                        id={`${clauseIdPrefix}-${index}-operator`}
                         className="w-full"
                         value={clause.op}
                         onChange={(event) =>
@@ -1121,64 +1092,54 @@ function ConditionFields({
                           </option>
                         ))}
                       </Select>
-                    </div>
+                    </FormField>
                     {fieldType === 'boolean' && (
-                      <div>
-                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>{__uiText("ค่า")}</label>
+                      <FormField label={__uiText("ค่า")}>
                         <Select
-                          id={`${clauseIdPrefix}-${index}-value`}
                           className="w-full"
                           value={clause.value === 'true' ? 'true' : 'false'}
                           onChange={(event) => updateClause(index, { value: event.target.value })}
                         >
-                          <option value="true">{__uiText("จริง (true)")}</option>
-                          <option value="false">{__uiText("เท็จ (false)")}</option>
+                          <option value="true">{__uiText("ใช่")}</option>
+                          <option value="false">{__uiText("ไม่ใช่")}</option>
                         </Select>
-                      </div>
+                      </FormField>
                     )}
                     {fieldType === 'number' && (
-                      <div>
-                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>{__uiText("ค่า")}</label>
+                      <FormField label={__uiText("ค่า")}>
                         <input
-                          id={`${clauseIdPrefix}-${index}-value`}
                           type="number"
                           className={INPUT_CLASS}
                           value={clause.value}
                           onChange={(event) => updateClause(index, { value: event.target.value })}
                         />
-                      </div>
+                      </FormField>
                     )}
                     {fieldType === 'segment' && (
-                      <div>
-                        <label htmlFor={`${clauseIdPrefix}-${index}-value`} className={FIELD_LABEL}>{__uiText("ค่า")}</label>
+                      <FormField label={__uiText("ค่า")}>
                         <Select
-                          id={`${clauseIdPrefix}-${index}-value`}
                           className="w-full"
                           value={clause.value}
                           onChange={(event) => updateClause(index, { value: event.target.value })}
                         >
-                          <option value="">{__uiText("— เลือก Segment —")}</option>
+                          <option value="">{__uiText("เลือกกลุ่มลูกค้า")}</option>
                           {segments.map((seg) => (
                             <option key={seg.id} value={seg.id}>
                               {seg.name}
                             </option>
                           ))}
                         </Select>
-                      </div>
+                      </FormField>
                     )}
                   </div>
                 </div>
               </div>
             );
           })}
-          <button
-            type="button"
-            onClick={addClause}
-            className="text-xs font-medium text-primary hover:underline"
-          >
-            {__uiText("+ เพิ่มเงื่อนไข")}</button>
+          <Button size="sm" icon="add" onClick={addClause}>
+            {__uiText("เพิ่มเงื่อนไข")}</Button>
           {step.expression.trim() && (
-            <p className="rounded-md bg-gray-50 px-2 py-1.5 font-mono text-[10px] text-gray-500 break-all">
+            <p className="rounded-md bg-surface-container-low px-2 py-1.5 font-mono text-[11px] text-on-surface-variant break-all">
               {step.expression}
             </p>
           )}
@@ -1186,58 +1147,52 @@ function ConditionFields({
       )}
 
       <div className="flex items-center gap-2">
-        <button
-          type="button"
+        <Button
+          size="sm"
           onClick={handleValidate}
           disabled={validating || !step.expression.trim()}
-          className="rounded-lg border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {validating ? __uiText("กำลังตรวจสอบ...") : __uiText("Validate")}
-        </button>
-        {validation && (
-          <span className={`text-xs ${validation.ok ? 'text-emerald-600' : 'text-red-500'}`}>
-            {validation.ok ? __uiText("✓ เงื่อนไขถูกต้อง") : validation.error}
-          </span>
+          {validating ? __uiText("กำลังตรวจสอบ...") : __uiText("ตรวจเงื่อนไข")}
+        </Button>
+        {validation && (validation.ok
+          ? <Chip tone="ok" dot>{__uiText("เงื่อนไขถูกต้อง")}</Chip>
+          : <span className="text-xs text-danger">{validation.error ? __uiText(validation.error) : null}</span>
         )}
       </div>
 
-      <div>
-        <label htmlFor={yesNextSelectId} className={FIELD_LABEL}>{__uiText("ถ้าเป็นจริง (Yes) → ไปที่")}</label>
+      <FormField label={__uiText("ถ้าใช่ ไปที่")}>
         <Select
-          id={yesNextSelectId}
           className="w-full"
           value={step.yesNextId ?? ''}
           onChange={(event) =>
             onUpdateStep({ ...step, yesNextId: event.target.value || null })
           }
         >
-          <option value="">{__uiText("— จบ (End) —")}</option>
+          <option value="">{__uiText("จบตรงนี้")}</option>
           {otherSteps.map((s) => (
             <option key={s.id} value={s.id}>
               {stepLabel(s)}
             </option>
           ))}
         </Select>
-      </div>
+      </FormField>
 
-      <div>
-        <label htmlFor={noNextSelectId} className={FIELD_LABEL}>{__uiText("ถ้าเป็นเท็จ (No) → ไปที่")}</label>
+      <FormField label={__uiText("ถ้าไม่ใช่ ไปที่")}>
         <Select
-          id={noNextSelectId}
           className="w-full"
           value={step.noNextId ?? ''}
           onChange={(event) =>
             onUpdateStep({ ...step, noNextId: event.target.value || null })
           }
         >
-          <option value="">{__uiText("— จบ (End) —")}</option>
+          <option value="">{__uiText("จบตรงนี้")}</option>
           {otherSteps.map((s) => (
             <option key={s.id} value={s.id}>
               {stepLabel(s)}
             </option>
           ))}
         </Select>
-      </div>
+      </FormField>
 
       <DeleteButton onClick={onDeleteStep} />
     </div>
@@ -1261,15 +1216,15 @@ export function MarketingStepSidePanel({
   __useUiLocale();
   if (!selection) {
     return (
-      <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-gray-200 p-6 text-center">
-        <p className="text-xs text-gray-400">{__uiText("คลิกที่การ์ดในแผนภาพเพื่อแก้ไขรายละเอียด")}</p>
+      <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-outline-variant p-6 text-center">
+        <p className="text-xs text-on-surface-variant">{__uiText("คลิกการ์ดในแผนภาพเพื่อแก้รายละเอียด")}</p>
       </div>
     );
   }
 
   if (selection.kind === 'trigger') {
     return (
-      <div className="rounded-xl border border-amber-200/80 bg-amber-50/30 p-4">
+      <div className="rounded-xl border border-secondary-container bg-surface-container-lowest p-4 shadow-card">
         <TriggerRuleBuilder
           variant="panel"
           triggerType={triggerType}
@@ -1288,7 +1243,7 @@ export function MarketingStepSidePanel({
   const deleteThis = () => onDeleteStep(step.id);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-secondary-container bg-surface-container-lowest p-4 shadow-card">
       {step.type === 'audience' && (
         <AudienceFields
           step={step}

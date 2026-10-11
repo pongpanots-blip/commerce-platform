@@ -8,6 +8,8 @@ import { InterruptedAction, requireSaved, taskMessages, useActionDraft, writeFai
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+/** Same values as commerce-platform inventory MovementStatus. */
+const MOVE_STATUS: Record<string, string> = { applied: 'นำไปใช้แล้ว', stale: 'ข้อมูลเก่ากว่ายอดปัจจุบัน ไม่ได้ใช้', ignored: 'ไม่ได้ใช้ เพราะคลังนี้ปรับยอดที่อื่น' };
 type Tab = 'receive' | 'count' | 'adjust' | 'transfer';
 const TASKS = [
   { id: 'receive', get title() { return __uiText("รับเข้า"); }, icon: 'inbox', get description() { return __uiText("เพิ่มสินค้าที่ได้รับเข้าในคลัง"); }, get hint() { return __uiText("ระบุจำนวนที่รับเพิ่ม ระบบจะบวกเข้ากับยอดคงเหลือเดิม"); } },
@@ -63,7 +65,7 @@ function StockTask({ tab }: { tab: Tab }) {
     const readings = await Promise.all(codes.map(code => inventoryOverviewApi.get(code, form.sku.trim(), 1)));
     return readings.map((data, index) => {
       const item = data.items.find(row => row.sku === form.sku.trim() && row.warehouseCode === codes[index]);
-      return item ? `${item.sku} · ${item.warehouseCode}: ${item.quantity} (${__uiText('จองแล้ว')}: ${item.reserved}) · ${item.lastStatus ?? '—'}` : __uiText('ไม่พบรหัสสินค้านี้ในผลค้นหาล่าสุด ตรวจรายการก่อนลองใหม่');
+      return item ? `${item.sku} · ${item.warehouseCode}: ${item.quantity} (${__uiText('จองแล้ว')}: ${item.reserved}) · ${item.lastStatus ? (MOVE_STATUS[item.lastStatus] ? __uiText(MOVE_STATUS[item.lastStatus]) : item.lastStatus) : '—'}` : __uiText('ไม่พบรหัสสินค้านี้ในผลค้นหาล่าสุด ตรวจรายการก่อนลองใหม่');
     }).join(' · ');
   }
   async function submit(_data: FormData, signal: AbortSignal) {

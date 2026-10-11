@@ -215,7 +215,7 @@ export function ElementInspector({
         <button
           type="button"
           onClick={onRemove}
-          className="text-[11px] text-red-500 hover:underline"
+          className="text-[11px] text-danger hover:underline"
         >
           {__uiText("ลบ")}</button>
       </div>
@@ -389,7 +389,7 @@ export function ElementInspector({
             <div className="space-y-2">
               <div>
                 <label className={LABEL_CLASS} htmlFor={`${uid}-video-src`}>
-                  {__uiText("URL วิดีโอ (YouTube / Vimeo / MP4)")}</label>
+                  {__uiText("ลิงก์วิดีโอ (YouTube / Vimeo / MP4)")}</label>
                 <input id={`${uid}-video-src`} className={INPUT_CLASS} value={element.src} onChange={(e) => onPatch({ src: e.target.value } as Partial<CreativeElement>)} placeholder="https://youtube.com/watch?v=..." />
               </div>
               <div>
@@ -417,7 +417,7 @@ export function ElementInspector({
                   translating ? onPatchOverlay?.({ html: e.target.value }) : onPatch({ html: e.target.value } as Partial<CreativeElement>)
                 }
               />
-              <p className="text-[10px] text-amber-500">{__uiText("⚠ ตรวจสอบ HTML ก่อน — จะถูก sanitize ด้วย DOMPurify ก่อนแสดงในหน้าร้าน")}</p>
+              <p className="text-[10px] text-warn">{__uiText("⚠ ตรวจสอบ HTML ก่อน — จะถูก sanitize ด้วย DOMPurify ก่อนแสดงในหน้าร้าน")}</p>
             </div>
           )}
 
@@ -564,7 +564,7 @@ export function ElementInspector({
                                   if (onPatchElementImages) onPatchElementImages(element.id, remove);
                                   else onPatch({ images: remove(element.images ?? []) } as Partial<CreativeElement>);
                                 }}
-                                className="text-red-400 hover:text-red-600"
+                                className="text-danger hover:text-danger"
                               >
                                 ✕
                               </button>
@@ -922,7 +922,7 @@ export function ElementInspector({
         <InspectorSection key={`${element.id}-display`} title={SECTION_LABELS.display} defaultOpen>
           <div className="space-y-1.5 rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5">
             <div className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-1 text-[10px] text-amber-700">
+              <span className="flex items-center gap-1 text-[10px] text-warn">
                 {overridden ? (
                   <>
                     <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber-500" />
@@ -935,13 +935,13 @@ export function ElementInspector({
                 <button
                   type="button"
                   onClick={onResetBreakpoint}
-                  className="shrink-0 text-[10px] font-medium text-amber-700 underline hover:text-amber-900"
+                  className="shrink-0 text-[10px] font-medium text-warn underline hover:text-warn"
                 >
                   {__uiText("รีเซ็ตกลับ base")}</button>
               )}
             </div>
             {onToggleHidden && (
-              <label className="flex items-center gap-1.5 text-[10px] text-amber-700">
+              <label className="flex items-center gap-1.5 text-[10px] text-warn">
                 <input
                   type="checkbox"
                   aria-label={__uiText("ซ่อนองค์ประกอบนี้บน {0}", {"0": BREAKPOINT_LABELS[breakpoint]})}

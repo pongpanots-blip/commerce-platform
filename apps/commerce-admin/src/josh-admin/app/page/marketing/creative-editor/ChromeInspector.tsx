@@ -113,7 +113,7 @@ export function ChromeInspector({
           {meta.backgroundColor && meta.backgroundColor !== 'transparent' ? (
             <button
               type="button"
-              className="shrink-0 text-[10px] text-gray-400 hover:text-red-500"
+              className="shrink-0 text-[10px] text-gray-400 hover:text-danger"
               onClick={() => onChange({ backgroundColor: 'transparent' })}
             >
               {__uiText("โปร่งใส")}</button>
@@ -167,10 +167,10 @@ export function ChromeInspector({
           {__uiText("ตำแหน่ง")}</label>
         <Select id={`${uid}-position`} className="w-full" value={meta.position ?? 'center'} onChange={(e) => onChange({ position: e.target.value as PopupChrome['position'] })}>
           <option value="center">{__uiText("Center")}</option>
-          <option value="top">{__uiText("Top")}</option>
+          <option value="top">{__uiText("ด้านบน")}</option>
           <option value="bottom">{__uiText("Bottom")}</option>
           <option value="bottom-sheet">{__uiText("Bottom Sheet")}</option>
-          <option value="side-right">{__uiText("Side Panel (ขวา)")}</option>
+          <option value="side-right">{__uiText("แผงด้านขวา")}</option>
         </Select>
       </div>
 
@@ -208,7 +208,7 @@ export function ChromeInspector({
           </div>
         </div>
         {dismissLabelDisabled ? (
-          <p className="text-[10px] text-amber-500 mt-0.5">
+          <p className="text-[10px] text-warn mt-0.5">
             {__uiText("กรุณาตั้งค่าปุ่ม Dismiss จากภาษาไทยก่อน จึงจะแปลป้ายปุ่มได้")}</p>
         ) : (
           <p className="text-[10px] text-gray-400 mt-0.5">{__uiText("ชั่วโมงที่ไม่แสดงหลังกดปุ่มนี้ — 8760 = ถาวร")}</p>
@@ -231,7 +231,7 @@ export function ChromeInspector({
       {/* Background image */}
       <div>
         <label className={LABEL_CLASS} htmlFor={`${uid}-bg-image`}>
-          {__uiText("URL รูปพื้นหลัง (ไม่บังคับ)")}</label>
+          {__uiText("ลิงก์รูปพื้นหลัง (ไม่บังคับ)")}</label>
         <input
           id={`${uid}-bg-image`}
           className={INPUT_CLASS}
@@ -274,7 +274,7 @@ export function EmailChromeInspector({
   const uid = useId();
   return (
     <div className="space-y-2.5 rounded-lg border border-gray-200 bg-white p-2.5">
-      <p className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("EMAIL CHROME")}</p>
+      <p className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("กรอบอีเมล")}</p>
 
       <div>
         <label className={LABEL_CLASS} htmlFor={`${uid}-content-width`}>

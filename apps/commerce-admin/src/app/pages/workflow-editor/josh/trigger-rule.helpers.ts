@@ -71,44 +71,52 @@ export const TRIGGER_TYPE_CARDS: Array<{
   {
     type: 'cart_idle',
     get title(){return uiText("ตะกร้าค้าง");},
-    get description(){return uiText("เมื่อตะกร้าไม่ถูกแตะเป็นเวลาที่กำหนด");},
+    get description(){return uiText("ลูกค้าใส่ของในตะกร้าแล้วไม่สั่งซื้อตามเวลาที่ตั้ง");},
   },
   {
     type: 'page_affinity',
-    get title(){return uiText("เข้าชมหน้าค้าง");},
-    get description(){return uiText("เมื่อลูกค้าดูหน้าเดิมบ่อยพอในช่วงเวลา (ชม./นาที)");},
+    get title(){return uiText("ดูหน้าเดิมซ้ำ");},
+    get description(){return uiText("ลูกค้าเปิดดูหน้าเดิมหลายครั้งในช่วงเวลาที่ตั้ง");},
   },
   {
     type: 'session_in_window',
-    get title(){return uiText("ช่วงเวลา + Login");},
-    get description(){return uiText("คนที่ล็อกอินในช่วงเวลาที่ตั้งไว้ (และ/หรือใน segment)");},
+    get title(){return uiText("เข้าสู่ระบบในช่วงเวลา");},
+    get description(){return uiText("ลูกค้าที่เข้าสู่ระบบในช่วงเวลาทำงานที่ตั้งไว้");},
   },
   {
     type: 'first_login',
-    get title(){return uiText("Login ครั้งแรก");},
-    get description(){return uiText("เมื่อลูกค้าเข้าสู่ระบบครั้งแรกบนแอป/เว็บ");},
+    get title(){return uiText("เข้าสู่ระบบครั้งแรก");},
+    get description(){return uiText("ลูกค้าเข้าสู่ระบบครั้งแรกบนแอปหรือเว็บ");},
   },
   {
     type: 'first_visit',
     get title(){return uiText("เข้าเว็บครั้งแรก");},
-    get description(){return uiText("เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้) — เหมาะกับ popup");},
+    get description(){return uiText("เปิดเว็บครั้งแรกบนเครื่องนี้ ยังไม่เข้าสู่ระบบก็ได้ เหมาะกับป๊อปอัป");},
   },
   {
     type: 'custom',
-    get title(){return uiText("กำหนดเอง (Custom)");},
-    get description(){return uiText("ตั้งชื่อเงื่อนไขเอง เช่น \"ช่วงฝนตก\" — กด Activate เมื่อเริ่มช่วง ทุกคนที่เข้าเว็บจะได้ popup/action, กด Pause เมื่อจบ");},
+    get title(){return uiText("กำหนดเอง");},
+    get description(){return uiText("ตั้งชื่อช่วงเอง เช่น ช่วงฝนตก กดเปิดใช้งานเมื่อเริ่มช่วง และกดหยุดชั่วคราวเมื่อจบ");},
   },
   {
     type: 'order_milestone',
-    get title(){return uiText("ยอดสั่งซื้อถึงเป้า (Milestone)");},
-    get description(){return uiText("ต่อเงื่อนไขเอง เช่น \"order เดียวเกิน 5,000 ครั้งแรก\" หรือ \"ยอดสะสมถึง 100,000 ครั้งแรก\" — ทำงานคนละ 1 ครั้ง");},
+    get title(){return uiText("ยอดสั่งซื้อถึงเป้า");},
+    get description(){return uiText("เช่น ออเดอร์เดียวเกิน 5,000 บาท หรือยอดสะสมถึง 100,000 บาท ทำงานคนละครั้ง");},
   },
   {
     type: 'scheduled',
-    get title(){return uiText("ตามเวลา (Scheduled)");},
-    get description(){return uiText("ยิงเองตามเวลา เช่น \"ทุกวัน 18:00\" หรือ \"ทุกวันจันทร์ 19:00\" — ส่งให้ Audience ที่เลือก (ไม่เลือก = ทุกคน)");},
+    get title(){return uiText("ตามเวลา");},
+    get description(){return uiText("ส่งตามเวลาที่ตั้ง เช่น ทุกวัน 18:00 ให้กลุ่มเป้าหมายที่เลือก (ไม่เลือก = ทุกคน)");},
   },
 ];
+
+/** Display label for a notify channel; the stored value stays the code. */
+export function marketingChannelLabel(channel: string): string {
+  if (channel === 'push') return uiText('การแจ้งเตือน');
+  if (channel === 'email') return uiText('อีเมล');
+  if (channel === 'in_app') return uiText('ข้อความในแอป');
+  return channel;
+}
 
 /** Short chips for the schedule strip (not the full `describeMarketingSchedule` sentence). */
 export function scheduleStripChips(schedule: MarketingWorkflowSchedule): string[] {

@@ -3,7 +3,7 @@ import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { Button, Checkbox, Empty, ErrorText, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Select, Stack2, Table, TBody, TD, TH, THead, TR, fmt, Icon } from '@cp/ui';
+import { Button, Checkbox, Chip, Empty, ErrorText, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Select, Stack2, Table, TBody, TD, TH, THead, TR, fmt, Icon } from '@cp/ui';
 import { marketApi, RestaurantRow } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { hasRestaurantCoordinates, RestaurantMap } from './RestaurantMap';
@@ -47,23 +47,21 @@ export function MarketExplorer() {
   return (
     <Page>
       <div className="market-explorer">
-        <header className="market-heading">
-          <div><div className="market-eyebrow"><Icon name="travel_explore" size={18} /> {__uiText(" MARKET EXPLORER")}</div>
-            <h1>{__uiText("สำรวจร้านอาหาร")}<span>{__uiText("ค้นหาโอกาสให้ทีมขาย")}</span></h1>
-            <p>{__uiText("เลือกพื้นที่และประเภทร้าน ดูข้อมูลประกอบ แล้วส่งต่อรายชื่อให้ทีม")}</p>
-          </div>
-          <div className="market-actions">
+        <PageHeader
+          title={__uiText("สำรวจร้านอาหาร")}
+          subtitle={__uiText("เลือกพื้นที่และประเภทร้าน ดูข้อมูลประกอบ แล้วส่งต่อรายชื่อให้ทีม")}
+          actions={<>
             <Button onClick={reload} icon="refresh" disabled={loading}>{__uiText("รีเฟรช")}</Button>
             <Button variant="primary" onClick={csv} icon="download" disabled={loading || exporting || !data || !!error || total === 0}>{exporting ? __uiText("กำลังส่งออก…") : __uiText("ส่งออกรายชื่อ CSV")}</Button>
-          </div>
-        </header>
+          </>}
+        />
         <ErrorText error={csvError} />
 
         <section className="market-overview" aria-label={__uiText("ภาพรวมร้านตามเงื่อนไข")} aria-busy={loading}>
           <div className="market-total">
             <span>{active.length ? __uiText("ร้านที่ตรงเงื่อนไข") : __uiText("ร้านในฐานข้อมูล")}</span>
             <strong>{loading ? '…' : error ? '—' : data ? fmt.num(total) : '—'}<small>{__uiText("ร้าน")}</small></strong>
-            <span><Icon name="database" size={15} /> {__uiText(" ข้อมูลจาก JOSH · อ่านอย่างเดียว")}</span>
+            <span><Icon name="database" size={15} /> {__uiText("ข้อมูลสำรองของร้านค้า · อ่านอย่างเดียว")}</span>
           </div>
           <div className="market-distribution">
             <div className="market-section-label">{__uiText("เริ่มจากพื้นที่ไหน ")}<span>{__uiText("เขตที่พบมากตามเงื่อนไข")}</span></div>
@@ -113,16 +111,16 @@ export function MarketExplorer() {
           <div className="market-results-head"><div><h2>{__uiText("รายชื่อร้านอาหาร ")}<span>{!loading && !error && data ? fmt.num(total) : '…'}</span></h2><p>{__uiText("เรียงตามชื่อร้าน · กดชื่อเพื่อดูรายละเอียด")}</p></div>
             {active.length > 0 && <Button onClick={() => apply({})} disabled={loading} icon="filter_alt_off">{__uiText("ล้างตัวกรอง (")}{active.length})</Button>}
           </div>
-          {active.length > 0 && <div className="market-applied">{active.map(([key, value]) => <span key={key}>{FILTER_LABELS[key]}: {value === true ? __uiText("ใช่") : String(value)}</span>)}</div>}
+          {active.length > 0 && <div className="market-applied">{active.map(([key, value]) => <span key={key}>{FILTER_LABELS[key]}: {value === true ? __uiText("ใช่") : key === 'category' ? categoryLabel(String(value)) : String(value)}</span>)}</div>}
           {loading && <div role="status" className="market-loading">{__uiText("กำลังค้นหาร้านอาหาร…")}</div>}
           {!loading && error && <div className="market-empty"><Icon name="cloud_off" size={32} /><h3>{__uiText("ยังโหลดรายชื่อไม่ได้")}</h3><p>{__uiText("ลองรีเฟรชเพื่ออ่านข้อมูลอีกครั้ง")}</p><Button onClick={reload}>{__uiText("ลองอีกครั้ง")}</Button></div>}
-          {!error && data && <div className="market-table-wrap"><TableViewport><table className="cp-data-table market-table"><thead><tr><th scope="col">{__uiText("ร้าน / พื้นที่")}</th><th scope="col">{__uiText("คะแนนและรีวิว")}</th><th scope="col">{__uiText("ช่วงราคา")}</th><th scope="col">{__uiText("คนเยอะวันนี้")}</th><th scope="col">{__uiText("สถานะฝ่ายขาย")}</th><th scope="col"><span className="sr-only">{__uiText("รายละเอียด")}</span></th></tr></thead><tbody>
+          {!error && data && <div className="market-table-wrap"><TableViewport><table className="cp-data-table market-table"><thead><tr><th scope="col">{__uiText("ร้าน / พื้นที่")}</th><th scope="col" className="text-right">{__uiText("คะแนนและรีวิว")}</th><th scope="col">{__uiText("ช่วงราคา")}</th><th scope="col">{__uiText("คนเยอะวันนี้")}</th><th scope="col">{__uiText("สถานะฝ่ายขาย")}</th><th scope="col"><span className="sr-only">{__uiText("รายละเอียด")}</span></th></tr></thead><tbody>
             {data.items.map(r => <tr key={r.id}>
               <td><button className="market-name" onClick={() => setSelected(r)} disabled={loading}>{r.name || __uiText("ยังไม่มีชื่อร้าน")}</button>{r.nameTh && r.nameEn && r.nameEn !== r.name && <span className="market-subname">{r.nameEn}</span>}<div className="market-location"><Icon name="location_on" size={14} /> {r.district || __uiText("ยังไม่ระบุเขต")}<span>·</span>{categoryLabel(r.category)}</div></td>
-              <td>{r.rating !== null ? <strong className="market-rating"><Icon name="star" size={15} /> {r.rating.toFixed(1)}</strong> : <span className="market-muted">{__uiText("ยังไม่มีคะแนน")}</span>}<span className="market-subname">{r.reviewCount !== null ? __uiText("{0} รีวิว", {"0": fmt.num(r.reviewCount)}) : __uiText("ยังไม่มีรีวิว")}</span></td>
+              <td className="text-right tabular-nums">{r.rating !== null ? <strong className="market-rating"><Icon name="star" size={15} /> {r.rating.toFixed(1)}</strong> : <span className="market-muted">{__uiText("ยังไม่มีคะแนน")}</span>}<span className="market-subname">{r.reviewCount !== null ? __uiText("{0} รีวิว", {"0": fmt.num(r.reviewCount)}) : __uiText("ยังไม่มีรีวิว")}</span></td>
               <td>{r.priceRange || <span className="market-muted">{__uiText("ยังไม่ระบุ")}</span>}</td>
               <td><Spark curve={r.popularTimesToday} /></td>
-              <td><span className={`market-sales ${r.winbackAccountId ? 'is-linked' : ''}`}>{r.winbackAccountId ? __uiText("มีในรายชื่อแล้ว") : __uiText("ยังไม่มีในรายชื่อ")}</span>{r.winbackCustomerCode && <span className="market-subname">{r.winbackCustomerCode}</span>}</td>
+              <td><Chip tone={r.winbackAccountId ? 'ok' : 'muted'} dot>{r.winbackAccountId ? __uiText("มีในรายชื่อแล้ว") : __uiText("ยังไม่มีในรายชื่อ")}</Chip>{r.winbackCustomerCode && <span className="market-subname font-mono">{r.winbackCustomerCode}</span>}</td>
               <td><button className="market-open" aria-label={__uiText("ดูรายละเอียด {0}", {"0": r.name})} onClick={() => setSelected(r)} disabled={loading}><Icon name="arrow_forward" size={18} /></button></td>
             </tr>)}
           </tbody></table></TableViewport></div>}
@@ -162,7 +160,7 @@ function RestaurantDialog({ restaurant, onClose }: { restaurant: RestaurantRow; 
     <h2 id="restaurant-title">{r.name || __uiText("ยังไม่มีชื่อร้าน")}</h2><p className="market-location">{r.district || __uiText("ยังไม่ระบุเขต")} · {categoryLabel(r.category)}</p>
     <div className="market-detail-stats"><div><span>{__uiText("คะแนน / รีวิว")}</span><strong>{r.rating ?? __uiText("ยังไม่มีคะแนน")}</strong><small>{r.reviewCount === null ? __uiText("ยังไม่มีรีวิว") : __uiText("{0} รีวิว", {"0": fmt.num(r.reviewCount)})}</small></div><div><span>{__uiText("ช่วงราคา")}</span><strong>{r.priceRange || __uiText("ยังไม่ระบุ")}</strong></div><div><span>{__uiText("จำนวนโต๊ะโดยประมาณ")}</span><strong>{fmt.num(r.estimatedTables)}</strong><small>{__uiText("คำนวณจากรีวิว ไม่ใช่จำนวนที่สำรวจ")}</small></div></div>
     <section className="market-detail-section"><h3>{__uiText("ช่วงคนเยอะวันนี้ ")}<span>{__uiText("08:00–23:00 · เวลาไทย")}</span></h3><Spark curve={r.popularTimesToday} />{!!r.popularTimesToday?.length && <div className="market-time-axis" aria-hidden="true"><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>23:00</span></div>}</section>
-    <section className="market-detail-section"><h3>{__uiText("สถานะฝ่ายขาย")}</h3><span className={`market-sales ${r.winbackAccountId ? 'is-linked' : ''}`}>{r.winbackAccountId ? __uiText("มีในรายชื่อฝ่ายขายแล้ว") : __uiText("ยังไม่มีในรายชื่อฝ่ายขาย")}</span>{r.winbackCustomerCode && <p>{__uiText("รหัสลูกค้า ")}{r.winbackCustomerCode}</p>}</section>
+    <section className="market-detail-section"><h3>{__uiText("สถานะฝ่ายขาย")}</h3><Chip tone={r.winbackAccountId ? 'ok' : 'muted'} dot>{r.winbackAccountId ? __uiText("มีในรายชื่อฝ่ายขายแล้ว") : __uiText("ยังไม่มีในรายชื่อฝ่ายขาย")}</Chip>{r.winbackCustomerCode && <p>{__uiText("รหัสลูกค้า ")}<span className="font-mono">{r.winbackCustomerCode}</span></p>}</section>
     {loading && <p role="status" className="market-muted">{__uiText("กำลังโหลดบริการและแหล่งข้อมูล…")}</p>}<ErrorText error={error} />{error && <Button onClick={reload}>{__uiText("ลองโหลดรายละเอียดอีกครั้ง")}</Button>}
     {data && <><section className="market-detail-section"><h3>{__uiText("บริการของร้าน")}</h3><div className="market-detail-services">{([['dineIn', 'นั่งทาน'], ['takeaway', 'ซื้อกลับ'], ['delivery', 'เดลิเวอรี']] as const).map(([key, label]) => <span key={key}>{label}<strong>{data.serviceOptions[key] === true ? __uiText("มีบริการ") : data.serviceOptions[key] === false ? __uiText("ไม่มีบริการ") : __uiText("ยังไม่มีข้อมูล")}</strong></span>)}</div></section><p className="market-muted">{__uiText("แหล่งข้อมูล: ")}{data.source || __uiText("ยังไม่ระบุ")} {__uiText(" · ข้อมูลเพิ่มเติมล่าสุด: ")}{data.enrichedAt ? new Date(data.enrichedAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { timeZone: 'Asia/Bangkok', dateStyle: 'medium', timeStyle: 'short' }) : __uiText("ยังไม่มีข้อมูล")}</p></>}
     <div className="market-dialog-footer"><span>{__uiText("ตรวจสอบข้อมูลก่อนเข้าพบหรือติดต่อร้าน")}</span>{hasCoordinates && <a href={`https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lng}`} target="_blank" rel="noreferrer"><Icon name="map" size={17} /> {__uiText(" เปิดแผนที่")}</a>}</div>

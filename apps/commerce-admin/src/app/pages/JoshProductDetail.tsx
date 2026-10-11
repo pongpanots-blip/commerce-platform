@@ -390,7 +390,7 @@ function ProductEditor({
           {f.kind === "long" ? (
             <Span>
               <Field label={f.label}>
-                <Textarea
+                <Textarea mono={false}
                   rows={3}
                   value={v[f.key]}
                   onChange={(e) => setV({ ...v, [f.key]: e.target.value })}

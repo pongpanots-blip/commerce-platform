@@ -142,7 +142,7 @@ function ItemListControl({
             <button
               type="button"
               aria-label={__uiText("ลบหัวข้อที่ {0}", {"0": index + 1})}
-              className="shrink-0 px-1 text-red-400 hover:text-red-600"
+              className="shrink-0 px-1 text-danger hover:text-danger"
               onClick={() => onChange(items.filter((_, i) => i !== index))}
             >
               ✕
@@ -366,7 +366,7 @@ function FieldControl({
           type="text"
           disabled={disabled}
           className={`${INPUT_CLASS} font-mono`}
-          placeholder={__uiText("category id จากหน้า Categories")}
+          placeholder={__uiText("รหัสหมวดหมู่ จากหน้าจัดการหมวดหมู่")}
           value={typeof value === 'string' ? value : ''}
           onChange={(event) => emit(event.target.value)}
         />

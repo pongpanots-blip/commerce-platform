@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, ReactNode, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { auditLogsApi, AuditLogRow, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
@@ -8,6 +8,41 @@ import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 const PAGE_SIZE = 50;
 const FILTERS = ['action', 'entityType', 'entityId', 'actorId', 'from', 'to', 'includeReads'] as const;
 type FilterKey = typeof FILTERS[number];
+
+/** Labels for what commerce-platform writes to audit_logs (staff accounts, josh actions, MCP, scheduled tasks, ERP simulator). Codes not listed show as-is. */
+const ACTION: Record<string, string> = {
+  'mcp.tool_call': 'ผู้ช่วย AI เปิดดูข้อมูล', 'mcp.write': 'ผู้ช่วย AI แก้ข้อมูล', 'scheduled_task.run': 'สั่งงานตามเวลาให้ทำทันที',
+  'staff.create': 'สร้างบัญชีพนักงาน', 'staff.self_register': 'พนักงานสมัครเอง', 'staff.update': 'แก้บัญชีพนักงาน',
+  'staff.reset_password': 'รีเซ็ตรหัสผ่านพนักงาน', 'staff.change_own_password': 'เปลี่ยนรหัสผ่านของตัวเอง',
+  'josh_staff.update': 'แก้สิทธิ์พนักงานในร้านค้าออนไลน์', 'erp.simulator.send': 'ส่งข้อมูลทดสอบจากระบบขายจำลอง',
+  'erp.simulator.josh_order': 'ส่งออเดอร์ทดสอบเข้าระบบขายจำลอง', 'josh.admin-call.call': 'ใช้หน้าจัดการร้านค้าออนไลน์',
+};
+/** josh actions are written as `josh.<target>.<verb>` (josh-actions.ts). */
+const JOSH_TARGET: Record<string, string> = {
+  winback: 'ดึงลูกค้ากลับ', 'push-campaigns': 'แคมเปญแจ้งเตือน', 'credit-applications': 'คำขอเครดิต', 'admin-access': 'สิทธิ์เข้าหน้าจัดการ',
+  coupons: 'คูปอง', 'customer-prices': 'ราคาเฉพาะลูกค้า', 'contract-prices': 'ราคาตามสัญญา', products: 'สินค้า', promotions: 'โปรโมชัน',
+  suppliers: 'ซัพพลายเออร์', 'internal-docs': 'เอกสารภายใน', 'marketing-workflows': 'ข้อความอัตโนมัติ', customers: 'ลูกค้า',
+};
+const JOSH_VERB: Record<string, string> = {
+  create: 'สร้าง', update: 'แก้ไข', remove: 'ลบ', approve: 'อนุมัติ', reject: 'ไม่อนุมัติ', review: 'พิจารณา', set_active: 'เปิด/ปิดใช้งาน',
+  assign: 'มอบหมาย', assign_sales: 'กำหนดเซลส์', set_target: 'ตั้งเป้า', update_branch: 'แก้สาขา', update_company: 'แก้ข้อมูลบริษัท',
+  update_user: 'แก้ผู้ใช้', upload: 'อัปโหลด', pause: 'หยุด', test: 'ทดลองส่ง', schedule: 'ตั้งเวลาส่ง', send: 'ส่ง', set_cuisines: 'กำหนดประเภทร้าน',
+};
+const ENTITY: Record<string, string> = {
+  mcp_tool: 'เครื่องมือผู้ช่วย AI', scheduled_task: 'งานตามเวลา', staff_account: 'บัญชีพนักงาน', josh_staff: 'พนักงานร้านค้าออนไลน์',
+  erp_route: 'ระบบขายจำลอง', order: 'ออเดอร์', josh_action: 'งานในร้านค้าออนไลน์', 'josh.workflow': 'ข้อความอัตโนมัติ', 'josh.coupon': 'คูปอง',
+  'josh.segment': 'กลุ่มลูกค้า', 'josh.campaign': 'แคมเปญ', 'josh.product_set': 'ชุดสินค้า', 'josh.promotion_page': 'หน้าโปรโมชัน',
+  'josh.banner': 'แบนเนอร์', 'josh.notify_template': 'แม่แบบการแจ้งเตือน', 'josh.smart_link': 'ลิงก์อัจฉริยะ', 'josh.welcome_email': 'อีเมลต้อนรับ',
+  'josh.push_campaign': 'แคมเปญแจ้งเตือน', 'josh.product': 'สินค้า',
+};
+const actionLabel = (code: string) => {
+  if (ACTION[code]) return __uiText(ACTION[code]);
+  const [, target, verb] = /^josh\.([a-z-]+)\.([a-z_]+)$/.exec(code) ?? [];
+  return target && JOSH_TARGET[target] && JOSH_VERB[verb] ? `${__uiText(JOSH_TARGET[target])}: ${__uiText(JOSH_VERB[verb])}` : null;
+};
+const entityLabel = (code: string) => (ENTITY[code] ? __uiText(ENTITY[code]) : null);
+/** Known code → label (code on hover); unknown code → the code in mono. */
+const codeCell = (code: string, label: string | null) => (label ? <span title={code}>{label}</span> : <span className="font-mono text-[11px]">{code}</span>);
 
 /** One line on what was touched; the writers store it in different places. */
 const summaryOf = (r: AuditLogRow) => {
@@ -51,7 +86,7 @@ export function AuditLogs() {
     page, pageSize: PAGE_SIZE,
   }), [params.toString()]);
 
-  const link = (k: FilterKey, v: string | null, label: string) => v
+  const link = (k: FilterKey, v: string | null, label: ReactNode) => v
     ? <button type="button" className="text-left hover:underline" title={__uiText('กรองตามค่านี้')} onClick={() => setFilter(k, v)}>{label}</button>
     : <span>—</span>;
 
@@ -63,10 +98,10 @@ export function AuditLogs() {
         <PanelHead title={__uiText('ตัวกรอง')} actions={<div className="flex flex-wrap items-center gap-2">
           <Input list="audit-actions" aria-label={__uiText('การกระทำ (ขึ้นต้นด้วย)')} placeholder={__uiText('การกระทำ (ขึ้นต้นด้วย)')} defaultValue={get('action')} key={`a-${get('action')}`}
             onBlur={(e) => setFilter('action', e.target.value.trim())} onKeyDown={(e) => { if (e.key === 'Enter') setFilter('action', e.currentTarget.value.trim()); }} className="w-56" />
-          <datalist id="audit-actions">{facets.data?.actions.map((a) => <option key={a.value} value={a.value}>{a.count}</option>)}</datalist>
+          <datalist id="audit-actions">{facets.data?.actions.map((a) => <option key={a.value} value={a.value}>{actionLabel(a.value) ?? a.value} ({a.count})</option>)}</datalist>
           <Select aria-label={__uiText('ประเภทข้อมูล')} value={get('entityType')} onChange={(e) => setFilter('entityType', e.target.value)} className="w-48">
             <option value="">{__uiText('ทุกประเภทข้อมูล')}</option>
-            {facets.data?.entityTypes.map((t) => <option key={t.value} value={t.value}>{t.value} ({t.count})</option>)}
+            {facets.data?.entityTypes.map((t) => <option key={t.value} value={t.value}>{entityLabel(t.value) ?? t.value} ({t.count})</option>)}
           </Select>
           <Input type="date" aria-label={__uiText('ตั้งแต่วันที่')} value={get('from')} onChange={(e) => setFilter('from', e.target.value)} className="w-40" />
           <Input type="date" aria-label={__uiText('ถึงวันที่')} value={get('to')} onChange={(e) => setFilter('to', e.target.value)} className="w-40" />
@@ -92,8 +127,8 @@ export function AuditLogs() {
                   <TR>
                     <TD kind="time">{fmt.when(r.at)}</TD>
                     <TD>{link('actorId', r.actorId, r.actorEmail ?? r.actorId?.slice(0, 8) ?? '')}</TD>
-                    <TD kind="mono">{link('action', r.action, r.action)}</TD>
-                    <TD kind="mono">{link('entityType', r.entityType, r.entityType)}</TD>
+                    <TD>{link('action', r.action, codeCell(r.action, actionLabel(r.action)))}</TD>
+                    <TD>{link('entityType', r.entityType, codeCell(r.entityType, entityLabel(r.entityType)))}</TD>
                     <TD kind="mono">{link('entityId', r.entityId, r.entityId?.slice(0, 8) ?? '')}</TD>
                     <TD className="text-xs text-on-surface-variant max-w-md truncate" title={summaryOf(r)}>{summaryOf(r) || '—'}</TD>
                     <TD kind="actions"><ExpandToggle open={expandedId === r.id} onClick={() => setExpandedId((cur) => (cur === r.id ? null : r.id))} /></TD>

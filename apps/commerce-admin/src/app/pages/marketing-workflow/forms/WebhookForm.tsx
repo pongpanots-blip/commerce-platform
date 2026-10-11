@@ -51,8 +51,8 @@ export function WebhookForm({ step, meta, secrets, onChange, onSecretsChanged }:
         </Select></div>
         <Input className="min-w-0 flex-1" placeholder="https://" value={step.url} onChange={(e) => onChange({ ...step, url: e.target.value })} aria-label="URL" />
       </div>
-      {warning === 'scheme' && <Hint>{__uiText('URL ต้องขึ้นต้นด้วย http:// หรือ https://')}</Hint>}
-      {warning === 'internal' && <Hint>{__uiText('URL นี้ชี้ไปที่เครือข่ายภายใน ระบบจะไม่ยิงให้')}</Hint>}
+      {warning === 'scheme' && <p className="text-[11px] text-warn">{__uiText('URL ต้องขึ้นต้นด้วย http:// หรือ https://')}</p>}
+      {warning === 'internal' && <p className="text-[11px] text-warn">{__uiText('URL นี้ชี้ไปที่เครือข่ายภายใน ระบบจะไม่ส่งให้')}</p>}
 
       <Field label={__uiText('Headers')}>
         {step.headers.map((h, i) => {
@@ -67,7 +67,7 @@ export function WebhookForm({ step, meta, secrets, onChange, onSecretsChanged }:
                   ? <Input type="password" autoComplete="off" aria-label={__uiText('ค่าลับ')} placeholder={ref ? `•••• (${name})` : __uiText('ใส่ค่าลับ')} value={draftSecret[i] ?? ''}
                       onChange={(e) => setDraftSecret((d) => ({ ...d, [i]: e.target.value }))} />
                   : <Input placeholder={__uiText('ค่า')} aria-label={__uiText('ค่า header')} value={h.value} onChange={(e) => setHeader(i, { value: e.target.value })} />}
-                <Button size="sm" variant="ghost" icon="close" aria-label={__uiText('ลบ header')} title={__uiText('ลบ header')}
+                <Button size="sm" variant="danger-ghost" icon="close" aria-label={__uiText('ลบ header')} title={__uiText('ลบ header')}
                   onClick={() => onChange({ ...step, headers: step.headers.filter((_, j) => j !== i) })} />
               </div>
               <div className="flex items-center gap-3">

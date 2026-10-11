@@ -16,6 +16,8 @@ describe('rule helpers', () => {
   it('describes rules in one line', () => {
     const names = new Map([['add_to_cart', 'ใส่ตะกร้า']]);
     expect(describeRule({ op: 'OR', children: [newEventLeaf(cart), { kind: 'event', name: 'add_to_cart', measure: { sum: 'price' }, op: 'gte', value: 500, window: { lastDays: 30 }, filters: [] }] }, names))
-      .toBe('(ใส่ตะกร้า ≥ 1 ครั้ง / 7 วัน OR ใส่ตะกร้า ผลรวม price ≥ 500 / 30 วัน)');
+      .toBe('(ใส่ตะกร้า ≥ 1 ครั้ง / 7 วัน หรือ ใส่ตะกร้า ผลรวมของ price ≥ 500 / 30 วัน)');
+    expect(describeRule({ op: 'AND', children: [newEventLeaf(cart), { kind: 'segment', segmentId: 'seg-1' }] }, new Map([...names, ['seg-1', 'ลูกค้าประจำ']])))
+      .toBe('(ใส่ตะกร้า ≥ 1 ครั้ง / 7 วัน และ กลุ่มลูกค้า ลูกค้าประจำ)');
   });
 });

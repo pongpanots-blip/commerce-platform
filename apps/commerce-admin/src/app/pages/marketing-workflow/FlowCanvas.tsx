@@ -5,7 +5,7 @@ import { Background, BackgroundVariant, ConnectionMode, Controls, MarkerType, Re
   useNodesState, useReactFlow, useStoreApi, type Connection, type Edge, type EdgeChange, type NodeChange } from '@xyflow/react';
 import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import type { CanvasPosition, TriggerType, WorkflowMeta, WorkflowStep } from '@cp/marketing-workflow';
-import { flowNodeTypes, type FlowNode } from './NodeCard';
+import { confirmRemoveStep, flowNodeTypes, type FlowNode } from './NodeCard';
 import { categoryOf, itemOf, kindOf, PALETTE, type PaletteItem } from './palette-items';
 import { DRAG_TYPE, Palette } from './Palette';
 import { autoLayout, outPorts, TRIGGER, type Anchor, type Graph, type StepKind } from './workflow-graph';
@@ -131,20 +131,20 @@ function Canvas(p: FlowCanvasProps) {
         onConnect={onConnect} isValidConnection={isValidConnection}
         onNodeDragStop={((_: unknown, n: FlowNode) => { if (n.id !== TRIGGER) p.onMove(n.id, n.position); }) as never}
         onPaneClick={() => { p.onSelect(null); setPlus(null); }} connectionMode={ConnectionMode.Loose} connectionRadius={48}
-        deleteKeyCode={['Backspace', 'Delete']} fitView fitViewOptions={{ padding: 0.3, maxZoom: 1 }} proOptions={{ hideAttribution: true }}
+        deleteKeyCode={['Backspace', 'Delete']} onBeforeDelete={async ({ nodes: removing }) => removing.every((n) => n.id === TRIGGER) || confirmRemoveStep()} fitView fitViewOptions={{ padding: 0.3, maxZoom: 1 }} proOptions={{ hideAttribution: true }}
         ariaLabelConfig={{ 'controls.ariaLabel': __uiText('Workflow controls'), 'controls.zoomIn.ariaLabel': __uiText('Zoom in'),
           'controls.zoomOut.ariaLabel': __uiText('Zoom out'), 'controls.fitView.ariaLabel': __uiText('Fit view'), 'controls.interactive.ariaLabel': __uiText('Toggle interactivity') }}>
         <MeasurementWatchdog />
-        <Background variant={BackgroundVariant.Lines} gap={24} color="#e3e7ee" />
+        <Background variant={BackgroundVariant.Lines} gap={24} color="var(--color-secondary-container)" />
         <Controls showInteractive={false} />
       </ReactFlow>
       {!p.graph.steps.length && (
         <div className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-sm text-on-surface-variant">
-          {__uiText('ลาก step จากแถบซ้ายมาวาง — Entry → Message หรือ Action → +')}
+          {__uiText('ลากขั้นตอนจากแถบซ้ายมาวาง หรือกดปุ่ม + ข้างการ์ดจุดเริ่ม')}
         </div>
       )}
       {plus && (
-        <div className="fixed z-50 max-h-[70vh] overflow-y-auto rounded-xl border border-outline-variant bg-surface p-2 shadow-lg" style={{ left: plus.x + 8, top: plus.y }}>
+        <div className="fixed z-50 max-h-[70vh] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-lowest p-2 shadow-raised" style={{ left: plus.x + 8, top: plus.y }}>
           <Palette compact steps={p.graph.steps} triggerType={p.triggerType} limits={p.limits} onPick={pick} />
         </div>
       )}

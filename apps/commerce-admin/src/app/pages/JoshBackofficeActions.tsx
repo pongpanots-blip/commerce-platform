@@ -174,7 +174,7 @@ function SupplierAction({ row, onDone }: { row: Row; onDone: (msg: string) => vo
 
   return (
     <FormPanel
-      title={__uiText("แก้ supplier")}
+      title={__uiText("แก้ไขซัพพลายเออร์")}
       icon="edit"
       cols={1}
       error={err}
@@ -217,8 +217,8 @@ export function ViewCreate({ view, onDone }: { view: string; onDone: (msg: strin
 
   if (!open) {
     return (
-      <Button size="sm" onClick={() => setOpen(true)}>
-        {view === 'suppliers' ? __uiText("เพิ่ม supplier") : __uiText("อัปโหลดเอกสาร (.md)")}
+      <Button variant="primary" icon={view === 'suppliers' ? 'add' : 'upload'} onClick={() => setOpen(true)}>
+        {view === 'suppliers' ? __uiText("เพิ่มซัพพลายเออร์") : __uiText("อัปโหลดเอกสาร (.md)")}
       </Button>
     );
   }
@@ -230,7 +230,7 @@ export function ViewCreate({ view, onDone }: { view: string; onDone: (msg: strin
     let done: string;
 
     if (view === 'suppliers') {
-      if (!form.supplier_name?.trim()) return setErr('ต้องมีชื่อ supplier');
+      if (!form.supplier_name?.trim()) return setErr('ต้องมีชื่อซัพพลายเออร์');
       const supplier = Object.fromEntries(SUPPLIER_FIELDS.map(([k]) => [k, (form[k] ?? '').trim()]).filter(([, v]) => v));
       fn = () => joshActionsApi.createSupplier(supplier);
       done = `เพิ่ม ${form.supplier_name} แล้ว`;
@@ -242,7 +242,7 @@ export function ViewCreate({ view, onDone }: { view: string; onDone: (msg: strin
       done = `อัปโหลด ${file.name} แล้ว`;
     }
 
-    if (!confirmJosh(view === 'suppliers' ? `เพิ่ม supplier "${form.supplier_name}"?` : `อัปโหลด ${file!.name} (${form.category})?`)) return;
+    if (!confirmJosh(view === 'suppliers' ? `เพิ่มซัพพลายเออร์ "${form.supplier_name}"?` : `อัปโหลด ${file!.name} (${form.category})?`)) return;
 
     setBusy(true);
     try { await fn(); setOpen(false); setForm({ category: DOC_CATEGORIES[0] }); setFile(null); onDone(done); }
@@ -252,7 +252,7 @@ export function ViewCreate({ view, onDone }: { view: string; onDone: (msg: strin
 
   return (
     <FormPanel
-      title={view === 'suppliers' ? __uiText("เพิ่ม supplier") : __uiText("อัปโหลดเอกสาร")}
+      title={view === 'suppliers' ? __uiText("เพิ่มซัพพลายเออร์") : __uiText("อัปโหลดเอกสาร")}
       icon={view === 'suppliers' ? 'add_circle' : 'upload_file'}
       cols={1}
       error={err}

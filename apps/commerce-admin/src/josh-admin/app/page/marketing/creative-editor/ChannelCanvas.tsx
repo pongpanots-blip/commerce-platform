@@ -335,7 +335,7 @@ export function renderElementPreview(element: CreativeElement) {
       );
     case 'html':
       return (
-        <div className="rounded border border-dashed border-amber-300 bg-amber-50 p-2 text-[10px] font-mono text-amber-700 line-clamp-3">{element.html}</div>
+        <div className="rounded border border-dashed border-amber-300 bg-amber-50 p-2 text-[10px] font-mono text-warn line-clamp-3">{element.html}</div>
       );
     case 'countdown':
       return (
@@ -642,7 +642,7 @@ function CanvasColumn({
                         event.stopPropagation();
                         onRemoveElement(element.id);
                       }}
-                      className="shrink-0 rounded p-0.5 text-neutral-300 hover:text-red-500"
+                      className="shrink-0 rounded p-0.5 text-neutral-300 hover:text-danger"
                       title={__uiText("ลบองค์ประกอบนี้")}
                     >
                       <MdOutlineClose size={14} />
@@ -712,7 +712,7 @@ function CanvasColumn({
                 <button
                   type="button"
                   onClick={() => onRemoveNestedRow(column.id, nestedRow.id)}
-                  className="text-[9px] text-red-400 hover:text-red-600"
+                  className="text-[9px] text-danger hover:text-danger"
                 >
                   {__uiText("ลบแถวย่อย")}</button>
               </div>

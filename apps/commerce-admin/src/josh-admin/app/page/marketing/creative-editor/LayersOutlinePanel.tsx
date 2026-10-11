@@ -70,7 +70,7 @@ function ElementMenu({
               {__uiText("Duplicate")}</button>
             <button
               type="button"
-              className="flex w-full items-center px-3 py-1.5 text-left text-[11px] text-red-500 hover:bg-red-50"
+              className="flex w-full items-center px-3 py-1.5 text-left text-[11px] text-danger hover:bg-red-50"
               onClick={(e) => { e.stopPropagation(); onRemove(); setOpen(false); }}
             >
               {__uiText("Delete")}</button>

@@ -35,7 +35,7 @@ import {
   type MarketingFlowNode,
   type MarketingNodeCardData,
 } from './MarketingNodeCards';
-import { formatDurationLabel } from './trigger-rule.helpers';
+import { formatDurationLabel, marketingChannelLabel, TRIGGER_TYPE_CARDS } from './trigger-rule.helpers';
 
 /**
  * Vertical, mostly-linear canvas (Agently-style): trigger card derived from
@@ -102,7 +102,7 @@ const PAGE_AFFINITY_TYPE_LABEL: Record<MarketingPageAffinityTriggerConfig['pageT
   get pdp(){return __uiText("สินค้า");},
   get category(){return __uiText("หมวดหมู่");},
   get cart(){return __uiText("ตะกร้า");},
-  get path(){return __uiText("Path");},
+  get path(){return __uiText("หน้าที่ระบุเอง");},
 };
 
 function describePageAffinity(config: Partial<MarketingPageAffinityTriggerConfig>): string {
@@ -110,10 +110,10 @@ function describePageAffinity(config: Partial<MarketingPageAffinityTriggerConfig
   const label = PAGE_AFFINITY_TYPE_LABEL[pageType] ?? pageType;
   const target =
     pageType === 'path'
-      ? config.path || __uiText("ยังไม่ระบุ path")
+      ? config.path || __uiText("ยังไม่ระบุหน้า")
       : pageType === 'cart'
         ? ''
-        : config.entityId || __uiText("ยังไม่ระบุ ID");
+        : config.entityId || __uiText("ยังไม่ได้เลือก");
   const targetPart = target ? ` (${target})` : '';
   return __uiText("เข้าชม{0}{1} อย่างน้อย {2} ครั้ง ภายใน {3}",{"0":label,"1":targetPart,"2":config.minViews ?? '-',"3":formatDurationLabel(config.windowHours, config.windowMinutes)});
 }
@@ -125,13 +125,13 @@ function describeTrigger(triggerType: MarketingTriggerType, triggerConfig: Marke
   if (triggerType === 'session_in_window') {
     const lookback =
       (triggerConfig as { lookbackMinutes?: number }).lookbackMinutes ?? 20;
-    return __uiText("คนที่ login ภายใน {0} นาที (+ segment ถ้าเลือก) ในช่วง Schedule",{"0":lookback});
+    return __uiText("ลูกค้าที่เข้าสู่ระบบภายใน {0} นาที ในช่วงเวลาทำงาน",{"0":lookback});
   }
   if (triggerType === 'first_login') {
-    return __uiText("เมื่อลูกค้า login ครั้งแรกบนแอป/เว็บ");
+    return __uiText("ลูกค้าเข้าสู่ระบบครั้งแรกบนแอปหรือเว็บ");
   }
   if (triggerType === 'first_visit') {
-    return __uiText("เมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (guest ได้)");
+    return __uiText("เปิดเว็บครั้งแรกบนเครื่องนี้ ยังไม่เข้าสู่ระบบก็ได้");
   }
   if (triggerType === 'custom') {
     const custom = triggerConfig as {
@@ -145,12 +145,12 @@ function describeTrigger(triggerType: MarketingTriggerType, triggerConfig: Marke
     const delay = Number(custom.delayMinutes) || 0;
     const audiencePart =
       delay > 0
-        ? __uiText("ทุกคนที่อยู่บนเว็บครบ {0} นาทีได้ action",{"0":delay})
-        : __uiText("ทุกคนที่เข้าเว็บช่วงเงื่อนไขได้ action");
+        ? __uiText("ทุกคนที่อยู่บนเว็บครบ {0} นาที",{"0":delay})
+        : __uiText("ทุกคนที่เข้าเว็บในช่วงนี้");
     const sourceLine =
       custom.source?.kind === 'http'
-        ? __uiText("เช็คอัตโนมัติจาก API ทุก {0} นาที ({1} {2} {3})",{"0":custom.source.intervalMinutes ?? 5,"1":custom.source.valuePath ?? '?',"2":custom.source.operator ?? '==',"3":String(custom.source.value ?? '')})
-        : __uiText("เปิด/ปิดเอง: Activate เมื่อเริ่มช่วง, Pause เมื่อจบ");
+        ? __uiText("ระบบเช็คจากลิงก์ข้อมูลทุก {0} นาที ({1} {2} {3})",{"0":custom.source.intervalMinutes ?? 5,"1":custom.source.valuePath ?? '?',"2":customOperatorLabel(custom.source.operator),"3":String(custom.source.value ?? '')})
+        : __uiText("เปิดใช้งานเมื่อเริ่มช่วง และหยุดชั่วคราวเมื่อจบ");
     return __uiText("\"{0}\" — {1} (วันละ 1 ครั้ง/เครื่อง)\n{2}{3}",{"0":label,"1":audiencePart,"2":sourceLine,"3":desc ? `\n${desc}` : ''});
   }
   if (triggerType === 'scheduled') {
@@ -158,7 +158,7 @@ function describeTrigger(triggerType: MarketingTriggerType, triggerConfig: Marke
     const dowLabels: Record<number, string> = { 0: __uiText("อา"), 1: __uiText("จ"), 2: __uiText("อ"), 3: __uiText("พ"), 4: __uiText("พฤ"), 5: __uiText("ศ"), 6: __uiText("ส") };
     const days = cfg.daysOfWeek ?? [];
     const dayText = days.length === 0 ? __uiText("ทุกวัน") : days.map((d) => dowLabels[d] ?? d).join(', ');
-    return __uiText("ยิงทุก{0} เวลา {1} น. — ส่ง Audience ที่เลือก (คนละ 1 ครั้ง/รอบ)",{"0":dayText,"1":cfg.time ?? '18:00'});
+    return __uiText("ส่งทุก{0} เวลา {1} น. ให้กลุ่มเป้าหมายที่เลือก (คนละ 1 ครั้งต่อรอบ)",{"0":dayText,"1":cfg.time ?? '18:00'});
   }
   if (triggerType === 'order_milestone') {
     const cfg = triggerConfig as { metric?: string; operator?: string; value?: number };
@@ -170,19 +170,16 @@ function describeTrigger(triggerType: MarketingTriggerType, triggerConfig: Marke
     return __uiText("{0} {1} {2} {3} — ทำงานครั้งแรกที่เข้าเงื่อนไข (คนละ 1 ครั้ง)",{"0":meta.label,"1":op,"2":Number(cfg.value ?? 0).toLocaleString(),"3":meta.unit});
   }
   const idle = triggerConfig as { idleHours?: number; idleMinutes?: number };
-  return __uiText("เริ่ม workflow เมื่อตะกร้าค้าง {0}",{"0":formatDurationLabel(idle.idleHours ?? 24, idle.idleMinutes ?? 0)});
+  return __uiText("เริ่มเมื่อตะกร้าค้าง {0}",{"0":formatDurationLabel(idle.idleHours ?? 24, idle.idleMinutes ?? 0)});
 }
 
-const TRIGGER_TITLE: Record<MarketingTriggerType, string> = {
-  cart_idle: 'ตะกร้าค้าง (Cart Idle)',
-  page_affinity: 'เข้าชมหน้าค้าง (Page Affinity)',
-  session_in_window: 'ช่วงเวลา + Login (Session In Window)',
-  first_login: 'Login ครั้งแรก (First Login)',
-  first_visit: 'เข้าเว็บครั้งแรก (First Visit)',
-  custom: 'กำหนดเอง (Custom)',
-  order_milestone: 'ยอดสั่งซื้อถึงเป้า (Milestone)',
-  scheduled: 'ตามเวลา (Scheduled)',
-};
+/** Display word for a custom-source comparison; the saved operator stays the code. */
+function customOperatorLabel(operator: string | undefined): string {
+  if (!operator || operator === '==') return __uiText("เท่ากับ");
+  if (operator === '!=') return __uiText("ไม่เท่ากับ");
+  if (operator === 'contains') return __uiText("มีคำว่า");
+  return operator;
+}
 
 const ORDER_MILESTONE_METRIC_LABEL: Record<string, { label: string; unit: string }> = {
   single_order_total: { get label(){return __uiText("ยอดออเดอร์ครั้งเดียว");}, get unit(){return __uiText("บาท");} },
@@ -199,7 +196,7 @@ function describeAudience(
   const exclude = step.excludeSegmentIds ?? [];
 
   if (include.length === 0 && exclude.length === 0) {
-    return __uiText("ทุกคนที่เข้าเงื่อนไข trigger (ไม่กรอง segment เพิ่ม)");
+    return __uiText("ทุกคนที่เข้าเงื่อนไขเริ่ม");
   }
 
   const lines: string[] = [];
@@ -236,32 +233,32 @@ function describeAction(
 ): { title: string; subtitle: string } {
   if (step.action.kind === 'grant_coupon') {
     return {
-      title: __uiText("แจกคูปอง (Grant Coupon)"),
+      title: __uiText("แจกคูปอง"),
       subtitle: describeCoupon(step.action.couponId, coupons),
     };
   }
   if (step.action.kind === 'show_offer') {
     if (step.action.displayOnly) {
       return {
-        title: __uiText("แสดง Popup (โฆษณา)"),
+        title: __uiText("แสดงป๊อปอัปโฆษณา"),
         subtitle: [
           step.action.title?.trim() || __uiText("ไม่มีหัวข้อ"),
-          __uiText("สูงสุด {0} ครั้ง/session",{"0":step.action.maxPerSession ?? 1}),
+          __uiText("สูงสุด {0} ครั้งต่อการเข้าเว็บ",{"0":step.action.maxPerSession ?? 1}),
         ].join('\n'),
       };
     }
     return {
-      title: __uiText("แสดง Offer บน Shop"),
+      title: __uiText("แสดงข้อเสนอบนหน้าร้าน"),
       subtitle: [
         step.action.title?.trim() || __uiText("ไม่มีหัวข้อกำหนดเอง"),
         describeCoupon(step.action.couponId, coupons),
       ].join('\n'),
     };
   }
-  const channels = step.action.channels?.length ? step.action.channels.join(', ') : __uiText("ยังไม่เลือกช่องทาง");
+  const channels = step.action.channels?.length ? step.action.channels.map(marketingChannelLabel).join(', ') : __uiText("ยังไม่เลือกช่องทาง");
   return {
-    title: __uiText("แจ้งเตือน (Notify)"),
-    subtitle: __uiText("ช่องทาง: {0}\nTemplate: {1}",{"0":channels,"1":step.action.templateKey || __uiText("ยังไม่ได้เลือก")}),
+    title: __uiText("ส่งข้อความหาลูกค้า"),
+    subtitle: __uiText("ช่องทาง: {0}\nเทมเพลต: {1}",{"0":channels,"1":step.action.templateKey || __uiText("ยังไม่ได้เลือก")}),
   };
 }
 
@@ -275,14 +272,14 @@ function buildNodeData(
     case 'audience':
       return {
         kind: 'audience',
-        title: __uiText("กลุ่มเป้าหมาย (Audience)"),
+        title: __uiText("กลุ่มเป้าหมาย"),
         subtitle: describeAudience(step, segments),
         removable: false,
       };
     case 'wait':
       return {
         kind: 'wait',
-        title: __uiText("รอ (Wait)"),
+        title: __uiText("รอเวลา"),
         subtitle: __uiText("หน่วงเวลา {0} ก่อนขั้นตอนถัดไป",{"0":formatDurationLabel(step.hours, step.minutes)}),
         removable: true,
         onRemove,
@@ -290,8 +287,8 @@ function buildNodeData(
     case 'gate':
       return {
         kind: 'gate',
-        title: __uiText("ตรวจเงื่อนไขซ้ำ (Gate)"),
-        subtitle: __uiText("ตรวจว่าตะกร้ายังไม่ว่าง/ยังไม่ชำระเงิน (cart_still_open) ก่อนทำขั้นตอนถัดไป"),
+        title: __uiText("ตรวจซ้ำก่อนทำต่อ"),
+        subtitle: __uiText("ทำต่อเฉพาะเมื่อตะกร้ายังมีของและยังไม่ชำระเงิน"),
         removable: true,
         onRemove,
       };
@@ -322,6 +319,13 @@ function stepExplicitNextId(step: MarketingStep): string | null | undefined {
   return undefined;
 }
 
+const EDGE_STYLE = { stroke: 'var(--color-outline-variant)', strokeWidth: 1.5 };
+
+/** Asked before a step leaves the canvas (card button or Delete key). */
+function confirmRemoveStep(): boolean {
+  return window.confirm(__uiText("ลบขั้นตอนนี้? เส้นที่ต่อเข้าและออกจากขั้นตอนนี้จะหายไปด้วย"));
+}
+
 function buildCanvasEdges(steps: MarketingStep[]): Edge[] {
   const stepIds = new Set(steps.map((s) => s.id));
   const edges: Edge[] = [];
@@ -332,7 +336,7 @@ function buildCanvasEdges(steps: MarketingStep[]): Edge[] {
       source: TRIGGER_NODE_ID,
       target: steps[0].id,
       type: 'smoothstep',
-      style: { stroke: '#d1d5db', strokeWidth: 1.5 },
+      style: EDGE_STYLE,
     });
   }
 
@@ -346,9 +350,9 @@ function buildCanvasEdges(steps: MarketingStep[]): Edge[] {
           sourceHandle: 'yes',
           target: step.yesNextId,
           type: 'smoothstep',
-          label: 'Yes',
-          style: { stroke: '#16a34a', strokeWidth: 1.5 },
-          labelStyle: { fill: '#16a34a', fontWeight: 600, fontSize: 11 },
+          label: __uiText("ใช่"),
+          style: { stroke: 'var(--color-ok)', strokeWidth: 1.5 },
+          labelStyle: { fill: 'var(--color-ok)', fontWeight: 600, fontSize: 11 },
         });
       }
       if (step.noNextId && stepIds.has(step.noNextId)) {
@@ -358,9 +362,9 @@ function buildCanvasEdges(steps: MarketingStep[]): Edge[] {
           sourceHandle: 'no',
           target: step.noNextId,
           type: 'smoothstep',
-          label: 'No',
-          style: { stroke: '#dc2626', strokeWidth: 1.5 },
-          labelStyle: { fill: '#dc2626', fontWeight: 600, fontSize: 11 },
+          label: __uiText("ไม่ใช่"),
+          style: { stroke: 'var(--color-danger)', strokeWidth: 1.5 },
+          labelStyle: { fill: 'var(--color-danger)', fontWeight: 600, fontSize: 11 },
         });
       }
       continue;
@@ -374,7 +378,7 @@ function buildCanvasEdges(steps: MarketingStep[]): Edge[] {
         source: step.id,
         target: explicit,
         type: 'smoothstep',
-        style: { stroke: '#9ca3af', strokeWidth: 1.5 },
+        style: { stroke: 'var(--color-outline)', strokeWidth: 1.5 },
       });
       continue;
     }
@@ -386,7 +390,7 @@ function buildCanvasEdges(steps: MarketingStep[]): Edge[] {
         source: step.id,
         target: next.id,
         type: 'smoothstep',
-        style: { stroke: '#d1d5db', strokeWidth: 1.5 },
+        style: EDGE_STYLE,
       });
     }
   }
@@ -475,7 +479,7 @@ export function MarketingFlowCanvas({
       selected: selectedNodeId === TRIGGER_NODE_ID,
       data: {
         kind: 'trigger',
-        title: __uiText('Trigger: {0}', { '0': __uiText(TRIGGER_TITLE[triggerType] ?? triggerType) }),
+        title: __uiText('เริ่มเมื่อ: {0}', { '0': TRIGGER_TYPE_CARDS.find((card) => card.type === triggerType)?.title ?? triggerType }),
         subtitle: `${describeTrigger(triggerType, triggerConfig)}\n${__uiText('ช่วงเวลาทำงาน: {0}', { '0': describeMarketingSchedule(schedule) })}`,
         triggerType,
         onUpdateTriggerType,
@@ -488,7 +492,9 @@ export function MarketingFlowCanvas({
       position: positions[step.id] ?? { x: 0, y: NODE_GAP_Y * (index + 1) },
       connectable: true,
       selected: selectedNodeId === step.id,
-      data: buildNodeData(step, segments, coupons, () => onDeleteStep(step.id)),
+      data: buildNodeData(step, segments, coupons, () => {
+        if (confirmRemoveStep()) onDeleteStep(step.id);
+      }),
     }));
 
     setNodes([triggerNode, ...stepNodes]);
@@ -610,7 +616,7 @@ export function MarketingFlowCanvas({
   }, []);
 
   return (
-    <div className="h-full w-full rounded-xl border border-gray-200 bg-gray-50">
+    <div className="h-full w-full rounded-xl border border-secondary-container bg-surface-container-low">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -631,6 +637,10 @@ export function MarketingFlowCanvas({
         connectionMode={ConnectionMode.Loose}
         connectionRadius={48}
         deleteKeyCode={['Backspace', 'Delete']}
+        // Keyboard delete of a step asks first; removing only a line does not.
+        onBeforeDelete={async ({ nodes: removing }) =>
+          removing.every((node) => node.id === TRIGGER_NODE_ID) || confirmRemoveStep()
+        }
         fitView
         fitViewOptions={{ padding: 0.3, maxZoom: 1 }}
         proOptions={{ hideAttribution: true }}
@@ -643,7 +653,7 @@ export function MarketingFlowCanvas({
         }}
       >
         <MeasurementWatchdog />
-        <Background variant={BackgroundVariant.Dots} gap={18} size={1.5} color="#d1d5db" />
+        <Background variant={BackgroundVariant.Dots} gap={18} size={1.5} color="var(--color-outline-variant)" />
         <Controls showInteractive={false} />
       </ReactFlow>
     </div>

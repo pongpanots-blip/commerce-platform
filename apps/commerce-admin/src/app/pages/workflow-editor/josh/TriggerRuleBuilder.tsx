@@ -26,18 +26,20 @@ import { Select } from './shared-ui';
 import { scheduleStripChips, TRIGGER_TYPE_CARDS } from './trigger-rule.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-const FIELD_LABEL = 'mb-1 block text-xs font-medium text-gray-500';
+import { Button, Chip, FormField, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+const FIELD_LABEL = 'mb-1 block text-xs font-medium text-on-surface';
 const INPUT_CLASS =
-  'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none';
+  'w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-sm text-on-surface focus:border-primary focus:outline-none';
+const HINT_CLASS = 'text-[11px] leading-relaxed text-on-surface-variant';
+const STEP_HEADING_CLASS = 'mb-1.5 text-xs font-semibold text-on-surface';
 
-const RULE_BLOCK_CLASS = 'rounded-lg border border-gray-200 bg-gray-50 p-3';
+const RULE_BLOCK_CLASS = 'rounded-lg border border-secondary-container bg-surface-container-low p-3';
 
 const PAGE_AFFINITY_PAGE_TYPE_OPTIONS: Array<{ value: MarketingPageAffinityPageType; label: string }> = [
-  { value: 'pdp', get label(){return __uiText("สินค้า (PDP)");} },
-  { value: 'category', get label(){return __uiText("หมวดหมู่ (Category)");} },
-  { value: 'cart', get label(){return __uiText("ตะกร้า (Cart)");} },
-  { value: 'path', get label(){return __uiText("Path เอง");} },
+  { value: 'pdp', get label(){return __uiText("หน้าสินค้า");} },
+  { value: 'category', get label(){return __uiText("หน้าหมวดหมู่");} },
+  { value: 'cart', get label(){return __uiText("ตะกร้า");} },
+  { value: 'path', get label(){return __uiText("หน้าที่ระบุเอง");} },
 ];
 
 const CUSTOM_SOURCE_OPERATOR_OPTIONS: Array<{
@@ -47,10 +49,10 @@ const CUSTOM_SOURCE_OPERATOR_OPTIONS: Array<{
   { value: '==', get label(){return __uiText("เท่ากับ");} },
   { value: '!=', get label(){return __uiText("ไม่เท่ากับ");} },
   { value: 'contains', get label(){return __uiText("มีคำว่า");} },
-  { value: '>', get label(){return __uiText(">");} },
-  { value: '>=', get label(){return __uiText("≥");} },
-  { value: '<', get label(){return __uiText("<");} },
-  { value: '<=', get label(){return __uiText("≤");} },
+  { value: '>', get label(){return __uiText("มากกว่า");} },
+  { value: '>=', get label(){return __uiText("ตั้งแต่");} },
+  { value: '<', get label(){return __uiText("น้อยกว่า");} },
+  { value: '<=', get label(){return __uiText("ไม่เกิน");} },
 ];
 
 /**
@@ -73,11 +75,6 @@ function CustomSourceFields({
   const [probeTruncated, setProbeTruncated] = useState(false);
   const [probeError, setProbeError] = useState<string | null>(null);
   const [selectedProbePath, setSelectedProbePath] = useState<string | null>(null);
-  const sourceKindSelectId = useId();
-  const urlInputId = useId();
-  const valuePathInputId = useId();
-  const operatorSelectId = useId();
-  const valueInputId = useId();
   const intervalInputId = useId();
 
   const clearProbeState = () => {
@@ -120,7 +117,7 @@ function CustomSourceFields({
       setProbeFields(result.fields ?? []);
       setProbeTruncated(Boolean(result.truncated));
     } catch (err: any) {
-      setProbeError(err?.response?.data?.message || __uiMessage("เรียก fetch ไม่สำเร็จ"));
+      setProbeError(err?.response?.data?.message || __uiMessage("ดึงข้อมูลไม่สำเร็จ"));
     } finally {
       setProbing(false);
     }
@@ -163,11 +160,9 @@ function CustomSourceFields({
   };
 
   return (
-    <div className="space-y-2 border-t border-dashed border-gray-200 pt-2">
-      <div>
-        <label htmlFor={sourceKindSelectId} className={FIELD_LABEL}>{__uiText("แหล่งข้อมูลเงื่อนไข (เปิด/ปิดจากอะไร)")}</label>
+    <div className="space-y-2 border-t border-secondary-container pt-3">
+      <FormField label={__uiText("เปิดหรือปิดเงื่อนไขอย่างไร")}>
         <Select
-          id={sourceKindSelectId}
           className="w-full"
           value={source.kind}
           onChange={(event) => {
@@ -177,17 +172,15 @@ function CustomSourceFields({
             );
           }}
         >
-          <option value="manual">{__uiText("เปิด/ปิดเอง (กด Activate เมื่อเริ่ม, Pause เมื่อจบ)")}</option>
-          <option value="http">{__uiText("เช็คอัตโนมัติจาก URL (API ภายนอก เช่น weather API)")}</option>
+          <option value="manual">{__uiText("เปิดและปิดเอง (กดเปิดใช้งานเมื่อเริ่ม หยุดชั่วคราวเมื่อจบ)")}</option>
+          <option value="http">{__uiText("ให้ระบบเช็คจากลิงก์ข้อมูลภายนอก เช่น ข้อมูลสภาพอากาศ")}</option>
         </Select>
-      </div>
+      </FormField>
 
       {source.kind === 'http' && (
         <div className="space-y-2">
-          <div>
-            <label htmlFor={urlInputId} className={FIELD_LABEL}>{__uiText("URL (ตอบกลับเป็น JSON)")}</label>
+          <FormField label={__uiText("ลิงก์ข้อมูล")}>
             <input
-              id={urlInputId}
               type="text"
               placeholder="https://api.openweathermap.org/data/2.5/weather?q=Bangkok&appid=..."
               className={`${INPUT_CLASS} font-mono text-xs`}
@@ -197,36 +190,35 @@ function CustomSourceFields({
                 patchSource({ ...source, url: event.target.value });
               }}
             />
-          </div>
+          </FormField>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
+            <Button
+              size="sm"
               disabled={probing || !source.url.trim()}
               onClick={handleProbe}
-              className="rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-[11px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
-              {probing ? __uiText("กำลัง fetch...") : __uiText("ลอง fetch")}
-            </button>
-            <span className="text-[11px] text-gray-400">{__uiText("ดึง sample เพื่อเลือก field")}</span>
+              {probing ? __uiText("กำลังดึงข้อมูล...") : __uiText("ลองดึงข้อมูล")}
+            </Button>
+            <span className={HINT_CLASS}>{__uiText("ดึงข้อมูลตัวอย่างเพื่อเลือกค่าที่จะใช้")}</span>
           </div>
           {probeError && (
-            <p className="rounded-md bg-red-50 px-2 py-1.5 text-[11px] text-red-600">
-              {__uiText("ดึงค่าไม่สำเร็จ: ")}{(typeof (probeError) === 'string' ? __uiText(probeError) : probeError)}
+            <p className="rounded-md bg-danger-container px-2 py-1.5 text-[11px] text-danger">
+              {__uiText("ดึงข้อมูลไม่สำเร็จ: {0}", { "0": typeof probeError === 'string' ? __uiText(probeError) : probeError })}
             </p>
           )}
           {probeFields && (
-            <div className="overflow-hidden rounded-lg border border-gray-200">
-              <div className="border-b border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] font-medium text-gray-600">
-                {__uiText("เลือก field (")}{probeFields.length}{__uiText(") — กดแล้วเติม path + ค่าที่ต้องการ")}</div>
+            <div className="overflow-hidden rounded-lg border border-secondary-container">
+              <div className="border-b border-secondary-container bg-surface-container-low px-2.5 py-1.5 text-[11px] font-medium text-on-surface">
+                {__uiText("เลือกค่าที่จะใช้ ({0} รายการ) กดแล้วระบบเติมตำแหน่งและค่าให้", { "0": probeFields.length })}</div>
               {probeFields.length === 0 ? (
-                <p className="px-2.5 py-2 text-[11px] text-gray-500">{__uiText("ไม่พบ field ที่เลือกได้")}</p>
+                <p className={`px-2.5 py-2 ${HINT_CLASS}`}>{__uiText("ไม่พบค่าที่เลือกได้")}</p>
               ) : (
                 <div className="max-h-48 overflow-auto">
                   {probeFields.map((field) => (
                     <label
                       key={field.path}
-                      className={`flex cursor-pointer items-center gap-2 border-b border-gray-50 px-2.5 py-1.5 last:border-b-0 ${
-                        selectedProbePath === field.path ? 'bg-blue-50' : 'hover:bg-gray-50'
+                      className={`flex cursor-pointer items-center gap-2 border-b border-secondary-container px-2.5 py-1.5 last:border-b-0 ${
+                        selectedProbePath === field.path ? 'bg-primary/10' : 'hover:bg-surface-container-low'
                       }`}
                     >
                       <input
@@ -236,10 +228,10 @@ function CustomSourceFields({
                         onChange={() => handleSelectField(field)}
                         className="shrink-0"
                       />
-                      <span className="flex-1 truncate font-mono text-[11px] text-gray-700">
+                      <span className="flex-1 truncate font-mono text-[11px] text-on-surface">
                         {field.path}
                       </span>
-                      <span className="shrink-0 text-[11px] text-emerald-700">
+                      <span className="shrink-0 text-[11px] text-on-surface-variant">
                         {field.sampleValue}
                       </span>
                     </label>
@@ -247,27 +239,23 @@ function CustomSourceFields({
                 </div>
               )}
               {probeTruncated && (
-                <p className="border-t border-gray-100 px-2.5 py-1 text-[10px] text-amber-700">
-                  {__uiText("แสดงสูงสุด 100 field — response ถูกตัดบางส่วน")}</p>
+                <p className="border-t border-secondary-container px-2.5 py-1 text-[11px] text-warn">
+                  {__uiText("แสดงสูงสุด 100 รายการ ข้อมูลบางส่วนถูกตัด")}</p>
               )}
             </div>
           )}
           <div className="grid grid-cols-3 gap-2">
-            <div>
-              <label htmlFor={valuePathInputId} className={FIELD_LABEL}>{__uiText("อ่านค่าจาก (dot path)")}</label>
+            <FormField label={__uiText("ตำแหน่งค่า")}>
               <input
-                id={valuePathInputId}
                 type="text"
                 placeholder={__uiText("weather.0.main")}
                 className={`${INPUT_CLASS} font-mono text-xs`}
                 value={source.valuePath}
                 onChange={(event) => patchSource({ ...source, valuePath: event.target.value })}
               />
-            </div>
-            <div>
-              <label htmlFor={operatorSelectId} className={FIELD_LABEL}>{__uiText("เงื่อนไข")}</label>
+            </FormField>
+            <FormField label={__uiText("เงื่อนไข")}>
               <Select
-                id={operatorSelectId}
                 className="w-full"
                 value={source.operator}
                 onChange={(event) =>
@@ -283,27 +271,25 @@ function CustomSourceFields({
                   </option>
                 ))}
               </Select>
-            </div>
-            <div>
-              <label htmlFor={valueInputId} className={FIELD_LABEL}>{__uiText("ค่าที่ต้องการ")}</label>
+            </FormField>
+            <FormField label={__uiText("ค่าที่ต้องการ")}>
               <input
-                id={valueInputId}
                 type="text"
                 placeholder={__uiText("Rain")}
                 className={INPUT_CLASS}
                 value={String(source.value ?? '')}
                 onChange={(event) => patchSource({ ...source, value: event.target.value })}
               />
-            </div>
+            </FormField>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+            <div className="flex items-center gap-1.5 text-xs text-on-surface">
               <label htmlFor={intervalInputId}>{__uiText("เช็คทุก")}</label>
               <input
                 id={intervalInputId}
                 type="number"
                 min={1}
-                className="w-16 rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 focus:border-primary focus:outline-none"
+                className="w-16 rounded-lg border border-outline-variant bg-surface-container-lowest px-2 py-1 text-xs text-on-surface focus:border-primary focus:outline-none"
                 value={source.intervalMinutes ?? 5}
                 onChange={(event) =>
                   patchSource({
@@ -313,33 +299,33 @@ function CustomSourceFields({
                 }
               />
               {__uiText("นาที")}</div>
-            <button
-              type="button"
+            <Button
+              size="sm"
               disabled={checking || !source.url.trim() || !source.valuePath.trim()}
               onClick={handleCheck}
-              className="rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-[11px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
               {checking ? __uiText("กำลังเช็ค...") : __uiText("ทดสอบดึงค่าตอนนี้")}
-            </button>
+            </Button>
           </div>
           {checkResult && (
             <p
               className={`rounded-md px-2 py-1.5 text-[11px] ${
                 checkResult.error
-                  ? 'bg-red-50 text-red-600'
+                  ? 'bg-danger-container text-danger'
                   : checkResult.matched
-                    ? 'bg-emerald-50 text-emerald-700'
-                    : 'bg-amber-50 text-amber-700'
+                    ? 'bg-ok-container text-ok'
+                    : 'bg-warn-container text-warn'
               }`}
             >
               {checkResult.error
-                ? __uiText("ดึงค่าไม่สำเร็จ: {0}", {"0": checkResult.error})
-                : __uiText("ค่าปัจจุบัน = \"{0}\" → {1}", {"0": checkResult.actualValue, "1": checkResult.matched ? 'เข้าเงื่อนไข ✓ (workflow จะทำงาน)' : 'ยังไม่เข้าเงื่อนไข (workflow จะเงียบ)'})}
+                ? __uiText("ดึงข้อมูลไม่สำเร็จ: {0}", {"0": checkResult.error})
+                : checkResult.matched
+                  ? __uiText("ค่าตอนนี้คือ \"{0}\" เข้าเงื่อนไขแล้ว ข้อความอัตโนมัติจะทำงาน", {"0": checkResult.actualValue})
+                  : __uiText("ค่าตอนนี้คือ \"{0}\" ยังไม่เข้าเงื่อนไข ข้อความอัตโนมัติจะยังไม่ทำงาน", {"0": checkResult.actualValue})}
             </p>
           )}
-          <p className="text-[11px] leading-relaxed text-gray-400">
-            {__uiText("ตัวอย่างฝนตก: URL ของ weather API + path ")}<code className="rounded bg-white px-1">{__uiText("weather.0.main")}</code>{' '}
-            {__uiText("เงื่อนไข ")}<strong>{__uiText("เท่ากับ")}</strong> {__uiText(" ค่า ")}<code className="rounded bg-white px-1">{__uiText("Rain")}</code> {__uiText(" — ระบบเช็คให้เองระหว่าง Active ไม่ต้องมากด Pause เมื่อฝนหยุด (ดึงไม่สำเร็จ = ถือว่าไม่เข้าเงื่อนไข)")}</p>
+          <p className={HINT_CLASS}>
+            {__uiText("ตัวอย่างช่วงฝนตก: ใส่ลิงก์ข้อมูลสภาพอากาศ ตำแหน่งค่า weather.0.main เงื่อนไขเท่ากับ ค่า Rain ระบบจะเช็คให้เองระหว่างเปิดใช้งาน ไม่ต้องกดหยุดเมื่อฝนหยุด (ถ้าดึงข้อมูลไม่สำเร็จ จะถือว่ายังไม่เข้าเงื่อนไข)")}</p>
         </div>
       )}
     </div>
@@ -351,9 +337,9 @@ const ORDER_MILESTONE_METRIC_OPTIONS: Array<{
   label: string;
   unit: string;
 }> = [
-  { value: 'single_order_total', get label(){return __uiText("ยอดออเดอร์ครั้งเดียว");}, unit: 'บาท' },
-  { value: 'lifetime_spend', get label(){return __uiText("ยอดสั่งซื้อสะสมทั้งหมด");}, unit: 'บาท' },
-  { value: 'lifetime_order_count', get label(){return __uiText("จำนวนออเดอร์สะสม");}, unit: 'ครั้ง' },
+  { value: 'single_order_total', get label(){return __uiText("ยอดออเดอร์ครั้งเดียว");}, get unit(){return __uiText("บาท");} },
+  { value: 'lifetime_spend', get label(){return __uiText("ยอดสั่งซื้อสะสมทั้งหมด");}, get unit(){return __uiText("บาท");} },
+  { value: 'lifetime_order_count', get label(){return __uiText("จำนวนออเดอร์สะสม");}, get unit(){return __uiText("ครั้ง");} },
 ];
 
 /**
@@ -370,7 +356,7 @@ export function OrderMilestoneFields({
   __useUiLocale();
   const metric = config.metric ?? 'single_order_total';
   const unit =
-    ORDER_MILESTONE_METRIC_OPTIONS.find((opt) => opt.value === metric)?.unit ?? 'บาท';
+    ORDER_MILESTONE_METRIC_OPTIONS.find((opt) => opt.value === metric)?.unit ?? __uiText("บาท");
 
   const patch = (next: Partial<MarketingOrderMilestoneTriggerConfig>) =>
     onUpdateTrigger({
@@ -379,17 +365,12 @@ export function OrderMilestoneFields({
       value: config.value ?? 5000,
       ...next,
     });
-  const metricSelectId = useId();
-  const operatorSelectId = useId();
-  const valueInputId = useId();
 
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-[1fr_auto_auto] items-end gap-2">
-        <div>
-          <label htmlFor={metricSelectId} className={FIELD_LABEL}>{__uiText("ตัวชี้วัด")}</label>
+        <FormField label={__uiText("วัดจาก")}>
           <Select
-            id={metricSelectId}
             className="w-full"
             value={metric}
             onChange={(event) =>
@@ -402,23 +383,19 @@ export function OrderMilestoneFields({
               </option>
             ))}
           </Select>
-        </div>
-        <div>
-          <label htmlFor={operatorSelectId} className={FIELD_LABEL}>{__uiText("เงื่อนไข")}</label>
+        </FormField>
+        <FormField label={__uiText("เงื่อนไข")}>
           <Select
-            id={operatorSelectId}
             className="w-full"
             value={config.operator ?? '>='}
             onChange={(event) => patch({ operator: event.target.value as '>=' | '>' })}
           >
-            <option value=">=">{__uiText("ถึง/เกิน (≥)")}</option>
-            <option value=">">{__uiText("มากกว่า (&gt;)")}</option>
+            <option value=">=">{__uiText("ถึงหรือเกิน")}</option>
+            <option value=">">{__uiText("มากกว่า")}</option>
           </Select>
-        </div>
-        <div>
-          <label htmlFor={valueInputId} className={FIELD_LABEL}>{__uiText("ค่าเป้าหมาย (")}{unit})</label>
+        </FormField>
+        <FormField label={__uiText("ค่าเป้าหมาย ({0})", { "0": unit })}>
           <input
-            id={valueInputId}
             type="number"
             min={1}
             className={`${INPUT_CLASS} w-36`}
@@ -427,17 +404,17 @@ export function OrderMilestoneFields({
               patch({ value: Math.max(1, Number(event.target.value) || 1) })
             }
           />
-        </div>
+        </FormField>
       </div>
-      <p className="rounded-md bg-white px-2 py-1.5 text-[11px] text-gray-600">
+      <p className="rounded-md bg-surface-container-lowest px-2 py-1.5 text-[11px] text-on-surface">
         {__uiText("สรุป: ลูกค้าที่")}{' '}
         <strong>
           {ORDER_MILESTONE_METRIC_OPTIONS.find((opt) => opt.value === metric)?.label}
         </strong>{' '}
-        {config.operator === '>' ? __uiText("มากกว่า") : __uiText("ถึง/เกิน")}{' '}
-        <strong>{Number(config.value ?? 5000).toLocaleString()}</strong> {unit} {__uiText(" — ทำงาน")}<strong>{__uiText("ครั้งแรกที่เข้าเงื่อนไข")}</strong> {__uiText(" (คนละ 1 ครั้ง)")}</p>
-      <p className="text-[11px] leading-relaxed text-gray-400">
-        {__uiText("นับจากออเดอร์ที่ชำระเงินแล้ว · ระบบสแกนทุก ~15 นาที เฉพาะคนที่มีออเดอร์ใหม่ช่วงนี้ · เหมาะกับ แจกคูปอง/แจ้งเตือน ขอบคุณลูกค้า")}</p>
+        {config.operator === '>' ? __uiText("มากกว่า") : __uiText("ถึงหรือเกิน")}{' '}
+        <strong>{Number(config.value ?? 5000).toLocaleString()}</strong> {unit} {__uiText("ทำงาน")}<strong>{__uiText("ครั้งแรกที่เข้าเงื่อนไข")}</strong> {__uiText("(คนละ 1 ครั้ง)")}</p>
+      <p className={HINT_CLASS}>
+        {__uiText("นับจากออเดอร์ที่ชำระเงินแล้ว ระบบตรวจทุกประมาณ 15 นาที เฉพาะลูกค้าที่มีออเดอร์ใหม่ เหมาะกับแจกคูปองหรือส่งข้อความขอบคุณ")}</p>
     </div>
   );
 }
@@ -466,20 +443,17 @@ export function ScheduledTriggerFields({
     const next = days.includes(day) ? days.filter((d) => d !== day) : [...days, day].sort();
     onUpdateTrigger({ ...config, daysOfWeek: next });
   };
-  const timeInputId = useId();
 
   return (
     <div className="space-y-3">
-      <div>
-        <label htmlFor={timeInputId} className={FIELD_LABEL}>{__uiText("เวลา")}</label>
+      <FormField label={__uiText("เวลา")} className="w-32">
         <input
-          id={timeInputId}
           type="time"
-          className={`${INPUT_CLASS} w-32`}
+          className={INPUT_CLASS}
           value={config.time ?? '18:00'}
           onChange={(event) => onUpdateTrigger({ ...config, time: event.target.value })}
         />
-      </div>
+      </FormField>
       <div>
         <span className={FIELD_LABEL}>{__uiText("วัน (ไม่เลือก = ทุกวัน)")}</span>
         <div className="flex flex-wrap gap-1.5">
@@ -489,7 +463,7 @@ export function ScheduledTriggerFields({
               className={`cursor-pointer rounded-full border px-2.5 py-1 text-xs ${
                 days.includes(opt.value)
                   ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-gray-200 bg-white text-gray-500'
+                  : 'border-secondary-container bg-surface-container-lowest text-on-surface-variant'
               }`}
             >
               <input
@@ -503,14 +477,14 @@ export function ScheduledTriggerFields({
           ))}
         </div>
       </div>
-      <p className="rounded-md bg-white px-2 py-1.5 text-[11px] text-gray-600">
-        {__uiText("สรุป: ยิงทุก")}{' '}
+      <p className="rounded-md bg-surface-container-lowest px-2 py-1.5 text-[11px] text-on-surface">
+        {__uiText("สรุป: ส่งทุก")}{' '}
         {days.length === 0
           ? __uiText("วัน")
           : days
               .map((d) => SCHEDULED_DOW_OPTIONS.find((opt) => opt.value === d)?.label)
               .join(', ')}{' '}
-        {__uiText("เวลา ")}<strong>{config.time ?? '18:00'}</strong> {__uiText(" น. — ส่งให้ Audience ที่เลือกด้านล่าง (ไม่เลือก Audience = ทุกคน) คนละ 1 ครั้งต่อรอบ")}</p>
+        {__uiText("เวลา")} <strong>{config.time ?? '18:00'}</strong> {__uiText("น. ให้กลุ่มเป้าหมายที่เลือก (ไม่เลือก = ทุกคน) คนละ 1 ครั้งต่อรอบ")}</p>
     </div>
   );
 }
@@ -529,15 +503,11 @@ function DurationFields({
   minutesLabel?: string;
 }) {
   __useUiLocale();
-  const hoursInputId = useId();
-  const minutesInputId = useId();
 
   return (
     <div className="grid grid-cols-2 gap-2">
-      <div>
-        <label htmlFor={hoursInputId} className={FIELD_LABEL}>{__uiText(hoursLabel)}</label>
+      <FormField label={__uiText(hoursLabel)}>
         <input
-          id={hoursInputId}
           type="number"
           min={0}
           className={INPUT_CLASS}
@@ -546,11 +516,9 @@ function DurationFields({
             onChange({ hours: Math.max(0, Number(event.target.value) || 0), minutes })
           }
         />
-      </div>
-      <div>
-        <label htmlFor={minutesInputId} className={FIELD_LABEL}>{__uiText(minutesLabel)}</label>
+      </FormField>
+      <FormField label={__uiText(minutesLabel)}>
         <input
-          id={minutesInputId}
           type="number"
           min={0}
           max={59}
@@ -563,7 +531,7 @@ function DurationFields({
             })
           }
         />
-      </div>
+      </FormField>
     </div>
   );
 }
@@ -589,7 +557,6 @@ function TriggerPresetBar({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const presetSelectId = useId();
-  const presetNameInputId = useId();
 
   useEffect(() => {
     let cancelled = false;
@@ -630,7 +597,7 @@ function TriggerPresetBar({
       setSelectedId(created.id);
       setSavingName(null);
     } catch (err: any) {
-      setError(err?.response?.data?.message || __uiMessage("บันทึก Preset ไม่สำเร็จ"));
+      setError(err?.response?.data?.message || __uiMessage("บันทึกชุดเงื่อนไขไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
@@ -638,6 +605,8 @@ function TriggerPresetBar({
 
   const handleDelete = async () => {
     if (!selectedId) return;
+    const name = presets.find((p) => p.id === selectedId)?.name ?? '';
+    if (!window.confirm(__uiText("ลบชุดเงื่อนไข \"{0}\"? ข้อความอัตโนมัติที่นำไปใช้แล้วจะไม่เปลี่ยน", { "0": name }))) return;
     setBusy(true);
     setError(null);
     try {
@@ -645,24 +614,20 @@ function TriggerPresetBar({
       setPresets((prev) => prev.filter((p) => p.id !== selectedId));
       setSelectedId('');
     } catch (err: any) {
-      setError(err?.response?.data?.message || __uiMessage("ลบ Preset ไม่สำเร็จ"));
+      setError(err?.response?.data?.message || __uiMessage("ลบชุดเงื่อนไขไม่สำเร็จ"));
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <div className="rounded-lg border border-dashed border-gray-300 bg-white p-2.5 space-y-2">
+    <div className="rounded-lg border border-secondary-container bg-surface-container-lowest p-2.5 space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <label htmlFor={presetSelectId} className="text-[10px] font-semibold tracking-wide text-gray-400">
-          {__uiText("TRIGGER ที่บันทึกไว้ (PRESET)")}</label>
+        <label htmlFor={presetSelectId} className="text-xs font-semibold text-on-surface">
+          {__uiText("ชุดเงื่อนไขที่บันทึกไว้")}</label>
         {savingName === null && (
-          <button
-            type="button"
-            onClick={() => setSavingName('')}
-            className="text-[11px] font-medium text-primary hover:underline"
-          >
-            {__uiText("+ บันทึก trigger นี้เป็น Preset")}</button>
+          <Button variant="ghost" size="sm" icon="add" onClick={() => setSavingName('')}>
+            {__uiText("บันทึกเงื่อนไขนี้ไว้ใช้ซ้ำ")}</Button>
         )}
       </div>
 
@@ -674,7 +639,7 @@ function TriggerPresetBar({
           onChange={(event) => handleApply(event.target.value)}
         >
           <option value="">
-            {presets.length === 0 ? __uiText("ยังไม่มี Preset ที่บันทึกไว้") : __uiText("— เลือก Preset เพื่อนำมาใช้ —")}
+            {presets.length === 0 ? __uiText("ยังไม่มีชุดเงื่อนไขที่บันทึกไว้") : __uiText("เลือกชุดเงื่อนไขเพื่อนำมาใช้")}
           </option>
           {presets.map((preset) => (
             <option key={preset.id} value={preset.id}>
@@ -683,28 +648,26 @@ function TriggerPresetBar({
           ))}
         </Select>
         {selectedId && (
-          <button
-            type="button"
+          <Button
+            variant="danger-ghost"
+            size="sm"
+            icon="delete"
             disabled={busy}
             onClick={handleDelete}
-            className="rounded-lg border border-gray-200 px-2 py-1.5 text-[11px] text-gray-500 hover:border-red-200 hover:text-red-500 disabled:opacity-50"
-            title={__uiText("ลบ Preset ที่เลือก")}
+            title={__uiText("ลบชุดเงื่อนไขที่เลือก")}
           >
-            {__uiText("ลบ")}</button>
+            {__uiText("ลบ")}</Button>
         )}
       </div>
 
       {savingName !== null && (
         <div className="flex flex-wrap items-end gap-1.5">
-          <div className="min-w-0 flex-1">
-            <label htmlFor={presetNameInputId} className="mb-0.5 block text-[10px] text-gray-400">
-              {__uiText("ชื่อ Preset")}</label>
+          <FormField label={__uiText("ชื่อชุดเงื่อนไข")} className="flex-1">
             <input
-              id={presetNameInputId}
               type="text"
               autoFocus
-              placeholder={__uiText("ตั้งชื่อ Preset เช่น ตะกร้าค้าง 30 นาที")}
-              className="w-full rounded-lg border border-gray-200 px-2 py-1.5 text-xs text-gray-700 focus:border-primary focus:outline-none"
+              placeholder={__uiText("เช่น ตะกร้าค้าง 30 นาที")}
+              className={INPUT_CLASS}
               value={savingName}
               onChange={(event) => setSavingName(event.target.value)}
               onKeyDown={(event) => {
@@ -712,27 +675,23 @@ function TriggerPresetBar({
                 if (event.key === 'Escape') setSavingName(null);
               }}
             />
-          </div>
-          <button
-            type="button"
+          </FormField>
+          <Button
+            variant="primary"
+            size="sm"
             disabled={busy || !savingName.trim()}
             onClick={handleSave}
-            className="rounded-lg bg-gray-900 px-2.5 py-1.5 text-[11px] font-medium text-white hover:bg-gray-800 disabled:opacity-50"
           >
             {busy ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
-          </button>
-          <button
-            type="button"
-            onClick={() => setSavingName(null)}
-            className="text-[11px] text-gray-400 hover:text-gray-600"
-          >
-            {__uiText("ยกเลิก")}</button>
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setSavingName(null)}>
+            {__uiText("ยกเลิก")}</Button>
         </div>
       )}
 
-      {error && <p className="text-[11px] text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
-      <p className="text-[10px] leading-relaxed text-gray-400">
-        {__uiText("เลือก Preset = คัดลอกประเภท + ค่ามาใส่ workflow นี้ (แก้ต่อได้ ไม่กระทบ Preset เดิม)")}</p>
+      {error && <p className="text-[11px] text-danger">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
+      <p className={HINT_CLASS}>
+        {__uiText("เลือกแล้วระบบคัดลอกประเภทและค่ามาใส่ที่นี่ แก้ต่อได้โดยไม่กระทบชุดที่บันทึกไว้")}</p>
     </div>
   );
 }
@@ -776,8 +735,8 @@ export function TriggerTypeChips({
               }}
               className={`rounded-md border px-2 py-0.5 text-[10px] font-medium transition-colors ${
                 selected
-                  ? 'border-primary bg-primary/5 ring-1 ring-primary text-gray-800'
-                  : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                  ? 'border-primary bg-primary/5 ring-1 ring-primary text-on-surface'
+                  : 'border-secondary-container bg-surface-container-lowest text-on-surface-variant hover:border-outline-variant'
               }`}
             >
               {card.title}
@@ -803,11 +762,11 @@ export function TriggerTypeChips({
             className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
               selected
                 ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                : 'border-gray-200 bg-white hover:border-gray-300'
+                : 'border-secondary-container bg-surface-container-lowest hover:border-outline-variant'
             }`}
           >
-            <div className="text-sm font-semibold text-gray-800">{card.title}</div>
-            <div className="mt-0.5 text-[11px] text-gray-500">{card.description}</div>
+            <div className="text-sm font-semibold text-on-surface">{card.title}</div>
+            <div className="mt-0.5 text-[11px] text-on-surface-variant">{card.description}</div>
           </button>
         );
       })}
@@ -843,14 +802,14 @@ function ProductSkuField({
       const result = await resolveMarketingProductSku(trimmed);
       if (!result) {
         setResolved(null);
-        setError(__uiMessage("ไม่พบ SKU \"{0}\"", {"0": trimmed}));
+        setError(__uiMessage("ไม่พบรหัสสินค้า \"{0}\"", {"0": trimmed}));
         onResolve(null);
       } else {
         setResolved({ sku: result.sku, name: result.name });
         onResolve(result.productId);
       }
     } catch {
-      setError(__uiMessage("ค้นหา SKU ไม่สำเร็จ"));
+      setError(__uiMessage("ค้นหารหัสสินค้าไม่สำเร็จ"));
     } finally {
       setResolving(false);
     }
@@ -858,7 +817,7 @@ function ProductSkuField({
 
   return (
     <div>
-      <label htmlFor={skuInputId} className={FIELD_LABEL}>{__uiText("SKU สินค้า")}</label>
+      <label htmlFor={skuInputId} className={FIELD_LABEL}>{__uiText("รหัสสินค้า")}</label>
       <div className="flex gap-1.5">
         <input
           id={skuInputId}
@@ -874,27 +833,27 @@ function ProductSkuField({
             }
           }}
         />
-        <button
-          type="button"
+        <Button
+          size="sm"
+          className="shrink-0"
           disabled={resolving || !sku.trim()}
           onClick={handleResolve}
-          className="shrink-0 rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
         >
           {resolving ? __uiText("กำลังค้นหา...") : __uiText("ค้นหา")}
-        </button>
+        </Button>
       </div>
       {resolved ? (
-        <p className="mt-1 rounded-md bg-emerald-50 px-2 py-1 text-[11px] text-emerald-700">
-          ✓ {resolved.sku}
-          {resolved.name ? ` — ${resolved.name}` : ''}
+        <p className="mt-1 rounded-md bg-ok-container px-2 py-1 text-[11px] text-ok">
+          <span className="font-mono">{resolved.sku}</span>
+          {resolved.name ? ` ${resolved.name}` : ''}
         </p>
       ) : entityId ? (
-        <p className="mt-1 text-[11px] text-gray-400">
-          {__uiText("ใช้สินค้าเดิม (ID: ")}<span className="font-mono">{entityId.slice(0, 8)}…</span>{__uiText(") — พิมพ์ SKU ใหม่แล้วกดค้นหาเพื่อเปลี่ยน")}</p>
+        <p className={`mt-1 ${HINT_CLASS}`}>
+          {__uiText("ใช้สินค้าเดิมอยู่")} <span className="font-mono">{entityId.slice(0, 8)}…</span> {__uiText("พิมพ์รหัสสินค้าใหม่แล้วกดค้นหาเพื่อเปลี่ยน")}</p>
       ) : (
-        <p className="mt-1 text-[11px] text-gray-400">{__uiText("พิมพ์ SKU แล้วกดค้นหา — ระบบจะจับคู่สินค้าให้")}</p>
+        <p className={`mt-1 ${HINT_CLASS}`}>{__uiText("พิมพ์รหัสสินค้าแล้วกดค้นหา ระบบจะจับคู่สินค้าให้")}</p>
       )}
-      {error && <p className="mt-1 text-[11px] text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
+      {error && <p className="mt-1 text-[11px] text-danger">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
     </div>
   );
 }
@@ -908,10 +867,6 @@ function PageAffinityFields({
 }) {
   __useUiLocale();
   const pageType = triggerConfig.pageType ?? 'pdp';
-  const pageTypeSelectId = useId();
-  const categoryIdInputId = useId();
-  const pathInputId = useId();
-  const minViewsInputId = useId();
 
   const patch = (next: Partial<MarketingPageAffinityTriggerConfig>) =>
     onUpdateTrigger({
@@ -926,10 +881,8 @@ function PageAffinityFields({
 
   return (
     <div className="space-y-3">
-      <div>
-        <label htmlFor={pageTypeSelectId} className={FIELD_LABEL}>{__uiText("ประเภทหน้า")}</label>
+      <FormField label={__uiText("ประเภทหน้า")}>
         <Select
-          id={pageTypeSelectId}
           className="w-full"
           value={pageType}
           onChange={(event) => patch({ pageType: event.target.value as MarketingPageAffinityPageType })}
@@ -940,7 +893,7 @@ function PageAffinityFields({
             </option>
           ))}
         </Select>
-      </div>
+      </FormField>
 
       {pageType === 'pdp' && (
         <ProductSkuField
@@ -950,44 +903,38 @@ function PageAffinityFields({
       )}
 
       {pageType === 'category' && (
-        <div>
-          <label htmlFor={categoryIdInputId} className={FIELD_LABEL}>{__uiText("รหัสหมวดหมู่ (Category ID)")}</label>
+        <FormField label={__uiText("รหัสหมวดหมู่")}>
           <input
-            id={categoryIdInputId}
             type="text"
             placeholder="00000000-0000-0000-0000-000000000000"
             className={`${INPUT_CLASS} font-mono text-xs`}
             value={triggerConfig.entityId ?? ''}
             onChange={(event) => patch({ entityId: event.target.value.trim() || null })}
           />
-        </div>
+        </FormField>
       )}
 
       {pageType === 'path' && (
-        <div>
-          <label htmlFor={pathInputId} className={FIELD_LABEL}>{__uiText("เส้นทางหน้าเว็บ (Path)")}</label>
+        <FormField label={__uiText("ที่อยู่หน้าเว็บ")}>
           <input
-            id={pathInputId}
             type="text"
             placeholder="/shop/product/detail/..."
-            className={INPUT_CLASS}
+            className={`${INPUT_CLASS} font-mono text-xs`}
             value={triggerConfig.path ?? ''}
             onChange={(event) => patch({ path: event.target.value || null })}
           />
-        </div>
+        </FormField>
       )}
 
-      <div>
-        <label htmlFor={minViewsInputId} className={FIELD_LABEL}>{__uiText("เข้าชมขั้นต่ำ (ครั้ง)")}</label>
+      <FormField label={__uiText("เข้าชมอย่างน้อย (ครั้ง)")}>
         <input
-          id={minViewsInputId}
           type="number"
           min={1}
           className={INPUT_CLASS}
           value={triggerConfig.minViews ?? 3}
           onChange={(event) => patch({ minViews: Math.max(1, Number(event.target.value) || 1) })}
         />
-      </div>
+      </FormField>
 
       <div>
         <span className={FIELD_LABEL}>{__uiText("ภายในช่วงเวลา")}</span>
@@ -1014,27 +961,19 @@ export function TriggerRuleBuilder({
   __useUiLocale();
   const typeTitle = TRIGGER_TYPE_CARDS.find((c) => c.type === triggerType)?.title;
   const isCreate = variant === 'create';
-  const lookbackMinutesInputId = useId();
-  const customLabelInputId = useId();
-  const customDescriptionInputId = useId();
-  const customDelayMinutesInputId = useId();
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <div className="text-[10px] font-semibold tracking-wide text-gray-400">{__uiText("TRIGGER")}</div>
-          <h3 className="mt-0.5 text-sm font-semibold text-gray-800">
-            {isCreate ? __uiText("สร้างเงื่อนไขเริ่ม Workflow") : __uiText("เงื่อนไขเริ่ม Workflow")}
+          <div className="text-[11px] font-semibold text-primary">{__uiText("จุดเริ่ม")}</div>
+          <h3 className="mt-0.5 text-[15px] font-semibold text-on-surface">
+            {isCreate ? __uiText("ตั้งเงื่อนไขเริ่ม") : __uiText("เงื่อนไขเริ่ม")}
           </h3>
-          <p className="mt-1 text-[11px] leading-relaxed text-gray-500">
-            {__uiText("เลือกประเภทด้านล่าง แล้วปรับค่าให้ตรงแคมเปญ — เปลี่ยนประเภทได้ตลอดก่อน Activate")}</p>
+          <p className={`mt-1 ${HINT_CLASS}`}>
+            {__uiText("เลือกประเภทด้านล่างแล้วปรับค่าให้ตรงแคมเปญ เปลี่ยนประเภทได้ก่อนเปิดใช้งาน")}</p>
         </div>
-        {typeTitle && (
-          <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
-            {typeTitle}
-          </span>
-        )}
+        {typeTitle && <Chip tone="primary">{typeTitle}</Chip>}
       </div>
 
       <TriggerPresetBar
@@ -1049,18 +988,18 @@ export function TriggerRuleBuilder({
       />
 
       <div>
-        <div className="mb-1.5 text-[10px] font-semibold tracking-wide text-gray-400">
+        <div className={STEP_HEADING_CLASS}>
           {__uiText("1 · เลือกประเภทเงื่อนไข")}</div>
         <TriggerTypeChips value={triggerType} onChange={onUpdateTriggerType} />
       </div>
 
       <div>
-        <div className="mb-1.5 text-[10px] font-semibold tracking-wide text-gray-400">
+        <div className={STEP_HEADING_CLASS}>
           {__uiText("2 · ตั้งค่ารายละเอียด")}</div>
 
       {triggerType === 'cart_idle' && (
         <div className={RULE_BLOCK_CLASS}>
-          <span className={FIELD_LABEL}>{__uiText("ค้างนานเท่าไหร่จึงเริ่ม workflow")}</span>
+          <span className={FIELD_LABEL}>{__uiText("ตะกร้าค้างนานเท่าไรจึงเริ่ม")}</span>
           <DurationFields
             hours={(triggerConfig as { idleHours?: number }).idleHours ?? 24}
             minutes={(triggerConfig as { idleMinutes?: number }).idleMinutes ?? 0}
@@ -1082,9 +1021,11 @@ export function TriggerRuleBuilder({
 
       {triggerType === 'session_in_window' && (
         <div className={RULE_BLOCK_CLASS}>
-          <label htmlFor={lookbackMinutesInputId} className={FIELD_LABEL}>{__uiText("นับ login ย้อนหลังกี่นาที")}</label>
+          <FormField
+            label={__uiText("นับการเข้าสู่ระบบย้อนหลัง (นาที)")}
+            hint={__uiText("ต้องตั้งช่วงเวลาทำงานด้วย ระบบนับลูกค้าที่เข้าสู่ระบบในช่วงนี้")}
+          >
           <input
-            id={lookbackMinutesInputId}
             type="number"
             min={1}
             className={INPUT_CLASS}
@@ -1095,22 +1036,21 @@ export function TriggerRuleBuilder({
               })
             }
           />
-          <p className="mt-1 text-[11px] text-gray-400">
-            {__uiText("ต้องตั้ง Schedule — รวมคนที่ login ในช่วงนี้ และคนใน segment (ถ้าเลือก)")}</p>
+          </FormField>
         </div>
       )}
 
       {triggerType === 'first_login' && (
         <div className={RULE_BLOCK_CLASS}>
-          <p className="text-xs text-gray-500">
-            {__uiText("เริ่มเมื่อลูกค้า login / สมัครครั้งแรกบนแอปหรือเว็บ (ไม่ต้องตั้งค่าเพิ่ม)")}</p>
+          <p className="text-xs text-on-surface-variant">
+            {__uiText("เริ่มเมื่อลูกค้าเข้าสู่ระบบหรือสมัครครั้งแรกบนแอปหรือเว็บ ไม่ต้องตั้งค่าเพิ่ม")}</p>
         </div>
       )}
 
       {triggerType === 'first_visit' && (
         <div className={RULE_BLOCK_CLASS}>
-          <p className="text-xs text-gray-500">
-            {__uiText("เริ่มเมื่อเปิดเว็บครั้งแรกบนอุปกรณ์นี้ (นับจาก device id) — guest ได้ แนะนำใช้กับ แสดง Offer / popup")}</p>
+          <p className="text-xs text-on-surface-variant">
+            {__uiText("เริ่มเมื่อเปิดเว็บครั้งแรกบนเครื่องนี้ ยังไม่เข้าสู่ระบบก็ได้ เหมาะกับการแสดงข้อเสนอหรือป๊อปอัป")}</p>
         </div>
       )}
 
@@ -1134,12 +1074,10 @@ export function TriggerRuleBuilder({
 
       {triggerType === 'custom' && (
         <div className={`${RULE_BLOCK_CLASS} space-y-3`}>
-          <div>
-            <label htmlFor={customLabelInputId} className={FIELD_LABEL}>{__uiText("ชื่อเงื่อนไข (ตั้งเอง)")}</label>
+          <FormField label={__uiText("ชื่อเงื่อนไข")}>
             <input
-              id={customLabelInputId}
               type="text"
-              placeholder={__uiText("เช่น \"ช่วงฝนตก\", \"Flash Sale หน้าร้าน\"")}
+              placeholder={__uiText("เช่น ช่วงฝนตก, ลดราคาหน้าร้าน")}
               className={INPUT_CLASS}
               value={(triggerConfig as MarketingCustomTriggerConfig).label ?? ''}
               onChange={(event) =>
@@ -1149,11 +1087,9 @@ export function TriggerRuleBuilder({
                 })
               }
             />
-          </div>
-          <div>
-            <label htmlFor={customDescriptionInputId} className={FIELD_LABEL}>{__uiText("คำอธิบาย (ไม่บังคับ)")}</label>
+          </FormField>
+          <FormField label={__uiText("คำอธิบาย (ไม่บังคับ)")}>
             <input
-              id={customDescriptionInputId}
               type="text"
               placeholder={__uiText("โน้ตให้ทีม เช่น เปิดเมื่อฝนเริ่มตกหน้าสาขา")}
               className={INPUT_CLASS}
@@ -1165,11 +1101,12 @@ export function TriggerRuleBuilder({
                 })
               }
             />
-          </div>
-          <div>
-            <label htmlFor={customDelayMinutesInputId} className={FIELD_LABEL}>{__uiText("เด้งหลังลูกค้าอยู่บนเว็บครบ (นาที)")}</label>
+          </FormField>
+          <FormField
+            label={__uiText("แสดงหลังลูกค้าอยู่บนเว็บครบ (นาที)")}
+            hint={__uiText("0 = แสดงทันทีที่เข้าเว็บ เช่น 1 = อยู่บนเว็บครบ 1 นาทีแล้วจึงแสดง (นับจากการเข้าครั้งแรกในรอบ 6 ชั่วโมง)")}
+          >
             <input
-              id={customDelayMinutesInputId}
               type="number"
               min={0}
               className={INPUT_CLASS}
@@ -1181,40 +1118,29 @@ export function TriggerRuleBuilder({
                 })
               }
             />
-            <p className="mt-1 text-[11px] text-gray-400">
-              {__uiText("0 = เด้งทันทีที่เข้าเว็บ · เช่น 1 = อยู่บนเว็บครบ 1 นาทีแล้วค่อยเด้ง (นับจากเข้าครั้งแรกในรอบ 6 ชม.)")}</p>
-          </div>
+          </FormField>
           <CustomSourceFields
             config={triggerConfig as MarketingCustomTriggerConfig}
             onUpdateTrigger={onUpdateTrigger}
           />
-          <p className="text-[11px] leading-relaxed text-gray-400">
-            {__uiText("วิธีใช้: กด ")}<strong>{__uiText("Activate")}</strong> {__uiText(" เมื่อเงื่อนไขเริ่ม (เช่น ฝนเริ่มตก) — ทุกคนที่เข้าเว็บช่วงนั้น จะเข้า workflow (สูงสุดวันละ 1 ครั้ง/เครื่อง) แล้วกด ")}<strong>{__uiText("Pause")}</strong> {__uiText(" เมื่อจบช่วง (หรือให้เช็คจาก URL อัตโนมัติด้านบน) · ใช้ Schedule จำกัดวัน/เวลาเพิ่มได้ · บันทึกเป็น Preset ไว้ใช้ซ้ำได้")}</p>
+          <p className={HINT_CLASS}>
+            {__uiText("วิธีใช้: กดเปิดใช้งานเมื่อเงื่อนไขเริ่ม (เช่น ฝนเริ่มตก) ทุกคนที่เข้าเว็บช่วงนั้นจะได้รับ (วันละไม่เกิน 1 ครั้งต่อเครื่อง) แล้วกดหยุดชั่วคราวเมื่อจบช่วง หรือให้ระบบเช็คจากลิงก์ข้อมูลด้านบน ตั้งช่วงเวลาทำงานเพื่อจำกัดวันและเวลาได้ และบันทึกไว้ใช้ซ้ำได้")}</p>
         </div>
       )}
       </div>
 
       {showScheduleStrip && (
-        <div className="space-y-2 border-t border-gray-100 pt-3">
-          <div className="text-[10px] font-semibold tracking-wide text-gray-400">
-            {__uiText("3 · ช่วงเวลาทำงาน (Schedule)")}</div>
+        <div className="space-y-2 border-t border-secondary-container pt-3">
+          <div className={STEP_HEADING_CLASS}>
+            {__uiText("3 · ช่วงเวลาทำงาน")}</div>
           <div className="flex flex-wrap gap-1.5">
             {scheduleStripChips(schedule ?? null).map((chip) => (
-              <span
-                key={chip}
-                className="rounded-md border border-gray-200 bg-white px-2 py-0.5 text-[11px] text-gray-600"
-              >
-                {chip}
-              </span>
+              <Chip key={chip}>{chip}</Chip>
             ))}
           </div>
           {onOpenScheduleEditor && (
-            <button
-              type="button"
-              onClick={onOpenScheduleEditor}
-              className="text-xs font-medium text-primary hover:underline"
-            >
-              {__uiText("แก้ไขช่วงเวลา")}</button>
+            <Button size="sm" icon="schedule" onClick={onOpenScheduleEditor}>
+              {__uiText("แก้ไขช่วงเวลา")}</Button>
           )}
         </div>
       )}

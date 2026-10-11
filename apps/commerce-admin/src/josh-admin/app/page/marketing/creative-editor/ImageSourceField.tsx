@@ -130,7 +130,7 @@ export function ImageSourceField({
         </div>
       )}
 
-      {error && <p className="text-[10px] text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
+      {error && <p className="text-[10px] text-danger">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
     </div>
   );
 }

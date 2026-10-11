@@ -92,7 +92,7 @@ export default function SmartLinkEdit() {
             <Input id="smart-link-title" value={form.title ?? ''} onChange={(e) => set('title', e.target.value)} />
           </FormField>
           <FormField label={__uiText("คำอธิบาย")}>
-            <Textarea id="smart-link-description" value={form.description ?? ''} onChange={(e) => set('description', e.target.value)} />
+            <Textarea mono={false} id="smart-link-description" value={form.description ?? ''} onChange={(e) => set('description', e.target.value)} />
           </FormField>
           <FormField label={__uiText("ลิงก์รูปภาพ")}>
             <Input id="smart-link-image-url" value={form.image_url ?? ''} onChange={(e) => set('image_url', e.target.value)} />

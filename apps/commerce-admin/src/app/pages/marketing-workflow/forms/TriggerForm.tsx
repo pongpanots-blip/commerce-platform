@@ -27,9 +27,9 @@ export function describeTrigger(type: TriggerType, config: TriggerConfig): { tit
     const days = (c.daysOfWeek as number[] | undefined)?.length ? __uiText('บางวัน') : __uiText('ทุกวัน');
     return { title, subtitle: `${days} ${String(c.time ?? '')}` };
   }
-  if (type === 'event') return { title, subtitle: (c.eventName as string) || __uiText('ยังไม่เลือก event') };
-  if (type === 'order_milestone') return { title, subtitle: `${METRIC_LABEL[String(c.metric)] ?? String(c.metric)} ${String(c.operator)} ${Number(c.value ?? 0).toLocaleString()}` };
-  return { title, subtitle: __uiText('นับเฉพาะหลังกด Activate') };
+  if (type === 'event') return { title, subtitle: (c.eventName as string) || __uiText('ยังไม่ได้เลือกสิ่งที่ลูกค้าทำ') };
+  if (type === 'order_milestone') return { title, subtitle: `${METRIC_LABEL[String(c.metric)] ?? String(c.metric)} ${c.operator === '>' ? __uiText('มากกว่า') : __uiText('ถึงหรือเกิน')} ${Number(c.value ?? 0).toLocaleString()}` };
+  return { title, subtitle: __uiText('นับเฉพาะหลังกดเปิดใช้งาน') };
 }
 
 /** Entry card: trigger type + its config, schedule window, cooldown / holdout / conversion / exit goal. */
@@ -44,20 +44,22 @@ export function TriggerForm({ input, definitions, onChange }: { input: WorkflowI
         </Select>
       </Field>
       {(input.triggerType === 'first_login' || input.triggerType === 'app_login') && (
-        <p className="text-xs text-on-surface-variant">{__uiText('นับเฉพาะการเข้าแอปหลังกด Activate — ลูกค้าเดิมที่เคยเข้าแล้วจะไม่ถูกส่งย้อนหลัง')}</p>
+        <p className="text-xs text-on-surface-variant">{__uiText('นับเฉพาะการเข้าแอปหลังกดเปิดใช้งาน ลูกค้าที่เคยเข้าแล้วจะไม่ได้รับย้อนหลัง')}</p>
       )}
       {input.triggerType === 'event' && <EventTriggerFields config={input.triggerConfig as EventTriggerConfig} definitions={definitions} onChange={(c) => onChange({ triggerConfig: c })} />}
       <div className="josh-tw">
         {input.triggerType === 'scheduled' && <ScheduledTriggerFields config={input.triggerConfig as never} onUpdateTrigger={(c) => onChange({ triggerConfig: c as never })} />}
         {input.triggerType === 'order_milestone' && <OrderMilestoneFields config={input.triggerConfig as never} onUpdateTrigger={(c) => onChange({ triggerConfig: c as never })} />}
       </div>
-      <Field label={__uiText('ช่วงเวลาทำงาน')}>
+      {/* A group of its own labelled fields, so a heading rather than one <label> around them. */}
+      <div className="space-y-1">
+        <p className="text-xs font-medium text-on-surface">{__uiText('ช่วงเวลาทำงาน')}</p>
         <div className="josh-tw"><ScheduleEditor schedule={(input.schedule ?? null) as never} onChange={(s) => onChange({ schedule: s as never })} /></div>
-      </Field>
+      </div>
       <div className="grid grid-cols-3 gap-2">
-        <Field label={__uiText('Cooldown (วัน)')}><Input type="number" min={0} max={365} value={input.cooldownDays} onChange={(e) => onChange({ cooldownDays: num(e.target.value) })} /></Field>
-        <Field label={__uiText('Holdout %')}><Input type="number" min={0} max={50} value={input.holdoutPercent} onChange={(e) => onChange({ holdoutPercent: num(e.target.value) })} /></Field>
-        <Field label={__uiText('วัด conversion (วัน)')}><Input type="number" min={1} max={90} value={input.conversionWindowDays} onChange={(e) => onChange({ conversionWindowDays: num(e.target.value) })} /></Field>
+        <Field label={__uiText('เว้นระยะส่งซ้ำ (วัน)')}><Input type="number" min={0} max={365} value={input.cooldownDays} onChange={(e) => onChange({ cooldownDays: num(e.target.value) })} /></Field>
+        <Field label={__uiText('กลุ่มควบคุม (%)')}><Input type="number" min={0} max={50} value={input.holdoutPercent} onChange={(e) => onChange({ holdoutPercent: num(e.target.value) })} /></Field>
+        <Field label={__uiText('นับยอดขายภายใน (วัน)')}><Input type="number" min={1} max={90} value={input.conversionWindowDays} onChange={(e) => onChange({ conversionWindowDays: num(e.target.value) })} /></Field>
       </div>
       <GoalFields input={input} definitions={definitions} onChange={onChange} />
     </div>

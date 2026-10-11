@@ -11,6 +11,8 @@ import { OrderStatusChip, fulfillmentModeLabel, fulfillmentSourceLabel } from '.
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+/** commerce-platform payments.method: checkout (order-checkout.saga) writes 'stub' until a real gateway exists. Unknown codes show as-is. */
+const PAYMENT_METHOD: Record<string, string> = { stub: 'ชำระแบบทดลอง (ยังไม่ต่อช่องทางจริง)' };
 const money = (currency: string, v: string | number | null | undefined) => (v === null || v === undefined ? '—' : `${currency} ${fmt.num(v)}`);
 
 /** One commerce order: checkout / payment / hold actions plus lines, fulfillments, reservations and payment. */
@@ -186,7 +188,7 @@ export function OrderDetail() {
                       cols={2}
                       items={[
                         { label: 'สถานะ', value: <OrderStatusChip status={d.payment.status} /> },
-                        { label: 'ช่องทาง', value: d.payment.method ?? '—', mono: !!d.payment.method },
+                        { label: 'ช่องทาง', value: !d.payment.method ? '—' : PAYMENT_METHOD[d.payment.method] ? __uiText(PAYMENT_METHOD[d.payment.method]) : d.payment.method, mono: !!d.payment.method && !PAYMENT_METHOD[d.payment.method] },
                         { label: 'ยอดเงิน', value: <span className="tabular-nums">{money(d.payment.currency, d.payment.amount)}</span> },
                       ]}
                     />

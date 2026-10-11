@@ -78,10 +78,10 @@ export type MechanicOriginal = {
 };
 
 export const VALUE_TYPE_OPTIONS: Array<{ value: MechanicValueType; label: string }> = [
-  { value: 'percentage', get label(){return uiText("ลด % (Percentage)");} },
-  { value: 'special_price', get label(){return uiText("ราคาโปร (Special price)");} },
-  { value: 'tiered', get label(){return uiText("ยิ่งซื้อยิ่งถูก (Tiered)");} },
-  { value: 'bogo', get label(){return uiText("ซื้อ X แถม Y (BOGO)");} },
+  { value: 'percentage', get label(){return uiText("ลดเป็น %");} },
+  { value: 'special_price', get label(){return uiText("ราคาโปร");} },
+  { value: 'tiered', get label(){return uiText("ยิ่งซื้อยิ่งถูก");} },
+  { value: 'bogo', get label(){return uiText("ซื้อ X แถม Y");} },
 ];
 
 let tierSeq = 0;
@@ -494,12 +494,12 @@ export function summarizeLegacyItems(items: LegacyItem[] | undefined): string {
   );
   kinds.delete('-');
   if (kinds.size === 0) return '-';
-  return kinds.size === 1 ? [...kinds][0] : __uiText("หลายแบบ ({0} แบบ ตามแต่ละ SKU)",{"0":kinds.size});
+  return kinds.size === 1 ? [...kinds][0] : __uiText("หลายแบบ ({0} แบบ ตามแต่ละสินค้า)",{"0":kinds.size});
 }
 
 /** List cell: new mechanics carry one `value`; a legacy one has none (its discount is per SKU). */
 export function summarizeMechanicRow(value: PromotionValue | null | undefined): string {
-  return value ? summarizeMechanicValue(value) : __uiText("ต่อ SKU (แบบเดิม)");
+  return value ? summarizeMechanicValue(value) : __uiText("ตามแต่ละสินค้า (แบบเดิม)");
 }
 
 // ui-display-helper-migration: display descriptions; record values and enum keys remain data

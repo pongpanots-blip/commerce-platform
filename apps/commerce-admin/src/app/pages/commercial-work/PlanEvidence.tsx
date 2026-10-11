@@ -1,4 +1,12 @@
-import { Alert, Chip, Panel, PanelHead } from "@cp/ui";
+import {
+  Alert,
+  Chip,
+  DetailSection,
+  KeyValueGrid,
+  Panel,
+  PanelHead,
+  statusLabel,
+} from "@cp/ui";
 import type {
   PlanInputs,
   PlanPreview,
@@ -36,7 +44,7 @@ const labels: Record<string, [string, string]> = {
     "No unambiguous historical lines",
   ],
   ambiguous_sku: [
-    "SKU ซ้ำในออเดอร์ ต้องตรวจแยกก่อนเลือก",
+    "สินค้าซ้ำในออเดอร์ ต้องตรวจแยกก่อนเลือก",
     "Repeated order SKU requires individual review",
   ],
   invalid_historical_quantity: [
@@ -86,6 +94,14 @@ const labels: Record<string, [string, string]> = {
   attribution: ["ที่มาของยอดขาย", "Sales attribution"],
   upstream_freshness: ["ความสดใหม่ของต้นทาง", "Upstream freshness"],
 };
+const sourceLabels: Record<string, [string, string]> = {
+  replica: ["ข้อมูลสำรองของร้านค้า", "Shop data backup"],
+  copies: ["สำเนาในระบบของเรา", "Our stored copies"],
+  mixed: [
+    "ข้อมูลสำรองของร้านค้าและสำเนาในระบบของเรา",
+    "Shop data backup and our stored copies",
+  ],
+};
 export const evidenceLabel = (v: string) =>
   labels[v] ? text(...labels[v]) : v;
 export function PlanSources({ inputs: i }: { inputs: PlanInputs }) {
@@ -97,131 +113,181 @@ export function PlanSources({ inputs: i }: { inputs: PlanInputs }) {
           "Evidence and required confirmations",
         )}
       />
-      <div className="p-4 min-w-0 break-words space-y-3">
-        <p>
-          {i.subject.name} · {i.subject.id}
-        </p>
-        <p>
-          {text("ขอบเขต", "Scope")}:{" "}
-          {i.scope === "own_assigned_company"
-            ? text(
-                "บริษัทที่ฉันรับผิดชอบตามต้นทาง",
-                "My source-authorized assigned companies",
-              )
-            : i.scope === "authorized_team_company"
-              ? text("บริษัทของทีมตามสิทธิ์เดิม", "Authorized team companies")
-              : text(
-                  "แค็ตตาล็อกตามสิทธิ์การตลาดเดิม",
-                  "Existing authorized marketing catalog",
-                )}
-        </p>
-        <p>
-          {text("อ่านเมื่อ", "Read at")}: {dateText(i.capturedAt)} ·{" "}
-          {text("แหล่งข้อมูล", "Source")}: {i.source}
-        </p>
+      <div className="p-4 min-w-0 break-words space-y-4">
+        <KeyValueGrid
+          cols={2}
+          items={[
+            {
+              label:
+                i.kind === "sales_work"
+                  ? text("บริษัท", "Company")
+                  : text("สินค้า", "Product"),
+              value: i.subject.name,
+            },
+            {
+              label:
+                i.kind === "sales_work"
+                  ? text("รหัสบริษัท", "Company id")
+                  : text("รหัสสินค้า", "Product code"),
+              value: i.subject.id,
+              mono: true,
+            },
+            {
+              label: text("ขอบเขต", "Scope"),
+              value:
+                i.scope === "own_assigned_company"
+                  ? text(
+                      "บริษัทที่ฉันรับผิดชอบตามต้นทาง",
+                      "My source-authorized assigned companies",
+                    )
+                  : i.scope === "authorized_team_company"
+                    ? text(
+                        "บริษัทของทีมตามสิทธิ์เดิม",
+                        "Authorized team companies",
+                      )
+                    : text(
+                        "แค็ตตาล็อกตามสิทธิ์การตลาดเดิม",
+                        "Existing authorized marketing catalog",
+                      ),
+            },
+            {
+              label: text("อ่านเมื่อ", "Read at"),
+              value: dateText(i.capturedAt),
+            },
+            {
+              label: text("แหล่งข้อมูล", "Source"),
+              value: sourceLabels[i.source]
+                ? text(...sourceLabels[i.source])
+                : i.source,
+            },
+            ...(i.kind === "sales_work"
+              ? [
+                  {
+                    label: text(
+                      "ผู้รับผิดชอบที่ต้นทางบันทึกไว้",
+                      "Source-recorded assignee",
+                    ),
+                    value:
+                      i.subject.assignedRepId ??
+                      text("ยังไม่ยืนยัน", "Unverified"),
+                    mono: !!i.subject.assignedRepId,
+                  },
+                  {
+                    label: text(
+                      "ประวัติออเดอร์ที่อ่านได้ในหน้านี้",
+                      "Orders returned on this history page",
+                    ),
+                    value: (
+                      <>
+                        <span className="tabular-nums">{i.orders.length}</span>
+                        {i.historyHasMore
+                          ? text(
+                              " · มีหน้าถัดไป ข้อมูลนี้ไม่ใช่ประวัติทั้งหมด",
+                              " · More history exists; this is not complete history",
+                            )
+                          : ""}
+                      </>
+                    ),
+                  },
+                  {
+                    label: text(
+                      "รายการเดิมที่เลือกทบทวนได้",
+                      "Unambiguous historical lines available",
+                    ),
+                    value: (
+                      <span className="tabular-nums">
+                        {i.historicalLines.length}
+                      </span>
+                    ),
+                  },
+                ]
+              : [
+                  {
+                    label: text("สถานะที่บันทึกไว้", "Recorded status"),
+                    value: i.product?.status
+                      ? statusLabel(i.product.status)
+                      : text("ไม่ทราบ", "Unknown"),
+                  },
+                  {
+                    label: text("ราคาขายที่บันทึกไว้", "Recorded sale price"),
+                    value: (
+                      <span className="tabular-nums">
+                        {i.product?.recordedPrice ?? text("ไม่ทราบ", "Unknown")}
+                      </span>
+                    ),
+                  },
+                  {
+                    label: text(
+                      "สต็อกที่บันทึกไว้ (ไม่ใช่พร้อมขายสด)",
+                      "Recorded stock (not live availability)",
+                    ),
+                    value: (
+                      <span className="tabular-nums">
+                        {i.product?.recordedStock ?? text("ไม่ทราบ", "Unknown")}
+                      </span>
+                    ),
+                  },
+                  {
+                    label: text("จำนวนรูปที่บันทึกไว้", "Recorded image count"),
+                    value: (
+                      <span className="tabular-nums">
+                        {i.product?.imageCount ?? text("ไม่ทราบ", "Unknown")}
+                      </span>
+                    ),
+                  },
+                  {
+                    label: text(
+                      "หน่วยขายที่บันทึกไว้",
+                      "Recorded selling unit",
+                    ),
+                    value: i.product?.sellingUnit ?? text("ไม่ทราบ", "Unknown"),
+                  },
+                  {
+                    label: text(
+                      "สินค้าต้นทางเปลี่ยนเมื่อ",
+                      "Source product changed at",
+                    ),
+                    value: i.product?.sourceChangedAt
+                      ? dateText(i.product.sourceChangedAt)
+                      : text("ไม่ทราบ", "Unknown"),
+                  },
+                ]),
+          ]}
+        />
         <Alert tone="warn">
           {text(
-            "เวลาอ่านไม่ใช่เวลาซิงก์ต้นทาง ความสดใหม่ยังไม่ยืนยัน",
+            "เวลาอ่านไม่ใช่เวลาอัปเดตจากต้นทาง ความสดใหม่ยังไม่ยืนยัน",
             "Read time is not upstream synchronization time. Freshness remains unverified.",
           )}
         </Alert>
-        {i.kind === "sales_work" ? (
-          <>
-            <p>
-              {text(
-                "ผู้รับผิดชอบที่ต้นทางบันทึกไว้",
-                "Source-recorded assignee",
-              )}
-              : {i.subject.assignedRepId ?? text("ยังไม่ยืนยัน", "Unverified")}
-            </p>
-            <p>
-              {text(
-                "ประวัติออเดอร์ที่อ่านได้ในหน้านี้",
-                "Orders returned on this history page",
-              )}
-              : {i.orders.length}
-              {i.historyHasMore
-                ? text(
-                    " · มีหน้าถัดไป ข้อมูลนี้ไม่ใช่ประวัติทั้งหมด",
-                    " · More history exists; this is not complete history",
-                  )
-                : ""}
-            </p>
-            <p>
-              {text(
-                "รายการเดิมที่เลือกทบทวนได้",
-                "Unambiguous historical lines available",
-              )}
-              : {i.historicalLines.length}
-            </p>
-          </>
-        ) : (
-          <dl className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <dt>{text("สถานะที่บันทึกไว้", "Recorded status")}</dt>
-              <dd>{i.product?.status ?? text("ไม่ทราบ", "Unknown")}</dd>
-            </div>
-            <div>
-              <dt>{text("ราคาขายที่บันทึกไว้", "Recorded sale price")}</dt>
-              <dd>{i.product?.recordedPrice ?? text("ไม่ทราบ", "Unknown")}</dd>
-            </div>
-            <div>
-              <dt>
-                {text(
-                  "สต็อกที่บันทึกไว้ (ไม่ใช่พร้อมขายสด)",
-                  "Recorded stock (not live availability)",
-                )}
-              </dt>
-              <dd>{i.product?.recordedStock ?? text("ไม่ทราบ", "Unknown")}</dd>
-            </div>
-            <div>
-              <dt>{text("จำนวนรูปที่บันทึกไว้", "Recorded image count")}</dt>
-              <dd>{i.product?.imageCount ?? text("ไม่ทราบ", "Unknown")}</dd>
-            </div>
-            <div>
-              <dt>{text("หน่วยขายที่บันทึกไว้", "Recorded selling unit")}</dt>
-              <dd>{i.product?.sellingUnit ?? text("ไม่ทราบ", "Unknown")}</dd>
-            </div>
-            <div>
-              <dt>
-                {text("สินค้าต้นทางเปลี่ยนเมื่อ", "Source product changed at")}
-              </dt>
-              <dd>
-                {i.product?.sourceChangedAt
-                  ? dateText(i.product.sourceChangedAt)
-                  : text("ไม่ทราบ", "Unknown")}
-              </dd>
-            </div>
-          </dl>
-        )}
         {i.knownReasons.length > 0 && (
-          <>
-            <p className="font-medium">
-              {text("ประเด็นที่พบจากข้อมูล", "Recorded findings")}
-            </p>
-            <ul className="list-disc pl-5 space-y-2">
+          <DetailSection
+            title={text("ประเด็นที่พบจากข้อมูล", "Recorded findings")}
+          >
+            <ul className="list-disc pl-5 space-y-1.5 text-sm">
               {i.knownReasons.map((r) => (
                 <li key={r}>{evidenceLabel(r)}</li>
               ))}
             </ul>
-          </>
+          </DetailSection>
         )}
-        <p className="font-medium">
-          {text(
-            "ข้อมูลที่ยังไม่มีสัญญาข้อมูลยืนยัน",
+        <DetailSection
+          title={text(
+            "ข้อมูลที่ยังยืนยันจากต้นทางไม่ได้",
             "Source contracts still unavailable",
           )}
-        </p>
-        <ul className="list-disc pl-5 space-y-2">
-          {i.missing.map((r) => (
-            <li key={r}>
-              {evidenceLabel(r)} · {text("ยังไม่ยืนยัน", "Unverified")}
-            </li>
-          ))}
-        </ul>
-        <p>
+        >
+          <ul className="list-disc pl-5 space-y-1.5 text-sm">
+            {i.missing.map((r) => (
+              <li key={r}>
+                {evidenceLabel(r)} · {text("ยังไม่ยืนยัน", "Unverified")}
+              </li>
+            ))}
+          </ul>
+        </DetailSection>
+        <p className="text-sm text-on-surface-variant">
           {text(
-            "Margin, ROAS และยอดออเดอร์ปัจจุบันยังไม่มีข้อมูลยืนยัน",
+            "กำไรขั้นต้น ผลตอบแทนค่าโฆษณา และยอดออเดอร์ปัจจุบันยังไม่มีข้อมูลยืนยัน",
             "Margin, ROAS and current order totals remain unavailable.",
           )}
         </p>
@@ -235,37 +301,59 @@ export function PlanEvidence({ value: v }: { value: PlanPreview }) {
       <Panel>
         <PanelHead
           title={text("ร่างสำหรับคนทบทวน", "Draft for human review")}
+          badge={
+            <Chip
+              tone={v.preview.readiness === "blocked" ? "warn" : "muted"}
+              dot
+            >
+              {v.preview.readiness === "blocked"
+                ? text("มีประเด็นต้องตรวจ", "Recorded issues require review")
+                : text(
+                    "ต้องยืนยันข้อมูลเพิ่มเติม",
+                    "Further confirmation required",
+                  )}
+            </Chip>
+          }
         />
-        <div className="p-4 min-w-0 break-words space-y-3">
-          <Chip tone={v.preview.readiness === "blocked" ? "warn" : "muted"}>
-            {v.preview.readiness === "blocked"
-              ? text("มีประเด็นต้องตรวจ", "Recorded issues require review")
-              : text(
-                  "ต้องยืนยันข้อมูลเพิ่มเติม",
-                  "Further confirmation required",
-                )}
-          </Chip>
-          <p>{v.scenario.name}</p>
-          <p>
-            {text("เหตุผลและงานที่เสนอ", "Reason and proposed work")}:{" "}
-            {v.scenario.note}
-          </p>
-          {v.scenario.dueDate && (
-            <p>
-              {text(
-                "วันที่ทบทวนที่ฉันเลือก (UTC)",
-                "My chosen review date (UTC)",
-              )}
-              : {v.scenario.dueDate}
-            </p>
+        <div className="p-4 min-w-0 break-words space-y-4">
+          <KeyValueGrid
+            cols={2}
+            items={[
+              {
+                label: text("ชื่อร่างงาน", "Work draft name"),
+                value: v.scenario.name,
+              },
+              {
+                label: text(
+                  "วันที่ทบทวนที่ฉันเลือก (UTC)",
+                  "My chosen review date (UTC)",
+                ),
+                value: v.scenario.dueDate,
+              },
+              {
+                label: text("เหตุผลและงานที่เสนอ", "Reason and proposed work"),
+                value: v.scenario.note,
+                wide: true,
+              },
+            ]}
+          />
+          {v.scenario.lines.length > 0 && (
+            <DetailSection title={text("รายการที่เสนอ", "Proposed lines")}>
+              <ul className="space-y-1.5 text-sm">
+                {v.scenario.lines.map((l) => (
+                  <li key={l.sku}>
+                    <span className="font-mono text-xs">{l.sku}</span> ·{" "}
+                    {text("ปริมาณที่ฉันเสนอ", "My proposed quantity")}:{" "}
+                    <span className="tabular-nums">{l.proposedQuantity}</span> ·{" "}
+                    {text(
+                      "หน่วยเดิมยังไม่ยืนยัน",
+                      "Historical unit unverified",
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </DetailSection>
           )}
-          {v.scenario.lines.map((l) => (
-            <p key={l.sku}>
-              {l.sku} · {text("ปริมาณที่ฉันเสนอ", "My proposed quantity")}:{" "}
-              {l.proposedQuantity} ·{" "}
-              {text("หน่วยเดิมยังไม่ยืนยัน", "Historical unit unverified")}
-            </p>
-          ))}
           <Alert tone="muted">
             {text(
               "เก็บเป็นร่างส่วนตัวเพื่อทบทวนเท่านั้น ขั้นตอนนี้ยังไม่ส่งข้อความ สร้างออเดอร์ หรือเปิดใช้แคมเปญ",

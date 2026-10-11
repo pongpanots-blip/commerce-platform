@@ -18,7 +18,7 @@ export function FilterEditor({ filters, types, triggerTypes, onChange }: { filte
       return <Select value={f.value.fromTrigger} onChange={(e) => set(i, { ...f, value: { fromTrigger: e.target.value } })}>{same.map((k) => <option key={k} value={k}>{k}</option>)}</Select>;
     }
     if (f.op === 'in') return <Input value={(f.value as string[]).join(',')} placeholder="A,B" onChange={(e) => set(i, { ...f, value: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} />;
-    if (type === 'boolean') return <Select value={String(f.value)} onChange={(e) => set(i, { ...f, value: e.target.value === 'true' })}><option value="true">true</option><option value="false">false</option></Select>;
+    if (type === 'boolean') return <Select value={String(f.value)} onChange={(e) => set(i, { ...f, value: e.target.value === 'true' })}><option value="true">{__uiText('ใช่')}</option><option value="false">{__uiText('ไม่ใช่')}</option></Select>;
     if (type === 'number' || f.op === 'within_last_days' || f.op === 'within_next_days')
       return <Input type="number" value={Number(f.value)} onChange={(e) => set(i, { ...f, value: Number(e.target.value) })} />;
     if (type === 'date') return <Input type="date" value={String(f.value).slice(0, 10)} onChange={(e) => set(i, { ...f, value: e.target.value })} />;

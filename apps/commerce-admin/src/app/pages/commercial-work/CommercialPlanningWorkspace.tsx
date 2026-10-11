@@ -9,14 +9,25 @@ import {
 import {
   Alert,
   Button,
+  ButtonLink,
   Chip,
   Empty,
+  KeyValueGrid,
   Loading,
   PageHeader,
   Panel,
   PanelHead,
+  RowLink,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+  Table,
   TaskInput,
   TaskSelect,
+  confirmAction,
+  statusLabel,
   useUiLocale,
 } from "@cp/ui";
 import {
@@ -328,9 +339,18 @@ function createWorkspace(kind: PlanKind) {
             "Choose evidence, describe the task and review a private plan.",
           )}
           actions={
-            <WorkspaceLink to={`${home}/new/source`}>
-              {text("เริ่มวางแผนงานเพื่อทบทวน", "Start a private work plan")}
-            </WorkspaceLink>
+            <>
+              <Button icon="refresh" onClick={list.reload}>
+                {text("อ่านใหม่", "Refresh")}
+              </Button>
+              <ButtonLink
+                variant="primary"
+                icon="add"
+                to={`${home}/new/source`}
+              >
+                {text("เริ่มวางแผนงานเพื่อทบทวน", "Start a private work plan")}
+              </ButtonLink>
+            </>
           }
         />
         <Alert tone="muted">
@@ -361,11 +381,7 @@ function createWorkspace(kind: PlanKind) {
         ) : (
           list.data &&
           !list.error && (
-            <>
-              <p role="status">
-                {text("ร่างที่อ่านพบในหน้านี้", "Drafts returned on this page")}
-                : {list.data.items.length}
-              </p>
+            <Panel className="overflow-hidden">
               {!list.data.items.length ? (
                 <Empty>
                   {text(
@@ -374,46 +390,73 @@ function createWorkspace(kind: PlanKind) {
                   )}
                 </Empty>
               ) : (
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {list.data.items.map((draft) => (
-                    <Panel key={draft.id}>
-                      <div className="p-4 space-y-3">
-                        <Chip tone="ok">
-                          {text("บันทึกร่างแล้ว", "Draft saved")}
-                        </Chip>
-                        <WorkspaceLink to={detailUrl(draft.id)}>
-                          {draft.scenario.name}
-                        </WorkspaceLink>
-                        <p>
-                          {draft.inputs.subject.name} ·{" "}
+                <Table>
+                  <THead>
+                    <TH>{text("ชื่อร่าง", "Draft")}</TH>
+                    <TH>
+                      {kind === "sales_work"
+                        ? text("บริษัท", "Company")
+                        : text("สินค้า", "Product")}
+                    </TH>
+                    <TH>{text("งาน", "Work")}</TH>
+                    <TH kind="num">{text("ฉบับ", "Revision")}</TH>
+                    <TH>{text("สถานะ", "Status")}</TH>
+                  </THead>
+                  <TBody>
+                    {list.data.items.map((draft) => (
+                      <TR key={draft.id}>
+                        <TD>
+                          <RowLink to={detailUrl(draft.id)} mono={false}>
+                            {draft.scenario.name}
+                          </RowLink>
+                        </TD>
+                        <TD>{draft.inputs.subject.name}</TD>
+                        <TD>
                           {draft.scenario.task === "follow_up"
                             ? text("งานติดตาม", "Follow-up")
                             : draft.scenario.task === "reorder"
                               ? text("ข้อเสนอสั่งซ้ำ", "Reorder proposal")
-                              : text("ทบทวนแคมเปญ", "Campaign brief")}{" "}
-                          · {text("ฉบับ", "Revision")} {draft.revision}
-                        </p>
-                      </div>
-                    </Panel>
-                  ))}
-                </div>
+                              : text("ทบทวนแคมเปญ", "Campaign brief")}
+                        </TD>
+                        <TD kind="num">{draft.revision}</TD>
+                        <TD>
+                          <Chip tone="ok" dot>
+                            {text("บันทึกร่างแล้ว", "Draft saved")}
+                          </Chip>
+                        </TD>
+                      </TR>
+                    ))}
+                  </TBody>
+                </Table>
               )}
-              <div className="flex flex-wrap gap-3">
-                {after && (
-                  <WorkspaceLink to={home}>
-                    {text("กลับหน้าแรก", "First page")}
-                  </WorkspaceLink>
-                )}
-                {list.data.next && (
-                  <WorkspaceLink to={`${home}?after=${list.data.next}`}>
-                    {text("รายการถัดไป", "Next page")}
-                  </WorkspaceLink>
-                )}
-                <Button onClick={list.reload}>
-                  {text("อ่านใหม่", "Refresh")}
-                </Button>
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-secondary-container px-4 py-3">
+                <p
+                  role="status"
+                  className="text-xs text-on-surface-variant tabular-nums"
+                >
+                  {text(
+                    "ร่างที่อ่านพบในหน้านี้",
+                    "Drafts returned on this page",
+                  )}
+                  : {list.data.items.length}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {after && (
+                    <ButtonLink to={home} icon="first_page">
+                      {text("กลับหน้าแรก", "First page")}
+                    </ButtonLink>
+                  )}
+                  {list.data.next && (
+                    <ButtonLink
+                      to={`${home}?after=${list.data.next}`}
+                      icon="chevron_right"
+                    >
+                      {text("รายการถัดไป", "Next page")}
+                    </ButtonLink>
+                  )}
+                </div>
               </div>
-            </>
+            </Panel>
           )
         )}
       </CommercePage>
@@ -444,20 +487,43 @@ function createWorkspace(kind: PlanKind) {
     );
     return (
       <CommercePage>
-        <WorkspaceLink to={home}>
-          {text("กลับไปร่างงานเพื่อทบทวน", "Back to work drafts")}
-        </WorkspaceLink>
         <PageHeader
+          back={{
+            to: home,
+            label: text("กลับไปร่างงานเพื่อทบทวน", "Back to work drafts"),
+          }}
           title={
             detail.data?.scenario.name ??
             text("ร่างงานเพื่อทบทวน", "Private work draft")
           }
-          actions={
-            canSavePlan(kind, role) && (
-              <WorkspaceLink to={`${detailUrl(draftId)}/edit/source`}>
-                {text("แก้ไขร่าง", "Edit draft")}
-              </WorkspaceLink>
+          badge={
+            detail.data &&
+            !detail.error && (
+              <>
+                <Chip tone="ok" dot>
+                  {text("บันทึกร่างแล้ว", "Draft saved")}
+                </Chip>
+                <Chip tone="muted">
+                  {text("ฉบับ", "Revision")} {detail.data.revision}
+                </Chip>
+              </>
             )
+          }
+          actions={
+            <>
+              <Button icon="refresh" onClick={detail.reload}>
+                {text("อ่านร่างใหม่", "Refresh draft")}
+              </Button>
+              {canSavePlan(kind, role) && (
+                <ButtonLink
+                  variant="primary"
+                  icon="edit"
+                  to={`${detailUrl(draftId)}/edit/source`}
+                >
+                  {text("แก้ไขร่าง", "Edit draft")}
+                </ButtonLink>
+              )}
+            </>
           }
         />
         {proof.data && !proof.error && (
@@ -486,22 +552,20 @@ function createWorkspace(kind: PlanKind) {
           detail.data &&
           !detail.error && (
             <>
-              <div className="flex gap-3 flex-wrap">
-                <Chip tone="ok">{text("บันทึกร่างแล้ว", "Draft saved")}</Chip>
-                <Chip tone="muted">
-                  {text("ฉบับ", "Revision")} {detail.data.revision}
-                </Chip>
-                <Button onClick={detail.reload}>
-                  {text("อ่านร่างใหม่", "Refresh draft")}
-                </Button>
-              </div>
-              <p className="text-sm">
-                {text(
-                  "หลักฐานเก็บพร้อมร่างเมื่อ",
-                  "Evidence retained with this draft at",
-                )}
-                : {dateText(detail.data.inputs.capturedAt)}
-              </p>
+              <Panel className="p-4">
+                <KeyValueGrid
+                  cols={2}
+                  items={[
+                    {
+                      label: text(
+                        "หลักฐานเก็บพร้อมร่างเมื่อ",
+                        "Evidence retained with this draft at",
+                      ),
+                      value: dateText(detail.data.inputs.capturedAt),
+                    },
+                  ]}
+                />
+              </Panel>
               <PlanEvidence value={detail.data} />
             </>
           )
@@ -567,10 +631,8 @@ function createWorkspace(kind: PlanKind) {
     }
     return (
       <CommercePage>
-        <WorkspaceLink to={home}>
-          {text("กลับไปร่าง", "Back to drafts")}
-        </WorkspaceLink>
         <PageHeader
+          back={{ to: home, label: text("กลับไปร่าง", "Back to drafts") }}
           title={text("ตรวจผลคำขอบันทึก", "Check save request")}
           subtitle={job?.scenario.name}
         />
@@ -587,9 +649,15 @@ function createWorkspace(kind: PlanKind) {
                 )}
               </span>
             </Alert>
-            <WorkspaceLink to={`${detailUrl(resolved.id)}?saved=${requestId}`}>
-              {text("เปิดร่างที่บันทึกแล้ว", "Open saved draft")}
-            </WorkspaceLink>
+            <div>
+              <ButtonLink
+                variant="primary"
+                icon="open_in_new"
+                to={`${detailUrl(resolved.id)}?saved=${requestId}`}
+              >
+                {text("เปิดร่างที่บันทึกแล้ว", "Open saved draft")}
+              </ButtonLink>
+            </div>
             <PlanEvidence value={resolved} />
           </>
         ) : (
@@ -600,58 +668,81 @@ function createWorkspace(kind: PlanKind) {
                 "No committed receipt was found. This request is not marked successful.",
               )}
             </Alert>
-            {job ? (
-              job.conflict ? (
-                <>
-                  <Alert tone="warn">
-                    {text(
-                      "ฉบับร่างหรือหลักฐานเปลี่ยน เปิดข้อมูลล่าสุดเพื่อทบทวนก่อนเริ่มคำขอใหม่",
-                      "The draft revision or evidence changed. Review current data before starting a new request.",
-                    )}
-                  </Alert>
-                  <WorkspaceLink
-                    to={
-                      job.draftId
-                        ? `${detailUrl(job.draftId)}/edit/source`
-                        : `${home}/new/source`
-                    }
-                  >
-                    {text("เปิดข้อมูลล่าสุด", "Review current data")}
-                  </WorkspaceLink>
-                  <Button
-                    onClick={() => {
-                      try {
-                        clearPlanJob(owner, kind, requestId);
-                        navigate(home);
-                      } catch {
-                        lookup.reload();
-                      }
-                    }}
-                  >
-                    {text(
-                      "ยกเลิกคำขอที่ไม่สำเร็จ",
-                      "Dismiss unsuccessful request",
-                    )}
-                  </Button>
-                </>
-              ) : (
-                canSavePlan(kind, role) && (
-                  <Button disabled={writer.busy} onClick={retry}>
-                    {text("ลองส่งคำขอเดิมอีกครั้ง", "Retry the same request")}
-                  </Button>
-                )
-              )
-            ) : (
+            {!job ? (
               <Empty>
                 {text(
                   "ไม่มีคำขอเดิมในเบราว์เซอร์นี้ เปิดร่างหรืออ่านผลอีกครั้ง",
                   "The original request is unavailable in this browser. Inspect drafts or check again.",
                 )}
               </Empty>
+            ) : (
+              job.conflict && (
+                <Alert tone="warn">
+                  {text(
+                    "ฉบับร่างหรือหลักฐานเปลี่ยน เปิดข้อมูลล่าสุดเพื่อทบทวนก่อนเริ่มคำขอใหม่",
+                    "The draft revision or evidence changed. Review current data before starting a new request.",
+                  )}
+                </Alert>
+              )
             )}
-            <Button disabled={writer.busy} onClick={lookup.reload}>
-              {text("ตรวจผลอีกครั้ง", "Check again")}
-            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              {job?.conflict && (
+                <Button
+                  variant="danger-ghost"
+                  icon="close"
+                  onClick={async () => {
+                    const ok = await confirmAction({
+                      title: text(
+                        "ยกเลิกคำขอที่ไม่สำเร็จ",
+                        "Dismiss unsuccessful request",
+                      ),
+                      body: text(
+                        "ระบบจะลบคำขอนี้ออกจากเบราว์เซอร์ ร่างที่บันทึกไว้แล้วไม่เปลี่ยน",
+                        "This removes the request from this browser. Saved drafts are not changed.",
+                      ),
+                      confirmLabel: text("ยกเลิกคำขอ", "Dismiss request"),
+                      danger: true,
+                    });
+                    if (!ok) return;
+                    try {
+                      clearPlanJob(owner, kind, requestId);
+                      navigate(home);
+                    } catch {
+                      lookup.reload();
+                    }
+                  }}
+                >
+                  {text(
+                    "ยกเลิกคำขอที่ไม่สำเร็จ",
+                    "Dismiss unsuccessful request",
+                  )}
+                </Button>
+              )}
+              <Button disabled={writer.busy} onClick={lookup.reload}>
+                {text("ตรวจผลอีกครั้ง", "Check again")}
+              </Button>
+              {job?.conflict && (
+                <ButtonLink
+                  variant="primary"
+                  to={
+                    job.draftId
+                      ? `${detailUrl(job.draftId)}/edit/source`
+                      : `${home}/new/source`
+                  }
+                >
+                  {text("เปิดข้อมูลล่าสุด", "Review current data")}
+                </ButtonLink>
+              )}
+              {job && !job.conflict && canSavePlan(kind, role) && (
+                <Button
+                  variant="primary"
+                  disabled={writer.busy}
+                  onClick={retry}
+                >
+                  {text("ลองส่งคำขอเดิมอีกครั้ง", "Retry the same request")}
+                </Button>
+              )}
+            </div>
           </>
         )}
         <ErrorText error={writer.error} />
@@ -961,10 +1052,11 @@ function createWorkspace(kind: PlanKind) {
     }
     return (
       <CommercePage>
-        <WorkspaceLink to={id ? detailUrl(id) : home}>
-          {text("กลับไปร่างงาน", "Back to work drafts")}
-        </WorkspaceLink>
         <PageHeader
+          back={{
+            to: id ? detailUrl(id) : home,
+            label: text("กลับไปร่างงาน", "Back to work drafts"),
+          }}
           title={
             kind === "sales_work"
               ? text(
@@ -987,7 +1079,11 @@ function createWorkspace(kind: PlanKind) {
               key={s}
               to={`${base}/${s}`}
               aria-current={step === s ? "step" : undefined}
-              className="rounded-lg border border-secondary-container p-3 min-h-11 focus-visible:outline-2 focus-visible:outline-primary"
+              className={`flex min-h-11 items-center gap-2 rounded-lg border p-3 text-sm shadow-card transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
+                step === s
+                  ? "border-primary bg-primary-container font-semibold text-primary"
+                  : "border-secondary-container bg-surface-container-lowest text-on-surface-variant hover:text-on-surface"
+              }`}
             >
               {i + 1}. {stepLabel(s)}
             </Link>
@@ -996,7 +1092,7 @@ function createWorkspace(kind: PlanKind) {
         {!canSavePlan(kind, role) && (
           <Alert tone="muted">
             {text(
-              "Sales อ่านและทบทวนได้ตามสิทธิ์เดิม บันทึกร่างได้เฉพาะ Admin และหัวหน้าฝ่ายขาย",
+              "ฝ่ายขายอ่านและทบทวนได้ตามสิทธิ์เดิม บันทึกร่างได้เฉพาะผู้ดูแลระบบและหัวหน้าฝ่ายขาย",
               "Sales retains read-only access. Admin and sales managers can retain private drafts.",
             )}
           </Alert>
@@ -1048,7 +1144,7 @@ function createWorkspace(kind: PlanKind) {
                 label={text(
                   kind === "sales_work"
                     ? "ค้นหาบริษัทในขอบเขตที่อ่านได้"
-                    : "ค้นหา SKU ในแค็ตตาล็อก",
+                    : "ค้นหาสินค้าในแค็ตตาล็อก",
                   kind === "sales_work"
                     ? "Search authorized companies"
                     : "Search catalog SKUs",
@@ -1066,7 +1162,7 @@ function createWorkspace(kind: PlanKind) {
                   <>
                     <TaskSelect
                       label={text(
-                        kind === "sales_work" ? "เลือกบริษัท" : "เลือก SKU",
+                        kind === "sales_work" ? "เลือกบริษัท" : "เลือกสินค้า",
                         kind === "sales_work"
                           ? "Choose a company"
                           : "Choose a SKU",
@@ -1101,7 +1197,7 @@ function createWorkspace(kind: PlanKind) {
                         )}
                       </Empty>
                     )}
-                    <p>
+                    <p className="text-xs text-on-surface-variant tabular-nums">
                       {text("ผลในหน้านี้", "Results on this page")}:{" "}
                       {subjects.data.items.length}
                       {subjects.data.hasMore
@@ -1148,7 +1244,7 @@ function createWorkspace(kind: PlanKind) {
                     )}
                   {inputs.orders.map((o) => (
                     <option key={o.id} value={o.id}>
-                      {o.number ?? o.id} · {o.status} ·{" "}
+                      {o.number ?? o.id} · {statusLabel(o.status)} ·{" "}
                       {o.paid === true
                         ? text("ชำระแล้วตามกฎต้นทาง", "Paid under source rule")
                         : text("ยังไม่ยืนยันชำระ", "Payment unverified")}
@@ -1156,12 +1252,18 @@ function createWorkspace(kind: PlanKind) {
                   ))}
                 </TaskSelect>
               )}
-              <WorkspaceLink to={`${base}/proposal`}>
-                {text(
-                  "ต่อไป: ระบุงานและเหตุผล",
-                  "Next: describe the task and reason",
-                )}
-              </WorkspaceLink>
+              <div className="flex justify-end">
+                <ButtonLink
+                  variant="primary"
+                  icon="arrow_forward"
+                  to={`${base}/proposal`}
+                >
+                  {text(
+                    "ต่อไป: ระบุงานและเหตุผล",
+                    "Next: describe the task and reason",
+                  )}
+                </ButtonLink>
+              </div>
             </div>
           </Panel>
         )}
@@ -1271,20 +1373,39 @@ function createWorkspace(kind: PlanKind) {
                     })}
                   </>
                 )}
+                <div className="flex justify-end">
+                  <Button
+                    variant="primary"
+                    disabled={reviewDisabled}
+                    onClick={review}
+                  >
+                    {text("ทบทวนงานและหลักฐาน", "Review work and evidence")}
+                  </Button>
+                </div>
               </div>
             </Panel>
-            <Button disabled={reviewDisabled} onClick={review}>
-              {text("ทบทวนงานและหลักฐาน", "Review work and evidence")}
-            </Button>
           </>
         )}
         {step === "review" &&
           (preview ? (
             <>
               <PlanEvidence value={preview} />
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <ButtonLink to={`${base}/source`} variant="ghost">
+                  {text("แก้แหล่งข้อมูล", "Edit source")}
+                </ButtonLink>
+                <ButtonLink to={`${base}/proposal`} variant="ghost">
+                  {text("แก้งานที่เสนอ", "Edit proposed work")}
+                </ButtonLink>
+                <Button disabled={reviewDisabled} onClick={review}>
+                  {text("อ่านและทบทวนใหม่", "Read and review again")}
+                </Button>
                 {canSavePlan(kind, role) && (
-                  <Button disabled={reviewDisabled} onClick={save}>
+                  <Button
+                    variant="primary"
+                    disabled={reviewDisabled}
+                    onClick={save}
+                  >
                     {writer.busy
                       ? text("กำลังตรวจผลบันทึก…", "Verifying save…")
                       : text(
@@ -1293,15 +1414,6 @@ function createWorkspace(kind: PlanKind) {
                         )}
                   </Button>
                 )}
-                <WorkspaceLink to={`${base}/source`}>
-                  {text("แก้แหล่งข้อมูล", "Edit source")}
-                </WorkspaceLink>
-                <WorkspaceLink to={`${base}/proposal`}>
-                  {text("แก้งานที่เสนอ", "Edit proposed work")}
-                </WorkspaceLink>
-                <Button disabled={reviewDisabled} onClick={review}>
-                  {text("อ่านและทบทวนใหม่", "Read and review again")}
-                </Button>
               </div>
             </>
           ) : (
@@ -1310,7 +1422,11 @@ function createWorkspace(kind: PlanKind) {
                 "ยังไม่มีผลทบทวนสำหรับค่าปัจจุบัน",
                 "No verified review for current values.",
               )}
-              <Button disabled={reviewDisabled} onClick={review}>
+              <Button
+                variant="primary"
+                disabled={reviewDisabled}
+                onClick={review}
+              >
                 {text("ทบทวนค่าปัจจุบัน", "Review current values")}
               </Button>
             </Empty>

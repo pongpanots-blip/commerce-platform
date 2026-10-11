@@ -1,16 +1,17 @@
 // ui-copy-migration: only literal UI copy and notification templates
 import '../../workflow-editor/josh/josh-tailwind.css';
 import { useState } from 'react';
-import { Button, Checkbox, Field, Hint, Input, Textarea, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { Button, Checkbox, Chip, Field, Hint, Input, Textarea, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import type { NotifyChannel, SegmentOption, WorkflowMeta, WorkflowStep } from '@cp/marketing-workflow';
 import { flowsApi } from '../../../../lib/api';
 import { CouponPicker, NotifyTemplatePicker } from '../../workflow-editor/josh/MarketingStepSidePanel';
+import { marketingChannelLabel } from '../../workflow-editor/josh/trigger-rule.helpers';
 import { itemOf } from '../palette-items';
 import { describeRule } from '../../marketing-events/rule-helpers';
 
 type Of<T extends WorkflowStep['type']> = Extract<WorkflowStep, { type: T }>;
 export interface CouponOption { id: string; coupon_code: string; title: string }
-const CHANNELS: { id: NotifyChannel; label: string }[] = [{ id: 'push', label: 'Push' }, { id: 'email', label: 'Email' }, { id: 'in_app', label: 'In-App' }];
+const CHANNELS: NotifyChannel[] = ['push', 'email', 'in_app'];
 
 export function describeStep(step: WorkflowStep, ctx: { segments: SegmentOption[]; coupons: CouponOption[] }): { title: string; subtitle: string } {
   const label = (id: string) => itemOf(id)?.label ?? id;
@@ -24,7 +25,7 @@ export function describeStep(step: WorkflowStep, ctx: { segments: SegmentOption[
     case 'event_split': return { title: label('event_split'), subtitle: describeRule(step.rule, new Map()) };
     case 'action': {
       const a = step.action;
-      if (a.kind === 'notify') return { title: a.channels.map((c) => label(c)).join(' + ') || label('push'), subtitle: a.templateKey || __uiText('ยังไม่เลือก template') };
+      if (a.kind === 'notify') return { title: a.channels.map((c) => label(c)).join(' + ') || label('push'), subtitle: a.templateKey || __uiText('ยังไม่ได้เลือกเทมเพลต') };
       return { title: label('grant_coupon'), subtitle: ctx.coupons.find((c) => c.id === a.couponId)?.coupon_code ?? __uiText('ยังไม่เลือกคูปอง') };
     }
   }
@@ -39,8 +40,8 @@ export function AudienceForm({ step, segments, onChange }: { step: Of<'audience'
   return (
     <div className="space-y-4">
       {(['segmentIds', 'excludeSegmentIds'] as const).map((key) => (
-        <Field key={key} label={key === 'segmentIds' ? __uiText('อยู่ใน segment ใดก็ได้') : __uiText('ยกเว้น segment')}>
-          {!segments.length && <Hint>{__uiText('ยังไม่มี segment ที่ใช้กับ workflow ของ commerce ได้')}</Hint>}
+        <Field key={key} label={key === 'segmentIds' ? __uiText('อยู่ในกลุ่มลูกค้าใดก็ได้') : __uiText('ยกเว้นกลุ่มลูกค้า')}>
+          {!segments.length && <Hint>{__uiText('ยังไม่มีกลุ่มลูกค้าที่ใช้กับข้อความอัตโนมัตินี้ได้')}</Hint>}
           <div className="space-y-1">
             {segments.map((s) => (
               <Checkbox key={s.id} checked={(step[key] ?? []).includes(s.id)} onChange={() => toggle(key, s.id)}
@@ -85,9 +86,9 @@ export function ConditionForm({ step, meta, onChange }: { step: Of<'condition'>;
           </button>
         ))}
       </div>
-      <Hint>{__uiText('ตัวอย่าง: still_no_order == true AND user.order_count >= 2 · ไป Yes เมื่อจริง, No เมื่อเท็จ')}</Hint>
+      <Hint>{__uiText('ตัวอย่าง: still_no_order == true AND user.order_count >= 2 ถ้าเงื่อนไขเป็นจริงไปทาง ใช่ ถ้าไม่จริงไปทาง ไม่ใช่')}</Hint>
       <Button size="sm" onClick={async () => setCheck(await flowsApi.validateExpression(step.expression))}>{__uiText('ตรวจเงื่อนไข')}</Button>
-      {check && <Hint>{check.ok ? __uiText('ใช้ได้') : check.error}</Hint>}
+      {check && (check.ok ? <Chip tone="ok" dot>{__uiText('เงื่อนไขถูกต้อง')}</Chip> : <p className="text-[11px] text-danger">{check.error}</p>)}
     </div>
   );
 }
@@ -100,12 +101,11 @@ export function NotifyForm({ step, onChange }: { step: Of<'action'>; onChange: (
   return (
     <div className="space-y-3">
       <Field label={__uiText('ช่องทาง')}>
-        <div className="flex gap-3">{CHANNELS.map((c) => <Checkbox key={c.id} checked={a.channels.includes(c.id)} onChange={() => toggle(c.id)} label={c.label} />)}</div>
+        <div className="flex gap-3">{CHANNELS.map((c) => <Checkbox key={c} checked={a.channels.includes(c)} onChange={() => toggle(c)} label={marketingChannelLabel(c)} />)}</div>
       </Field>
-      <Field label={__uiText('Template ข้อความ (josh)')}>
-        <div className="josh-tw"><NotifyTemplatePicker templateKey={a.templateKey} onSelect={(key) => onChange({ ...step, action: { ...a, templateKey: key } })} /></div>
-      </Field>
-      <Hint>{__uiText('josh เป็นคนส่งจริง และเคารพการปิดรับข่าวสารของลูกค้า')}</Hint>
+      {/* The picker carries its own label (and a link), so it is not wrapped in another <label>. */}
+      <div className="josh-tw"><NotifyTemplatePicker templateKey={a.templateKey} onSelect={(key) => onChange({ ...step, action: { ...a, templateKey: key } })} /></div>
+      <Hint>{__uiText('ระบบร้านค้าเป็นผู้ส่งจริง และไม่ส่งให้ลูกค้าที่ปิดรับข่าวสาร')}</Hint>
     </div>
   );
 }
@@ -114,9 +114,6 @@ export function CouponForm({ step, coupons, onChange }: { step: Of<'action'>; co
   __useUiLocale();
   const a = step.action;
   if (a.kind !== 'grant_coupon') return null;
-  return (
-    <Field label={__uiText('คูปอง')}>
-      <div className="josh-tw"><CouponPicker coupons={coupons} value={a.couponId || undefined} onChange={(couponId) => onChange({ ...step, action: { kind: 'grant_coupon', couponId } })} /></div>
-    </Field>
-  );
+  // CouponPicker carries its own "คูปอง" label.
+  return <div className="josh-tw"><CouponPicker coupons={coupons} value={a.couponId || undefined} onChange={(couponId) => onChange({ ...step, action: { kind: 'grant_coupon', couponId } })} /></div>;
 }

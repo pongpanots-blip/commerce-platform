@@ -82,7 +82,7 @@ function Editor({ id }: { id: string | null }) {
         <PanelHead title={__uiText('ตั้งค่า')} />
         <div className="space-y-3 p-4">
           <Field label={__uiText('ชื่อ')}><Input value={value.name} onChange={(e) => set({ name: e.target.value })} /></Field>
-          <Field label={__uiText('คำอธิบาย')}><Textarea rows={2} value={value.description ?? ''} onChange={(e) => set({ description: e.target.value || null })} /></Field>
+          <Field label={__uiText('คำอธิบาย')}><Textarea mono={false} rows={2} value={value.description ?? ''} onChange={(e) => set({ description: e.target.value || null })} /></Field>
           <Field label={__uiText('เงื่อนไข')}>
             <EventRuleBuilder rule={value.rule} definitions={definitions} allowSegments={false} onChange={(rule: EventRule) => set({ rule })} />
           </Field>

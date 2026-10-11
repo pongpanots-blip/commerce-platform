@@ -1,3 +1,4 @@
+import { uiText } from '@cp/ui';
 import type { EventAttributeType, EventDefinition, EventFilter, EventRule, FilterOp } from '@cp/marketing-workflow';
 
 /** Same table as commerce-platform marketing-events/domain/event-filter.ts. */
@@ -26,9 +27,9 @@ export function newEventLeaf(def: EventDefinition | undefined): EventRule {
 
 const CMP = { gte: '≥', eq: '=', lte: '≤' } as const;
 export function describeRule(rule: EventRule, names: Map<string, string>): string {
-  if ('children' in rule) return `(${rule.children.map((c) => describeRule(c, names)).join(` ${rule.op} `)})`;
-  if (rule.kind === 'segment') return `segment ${names.get(rule.segmentId) ?? rule.segmentId.slice(0, 8)}`;
-  const what = rule.measure === 'count' ? `${CMP[rule.op]} ${rule.value} ครั้ง` : `ผลรวม ${rule.measure.sum} ${CMP[rule.op]} ${rule.value}`;
-  const when = 'lastDays' in rule.window ? `${rule.window.lastDays} วัน` : `${rule.window.from.slice(0, 10)}–${rule.window.to.slice(0, 10)}`;
+  if ('children' in rule) return `(${rule.children.map((c) => describeRule(c, names)).join(` ${uiText(rule.op === 'AND' ? 'และ' : 'หรือ')} `)})`;
+  if (rule.kind === 'segment') return `${uiText('กลุ่มลูกค้า')} ${names.get(rule.segmentId) ?? rule.segmentId.slice(0, 8)}`;
+  const what = rule.measure === 'count' ? `${CMP[rule.op]} ${rule.value} ${uiText('ครั้ง')}` : `${uiText('ผลรวมของ {0}', { 0: rule.measure.sum })} ${CMP[rule.op]} ${rule.value}`;
+  const when = 'lastDays' in rule.window ? `${rule.window.lastDays} ${uiText('วัน')}` : `${rule.window.from.slice(0, 10)}–${rule.window.to.slice(0, 10)}`;
   return `${names.get(rule.name) ?? rule.name} ${what} / ${when}${rule.filters.length ? ` (+${rule.filters.length})` : ''}`;
 }

@@ -19,7 +19,7 @@ const reject = () => buttons().find(button => button.textContent === 'Reject')!;
 async function render() { await act(async () => root.render(<MemoryRouter><ProductMasterQueue /></MemoryRouter>)); }
 async function select() { await act(async () => (container.querySelector('input[type="checkbox"]') as HTMLInputElement).click()); }
 beforeEach(() => {
-  vi.clearAllMocks(); sessionStorage.clear(); setUiLocale('en');
+  vi.clearAllMocks(); vi.spyOn(window, 'confirm').mockReturnValue(true); sessionStorage.clear(); setUiLocale('en');
   vi.mocked(productPricesApi.ownership).mockResolvedValue({ productMaster: true } as Awaited<ReturnType<typeof productPricesApi.ownership>>);
   vi.mocked(productMastersApi.pending).mockResolvedValue(page);
   container = document.createElement('div'); document.body.append(container); root = createRoot(container);
@@ -107,4 +107,13 @@ it('displays the requested rejection count when a receipt includes both count ke
   vi.mocked(productMastersApi.reject).mockResolvedValueOnce({approved:1,rejected:0} as never);
   await render();await select();await act(async()=>reject().click());
   expect(container.textContent).toContain('Rejected 0 records');expect(container.textContent).not.toContain('Rejected 1 records');
+});
+
+it('asks before rejecting and sends nothing when cancelled', async () => {
+  vi.mocked(window.confirm).mockReturnValueOnce(false);
+  await render(); await select();
+  await act(async () => reject().click());
+  expect(window.confirm).toHaveBeenCalledTimes(1);
+  expect(productMastersApi.reject).not.toHaveBeenCalled();
+  expect((container.querySelector('input[type="checkbox"]') as HTMLInputElement).checked).toBe(true);
 });

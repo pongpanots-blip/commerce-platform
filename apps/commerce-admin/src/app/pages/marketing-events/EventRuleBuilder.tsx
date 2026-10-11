@@ -29,7 +29,7 @@ export function EventRuleBuilder({ rule, definitions, segments = [], allowSegmen
         <div className="flex flex-wrap gap-1">
           <Button size="sm" icon="add" onClick={() => onChange({ ...rule, children: [...rule.children, newEventLeaf(active[0])] })}>{__uiText('เงื่อนไข event')}</Button>
           {allowSegments && segments.length > 0 && (
-            <Button size="sm" icon="add" onClick={() => onChange({ ...rule, children: [...rule.children, { kind: 'segment', segmentId: segments[0].id }] })}>{__uiText('dynamic segment')}</Button>
+            <Button size="sm" icon="add" onClick={() => onChange({ ...rule, children: [...rule.children, { kind: 'segment', segmentId: segments[0].id }] })}>{__uiText('กลุ่มลูกค้าอัตโนมัติ')}</Button>
           )}
           {depth < 3 && <Button size="sm" icon="add" onClick={() => onChange({ ...rule, children: [...rule.children, { op: 'AND', children: [newEventLeaf(active[0])] }] })}>{__uiText('กลุ่ม')}</Button>}
         </div>

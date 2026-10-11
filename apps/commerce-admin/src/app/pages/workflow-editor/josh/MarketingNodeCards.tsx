@@ -27,23 +27,32 @@ export type MarketingNodeCardData = {
 
 export type MarketingFlowNode = Node<MarketingNodeCardData, 'marketingStep' | 'marketingCondition'>;
 
-const KIND_ACCENT: Record<MarketingNodeKind, string> = {
-  trigger: 'border-l-amber-400',
-  audience: 'border-l-blue-400',
-  wait: 'border-l-gray-400',
-  gate: 'border-l-violet-400',
-  action: 'border-l-emerald-400',
-  condition: 'border-l-orange-400',
+const KIND_LABEL: Record<MarketingNodeKind, string> = {
+  get trigger(){return __uiText("จุดเริ่ม");},
+  get audience(){return __uiText("คัดกลุ่ม");},
+  get wait(){return __uiText("รอ");},
+  get gate(){return __uiText("ตรวจซ้ำ");},
+  get action(){return __uiText("สิ่งที่ทำ");},
+  get condition(){return __uiText("แยกเส้นทาง");},
 };
 
-const KIND_LABEL: Record<MarketingNodeKind, string> = {
-  get trigger(){return __uiText("TRIGGER");},
-  get audience(){return __uiText("AUDIENCE");},
-  get wait(){return __uiText("WAIT");},
-  get gate(){return __uiText("GATE");},
-  get action(){return __uiText("ACTION");},
-  get condition(){return __uiText("IF / ELSE");},
-};
+/** Quiet remove control on a card; the canvas asks to confirm before removing. */
+function RemoveStepButton({ onRemove, className }: { onRemove?: () => void; className: string }) {
+  return (
+    <button
+      type="button"
+      onClick={(event) => {
+        event.stopPropagation();
+        onRemove?.();
+      }}
+      className={`${className} shrink-0 rounded p-1 text-on-surface-variant hover:bg-danger-container hover:text-danger`}
+      title={__uiText("ลบขั้นตอนนี้")}
+      aria-label={__uiText("ลบขั้นตอนนี้")}
+    >
+      <MdOutlineClose size={14} />
+    </button>
+  );
+}
 
 /**
  * Visible source handle (bottom / left / right). Sized generously (22px) so it
@@ -65,10 +74,10 @@ function MarketingStepNode({ data, selected }: NodeProps<MarketingFlowNode>) {
   const isTrigger = data.kind === 'trigger';
   return (
     <div
-      className={`relative ${isTrigger ? 'w-[320px]' : 'w-[300px]'} rounded-2xl border border-l-4 bg-white p-4 shadow-sm transition-shadow ${KIND_ACCENT[data.kind]} ${
+      className={`relative ${isTrigger ? 'w-[320px]' : 'w-[300px]'} rounded-2xl border bg-surface-container-lowest p-4 shadow-card transition-shadow ${
         selected
-          ? 'border-primary ring-2 ring-primary/20 shadow-md'
-          : 'border-gray-200 hover:shadow-md'
+          ? 'border-primary ring-2 ring-primary/20'
+          : 'border-secondary-container hover:shadow-raised'
       }`}
     >
       {!isTrigger && (
@@ -81,26 +90,14 @@ function MarketingStepNode({ data, selected }: NodeProps<MarketingFlowNode>) {
       )}
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <div className="text-[10px] font-semibold tracking-wide text-gray-400">
+          <div className={`text-[11px] font-semibold ${isTrigger ? 'text-primary' : 'text-on-surface-variant'}`}>
             {KIND_LABEL[data.kind]}
           </div>
-          <div className="mt-0.5 truncate text-sm font-semibold text-gray-800">
+          <div className="mt-0.5 truncate text-sm font-semibold text-on-surface">
             {data.title}
           </div>
         </div>
-        {data.removable && (
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              data.onRemove?.();
-            }}
-            className="relative z-10 shrink-0 rounded p-1 text-gray-300 hover:bg-gray-50 hover:text-red-500"
-            title={__uiText("ลบขั้นตอนนี้")}
-          >
-            <MdOutlineClose size={14} />
-          </button>
-        )}
+        {data.removable && <RemoveStepButton onRemove={data.onRemove} className="relative z-10" />}
       </div>
       {isTrigger && data.triggerType && data.onUpdateTriggerType && (
         <div className="mt-2" onMouseDown={(e) => e.stopPropagation()}>
@@ -111,16 +108,16 @@ function MarketingStepNode({ data, selected }: NodeProps<MarketingFlowNode>) {
           />
         </div>
       )}
-      <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-gray-500">
+      <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-on-surface-variant">
         {data.subtitle}
       </p>
       {isTrigger && (
         <p
-          className={`mt-2 border-t border-dashed border-gray-100 pt-2 text-[10px] ${
-            selected ? 'font-medium text-primary' : 'text-gray-400'
+          className={`mt-2 border-t border-dashed border-secondary-container pt-2 text-[11px] ${
+            selected ? 'font-medium text-primary' : 'text-on-surface-variant'
           }`}
         >
-          {__uiText("ลากจุดสีด้านล่าง → ปล่อยบนแถบด้านบนของการ์ดปลายทาง")}</p>
+          {__uiText("ต่อขั้นตอน: ลากจุดด้านล่างไปปล่อยบนแถบด้านบนของการ์ดที่ต้องการ")}</p>
       )}
       <Handle
         type="source"
@@ -140,31 +137,19 @@ function MarketingConditionNode({ data, selected }: NodeProps<MarketingFlowNode>
       <Handle type="target" position={Position.Top} isConnectable className={TARGET_HANDLE_CLASS} />
       {/* Decorative only — must not steal pointer events from handles */}
       <div
-        className={`pointer-events-none absolute inset-0 rotate-45 rounded-xl border-2 bg-white shadow-sm transition-shadow ${
-          selected ? 'border-primary ring-2 ring-primary/20 shadow-md' : 'border-orange-300'
+        className={`pointer-events-none absolute inset-0 rotate-45 rounded-xl border-2 bg-surface-container-lowest shadow-card transition-shadow ${
+          selected ? 'border-primary ring-2 ring-primary/20' : 'border-outline-variant'
         }`}
       />
       <div className="pointer-events-none relative z-10 flex flex-col items-center gap-1 px-8 text-center">
-        <div className="text-[10px] font-semibold tracking-wide text-orange-500">
+        <div className="text-[11px] font-semibold text-on-surface-variant">
           {KIND_LABEL.condition}
         </div>
-        <div className="line-clamp-3 break-words text-[11px] font-medium leading-snug text-gray-700">
+        <div className="line-clamp-3 break-words text-[11px] font-medium leading-snug text-on-surface">
           {data.title}
         </div>
       </div>
-      {data.removable && (
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            data.onRemove?.();
-          }}
-          className="absolute right-1 top-1 z-50 shrink-0 rounded p-1 text-gray-300 hover:bg-gray-50 hover:text-red-500"
-          title={__uiText("ลบขั้นตอนนี้")}
-        >
-          <MdOutlineClose size={14} />
-        </button>
-      )}
+      {data.removable && <RemoveStepButton onRemove={data.onRemove} className="absolute right-1 top-1 z-50" />}
       <Handle id="yes" type="source" position={Position.Left} isConnectable className={SOURCE_HANDLE_CLASS} />
       <Handle id="no" type="source" position={Position.Right} isConnectable className={SOURCE_HANDLE_CLASS} />
     </div>

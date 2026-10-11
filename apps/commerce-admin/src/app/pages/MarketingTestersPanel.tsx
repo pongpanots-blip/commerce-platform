@@ -1,6 +1,6 @@
 // ui-copy-migration: only literal UI copy and notification templates
 import { useState } from 'react';
-import { Button, Empty, ErrorText, Hint, Input, Panel, PanelHead, Table, TBody, TD, TH, THead, TR, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { Button, Empty, ErrorText, FormField, Hint, Input, Panel, PanelHead, Table, TBody, TD, TH, THead, TR, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import { marketingTestersApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -19,12 +19,14 @@ export function MarketingTestersPanel() {
 
   return (
     <Panel className="overflow-hidden">
-      <PanelHead title={__uiText("Tester (ผู้รับข้อความทดสอบ)")} />
-      <div className="px-4 pt-3"><Hint>{__uiText("ส่งทดสอบจริง (แจ้งเตือน / workflow / ผ่าน AI) ได้เฉพาะบัญชีในรายการนี้ · ใส่อีเมลบัญชีลูกค้าทดสอบในแอป")}</Hint></div>
+      <PanelHead title={__uiText("ผู้รับข้อความทดสอบ")} />
+      <div className="px-4 pt-3"><Hint>{__uiText("ส่งข้อความทดสอบจริงได้เฉพาะบัญชีในรายการนี้ ใส่อีเมลของบัญชีลูกค้าทดสอบในแอป")}</Hint></div>
       <ErrorText error={error ?? list.error} />
-      <form className="flex gap-2 px-4 py-3" onSubmit={(e) => { e.preventDefault(); if (email.trim()) void act(() => marketingTestersApi.add(email.trim())); }}>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={__uiText("อีเมลบัญชีทดสอบ")} className="max-w-sm" />
-        <Button type="submit" disabled={busy || !email.trim()}>{__uiText("เพิ่ม tester")}</Button>
+      <form className="flex items-end gap-2 px-4 py-3" onSubmit={(e) => { e.preventDefault(); if (email.trim()) void act(() => marketingTestersApi.add(email.trim())); }}>
+        <FormField label={__uiText("อีเมลบัญชีทดสอบ")} className="w-full max-w-sm">
+          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </FormField>
+        <Button type="submit" icon="person_add" disabled={busy || !email.trim()}>{__uiText("เพิ่มผู้รับทดสอบ")}</Button>
       </form>
       {list.data?.length ? (
         <Table>
@@ -35,12 +37,13 @@ export function MarketingTestersPanel() {
                 <TD kind="mono">{t.email}</TD>
                 <TD>{t.name ?? '—'}</TD>
                 <TD>{t.addedBy}</TD>
-                <TD><Button size="sm" variant="ghost" disabled={busy} onClick={() => void act(() => marketingTestersApi.remove(t.userId))}>{__uiText("ลบ")}</Button></TD>
+                <TD><Button size="sm" variant="danger-ghost" icon="delete" disabled={busy}
+                  onClick={() => { if (window.confirm(__uiText("นำ {0} ออกจากผู้รับข้อความทดสอบ?", { "0": t.email }))) void act(() => marketingTestersApi.remove(t.userId)); }}>{__uiText("ลบ")}</Button></TD>
               </TR>
             ))}
           </TBody>
         </Table>
-      ) : list.data && <div className="px-4 py-6"><Empty icon="person">{__uiText("ยังไม่มี tester")}</Empty></div>}
+      ) : list.data && <div className="px-4 py-6"><Empty icon="person">{__uiText("ยังไม่มีผู้รับทดสอบ ใส่อีเมลด้านบนแล้วกดเพิ่ม")}</Empty></div>}
     </Panel>
   );
 }

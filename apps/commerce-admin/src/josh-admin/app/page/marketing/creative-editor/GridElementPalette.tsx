@@ -105,7 +105,7 @@ export function GridElementPalette({
       {disabled && disabledHint && (
         <p
           data-testid="palette-disabled-hint"
-          className="mt-1.5 rounded-md bg-amber-50 px-2 py-1.5 text-[10px] leading-relaxed text-amber-700"
+          className="mt-1.5 rounded-md bg-amber-50 px-2 py-1.5 text-[10px] leading-relaxed text-warn"
         >
           {disabledHint}
         </p>

@@ -6,6 +6,7 @@ import { AudienceForm, ConditionForm, CouponForm, describeStep, NotifyForm, Wait
 import { SplitForm } from './forms/SplitForm';
 import { TriggerForm } from './forms/TriggerForm';
 import { WebhookForm } from './forms/WebhookForm';
+import { confirmRemoveStep } from './NodeCard';
 import { TRIGGER } from './workflow-graph';
 
 /** Right panel: the selected card's settings (Entry → trigger + workflow settings). */
@@ -17,15 +18,15 @@ export function StepPanel(p: {
   __useUiLocale();
   const step = p.input.steps.find((s) => s.id === p.selection);
   if (!p.selection || (p.selection !== TRIGGER && !step)) {
-    return <Panel><PanelHead title={__uiText('ตั้งค่า')} /><p className="p-4 text-sm text-on-surface-variant">{__uiText('เลือกการ์ดบน canvas เพื่อตั้งค่า')}</p></Panel>;
+    return <Panel><PanelHead title={__uiText('ตั้งค่า')} /><p className="p-4 text-sm text-on-surface-variant">{__uiText('เลือกการ์ดในแผนภาพเพื่อตั้งค่า')}</p></Panel>;
   }
   const issues = p.issues.filter((i) => (p.selection === TRIGGER ? i.stepId === null : i.stepId === p.selection));
-  const title = p.selection === TRIGGER ? __uiText('Entry') : describeStep(step!, p).title;
+  const title = p.selection === TRIGGER ? __uiText('จุดเริ่ม') : describeStep(step!, p).title;
   return (
     <Panel>
       <PanelHead title={title} />
       <div className="space-y-4 p-4">
-        {issues.map((i) => <p key={i.code} className="rounded bg-error-container px-2 py-1 text-xs text-on-error-container">{i.message}</p>)}
+        {issues.map((i) => <p key={i.code} className="rounded bg-danger-container px-2 py-1 text-xs text-danger">{i.message}</p>)}
         {p.selection === TRIGGER && <TriggerForm input={p.input} definitions={p.definitions} onChange={p.onChangeInput} />}
         {step?.type === 'audience' && <><AudienceForm step={step} segments={p.segments} onChange={p.onChangeStep} />
           <AudienceEventFields step={step} definitions={p.definitions} segments={p.dynamicSegments} onChange={p.onChangeStep} /></>}
@@ -38,7 +39,11 @@ export function StepPanel(p: {
         {step?.type === 'webhook' && <WebhookForm step={step} meta={p.meta} secrets={p.secrets} onChange={p.onChangeStep} onSecretsChanged={p.onSecretsChanged} />}
         {step?.type === 'action' && step.action.kind === 'notify' && <NotifyForm step={step} onChange={p.onChangeStep} />}
         {step?.type === 'action' && step.action.kind === 'grant_coupon' && <CouponForm step={step} coupons={p.coupons} onChange={p.onChangeStep} />}
-        {step && <Button variant="danger-ghost" icon="close" onClick={() => p.onRemoveStep(step.id)}>{__uiText('ลบขั้นตอนนี้')}</Button>}
+        {step && (
+          <div className="border-t border-outline-variant/60 pt-3">
+            <Button variant="danger-ghost" size="sm" icon="delete" onClick={() => { if (confirmRemoveStep()) p.onRemoveStep(step.id); }}>{__uiText('ลบขั้นตอนนี้')}</Button>
+          </div>
+        )}
       </div>
     </Panel>
   );

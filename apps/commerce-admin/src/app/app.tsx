@@ -39,11 +39,9 @@ import { SupplierOrderPeriods } from './pages/SupplierOrderPeriods';
 import { Orders } from './pages/Orders';
 import { Reservations } from './pages/Reservations';
 import { ErpStock } from './pages/ErpStock';
-import { ErpIngest } from './pages/ErpIngest';
 import { MarketingResearch } from './pages/MarketingResearch';
 import { InboundLog } from './pages/InboundLog';
 import { WebhookDeadLetter } from './pages/WebhookDeadLetter';
-import { WebhookPlatforms } from './pages/WebhookPlatforms';
 import { InventoryPerWarehouse } from './pages/InventoryPerWarehouse';
 import { AiConnectors } from './pages/AiConnectors';
 import { AuditLogs } from './pages/AuditLogs';
@@ -274,7 +272,7 @@ export function App() {
             <Route path="/erp/josh-logs" element={<JoshErpLogs />} />
             <Route path="/erp/inbound-log" element={<InboundLog />} />
             <Route path="/erp/webhook-dead-letter" element={<WebhookDeadLetter />} />
-            <Route path="/erp/webhook-platforms" element={<WebhookPlatforms />} />
+            <Route path="/erp/webhook-platforms" element={<Navigate to="/subscriptions" replace />} />
             <Route path="/erp/inventory-warehouse" element={<InventoryPerWarehouse />} />
             <Route path="/erp/jagota-shadow" element={<JagotaShadow />} />
             <Route path="/erp/simulator" element={<ErpSimulator />} />
@@ -299,7 +297,7 @@ export function App() {
             <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/reservations" element={<Reservations />} />
             <Route path="/erp-stock" element={<ErpStock />} />
-            <Route path="/erp-ingest" element={<ErpIngest />} />
+            <Route path="/erp-ingest" element={<Navigate to="/erp/inbound-log" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
       </CommerceWorkspace>

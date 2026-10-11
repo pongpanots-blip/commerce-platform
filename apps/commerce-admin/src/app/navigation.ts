@@ -36,7 +36,7 @@ type NavEntry = Omit<NavItem, 'icon' | 'badge'> & {
 const NAV: Record<SectionId, NavEntry[]> = {
   catalog: [
     { to: '/j/allproducts', label: 'สินค้าบนร้านค้า', activeFor: ['/j/product'], description: 'ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า' },
-    { to: '/products', label: 'ค้นหาสินค้าตามรหัส', description: 'สินค้าทุกรายการตามรหัสสินค้า และการอนุมัติสินค้าใหม่' },
+    { to: '/products', label: 'ค้นหาสินค้าตามรหัส', description: 'ค้นหาสินค้าทุกรายการตามรหัสสินค้า และดูสต็อกแต่ละคลัง' },
     { to: '/j/categories', label: 'จัดการหมวดหมู่', description: 'จัดโครงสร้าง ลำดับ และรูปของหมวดหมู่บนร้านค้า' },
     { to: '/j/brands', label: 'แบรนด์', description: 'รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า' },
     { to: '/j/product/bulk-image-upload', label: 'อัปโหลดรูปสินค้า', end: true, description: 'อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน' },
@@ -53,8 +53,7 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/j/order', label: 'คำสั่งซื้อ', description: 'ค้นหาและติดตามคำสั่งซื้อ เปิดดูรายละเอียดและสถานะ' },
     { to: '/j/shipments', label: 'การจัดส่งสินค้า', description: 'ติดตามการจัดส่งและอัปเดตสถานะพัสดุ' },
     { to: '/j/payment-transactions', label: 'รายการชำระเงิน', description: 'รายการชำระเงินของลูกค้าและสถานะการชำระ' },
-    { to: '/j/invoices', label: 'ใบแจ้งหนี้ค้างชำระ', description: 'ใบแจ้งหนี้ที่เลยกำหนดชำระ เพื่อติดตามกับลูกค้า' },
-    { to: '/j/billing', label: 'วางบิล', description: 'ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ทั้งหมด' },
+    { to: '/j/billing', label: 'วางบิล', description: 'ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ หรือดูใบแจ้งหนี้ค้างชำระของทุกบริษัท' },
     { to: '/j/credit-terms', label: 'ใบสมัครเครดิต', description: 'พิจารณาใบสมัครเครดิตเทอมของลูกค้า' },
     { to: '/j/credit-notes', label: 'ใบลดหนี้', description: 'ออกและติดตามใบลดหนี้' },
     { to: '/j/credit-backs', label: 'คืนเครดิตให้ลูกค้า', description: 'คืนเครดิตให้ลูกค้าและติดตามสถานะ' },
@@ -75,7 +74,6 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/reports/winback/opportunities', label: 'โอกาสของทีม', description: 'โอกาสขายและลีดของทั้งทีม แยกตามพนักงานขาย' },
     { to: '/cs/sales-assignment', label: 'มอบหมายพนักงานขาย', description: 'กำหนดพนักงานขายที่ดูแลแต่ละบริษัทลูกค้า' },
     { to: '/reports/winback/my', label: 'โอกาสและลีดของฉัน', more: true, description: 'ลูกค้าที่ควรติดต่อกลับและลีดที่ได้รับมอบหมาย' },
-    { to: '/j/active-offers', label: 'ข้อเสนอราคาที่ใช้งาน', more: true, description: 'ราคาพิเศษเฉพาะลูกค้าที่ยังใช้งานอยู่' },
     { to: '/j/membership-tiers', label: 'ระดับสมาชิก', more: true, description: 'กำหนดระดับสมาชิกและเงื่อนไขของแต่ละระดับ' },
     { to: '/j/cs/cart-move-categories', label: 'หมวดที่ย้ายของในตะกร้าได้', more: true, description: 'หมวดสินค้าที่ย้ายข้ามรอบจัดส่งได้เพื่อปลดล็อกส่งฟรี' },
     { to: '/customers', label: 'ข้อมูลติดต่อลูกค้า', more: true, description: 'ข้อมูลติดต่อและรายละเอียดของลูกค้า' },
@@ -100,7 +98,6 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/j/marketing/notify-templates', label: 'แม่แบบข้อความ', more: true, description: 'แม่แบบข้อความแจ้งเตือน อีเมล และป๊อปอัป' },
     { to: '/j/marketing/welcome-lead-email', label: 'อีเมลต้อนรับลีด', more: true, description: 'อีเมลต้อนรับลูกค้าที่สนใจ (ลีด) รายใหม่' },
     { to: '/j/smart-links', label: 'ลิงก์ติดตามผล', more: true, description: 'ลิงก์ที่ติดตามผลได้ พาลูกค้าไปยังหน้าที่เลือก' },
-    { to: '/j/marketing-links', label: 'สร้างลิงก์การตลาด', more: true, description: 'สร้างลิงก์การตลาดพร้อมแท็กติดตามแคมเปญ' },
     { to: '/j/marketing/scraped-catalog', label: 'สินค้าจากเว็บคู่แข่ง', more: true, description: 'สินค้าที่เก็บมาจากเว็บคู่แข่ง' },
     { to: '/j/bot/intent-rules', label: 'แชตบอต: เข้าใจคำถาม', more: true, description: 'กติกาที่ช่วยให้แชตบอตเข้าใจคำถามของลูกค้า' },
     { to: '/j/bot/workflows', label: 'แชตบอต: ลำดับการตอบ', more: true, description: 'ลำดับการตอบของแชตบอต' },
@@ -132,12 +129,10 @@ const NAV: Record<SectionId, NavEntry[]> = {
     { to: '/sync-jobs', label: 'งานซิงก์ข้อมูล', description: 'งานซิงก์ข้อมูลกับระบบภายนอกและผลลัพธ์' },
     { to: '/scheduled-tasks', label: 'งานอัตโนมัติตามเวลา', description: 'งานที่ระบบรันเองตามเวลา ผลการรันล่าสุด และสั่งรันทันที' },
     { to: '/webhooks', label: 'เหตุการณ์ขาเข้า', description: 'เหตุการณ์ที่ระบบภายนอกส่งเข้ามา' },
-    { to: '/subscriptions', label: 'การส่งเหตุการณ์ขาออก', description: 'ปลายทางที่รับเหตุการณ์จากระบบของเรา' },
+    { to: '/subscriptions', label: 'การส่งเหตุการณ์ขาออก', description: 'ปลายทางที่รับเหตุการณ์จากระบบของเรา เพิ่ม เปิด ปิด หรือลบได้' },
     { to: '/erp/inbound-log', label: 'บันทึกข้อมูลจากระบบหลัก (ERP)', description: 'บันทึกข้อมูลที่ระบบหลัก (ERP) ส่งเข้ามา' },
-    { to: '/erp-ingest', label: 'ข้อมูลที่รับจากระบบหลัก (ERP)', description: 'ข้อมูลสินค้า ราคา และสต็อกที่ระบบหลักของบริษัท (ERP) ส่งเข้ามา' },
     { to: '/josh-api-logs', label: 'บันทึกการเรียกใช้ระบบร้านค้า', description: 'บันทึกทุกครั้งที่มีการเรียกใช้ระบบร้านค้า' },
     { to: '/erp/josh-logs', label: 'บันทึกการเรียกระบบหลัก (ERP)', description: 'บันทึกการเรียกระบบหลัก (ERP) จากระบบร้านค้า' },
-    { to: '/erp/webhook-platforms', label: 'ระบบปลายทางที่รับข้อมูล', description: 'ระบบภายนอกที่รับข้อมูลที่เราส่งต่อ และการตั้งค่า' },
     { to: '/ai/connectors', label: 'เชื่อมต่อผู้ช่วย AI', more: true, description: 'ให้ผู้ช่วย AI อ่านข้อมูลของเราแบบอ่านอย่างเดียว' },
     { to: '/j/marketing/settings', label: 'ตั้งค่าการตลาด', more: true, description: 'ค่าที่มีผลกับข้อความอัตโนมัติทั้งหมด' },
     { to: '/j/marketing/queue', label: 'คิวงานการตลาด', more: true, description: 'ข้อความการตลาดที่รอส่งและที่ส่งแล้ว' },
@@ -357,9 +352,6 @@ export const ROLE_ACCESS: Record<string, readonly string[]> = {
     "marketing"
   ],
   "/j/smart-links": [
-    "marketing"
-  ],
-  "/j/marketing-links": [
     "marketing"
   ],
   "/j/marketing/welcome-lead-email": [

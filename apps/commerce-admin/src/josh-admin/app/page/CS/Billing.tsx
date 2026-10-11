@@ -2,7 +2,7 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
-import { getCompanyBilling, searchBillingCompanies } from '@josh/shared-api';
+import { getCompanyBilling, getOverdueInvoices, searchBillingCompanies } from '@josh/shared-api';
 import { Input, Select, Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -42,6 +42,13 @@ type InvoiceRow = {
   download_url: string | null;
 };
 
+type OverdueRow = {
+  invoice_id: string;
+  invoice_number: string;
+  due_date: string;
+  order?: { order_number?: string; user?: { email?: string } };
+};
+
 const STATUS_OPTIONS = [
   { value: '', get label(){return __uiText("ทุกสถานะ");} },
   { value: 'unpaid', get label(){return __uiText("ยังไม่ชำระ");} },
@@ -73,6 +80,17 @@ export default function Billing() {
   const [loadingCompany, setLoadingCompany] = useState(false);
   const [loadingInvoices, setLoadingInvoices] = useState(false);
   const [billingError, setBillingError] = useState('');
+  // Overdue invoices of every company, shown until a company is picked (was its own page, /j/invoices).
+  const [overdue, setOverdue] = useState<OverdueRow[]>([]);
+  const [loadingOverdue, setLoadingOverdue] = useState(true);
+  const [overdueError, setOverdueError] = useState('');
+
+  useEffect(() => {
+    void getOverdueInvoices()
+      .then((res: any) => setOverdue(res?.data?.data ?? []))
+      .catch((err: unknown) => setOverdueError(getErrorMessage(err, 'โหลดใบแจ้งหนี้ไม่สำเร็จ')))
+      .finally(() => setLoadingOverdue(false));
+  }, []);
 
   const runSearch = useCallback(async (searchQuery: string) => {
     setSearching(true);
@@ -184,6 +202,13 @@ export default function Billing() {
           '-'
         ),
     },
+  ];
+
+  const overdueColumns: TableColumn<OverdueRow>[] = [
+    { key: 'invoice_number', label: __uiText("Invoice #") },
+    { key: 'order', label: __uiText("Order"), render: (_v, row) => row.order?.order_number ?? '-' },
+    { key: 'order', label: __uiText("ลูกค้า"), render: (_v, row) => row.order?.user?.email ?? '-' },
+    { key: 'due_date', label: __uiText("ครบกำหนด") },
   ];
 
   return (
@@ -299,8 +324,16 @@ export default function Billing() {
       )}
 
       {!company && !loadingCompany && (
-        <div className="rounded-xl border border-dashed border-gray-200 p-8 text-center text-sm text-gray-400">
-          {__uiText("ค้นหาและเลือกบริษัทเพื่อดู credit และใบแจ้งหนี้")}</div>
+        <>
+          <div className="mb-4 text-sm text-gray-400">
+            {__uiText("ค้นหาและเลือกบริษัทเพื่อดู credit และใบแจ้งหนี้")}</div>
+          <h2 className="mb-2 text-sm font-semibold text-gray-800">{__uiText("ใบแจ้งหนี้เลยกำหนดชำระ")}</h2>
+          {overdueError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">{__uiText(overdueError)}</div>
+          ) : (
+            <Table columns={overdueColumns} data={overdue} loading={loadingOverdue} />
+          )}
+        </>
       )}
     </div>
   );

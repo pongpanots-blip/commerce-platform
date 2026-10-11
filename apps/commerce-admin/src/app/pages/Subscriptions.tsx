@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Chip, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Span, StatusChip, TBody, TD, TH, THead, TR, Table, TogglePill, fmt } from '@cp/ui';
-import { api, EVENT_TYPES, WebhookDelivery, WebhookSubscription } from '../../lib/api';
+import { api, EVENT_TYPES, webhookApi, WebhookDelivery, WebhookSubscription } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -13,6 +13,8 @@ export function Subscriptions() {
   const [events, setEvents] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   function toggle(evt: string) {
     setEvents((cur) => (cur.includes(evt) ? cur.filter((e) => e !== evt) : [...cur, evt]));
@@ -42,6 +44,24 @@ export function Subscriptions() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  /** Enable/disable or delete (was its own page, /erp/webhook-platforms). */
+  async function act(key: string, run: () => Promise<unknown>) {
+    setBusy(key);
+    setActionError(null);
+    try {
+      await run();
+      subs.reload();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  function remove(s: WebhookSubscription) {
+    if (window.confirm(__uiText("Delete this subscription?"))) void act(`delete-${s.id}`, () => webhookApi.deleteSubscription(s.id));
   }
 
   function reloadAll() {
@@ -110,6 +130,7 @@ export function Subscriptions() {
 
       <Panel>
         <PanelHead title={__uiText("Subscriptions")} />
+        <ErrorText error={actionError} />
         {subs.loading && !subs.data ? (
           <Loading />
         ) : !subs.data?.length ? (
@@ -122,6 +143,7 @@ export function Subscriptions() {
               <TH>{__uiText("Events")}</TH>
               <TH>{__uiText("Secret")}</TH>
               <TH>{__uiText("Status")}</TH>
+              <TH />
             </THead>
             <TBody>
               {subs.data.map((s) => (
@@ -137,6 +159,14 @@ export function Subscriptions() {
                   </TD>
                   <TD>{s.secret ? <Chip tone="muted">{__uiText("set")}</Chip> : '—'}</TD>
                   <TD><StatusChip status={s.active ? 'active' : 'disabled'} /></TD>
+                  <TD kind="actions">
+                    <Button size="sm" disabled={busy !== null} onClick={() => void act(`toggle-${s.id}`, () => webhookApi.updateSubscription(s.id, { active: !s.active }))}>
+                      {busy === `toggle-${s.id}` ? '…' : s.active ? __uiText("Disable") : __uiText("Enable")}
+                    </Button>{' '}
+                    <Button size="sm" variant="ghost" disabled={busy !== null} onClick={() => remove(s)}>
+                      {busy === `delete-${s.id}` ? '…' : __uiText("Delete")}
+                    </Button>
+                  </TD>
                 </TR>
               ))}
             </TBody>

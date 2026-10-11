@@ -7,7 +7,7 @@ export const FEATURE_HOMES: Readonly<Record<string, string>> = {
   '/josh/payments': '/j/payment-transactions',
   '/josh/credit_notes': '/j/credit-notes',
   '/josh/credit_backs': '/j/credit-backs',
-  '/josh/invoices': '/j/invoices',
+  '/josh/invoices': '/j/billing',
   '/josh/coupons': '/j/coupons',
   '/josh/campaigns': '/j/promotions/campaigns',
   '/josh/segments': '/j/segments',
@@ -15,6 +15,12 @@ export const FEATURE_HOMES: Readonly<Record<string, string>> = {
   '/j/cs/sample-requests': '/cs',
   '/j/product/create': '/j/allproducts',
   '/j/order/import': '/j/order',
+  // Duplicate pages merged into another (their routes redirect there).
+  '/j/invoices': '/j/billing',
+  '/j/active-offers': '/prices/staff',
+  '/j/marketing-links': '/j/smart-links',
+  '/erp-ingest': '/erp/inbound-log',
+  '/erp/webhook-platforms': '/subscriptions',
 };
 
 export function featureHome(path: string): string {

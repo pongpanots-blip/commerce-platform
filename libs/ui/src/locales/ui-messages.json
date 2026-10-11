@@ -1,4 +1,16 @@
 {
+  "ค้นหาสินค้าทุกรายการตามรหัสสินค้า และดูสต็อกแต่ละคลัง": {
+    "th": "ค้นหาสินค้าทุกรายการตามรหัสสินค้า และดูสต็อกแต่ละคลัง",
+    "en": "Find any product by product code and see its stock per warehouse"
+  },
+  "ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ หรือดูใบแจ้งหนี้ค้างชำระของทุกบริษัท": {
+    "th": "ค้นหาบริษัท ดูเครดิตและใบแจ้งหนี้ หรือดูใบแจ้งหนี้ค้างชำระของทุกบริษัท",
+    "en": "Search a company for its credit and invoices, or see overdue invoices across all companies"
+  },
+  "ปลายทางที่รับเหตุการณ์จากระบบของเรา เพิ่ม เปิด ปิด หรือลบได้": {
+    "th": "ปลายทางที่รับเหตุการณ์จากระบบของเรา เพิ่ม เปิด ปิด หรือลบได้",
+    "en": "Destinations that receive events from our system; add, enable, disable or delete them"
+  },
   "ภาพรวม": {
     "th": "ภาพรวม",
     "en": "Overview"

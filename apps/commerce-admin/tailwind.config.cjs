@@ -3,6 +3,11 @@
  * web-admin's theme. No preflight and everything scoped under `.josh-tw`, so the rest of
  * commerce-admin's own CSS is untouched.
  */
+/** A CSS-variable colour that still takes opacity modifiers (bg-primary/10); `mix` < 100 lightens it toward white. */
+const tone = (name, mix = 100) => mix === 100
+  ? `color-mix(in srgb, var(${name}) calc(<alpha-value> * 100%), transparent)`
+  : `color-mix(in srgb, color-mix(in srgb, var(${name}) ${mix}%, white) calc(<alpha-value> * 100%), transparent)`;
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [__dirname + '/src/app/pages/workflow-editor/josh/**/*.{ts,tsx}', __dirname + '/src/josh-admin/**/*.{ts,tsx}'],
@@ -12,8 +17,12 @@ module.exports = {
     extend: {
       fontFamily: { sans: ['"Noto Sans Thai"', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
       colors: {
-        primary: { DEFAULT: '#365cf5', dark: '#2948d4', light: '#6b86ff', soft: '#e8edff', border: 'var(--color-secondary-container)' },
-        alert: { DEFAULT: '#BF0013', dark: '#7B0008', soft: '#FFF2F0', light: '#FF5E54' },
+        // The shared tokens (libs/ui/theme.css, overridden by the workspace shell), so josh pages match the rest.
+        primary: { DEFAULT: tone('--color-primary'), dark: tone('--color-primary-dim'), light: tone('--color-primary', 70), soft: tone('--color-primary-container'), border: 'var(--color-secondary-container)' },
+        // josh pages use blue/indigo as their link and action colour: map them onto the brand colour too.
+        blue: { 50: tone('--color-primary-container'), 100: tone('--color-primary-container'), 200: tone('--color-primary-fixed-dim'), 500: tone('--color-primary'), 600: tone('--color-primary'), 700: tone('--color-primary-dim'), 800: tone('--color-primary-dim') },
+        indigo: { 50: tone('--color-primary-container'), 600: tone('--color-primary'), 700: tone('--color-primary-dim') },
+        alert: { DEFAULT: tone('--color-danger'), dark: tone('--color-danger-dim'), soft: tone('--color-danger-container'), light: tone('--color-danger', 70) },
         ink: { DEFAULT: 'var(--color-on-surface)', secondary: 'var(--color-on-surface-variant)', muted: 'var(--color-outline)', disabled: 'var(--color-outline-variant)' },
         surface: { disabled: 'var(--color-surface-container-low)', 'container-lowest': 'var(--color-surface-container-lowest)', 'container-low': 'var(--color-surface-container-low)' },
         'on-surface': 'var(--color-on-surface)',

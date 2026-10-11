@@ -49,26 +49,26 @@ export function Icon({ name, size, className }: { name: string; size?: number; c
 export type Tone = 'ok' | 'warn' | 'danger' | 'info' | 'muted' | 'primary';
 
 const CHIP: Record<Tone, string> = {
-  ok: 'bg-[#e7f5ec] text-[#157347]',
-  info: 'bg-[#e9f2ff] text-[#2044c5]',
-  warn: 'bg-[#fef7e0] text-[#b08900]',
-  danger: 'bg-[#fdecee] text-[#c2333f]',
+  ok: 'bg-ok-container text-ok',
+  info: 'bg-info-container text-info',
+  warn: 'bg-warn-container text-warn',
+  danger: 'bg-danger-container text-danger',
   muted: 'bg-surface-container text-secondary',
   primary: 'bg-primary-container text-on-primary-container',
 };
 const DOT: Record<Tone, string> = {
-  ok: 'bg-[#157347]',
-  info: 'bg-[#2044c5]',
-  warn: 'bg-[#b08900]',
-  danger: 'bg-[#c2333f]',
+  ok: 'bg-ok',
+  info: 'bg-info',
+  warn: 'bg-warn',
+  danger: 'bg-danger',
   muted: 'bg-outline-variant',
   primary: 'bg-primary',
 };
 const TEXT: Record<Tone, string> = {
-  ok: 'text-[#157347]',
-  info: 'text-[#2044c5]',
-  warn: 'text-[#b08900]',
-  danger: 'text-[#c2333f]',
+  ok: 'text-ok',
+  info: 'text-info',
+  warn: 'text-warn',
+  danger: 'text-danger',
   muted: 'text-on-surface-variant',
   primary: 'text-primary',
 };
@@ -83,9 +83,10 @@ export function toneOf(status: string | null | undefined): Tone {
   return 'info';
 }
 
-export function Chip({ tone = 'muted', children, className, statusCode }: { tone?: Tone; children: ReactNode; className?: string; statusCode?: string | null }) {
+export function Chip({ tone = 'muted', children, className, statusCode, dot }: { tone?: Tone; children: ReactNode; className?: string; statusCode?: string | null; dot?: boolean }) {
   return (
-    <span data-status={statusCode ?? undefined} className={cx('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap', CHIP[tone], className)}>
+    <span data-status={statusCode ?? undefined} className={cx('inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] leading-5 font-semibold whitespace-nowrap', CHIP[tone], className)}>
+      {dot && <span aria-hidden="true" className={cx('w-1.5 h-1.5 rounded-full shrink-0', DOT[tone])} />}
       {children}
     </span>
   );
@@ -94,7 +95,7 @@ export function Chip({ tone = 'muted', children, className, statusCode }: { tone
 /** A status chip whose tone comes from the status text. */
 export function StatusChip({ status }: { status: string | null | undefined }) {
   __useUiLocale();
-  return <Chip tone={toneOf(status)} statusCode={status}>{statusLabel(status)}</Chip>;
+  return <Chip tone={toneOf(status)} statusCode={status} dot>{statusLabel(status)}</Chip>;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -141,11 +142,11 @@ export function Count({ children, tone }: { children: ReactNode; tone?: 'danger'
 
 type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-ghost';
 const BTN: Record<BtnVariant, string> = {
-  primary: 'bg-primary text-on-primary hover:bg-primary-dim border border-primary shadow-xs',
-  secondary: 'border border-secondary-container bg-surface-container-lowest hover:bg-surface-container-low text-on-surface',
+  primary: 'bg-primary text-on-primary hover:bg-primary-dim border border-primary shadow-card',
+  secondary: 'border border-outline-variant/70 bg-surface-container-lowest hover:bg-surface-container-low text-on-surface shadow-card',
   ghost: 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low border border-transparent',
-  danger: 'bg-[#c2333f] text-white hover:bg-[#a82b36] border border-[#c2333f]',
-  'danger-ghost': 'text-[#c2333f] hover:bg-[#fdecee] border border-transparent',
+  danger: 'bg-danger text-white hover:bg-danger-dim border border-danger shadow-card',
+  'danger-ghost': 'text-danger hover:bg-danger-container border border-transparent',
 };
 
 export function Button({
@@ -267,10 +268,10 @@ export function FormField({ label, hint, required, error, children, className }:
     <label className={cx('flex flex-col gap-1 min-w-0', className)}>
       <span id={labelId} className="text-xs font-medium text-on-surface">
         {typeof label === 'string' ? __uiText(label) : label}
-        {isRequired && <span className="text-[#c2333f]"> *</span>}
+        {isRequired && <span className="text-danger"> *</span>}
       </span>
       {controls}
-      {shownError ? <span id={hintId} className="text-[11px] text-[#c2333f]">{typeof shownError === 'string' ? __uiText(shownError) : shownError}</span> : help && <span id={hintId} className="text-[11px] text-outline">{typeof help === 'string' ? __uiText(help) : help}</span>}
+      {shownError ? <span id={hintId} className="text-[11px] text-danger">{typeof shownError === 'string' ? __uiText(shownError) : shownError}</span> : help && <span id={hintId} className="text-[11px] text-outline">{typeof help === 'string' ? __uiText(help) : help}</span>}
     </label>
   );
 }
@@ -362,7 +363,7 @@ export function FilterChip({ children, onRemove }: { children: ReactNode; onRemo
 
 // ---------------------------------------------------------------- layout
 
-export const panelCls = 'min-w-0 bg-surface-container-lowest rounded-xl border border-secondary-container shadow-[0_2px_5px_rgba(23,36,59,0.025)]';
+export const panelCls = 'min-w-0 bg-surface-container-lowest rounded-xl border border-secondary-container shadow-card';
 
 export function Panel({ children, className, as = 'section', onSubmit }: { children: ReactNode; className?: string; as?: 'section' | 'div' | 'form'; onSubmit?: (e: FormEvent<HTMLFormElement>) => unknown }) {
   if (as === 'form') return <form data-panel className={cx(panelCls, className)} onSubmit={onSubmit}>{children}</form>;
@@ -373,14 +374,14 @@ export function Panel({ children, className, as = 'section', onSubmit }: { child
 /** Panel title bar: title (+ optional icon / badge) left, actions right. */
 export function PanelHead({ title, icon, badge, sub, actions }: { title: ReactNode; icon?: string; badge?: ReactNode; sub?: ReactNode; actions?: ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-secondary-container">
+    <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3.5 border-b border-secondary-container">
       <div className="flex items-center gap-2 min-w-0">
         {icon && (
           <span className="w-7 h-7 rounded-md bg-surface-container-low text-primary flex items-center justify-center shrink-0">
             <Icon name={icon} size={16} />
           </span>
         )}
-        <h2 className="text-sm font-semibold text-on-surface truncate">{title}</h2>
+        <h2 className="text-[15px] font-semibold text-on-surface truncate">{title}</h2>
         {badge}
         {sub && <span className="text-[11px] text-on-surface-variant">{sub}</span>}
       </div>
@@ -648,10 +649,10 @@ export function DetailPanel({ title, subtitle, status, actions, onClose, childre
 // ---------------------------------------------------------------- feedback
 
 const ALERT: Record<Tone, { box: string; icon: string }> = {
-  ok: { box: 'bg-[#f0f9f4] border-[#d1e7dd] text-[#0f5132]', icon: 'check_circle' },
-  warn: { box: 'bg-[#fef7e0] border-[#f5e2a8] text-[#7a5d00]', icon: 'warning' },
-  danger: { box: 'bg-[#fdecee] border-[#f5c2c7] text-[#842029]', icon: 'error' },
-  info: { box: 'bg-[#e9f2ff] border-[#c9dcff] text-[#1e43c5]', icon: 'info' },
+  ok: { box: 'bg-ok-container border-ok/20 text-ok', icon: 'check_circle' },
+  warn: { box: 'bg-warn-container border-warn/20 text-warn', icon: 'warning' },
+  danger: { box: 'bg-danger-container border-danger/20 text-danger', icon: 'error' },
+  info: { box: 'bg-info-container border-info/20 text-info', icon: 'info' },
   muted: { box: 'bg-surface-container-low border-secondary-container text-on-surface-variant', icon: 'info' },
   primary: { box: 'bg-primary-container border-primary/20 text-on-primary-container', icon: 'info' },
 };
@@ -748,21 +749,20 @@ export function StatTile({
   to?: string;
   onClick?: () => void;
   selected?: boolean;
-  /** Coloured left border + coloured value (the "Needs attention" cards). */
+  /** A larger value coloured by tone (the "Needs attention" cards). */
   accent?: boolean;
   className?: string;
 }) {
-  const accentBorder = accent && tone ? { warn: 'border-l-4 border-l-amber-500', danger: 'border-l-4 border-l-rose-500', ok: 'border-l-4 border-l-emerald-600', info: 'border-l-4 border-l-primary', muted: '', primary: 'border-l-4 border-l-primary' }[tone] : '';
-  const valueColor = accent && tone ? { warn: 'text-amber-700', danger: 'text-rose-700', ok: 'text-on-surface', info: 'text-on-surface', muted: 'text-on-surface', primary: 'text-primary' }[tone] : tone === 'danger' ? 'text-[#c2333f]' : tone === 'warn' ? 'text-[#b08900]' : 'text-on-surface';
+  const valueColor = tone === 'danger' ? 'text-danger' : tone === 'warn' ? 'text-warn' : accent && tone === 'primary' ? 'text-primary' : 'text-on-surface';
   const body = (
     <>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-xs font-medium text-on-surface-variant truncate">{label}</p>
-          <p className={cx('font-semibold mt-1 tabular-nums', accent ? 'text-2xl md:text-3xl' : 'text-xl', valueColor)}>{value}</p>
+          <p className={cx('font-semibold mt-1.5 tabular-nums tracking-tight', accent ? 'text-2xl md:text-3xl' : 'text-2xl', valueColor)}>{value}</p>
         </div>
         {icon && (
-          <span className={cx('p-1 rounded', accent && tone ? { warn: 'bg-amber-50 text-amber-600', danger: 'bg-rose-50 text-rose-600', ok: 'bg-emerald-50 text-emerald-600', info: 'bg-primary-container text-primary', muted: 'bg-surface-container text-outline', primary: 'bg-primary-container text-primary' }[tone] : 'text-outline')}>
+          <span className={cx('p-1.5 rounded-lg', tone ? { warn: 'bg-warn-container text-warn', danger: 'bg-danger-container text-danger', ok: 'bg-ok-container text-ok', info: 'bg-primary-container text-primary', muted: 'bg-surface-container text-outline', primary: 'bg-primary-container text-primary' }[tone] : 'bg-surface-container-low text-outline')}>
             <Icon name={icon} size={18} />
           </span>
         )}
@@ -771,10 +771,9 @@ export function StatTile({
     </>
   );
   const cls = cx(
-    'block text-left rounded-lg p-4 border shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-colors',
+    'block text-left rounded-xl p-5 border shadow-card transition-[border-color,box-shadow]',
     selected ? 'bg-primary-container/40 border-primary ring-1 ring-primary' : 'bg-surface-container-lowest border-secondary-container',
-    (to || onClick) && !selected && 'hover:border-outline-variant',
-    accentBorder,
+    (to || onClick) && !selected && 'hover:border-outline-variant hover:shadow-raised',
     className,
   );
   if (to) return <Link to={to} className={cls}>{body}</Link>;
@@ -793,7 +792,7 @@ export function Delta({ pct }: { pct: number | null | undefined }) {
   if (pct === null || pct === undefined || !Number.isFinite(pct)) return null;
   const up = pct >= 0;
   return (
-    <span className={cx('inline-flex items-center gap-0.5 text-[11px] font-medium tabular-nums', up ? 'text-[#157347]' : 'text-[#c2333f]')}>
+    <span className={cx('inline-flex items-center gap-0.5 text-[11px] font-medium tabular-nums', up ? 'text-ok' : 'text-danger')}>
       <Icon name={up ? 'trending_up' : 'trending_down'} size={14} />
       {Math.abs(pct).toFixed(1)}%
     </span>
@@ -1033,7 +1032,7 @@ export function BarList({ rows, tone = 'primary' }: { rows: { label: ReactNode; 
         <div key={i} className="grid grid-cols-[minmax(80px,160px)_1fr_auto] items-center gap-3 text-xs">
           <span className="truncate text-on-surface-variant">{r.label}</span>
           <div className="h-2 rounded-full bg-surface-container-low overflow-hidden">
-            <div className={cx('h-full rounded-full', tone === 'danger' ? 'bg-[#c2333f]' : 'bg-primary')} style={{ width: `${(r.value / max) * 100}%` }} />
+            <div className={cx('h-full rounded-full', tone === 'danger' ? 'bg-danger' : 'bg-primary')} style={{ width: `${(r.value / max) * 100}%` }} />
           </div>
           <span className="font-mono tabular-nums text-on-surface text-right">{r.text ?? r.value.toLocaleString()}</span>
         </div>
@@ -1051,7 +1050,7 @@ export function StackedBars({ bars, height = 120 }: { bars: { label: string; ok:
       <div className="flex items-end gap-1" style={{ height }}>
         {bars.map((b, i) => (
           <div key={i} className="flex-1 flex flex-col justify-end h-full min-w-[4px] group" title={__uiText("{0} · ok {1} · error {2}", {"0": b.label, "1": b.ok, "2": b.err})}>
-            <div className="bg-[#c2333f] rounded-t-sm" style={{ height: `${(b.err / max) * 100}%` }} />
+            <div className="bg-danger rounded-t-sm" style={{ height: `${(b.err / max) * 100}%` }} />
             <div className={cx('bg-primary group-hover:bg-primary-dim', b.err ? '' : 'rounded-t-sm')} style={{ height: `${(b.ok / max) * 100}%` }} />
           </div>
         ))}

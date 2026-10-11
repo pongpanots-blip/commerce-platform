@@ -1,8 +1,17 @@
 /* All overrides are opt-in. The welcome email route renders neither scope. */
 [data-commerce-shell="tasks"] {
+  /* The whole primary family, so hovers, pressed and tinted states never fall back to the old blue. */
   --color-primary: #125b61;
+  --color-primary-dim: #0d474c;
+  --color-on-primary: #ffffff;
   --color-primary-container: #e0f0f1;
-  --color-background: #f5f7fa;
+  --color-on-primary-container: #0d474c;
+  --color-primary-fixed: #e0f0f1;
+  --color-primary-fixed-dim: #b5dbde;
+  --color-surface-tint: #125b61;
+  --color-inverse-primary: #7cc4ca;
+  /* One step darker than the white cards, so cards read as sitting on the page. */
+  --color-background: #eef2f5;
 }
 [data-commerce-workspace="fluid"] {
   width: 100%;

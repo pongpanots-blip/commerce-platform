@@ -27,3 +27,14 @@ group with a link to each member (admin: 109 cards → 41), and every member pag
 (`FeatureTabs`, rendered once in CommerceWorkspace; not on the Welcome Lead Email page). Routes, permissions and
 ⌘K search unchanged; a role sees only members it may open. Checked in the browser at 1400px and 375px.
 Spec: `app/feature-groups.spec.tsx`.
+
+## Part 3 · design system and every page (same day)
+
+- #142: one brand colour (josh Tailwind primary/blue/alert → tokens), page vs card depth (shadow-card), status tokens,
+  table polish. `design.md` at the repo root is the locked system; its "Page rules" are the checklist for any page.
+- #144 + #145: every admin page brought to the page rules by section (raw codes → labels, lists first, Thai headers,
+  StatusChip, right-aligned numbers, confirms on destructive actions, detail pages with KeyValueGrid), ~1,500 new TH/EN
+  strings. No API call, route or permission changed. Welcome Lead Email untouched (outside the shell theme, stays blue).
+- How it was checked: tsc, full vitest (only the pre-existing task-navigation failure), portal tests, build, a scan
+  that every token class used in josh files exists in the built CSS (josh-admin is outside the Tailwind v4 scan), and
+  a browser pass against a local mock API. The workflow editor internals were not opened in a browser.

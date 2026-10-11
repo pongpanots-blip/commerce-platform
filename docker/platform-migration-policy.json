@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "670393dd4dcaaa9aea6b8c453ffc947bf0c10e34",
-  "imageTag": "670393d",
+  "sourceCommit": "7bb86dd80022ad7d27d5c7ad1a8715bd091b6b9c",
+  "imageTag": "7bb86dd",
   "migrations": [
     "InitialSchema1784105337942",
     "AddIntegrationSlug1784108912731",
@@ -90,7 +90,8 @@
       "396e8d6",
       "5d258a7",
       "670393d",
-      "3e0133a"
+      "3e0133a",
+      "7bb86dd"
     ],
     "portal": [
       "020066e"

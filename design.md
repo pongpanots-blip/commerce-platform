@@ -60,3 +60,22 @@ Colour and shadow transitions only, about 120–150 ms. `prefers-reduced-motion`
 - Saving succeeds silently or shows a short inline message.
 - A destructive action asks to confirm.
 - The focus ring shows instantly.
+
+## Page rules (every page must pass)
+1. **No raw codes in the UI.** Enum and code values (`FIXED`, `PERCENTAGE`, `ORDER`, `PRODUCT`, `ACTIVE`, `pending`…)
+   are shown through a label map with `uiText` (TH + EN). Request and filter values stay the raw code.
+2. **Lists first.** A list page shows its list first. A "create" form doesn't sit open above the list: a primary
+   `+ เพิ่ม…` button in the page header opens it (inline panel toggled by the button, or `Modal`).
+3. **One clear header.** `PageHeader` / `AdminListHeader` with a Thai title and one short subtitle in plain words,
+   with no arrows, internal module names or English-only copy. At most one primary action in the header.
+4. **Status uses the system.** Use `StatusChip`, or `Chip` with a tone, for statuses. No hand-picked
+   `bg-green-50 text-green-700` pills. Tags (event names, codes) use a plain `Chip`.
+5. **Tables.** Numbers and money are right-aligned (`align: 'right'` / `TD kind="num"`), and money is formatted with
+   thousands separators. An empty list shows `TableEmpty` / `Empty` with what to do next. Codes and ids are mono.
+6. **Destructive actions** (delete, disable, cancel) are secondary or ghost danger buttons and ask to confirm.
+   They are never the most prominent button.
+7. **Forms.** Use `FormField` / `Field` with labels. Group long forms into sections with headings. Primary submit at
+   the end, cancel next to it.
+8. **Detail pages.** A back link to the list, a header with the record's name and status, then facts as
+   `KeyValueGrid` / `DetailSection`, not loose paragraphs.
+9. **No look-only changes to behaviour.** Keep every API call, permission, route, query parameter and business rule.

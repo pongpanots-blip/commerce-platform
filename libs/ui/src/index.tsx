@@ -106,6 +106,9 @@ const STATUS_LABELS: Record<string, string> = {
   draft: 'Draft', paused: 'Paused', paid: 'Paid', unpaid: 'Unpaid', shipped: 'Shipped',
   delivered: 'Delivered', approved: 'Approved', rejected: 'Rejected', revoked: 'Revoked',
   expired: 'Expired', reserved: 'Reserved', released: 'Released', confirmed: 'Confirmed',
+  sent: 'Sent', sending: 'Sending', skipped: 'Skipped', received: 'Received', processed: 'Processed',
+  superseded: 'Superseded', valid: 'Valid', invalid: 'Invalid', ok: 'OK', applied: 'Applied', stale: 'Stale',
+  ignored: 'Ignored', held: 'Held', pending_payment: 'Pending payment', reserving: 'Reserving', reconcile: 'Reconcile',
 };
 
 /** Labels are translated for display; filter values and request enums stay unchanged. */

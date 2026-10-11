@@ -26,7 +26,6 @@ const MembershipTierConfig = lazy(() => import('./app/page/membership-tier/Membe
 const Order = lazy(() => import('./app/page/Order'));
 const OrderDetail = lazy(() => import('./app/page/OrderDetail'));
 const OrderImport = lazy(() => import('./app/page/orders/OrderImport'));
-const PaymentTransactions = lazy(() => import('./app/page/orders/PaymentTransactions'));
 const ShipmentDetail = lazy(() => import('./app/page/orders/ShipmentDetail'));
 const Shipments = lazy(() => import('./app/page/orders/Shipments'));
 const SmartLinkAnalyticsPage = lazy(() => import('./app/page/marketing/SmartLinkAnalyticsPage'));
@@ -56,7 +55,6 @@ const SegmentList = lazy(() => import('./app/page/segment/SegmentList'));
 const CreateSegment = lazy(() => import('./app/page/segment/CreateSegment'));
 const EditSegment = lazy(() => import('./app/page/segment/EditSegment'));
 const SegmentBuilder = lazy(() => import('./app/page/segment/SegmentBuilder'));
-const SampleRequestsAdmin = lazy(() => import('./app/page/CS/SampleRequestsAdmin'));
 const DeliveryScheduleAdmin = lazy(() => import('./app/page/CS/DeliveryScheduleAdmin'));
 const CartMoveCategoriesAdmin = lazy(() => import('./app/page/CS/CartMoveCategoriesAdmin'));
 const AllProduct = lazy(() => import('./app/page/product/AllProduct'));
@@ -123,7 +121,6 @@ export function JoshAdminApp() {
             <Route path="order/:ordersId" element={<OrderDetail />} />
             <Route path="shipments" element={<Shipments />} />
             <Route path="shipments/:shipmentId" element={<ShipmentDetail />} />
-            <Route path="payment-transactions" element={<PaymentTransactions />} />
             <Route path="allusers" element={<Alluser />} />
             <Route path="allusers/:userId" element={<UserDetail />} />
             <Route path="membership-tiers" element={<MembershipTierConfig />} />
@@ -159,7 +156,6 @@ export function JoshAdminApp() {
             <Route path="segments/edit/:id" element={<EditSegment />} />
             <Route path="segments/builder" element={<SegmentBuilder />} />
             <Route path="segments/builder/:id" element={<SegmentBuilder />} />
-            <Route path="cs/sample-requests" element={<SampleRequestsAdmin />} />
             <Route path="cs/delivery-schedule" element={<DeliveryScheduleAdmin />} />
             <Route path="cs/cart-move-categories" element={<CartMoveCategoriesAdmin />} />
             <Route path="allproducts" element={<AllProduct />} />

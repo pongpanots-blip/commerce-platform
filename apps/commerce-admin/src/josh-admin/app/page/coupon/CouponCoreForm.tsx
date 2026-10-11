@@ -45,7 +45,7 @@ export function FieldLabel({
   return (
     <label htmlFor={htmlFor} className="mb-1 block text-sm text-gray-600">
       {children}
-      {required ? <span className="text-red-500"> *</span> : null}
+      {required ? <span className="text-danger"> *</span> : null}
     </label>
   );
 }

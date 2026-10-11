@@ -11,10 +11,10 @@ import AdminListHeader from '../../components/AdminListHeader';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Button, Chip, Empty, confirmAction } from "@cp/ui";
 const CHANNELS: { key: NotificationDeliveryChannel; label: string }[] = [
   { key: 'inapp', get label() { return __uiText("ในแอป"); } },
-  { key: 'push', get label() { return __uiText("Push"); } },
+  { key: 'push', get label() { return __uiText("แจ้งเตือนบนมือถือ"); } },
   { key: 'email', get label() { return __uiText("อีเมล"); } },
 ];
 
@@ -25,7 +25,7 @@ const CATEGORY_LABEL: Record<NotificationCatalogItem['category'], string> = {
   get back_in_stock(){return __uiText("สินค้ากลับมามีสต๊อก");},
   get order_round(){return __uiText("รอบสั่งซื้อ");},
   get marketing(){return __uiText("การตลาด");},
-  get winback(){return __uiText("Win-back (แอปเซลล์)");},
+  get winback(){return __uiText("ชวนลูกค้าเก่ากลับมาซื้อ");},
 };
 
 const CATEGORY_ORDER: NotificationCatalogItem['category'][] = [
@@ -89,14 +89,17 @@ export default function NotificationCatalogPage() {
     }
   };
 
-  const handleToggleEnabled = (item: NotificationCatalogItem) => {
+  const handleToggleEnabled = async (item: NotificationCatalogItem) => {
     if (
       item.enabled &&
-      item.critical &&
-      !window.confirm(
-        `"${item.label}" เป็นการแจ้งเตือนเรื่องคำสั่งซื้อของลูกค้า\n` +
-          'ปิดแล้วลูกค้าจะไม่รู้ความคืบหน้าของออเดอร์ที่จ่ายเงินไปแล้ว\n\nยืนยันปิด?',
-      )
+      !(await confirmAction({
+        title: __uiMessage("ปิดการแจ้งเตือน \"{0}\" ?", { "0": item.label }),
+        body: item.critical
+          ? __uiText("เป็นการแจ้งเตือนเรื่องคำสั่งซื้อของลูกค้า ปิดแล้วลูกค้าจะไม่รู้ความคืบหน้าของคำสั่งซื้อที่จ่ายเงินไปแล้ว")
+          : __uiText("ปิดแล้วลูกค้าทุกคนจะไม่ได้รับการแจ้งเตือนประเภทนี้ จนกว่าจะเปิดอีกครั้ง"),
+        confirmLabel: __uiText("ปิดการแจ้งเตือน"),
+        danger: true,
+      }))
     ) {
       return;
     }
@@ -129,8 +132,8 @@ export default function NotificationCatalogPage() {
   return (
     <div className="p-6">
       <AdminListHeader
-        title={__uiText("Notification Catalog")}
-        subtitle={__uiText("ตั้งค่าว่าระบบส่งการแจ้งเตือนอะไรบ้าง และส่งทางไหน")}
+        title={__uiText("ประเภทการแจ้งเตือนทั้งหมด")}
+        subtitle={__uiText("การแจ้งเตือนทุกประเภทที่ระบบส่งได้ และการเปิดปิด")}
       />
 
       <div className="mb-4 rounded-xl border border-gray-100 bg-white p-4 text-sm text-gray-600">
@@ -139,10 +142,10 @@ export default function NotificationCatalogPage() {
         <p className="mt-2">
           {__uiText("แก้ข้อความที่")}{' '}
           <Link className="text-primary hover:underline" to={ADMIN_ROUTES.marketingNotifyTemplates}>
-            {__uiText("Notify Templates")}</Link>{' '}
+            {__uiText("แม่แบบข้อความ")}</Link>{' '}
           {__uiText("· ดูผลการส่งที่")}{' '}
           <Link className="text-primary hover:underline" to={ADMIN_ROUTES.notificationStats}>
-            {__uiText("Notification Stats")}</Link>
+            {__uiText("สถิติการส่งแจ้งเตือน")}</Link>
         </p>
       </div>
 
@@ -150,6 +153,8 @@ export default function NotificationCatalogPage() {
 
       {loading ? (
         <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
+      ) : grouped.length === 0 ? (
+        !error && <Empty>{__uiText("ยังไม่มีประเภทการแจ้งเตือน — ลองโหลดหน้านี้ใหม่อีกครั้ง")}</Empty>
       ) : (
         <div className="space-y-6">
           {grouped.map((group) => (
@@ -169,14 +174,8 @@ export default function NotificationCatalogPage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-medium text-gray-800">{item.label}</span>
                         <span className="font-mono text-xs text-gray-400">{item.type}</span>
-                        {item.critical && (
-                          <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-700">
-                            {__uiText("สำคัญ")}</span>
-                        )}
-                        {item.customised && (
-                          <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
-                            {__uiText("แก้ไขแล้ว")}</span>
-                        )}
+                        {item.critical && <Chip tone="warn">{__uiText("สำคัญ")}</Chip>}
+                        {item.customised && <Chip tone="info">{__uiText("แก้ไขแล้ว")}</Chip>}
                       </div>
                       <p className="mt-1 text-xs text-gray-500">{item.trigger}</p>
                     </div>
@@ -201,18 +200,17 @@ export default function NotificationCatalogPage() {
                         ))}
                       </div>
 
-                      <button
-                        type="button"
-                        disabled={savingType === item.type}
-                        className={`rounded-lg px-3 py-1.5 text-xs font-medium disabled:opacity-40 ${
-                          item.enabled
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-gray-100 text-gray-500'
-                        }`}
-                        onClick={() => handleToggleEnabled(item)}
-                      >
+                      <Chip tone={item.enabled ? 'ok' : 'muted'} dot>
                         {item.enabled ? __uiText("เปิดใช้งาน") : __uiText("ปิดอยู่")}
-                      </button>
+                      </Chip>
+                      <Button
+                        size="sm"
+                        variant={item.enabled ? 'danger-ghost' : 'secondary'}
+                        disabled={savingType === item.type}
+                        onClick={() => void handleToggleEnabled(item)}
+                      >
+                        {item.enabled ? __uiText("ปิดการแจ้งเตือน") : __uiText("เปิดการแจ้งเตือน")}
+                      </Button>
                     </div>
                   </div>
                 ))}

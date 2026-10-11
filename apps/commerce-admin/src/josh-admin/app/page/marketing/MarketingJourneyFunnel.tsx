@@ -11,14 +11,14 @@ import { Table, TableColumn } from '@josh/shared-ui-web';
 import AdminListHeader from '../../components/AdminListHeader';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Alert, Button, Loading } from "@cp/ui";
 type AudienceFilter = GetAnalyticsFunnelParams['audience'] & string;
 type PlatformFilter = AnalyticsPlatform | 'all';
 
 const AUDIENCE_OPTIONS: { value: AudienceFilter; label: string }[] = [
   { value: 'all', get label(){return __uiText("ทั้งหมด");} },
-  { value: 'guest', get label(){return __uiText("Guest");} },
-  { value: 'logged_in', get label(){return __uiText("Logged in");} },
+  { value: 'guest', get label(){return __uiText("ยังไม่เข้าสู่ระบบ");} },
+  { value: 'logged_in', get label(){return __uiText("เข้าสู่ระบบแล้ว");} },
 ];
 
 const PLATFORM_OPTIONS: { value: PlatformFilter; label: string }[] = [
@@ -29,10 +29,10 @@ const PLATFORM_OPTIONS: { value: PlatformFilter; label: string }[] = [
 ];
 
 const STEP_LABELS: Record<AnalyticsFunnelStep, string> = {
-  get view_item(){return __uiText("View Item");},
-  get add_to_cart(){return __uiText("Add to Cart");},
-  get begin_checkout(){return __uiText("Begin Checkout");},
-  get purchase(){return __uiText("Purchase");},
+  get view_item(){return __uiText("ดูสินค้า");},
+  get add_to_cart(){return __uiText("ใส่ตะกร้า");},
+  get begin_checkout(){return __uiText("เริ่มชำระเงิน");},
+  get purchase(){return __uiText("สั่งซื้อสำเร็จ");},
 };
 
 type FunnelRow = {
@@ -102,19 +102,21 @@ export default function MarketingJourneyFunnel() {
   );
 
   const columns: TableColumn<FunnelRow>[] = [
-    { key: 'label', label: __uiText("Step") },
+    { key: 'label', label: __uiText("ขั้นตอน") },
     {
       key: 'session_count',
-      label: __uiText("Sessions"),
+      label: __uiText("จำนวนการเข้าใช้งาน"),
+      align: 'right',
       render: (value: number) => (
         <span className="font-semibold tabular-nums text-gray-900">{value.toLocaleString()}</span>
       ),
     },
     {
       key: 'conversion_from_previous',
-      label: __uiText("Conversion (จาก step ก่อนหน้า)"),
+      label: __uiText("ไปต่อจากขั้นก่อนหน้า"),
+      align: 'right',
       render: (value: number | null) => (
-        <span className={`tabular-nums ${value !== null ? 'text-emerald-700' : 'text-gray-400'}`}>
+        <span className={`tabular-nums ${value !== null ? 'text-gray-900' : 'text-gray-400'}`}>
           {formatPercent(value)}
         </span>
       ),
@@ -127,20 +129,14 @@ export default function MarketingJourneyFunnel() {
 
   return (
     <div className="cp-management-page flex flex-col gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <AdminListHeader
-          title={__uiText("Journey Funnel")}
-          subtitle={__uiText("View Item → Add to Cart → Begin Checkout → Purchase — session-based conversion ตาม audience / platform")}
-        />
-        <button
-          type="button"
-          onClick={load}
-          disabled={loading}
-          className="rounded-md border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-gray-50 disabled:opacity-50"
-        >
+      <AdminListHeader
+        title={__uiText("เส้นทางของลูกค้า")}
+        subtitle={__uiText("จำนวนลูกค้าที่ผ่านแต่ละขั้นของการใช้งาน")}
+      >
+        <Button icon="refresh" onClick={load} disabled={loading}>
           {loading ? __uiText("กำลังโหลด...") : __uiText("รีเฟรช")}
-        </button>
-      </div>
+        </Button>
+      </AdminListHeader>
 
       <div className="flex flex-wrap items-end gap-3">
         <div>
@@ -168,7 +164,7 @@ export default function MarketingJourneyFunnel() {
         </div>
 
         <div>
-          <span className="mb-1 block text-[11px] font-medium text-gray-500">{__uiText("Audience")}</span>
+          <span className="mb-1 block text-[11px] font-medium text-gray-500">{__uiText("กลุ่มลูกค้า")}</span>
           <div className="flex gap-1">
             {AUDIENCE_OPTIONS.map((option) => (
               <button
@@ -188,7 +184,7 @@ export default function MarketingJourneyFunnel() {
         </div>
 
         <div>
-          <span className="mb-1 block text-[11px] font-medium text-gray-500">{__uiText("Platform")}</span>
+          <span className="mb-1 block text-[11px] font-medium text-gray-500">{__uiText("ช่องทาง")}</span>
           <div className="flex gap-1">
             {PLATFORM_OPTIONS.map((option) => (
               <button
@@ -209,36 +205,40 @@ export default function MarketingJourneyFunnel() {
       </div>
 
       {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
-          {(typeof error === 'string' ? __uiText(error) : error)}
-        </p>
+        <Alert tone="danger">{(typeof error === 'string' ? __uiText(error) : error)}</Alert>
       )}
 
       {!error && loading && !data && (
-        <p className="text-xs text-gray-400">{__uiText("กำลังโหลด...")}</p>
+        <Loading />
       )}
 
       {!error && data && (
         <>
-          <Table columns={columns} data={rows} idKey="step" />
+          <Table
+            columns={columns}
+            data={rows}
+            idKey="step"
+            emptyTitle="ยังไม่มีข้อมูลในช่วงที่เลือก"
+            emptyDescription={__uiText("ลองเลือกช่วงวันที่ที่ยาวขึ้น หรือเปลี่ยนกลุ่มลูกค้าและช่องทาง")}
+          />
 
           <div className="flex flex-wrap items-center gap-4 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-600">
             <span>
-              {__uiText("Login sessions (annotation):")}{' '}
+              {__uiText("การเข้าใช้งานที่มีการเข้าสู่ระบบ:")}{' '}
               <span className="font-semibold tabular-nums text-gray-900">
                 {data.login_sessions.toLocaleString()}
               </span>
             </span>
             <span>
-              {__uiText("Overall conversion (View Item → Purchase):")}{' '}
-              <span className="font-semibold tabular-nums text-emerald-700">
+              {__uiText("จากดูสินค้าจนสั่งซื้อสำเร็จ:")}{' '}
+              <span className="font-semibold tabular-nums text-gray-900">
                 {formatPercent(overallConversion)}
               </span>
             </span>
           </div>
 
           {firstStepCount === 0 && (
-            <p className="text-xs text-gray-400">{__uiText("ยังไม่มีข้อมูลในช่วง / filter ที่เลือก")}</p>
+            <p className="text-xs text-gray-400">{__uiText("ยังไม่มีลูกค้าในช่วงหรือตัวกรองที่เลือก ลองเลือกช่วงวันที่ที่ยาวขึ้น")}</p>
           )}
         </>
       )}

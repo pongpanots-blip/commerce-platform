@@ -4,7 +4,7 @@ import { getUiLocale as __dateLocale } from '@cp/ui';
 import { Fragment, useState } from 'react';
 import { apiLogsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, StatusChip, fmt, StackedBars, DetailSection, Button } from '@cp/ui';
+import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, Chip, Field, Hint, Input, Select, fmt, StackedBars, DetailSection, Button } from '@cp/ui';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -12,6 +12,13 @@ const SELECTS = {
   status: ['all', '2xx', '4xx', '5xx'], source: ['all', 'internal', 'jagota', 'kbank', 'erp_webhook'],
   method: ['all', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'], sort: ['newest', 'slowest'],
 } as const;
+/** Filter names and values in staff words. Request values stay the raw codes. */
+const FILTER_LABEL: Record<string, string> = { status: 'ผล', source: 'ที่มา', method: 'วิธีเรียก', sort: 'เรียงตาม' };
+const OPTION_LABEL: Record<string, string> = {
+  all: 'ทั้งหมด', '2xx': 'สำเร็จ (2xx)', '4xx': 'คำขอไม่ถูกต้อง (4xx)', '5xx': 'ระบบขัดข้อง (5xx)',
+  internal: 'ภายในระบบร้านค้า', jagota: 'Jagota', kbank: 'KBank', erp_webhook: 'ระบบหลัก (ERP)',
+  newest: 'ล่าสุดก่อน', slowest: 'ช้าที่สุดก่อน',
+};
 
 export function JoshApiLogs() {
   __useUiLocale();
@@ -29,20 +36,24 @@ export function JoshApiLogs() {
 
   return (
     <Page>
-      <PageHeader title={__uiText("API log ของ josh")} subtitle={__uiText("อ่านอย่างเดียวจาก Mongo ของ josh (24 ชม. ล่าสุด, ย้อนได้สูงสุด 7 วัน) · ERP ที่ยิงเข้า josh ดูที่ &#34;ERP log ของ josh&#34;")} actions={<Button icon="refresh" onClick={() => { stats.reload(); list.reload(); }}>{__uiText("Refresh")}</Button>} />
+      <PageHeader title={__uiText("บันทึกการเรียกใช้ระบบร้านค้า")} subtitle={__uiText("บันทึกทุกครั้งที่มีการเรียกใช้ระบบร้านค้า")} actions={<Button icon="refresh" onClick={() => { stats.reload(); list.reload(); }}>{__uiText("Refresh")}</Button>} />
 
       <Panel>
-        <PanelHead title={__uiText("Filters")} />
+        <PanelHead title={__uiText("ตัวกรอง")} />
         <form className="space-y-3 px-4 py-3" onSubmit={(e) => { e.preventDefault(); set('q', draft.trim()); }}>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             {Object.entries(SELECTS).map(([k, opts]) => (
-              <select key={k} value={f[k]} onChange={(e) => set(k, e.target.value)} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
-                <option value="">{k}</option>
-                {opts.map((o) => <option key={o} value={o}>{o}</option>)}
-              </select>
+              <Field key={k} label={__uiText(FILTER_LABEL[k])}>
+                <Select value={f[k]} onChange={(e) => set(k, e.target.value)}>
+                  {opts.map((o) => <option key={o} value={o}>{OPTION_LABEL[o] ? __uiText(OPTION_LABEL[o]) : o}</option>)}
+                </Select>
+              </Field>
             ))}
-            <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={__uiText("ค้นใน URL / message")} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60 lg:col-span-2" />
-            <Button variant="primary">{__uiText("ค้นหา")}</Button>
+            <Field label={__uiText("ค้นหา")} className="lg:col-span-3"><Input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={__uiText("ค้นในที่อยู่ที่เรียกหรือข้อความ")} /></Field>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Hint>{__uiText("อ่านอย่างเดียว แสดง 24 ชั่วโมงล่าสุด ย้อนได้สูงสุด 7 วัน การเรียกจากระบบหลัก (ERP) ดูที่หน้า “บันทึกการเรียกระบบหลัก (ERP)”")}</Hint>
+            <Button variant="primary" type="submit">{__uiText("ค้นหา")}</Button>
           </div>
         </form>
       </Panel>
@@ -66,13 +77,13 @@ export function JoshApiLogs() {
               {s.topEndpoints.length ? (
                 <Table maxHeight="400px">
                   <THead>
-                    <TH>{__uiText("Route")}</TH><TH right>{__uiText("ms")}</TH>
+                    <TH>{__uiText("Route")}</TH><TH right>{__uiText("เวลาเฉลี่ย (มิลลิวินาที)")}</TH>
                   </THead>
                   <TBody>
                     {s.topEndpoints.slice(0, 10).map((t) => (
                       <TR key={t.method + t.route}>
                         <TD kind="mono" className="text-[10px]">{t.method} {t.route}</TD>
-                        <TD kind="num" className="text-[10px]">{t.avgMs}</TD>
+                        <TD kind="num" className="text-[10px]">{fmt.num(t.avgMs)}</TD>
                       </TR>
                     ))}
                   </TBody>
@@ -89,14 +100,14 @@ export function JoshApiLogs() {
           {list.data.items.length ? (
             <Table>
               <THead>
-                <TH>{__uiText("เวลา")}</TH><TH>{__uiText("Method")}</TH><TH>{__uiText("URL")}</TH><TH>{__uiText("Status")}</TH><TH right>{__uiText("ms")}</TH><TH>{__uiText("ที่มา")}</TH><TH></TH>
+                <TH>{__uiText("เวลา")}</TH><TH>{__uiText("Method")}</TH><TH>{__uiText("URL")}</TH><TH>{__uiText("ผล")}</TH><TH right>{__uiText("เวลาที่ใช้ (มิลลิวินาที)")}</TH><TH>{__uiText("ที่มา")}</TH><TH></TH>
               </THead>
               <TBody>
                 {list.data.items.map((r) => (
                   <Fragment key={r.id}>
                     <TR>
                       <TD kind="time">{fmt.when(r.createdAt)}</TD><TD kind="mono">{r.method}</TD><TD kind="mono" className="text-[11px]">{r.url}</TD>
-                      <TD><StatusChip status={r.isSuccess ? 'ok' : 'error'} /></TD><TD kind="num">{r.durationMs}</TD><TD className="text-on-surface-variant text-xs">{r.source}</TD>
+                      <TD>{r.isSuccess ? <Chip tone="ok" dot>{__uiText("สำเร็จ")}</Chip> : <Chip tone="danger" dot>{__uiText("ไม่สำเร็จ")}</Chip>}</TD><TD kind="num">{fmt.num(r.durationMs)}</TD><TD className="text-on-surface-variant text-xs">{OPTION_LABEL[r.source] ? __uiText(OPTION_LABEL[r.source]) : r.source}</TD>
                       <TD kind="actions"><ExpandToggle open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)} /></TD>
                     </TR>
                     {open === r.id && (
@@ -130,7 +141,7 @@ export function JoshApiLogs() {
                 ))}
               </TBody>
             </Table>
-          ) : <Empty>{__uiText("ไม่มี log ในช่วงนี้")}</Empty>}
+          ) : <Empty>{__uiText("ไม่มีบันทึกในช่วงนี้ ลองเปลี่ยนตัวกรอง")}</Empty>}
           <Pager page={page} pageSize={list.data.limit} total={list.data.total} onPage={(p) => setF({ ...f, page: String(p) })} />
         </Panel>
       )}

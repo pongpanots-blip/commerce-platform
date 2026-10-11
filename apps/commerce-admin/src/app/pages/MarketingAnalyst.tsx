@@ -10,8 +10,8 @@ import { Evidence, LoadState } from './growth/shared';
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const prompts = [
-  { label: __uiText("เทรนด์อาหาร / B2B"), question: 'หาเทรนด์ช่วงนี้ในตลาดอาหาร B2B ที่เข้ากับสินค้าและลูกค้าของร้าน พร้อมแนะนำสิ่งที่ควรทำต่อ' },
-  { label: __uiText("GTM / ค้นหาไม่เจอ"), question: 'จาก GTM funnel และคำค้นที่ไม่พบสินค้า เทียบกับเทรนด์ช่วงนี้ เราควรแก้จุดไหนก่อน?' },
+  { label: __uiText("เทรนด์อาหารที่ลูกค้าธุรกิจสนใจ"), question: 'หาเทรนด์ช่วงนี้ในตลาดอาหาร B2B ที่เข้ากับสินค้าและลูกค้าของร้าน พร้อมแนะนำสิ่งที่ควรทำต่อ' },
+  { label: __uiText("คำค้นที่หาสินค้าไม่เจอ"), question: 'จาก GTM funnel และคำค้นที่ไม่พบสินค้า เทียบกับเทรนด์ช่วงนี้ เราควรแก้จุดไหนก่อน?' },
   { label: __uiText("โอกาสทำแผนเฉพาะบุคคล"), question: 'จากพฤติกรรมดูสินค้า ค้นหาและตะกร้า กลุ่มไหนควรทำแผนเฉพาะบุคคล?' },
 ];
 type ReportActions = {
@@ -127,7 +127,7 @@ export default function MarketingAnalyst() {
 
   const actions = { busy, draftError, onDraft: createDraft };
   return <Page>
-    <PageHeader crumbs={[__uiText("Marketing"), __uiText("Analyst")]} title={__uiText("Marketing Analyst")} subtitle={__uiText("ถามเรื่องตลาดหรือพฤติกรรมลูกค้า ให้ AI อ่านข้อมูลร้านและหลักฐานเว็บ แล้วแนะนำสิ่งที่ควรทำ")} actions={<ButtonLink to="/marketing/growth/plans" icon="calendar_month">{__uiText("แผน Growth")}</ButtonLink>} />
+    <PageHeader title={__uiText("ผู้ช่วยวิเคราะห์การตลาด")} subtitle={__uiText("ถามเรื่องตลาดหรือพฤติกรรมลูกค้า ให้ AI อ่านข้อมูลร้านและหลักฐานเว็บ แล้วแนะนำสิ่งที่ควรทำ")} actions={<ButtonLink to="/marketing/growth/plans" icon="calendar_month">{__uiText("แผนการเติบโต")}</ButtonLink>} />
     <Panel as="form" onSubmit={(event) => { event.preventDefault(); void analyze(); }}><PanelHead title={__uiText("อยากรู้อะไรเกี่ยวกับร้าน?")} icon="query_stats" />
       <div className="p-4 space-y-4">
         <Field label={__uiText("คำถาม")} hint={__uiText("ระบุสิ่งที่อยากตัดสินใจ · ไม่เกิน 2,000 ตัวอักษร")}><Textarea aria-label={__uiText("คำถาม")} rows={3} className="font-sans text-sm" required maxLength={2000} disabled={!!busy} value={input.question} onChange={(event) => setInput({ ...input, question: event.target.value })} /></Field>

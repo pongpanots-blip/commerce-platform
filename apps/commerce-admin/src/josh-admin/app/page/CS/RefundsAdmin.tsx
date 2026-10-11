@@ -10,7 +10,7 @@ import AdminListHeader from '../../components/AdminListHeader';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button, Chip, Panel, PanelHead, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type RefundItemRow = {
   id: string;
   order_item_id: string;
@@ -32,11 +32,13 @@ type Row = {
 
 const STATUS_OPTIONS = [
   { value: '', get label(){return __uiText("ทุกสถานะ");} },
-  { value: 'under_review', get label(){return __uiText("under_review");} },
-  { value: 'pending_decision', get label(){return __uiText("pending_decision");} },
-  { value: 'rejected', get label(){return __uiText("rejected");} },
-  { value: 'refunded', get label(){return __uiText("refunded");} },
+  { value: 'under_review', get label(){return __uiText("กำลังตรวจสอบ");} },
+  { value: 'pending_decision', get label(){return __uiText("รอตัดสินใจ");} },
+  { value: 'rejected', get label(){return __uiText("ปฏิเสธแล้ว");} },
+  { value: 'refunded', get label(){return __uiText("คืนเงินแล้ว");} },
 ] as const;
+
+const STATUS_TONES: Record<string, Tone> = { under_review: 'warn', pending_decision: 'info', rejected: 'danger', refunded: 'ok' };
 
 type OrderItemForRefund = {
   id: string;
@@ -62,6 +64,7 @@ export default function RefundsAdmin() {
   const [itemSelections, setItemSelections] = useState<Record<string, ItemSelection>>({});
   const [itemsLoading, setItemsLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -157,14 +160,19 @@ export default function RefundsAdmin() {
     }
   };
 
+  const confirmReject = (id: string) => {
+    if (!window.confirm(__uiText("ปฏิเสธคำขอคืนเงินนี้หรือไม่"))) return;
+    void patchStatus(id, 'rejected');
+  };
+
   const columns: TableColumn<Row>[] = [
     {
       key: 'order_id',
-      label: __uiText("Order"),
+      label: __uiText("ออเดอร์"),
       render: (v) => (
         <Link
           to={ADMIN_ROUTES.orderDetail(String(v))}
-          className="font-mono text-xs text-blue-600 hover:underline"
+          className="font-mono text-xs text-primary hover:underline"
         >
           {String(v).slice(0, 8)}…
         </Link>
@@ -172,11 +180,20 @@ export default function RefundsAdmin() {
     },
     {
       key: 'amount',
-      label: __uiText("จำนวน"),
-      render: (v) => Number(v).toLocaleString(),
+      label: __uiText("ยอดเงินคืน"),
+      align: 'right',
+      render: (v) => <span className="tabular-nums">{__uiText("฿")}{Number(v).toLocaleString()}</span>,
     },
     { key: 'reason', label: __uiText("เหตุผล") },
-    { key: 'status', label: __uiText("สถานะ") },
+    {
+      key: 'status',
+      label: __uiText("สถานะ"),
+      render: (v: string) => (
+        <Chip tone={STATUS_TONES[v] ?? 'muted'} statusCode={v} dot>
+          {STATUS_OPTIONS.find((o) => o.value && o.value === v)?.label ?? v}
+        </Chip>
+      ),
+    },
     {
       key: 'items',
       label: __uiText("รายการสินค้า"),
@@ -187,7 +204,7 @@ export default function RefundsAdmin() {
           <ul className="space-y-0.5 text-xs text-gray-600">
             {items.map((item) => (
               <li key={item.id}>
-                {item.orderItem?.sku ?? item.order_item_id.slice(0, 8)} × {item.quantity_refunded} —{' '}
+                <span className="font-mono">{item.orderItem?.sku ?? item.order_item_id.slice(0, 8)}</span> × {item.quantity_refunded} —{' '}
                 {__uiText("฿")}{Number(item.amount).toLocaleString()}
               </li>
             ))}
@@ -197,7 +214,7 @@ export default function RefundsAdmin() {
     },
     {
       key: 'cs_note',
-      label: __uiText("CS note"),
+      label: __uiText("หมายเหตุทีมบริการลูกค้า"),
       render: (v, row) =>
         row.status === 'under_review' || row.status === 'pending_decision' ? (
           <Input
@@ -223,33 +240,17 @@ export default function RefundsAdmin() {
       render: (id, row) =>
         row.status === 'under_review' ? (
           <div className="flex flex-wrap gap-1">
-            <button
-              type="button"
-              className="rounded bg-emerald-600 px-2 py-1 text-xs text-white"
-              onClick={() => void patchStatus(String(id), 'pending_decision')}
-            >
-              {__uiText("Pending decision")}</button>
-            <button
-              type="button"
-              className="rounded bg-red-600 px-2 py-1 text-xs text-white"
-              onClick={() => void patchStatus(String(id), 'rejected')}
-            >
-              {__uiText("Reject")}</button>
+            <Button size="sm" onClick={() => void patchStatus(String(id), 'pending_decision')}>
+              {__uiText("ส่งต่อให้ตัดสินใจ")}</Button>
+            <Button size="sm" variant="danger-ghost" onClick={() => confirmReject(String(id))}>
+              {__uiText("ปฏิเสธ")}</Button>
           </div>
         ) : row.status === 'pending_decision' ? (
           <div className="flex flex-wrap gap-1">
-            <button
-              type="button"
-              className="rounded bg-sky-600 px-2 py-1 text-xs text-white"
-              onClick={() => void patchStatus(String(id), 'refunded')}
-            >
-              {__uiText("Refunded")}</button>
-            <button
-              type="button"
-              className="rounded bg-red-600 px-2 py-1 text-xs text-white"
-              onClick={() => void patchStatus(String(id), 'rejected')}
-            >
-              {__uiText("Reject")}</button>
+            <Button size="sm" onClick={() => void patchStatus(String(id), 'refunded')}>
+              {__uiText("บันทึกว่าคืนเงินแล้ว")}</Button>
+            <Button size="sm" variant="danger-ghost" onClick={() => confirmReject(String(id))}>
+              {__uiText("ปฏิเสธ")}</Button>
           </div>
         ) : (
           '—'
@@ -258,13 +259,16 @@ export default function RefundsAdmin() {
   ];
 
   return (
-    <div className="cp-management-page">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
-        title={__uiText("Returns & Refunds")}
-        subtitle={__uiText("คำขอคืนเงิน / คืนสินค้า")}
-      />
+        title={__uiText("คืนสินค้าและคืนเงิน")}
+        subtitle={__uiText("คำขอคืนสินค้าและคืนเงินของลูกค้า ตรวจสอบ ตัดสินใจ และบันทึกผล")}
+      >
+        <Button icon="refresh" onClick={() => void load()}>{__uiText("รีเฟรช")}</Button>
+        <Button variant="primary" icon="add" onClick={() => setShowCreate((v) => !v)}>{__uiText("สร้างคำขอคืนเงิน")}</Button>
+      </AdminListHeader>
 
-      <div className="mb-4 flex flex-wrap items-end gap-3">
+      <div className="flex flex-wrap items-end gap-3">
         <div className="w-48">
           <Select
             label={__uiText("สถานะ")}
@@ -278,29 +282,25 @@ export default function RefundsAdmin() {
             ))}
           </Select>
         </div>
-        <button
-          type="button"
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm hover:bg-gray-50"
-          onClick={() => void load()}
-        >
-          {__uiText("รีเฟรช")}</button>
       </div>
 
-      <div className="mb-6 max-w-3xl rounded-lg border border-gray-100 p-4">
+      {showCreate && (
+      <Panel className="max-w-3xl">
+        <PanelHead title={__uiText("สร้างคำขอคืนเงิน")} icon="add_circle" />
+        <div className="p-5">
         <div className="grid gap-3 md:grid-cols-3">
           <Input
             label={__uiText("รหัสออเดอร์ (Order ID) *")}
             value={orderId}
             onChange={(e) => setOrderId(e.target.value)}
           />
-          <button
-            type="button"
-            className="self-end rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm hover:bg-gray-50"
+          <Button
+            className="self-end"
             disabled={itemsLoading || !orderId.trim()}
             onClick={() => void loadOrderItems()}
           >
             {itemsLoading ? __uiText("กำลังโหลด...") : __uiText("โหลดรายการสินค้า")}
-          </button>
+          </Button>
           <Input
             label={__uiText("เหตุผลการคืนเงิน *")}
             value={reason}
@@ -314,7 +314,7 @@ export default function RefundsAdmin() {
               <thead className="bg-gray-50 text-left text-xs text-gray-500">
                 <tr>
                   <th className="px-2 py-2" scope="col" />
-                  <th className="px-2 py-2" scope="col">{__uiText("SKU")}</th>
+                  <th className="px-2 py-2" scope="col">{__uiText("รหัสสินค้า")}</th>
                   <th className="px-2 py-2" scope="col">{__uiText("สินค้า")}</th>
                   <th className="px-2 py-2" scope="col">{__uiText("จำนวนคืน")}</th>
                   <th className="px-2 py-2" scope="col">{__uiText("ยอดเงินคืน")}</th>
@@ -378,20 +378,28 @@ export default function RefundsAdmin() {
           </TableViewport>
         )}
 
-        <button
-          type="button"
-          disabled={creating}
-          className="mt-3 rounded-lg bg-primary px-4 py-2 text-sm text-white disabled:opacity-50"
-          onClick={() => void handleCreateRefund()}
-        >
-          {creating ? __uiText("กำลังบันทึก...") : __uiText("สร้างคำขอคืนเงิน")}
-        </button>
-      </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button
+            variant="primary"
+            disabled={creating}
+            onClick={() => void handleCreateRefund()}
+          >
+            {creating ? __uiText("กำลังบันทึก...") : __uiText("สร้างคำขอคืนเงิน")}
+          </Button>
+          <Button variant="ghost" disabled={creating} onClick={() => setShowCreate(false)}>{__uiText("ยกเลิก")}</Button>
+        </div>
+        </div>
+      </Panel>
+      )}
 
-      {loading ? (
-        <p className="mb-2 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
-      ) : null}
-      <Table columns={columns} data={rows} idKey="id" />
+      <Table
+        columns={columns}
+        data={rows}
+        idKey="id"
+        loading={loading}
+        emptyTitle={__uiText("ยังไม่มีคำขอคืนเงิน")}
+        emptyDescription={__uiText("ลองเลือกสถานะอื่น หรือกดสร้างคำขอคืนเงิน")}
+      />
     </div>
   );
 }

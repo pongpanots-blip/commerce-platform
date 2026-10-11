@@ -171,7 +171,7 @@ export function ProductDetailFormFields({ values, onChange, contentManagedSepara
             <button
               type="button"
               onClick={() => removeItem(index)}
-              className="text-xs text-red-500 hover:underline text-left sm:text-center py-1"
+              className="text-xs text-danger hover:underline text-left sm:text-center py-1"
             >
               {__uiText("ลบ")}</button>
           </div>

@@ -188,7 +188,7 @@ export function PromotionCategoryMultiSelect({ rows, selectedIds, onChange }: Pr
                 <button
                   type="button"
                   onClick={() => removeChip(id)}
-                  className="ml-1 text-gray-400 hover:text-red-500"
+                  className="ml-1 text-gray-400 hover:text-alert"
                 >
                   ×
                 </button>

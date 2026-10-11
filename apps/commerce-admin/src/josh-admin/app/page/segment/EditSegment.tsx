@@ -164,20 +164,20 @@ const EditSegment = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("แก้ไข User Segment")}
-      subtitle={__uiText("slug: {0}", {"0": slug})}
+      title={__uiText("แก้ไขกลุ่มลูกค้า")}
+      subtitle={__uiText("รหัสอ้างอิง: {0}", {"0": slug})}
       backPath={returnDestination}
       saving={saving}
       onSave={handleSubmit}
     >
-      <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 text-sm text-gray-600">
+      <div className="rounded-lg border border-secondary-container bg-surface-container-low p-4 text-sm text-gray-600">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="font-medium text-gray-800">
               {getRuleTypeLabel(form.rule_type)}
             </div>
             <div className="mt-1 text-xs text-gray-500">
-              {__uiText("Config ปัจจุบัน:")}{' '}
+              {__uiText("เงื่อนไขปัจจุบัน:")}{' '}
               {summarizeRuleConfig(form.rule_type, savedRuleConfig)}
             </div>
             {locked ? (
@@ -193,7 +193,7 @@ const EditSegment = () => {
                   {lockedMemberCount != null ? __uiText("{0} คน", {"0": lockedMemberCount.toLocaleString()}) : '—'}
                 </div>
                 <div className="mt-1 text-xs text-gray-400">
-                  {__uiText("ต้องการรายชื่อใหม่? สร้าง segment ใหม่")}</div>
+                  {__uiText("ต้องการรายชื่อใหม่? สร้างกลุ่มลูกค้าใหม่")}</div>
               </>
             ) : null}
           </div>
@@ -204,13 +204,14 @@ const EditSegment = () => {
               to={`${ADMIN_ROUTES.users}?segment=${id}`}
               className="text-xs text-blue-600 hover:underline"
             >
-              {__uiText("ดู Users")}</Link>
+              {__uiText("ดูรายชื่อลูกค้า")}</Link>
           </div>
         </div>
       </div>
 
       <Input
-        label={__uiText("ชื่อ Segment *")}
+        label={__uiText("ชื่อกลุ่มลูกค้า")}
+        required
         value={form.name}
         onChange={(event) => setForm({ ...form, name: event.target.value })}
       />
@@ -244,7 +245,7 @@ const EditSegment = () => {
         <summary className="cursor-pointer text-sm font-medium text-gray-700">
           {__uiText("ตั้งค่าขั้นสูง")}</summary>
         <div className="mt-3 space-y-4">
-          <Input label={__uiText("Slug (ตัวระบุ URL)")} value={slug} disabled />
+          <Input label={__uiText("รหัสอ้างอิง")} value={slug} disabled />
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
               type="checkbox"
@@ -253,7 +254,7 @@ const EditSegment = () => {
                 setForm({ ...form, is_active: event.target.checked })
               }
             />
-            {__uiText("เปิดใช้งาน Segment นี้ (Active)")}</label>
+            {__uiText("เปิดใช้กลุ่มนี้")}</label>
         </div>
       </details>
     </AdminInsertLayout>

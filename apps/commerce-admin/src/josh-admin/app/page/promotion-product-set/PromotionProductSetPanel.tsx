@@ -16,7 +16,7 @@ import {
 } from './promotion-product-set.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, Panel, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const API_BASE_URL =
   import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? 'https://joshapp.io/api';
 
@@ -184,10 +184,10 @@ export function PromotionProductSetPanel({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-        <div className="flex flex-col justify-between gap-2 border-b pb-3 md:flex-row md:items-center">
-          <h3 className="flex items-center gap-2 text-sm font-bold text-gray-700">
-            <AiOutlineSearch /> {__uiText(" ค้นหาหรือเลือกสินค้าเข้า Product Set")}</h3>
+      <Panel className="space-y-4 p-5">
+        <div className="flex flex-col justify-between gap-2 border-b border-secondary-container pb-3 md:flex-row md:items-center">
+          <h3 className="flex items-center gap-2 text-[15px] font-semibold text-on-surface">
+            <AiOutlineSearch /> {__uiText("ค้นหาหรือเลือกสินค้าเข้าชุด")}</h3>
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
@@ -195,7 +195,7 @@ export function PromotionProductSetPanel({
               className="flex items-center gap-1.5 rounded-lg border border-dashed border-gray-300 bg-white px-3 py-1.5 text-xs font-black text-gray-600 transition-colors hover:bg-gray-50"
             >
               <MdInsertDriveFile size={16} />
-              {__uiText("ดาวน์โหลด CSV template")}</button>
+              {__uiText("ดาวน์โหลดไฟล์ตัวอย่าง (CSV)")}</button>
             <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-black text-primary transition-colors hover:bg-primary/20">
               <MdInsertDriveFile size={16} />
               <span>{importing ? __uiText("กำลังนำเข้า...") : __uiText("นำเข้า CSV")}</span>
@@ -210,16 +210,16 @@ export function PromotionProductSetPanel({
           </div>
         </div>
         <p className="text-[11px] text-gray-400">
-          {__uiText("ไฟล์ CSV คอลัมน์เดียว หัวตาราง ")}<code>{__uiText("sku")}</code> {__uiText(" — หนึ่งแถวต่อหนึ่ง SKU")}</p>
-        {importMsg && <p className="text-xs text-amber-600">{importMsg}</p>}
+          {__uiText("ไฟล์ CSV คอลัมน์เดียว หัวตาราง ")}<code>{__uiText("sku")}</code> {__uiText(" หนึ่งแถวต่อหนึ่งสินค้า")}</p>
+        {importMsg && <p className="text-xs text-warn">{importMsg}</p>}
 
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500">{__uiText("ค้นหาสินค้าเพื่อเพิ่มเข้า Product Set")}</span>
+          <span className="text-xs text-gray-500">{__uiText("ค้นหาสินค้าเพื่อเพิ่มเข้าชุด")}</span>
           <div className="relative">
             <input
               type="text"
               className="w-full rounded-xl border-none bg-gray-50 py-2 pl-10 pr-4 text-sm outline-none ring-primary/20 focus:ring-2"
-              placeholder={__uiText("ค้นหาชื่อสินค้า หรือ SKU...")}
+              placeholder={__uiText("ค้นหาชื่อสินค้า หรือรหัสสินค้า...")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -228,7 +228,7 @@ export function PromotionProductSetPanel({
         </label>
 
         {searching && <p className="text-xs text-gray-400">{__uiText("กำลังค้นหา...")}</p>}
-        {addMsg && <p className="text-xs text-amber-600">{addMsg}</p>}
+        {addMsg && <p className="text-xs text-warn">{addMsg}</p>}
 
         <div className="grid max-h-48 grid-cols-1 gap-2 overflow-y-auto md:grid-cols-2">
           {searchResult.map((row) => (
@@ -239,7 +239,7 @@ export function PromotionProductSetPanel({
               <div className="min-w-0 pr-2">
                 <p className="truncate font-medium text-gray-800">{row.name}</p>
                 <p className="text-gray-400">
-                  {__uiText("SKU: ")}{row.sku} {__uiText(" · ฿")}{row.price.toLocaleString()}
+                  {__uiText("รหัสสินค้า: ")}<span className="font-mono">{row.sku}</span> {__uiText(" · ฿")}<span className="tabular-nums">{row.price.toLocaleString()}</span>
                 </p>
               </div>
               <button
@@ -255,15 +255,15 @@ export function PromotionProductSetPanel({
           ))}
           {!searching && searchResult.length === 0 && (
             <p className="col-span-full py-4 text-center text-xs text-gray-400">
-              {searchTerm.trim() ? __uiText("ไม่พบสินค้า — ลองคำค้นอื่น") : __uiText("พิมพ์ชื่อสินค้าหรือ SKU เพื่อค้นหา")}
+              {searchTerm.trim() ? __uiText("ไม่พบสินค้า — ลองคำค้นอื่น") : __uiText("พิมพ์ชื่อสินค้าหรือรหัสสินค้าเพื่อค้นหา")}
             </p>
           )}
         </div>
-      </div>
+      </Panel>
 
-      <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+      <Panel className="p-5">
         <div className="mb-3 flex flex-col justify-between gap-2 md:flex-row md:items-center">
-          <h3 className="text-sm font-bold text-gray-700">
+          <h3 className="text-[15px] font-semibold text-on-surface">
             {__uiText("รายการสินค้า (")}{items.length}{__uiText(") — เพิ่มเอง")}{' '}
             {items.filter((item) => item.source === 'manual').length} {__uiText(" · จากหมวด")}{' '}
             {items.filter((item) => item.source === 'category').length} {__uiText(" · จากแบรนด์")}{' '}
@@ -272,7 +272,7 @@ export function PromotionProductSetPanel({
           <input
             type="text"
             className="w-full rounded-xl border-none bg-gray-50 py-2 px-3 text-sm outline-none ring-primary/20 focus:ring-2 md:w-64"
-            placeholder={__uiText("กรองรายการที่เลือก — ชื่อ/SKU")}
+            placeholder={__uiText("กรองรายการที่เลือก ด้วยชื่อหรือรหัสสินค้า")}
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />
@@ -288,7 +288,7 @@ export function PromotionProductSetPanel({
               <div
                 key={item.productInventoryId}
                 className={`flex items-center justify-between rounded-xl border p-3 ${
-                  item.isActive === false ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-gray-50'
+                  item.isActive === false ? 'border-danger/20 bg-danger-container' : 'border-gray-200 bg-gray-50'
                 }`}
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -304,25 +304,19 @@ export function PromotionProductSetPanel({
                     <p className="truncate text-xs font-bold text-gray-800">
                       {item.name}
                       {item.source === 'manual' && (
-                        <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary">
-                          {__uiText("เพิ่มเอง")}</span>
+                        <Chip tone="primary" className="ml-1.5">{__uiText("เพิ่มเอง")}</Chip>
                       )}
                       {item.source === 'category' && (
-                        <span className="ml-1.5 rounded-full bg-orange-100 px-1.5 py-0.5 text-[9px] font-bold text-orange-700">
-                          {item.sourceLabel || __uiText("หมวด")}
-                        </span>
+                        <Chip className="ml-1.5">{item.sourceLabel || __uiText("หมวด")}</Chip>
                       )}
                       {item.source === 'brand' && (
-                        <span className="ml-1.5 rounded-full bg-yellow-100 px-1.5 py-0.5 text-[9px] font-bold text-yellow-800">
-                          {__uiText("Brand: ")}{item.sourceLabel || __uiText("Brand")}
-                        </span>
+                        <Chip className="ml-1.5">{__uiText("แบรนด์: ")}{item.sourceLabel || __uiText("แบรนด์")}</Chip>
                       )}
                     </p>
                     <p className="text-[10px] text-gray-400">
-                      {__uiText("SKU: ")}{item.sku} {__uiText(" · ฿")}{(item.price ?? 0).toLocaleString()}
+                      {__uiText("รหัสสินค้า: ")}<span className="font-mono">{item.sku}</span> {__uiText(" · ฿")}<span className="tabular-nums">{(item.price ?? 0).toLocaleString()}</span>
                       {item.isActive === false && (
-                        <span className="ml-1.5 rounded-full bg-rose-100 px-1.5 py-0.5 text-[9px] font-bold text-rose-600">
-                          {__uiText("ไม่ active")}</span>
+                        <Chip tone="danger" className="ml-1.5">{__uiText("ปิดใช้งาน")}</Chip>
                       )}
                     </p>
                   </div>
@@ -332,7 +326,7 @@ export function PromotionProductSetPanel({
                     type="button"
                     onClick={() => removeManual(item.productInventoryId)}
                     aria-label={__uiText("ลบ {0}", {"0": item.sku})}
-                    className="ml-2 shrink-0 rounded-full p-1.5 text-rose-500 hover:bg-rose-50"
+                    className="ml-2 shrink-0 rounded-full p-1.5 text-on-surface-variant hover:bg-danger-container hover:text-alert"
                   >
                     <MdOutlineDelete size={18} />
                   </button>
@@ -346,7 +340,7 @@ export function PromotionProductSetPanel({
             </div>
           )}
         </div>
-      </div>
+      </Panel>
     </div>
   );
 }

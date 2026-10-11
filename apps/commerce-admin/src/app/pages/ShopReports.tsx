@@ -33,7 +33,7 @@ function useReport<T>(load: (p: PeriodParams) => Promise<T>, deps: unknown[] = [
           <input type="date" value={p.toDate ?? ''} onChange={(e) => setP({ ...p, toDate: e.target.value })} aria-label={__uiText("ถึง")} className="px-2 py-1 border border-secondary-container rounded text-xs" />
         </>
       )}
-      <Button onClick={state.reload} icon="refresh">{__uiText("Refresh")}</Button>
+      <Button onClick={state.reload} icon="refresh">{__uiText("โหลดใหม่")}</Button>
     </div>
   );
   return { ...state, picker };
@@ -72,10 +72,10 @@ export function SalesReport() {
 
       <ErrorText error={error} />
       {data?.byRep && <Panel><PanelHead title={__uiText('ผลงานรายเซลส์')} />
-        <Table><THead><TH>{__uiText('พนักงานขาย')}</TH><TH>{__uiText('ออเดอร์')}</TH><TH>{__uiText('ยอดขาย')}</TH><TH>{__uiText('ลูกค้าที่ซื้อ')}</TH></THead>
+        <Table><THead><TH>{__uiText('พนักงานขาย')}</TH><TH kind="num">{__uiText('ออเดอร์')}</TH><TH kind="money">{__uiText('ยอดขาย')}</TH><TH kind="num">{__uiText('ลูกค้าที่ซื้อ')}</TH></THead>
         <TBody>{data.byRep.items.map(row => <TR key={row.sales_user_id ?? 'unassigned'}>
           <TD>{row.sales_user_id ? reps.data?.find(rep => rep.id === row.sales_user_id)?.name || row.sales_user_id : __uiText('ยังไม่มีผู้ดูแล')}</TD>
-          <TD>{fmt.num(row.orders)}</TD><TD>{fmt.baht(row.revenue_inc_vat)}</TD><TD>{fmt.num(row.customers)}</TD>
+          <TD kind="num">{fmt.num(row.orders)}</TD><TD kind="money">{fmt.baht(row.revenue_inc_vat)}</TD><TD kind="num">{fmt.num(row.customers)}</TD>
         </TR>)}</TBody></Table>
       </Panel>}
 
@@ -121,18 +121,18 @@ export function SalesReport() {
                 icon="warning"
                 label={__uiText("ไม่นับเป็นยอดขาย")}
                 value={fmt.baht(t.settled_without_payment_value)}
-                foot={<span className="text-xs text-on-surface-variant">{fmt.num(t.settled_without_payment)} {__uiText(" ออเดอร์ · ดูที่ Orders (josh)")}</span>}
+                foot={<span className="text-xs text-on-surface-variant">{fmt.num(t.settled_without_payment)} {__uiText(" ออเดอร์ · ดูได้ที่หน้าคำสั่งซื้อ")}</span>}
               />
             )}
             <StatTile
               label={__uiText("คืนเงิน")}
               value={fmt.baht(t.refunds.amount)}
-              foot={<span className="text-xs text-on-surface-variant">{t.refunds.n == null ? __uiText("ยังไม่มีข้อมูลคืนเงินใน commerce") : __uiText("{0} รายการ", {"0": fmt.num(t.refunds.n)})}</span>}
+              foot={<span className="text-xs text-on-surface-variant">{t.refunds.n == null ? __uiText("ยังไม่มีข้อมูลคืนเงินในระบบ") : __uiText("{0} รายการ", {"0": fmt.num(t.refunds.n)})}</span>}
             />
           </StatGrid>
 
           <Panel>
-            <PanelHead title={__uiText("ยอดขาย{0}", {"0": data.byMonth ? 'รายเดือน' : 'รายวัน'})} />
+            <PanelHead title={data.byMonth ? __uiText("ยอดขายรายเดือน") : __uiText("ยอดขายรายวัน")} />
             {series.length ? (
               <BarList rows={series.map((s) => ({ label: s.bucket, value: s.revenue_inc_vat, text: `${fmt.baht(s.revenue_inc_vat)} · ${s.orders}` }))} />
             ) : (
@@ -145,17 +145,17 @@ export function SalesReport() {
             {data.topProducts.length ? (
               <Table>
                 <THead>
-                    <TH>{__uiText("SKU")}</TH>
+                    <TH>{__uiText("รหัสสินค้า")}</TH>
                     <TH>{__uiText("สินค้า")}</TH>
-                    <TH>{__uiText("จำนวน")}</TH>
-                    <TH>{__uiText("ยอดขาย")}</TH>
+                    <TH kind="num">{__uiText("จำนวน")}</TH>
+                    <TH kind="money">{__uiText("ยอดขาย")}</TH>
                   </THead>
                 <TBody>
                   {data.topProducts.map((p) => (
                     <TR key={p.sku}>
                       <TD kind="code">{p.sku}</TD>
                       <TD>{p.name}</TD>
-                      <TD>{fmt.num(p.qty)}</TD>
+                      <TD kind="num">{fmt.num(p.qty)}</TD>
                       <TD kind="money">{fmt.baht(p.revenue_inc_vat)}</TD>
                     </TR>
                   ))}
@@ -174,8 +174,9 @@ export function SalesReport() {
 }
 
 const FUNNEL_STEPS: [string, string][] = [
-  ['view_item', 'ดูสินค้า'], ['add_to_cart', 'ใส่ตะกร้า'], ['begin_checkout', 'เริ่ม checkout'], ['purchase', 'ซื้อ'],
+  ['view_item', 'ดูสินค้า'], ['add_to_cart', 'ใส่ตะกร้า'], ['begin_checkout', 'เริ่มชำระเงิน'], ['purchase', 'ซื้อ'],
 ];
+const PLATFORM_LABEL: Record<string, string> = { web: 'เว็บไซต์', ios: 'แอป iOS', android: 'แอป Android' };
 
 export function TrafficReport() {
   __useUiLocale();
@@ -185,8 +186,8 @@ export function TrafficReport() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("Traffic")}
-        subtitle={__uiText("ผู้เข้าชม การค้นหา และ funnel ของหน้าร้าน josh · อ่านจาก replica ของ josh")}
+        title={__uiText("การเข้าชมร้านค้า")}
+        subtitle={__uiText("คนเข้าชม การค้นหา และขั้นตอนก่อนซื้อบนร้านค้าออนไลน์")}
         actions={picker}
       />
       <div className="border-t border-secondary-container" />
@@ -202,16 +203,16 @@ export function TrafficReport() {
 
           <StatGrid cols={4}>
             <StatTile
-              label={__uiText("Sessions")}
+              label={__uiText("ครั้งที่เข้าชม")}
               value={fmt.num(t.sessions)}
               foot={<Change pct={data.vsPreviousPeriod.sessions_change_percent} />}
             />
             <StatTile
-              label={__uiText("Visitors")}
+              label={__uiText("ผู้เข้าชม")}
               value={fmt.num(t.visitors)}
             />
             <StatTile
-              label={__uiText("Login แล้ว")}
+              label={__uiText("ล็อกอินแล้ว")}
               value={fmt.num(t.logged_in_users)}
             />
             <StatTile
@@ -233,16 +234,16 @@ export function TrafficReport() {
           </StatGrid>
 
           <Panel>
-            <PanelHead title={__uiText("Funnel (sessions)")} />
+            <PanelHead title={__uiText("ขั้นตอนก่อนซื้อ (นับครั้งที่เข้าชม)")} />
             {FUNNEL_STEPS.filter(([k]) => k in data.funnelSessions).length ? (
-              <BarList rows={FUNNEL_STEPS.filter(([k]) => k in data.funnelSessions).map(([k, label]) => ({ label, value: data.funnelSessions[k], text: fmt.num(data.funnelSessions[k]) }))} />
+              <BarList rows={FUNNEL_STEPS.filter(([k]) => k in data.funnelSessions).map(([k, label]) => ({ label: __uiText(label), value: data.funnelSessions[k], text: fmt.num(data.funnelSessions[k]) }))} />
             ) : (
               <Empty>{__uiText("ไม่มีข้อมูลในช่วงนี้")}</Empty>
             )}
           </Panel>
 
           <Panel>
-            <PanelHead title={__uiText("Sessions รายวัน")} />
+            <PanelHead title={__uiText("ครั้งที่เข้าชมรายวัน")} />
             {data.sessionsByDay.length ? (
               <BarList rows={data.sessionsByDay.map((d) => ({ label: d.day, value: d.sessions, text: fmt.num(d.sessions) }))} />
             ) : (
@@ -251,9 +252,9 @@ export function TrafficReport() {
           </Panel>
 
           <Panel>
-            <PanelHead title={__uiText("แยกตาม platform")} />
+            <PanelHead title={__uiText("แยกตามช่องทาง")} />
             {data.byPlatform.length ? (
-              <BarList rows={data.byPlatform.map((p) => ({ label: p.platform ?? '-', value: p.sessions, text: `${fmt.num(p.sessions)} · ${fmt.num(p.visitors)} คน` }))} />
+              <BarList rows={data.byPlatform.map((p) => ({ label: p.platform ? (PLATFORM_LABEL[p.platform] ? __uiText(PLATFORM_LABEL[p.platform]) : p.platform) : '—', value: p.sessions, text: `${fmt.num(p.sessions)} · ${__uiText('{0} คน', { 0: fmt.num(p.visitors) })}` }))} />
             ) : (
               <Empty>{__uiText("ไม่มีข้อมูลในช่วงนี้")}</Empty>
             )}
@@ -265,15 +266,15 @@ export function TrafficReport() {
               <Table>
                 <THead>
                     <TH>{__uiText("คำค้น")}</TH>
-                    <TH>{__uiText("ครั้ง")}</TH>
-                    <TH>{__uiText("ไม่เจอสินค้า")}</TH>
+                    <TH kind="num">{__uiText("ครั้ง")}</TH>
+                    <TH kind="num">{__uiText("ไม่เจอสินค้า")}</TH>
                   </THead>
                 <TBody>
                   {data.topSearches.map((s) => (
                     <TR key={s.query}>
                       <TD>{s.query}</TD>
-                      <TD>{fmt.num(s.searches)}</TD>
-                      <TD>{s.no_results ? <Chip tone="warn">{fmt.num(s.no_results)}</Chip> : 0}</TD>
+                      <TD kind="num">{fmt.num(s.searches)}</TD>
+                      <TD kind="num">{s.no_results ? <Chip tone="warn">{fmt.num(s.no_results)}</Chip> : 0}</TD>
                     </TR>
                   ))}
                 </TBody>
@@ -291,12 +292,12 @@ export function TrafficReport() {
 }
 
 const COMMERCE_LABEL: Record<string, string> = {
-  get deliveries_succeeded(){return __uiText("ส่งข้อมูลถึง platform สำเร็จ");}, get deliveries_dead_lettered(){return __uiText("ส่งไม่สำเร็จ (dead letter)");},
-  get erp_intake_total(){return __uiText("ERP ส่งเข้ามาทั้งหมด");}, get erp_intake_failed(){return __uiText("ERP ส่งเข้ามาแล้ว fail");},
+  get deliveries_succeeded(){return __uiText("ส่งข้อมูลถึงร้านค้าสำเร็จ");}, get deliveries_dead_lettered(){return __uiText("ส่งข้อมูลถึงร้านค้าไม่สำเร็จ (เลิกลองส่งแล้ว)");},
+  get erp_intake_total(){return __uiText("ข้อมูลที่ระบบขาย (ERP) ส่งเข้ามาทั้งหมด");}, get erp_intake_failed(){return __uiText("ข้อมูลจากระบบขาย (ERP) ที่รับเข้าไม่สำเร็จ");},
 };
 const JOSH_LABEL: Record<string, string> = {
   get payments_failed(){return __uiText("ชำระเงินไม่สำเร็จ");}, get jagota_order_sync_failed(){return __uiText("ส่งออเดอร์ไป Jagota ไม่สำเร็จ");},
-  get marketing_runs_failed(){return __uiText("Marketing workflow fail");}, get push_campaigns_failed(){return __uiText("Push campaign fail");},
+  get marketing_runs_failed(){return __uiText("ข้อความอัตโนมัติที่ส่งไม่สำเร็จ");}, get push_campaigns_failed(){return __uiText("การแจ้งเตือนถึงลูกค้าที่ส่งไม่สำเร็จ");},
 };
 const bad = (k: string) => !/total|succeeded/.test(k);
 
@@ -324,8 +325,8 @@ export function HealthReportPage() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("Error และสุขภาพระบบ")}
-        subtitle={__uiText("ตอนนี้มีอะไรพังไหม และช่วงนี้ fail อะไรไปบ้าง ทั้งฝั่ง commerce และ josh")}
+        title={__uiText("สุขภาพระบบ")}
+        subtitle={__uiText("ตอนนี้มีปัญหาอะไรที่กระทบการขาย และช่วงนี้มีอะไรทำงานไม่สำเร็จบ้าง")}
         actions={picker}
       />
       <div className="border-t border-secondary-container" />
@@ -346,7 +347,7 @@ export function HealthReportPage() {
               }
             />
             {data.now.ok ? (
-              <Empty>{__uiText("การส่งข้อมูลไป platform ทันเวลา ไม่มีคิวค้าง")}</Empty>
+              <Empty>{__uiText("ส่งข้อมูลถึงร้านค้าทันเวลา ไม่มีงานค้าง")}</Empty>
             ) : (
               <ul className="list-disc list-inside px-4 py-3 space-y-1 text-xs">
                 {data.now.problems.map((p, i) => <li key={i}>{p}</li>)}
@@ -358,28 +359,28 @@ export function HealthReportPage() {
             {data.period}</Alert>
 
           <Panel>
-            <PanelHead title={__uiText("Commerce")} />
+            <PanelHead title={__uiText("การรับส่งข้อมูลระหว่างระบบ")} />
             <Counts counts={data.commerce} labels={COMMERCE_LABEL} />
           </Panel>
 
           <Panel>
-            <PanelHead title={__uiText("josh")} />
+            <PanelHead title={__uiText("ร้านค้าออนไลน์")} />
             {data.josh.counts ? (
               <>
                 <Counts counts={data.josh.counts} labels={JOSH_LABEL} />
                 {!!data.josh.jagotaOrderSyncErrors?.length && (
                   <Table>
                     <THead>
-                        <TH>{__uiText("Jagota sync error")}</TH>
-                        <TH>{__uiText("ครั้ง")}</TH>
+                        <TH>{__uiText("สาเหตุที่ส่งออเดอร์ไป Jagota ไม่สำเร็จ")}</TH>
+                        <TH kind="num">{__uiText("ครั้ง")}</TH>
                         <TH>{__uiText("ล่าสุด")}</TH>
                       </THead>
                     <TBody>
                       {data.josh.jagotaOrderSyncErrors.map((e) => (
                         <TR key={String(e.error)}>
                           <TD kind="code">{e.error}</TD>
-                          <TD>{e.n}</TD>
-                          <TD>{e.last_at ? new Date(String(e.last_at)).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) : ''}</TD>
+                          <TD kind="num">{fmt.num(e.n)}</TD>
+                          <TD kind="time">{e.last_at ? new Date(String(e.last_at)).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB')) : ''}</TD>
                         </TR>
                       ))}
                     </TBody>

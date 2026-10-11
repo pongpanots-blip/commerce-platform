@@ -7,17 +7,17 @@ import { Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useEffect, useState } from 'react';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, DetailSection, Empty, fmt, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS_LABELS: Record<BranchSpecialPriceListItem['status'], string> = {
   get active(){return __uiText("ใช้งาน");},
   get scheduled(){return __uiText("รอเริ่ม");},
   get expired(){return __uiText("หมดอายุ");},
 };
 
-const STATUS_STYLES: Record<BranchSpecialPriceListItem['status'], string> = {
-  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  scheduled: 'bg-amber-50 text-amber-700 border-amber-200',
-  expired: 'bg-gray-100 text-gray-600 border-gray-200',
+const STATUS_TONES: Record<BranchSpecialPriceListItem['status'], Tone> = {
+  active: 'ok',
+  scheduled: 'warn',
+  expired: 'muted',
 };
 
 type Props = {
@@ -57,30 +57,28 @@ export function ProductCustomerPricingSection({ productId }: Props) {
     {
       key: 'price',
       label: __uiText("ราคาที่กำหนด"),
-      render: (value) => `฿${Number(value).toLocaleString()}`,
+      align: 'right',
+      render: (value) => fmt.baht(value),
     },
     {
       key: 'start_date',
       label: __uiText("ช่วงเวลา"),
       render: (_, row) =>
-        `${row.start_date} – ${row.end_date ?? 'ไม่กำหนด'}`,
+        `${row.start_date} – ${row.end_date ?? __uiText('ไม่กำหนด')}`,
     },
     {
       key: 'status',
       label: __uiText("สถานะ"),
       render: (value: BranchSpecialPriceListItem['status']) => (
-        <span
-          className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[value]}`}
-        >
-          {STATUS_LABELS[value]}
-        </span>
+        <Chip tone={STATUS_TONES[value] ?? 'muted'} statusCode={value} dot>
+          {STATUS_LABELS[value] ?? value}
+        </Chip>
       ),
     },
   ];
 
   return (
-    <section>
-      <h2 className="text-sm font-semibold text-gray-700 mb-3">{__uiText("ราคาตามลูกค้า")}</h2>
+    <DetailSection title={__uiText("ราคาตามลูกค้า")}>
       {loading ? (
         <p className="text-sm text-gray-400">{__uiText("กำลังโหลด...")}</p>
       ) : forbidden ? (
@@ -88,11 +86,11 @@ export function ProductCustomerPricingSection({ productId }: Props) {
       ) : failed ? (
         <p className="text-sm text-gray-400">{__uiText("โหลดราคาตามลูกค้าไม่สำเร็จ")}</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-gray-400">{__uiText("ยังไม่มีราคาพิเศษตามลูกค้าสำหรับ SKU นี้")}</p>
+        <Empty>{__uiText("ยังไม่มีราคาพิเศษตามลูกค้าสำหรับสินค้านี้ เพิ่มได้ที่หน้าราคาเฉพาะลูกค้าและราคาสัญญา")}</Empty>
       ) : (
         <Table columns={columns} data={rows} idKey="id" />
       )}
-    </section>
+    </DetailSection>
   );
 }
 

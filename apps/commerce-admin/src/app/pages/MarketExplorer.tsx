@@ -3,7 +3,7 @@ import { TableViewport } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { Button, Checkbox, Empty, ErrorText, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Stack2, Table, TBody, TD, TH, THead, TR, fmt, Icon } from '@cp/ui';
+import { Button, Checkbox, Empty, ErrorText, Field, Input, Loading, Page, PageHeader, Panel, PanelHead, Pager, SearchInput, Select, Stack2, Table, TBody, TD, TH, THead, TR, fmt, Icon } from '@cp/ui';
 import { marketApi, RestaurantRow } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { hasRestaurantCoordinates, RestaurantMap } from './RestaurantMap';
@@ -186,9 +186,9 @@ export function OrderTargetgroup() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("Order target group")}
-        subtitle={__uiText("ลูกค้าแต่ละรายสั่ง SKU แบบ order-taking กี่ตัว และส่งของได้กี่วันต่อสัปดาห์ · อ่านจาก replica ของ josh")}
-        actions={<Button onClick={reload} icon="refresh">{__uiText("Refresh")}</Button>}
+        title={__uiText("กลุ่มลูกค้าเป้าหมาย")}
+        subtitle={__uiText("ลูกค้าแต่ละรายสั่งสินค้าสั่งจองกี่รายการ และรับของได้กี่วันต่อสัปดาห์")}
+        actions={<Button onClick={reload} icon="refresh">{__uiText("โหลดใหม่")}</Button>}
       />
 
       <Panel as="form" onSubmit={(e) => { e.preventDefault(); setPage(1); setSearch(custCode.trim()); }}>
@@ -199,12 +199,12 @@ export function OrderTargetgroup() {
               <Input value={custCode} onChange={(e) => setCustCode(e.target.value)} />
             </Field>
             <Field label={__uiText("ส่งได้อย่างน้อย (วัน/สัปดาห์)")}>
-              <select value={minShipments} onChange={(e) => { setPage(1); setMinShipments(Number(e.target.value)); }} className="w-full px-2.5 py-1.5 bg-surface-container-low text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-xs focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-colors disabled:opacity-60">
+              <Select value={minShipments} onChange={(e) => { setPage(1); setMinShipments(Number(e.target.value)); }}>
                 {[0, 1, 2, 3, 4, 5, 6, 7].map((n) => <option key={n} value={n}>{n === 0 ? __uiText("ทั้งหมด") : `≥ ${n}`}</option>)}
-              </select>
+              </Select>
             </Field>
           </div>
-          <Button type="submit">{__uiText("ค้นหา")}</Button>
+          <Button type="submit" variant="primary" icon="search">{__uiText("ค้นหา")}</Button>
         </div>
       </Panel>
 
@@ -218,9 +218,9 @@ export function OrderTargetgroup() {
             <Table>
               <THead>
                 <TH>{__uiText("ลูกค้า")}</TH>
-                <TH right>{__uiText("SKU ที่สั่ง")}</TH>
-                <TH right>{__uiText("SKU order-taking")}</TH>
-                <TH right>{__uiText("มีรอบส่งเปิด")}</TH>
+                <TH right>{__uiText("สินค้าที่สั่ง (รายการ)")}</TH>
+                <TH right>{__uiText("สินค้าสั่งจอง (รายการ)")}</TH>
+                <TH right>{__uiText("สินค้าสั่งจองที่มีรอบเปิด")}</TH>
                 <TH right>{__uiText("ส่งได้/สัปดาห์")}</TH>
                 <TH>{__uiText("วันส่ง")}</TH>
               </THead>
@@ -229,15 +229,15 @@ export function OrderTargetgroup() {
                   data.items.map((r) => (
                     <TR key={r.cust_code}>
                       <TD kind="mono">{r.cust_code}</TD>
-                      <TD kind="num">{r.total_skus_ordered}</TD>
-                      <TD kind="num">{r.ot_skus_ordered}</TD>
-                      <TD kind="num">{r.ot_skus_with_active_period}</TD>
-                      <TD kind="num">{r.max_shipments_per_week}</TD>
-                      <TD kind="muted">{r.delivery_weekdays?.map((d) => WEEKDAYS[d] ?? d).join(' ') ?? '—'}</TD>
+                      <TD kind="num">{fmt.num(r.total_skus_ordered)}</TD>
+                      <TD kind="num">{fmt.num(r.ot_skus_ordered)}</TD>
+                      <TD kind="num">{fmt.num(r.ot_skus_with_active_period)}</TD>
+                      <TD kind="num">{fmt.num(r.max_shipments_per_week)}</TD>
+                      <TD kind="muted">{r.delivery_weekdays?.map((d) => (WEEKDAYS[d] ? __uiText(WEEKDAYS[d]) : d)).join(' ') ?? '—'}</TD>
                     </TR>
                   ))
                 ) : (
-                  <TR><TD colSpan={6}><Empty icon="inbox">{__uiText("ไม่พบข้อมูล")}</Empty></TD></TR>
+                  <TR><TD colSpan={6}><Empty icon="inbox">{__uiText("ไม่พบลูกค้าตามเงื่อนไขนี้ ลองล้างรหัสลูกค้าหรือลดจำนวนวันส่ง")}</Empty></TD></TR>
                 )}
               </TBody>
             </Table>

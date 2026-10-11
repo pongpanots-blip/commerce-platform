@@ -12,7 +12,7 @@ import { Table, TableColumn } from '@josh/shared-ui-web';
 import AdminListHeader from '../../components/AdminListHeader';
 import { CopyField } from '../../components/CopyField';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
-import { ErrorText } from '@cp/ui';
+import { Button, ErrorText, SearchInput, StatusChip, fmt } from '@cp/ui';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -55,6 +55,7 @@ export default function SmartLinksPage() {
   };
 
   const onDeactivate = async (row: SmartLink) => {
+    if (!window.confirm(__uiText("ปิดลิงก์ \"{0}\"? คนที่กดลิงก์นี้จะไปต่อไม่ได้", {"0": row.slug}))) return;
     try {
       await deactivateSmartLink(row.id);
       void load(page, search);
@@ -75,7 +76,7 @@ export default function SmartLinksPage() {
   const columns: TableColumn<SmartLink>[] = [
     {
       key: 'slug',
-      label: __uiText("Link"),
+      label: __uiText("ลิงก์"),
       render: (_v, row) => (
         <div className="min-w-[220px]">
           <div className="font-semibold">{row.title || row.slug}</div>
@@ -83,99 +84,80 @@ export default function SmartLinksPage() {
         </div>
       ),
     },
-    { key: 'destination_web', label: __uiText("Web destination") },
+    {
+      key: 'destination_web',
+      label: __uiText("ปลายทางบนเว็บ"),
+      render: (v) => (v ? <span className="font-mono text-xs break-all">{v}</span> : '—'),
+    },
     {
       key: 'active',
-      label: __uiText("Status"),
-      render: (v) => (
-        <span className={v ? 'text-green-600 font-medium' : 'text-gray-400'}>
-          {v ? __uiText("Active") : __uiText("Inactive")}
-        </span>
-      ),
+      label: __uiText("สถานะ"),
+      render: (v) => <StatusChip status={v ? 'active' : 'inactive'} />,
     },
     {
       key: 'expires_at',
-      label: __uiText("Expires"),
-      render: (v) => (v ? new Date(v).toLocaleDateString() : '—'),
+      label: __uiText("หมดอายุ"),
+      align: 'right',
+      render: (v) => <span className="tabular-nums whitespace-nowrap">{v ? fmt.date(v) : '—'}</span>,
     },
     {
       key: 'id',
-      label: __uiText("Actions"),
+      label: '',
+      align: 'right',
       render: (_v, row) => (
-        <div className="flex gap-2">
-          <button
-            className="text-gray-600"
-            onClick={() =>
-              navigate(ADMIN_ROUTES.smartLinkAnalyticsDetail(row.id))
-            }
-          >
-            {__uiText("Analytics")}</button>
-          <button
-            className="text-blue-600"
-            onClick={() => navigate(ADMIN_ROUTES.smartLinkEdit(row.id))}
-          >
-            {__uiText("Edit")}</button>
+        <div className="flex justify-end gap-1">
+          <Button size="sm" variant="ghost" icon="bar_chart" onClick={() => navigate(ADMIN_ROUTES.smartLinkAnalyticsDetail(row.id))}>
+            {__uiText("ดูผล")}</Button>
+          <Button size="sm" variant="ghost" icon="edit" onClick={() => navigate(ADMIN_ROUTES.smartLinkEdit(row.id))}>
+            {__uiText("แก้ไข")}</Button>
           {row.active && (
-            <button
-              className="text-amber-600"
-              onClick={() => void onDeactivate(row)}
-            >
-              {__uiText("Deactivate")}</button>
+            <Button size="sm" variant="danger-ghost" onClick={() => void onDeactivate(row)}>
+              {__uiText("ปิดลิงก์")}</Button>
           )}
-          <button className="text-red-600" onClick={() => void onDelete(row)}>
-            {__uiText("Delete")}</button>
+          <Button size="sm" variant="danger-ghost" icon="delete" onClick={() => void onDelete(row)}>
+            {__uiText("ลบ")}</Button>
         </div>
       ),
     },
   ];
 
   return (
-    <div className="cp-management-page">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
-        title={__uiText("Smart Links")}
-        subtitle={__uiText("ลิงก์เดียวสำหรับยิง ads — เด้งตามอุปกรณ์ พร้อม tracking")}
+        title={__uiText("ลิงก์ติดตามผล")}
+        subtitle={__uiText("ลิงก์เดียวใช้ได้ทุกที่ พาลูกค้าไปหน้าที่เลือกตามเครื่องที่ใช้ และนับคนกดให้")}
+        createLabel={__uiText("สร้างลิงก์")}
+        createPath={ADMIN_ROUTES.smartLinkCreate}
       />
-      <div className="mt-4 flex flex-wrap items-end gap-2">
+      <div className="flex flex-wrap items-end gap-2">
         <div className="w-full max-w-sm">
-          <label htmlFor={searchInputId} className="mb-1 block text-xs text-gray-500">
+          <label htmlFor={searchInputId} className="mb-1 block text-xs font-medium text-gray-600">
             {__uiText("ค้นหาลิงก์")}</label>
-          <input
+          <SearchInput
             id={searchInputId}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            placeholder={__uiText("ค้นหา slug / title")}
+            placeholder={__uiText("ค้นหาจากชื่อหรือท้ายลิงก์")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onSearch()}
           />
         </div>
-        <button
-          className="rounded-lg bg-gray-100 px-3 py-2 text-sm"
-          onClick={onSearch}
-        >
-          {__uiText("ค้นหา")}</button>
-        <button
-          className="ml-auto rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white"
-          onClick={() => navigate(ADMIN_ROUTES.smartLinkCreate)}
-        >
-          {__uiText("+ สร้างลิงก์")}</button>
+        <Button onClick={onSearch}>{__uiText("ค้นหา")}</Button>
       </div>
 
-      <div className="mt-4">
+      <div>
         <ErrorText error={error} />
         <Table<SmartLink>
           columns={columns}
           data={res.data}
+          loading={loading}
           currentPage={res.meta.page}
           totalPages={res.meta.totalPages}
           totalItems={res.meta.total}
           pageSize={res.meta.limit}
           onPageChange={(p) => setPage(p)}
+          emptyTitle={search ? __uiText("ไม่พบลิงก์ที่ค้นหา") : __uiText("ยังไม่มีลิงก์ติดตามผล")}
+          emptyDescription={search ? __uiText("ลองค้นด้วยคำอื่น") : __uiText("กด \"สร้างลิงก์\" เพื่อสร้างลิงก์แรก")}
         />
-        {loading && <p className="mt-2 text-xs text-gray-400">{__uiText("กำลังโหลด…")}</p>}
-        {!loading && !error && res.data.length === 0 && (
-          <p className="mt-6 text-center text-sm text-gray-400">
-            {__uiText("ยังไม่มี smart link — กด \"สร้างลิงก์\"")}</p>
-        )}
       </div>
     </div>
   );

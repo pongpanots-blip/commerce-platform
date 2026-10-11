@@ -6,7 +6,7 @@ import { useAsync, type AsyncState } from '../../hooks';
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 export const templateLabels: Record<GrowthTemplate, string> = {
-  get cart_idle(){return __uiText("ตะกร้าค้าง");}, get reorder(){return __uiText("ซื้อซ้ำ");}, winback: 'Winback', get market(){return __uiText("โอกาสจากตลาด");},
+  get cart_idle(){return __uiText("ตะกร้าค้าง");}, get reorder(){return __uiText("ซื้อซ้ำ");}, get winback(){return __uiText("ชวนลูกค้าเก่ากลับมา");}, get market(){return __uiText("โอกาสจากตลาด");},
 };
 const statusLabels: Record<GrowthStatus, string> = {
   get draft(){return __uiText("ร่าง");}, get review(){return __uiText("รอตรวจ");}, get approved(){return __uiText("อนุมัติแล้ว");}, get exporting(){return __uiText("กำลังสร้างร่าง workflow");},

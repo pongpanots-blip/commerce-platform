@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import {
   Button, Chip, DetailSection, Empty, ErrorText, Field, FormPanel, Icon, Input, KeyValueGrid, Loading,
-  Page, PageHeader, Panel, SearchInput, Span, StatusChip,
+  Page, PageHeader, Panel, SearchInput, Span, StatusChip, statusLabel,
   TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
 import { joshActionsApi, joshCustomerApi, JoshRow, session } from '../../lib/api';
@@ -11,7 +11,7 @@ import { CompanyTermsPrices } from './CompanyTermsPrices';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-const KYC: Record<string, [string, string]> = { none: ['ไม่มีเอกสาร', 'muted'], pending: ['รอตรวจ', 'warn'], approved: ['ผ่าน', 'ok'], rejected: ['ไม่ผ่าน', 'danger'] };
+const KYC: Record<string, [string, 'muted' | 'warn' | 'ok' | 'danger']> = { none: ['ไม่มีเอกสาร', 'muted'], pending: ['รอตรวจ', 'warn'], approved: ['ผ่าน', 'ok'], rejected: ['ไม่ผ่าน', 'danger'] };
 
 /**
  * Edit customer data through josh (COMMERCE_OWNS_CUSTOMERS). Masked values start empty: fill a field only to
@@ -38,11 +38,11 @@ function CustomerEdit({ kind, id, label, fields, onDone }: {
     for (const [k, l, , type] of changed) {
       if (type === 'number') {
         const n = Number(v![k]);
-        if (!Number.isFinite(n) || n < 0) return setErr(`${l}: ต้องเป็นตัวเลขไม่ติดลบ`);
+        if (!Number.isFinite(n) || n < 0) return setErr(__uiText('{0}: ต้องเป็นตัวเลขไม่ติดลบ', { 0: __uiText(l) }));
         changes[k] = n;
       } else changes[k] = v![k].trim();
     }
-    if (!window.confirm(__uiText("บันทึก {0}: {1}?\n\njosh บันทึกจริงในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit", {"0": label, "1": changed.map(([, l]) => l).join(', ')}))) return;
+    if (!window.confirm(__uiText("บันทึก {0}: {1}?\n\nร้านค้าออนไลน์จะบันทึกจริงในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข", {"0": label, "1": changed.map(([, l]) => __uiText(l)).join(', ')}))) return;
     setBusy(true); setErr('');
     try { await joshActionsApi.updateCustomer(kind, id, changes); setV(null); onDone(); }
     catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
@@ -83,16 +83,16 @@ export function JoshCustomerDetail() {
   const d = detail.data;
 
   const backTo = `${location.state?.from ?? '/reports/customers'}${location.state?.search ?? ''}`;
-  const [kycLabel, kycTone] = d ? KYC[d.kyc_status] ?? [d.kyc_status, 'muted'] : ['—', 'muted'];
+  const kycText = (k: string) => (KYC[k] ? __uiText(KYC[k][0]) : k);
   const over = d && d.credit_limit > 0 && d.credit_used > d.credit_limit;
 
   return (
     <Page>
       <PageHeader
-        back={{ to: backTo, label: 'ลูกค้า / บริษัท (josh)' }}
+        back={{ to: backTo, label: 'รายงานลูกค้าและบริษัท' }}
         title={d ? d.name?.trim() || d.register_number || __uiText("ไม่มีชื่อบริษัท") : id}
-        badge={d && <Chip tone={kycTone as any}>{kycLabel}</Chip>}
-        subtitle={d ? [d.register_number, `วงเงิน ${fmt.baht(d.credit_used)} / ${fmt.baht(d.credit_limit)}`, d.credit_term_days ? `${d.credit_term_days} วัน` : 'เงินสด'].filter(Boolean).join(' · ') : undefined}
+        badge={d && <Chip tone={KYC[d.kyc_status]?.[1] ?? 'muted'} dot>{__uiText('เอกสารยืนยันตัวตน: {0}', { 0: kycText(d.kyc_status) })}</Chip>}
+        subtitle={d ? [d.register_number, __uiText('วงเงิน {0} / {1}', { 0: fmt.baht(d.credit_used), 1: fmt.baht(d.credit_limit) }), d.credit_term_days ? __uiText('{0} วัน', { 0: d.credit_term_days }) : __uiText('เงินสด')].filter(Boolean).join(' · ') : undefined}
       />
 
       <ErrorText error={detail.error} />
@@ -104,12 +104,16 @@ export function JoshCustomerDetail() {
       ) : (
         <>
           <Panel className="p-4">
-            <div className="text-xs text-on-surface-variant space-y-2">
-              <div>
-                {__uiText("โทร ")}{d.phone ?? '—'} {__uiText(" · ออเดอร์ ")}{d.orders?.orders ?? 0} {__uiText(" รายการ · ยอดที่ชำระแล้ว ")}{fmt.baht(d.orders?.paid_value)}
-              </div>
-              {over && <div><Chip tone="danger">{__uiText("เกินวงเงิน")}</Chip></div>}
-            </div>
+            <DetailSection title={__uiText("ภาพรวม")} icon="info">
+              <KeyValueGrid
+                items={[
+                  { label: __uiText("โทร"), value: d.phone ?? '—' },
+                  { label: __uiText("ออเดอร์"), value: fmt.num(d.orders?.orders ?? 0) },
+                  { label: __uiText("ยอดที่ชำระแล้ว"), value: fmt.baht(d.orders?.paid_value) },
+                  { label: __uiText("วงเงิน"), value: over ? <Chip tone="danger" dot>{__uiText("เกินวงเงิน")}</Chip> : `${fmt.baht(d.credit_used)} / ${fmt.baht(d.credit_limit)}` },
+                ]}
+              />
+            </DetailSection>
           </Panel>
 
           <Panel className="p-4">
@@ -132,8 +136,8 @@ export function JoshCustomerDetail() {
                 <Table>
                   <THead>
                     <TH>{__uiText("สาขา")}</TH>
-                    <TH>{__uiText("รหัส ERP")}</TH>
-                    <TH>{__uiText("sync")}</TH>
+                    <TH>{__uiText("รหัสสาขา (ERP)")}</TH>
+                    <TH>{__uiText("ส่งเข้าระบบขาย (ERP)")}</TH>
                     <TH>{__uiText("วันส่ง")}</TH>
                     <TH>{__uiText("โทร")}</TH>
                     <TH />
@@ -146,7 +150,7 @@ export function JoshCustomerDetail() {
                           {b.is_default_delivery && <Chip tone="info" className="ml-2">{__uiText("หลัก")}</Chip>}
                         </TD>
                         <TD kind="code">{b.erp_branch_code ?? '—'}</TD>
-                        <TD>{b.erp_sync_status ?? '—'}</TD>
+                        <TD><StatusChip status={b.erp_sync_status} /></TD>
                         <TD>{b.delivery_days ?? '—'}</TD>
                         <TD>{b.phone ?? '—'}</TD>
                         <TD>
@@ -176,7 +180,7 @@ export function JoshCustomerDetail() {
                     <TH>{__uiText("ผู้ใช้")}</TH>
                     <TH>{__uiText("อีเมล")}</TH>
                     <TH>{__uiText("โทร")}</TH>
-                    <TH>{__uiText("role")}</TH>
+                    <TH>{__uiText("บทบาท")}</TH>
                     <TH>{__uiText("เข้าแอปล่าสุด")}</TH>
                     <TH />
                   </THead>
@@ -187,10 +191,10 @@ export function JoshCustomerDetail() {
                           {u.first_name} {u.last_name ?? ''}
                           {!u.is_active && <Chip tone="muted" className="ml-2">{__uiText("ปิด")}</Chip>}
                         </TD>
-                        <TD>{u.email ?? '—'}</TD>
+                        <TD kind="mono">{u.email ?? '—'}</TD>
                         <TD>{u.mobile_phone ?? '—'}</TD>
-                        <TD>{u.role}</TD>
-                        <TD>{fmt.when(u.last_app_login_at)}</TD>
+                        <TD>{u.role ? <Chip>{u.role}</Chip> : '—'}</TD>
+                        <TD kind="time">{fmt.when(u.last_app_login_at)}</TD>
                         <TD>
                           <CustomerEdit
                             kind="users"
@@ -211,21 +215,24 @@ export function JoshCustomerDetail() {
           </Panel>
 
           <Panel className="p-4">
-            <DetailSection title={__uiText("KYC และวงเงิน")} icon="verified_user">
-              <div className="space-y-3 text-xs text-on-surface-variant">
-                <div>
-                  <span className="font-semibold">{__uiText("KYC:")}</span>{' '}
-                  {d.kycDocuments && d.kycDocuments.length
-                    ? d.kycDocuments.map((k: JoshRow) => `${k.document_type} ${KYC[k.status]?.[0] ?? k.status}${k.rejection_reason ? ` (${k.rejection_reason})` : ''}`).join(' · ')
-                    : __uiText("ยังไม่มีเอกสาร")}
-                </div>
-                <div>
-                  <span className="font-semibold">{__uiText("ขอวงเงิน:")}</span>{' '}
-                  {d.creditApplications && d.creditApplications.length
-                    ? d.creditApplications.map((a: JoshRow) => `${a.status} ขอ ${fmt.baht(a.requested_credit_limit)} / ${a.requested_term_days} วัน${a.approved_credit_limit ? ` → อนุมัติ ${fmt.baht(a.approved_credit_limit)}` : ''}`).join(' · ')
-                    : '—'}
-                </div>
-              </div>
+            <DetailSection title={__uiText("เอกสารยืนยันตัวตนและวงเงิน")} icon="verified_user">
+              <KeyValueGrid
+                cols={2}
+                items={[
+                  {
+                    label: __uiText("เอกสารยืนยันตัวตน"),
+                    value: d.kycDocuments && d.kycDocuments.length
+                      ? d.kycDocuments.map((k: JoshRow) => `${k.document_type} ${kycText(k.status)}${k.rejection_reason ? ` (${k.rejection_reason})` : ''}`).join(' · ')
+                      : __uiText("ยังไม่มีเอกสาร"),
+                  },
+                  {
+                    label: __uiText("คำขอวงเงิน"),
+                    value: d.creditApplications && d.creditApplications.length
+                      ? d.creditApplications.map((a: JoshRow) => `${statusLabel(a.status)} · ${__uiText('ขอ {0} / {1} วัน', { 0: fmt.baht(a.requested_credit_limit), 1: a.requested_term_days })}${a.approved_credit_limit ? ` · ${__uiText('อนุมัติ {0}', { 0: fmt.baht(a.approved_credit_limit) })}` : ''}`).join(' · ')
+                      : '—',
+                  },
+                ]}
+              />
             </DetailSection>
           </Panel>
         </>

@@ -17,7 +17,7 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
  * and whether they've read it. No write actions on purpose.
  */
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Button, Chip, Empty, FormField } from "@cp/ui";
 export default function NotificationLog() {
   __useUiLocale();
   const [userIdInput, setUserIdInput] = useState('');
@@ -50,7 +50,7 @@ export default function NotificationLog() {
       } catch {
         setRows([]);
         setNextCursor(null);
-        setError(__uiMessage("ไม่พบข้อมูล หรือ userId ไม่ถูกต้อง"));
+        setError(__uiMessage("ไม่พบข้อมูล หรือรหัสผู้ใช้ไม่ถูกต้อง"));
       } finally {
         setLoading(false);
       }
@@ -92,11 +92,14 @@ export default function NotificationLog() {
     {
       key: 'created_at',
       label: __uiText("เวลา"),
-      render: (value: string) =>
-        new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-        }),
+      render: (value: string) => (
+        <span className="whitespace-nowrap tabular-nums">
+          {new Date(value).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          })}
+        </span>
+      ),
     },
     {
       key: 'user_id',
@@ -110,18 +113,20 @@ export default function NotificationLog() {
         </Link>
       ),
     },
-    { key: 'type', label: __uiText("ประเภท") },
+    {
+      key: 'type',
+      label: __uiText("ประเภท"),
+      render: (value: string) => <Chip className="font-mono">{value}</Chip>,
+    },
     { key: 'title', label: __uiText("หัวข้อ") },
     {
       key: 'read_at',
       label: __uiText("สถานะอ่าน"),
       render: (value: string | null) =>
         value ? (
-          <span className="rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-700">
-            {__uiText("อ่านแล้ว")}</span>
+          <Chip tone="ok" dot>{__uiText("อ่านแล้ว")}</Chip>
         ) : (
-          <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-500">
-            {__uiText("ยังไม่อ่าน")}</span>
+          <Chip tone="muted" dot>{__uiText("ยังไม่อ่าน")}</Chip>
         ),
     },
   ];
@@ -129,54 +134,45 @@ export default function NotificationLog() {
   return (
     <div className="cp-management-page">
       <AdminListHeader
-        title={__uiText("Notification Log")}
-        subtitle={__uiText("ประวัติการแจ้งเตือนของผู้ใช้ (อ่านอย่างเดียว) — สำหรับทีมซัพพอร์ต")}
+        title={__uiText("ประวัติการแจ้งเตือน")}
+        subtitle={__uiText("บันทึกการแจ้งเตือนที่ส่งถึงลูกค้า")}
       />
 
       <div className="mb-4 flex flex-wrap items-end gap-2">
-        <label className="flex min-w-0 max-w-full flex-col gap-1">
-          <span className="text-xs text-gray-500">{__uiText("รหัสผู้ใช้ (User ID)")}</span>
+        <FormField label={__uiText("รหัสผู้ใช้ (User ID)")} className="min-w-0 max-w-full">
           <input
-            className="w-96 max-w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className="w-96 max-w-full rounded-lg border border-gray-200 px-3 py-2 font-mono text-sm"
             value={userIdInput}
             onChange={(e) => setUserIdInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSearch();
             }}
           />
-        </label>
-        <button
-          type="button"
-          className="rounded-lg bg-primary px-4 py-2 text-sm text-white"
-          onClick={handleSearch}
-        >
-          {__uiText("ค้นหา")}</button>
+        </FormField>
+        <Button variant="primary" onClick={handleSearch}>
+          {__uiText("ค้นหา")}</Button>
       </div>
 
       {error && <p className="mb-3 text-sm text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
 
       {!activeUserId ? (
-        <p className="text-sm text-gray-400">{__uiText("ใส่ userId เพื่อดูประวัติการแจ้งเตือน")}</p>
+        <Empty icon="search">{__uiText("ใส่รหัสผู้ใช้แล้วกดค้นหา เพื่อดูประวัติการแจ้งเตือนของลูกค้าคนนั้น")}</Empty>
       ) : loading ? (
         <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : (
         <>
-          <Table columns={columns} data={rows} idKey="id" />
+          <Table
+            columns={columns}
+            data={rows}
+            idKey="id"
+            emptyTitle={__uiText("ยังไม่มีการแจ้งเตือนถึงผู้ใช้นี้")}
+            emptyDescription={__uiText("ตรวจรหัสผู้ใช้อีกครั้ง หรือลองค้นหาลูกค้าคนอื่น")}
+          />
           <div className="mt-4 flex items-center justify-end gap-2 text-sm">
-            <button
-              type="button"
-              disabled={cursorStack.length === 0}
-              className="rounded border px-3 py-1 disabled:opacity-40"
-              onClick={handlePrev}
-            >
-              {__uiText("ก่อนหน้า")}</button>
-            <button
-              type="button"
-              disabled={!nextCursor}
-              className="rounded border px-3 py-1 disabled:opacity-40"
-              onClick={handleNext}
-            >
-              {__uiText("ถัดไป")}</button>
+            <Button size="sm" disabled={cursorStack.length === 0} onClick={handlePrev}>
+              {__uiText("ก่อนหน้า")}</Button>
+            <Button size="sm" disabled={!nextCursor} onClick={handleNext}>
+              {__uiText("ถัดไป")}</Button>
           </div>
         </>
       )}

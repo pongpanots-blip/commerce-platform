@@ -2,7 +2,7 @@
 // ui-metadata-migration: static labels and UI notices only
 import { useState } from 'react';
 import {
-  Alert, Button, CopyValue, Empty, ErrorText, Icon, Loading, Page, PageHeader, Panel, PanelHead, SectionTitle,
+  Alert, Button, Chip, CopyValue, Empty, ErrorText, Loading, Page, PageHeader, Panel, PanelHead, SectionTitle,
   Table, TBody, TD, TH, THead, TR, fmt,
 } from '@cp/ui';
 import { mcpApi, McpConnection } from '../../lib/api';
@@ -12,14 +12,14 @@ import { useAsync } from '../hooks';
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const TOOL_LABEL: Record<string, string> = {
   get competitor_prices(){return __uiText("เทียบราคาคู่แข่ง");}, get scraped_catalog_search(){return __uiText("ค้นคลังเว็บคู่แข่ง");}, get scraping_sources(){return __uiText("เว็บที่เก็บข้อมูล");},
-  get research_topics(){return __uiText("โจทย์ research");}, get research_report(){return __uiText("รายงาน research");}, get catalog_products(){return __uiText("แค็ตตาล็อก josh");},
-  get erp_intake_summary(){return __uiText("สรุปข้อมูลจาก ERP");}, get webhook_failures(){return __uiText("event ที่ส่งไม่สำเร็จ");}, get stock_levels(){return __uiText("สต็อกต่อคลัง");},
-  get research_create_topic(){return __uiText("สร้างโจทย์ research");}, get research_request_run(){return __uiText("สั่งรัน research");}, get competitor_record_price(){return __uiText("บันทึกราคาคู่แข่ง");},
-  get webhook_retry_delivery(){return __uiText("ส่ง event ซ้ำ");}, get erp_replay_ingest(){return __uiText("replay ข้อมูล ERP");},
+  get research_topics(){return __uiText("โจทย์วิจัยการตลาด");}, get research_report(){return __uiText("รายงานวิจัยการตลาด");}, get catalog_products(){return __uiText("สินค้าบนร้านค้า");},
+  get erp_intake_summary(){return __uiText("สรุปข้อมูลจากระบบหลัก (ERP)");}, get webhook_failures(){return __uiText("เหตุการณ์ที่ส่งไม่สำเร็จ");}, get stock_levels(){return __uiText("สต็อกต่อคลัง");},
+  get research_create_topic(){return __uiText("สร้างโจทย์วิจัยการตลาด");}, get research_request_run(){return __uiText("สั่งรันวิจัยการตลาด");}, get competitor_record_price(){return __uiText("บันทึกราคาคู่แข่ง");},
+  get webhook_retry_delivery(){return __uiText("ส่งเหตุการณ์ซ้ำ");}, get erp_replay_ingest(){return __uiText("นำข้อมูลระบบหลัก (ERP) มาลงใหม่");},
   get scraping_update_source(){return __uiText("ตั้งค่าเก็บข้อมูลเว็บ");}, get scraping_run(){return __uiText("สั่งเริ่ม/หยุดเก็บข้อมูลเว็บ");}, get stock_adjust(){return __uiText("ปรับสต็อก");},
-  get marketing_list(){return __uiText("รายการ setup การตลาด");}, get marketing_fields(){return __uiText("ดู field ที่ต้องกรอก");}, get marketing_save(){return __uiText("สร้าง/แก้ setup การตลาด");},
-  get marketing_workflow_pause(){return __uiText("หยุด workflow");}, get product_content_save(){return __uiText("แก้ชื่อ/คำอธิบายสินค้า");},
-  get growth_plan_save(){return __uiText("บันทึกแผน Growth");}, get growth_plan_tasks(){return __uiText("แก้งานในแผน Growth");}, get growth_plan_action(){return __uiText("ส่งตรวจ/อนุมัติ/ส่งออกแผน Growth");}, get market_analyse(){return __uiText("วิเคราะห์ตลาด");},
+  get marketing_list(){return __uiText("รายการตั้งค่าการตลาด");}, get marketing_fields(){return __uiText("ดูช่องที่ต้องกรอก");}, get marketing_save(){return __uiText("สร้างหรือแก้การตั้งค่าการตลาด");},
+  get marketing_workflow_pause(){return __uiText("หยุดข้อความอัตโนมัติ");}, get product_content_save(){return __uiText("แก้ชื่อ/คำอธิบายสินค้า");},
+  get growth_plan_save(){return __uiText("บันทึกแผนการเติบโต");}, get growth_plan_tasks(){return __uiText("แก้งานในแผนการเติบโต");}, get growth_plan_action(){return __uiText("ส่งตรวจ อนุมัติ หรือส่งออกแผนการเติบโต");}, get market_analyse(){return __uiText("วิเคราะห์ตลาด");},
 };
 const WRITE_TOOLS = new Set(['research_create_topic', 'research_request_run', 'competitor_record_price', 'webhook_retry_delivery', 'erp_replay_ingest', 'scraping_update_source', 'scraping_run', 'stock_adjust',
   'marketing_save', 'marketing_workflow_pause', 'product_content_save', 'growth_plan_save', 'growth_plan_tasks', 'growth_plan_action', 'market_analyse']);
@@ -42,11 +42,11 @@ export function AiConnectors() {
   const admin = info.data?.role === 'admin';
 
   async function revoke(c: McpConnection) {
-    if (!window.confirm(__uiText("ยกเลิกการเชื่อมต่อ {0} ของ {1}? AI จะใช้ข้อมูลต่อไม่ได้ทันที ต้อง login ใหม่ถ้าจะใช้อีก", {"0": c.clientName, "1": c.staffEmail}))) return;
+    if (!window.confirm(__uiText("ยกเลิกการเชื่อมต่อ {0} ของ {1}? ผู้ช่วย AI จะใช้ข้อมูลต่อไม่ได้ทันที ถ้าจะใช้อีกต้องเข้าสู่ระบบใหม่", {"0": c.clientName, "1": c.staffEmail}))) return;
     setBusy(c.clientId + c.staffUserId); setNote(null);
     try {
       const r = await mcpApi.revoke(c);
-      setNote({ ok: true, text: `ยกเลิกแล้ว (${r.revoked} token)` });
+      setNote({ ok: true, text: __uiText('ยกเลิกสิทธิ์แล้ว {0} รายการ', { 0: r.revoked }) });
       info.reload();
     } catch (e) { setNote({ ok: false, text: e instanceof Error ? e.message : String(e) }); }
     finally { setBusy(null); }
@@ -55,8 +55,8 @@ export function AiConnectors() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("AI connectors (MCP)")}
-        subtitle={__uiText("ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของ commerce ได้")}
+        title={__uiText("เชื่อมต่อผู้ช่วย AI")}
+        subtitle={__uiText("ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของเราได้")}
         actions={<Button icon="refresh" onClick={() => { info.reload(); activity.reload(); changes.reload(); }}>{__uiText("Refresh")}</Button>}
       />
 
@@ -72,7 +72,7 @@ export function AiConnectors() {
         ) : info.data.enabled ? (
           <div className="space-y-4 p-4">
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">{__uiText("MCP URL")}</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">{__uiText("ลิงก์สำหรับเชื่อมต่อ")}</h3>
               <CopyValue value={info.data.mcpUrl!} className="flex" />
             </div>
             <div className="space-y-3">
@@ -90,7 +90,7 @@ export function AiConnectors() {
             </div>
           </div>
         ) : (
-          <Alert tone="danger">{__uiText("MCP ยังไม่เปิดบนเซิร์ฟเวอร์นี้ — ตั้ง MCP_PUBLIC_URL (ดู docs/mcp.md)")}</Alert>
+          <Alert tone="danger">{__uiText("การเชื่อมต่อผู้ช่วย AI ยังไม่เปิดบนเซิร์ฟเวอร์นี้ ให้ทีมระบบตั้งค่า MCP_PUBLIC_URL (ดู docs/mcp.md)")}</Alert>
         )}
       </Panel>
 
@@ -99,7 +99,7 @@ export function AiConnectors() {
         {info.loading ? (
           <Loading />
         ) : !info.data?.connections.length ? (
-          <Empty>{__uiText("ยังไม่มี AI เชื่อมต่อ")}</Empty>
+          <Empty>{__uiText("ยังไม่มีผู้ช่วย AI เชื่อมต่อ ทำตามขั้นตอนการเชื่อมต่อด้านบนเพื่อเริ่มใช้")}</Empty>
         ) : (
           <Table>
             <THead>
@@ -122,15 +122,13 @@ export function AiConnectors() {
                   <TD>
                     {c.liveSessions > 0 ? (
                       <div className="flex flex-wrap items-center gap-1">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">
-                          <Icon name="check_circle" size={12} />
-                          {__uiText("เชื่อมต่ออยู่")}</span>
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.canWrite ? 'bg-[#fef7e0] text-[#b08900]' : 'bg-surface-container text-secondary'}`}>
+                        <Chip tone="ok" dot>{__uiText("เชื่อมต่ออยู่")}</Chip>
+                        <Chip tone={c.canWrite ? 'warn' : 'muted'}>
                           {c.canWrite ? __uiText("แก้ไขได้ (ต้องยืนยัน)") : __uiText("อ่านอย่างเดียว")}
-                        </span>
+                        </Chip>
                       </div>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-secondary">{__uiText("หมดอายุ / ยกเลิกแล้ว")}</span>
+                      <Chip tone="muted" dot>{__uiText("หมดอายุ / ยกเลิกแล้ว")}</Chip>
                     )}
                   </TD>
                   <TD kind="time">{c.lastUsedAt ? fmt.when(c.lastUsedAt) : '—'}</TD>
@@ -176,7 +174,7 @@ export function AiConnectors() {
                   <TD>
                     <div>{TOOL_LABEL[c.tool] ?? c.tool}</div>
                     {c.summary && <div className="text-[11px] text-on-surface-variant">{c.summary}</div>}
-                    {c.adminUrl && <a href={c.adminUrl} className="text-[11px] text-primary underline">{__uiText("เปิดดูใน admin")}</a>}
+                    {c.adminUrl && <a href={c.adminUrl} className="text-[11px] text-primary underline">{__uiText("เปิดดูในหลังร้าน")}</a>}
                   </TD>
                   <TD className="text-[11px]">
                     {c.changes.length ? (
@@ -188,15 +186,15 @@ export function AiConnectors() {
                             <span title={JSON.stringify(ch.after)}>{show(ch.after)}</span>
                           </li>
                         ))}
-                        {c.changes.length > 8 && <li className="text-on-surface-variant">{__uiText("และอีก {0} field", { "0": String(c.changes.length - 8) })}</li>}
+                        {c.changes.length > 8 && <li className="text-on-surface-variant">{__uiText("และอีก {0} ช่อง", { "0": String(c.changes.length - 8) })}</li>}
                       </ul>
                     ) : '—'}
                   </TD>
                   <TD>
                     {c.error ? (
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fdecea] text-[#b3261e]" title={c.error}>{__uiText("ไม่สำเร็จ")}</span>
+                      <span title={c.error}><Chip tone="danger" dot>{__uiText("ไม่สำเร็จ")}</Chip></span>
                     ) : (
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e7f5ec] text-[#157347]">{__uiText("สำเร็จ")}</span>
+                      <Chip tone="ok" dot>{__uiText("สำเร็จ")}</Chip>
                     )}
                     {c.error && <div className="text-[10px] text-on-surface-variant max-w-[220px] break-words">{show(c.error)}</div>}
                   </TD>
@@ -228,7 +226,7 @@ export function AiConnectors() {
                 <TR key={a.id}>
                   <TD kind="time">{fmt.when(a.at)}</TD>
                   <TD>
-                    {a.isWrite && <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fef7e0] text-[#b08900] mr-1">{__uiText("แก้ไข")}</span>}
+                    {a.isWrite && <Chip tone="warn" className="mr-1">{__uiText("แก้ไข")}</Chip>}
                     <span>{TOOL_LABEL[a.tool] ?? a.tool}</span>
                     {!a.isWrite && WRITE_TOOLS.has(a.tool) && <div className="text-[10px] text-on-surface-variant">{__uiText("ขอดูตัวอย่าง ยังไม่ได้ทำ")}</div>}
                     <div className="text-[11px] font-mono text-on-surface-variant">{a.tool}</div>

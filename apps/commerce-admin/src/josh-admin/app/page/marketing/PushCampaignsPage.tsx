@@ -26,7 +26,7 @@ import { marketingTestersApi, type MarketingTester } from '../../../../lib/api';
 import { useCompanySearch } from '../../components/useCompanySearch';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Chip, Segmented, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Tab = 'overview' | 'create' | 'delivery';
 
 type PickedUser = { id: string; label: string };
@@ -38,22 +38,32 @@ const emptyAudience = (): PushCampaignAudience => ({
 });
 
 const statusLabel: Record<PushCampaign['status'], string> = {
-  draft: 'Draft',
-  scheduled: 'Scheduled',
-  sending: 'Sending',
-  sent: 'Sent',
-  failed: 'Failed',
-  cancelled: 'Cancelled',
+  get draft() { return __uiText('ร่าง'); },
+  get scheduled() { return __uiText('ตั้งเวลาแล้ว'); },
+  get sending() { return __uiText('กำลังส่ง'); },
+  get sent() { return __uiText('ส่งแล้ว'); },
+  get failed() { return __uiText('ส่งไม่สำเร็จ'); },
+  get cancelled() { return __uiText('ยกเลิกแล้ว'); },
 };
 
-const statusClass: Record<PushCampaign['status'], string> = {
-  draft: 'bg-gray-100 text-gray-700',
-  scheduled: 'bg-amber-50 text-amber-800',
-  sending: 'bg-blue-50 text-blue-700',
-  sent: 'bg-emerald-50 text-emerald-800',
-  failed: 'bg-red-50 text-red-700',
-  cancelled: 'bg-gray-100 text-gray-500',
+const statusTone: Record<PushCampaign['status'], Tone> = {
+  draft: 'muted',
+  scheduled: 'warn',
+  sending: 'info',
+  sent: 'ok',
+  failed: 'danger',
+  cancelled: 'muted',
 };
+
+/** Delivery rows: display labels only, unknown codes show as they are. */
+const deliveryStatusLabel: Record<string, () => string> = {
+  queued: () => __uiText('รอส่ง'),
+  sent: () => __uiText('ส่งแล้ว'),
+  skipped: () => __uiText('ข้าม'),
+  failed: () => __uiText('ส่งไม่สำเร็จ'),
+  clicked: () => __uiText('กดเปิดแล้ว'),
+};
+const deliveryTone: Record<string, Tone> = { queued: 'warn', sent: 'ok', skipped: 'muted', failed: 'danger', clicked: 'ok' };
 
 function PhonePreview({ title, body }: { title: string; body: string }) {
   __useUiLocale();
@@ -327,7 +337,7 @@ export default function PushCampaignsPage() {
       [
         { key: 'overview' as const, label: __uiText("Overview") },
         { key: 'create' as const, label: __uiText("Create Notification") },
-        { key: 'delivery' as const, label: __uiText("Delivery") },
+        { key: 'delivery' as const, label: __uiText("ผลการส่ง") },
       ] as const,
     [__getUiLocale()],
   );
@@ -335,28 +345,15 @@ export default function PushCampaignsPage() {
   return (
     <div className="cp-management-page">
       <AdminListHeader
-        title={__uiText("Push Campaigns")}
-        subtitle={__uiText("Compose · Audience · Schedule/Send — ส่งผ่าน OneSignal ของ Josh")}
+        title={__uiText("ส่งแจ้งเตือนถึงลูกค้า")}
+        subtitle={__uiText("เขียนข้อความแจ้งเตือน เลือกลูกค้าที่จะได้รับ แล้วส่งทันทีหรือตั้งเวลาส่ง")}
       />
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {tabs.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            className={`rounded-lg px-3 py-2 text-sm ${
-              tab === item.key
-                ? 'bg-slate-900 text-white'
-                : 'border border-gray-200 bg-white text-gray-700'
-            }`}
-            onClick={() => setTab(item.key)}
-          >
-            {item.label}
-          </button>
-        ))}
+      <div className="my-4 flex">
+        <Segmented options={tabs.map((item) => ({ value: item.key, label: item.label }))} value={tab} onChange={setTab} />
       </div>
 
-      {error && <p className="mb-3 text-sm text-red-500">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
+      {error && <div className="mb-3"><Alert tone="danger">{(typeof error === 'string' ? __uiText(error) : error)}</Alert></div>}
 
       {tab === 'overview' && (
         <div className="space-y-4">
@@ -379,7 +376,7 @@ export default function PushCampaignsPage() {
               <h2 className="text-sm font-semibold text-gray-800">{__uiText("Recent campaigns")}</h2>
               <button
                 type="button"
-                className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white"
+                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium"
                 onClick={() => {
                   setCreatedId(null);
                   setTab('create');
@@ -390,14 +387,14 @@ export default function PushCampaignsPage() {
             {loading ? (
               <p className="p-4 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
             ) : campaigns.length === 0 ? (
-              <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มีแคมเปญ")}</p>
+              <p className="p-6 text-center text-sm text-gray-500">{__uiText("ยังไม่มีแคมเปญ — กด \"+ การแจ้งเตือนใหม่\" เพื่อเขียนข้อความแรก")}</p>
             ) : (
               <TableViewport><table className="cp-data-table w-full text-left text-sm">
                 <thead className="bg-gray-50 text-xs text-gray-500">
                   <tr>
                     <th className="px-4 py-2" scope="col">{__uiText("Notification")}</th>
-                    <th className="px-4 py-2" scope="col">{__uiText("Audience")}</th>
-                    <th className="px-4 py-2" scope="col">{__uiText("Sent")}</th>
+                    <th className="px-4 py-2 text-right" scope="col">{__uiText("จำนวนผู้รับ")}</th>
+                    <th className="px-4 py-2 text-right" scope="col">{__uiText("เวลาส่ง")}</th>
                     <th className="px-4 py-2" scope="col">{__uiText("Status")}</th>
                     <th className="px-4 py-2" scope="col" />
                   </tr>
@@ -409,10 +406,10 @@ export default function PushCampaignsPage() {
                         <div className="font-medium text-gray-900">{row.name}</div>
                         <div className="text-xs text-gray-500">{row.title}</div>
                       </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {row.stats?.queued || '—'}
+                      <td className="px-4 py-3 text-right tabular-nums text-gray-600">
+                        {row.stats?.queued ? row.stats.queued.toLocaleString('en-US') : '—'}
                       </td>
-                      <td className="px-4 py-3 text-gray-600">
+                      <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums text-gray-600">
                         {row.sent_at
                           ? new Date(row.sent_at).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))
                           : row.scheduled_at
@@ -420,11 +417,9 @@ export default function PushCampaignsPage() {
                             : '—'}
                       </td>
                       <td className="px-4 py-3">
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusClass[row.status]}`}
-                        >
-                          {statusLabel[row.status]}
-                        </span>
+                        <Chip tone={statusTone[row.status] ?? 'muted'} statusCode={row.status} dot>
+                          {statusLabel[row.status] ?? row.status}
+                        </Chip>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button
@@ -435,7 +430,7 @@ export default function PushCampaignsPage() {
                             void openDelivery(row.id);
                           }}
                         >
-                          {__uiText("Delivery")}</button>
+                          {__uiText("ดูผลการส่ง")}</button>
                       </td>
                     </tr>
                   ))}
@@ -452,9 +447,9 @@ export default function PushCampaignsPage() {
             <section className="rounded-xl border border-gray-100 bg-white p-4">
               <h2 className="mb-3 text-sm font-semibold text-gray-800">{__uiText("1. Audience")}</h2>
               <p className="mb-3 text-xs text-gray-500">
-                {__uiText("Include = users ∪ ร้าน(company) ∪ segments · Exclude ตัดออกก่อนส่ง")}</p>
+                {__uiText("ผู้รับ = ผู้ใช้ที่เลือก + ร้านที่เลือก + กลุ่มลูกค้าที่เลือก แล้วตัดกลุ่มที่ไม่ต้องการส่งออกก่อน")}</p>
 
-              <label className="mb-1 block text-xs text-gray-500">{__uiText("ค้นหา Users")}</label>
+              <label className="mb-1 block text-xs text-gray-500">{__uiText("ค้นหาผู้ใช้")}</label>
               <input
                 className="mb-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                 value={userQuery}
@@ -489,7 +484,7 @@ export default function PushCampaignsPage() {
                 }}
               />
 
-              <label className="mb-1 mt-3 block text-xs text-gray-500">{__uiText("ค้นหาร้าน / Company")}</label>
+              <label className="mb-1 mt-3 block text-xs text-gray-500">{__uiText("ค้นหาร้าน / บริษัท")}</label>
               <input
                 className="mb-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                 value={companyQuery}
@@ -527,7 +522,7 @@ export default function PushCampaignsPage() {
               <label className="mb-1 mt-3 block text-xs text-gray-500">{__uiText("Segments")}</label>
               <div className="max-h-40 space-y-1 overflow-auto rounded-lg border border-gray-100 p-2">
                 {segments.length === 0 ? (
-                  <p className="text-xs text-gray-400">{__uiText("ยังไม่มี segment")}</p>
+                  <p className="text-xs text-gray-400">{__uiText("ยังไม่มีกลุ่มลูกค้า")}</p>
                 ) : (
                   segments.map((seg) => {
                     const checked = selectedSegmentIds.includes(seg.id);
@@ -563,12 +558,12 @@ export default function PushCampaignsPage() {
                   {__uiText("Preview audience")}</button>
                 {estimate != null && (
                   <span className="text-sm font-semibold text-gray-800">
-                    ≈ {estimate.toLocaleString()} {__uiText(" users")}</span>
+                    ≈ {estimate.toLocaleString()} {__uiText(" คน")}</span>
                 )}
               </div>
 
               <label className="mb-1 mt-4 block text-xs text-gray-500">
-                {__uiText("Exclude segments (optional)")}</label>
+                {__uiText("กลุ่มลูกค้าที่ไม่ต้องการส่ง (ไม่บังคับ)")}</label>
               <div className="max-h-28 space-y-1 overflow-auto rounded-lg border border-gray-100 p-2">
                 {segments.map((seg) => {
                   const excludeIds = audience.exclude?.segmentIds ?? [];
@@ -643,7 +638,7 @@ export default function PushCampaignsPage() {
                   />
                 </Field>
               </div>
-              <Field label={__uiText("Image URL")}>
+              <Field label={__uiText("ลิงก์รูปภาพ")}>
                 <input
                   className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   value={imageUrl}
@@ -704,7 +699,7 @@ export default function PushCampaignsPage() {
             </section>
 
             <section className="rounded-xl border border-gray-100 bg-white p-4">
-              <h2 className="mb-3 text-sm font-semibold text-gray-800">{__uiText("3. Delivery")}</h2>
+              <h2 className="mb-3 text-sm font-semibold text-gray-800">{__uiText("3. ส่ง")}</h2>
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -723,7 +718,7 @@ export default function PushCampaignsPage() {
               </div>
               <div className="mt-3 flex flex-wrap items-end gap-2">
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">{__uiText("Schedule")}</label>
+                  <label className="mb-1 block text-xs text-gray-500">{__uiText("ตั้งเวลาส่ง")}</label>
                   <input
                     type="datetime-local"
                     className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
@@ -737,18 +732,18 @@ export default function PushCampaignsPage() {
                   className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
                   onClick={() => void handleSchedule()}
                 >
-                  {__uiText("Schedule")}</button>
+                  {__uiText("ตั้งเวลาส่ง")}</button>
               </div>
               <div className="mt-3 flex flex-wrap items-end gap-2">
                 <div className="min-w-[220px] flex-1">
                   <label className="mb-1 block text-xs text-gray-500">
-                    {__uiText("ส่งทดสอบถึง tester")}</label>
+                    {__uiText("ส่งทดสอบถึงผู้ทดสอบ")}</label>
                   <select
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                     value={testUserId}
                     onChange={(e) => setTestUserId(e.target.value)}
                   >
-                    <option value="">{testers.length ? __uiText("เลือก tester") : __uiText("ยังไม่มี tester — เพิ่มที่ ข้อความอัตโนมัติ")}</option>
+                    <option value="">{testers.length ? __uiText("เลือกผู้ทดสอบ") : __uiText("ยังไม่มีผู้ทดสอบ — เพิ่มได้ที่หน้าข้อความอัตโนมัติ")}</option>
                     {testers.map((t) => <option key={t.userId} value={t.userId}>{t.name ? `${t.name} · ${t.email}` : t.email}</option>)}
                   </select>
                 </div>
@@ -761,7 +756,7 @@ export default function PushCampaignsPage() {
                   {__uiText("Test send")}</button>
               </div>
               {createdId && (
-                <p className="mt-2 text-xs text-gray-500">{__uiText("Saved campaign: ")}{createdId}</p>
+                <p className="mt-2 text-xs text-gray-500">{__uiText("บันทึกแคมเปญแล้ว รหัส ")}<span className="font-mono">{createdId}</span></p>
               )}
             </section>
           </div>
@@ -807,7 +802,7 @@ export default function PushCampaignsPage() {
           </div>
 
           {!delivery ? (
-            <p className="text-sm text-gray-500">{__uiText("เลือกแคมเปญเพื่อดู pipeline")}</p>
+            <p className="text-sm text-gray-500">{__uiText("เลือกแคมเปญเพื่อดูผลการส่ง")}</p>
           ) : (
             <>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -819,19 +814,19 @@ export default function PushCampaignsPage() {
               </div>
               <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
                 <div className="border-b border-gray-100 px-4 py-3 text-sm font-semibold">
-                  {__uiText("Recent deliveries · ")}{delivery.campaign.name}
+                  {__uiText("การส่งล่าสุด · ")}{delivery.campaign.name}
                 </div>
                 {delivery.recentDeliveries.length === 0 ? (
-                  <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มี delivery log")}</p>
+                  <p className="p-4 text-sm text-gray-500">{__uiText("ยังไม่มีประวัติการส่ง")}</p>
                 ) : (
                   <TableViewport><table className="cp-data-table w-full text-left text-sm">
                     <thead className="bg-gray-50 text-xs text-gray-500">
                       <tr>
-                        <th className="px-4 py-2" scope="col">{__uiText("User")}</th>
+                        <th className="px-4 py-2" scope="col">{__uiText("ผู้ใช้")}</th>
                         <th className="px-4 py-2" scope="col">{__uiText("Channel")}</th>
                         <th className="px-4 py-2" scope="col">{__uiText("Status")}</th>
-                        <th className="px-4 py-2" scope="col">{__uiText("Reason")}</th>
-                        <th className="px-4 py-2" scope="col">{__uiText("Sent")}</th>
+                        <th className="px-4 py-2" scope="col">{__uiText("เหตุผล")}</th>
+                        <th className="px-4 py-2 text-right" scope="col">{__uiText("เวลาส่ง")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -839,11 +834,11 @@ export default function PushCampaignsPage() {
                         <tr key={row.id} className="border-t border-gray-100">
                           <td className="px-4 py-2 font-mono text-xs">{row.userId}</td>
                           <td className="px-4 py-2">{row.channel}</td>
-                          <td className="px-4 py-2">{row.status}</td>
+                          <td className="px-4 py-2"><Chip tone={deliveryTone[row.status] ?? 'muted'} statusCode={row.status} dot>{deliveryStatusLabel[row.status]?.() ?? row.status}</Chip></td>
                           <td className="px-4 py-2 text-xs text-gray-500">
                             {row.reason ?? '—'}
                           </td>
-                          <td className="px-4 py-2 text-xs">
+                          <td className="whitespace-nowrap px-4 py-2 text-right text-xs tabular-nums">
                             {new Date(row.sentAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}
                           </td>
                         </tr>

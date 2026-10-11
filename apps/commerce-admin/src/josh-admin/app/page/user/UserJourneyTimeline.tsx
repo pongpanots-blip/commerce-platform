@@ -9,7 +9,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Button, Chip, Empty, Loading, Panel, PanelHead, Segmented, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type PlatformFilter = AnalyticsPlatform | 'all';
 
 const PLATFORM_OPTIONS: { value: PlatformFilter; label: string }[] = [
@@ -19,11 +19,6 @@ const PLATFORM_OPTIONS: { value: PlatformFilter; label: string }[] = [
   { value: 'android', get label(){return __uiText("Android");} },
 ];
 
-const PLATFORM_BADGE_STYLES: Record<string, string> = {
-  web: 'border-blue-200 bg-blue-50 text-blue-700',
-  ios: 'border-gray-200 bg-gray-100 text-gray-700',
-  android: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-};
 
 const DEFAULT_RANGE_DAYS = 30;
 const PAGE_SIZE = 50;
@@ -119,92 +114,67 @@ export default function UserJourneyTimeline({ userId }: Props) {
       .finally(() => setLoadingMore(false));
   };
 
+  const platformLabel = (value: string) => PLATFORM_OPTIONS.find((option) => option.value === value)?.label ?? value;
+
   return (
-    <section className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-3">
-        <div>
-          <h2 className="text-sm font-bold text-gray-800">{__uiText("Journey Timeline")}</h2>
-          <p className="mt-0.5 text-xs text-gray-500">
-            {__uiText("เหตุการณ์ย้อนหลัง ")}{DEFAULT_RANGE_DAYS} {__uiText(" วัน · รวมทุกอุปกรณ์ที่เชื่อมโยงกับผู้ใช้นี้")}</p>
-        </div>
-        <div className="flex gap-1">
-          {PLATFORM_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setPlatform(option.value)}
-              className={`rounded-md border px-2 py-1 text-[11px] font-medium ${
-                platform === option.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-gray-200 text-gray-500 hover:bg-gray-50'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </div>
+    <Panel className="overflow-hidden">
+      <PanelHead
+        icon="timeline"
+        title={__uiText("เส้นทางการใช้งาน")}
+        sub={<>{__uiText("เหตุการณ์ย้อนหลัง ")}{DEFAULT_RANGE_DAYS} {__uiText(" วัน · รวมทุกอุปกรณ์ที่เชื่อมโยงกับผู้ใช้นี้")}</>}
+        actions={
+          <Segmented
+            value={platform}
+            onChange={setPlatform}
+            options={PLATFORM_OPTIONS.map((option) => ({ value: option.value, label: option.label }))}
+          />
+        }
+      />
 
       {loading ? (
-        <p className="p-4 text-xs text-gray-400">{__uiText("กำลังโหลด...")}</p>
+        <Loading variant="table" />
       ) : error ? (
-        <div className="flex items-center justify-between gap-3 p-4">
-          <p className="text-xs text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>
-          <button
-            type="button"
-            onClick={load}
-            className="shrink-0 rounded-md border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-primary hover:bg-gray-50"
-          >
-            {__uiText("ลองใหม่")}</button>
+        <div className="p-4">
+          <Alert tone="danger" actions={<Button size="sm" icon="refresh" onClick={load}>{__uiText("ลองใหม่")}</Button>}>
+            {(typeof error === 'string' ? __uiText(error) : error)}
+          </Alert>
         </div>
       ) : items.length === 0 ? (
-        <p className="p-4 text-xs text-gray-400">{__uiText("ไม่มีเหตุการณ์ในช่วงที่เลือก")}</p>
+        <Empty icon="timeline">{__uiText("ไม่มีเหตุการณ์ในช่วงที่เลือก")}</Empty>
       ) : (
         <>
-          <ul className="divide-y divide-gray-50">
+          <ul className="divide-y divide-secondary-container">
             {items.map((item) => (
               <li
                 key={item.event_id}
-                className="flex items-center gap-3 px-4 py-2 text-xs hover:bg-gray-50"
+                className="flex items-center gap-3 px-4 py-2 text-xs hover:bg-surface-container-low"
               >
-                <span className="w-[130px] shrink-0 tabular-nums text-gray-500">
+                <span className="w-[130px] shrink-0 tabular-nums text-on-surface-variant">
                   {formatDateTime(item.occurred_at)}
                 </span>
-                <span className="w-[160px] shrink-0 truncate font-semibold text-gray-800">
-                  {item.event_name}
+                <span className="w-[160px] shrink-0 truncate">
+                  <Chip>{item.event_name}</Chip>
                 </span>
-                <span
-                  className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                    PLATFORM_BADGE_STYLES[item.platform] ??
-                    'border-gray-200 bg-gray-100 text-gray-600'
-                  }`}
-                >
-                  {item.platform}
-                </span>
-                <span className="truncate text-gray-600">
+                <Chip statusCode={item.platform}>{platformLabel(item.platform)}</Chip>
+                <span className="truncate text-on-surface-variant">
                   {summarize(item.event_name, item.payload)}
                 </span>
               </li>
             ))}
           </ul>
           {cursor && (
-            <div className="border-t border-gray-100 px-4 py-2 text-center">
+            <div className="border-t border-secondary-container px-4 py-2 text-center">
               {loadMoreError && (
-                <p className="mb-2 text-xs text-red-600">{(typeof (loadMoreError) === 'string' ? __uiText(loadMoreError) : loadMoreError)}</p>
+                <p className="mb-2 text-xs text-danger">{(typeof (loadMoreError) === 'string' ? __uiText(loadMoreError) : loadMoreError)}</p>
               )}
-              <button
-                type="button"
-                onClick={loadMore}
-                disabled={loadingMore}
-                className="text-xs font-semibold text-primary hover:underline disabled:opacity-50"
-              >
+              <Button size="sm" variant="ghost" onClick={loadMore} disabled={loadingMore}>
                 {loadingMore ? __uiText("กำลังโหลด...") : __uiText("โหลดเพิ่มเติม")}
-              </button>
+              </Button>
             </div>
           )}
         </>
       )}
-    </section>
+    </Panel>
   );
 }
 

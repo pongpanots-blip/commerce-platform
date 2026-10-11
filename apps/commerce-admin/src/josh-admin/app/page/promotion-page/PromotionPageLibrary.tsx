@@ -100,7 +100,7 @@ export default function PromotionPageLibrary() {
     },
     {
       key: 'campaign_id',
-      label: __uiText("Campaign"),
+      label: __uiText("แคมเปญ"),
       render: (value: string | null) =>
         value && campaignName.has(value) ? (
           <Link to={ADMIN_ROUTES.campaignDetail(value)} className="text-blue-600 hover:underline">
@@ -112,7 +112,7 @@ export default function PromotionPageLibrary() {
     },
     {
       key: 'slug',
-      label: __uiText("URL"),
+      label: __uiText("ลิงก์"),
       render: (value: string) => (
         <a
           href={toShopUrl(shopPagePath(value))}
@@ -178,9 +178,9 @@ export default function PromotionPageLibrary() {
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
-        title={__uiText("Promotion Pages")}
-        subtitle={__uiText("หน้าของ campaign = แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign (และสินค้าที่คูปองจำกัดไว้) — อยู่ที่ {0}", {"0": toShopPath('/promotions/<slug>')})}
-        createLabel={__uiText("สร้างหน้าโปรโมชัน")}
+        title={__uiText("หน้าโปรโมชัน")}
+        subtitle={__uiText("หน้ารวมแบนเนอร์ สินค้า และคูปองของแคมเปญ ลูกค้าเปิดได้ที่ {0}", {"0": toShopPath('/promotions/<slug>')})}
+        createLabel={__uiText("เพิ่มหน้าโปรโมชัน")}
         createPath={ADMIN_ROUTES.promotionPageCreate}
       />
 
@@ -204,21 +204,27 @@ export default function PromotionPageLibrary() {
         <>
           <div className="rounded-lg bg-white p-3 shadow-level-1">
             <Input
-              label={__uiText("ค้นหาชื่อหรือ slug")}
+              label={__uiText("ค้นหาชื่อหรือลิงก์")}
               icon={<AiOutlineSearch size={20} />}
               className="md:w-[296px]"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
           </div>
-          <Table columns={columns} data={visible} idKey="id" />
+          <Table
+            columns={columns}
+            data={visible}
+            idKey="id"
+            emptyTitle={search.trim() ? __uiText("ไม่พบหน้าโปรโมชันที่ตรงกับคำค้น") : __uiText("ยังไม่มีหน้าโปรโมชัน")}
+            emptyDescription={search.trim() ? __uiText("ลองค้นด้วยชื่ออื่น") : __uiText("กด \"เพิ่มหน้าโปรโมชัน\" เพื่อสร้างหน้าแรก")}
+          />
         </>
       )}
 
       <CouponConfirmDialog
         open={!!pendingDelete}
         title={__uiText("ลบหน้าโปรโมชันนี้?")}
-        body={`“${pendingDelete?.name ?? ''}” — ลิงก์ที่แชร์ไปแล้วจะเปิดไม่ได้ และแบนเนอร์หน้าแรกของหน้านี้จะถูกลบด้วย`}
+        body={__uiText("“{0}” ลิงก์ที่แชร์ไปแล้วจะเปิดไม่ได้ และแบนเนอร์หน้าแรกของหน้านี้จะถูกลบด้วย", {"0": pendingDelete?.name ?? ''})}
         confirmLabel="ลบ"
         tone="danger"
         busy={deleting}

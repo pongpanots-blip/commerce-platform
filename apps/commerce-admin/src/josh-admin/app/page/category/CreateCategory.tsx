@@ -15,7 +15,7 @@ import {
   useCategoryRows,
 } from './category-form';
 
-import { MasterDataSelect, toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { ErrorText, MasterDataSelect, toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import { roleCanWrite } from '../../../../app/role-can';
 
 /** Level 3 เป็นชั้นลึกสุดใน seed — หมวดที่ลึกกว่านั้นจะหลุดจากทุกคิวรีที่หน้าร้านใช้ */
@@ -86,7 +86,7 @@ const CreateCategory = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText('สร้างหมวดหมู่สินค้า')}
+      title={__uiText('เพิ่มหมวดหมู่สินค้า')}
       subtitle={__uiText('เลือกหมวดที่อยู่เหนือกว่า แล้วตั้งชื่อที่ลูกค้าอ่านได้')}
       backPath={ADMIN_ROUTES.categories}
       saving={saving}
@@ -94,7 +94,7 @@ const CreateCategory = () => {
       steps={['เลือกหมวดที่อยู่เหนือกว่า', 'ตั้งชื่อ', 'ใส่รูปถ้าต้องการ']}
       onSave={handleSubmit}
     >
-      {error && <p className="text-sm text-alert">{__uiText(error)}</p>}
+      {error && <ErrorText error={__uiText(error)} />}
 
       <Field
         label="หมวดที่อยู่เหนือกว่า"
@@ -166,7 +166,7 @@ const CreateCategory = () => {
           <span>
             <span className="font-medium text-ink">{__uiText('แสดงบนหน้าแรก')}</span>
             <span className="block text-xs text-ink-muted">
-              {__uiText('แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด — ช่องนี้จึงขึ้นเฉพาะตอนสร้างหมวดชั้นบนสุด')}
+              {__uiText('แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด ช่องนี้จึงขึ้นเฉพาะตอนเพิ่มหมวดชั้นบนสุด')}
             </span>
           </span>
         </label>

@@ -16,7 +16,7 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { getRuleTypeLabel, isLiveSegment, summarizeRuleConfig } from './segment-rule.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, StatusChip, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const SegmentList = () => {
   __useUiLocale();
   const navigate = useNavigate();
@@ -86,7 +86,7 @@ const SegmentList = () => {
   }, [loadData]);
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(__uiText("ยืนยันการลบ segment \"{0}\"?", {"0": name}))) return;
+    if (!confirm(__uiText("ยืนยันการลบกลุ่มลูกค้า \"{0}\"?", {"0": name}))) return;
     try {
       await deleteUserSegment(id);
       await loadData();
@@ -118,23 +118,20 @@ const SegmentList = () => {
     },
     {
       key: 'rule_type',
-      label: __uiText("Rule Type"),
+      label: __uiText("วิธีเลือกลูกค้า"),
       render: (value: string, row) =>
         row.definition ? (
-          <span className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
-            {__uiText("Visual Builder")}</span>
+          <Chip>{__uiText("หลายเงื่อนไข")}</Chip>
         ) : (
-          <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
-            {getRuleTypeLabel(value)}
-          </span>
+          <Chip>{getRuleTypeLabel(value)}</Chip>
         ),
     },
     {
       key: 'rule_config',
-      label: __uiText("Config"),
+      label: __uiText("เงื่อนไข"),
       render: (_, row) =>
         row.definition ? (
-          <span className="text-xs text-gray-400">{__uiText("เงื่อนไขแบบ AND/OR — แก้ไขใน Builder")}</span>
+          <span className="text-xs text-gray-400">{__uiText("หลายเงื่อนไข (และ/หรือ) แก้ไขในหน้าตั้งเงื่อนไข")}</span>
         ) : (
           <span className="line-clamp-2 max-w-[220px] text-xs text-gray-500">
             {summarizeRuleConfig(row.rule_type, row.rule_config)}
@@ -144,13 +141,13 @@ const SegmentList = () => {
     {
       key: 'member_count',
       label: __uiText("สมาชิก"),
+      align: 'right',
       render: (_, row) => {
         if (isLiveSegment(row.rule_type, row.definition)) {
           return (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center justify-end gap-1.5">
               <span className="text-sm text-gray-700">—</span>
-              <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
-                {__uiText("live")}</span>
+              <Chip tone="info">{__uiText("อัปเดตสด")}</Chip>
             </div>
           );
         }
@@ -161,11 +158,11 @@ const SegmentList = () => {
 
         return (
           <div className="text-sm">
-            <span className="text-gray-700">
+            <span className="tabular-nums text-gray-700">
               {freezing ? '…' : count != null ? __uiText("{0} คน", {"0": count.toLocaleString()}) : '—'}
             </span>
             {frozenAt ? (
-              <div className="text-xs text-gray-400">
+              <div className="whitespace-nowrap text-xs tabular-nums text-gray-400">
                 {__uiText("ล็อกเมื่อ ")}{new Date(frozenAt).toLocaleString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'))}
               </div>
             ) : null}
@@ -176,12 +173,7 @@ const SegmentList = () => {
     {
       key: 'is_active',
       label: __uiText("สถานะ"),
-      render: (value: boolean) =>
-        value ? (
-          <span className="text-xs font-semibold text-green-600">{__uiText("Active")}</span>
-        ) : (
-          <span className="text-xs text-gray-400">{__uiText("Inactive")}</span>
-        ),
+      render: (value: boolean) => <StatusChip status={value ? 'active' : 'inactive'} />,
     },
     {
       key: 'actions',
@@ -203,15 +195,15 @@ const SegmentList = () => {
           <Link
             to={`${ADMIN_ROUTES.users}?segment=${row.id}`}
             className="p-1.5 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-            title={__uiText("ดู Users")}
-            aria-label={__uiText("ดู Users")}
+            title={__uiText("ดูรายชื่อลูกค้า")}
+            aria-label={__uiText("ดูรายชื่อลูกค้า")}
           >
             <AiOutlineEye size={18} />
           </Link>
           <button
             type="button"
             onClick={() => handleDelete(row.id, row.name)}
-            className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-1.5 text-gray-500 hover:text-alert hover:bg-danger-container rounded-lg transition-colors"
             title={__uiText("ลบ")}
             aria-label={__uiText("ลบ")}
           >
@@ -225,13 +217,14 @@ const SegmentList = () => {
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
-        title={__uiText("User Segments")}
-        subtitle={__uiText("กลุ่มลูกค้าที่ล็อกรายชื่อตอนสร้าง — ใช้กับ Coupon, Banner และกรองรายชื่อ Users")}
-        createLabel={__uiText("เพิ่ม Segment")}
+        title={__uiText("กลุ่มลูกค้าสำหรับแคมเปญ")}
+        subtitle={__uiText("กลุ่มลูกค้าที่ล็อกรายชื่อตอนสร้าง ใช้กับคูปอง แบนเนอร์ และกรองรายชื่อลูกค้า")}
+        createLabel={__uiText("เพิ่มกลุ่มลูกค้า")}
         createPath={ADMIN_ROUTES.segmentCreate}
       >
         <Button
-          text={__uiText("สร้างด้วย Visual Builder")}
+          variant="secondary"
+          text={__uiText("สร้างแบบหลายเงื่อนไข")}
           onClick={() => navigate(ADMIN_ROUTES.segmentBuilderCreate)}
         />
       </AdminListHeader>
@@ -248,6 +241,8 @@ const SegmentList = () => {
         currentPage={1}
         totalPages={1}
         onPageChange={() => undefined}
+        emptyTitle={loading ? __uiText("กำลังโหลด...") : __uiText("ยังไม่มีกลุ่มลูกค้า")}
+        emptyDescription={loading ? undefined : __uiText("กด \"เพิ่มกลุ่มลูกค้า\" เพื่อสร้างกลุ่มแรก")}
       />
     </div>
   );

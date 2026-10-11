@@ -94,11 +94,11 @@ function PlanEditor({ id, params }: { id?: string; params: URLSearchParams }) {
     finally { setBusy(''); }
   }
   if (id && (loaded.loading || loaded.error || !plan)) return <Page>
-    <PageHeader crumbs={[__uiText("Marketing"), __uiText("Growth"), __uiText("แผน")]} back={{ to: '/marketing/growth/plans', label: 'แผนทั้งหมด' }} title={__uiText("รายละเอียดแผน")} />
+    <PageHeader back={{ to: '/marketing/growth/plans', label: 'แผนทั้งหมด' }} title={__uiText("รายละเอียดแผน")} />
     <LoadState state={loaded} />
   </Page>;
   return <Page>
-    <PageHeader crumbs={[__uiText("Marketing"), __uiText("Growth"), id ? __uiText("รายละเอียดแผน") : __uiText("สร้างแผน")]} back={{ to: '/marketing/growth/plans', label: 'แผนและปฏิทิน' }} title={plan?.title ?? __uiText("สร้างแผน Growth")}
+    <PageHeader back={{ to: '/marketing/growth/plans', label: 'แผนและปฏิทิน' }} title={plan?.title ?? __uiText("สร้างแผนการเติบโต")}
       badge={plan ? <PlanStatus status={plan.status} /> : <Chip>{__uiText("ร่างใหม่")}</Chip>} subtitle={__uiText("ร่างข้อเสนอและข้อความ ตรวจหลักฐาน แล้วอนุมัติ revision ก่อนสร้าง workflow ที่หยุดไว้")}
       actions={plan?.workflowId ? <><ButtonLink to={`/marketing/workflows/${encodeURIComponent(plan.workflowId)}/edit`} icon="account_tree">{__uiText("เปิดร่าง workflow")}</ButtonLink><ButtonLink to={`/marketing/growth/results/${encodeURIComponent(plan.workflowId)}`} icon="monitoring">{__uiText("ดูผล")}</ButtonLink></> : undefined} />
     {note && <Alert tone={note.ok ? 'ok' : 'danger'} onClose={() => setNote(null)} actions={!note.ok && id ? <Button size="sm" onClick={() => { setNote(null); loaded.reload(); }}>{__uiText("โหลดเวอร์ชันล่าสุด")}</Button> : undefined}>{__uiText(note.text)}</Alert>}
@@ -136,7 +136,7 @@ function PlanEditor({ id, params }: { id?: string; params: URLSearchParams }) {
           <Field label={__uiText("กลุ่มที่ไม่รวม")} hint={__uiText("เลือกจากชื่อกลุ่ม ไม่ต้องวางรหัส")}>
             <MasterDataSelect multiple options={(segments.data ?? []).map((item) => ({ value: item.id, label: item.name }))} value={form.excludeSegmentIds} onChange={(value) => update('excludeSegmentIds', value as string[])} />
           </Field>
-          <Field label={__uiText("SKU ที่ใช้")} hint={__uiText("คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง")}><CommaInput value={form.productSkus} onChange={(value) => update('productSkus', value)} /></Field>
+          <Field label={__uiText("รหัสสินค้าที่ใช้")} hint={__uiText("คั่นด้วย comma · ต้องตรวจสต็อกและราคาจริงอีกครั้ง")}><CommaInput value={form.productSkus} onChange={(value) => update('productSkus', value)} /></Field>
           <Field label={__uiText("ใช้ notification template เดิม (ไม่บังคับ)")} hint={__uiText("เว้นว่างเพื่อสร้าง template จากข้อความที่เลือก หากระบุ key เนื้อหาต้องตรงกับเวอร์ชันที่อนุมัติ")}><Input value={form.notifyTemplateKey ?? ''} onChange={(event) => update('notifyTemplateKey', event.target.value || null)} /></Field>
           <Field label={__uiText("กลุ่มควบคุม (%)")}><Input required type="number" min={1} max={50} value={form.holdoutPercent} onChange={(event) => update('holdoutPercent', Number(event.target.value))} /></Field>
           <Field label={__uiText("เว้นช่วงติดต่อ (วัน)")}><Input required type="number" min={1} max={365} value={form.cooldownDays} onChange={(event) => update('cooldownDays', Number(event.target.value))} /></Field>
@@ -184,7 +184,15 @@ function PlanEditor({ id, params }: { id?: string; params: URLSearchParams }) {
           {tasksDirty && <div className="px-4 pb-4"><Button type="submit" variant="primary" disabled={!!busy || dirty || exportPending}>{__uiText("บันทึกงานของทีม")}</Button></div>}
         </form>
       </Panel>
-      <Panel><PanelHead title={__uiText("ประวัติ revision และการตรวจ")} icon="history" /><Table><THead><TH>{__uiText("เวลา")}</TH><TH>{__uiText("ผู้ทำรายการ")}</TH><TH>{__uiText("การเปลี่ยนแปลง")}</TH><TH kind="num">{__uiText("Revision")}</TH></THead><TBody>{plan.history.map((item, index) => <TR key={index}><TD kind="time">{fmt.when(item.at)}</TD><TD>{item.actor}</TD><TD>{item.action}</TD><TD kind="num">{item.version}</TD></TR>)}</TBody></Table></Panel>
+      <Panel><PanelHead title={__uiText("ประวัติการแก้ไขและการตรวจ")} icon="history" /><Table><THead><TH>{__uiText("เวลา")}</TH><TH>{__uiText("ผู้ทำรายการ")}</TH><TH>{__uiText("การเปลี่ยนแปลง")}</TH><TH kind="num">{__uiText("ฉบับที่")}</TH></THead><TBody>{plan.history.map((item, index) => <TR key={index}><TD kind="time">{fmt.when(item.at)}</TD><TD>{item.actor}</TD><TD>{historyActionLabel(item.action)}</TD><TD kind="num">{item.version}</TD></TR>)}</TBody></Table></Panel>
     </>}
   </Page>;
+}
+
+function historyActionLabel(action: string) {
+  return ({
+    created: __uiText('สร้างแผนแล้ว'), revised: __uiText('แก้ไขแผนแล้ว'), submitted: __uiText('ส่งให้ตรวจแล้ว'), approved: __uiText('อนุมัติแล้ว'),
+    tasks_updated: __uiText('อัปเดตงานของทีมแล้ว'), export_started: __uiText('เริ่มสร้างร่าง workflow'), draft_exported: __uiText('สร้างร่าง workflow แล้ว'),
+    export_rejected: __uiText('สร้างร่าง workflow ไม่สำเร็จ'), export_outcome_unknown: __uiText('ต้องตรวจผลการสร้าง workflow'),
+  } as Record<string, string>)[action] ?? action;
 }

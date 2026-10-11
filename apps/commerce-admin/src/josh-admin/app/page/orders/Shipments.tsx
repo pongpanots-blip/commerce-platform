@@ -17,7 +17,6 @@ import {
   Select,
   Table,
   TableColumn,
-  Text,
 } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -25,7 +24,7 @@ import { AiOutlineClose, AiOutlineEye, AiOutlineFilter } from 'react-icons/ai';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { PageHeader, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { ButtonLink, Chip, PageHeader, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_SIZE = 20;
 const CUSTOMER_SEARCH_DEBOUNCE_MS = 300;
 
@@ -34,6 +33,13 @@ const STATUS_LABELS: Record<ShipmentUiStatus, string> = {
   get shipping(){return __uiText("กำลังจัดส่ง");},
   get delivered(){return __uiText("ส่งแล้ว");},
   get cancelled(){return __uiText("ยกเลิก");},
+};
+
+const STATUS_TONES: Record<ShipmentUiStatus, Tone> = {
+  to_ship: 'warn',
+  shipping: 'info',
+  delivered: 'ok',
+  cancelled: 'muted',
 };
 
 type CustomerPick = {
@@ -242,7 +248,7 @@ const Shipments = () => {
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
   const cardData = [
-    { name: __uiText("Shipments ทั้งหมด"), value: String(analytics?.total ?? 0) },
+    { name: __uiText("การจัดส่งทั้งหมด"), value: String(analytics?.total ?? 0) },
     {
       name: __uiText("รอส่ง"),
       value: String(analytics?.toShip ?? 0),
@@ -273,17 +279,17 @@ const Shipments = () => {
       value: String(analytics?.createdToday ?? 0),
     },
     {
-      name: __uiText("Avg รอส่ง"),
+      name: __uiText("เวลารอส่งเฉลี่ย"),
       value: formatShipmentDurationMinutes(analytics?.avgToShipMinutes),
       textColor: 'text-lime-700',
     },
     {
-      name: __uiText("Avg จัดส่ง"),
+      name: __uiText("เวลาจัดส่งเฉลี่ย"),
       value: formatShipmentDurationMinutes(analytics?.avgShippingMinutes),
       textColor: 'text-primary',
     },
     {
-      name: __uiText("Avg รวม (สร้าง→ส่งถึง)"),
+      name: __uiText("เวลารวมเฉลี่ย (สร้างจนส่งถึง)"),
       value: formatShipmentDurationMinutes(analytics?.avgTotalMinutes),
       textColor: 'text-sky-700',
     },
@@ -292,7 +298,7 @@ const Shipments = () => {
   const columns: TableColumn<AdminShipmentListItem>[] = [
     {
       key: 'shipmentNumber',
-      label: __uiText("Shipment"),
+      label: __uiText("เลขที่การจัดส่ง"),
       sortable: true,
       render: (value, row) => (
         <button
@@ -306,7 +312,7 @@ const Shipments = () => {
     },
     {
       key: 'orderNumber',
-      label: __uiText("Order"),
+      label: __uiText("เลขที่ออเดอร์"),
       render: (value, row) =>
         value ? (
           <Link
@@ -329,29 +335,18 @@ const Shipments = () => {
       label: __uiText("สถานะ"),
       render: (value: AdminShipmentListItem['status']) => {
         if (!value) {
-          return (
-            <span className="px-2.5 py-1 text-xs font-semibold rounded-full border bg-amber-50 text-amber-700 border-amber-200">
-              {__uiText("รอชำระ")}</span>
-          );
+          return <Chip tone="warn" dot>{__uiText("รอชำระ")}</Chip>;
         }
-        const badgeStyles: Record<ShipmentUiStatus, string> = {
-          to_ship: 'bg-lime-50 text-lime-700 border-lime-200',
-          shipping: 'bg-primary/10 text-primary border-primary/20',
-          delivered: 'bg-sky-50 text-sky-700 border-sky-200',
-          cancelled: 'bg-gray-100 text-gray-600 border-gray-200',
-        };
         return (
-          <span
-            className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${badgeStyles[value]}`}
-          >
-            {STATUS_LABELS[value]}
-          </span>
+          <Chip tone={STATUS_TONES[value] ?? 'muted'} statusCode={value} dot>
+            {STATUS_LABELS[value] ?? value}
+          </Chip>
         );
       },
     },
     {
       key: 'courierName',
-      label: __uiText("Courier"),
+      label: __uiText("ขนส่ง"),
       render: (value) => String(value || '-'),
     },
     {
@@ -367,6 +362,7 @@ const Shipments = () => {
     {
       key: 'toShip',
       label: __uiText("รอส่ง (นาที)"),
+      align: 'right',
       render: (_, row) =>
         row.timing?.toShipMinutes != null
           ? formatShipmentDurationMinutes(row.timing.toShipMinutes)
@@ -375,6 +371,7 @@ const Shipments = () => {
     {
       key: 'shippingDur',
       label: __uiText("จัดส่ง (นาที)"),
+      align: 'right',
       render: (_, row) =>
         row.timing?.shippingMinutes != null
           ? formatShipmentDurationMinutes(row.timing.shippingMinutes)
@@ -383,6 +380,7 @@ const Shipments = () => {
     {
       key: 'totalDur',
       label: __uiText("รวม (นาที)"),
+      align: 'right',
       render: (_, row) => (
         <span className="font-medium">
           {row.timing?.totalMinutes != null
@@ -395,6 +393,7 @@ const Shipments = () => {
       key: 'totalIncVat',
       label: __uiText("ยอด"),
       sortable: true,
+      align: 'right',
       render: (value) => (
         <span className="font-medium">
           {__uiText("฿")}{Number(value).toLocaleString()}
@@ -419,20 +418,11 @@ const Shipments = () => {
 
   return (
     <div className="cp-management-page flex flex-col gap-4">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-col">
-          <PageHeader title={__uiText("Shipments")} />
-          <Text
-            text={__uiText("ดู shipment แยกจาก order — timing ต่อสถานะ + ลิงก์กลับ order")}
-            size="sm"
-          />
-        </div>
-        <Link
-          to={ADMIN_ROUTES.orders}
-          className="inline-flex h-fit items-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-        >
-          {__uiText("All Orders")}</Link>
-      </div>
+      <PageHeader
+        title={__uiText("การจัดส่งสินค้า")}
+        subtitle={__uiText("ติดตามการจัดส่งแต่ละรอบ ดูเวลาที่ใช้ในแต่ละขั้น และเปิดคำสั่งซื้อที่เกี่ยวข้อง")}
+        actions={<ButtonLink to={ADMIN_ROUTES.orders} icon="receipt_long">{__uiText("คำสั่งซื้อ")}</ButtonLink>}
+      />
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
         {cardData.map((card) => (
@@ -461,7 +451,7 @@ const Shipments = () => {
           </div>
           <div className="w-64">
             <Input
-              label={__uiText("ค้นหา shipment / order / ลูกค้า")}
+              label={__uiText("ค้นหาเลขที่จัดส่ง / เลขที่ออเดอร์ / ลูกค้า")}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => {
@@ -502,7 +492,7 @@ const Shipments = () => {
                 <Input
                   label={__uiText("เลือกลูกค้า")}
                   value={customerQuery}
-                  placeholder={__uiText("ชื่อ / email / custcode")}
+                  placeholder={__uiText("ชื่อ / อีเมล / รหัสลูกค้า")}
                   onChange={(e) => {
                     setCustomerQuery(e.target.value);
                     setCustomerDropdownOpen(true);
@@ -574,6 +564,8 @@ const Shipments = () => {
             pageSize={PAGE_SIZE}
             onPageChange={setCurrentPage}
             totalItems={totalItems}
+            emptyTitle={__uiText("ยังไม่มีการจัดส่ง")}
+            emptyDescription={__uiText("ลองเปลี่ยนสถานะ ลูกค้า หรือช่วงวันที่")}
           />
         )}
       </div>

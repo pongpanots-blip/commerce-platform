@@ -5,10 +5,10 @@ import { BotIntent } from '@josh/shared-api';
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const INTENT_OPTIONS: { value: BotIntent; label: string }[] = [
-  { value: 'order_lookup', get label(){return __uiText("order_lookup");} },
-  { value: 'product_search', get label(){return __uiText("product_search");} },
-  { value: 'faq_general', get label(){return __uiText("faq_general");} },
-  { value: 'escalate', get label(){return __uiText("escalate");} },
+  { value: 'order_lookup', get label(){return __uiText("ถามเรื่องคำสั่งซื้อ");} },
+  { value: 'product_search', get label(){return __uiText("หาสินค้า");} },
+  { value: 'faq_general', get label(){return __uiText("คำถามทั่วไป");} },
+  { value: 'escalate', get label(){return __uiText("ขอคุยกับพนักงาน");} },
 ];
 
 export interface BotIntentRuleFormValue {

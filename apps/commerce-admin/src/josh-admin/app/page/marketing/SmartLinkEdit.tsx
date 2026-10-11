@@ -4,19 +4,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   createSmartLink, getSmartLink, updateSmartLink, type SmartLinkInput,
 } from '@josh/shared-api';
-import AdminListHeader from '../../components/AdminListHeader';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { UtmBuilder, EMPTY_UTM, type UtmValues } from '../../components/UtmBuilder';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Checkbox, FormActions, FormField, FormSection, Input, PageHeader, Panel, Textarea, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PUBLIC_BASE =
   (import.meta as any).env?.VITE_SMART_LINK_BASE_URL?.replace(/\/$/, '') || '/api/r';
 const API_ORIGIN =
   (import.meta as any).env?.VITE_API_URL?.replace(/\/$/, '') || '/api';
-
-const field = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm';
-const labelCls = 'text-xs font-semibold text-gray-500';
 
 const EMPTY: SmartLinkInput = {
   slug: '', destination_web: '', title: '', description: '', image_url: '',
@@ -65,99 +61,97 @@ export default function SmartLinkEdit() {
 
   const submit = async () => {
     setError(null);
-    if (!/^[a-z0-9-]+$/.test(form.slug)) return setError(__uiMessage("slug ต้องเป็น a-z, 0-9, - เท่านั้น"));
-    if (!form.destination_web) return setError(__uiMessage("ต้องมี Web destination"));
+    if (!/^[a-z0-9-]+$/.test(form.slug)) return setError(__uiMessage("ท้ายลิงก์ใช้ได้แค่ a-z, 0-9 และ - เท่านั้น"));
+    if (!form.destination_web) return setError(__uiMessage("กรุณากรอกปลายทางบนเว็บ"));
     setSaving(true);
     try {
       if (isEdit && id) await updateSmartLink(id, clean(form));
       else await createSmartLink(clean(form));
       navigate(ADMIN_ROUTES.smartLinks);
     } catch {
-      setError(__uiMessage("บันทึกไม่สำเร็จ — ตรวจ slug ซ้ำ หรือรูปแบบ URL"));
+      setError(__uiMessage("บันทึกไม่สำเร็จ — ท้ายลิงก์อาจซ้ำกับลิงก์อื่น หรือรูปแบบลิงก์ไม่ถูกต้อง"));
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="cp-management-page">
-      <AdminListHeader title={isEdit ? __uiText("แก้ไข Smart Link") : __uiText("สร้าง Smart Link")} subtitle="" />
-      <div className="mt-4 max-w-2xl space-y-4 rounded-xl border border-gray-100 bg-white p-5">
-        <div>
-          <label htmlFor="smart-link-slug" className={labelCls}>{__uiText("Slug (ส่วนท้ายลิงก์) *")}</label>
-          <input id="smart-link-slug" className={field} value={form.slug} placeholder={__uiText("summer-sale")}
-            onChange={(e) => set('slug', e.target.value)} disabled={isEdit} />
-        </div>
-        <div>
-          <label htmlFor="smart-link-title" className={labelCls}>{__uiText("ชื่อเรื่อง (Title)")}</label>
-          <input id="smart-link-title" className={field} value={form.title ?? ''} onChange={(e) => set('title', e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="smart-link-description" className={labelCls}>{__uiText("คำอธิบาย (Description)")}</label>
-          <textarea id="smart-link-description" className={field} value={form.description ?? ''} onChange={(e) => set('description', e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="smart-link-image-url" className={labelCls}>{__uiText("ลิงก์รูปภาพ (Image URL)")}</label>
-          <input id="smart-link-image-url" className={field} value={form.image_url ?? ''} onChange={(e) => set('image_url', e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="smart-link-web-destination" className={labelCls}>{__uiText("ปลายทางเว็บ (Web destination) *")}</label>
-          <input id="smart-link-web-destination" className={field} value={form.destination_web} placeholder="https://example.com/shop"
-            onChange={(e) => set('destination_web', e.target.value)} />
-        </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div>
-            <label htmlFor="smart-link-ios-destination" className={labelCls}>{__uiText("ปลายทาง iOS (iOS destination)")}</label>
-            <input id="smart-link-ios-destination" className={field} value={form.destination_ios ?? ''} onChange={(e) => set('destination_ios', e.target.value)} />
+    <div className="cp-management-page max-w-3xl space-y-5">
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.smartLinks, label: 'ลิงก์ติดตามผล' }}
+        title={isEdit ? __uiText("แก้ไขลิงก์ติดตามผล") : __uiText("สร้างลิงก์ติดตามผล")}
+        subtitle={__uiText("ตั้งท้ายลิงก์ เลือกหน้าปลายทาง แล้วนำลิงก์ไปใช้ได้ทุกที่")}
+      />
+      <Panel className="space-y-6 p-5">
+        <FormSection title="ลิงก์">
+          <FormField label={__uiText("ท้ายลิงก์")} required hint={isEdit ? __uiText("แก้ท้ายลิงก์หลังสร้างไม่ได้") : __uiText("ใช้ a-z, 0-9 และ - เท่านั้น")}>
+            <Input id="smart-link-slug" className="font-mono" value={form.slug} placeholder="summer-sale"
+              onChange={(e) => set('slug', e.target.value)} disabled={isEdit} />
+          </FormField>
+          <FormField label={__uiText("ชื่อเรื่อง")}>
+            <Input id="smart-link-title" value={form.title ?? ''} onChange={(e) => set('title', e.target.value)} />
+          </FormField>
+          <FormField label={__uiText("คำอธิบาย")}>
+            <Textarea id="smart-link-description" value={form.description ?? ''} onChange={(e) => set('description', e.target.value)} />
+          </FormField>
+          <FormField label={__uiText("ลิงก์รูปภาพ")}>
+            <Input id="smart-link-image-url" value={form.image_url ?? ''} onChange={(e) => set('image_url', e.target.value)} />
+          </FormField>
+        </FormSection>
+
+        <FormSection title="ปลายทาง" description="ลูกค้าจะถูกพาไปหน้าตามเครื่องที่ใช้ ถ้าไม่ได้ตั้งไว้จะไปปลายทางบนเว็บ">
+          <FormField label={__uiText("ปลายทางบนเว็บ")} required>
+            <Input id="smart-link-web-destination" value={form.destination_web} placeholder="https://example.com/shop"
+              onChange={(e) => set('destination_web', e.target.value)} />
+          </FormField>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <FormField label={__uiText("ปลายทางบน iPhone / iPad")}>
+              <Input id="smart-link-ios-destination" value={form.destination_ios ?? ''} onChange={(e) => set('destination_ios', e.target.value)} />
+            </FormField>
+            <FormField label={__uiText("ปลายทางบน Android")}>
+              <Input id="smart-link-android-destination" value={form.destination_android ?? ''} onChange={(e) => set('destination_android', e.target.value)} />
+            </FormField>
           </div>
-          <div>
-            <label htmlFor="smart-link-android-destination" className={labelCls}>{__uiText("ปลายทาง Android (Android destination)")}</label>
-            <input id="smart-link-android-destination" className={field} value={form.destination_android ?? ''} onChange={(e) => set('destination_android', e.target.value)} />
+          <FormField label={__uiText("ลิงก์สำรอง")} hint={__uiText("ใช้เมื่อเปิดปลายทางไม่ได้")}>
+            <Input id="smart-link-fallback-url" value={form.fallback_url ?? ''} onChange={(e) => set('fallback_url', e.target.value)} />
+          </FormField>
+        </FormSection>
+
+        <FormSection title="การใช้งาน">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <FormField label={__uiText("วันหมดอายุ")}>
+              <Input id="smart-link-expires-at" type="date" value={form.expires_at ?? ''} onChange={(e) => set('expires_at', e.target.value)} />
+            </FormField>
+            <div className="flex items-end gap-4 pb-2">
+              <Checkbox label={__uiText("แสดงหน้าแนะนำก่อนพาไปปลายทาง")} checked={!!form.show_landing} onChange={(e) => set('show_landing', e.target.checked)} />
+              <Checkbox label={__uiText("เปิดใช้งาน")} checked={!!form.active} onChange={(e) => set('active', e.target.checked)} />
+            </div>
           </div>
-        </div>
-        <div>
-          <label htmlFor="smart-link-fallback-url" className={labelCls}>{__uiText("ลิงก์สำรอง (Fallback URL)")}</label>
-          <input id="smart-link-fallback-url" className={field} value={form.fallback_url ?? ''} onChange={(e) => set('fallback_url', e.target.value)} />
-        </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div>
-            <label htmlFor="smart-link-expires-at" className={labelCls}>{__uiText("วันหมดอายุ (Expires at)")}</label>
-            <input id="smart-link-expires-at" type="date" className={field} value={form.expires_at ?? ''} onChange={(e) => set('expires_at', e.target.value)} />
-          </div>
-          <div className="flex items-end gap-4">
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={!!form.show_landing} onChange={(e) => set('show_landing', e.target.checked)} />
-              {__uiText("แสดงหน้า Landing Page")}</label>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={!!form.active} onChange={(e) => set('active', e.target.checked)} />
-              {__uiText("เปิดใช้งาน (Active)")}</label>
-          </div>
-        </div>
+        </FormSection>
+
         {form.slug && (
-          <div className="space-y-3 border-t border-gray-100 pt-4">
-            <p className="text-sm font-semibold text-gray-700">{__uiText("UTM & QR")}</p>
+          <FormSection title="ลิงก์สำหรับแต่ละช่องทาง และ QR">
             <UtmBuilder value={utm} baseUrl={publicUrl} onChange={setUtm} />
             {isEdit && id && (
-              <div className="flex gap-2">
-                <a className="rounded-lg bg-gray-100 px-3 py-2 text-sm"
+              <div className="flex flex-wrap gap-2">
+                <a className="inline-flex min-h-10 items-center rounded-lg border border-gray-200 bg-white px-3.5 text-[13px] font-medium"
                    href={`${API_ORIGIN}/smart-links/${id}/qr?format=png&size=512`} target="_blank" rel="noreferrer">
-                  {__uiText("Download QR (PNG)")}</a>
-                <a className="rounded-lg bg-gray-100 px-3 py-2 text-sm"
+                  {__uiText("ดาวน์โหลด QR (PNG)")}</a>
+                <a className="inline-flex min-h-10 items-center rounded-lg border border-gray-200 bg-white px-3.5 text-[13px] font-medium"
                    href={`${API_ORIGIN}/smart-links/${id}/qr?format=svg`} target="_blank" rel="noreferrer">
-                  {__uiText("Download QR (SVG)")}</a>
+                  {__uiText("ดาวน์โหลด QR (SVG)")}</a>
               </div>
             )}
-          </div>
+          </FormSection>
         )}
-        {error && <p className="text-xs text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
-        <div className="flex gap-2">
-          <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-            disabled={saving} onClick={() => void submit()}>
-            {saving ? __uiText("กำลังบันทึก…") : __uiText("บันทึก")}
-          </button>
-          <button className="rounded-lg bg-gray-100 px-4 py-2 text-sm" onClick={() => navigate(ADMIN_ROUTES.smartLinks)}>{__uiText("ยกเลิก")}</button>
-        </div>
-      </div>
+        {error && <Alert tone="danger">{(typeof error === 'string' ? __uiText(error) : error)}</Alert>}
+      </Panel>
+      <FormActions
+        saveLabel={isEdit ? 'บันทึกลิงก์' : 'สร้างลิงก์'}
+        saving={saving}
+        onSave={() => void submit()}
+        onCancel={() => navigate(ADMIN_ROUTES.smartLinks)}
+      />
     </div>
   );
 }

@@ -4,15 +4,15 @@ import { Input, Select } from '@josh/shared-ui-web';
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const ACTION_TYPE_OPTIONS = [
-  { value: 'tool', get label(){return __uiText("tool");} },
-  { value: 'escalate', get label(){return __uiText("escalate");} },
-  { value: 'llm', get label(){return __uiText("llm (ยังไม่รองรับ)");} },
+  { value: 'tool', get label(){return __uiText("ค้นข้อมูลให้ลูกค้า");} },
+  { value: 'escalate', get label(){return __uiText("ส่งต่อให้พนักงาน");} },
+  { value: 'llm', get label(){return __uiText("ให้ AI ตอบ (ยังไม่รองรับ)");} },
 ];
 
 const TOOL_NAME_OPTIONS = [
-  { value: 'order_lookup', get label(){return __uiText("order_lookup");} },
-  { value: 'product_search', get label(){return __uiText("product_search");} },
-  { value: 'faq', get label(){return __uiText("faq");} },
+  { value: 'order_lookup', get label(){return __uiText("ค้นคำสั่งซื้อ");} },
+  { value: 'product_search', get label(){return __uiText("ค้นสินค้า");} },
+  { value: 'faq', get label(){return __uiText("คำถามที่พบบ่อย");} },
 ];
 
 export interface BotWorkflowFormValue {

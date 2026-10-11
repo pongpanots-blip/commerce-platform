@@ -22,6 +22,12 @@ module.exports = {
         // josh pages use blue/indigo as their link and action colour: map them onto the brand colour too.
         blue: { 50: tone('--color-primary-container'), 100: tone('--color-primary-container'), 200: tone('--color-primary-fixed-dim'), 500: tone('--color-primary'), 600: tone('--color-primary'), 700: tone('--color-primary-dim'), 800: tone('--color-primary-dim') },
         indigo: { 50: tone('--color-primary-container'), 600: tone('--color-primary'), 700: tone('--color-primary-dim') },
+        // Status tones (design.md), so josh pages can use text-danger / bg-ok-container like the rest of the app.
+        ok: { DEFAULT: tone('--color-ok'), container: tone('--color-ok-container') },
+        info: { DEFAULT: tone('--color-info'), container: tone('--color-info-container') },
+        warn: { DEFAULT: tone('--color-warn'), container: tone('--color-warn-container') },
+        danger: { DEFAULT: tone('--color-danger'), dim: tone('--color-danger-dim'), container: tone('--color-danger-container') },
+        outline: { DEFAULT: 'var(--color-outline)', variant: 'var(--color-outline-variant)' },
         alert: { DEFAULT: tone('--color-danger'), dark: tone('--color-danger-dim'), soft: tone('--color-danger-container'), light: tone('--color-danger', 70) },
         ink: { DEFAULT: 'var(--color-on-surface)', secondary: 'var(--color-on-surface-variant)', muted: 'var(--color-outline)', disabled: 'var(--color-outline-variant)' },
         surface: { disabled: 'var(--color-surface-container-low)', 'container-lowest': 'var(--color-surface-container-lowest)', 'container-low': 'var(--color-surface-container-low)' },

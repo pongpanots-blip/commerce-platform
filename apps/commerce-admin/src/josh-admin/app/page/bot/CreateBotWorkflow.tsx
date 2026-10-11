@@ -33,7 +33,7 @@ const CreateBotWorkflow = () => {
 
   const handleSubmit = async () => {
     if (!form.name || !form.triggerPattern) {
-      alert(__uiText("กรุณากรอกชื่อและ Trigger Pattern"));
+      alert(__uiText("กรุณากรอกชื่อและรูปแบบคำที่ใช้จับ"));
       return false;
     }
     setSaving(true);
@@ -61,9 +61,9 @@ const CreateBotWorkflow = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่มขั้นตอนของบอท")}
-      subtitle={__uiText("เลือกเหตุการณ์ที่เริ่มขั้นตอน แล้วเลือกว่าบอททำอะไรและตอบด้วยข้อความไหน")}
-      saveLabel="บันทึกขั้นตอนของบอท"
+      title={__uiText("เพิ่มลำดับการตอบ")}
+      subtitle={__uiText("เลือกว่าเริ่มเมื่อไร แชตบอตทำอะไร และตอบด้วยข้อความไหน")}
+      saveLabel="บันทึกลำดับการตอบ"
       backPath={ADMIN_ROUTES.botWorkflows}
       saving={saving}
       onSave={handleSubmit}

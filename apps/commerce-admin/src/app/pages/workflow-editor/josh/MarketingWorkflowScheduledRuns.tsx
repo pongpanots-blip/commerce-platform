@@ -2,7 +2,7 @@
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   getMarketingWorkflow,
   getMarketingWorkflowScheduledRuns,
@@ -10,29 +10,28 @@ import {
   type MarketingWorkflowScheduledRun,
 } from './shared-api';
 import { Table, TableColumn } from './shared-ui';
-import AdminListHeader from './AdminListHeader';
 import { ADMIN_ROUTES } from './admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Button, Chip, PageHeader, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 function formatSource(source: MarketingWorkflowScheduledRun['source']): string {
-  return source === 'job_scheduler' ? 'BullMQ' : 'Cron safety net';
+  return source === 'job_scheduler' ? __uiText('ตามรอบปกติ') : __uiText('รอบสำรอง');
 }
 
 function formatStatus(run: MarketingWorkflowScheduledRun): string {
   if (run.status === 'fired') return __uiText("สำเร็จ");
   if (run.status === 'failed') return __uiText("ล้มเหลว");
   if (run.skipReason === 'not_due') return __uiText("ข้าม (ยังไม่ถึงเวลา)");
-  if (run.skipReason === 'outside_schedule') return __uiText("ข้าม (นอก schedule)");
-  if (run.skipReason === 'inactive_or_missing') return __uiText("ข้าม (ไม่ active)");
-  if (run.skipReason === 'empty_audience') return __uiText("ข้าม (audience ว่าง)");
+  if (run.skipReason === 'outside_schedule') return __uiText("ข้าม (นอกช่วงเวลาที่ตั้งไว้)");
+  if (run.skipReason === 'inactive_or_missing') return __uiText("ข้าม (ไม่ได้เปิดใช้งาน)");
+  if (run.skipReason === 'empty_audience') return __uiText("ข้าม (ไม่มีลูกค้าเข้าเงื่อนไข)");
   return __uiText("ข้าม");
 }
 
-function statusClass(status: MarketingWorkflowScheduledRun['status']): string {
-  if (status === 'failed') return 'text-red-600 font-semibold';
-  if (status === 'skipped') return 'text-amber-600';
-  return 'text-emerald-700 font-semibold';
+function statusTone(status: MarketingWorkflowScheduledRun['status']): Tone {
+  if (status === 'failed') return 'danger';
+  if (status === 'skipped') return 'warn';
+  return 'ok';
 }
 
 export default function MarketingWorkflowScheduledRuns() {
@@ -59,7 +58,7 @@ export default function MarketingWorkflowScheduledRuns() {
         err && typeof err === 'object' && 'response' in err
           ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
           : undefined;
-      setError(message || __uiMessage("โหลดประวัติการยิงไม่สำเร็จ"));
+      setError(message || __uiMessage("โหลดประวัติการส่งตามเวลาไม่สำเร็จ"));
       setRuns([]);
     } finally {
       setLoading(false);
@@ -86,7 +85,7 @@ export default function MarketingWorkflowScheduledRuns() {
       label: __uiText("สถานะ"),
       render: (_value, row) => (
         <div>
-          <span className={`text-xs ${statusClass(row.status)}`}>{formatStatus(row)}</span>
+          <Chip tone={statusTone(row.status)} statusCode={row.status} dot>{formatStatus(row)}</Chip>
           {row.errorMessage && (
             <p className="mt-0.5 max-w-md truncate text-[11px] text-red-500" title={row.errorMessage}>
               {row.errorMessage}
@@ -97,72 +96,58 @@ export default function MarketingWorkflowScheduledRuns() {
     },
     {
       key: 'audienceCount',
-      label: __uiText("Audience"),
-      render: (value: number) => value.toLocaleString(),
+      label: __uiText("ลูกค้าที่เข้าเงื่อนไข"),
+      align: 'right',
+      render: (value: number) => <span className="tabular-nums">{value.toLocaleString('en-US')}</span>,
     },
     {
       key: 'enrolledCount',
-      label: __uiText("Enrolled"),
+      label: __uiText("ลูกค้าที่เข้าแล้ว"),
+      align: 'right',
       render: (value: number) => (
-        <span className="font-medium tabular-nums">{value.toLocaleString()}</span>
+        <span className="font-medium tabular-nums">{value.toLocaleString('en-US')}</span>
       ),
     },
   ];
 
-  if (loading) {
-    return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
-  }
-
   return (
     <div className="cp-management-page flex flex-col gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Link
-          to={id ? ADMIN_ROUTES.marketingWorkflowEdit(id) : ADMIN_ROUTES.marketingWorkflows}
-          className="text-xs text-primary hover:underline"
-        >
-          {__uiText("&larr; กลับไปหน้าแก้ไข Workflow")}</Link>
-        <div className="flex items-center gap-3">
-          <a
-            href="/api/admin/queues"
-            target="_blank"
-            rel="noreferrer"
-            className="text-xs text-gray-600 hover:underline"
-          >
-            {__uiText("Queue Board ↗")}</a>
-          <button
-            type="button"
-            onClick={() => void load()}
-            className="text-xs text-primary hover:underline"
-          >
-            {__uiText("รีเฟรช")}</button>
-        </div>
-      </div>
-
-      <AdminListHeader
+      <PageHeader
+        back={{ to: id ? ADMIN_ROUTES.marketingWorkflowEdit(id) : ADMIN_ROUTES.marketingWorkflows, label: 'กลับไปหน้าแก้ข้อความอัตโนมัติ' }}
         title={
           workflow
-            ? __uiText("Scheduled fire log — {0}", {"0": workflow.name})
-            : __uiText("Scheduled fire log")
+            ? __uiText("ประวัติการส่งตามเวลา — {0}", {"0": workflow.name})
+            : __uiText("ประวัติการส่งตามเวลา")
+        }
+        subtitle={__uiText("แต่ละรอบที่ถึงเวลาส่ง ส่งได้กี่คน หรือข้ามเพราะอะไร")}
+        actions={
+          <>
+            <a href="/api/admin/queues" target="_blank" rel="noreferrer" className="text-xs text-gray-600 hover:underline">
+              {__uiText("ดูคิวงานของระบบ ↗")}</a>
+            <Button size="sm" icon="refresh" onClick={() => void load()}>{__uiText("รีเฟรช")}</Button>
+          </>
         }
       />
 
       {workflow && workflow.trigger_type !== 'scheduled' && (
-        <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
-          {__uiText("Workflow นี้ไม่ใช่ trigger แบบ scheduled — จะมีประวัติก็ต่อเมื่อเคยเป็น scheduled และถูกยิงมาก่อน")}</p>
+        <Alert tone="warn">
+          {__uiText("ข้อความอัตโนมัตินี้ไม่ได้เริ่มตามเวลา — จะมีประวัติก็ต่อเมื่อเคยตั้งให้ส่งตามเวลามาก่อน")}</Alert>
       )}
 
       {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+        <Alert tone="danger">
           {(typeof error === 'string' ? __uiText(error) : error)}
-        </p>
+        </Alert>
       )}
 
-      {!error && runs.length === 0 ? (
-        <p className="text-sm text-gray-400">
-          {__uiText("ยังไม่มีประวัติการยิง — จะปรากฏหลัง activate และถึงเวลาที่ตั้งไว้")}</p>
-      ) : (
-        <Table columns={columns} data={runs} idKey="id" />
-      )}
+      <Table
+        columns={columns}
+        data={runs}
+        idKey="id"
+        loading={loading}
+        emptyTitle={__uiText("ยังไม่มีประวัติการส่งตามเวลา")}
+        emptyDescription={__uiText("จะเห็นรายการหลังเปิดใช้งานและถึงเวลาที่ตั้งไว้")}
+      />
     </div>
   );
 }

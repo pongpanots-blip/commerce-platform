@@ -1,5 +1,5 @@
 // ui-metadata-migration: static labels and UI notices only
-import { TableViewport } from '@cp/ui';
+import { Alert, Button, PageHeader, TableViewport } from '@cp/ui';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
@@ -134,17 +134,16 @@ export default function ScrapingSourcesPage() {
 
   return <div className="cp-management-page space-y-5">
     <ScrapingNavigation />
-    <header className="flex flex-wrap justify-between gap-3"><div><h1 className="text-2xl font-semibold">{__uiText("ตั้งค่าเก็บข้อมูลจากเว็บ")}</h1>
-      <p className="mt-1 text-sm text-gray-500">{__uiText("กำหนดหน้าที่เก็บและฟิลด์เองได้ ทั้งสินค้า ราคา รายละเอียด และข้อมูลอื่น")}</p></div>
-      <button className={scrapingButton} disabled={busy} onClick={() => edit()}>{__uiText("+ ตั้งค่าเองแบบละเอียด")}</button></header>
-    {automation && <section aria-label={__uiText("สวิตช์เก็บข้อมูลเบื้องหลัง")} className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 ${automation.enabled ? 'border-green-200 bg-green-50' : 'border-amber-200 bg-amber-50'}`}>
+    <PageHeader title={__uiText("ตั้งค่าเว็บคู่แข่งที่เก็บข้อมูล")} subtitle={__uiText("เลือกเว็บคู่แข่งที่ระบบเก็บข้อมูล และการเก็บอัตโนมัติ")}
+      actions={<Button icon="tune" disabled={busy} onClick={() => edit()}>{__uiText("ตั้งค่าเองแบบละเอียด")}</Button>} />
+    {automation && <section aria-label={__uiText("สวิตช์เก็บข้อมูลเบื้องหลัง")} className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 ${automation.enabled ? 'border-ok/20 bg-ok-container' : 'border-warn/20 bg-warn-container'}`}>
       <div><p className="font-medium">{__uiText("การเก็บข้อมูลเบื้องหลัง (ช่วงทดลอง): ")}{automation.enabled ? __uiText("เปิดอยู่") : __uiText("ปิดอยู่")}</p>
         <p className="text-xs text-gray-600">{automation.enabled ? __uiText("เว็บที่ตั้งเก็บอัตโนมัติจะทำงานตามรอบ · ปิดแล้วทุกเว็บหยุดหลังหน้าที่กำลังอ่าน ความคืบหน้ายังอยู่") : __uiText("ไม่มีการเก็บเบื้องหลังเลย · “ลองดึงข้อมูล” ยังใช้ได้ · เปิดแล้วเก็บต่อจากที่ค้างไว้")}</p></div>
       <button className={automation.enabled ? scrapingButton : scrapingPrimary} disabled={busy} onClick={() => {
         if (!automation.enabled || window.confirm(__uiText("ปิดการเก็บข้อมูลเบื้องหลังทุกเว็บ?"))) void action(async () => setAutomation(await setScrapingAutomation(!automation.enabled)));
       }}>{automation.enabled ? __uiText("ปิดการเก็บเบื้องหลัง") : __uiText("เปิดการเก็บเบื้องหลัง")}</button>
     </section>}
-    {error && <div role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{(typeof error === 'string' ? __uiText(error) : error)}</div>}
+    {error && <Alert tone="danger">{typeof error === 'string' ? __uiText(error) : error}</Alert>}
     <section aria-label={__uiText("สำรวจเว็บอัตโนมัติ")} className="space-y-4 rounded-xl border border-primary-border bg-white p-5">
       <div><h2 className="text-lg font-semibold">{__uiText("1. ใส่ลิงก์เว็บ แล้วลองดึงข้อมูล 1 รอบ")}</h2><p className="mt-1 text-sm text-gray-500">{__uiText("ระบบเปิดดูไม่เกิน 6 หน้า แล้วบอกว่าเว็บนี้มีข้อมูลอะไร เช่น ชื่อสินค้า ราคา — ยังไม่เริ่มเก็บจริงจนกว่าจะกดยืนยัน")}</p></div>
       <label className="block text-sm">{__uiText("ลิงก์เว็บ (หรือชื่อ Makro PRO, Big C, Freshket)")}<input className={scrapingInput} maxLength={2000} disabled={busy} value={website} placeholder={__uiText("เช่น https://example.com/products")} onChange={e => { setWebsite(e.target.value); setDiscovery(null); setForm(null); setStarted(''); }} onKeyDown={e => { if (e.key === 'Enter' && !busy && allowed && website.trim()) void discover(); }} /></label>
@@ -159,7 +158,7 @@ export default function ScrapingSourcesPage() {
       </details>
       <div className="flex flex-wrap items-center gap-3"><button className={scrapingPrimary} disabled={busy || !allowed || !website.trim()} onClick={() => void discover()}>{busy ? __uiText("กำลังดึงข้อมูล… (อาจใช้ถึง 2 นาที)") : __uiText("ลองดึงข้อมูล")}</button>
         {!busy && website.trim() && !allowed && <span className="text-xs text-amber-700">{__uiText("ติ๊กยืนยันสิทธิ์ก่อน")}</span>}</div>
-      {started && <p role="status" className="rounded-lg bg-green-50 p-3 text-sm text-green-800">{started}</p>}
+      {started && <Alert tone="ok">{started}</Alert>}
       {discovery && <div className="space-y-3 text-sm">{discovery.warnings.map((warning, index) => <p key={index} className="text-amber-700">{warning}</p>)}
         <details><summary className="cursor-pointer text-gray-600">{__uiText("ตรวจแล้ว ")}{discovery.scannedPages.length} {__uiText(" หน้า · ดูแหล่งที่มา")}</summary><ul className="mt-2 space-y-2">{discovery.scannedPages.map((page, index) => <li key={index} className="break-all"><a className="text-primary underline" href={page.url} target="_blank" rel="noopener noreferrer">{page.title || page.url}</a> · {page.error || __uiText("พบ {0} รายการ", {"0": page.found})}</li>)}</ul></details>
       </div>}
@@ -171,7 +170,7 @@ export default function ScrapingSourcesPage() {
         <fieldset className="space-y-2"><legend className="text-sm font-medium">{__uiText("เลือกข้อมูลที่จะเก็บ")}</legend>
           <div className="flex flex-wrap gap-2">{discovery.fields.map(field => <label key={field.key} className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm">
             <input type="checkbox" checked={picked(field.key)} disabled={field.required} onChange={e => selectField(field.key, e.target.checked)} />{field.label}</label>)}
-            {!discovery.fields.some(field => field.key === 'price') && <span className="rounded-lg bg-amber-50 px-3 py-1.5 text-sm text-amber-800">{__uiText("✗ ไม่พบราคา")}</span>}</div></fieldset>
+            {!discovery.fields.some(field => field.key === 'price') && <span className="rounded-lg bg-warn-container px-3 py-1.5 text-sm text-warn">{__uiText("✗ ไม่พบราคา")}</span>}</div></fieldset>
         {!!discovery.preview?.items.length && <TableViewport className="overflow-x-auto rounded-lg border border-gray-200">
           <p className="bg-gray-50 px-3 py-2 text-xs text-gray-500">{__uiText("ตัวอย่าง ")}{Math.min(discovery.preview.items.length, 5)} {__uiText(" จาก ")}{discovery.preview.found} {__uiText(" รายการในหน้าแรก ")}<a className="text-primary underline" href={discovery.preview.url} target="_blank" rel="noopener noreferrer">{discovery.preview.url}</a></p>
           <table className="cp-data-table w-full text-left text-sm"><thead className="text-xs text-gray-500"><tr>{columns.map(field => <th key={field.key} className="px-3 py-2 font-medium" scope="col">{field.label}</th>)}</tr></thead>

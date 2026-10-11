@@ -3,7 +3,6 @@ import {
   getCartMoveAllowedCategories,
   putCartMoveAllowedCategories,
 } from '@josh/shared-api';
-import { Button } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
 import {
@@ -13,7 +12,7 @@ import {
 import { childrenOf } from '../category/category-tree.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Button, Empty, Icon, Loading, Panel, PanelHead, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 function parentMap(rows: CategoryRow[]): Map<string, string | null> {
   return new Map(
     rows.map((row) => [row.category_id_uuid, row.parent_id_uuid ?? null]),
@@ -104,26 +103,26 @@ function CategoryNode({
         {kids.length > 0 ? (
           <button
             type="button"
-            className="w-5 text-xs text-gray-500"
+            className="flex w-5 items-center justify-center text-on-surface-variant"
             onClick={() => onToggleExpand(id)}
-            aria-label={isOpen ? __uiText("Collapse") : __uiText("Expand")}
+            aria-label={isOpen ? __uiText("ย่อหมวดย่อย") : __uiText("ขยายหมวดย่อย")}
           >
-            {isOpen ? '▼' : '▶'}
+            <Icon name={isOpen ? 'expand_more' : 'chevron_right'} size={18} />
           </button>
         ) : (
           <span className="w-5" />
         )}
-        <label className="flex flex-1 cursor-pointer items-center gap-2 text-sm text-gray-800">
+        <label className="flex flex-1 cursor-pointer items-center gap-2 text-sm text-on-surface">
           <input
             type="checkbox"
             checked={checked}
             disabled={covered}
             onChange={() => onToggle(id)}
           />
-          <span className={covered ? 'text-gray-400' : ''}>
+          <span className={covered ? 'text-outline' : ''}>
             {labelOf(row)}
             {row.category_name_en && row.category_name_th ? (
-              <span className="ml-1 text-xs text-gray-400">
+              <span className="ml-1 text-xs text-outline">
                 ({row.category_name_en})
               </span>
             ) : null}
@@ -171,7 +170,7 @@ export default function CartMoveCategoriesAdmin() {
       })
       .catch((err: { response?: { data?: { message?: string } }; message?: string }) => {
         setError(
-          err?.response?.data?.message ?? err.message ?? __uiMessage("โหลด allowlist ไม่สำเร็จ"),
+          err?.response?.data?.message ?? err.message ?? __uiMessage("โหลดรายการหมวดไม่สำเร็จ"),
         );
       })
       .finally(() => setLoadingAllowlist(false));
@@ -210,7 +209,7 @@ export default function CartMoveCategoriesAdmin() {
     try {
       const res = await putCartMoveAllowedCategories([...selected]);
       setSelected(new Set(res.categoryIds ?? []));
-      setSavedMsg(`บันทึกแล้ว ${res.categoryIds.length} หมวด`);
+      setSavedMsg(__uiText("บันทึกแล้ว {0} หมวด", { 0: res.categoryIds.length }));
     } catch (err: unknown) {
       const e = err as {
         response?: { data?: { message?: string } };
@@ -225,59 +224,64 @@ export default function CartMoveCategoriesAdmin() {
   const loading = loadingTree || loadingAllowlist;
 
   return (
-    <div className="cp-management-page">
+    <div className="cp-management-page grid w-full gap-5">
       <AdminListHeader
-        title={__uiText("Unlock Move Categories")}
-        subtitle={__uiText("หมวดที่อนุญาตให้ย้ายข้าม shipment ใน Unlock Free Shipping — ติ๊กแม่ครอบทั้งต้นไม้ หรือเลือกแค่บาง subcate")}
+        title={__uiText("หมวดที่ย้ายของในตะกร้าได้")}
+        subtitle={__uiText("เลือกหมวดสินค้าที่ลูกค้าย้ายไปส่งรอบอื่นได้ เพื่อให้ยอดถึงเกณฑ์ส่งฟรี")}
       />
 
-      <p className="mb-4 max-w-2xl text-sm text-gray-600">
-        {__uiText("สินค้า order-taking ย้ายไม่ได้เสมอ เปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วลูกจะถูกครอบอัตโนมัติ (checkbox ลูกเป็นสีเทา) ถ้าต้องการแค่บาง subcate ให้ติ๊กเฉพาะลูกโดยไม่ติ๊กแม่")}</p>
+      <p className="max-w-3xl text-sm text-on-surface-variant">
+        {__uiText("สินค้าสั่งล่วงหน้าย้ายไม่ได้เสมอ และการเปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วหมวดย่อยทั้งหมดจะถูกเลือกด้วย (ช่องเป็นสีเทา) ถ้าต้องการแค่บางหมวดย่อย ให้ติ๊กเฉพาะหมวดย่อยโดยไม่ติ๊กหมวดแม่")}</p>
 
-      {loading ? (
-        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
-      ) : (
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <Button
-              type="button"
-              onClick={() => void handleSave()}
-              disabled={saving}
-            >
-              {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
-            </Button>
-            <span className="text-sm text-gray-500">
-              {__uiText("เลือกแล้ว ")}{selected.size} {__uiText(" หมวด")}</span>
-            {savedMsg ? (
-              <span className="text-sm text-green-700">{savedMsg}</span>
-            ) : null}
-          </div>
+      {error ? <Alert tone="danger">{(typeof error === 'string' ? __uiText(error) : error)}</Alert> : null}
 
-          {error ? <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p> : null}
-
-          <div className="max-h-[70vh] overflow-auto rounded-lg border border-gray-200 bg-white p-3">
-            {roots.length === 0 ? (
-              <p className="text-sm text-gray-500">{__uiText("ไม่พบหมวดหมู่")}</p>
-            ) : (
-              <ul>
-                {roots.map((row) => (
-                  <CategoryNode
-                    key={row.category_id_uuid}
-                    row={row}
-                    rows={rows}
-                    selected={selected}
-                    parents={parents}
-                    expanded={expanded}
-                    onToggleExpand={onToggleExpand}
-                    onToggle={onToggle}
-                    depth={0}
-                  />
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-      )}
+      <Panel className="overflow-hidden">
+        <PanelHead
+          icon="category"
+          title={__uiText("หมวดสินค้า")}
+          sub={!loading && <>{__uiText("เลือกแล้ว ")}{selected.size} {__uiText(" หมวด")}</>}
+        />
+        {loading ? (
+          <Loading variant="form" />
+        ) : (
+          <>
+            <div className="max-h-[70vh] overflow-auto p-3">
+              {roots.length === 0 ? (
+                <Empty icon="category">{__uiText("ไม่พบหมวดหมู่")}</Empty>
+              ) : (
+                <ul>
+                  {roots.map((row) => (
+                    <CategoryNode
+                      key={row.category_id_uuid}
+                      row={row}
+                      rows={rows}
+                      selected={selected}
+                      parents={parents}
+                      expanded={expanded}
+                      onToggleExpand={onToggleExpand}
+                      onToggle={onToggle}
+                      depth={0}
+                    />
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center justify-end gap-3 border-t border-secondary-container px-4 py-3">
+              {savedMsg ? (
+                <span role="status" className="text-sm text-ok">{savedMsg}</span>
+              ) : null}
+              <Button
+                variant="primary"
+                icon="check"
+                onClick={() => void handleSave()}
+                disabled={saving}
+              >
+                {saving ? __uiText("กำลังบันทึก...") : __uiText("บันทึก")}
+              </Button>
+            </div>
+          </>
+        )}
+      </Panel>
     </div>
   );
 }

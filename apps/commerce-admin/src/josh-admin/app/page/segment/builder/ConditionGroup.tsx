@@ -87,7 +87,7 @@ export function ConditionGroup({
           <button
             type="button"
             onClick={onRemove}
-            className="text-xs text-red-500 hover:underline"
+            className="text-xs text-danger hover:underline"
           >
             {__uiText("ลบกลุ่มนี้")}</button>
         )}

@@ -24,7 +24,7 @@ import {
 } from './promotion-product-set.helpers';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Button, Checkbox, FormField, Input, PageHeader, Panel, PanelHead, inputCls, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PromotionProductSetForm = () => {
   __useUiLocale();
   const navigate = useNavigate();
@@ -122,7 +122,7 @@ const PromotionProductSetForm = () => {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert(__uiText("กรุณาระบุชื่อ Product Set"));
+      alert(__uiText("กรุณาระบุชื่อชุดสินค้า"));
       return;
     }
     setSaving(true);
@@ -157,89 +157,69 @@ const PromotionProductSetForm = () => {
     return <div className="cp-management-page text-sm text-gray-500">{__uiText("กำลังโหลด...")}</div>;
   }
 
+  const leave = () => navigate(returnDestination ?? ADMIN_ROUTES.promotionProductSets);
+
   return (
-    <div className="cp-page-panel space-y-6 bg-white border border-secondary-container rounded-xl p-4 md:p-6">
-      <header className="flex items-center justify-between border-b pb-4">
-        <h1 className="text-2xl font-black text-gray-800">
-          {id ? __uiText("แก้ไข Promotion Product Set") : __uiText("สร้าง Promotion Product Set")}
-        </h1>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => navigate(returnDestination ?? ADMIN_ROUTES.promotionProductSets)}
-            className="rounded-lg px-4 py-2 text-sm font-bold text-gray-500 hover:bg-gray-100"
-          >
-            {__uiText("ยกเลิก")}</button>
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => void handleSave()}
-            className="rounded-lg bg-emerald-600 px-6 py-2 text-sm font-bold text-white shadow-md hover:bg-emerald-700 disabled:opacity-60"
-          >
-            {saving ? __uiText("กำลังบันทึก…") : __uiText("บันทึก")}
-          </button>
-        </div>
-      </header>
+    <div className="cp-management-page flex flex-col gap-5">
+      <PageHeader
+        back={{ to: returnDestination ?? ADMIN_ROUTES.promotionProductSets, label: 'กลับ' }}
+        title={id ? __uiText("แก้ไขชุดสินค้าโปรโมชัน") : __uiText("เพิ่มชุดสินค้าโปรโมชัน")}
+        subtitle={__uiText("ตั้งชื่อชุด แล้วเลือกหมวดหมู่ แบรนด์ หรือสินค้าที่อยู่ในชุดนี้")}
+      />
 
-      {error && <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
-      {previewError.category && <p className="text-sm text-red-600">{(typeof (previewError.category) === 'string' ? __uiText(previewError.category) : previewError.category)}</p>}
-      {previewError.brand && <p className="text-sm text-red-600">{(typeof (previewError.brand) === 'string' ? __uiText(previewError.brand) : previewError.brand)}</p>}
+      {error && <Alert tone="danger">{(typeof error === 'string' ? __uiText(error) : error)}</Alert>}
+      {previewError.category && <Alert tone="danger">{(typeof (previewError.category) === 'string' ? __uiText(previewError.category) : previewError.category)}</Alert>}
+      {previewError.brand && <Alert tone="danger">{(typeof (previewError.brand) === 'string' ? __uiText(previewError.brand) : previewError.brand)}</Alert>}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="h-fit min-w-0 space-y-4 rounded-2xl border border-gray-100 p-5 shadow-sm lg:col-span-1">
-          <h3 className="border-b pb-2 font-bold text-gray-700">{__uiText("ตั้งค่า Product Set")}</h3>
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <Panel className="h-fit lg:col-span-1">
+          <PanelHead title={__uiText("ตั้งค่าชุดสินค้า")} />
+          <div className="space-y-4 p-5">
+            <FormField label={__uiText("ชื่อ")} required>
+              <Input
+                id="pps-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={__uiText("เช่น หมวดเนื้อสัตว์โปรโมชั่น")}
+              />
+            </FormField>
 
-          <div>
-            <label htmlFor="pps-name" className="text-xs font-bold uppercase text-gray-400">
-              {__uiText("ชื่อ")}</label>
-            <input
-              id="pps-name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={__uiText("เช่น หมวดเนื้อสัตว์โปรโมชั่น")}
-              className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none ring-primary/10 focus:ring-2"
-            />
-          </div>
+            <FormField label={__uiText("คำอธิบาย")}>
+              <textarea
+                id="pps-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                className={inputCls}
+              />
+            </FormField>
 
-          <div>
-            <label htmlFor="pps-description" className="text-xs font-bold uppercase text-gray-400">
-              {__uiText("คำอธิบาย")}</label>
-            <textarea
-              id="pps-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none ring-primary/10 focus:ring-2"
-            />
-          </div>
-
-          <label className="flex items-center gap-2 text-sm text-gray-700">
-            <input
-              type="checkbox"
+            <Checkbox
+              label={__uiText("เปิดใช้งาน")}
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
             />
-            {__uiText("เปิดใช้งาน")}</label>
 
-          <div>
-            <span className="text-xs font-bold uppercase text-gray-400">{__uiText("หมวดหมู่ที่ผูกอัตโนมัติ")}</span>
-            <p className="mb-1 text-[11px] text-gray-400">
-              {__uiText("ติ๊กหมวดหมู่ → สินค้าทั้งหมดในหมวดถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกติ๊กเพื่อเอาออก")}</p>
-            <PromotionCategoryMultiSelect
-              rows={categoryRows}
-              selectedIds={categoryIds}
-              onChange={setCategoryIds}
-            />
-          </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-medium text-on-surface">{__uiText("หมวดหมู่ที่ผูกอัตโนมัติ")}</span>
+              <p className="text-[11px] text-outline">
+                {__uiText("เลือกหมวดหมู่ แล้วสินค้าทั้งหมดในหมวดจะถูกเพิ่มเข้าชุดเอง เอาออกได้โดยยกเลิกการเลือก")}</p>
+              <PromotionCategoryMultiSelect
+                rows={categoryRows}
+                selectedIds={categoryIds}
+                onChange={setCategoryIds}
+              />
+            </div>
 
-          <div>
-            <span className="text-xs font-bold uppercase text-gray-400">{__uiText("แบรนด์ที่ผูกอัตโนมัติ")}</span>
-            <p className="mb-1 text-[11px] text-gray-400">
-              {__uiText("เลือกแบรนด์ → สินค้าทั้งหมดของแบรนด์ถูกเพิ่มเข้ารายการอัตโนมัติ ยกเลิกเลือกเพื่อเอาออก")}</p>
-            <PromotionBrandMultiSelect selectedIds={brandIds} onChange={setBrandIds} />
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-medium text-on-surface">{__uiText("แบรนด์ที่ผูกอัตโนมัติ")}</span>
+              <p className="text-[11px] text-outline">
+                {__uiText("เลือกแบรนด์ แล้วสินค้าทั้งหมดของแบรนด์จะถูกเพิ่มเข้าชุดเอง เอาออกได้โดยยกเลิกการเลือก")}</p>
+              <PromotionBrandMultiSelect selectedIds={brandIds} onChange={setBrandIds} />
+            </div>
           </div>
-        </div>
+        </Panel>
 
         <div className="min-w-0 lg:col-span-2">
           <PromotionProductSetPanel
@@ -249,6 +229,14 @@ const PromotionProductSetForm = () => {
             onManualChange={setManualItems}
           />
         </div>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <Button variant="ghost" onClick={leave}>
+          {__uiText("ยกเลิก")}</Button>
+        <Button variant="primary" icon="check" disabled={saving} onClick={() => void handleSave()}>
+          {saving ? __uiText("กำลังบันทึก…") : __uiText("บันทึก")}
+        </Button>
       </div>
 
       {id && (

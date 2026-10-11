@@ -330,8 +330,8 @@ function Choose({ owner }: { owner: string }) {
                 {companies.data.ownership === "josh" && (
                   <Alert tone="warn">
                     {text(
-                      "Josh ยังเป็นเจ้าของการมอบหมาย Commerce ยังบันทึกไม่ได้",
-                      "Josh still owns assignments. Commerce cannot save them.",
+                      "ตอนนี้ยังมอบหมายผ่านระบบร้านค้าเดิม หน้านี้จึงยังบันทึกไม่ได้",
+                      "Assignments are still saved in the store system, so this page cannot save them yet.",
                     )}
                   </Alert>
                 )}
@@ -356,7 +356,7 @@ function Choose({ owner }: { owner: string }) {
                           />
                           <span className="min-w-0 break-words">
                             {c.name}
-                            <span className="block text-xs text-on-surface-variant">
+                            <span className="block font-mono text-[11px] text-on-surface-variant">
                               {c.id}
                             </span>
                           </span>
@@ -447,6 +447,7 @@ function Choose({ owner }: { owner: string }) {
           <PlanningError error={error} />
           <div className="flex flex-wrap gap-3">
             <Button
+              variant="primary"
               disabled={
                 companies.loading ||
                 !!companies.error ||
@@ -506,14 +507,14 @@ function Scope({ review }: { review: AssignmentReview }) {
               className="rounded-lg border border-secondary-container p-3 space-y-2 break-words"
             >
               <h3 className="font-semibold">{i.name}</h3>
-              <p className="text-xs break-all">{i.companyId}</p>
+              <p className="font-mono text-[11px] break-all">{i.companyId}</p>
               <p>
                 {text("ผู้ดูแลเดิม", "Previous owner")}:{" "}
                 {i.recorded
                   ? ownerName(i.previousOwner)
                   : text(
-                      "ยังไม่มีระเบียน Commerce ผู้ดูแลจากระบบต้นทางยังไม่ยืนยัน",
-                      "No Commerce assignment record. Upstream ownership is unverified.",
+                      "ยังไม่มีบันทึกผู้ดูแลในหน้านี้ ผู้ดูแลจากระบบเดิมยังไม่ได้ยืนยัน",
+                      "No assignment recorded here yet. Ownership from the earlier system is unverified.",
                     )}
               </p>
               <p>
@@ -531,7 +532,7 @@ function Scope({ review }: { review: AssignmentReview }) {
         </ul>
         <Alert tone="warn">
           {text(
-            "จำนวนบัญชีอ้างอิงสำเนาที่นำเข้า ความสดของระบบต้นทางยังไม่ยืนยัน บันทึกจะส่งเหตุการณ์ผ่าน outbox แต่ยังไม่ยืนยันว่า Josh รับแล้ว",
+            "จำนวนบัญชีมาจากข้อมูลที่นำเข้าไว้ อาจยังไม่ตรงกับระบบร้านค้าล่าสุด หลังบันทึก ระบบจะส่งการเปลี่ยนแปลงไปที่ระบบร้านค้า แต่ยังยืนยันไม่ได้ว่าระบบร้านค้ารับแล้ว",
             "Account counts describe imported copies; upstream freshness is unverified. Saving enqueues outbox events; Josh delivery remains unverified.",
           )}
         </Alert>
@@ -665,6 +666,7 @@ function Review({ owner }: { owner: string }) {
                 </label>
                 <PlanningError error={writer.error} />
                 <Button
+                  variant="primary"
                   disabled={
                     !confirmed ||
                     writer.busy ||
@@ -770,7 +772,7 @@ function Recovery({ owner, id }: { owner: string; id: string }) {
       </WorkspaceLink>
       <PageHeader
         title={text("ตรวจผลคำขอการมอบหมาย", "Check assignment request")}
-        subtitle={id}
+        subtitle={<span className="font-mono">{id}</span>}
       />
       {outcome.loading ? (
         <Loading variant="detail" />

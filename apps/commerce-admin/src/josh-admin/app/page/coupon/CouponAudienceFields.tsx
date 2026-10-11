@@ -234,7 +234,7 @@ export function CouponAudienceFields({
               {__uiText("ดาวน์โหลด template")}</a>
           </div>
           {fileError && (
-            <p role="alert" className="text-xs text-red-600">
+            <p role="alert" className="text-xs text-danger">
               {(typeof (fileError) === 'string' ? __uiText(fileError) : fileError)}
             </p>
           )}
@@ -259,7 +259,7 @@ export function CouponAudienceFields({
           <p
             role="status"
             aria-live="polite"
-            className={`text-xs ${recipientCount === 0 ? 'text-amber-700' : 'text-gray-500'}`}
+            className={`text-xs ${recipientCount === 0 ? 'text-warn' : 'text-gray-500'}`}
           >
             {recipientCount === 0
               ? __uiText("ยังไม่มีรายชื่อ — คูปองนี้จะยังไม่มีใครใช้ได้จนกว่าจะเพิ่มรายชื่อ")

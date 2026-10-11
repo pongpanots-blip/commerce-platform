@@ -85,7 +85,7 @@ export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onCh
       </button>
 
       {loadError && (
-        <p className="mt-1 text-xs text-red-600">
+        <p className="mt-1 text-xs text-danger">
           {__uiText("โหลดข้อมูลประเภทร้านไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง")}</p>
       )}
 
@@ -162,7 +162,7 @@ export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onCh
                 type="button"
                 onClick={() => removeGroupChip(id)}
                 aria-label={__uiText("นำ {0} ออก", {"0": byGroupId.get(id) ?? id})}
-                className="ml-1 text-gray-400 hover:text-red-500"
+                className="ml-1 text-gray-400 hover:text-alert"
               >
                 ×
               </button>
@@ -178,7 +178,7 @@ export function CuisineMultiSelect({ selectedCuisineIds, selectedParentIds, onCh
                 type="button"
                 onClick={() => removeChildChip(id)}
                 aria-label={__uiText("นำ {0} ออก", {"0": byChildId.get(id) ?? id})}
-                className="ml-1 text-gray-400 hover:text-red-500"
+                className="ml-1 text-gray-400 hover:text-alert"
               >
                 ×
               </button>

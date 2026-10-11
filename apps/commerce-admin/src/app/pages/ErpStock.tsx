@@ -12,6 +12,7 @@ export function ErpStock() {
   const [form, setForm] = useState({ sku: '', qty: '' });
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   async function handleSubmit() {
     setSubmitting(true);
@@ -19,6 +20,7 @@ export function ErpStock() {
     try {
       await api.put('/erp-stub/stock', { sku: form.sku, qty: Number(form.qty) });
       setForm({ sku: '', qty: '' });
+      setShowForm(false);
       reload();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : String(err));
@@ -30,12 +32,15 @@ export function ErpStock() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("ERP stub stock")}
-        subtitle={__uiText("Simulated ERP inventory — set stock levels for the on_hand fulfillment mode.")}
-        actions={<Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("Refresh")}</Button>}
+        title={__uiText("สต็อกจำลองสำหรับทดสอบ")}
+        subtitle={__uiText("กำหนดสต็อกจำลองเพื่อทดสอบการขาย")}
+        actions={<>
+          <Button icon="refresh" variant="secondary" onClick={reload}>{__uiText("Refresh")}</Button>
+          <Button icon="add" variant="primary" onClick={() => setShowForm(true)} disabled={showForm}>{__uiText("ตั้งสต็อกจำลอง")}</Button>
+        </>}
       />
 
-      <FormPanel
+      {showForm && <FormPanel
         title={__uiText("Set stock level")}
         icon="inventory_2"
         cols={2}
@@ -43,13 +48,14 @@ export function ErpStock() {
         submitLabel={__uiText("Set stock")}
         busy={submitting}
         onSubmit={handleSubmit}
+        onCancel={() => { setShowForm(false); setFormError(null); }}
       >
-        <Field label={__uiText("SKU")}>
+        <Field label={__uiText("รหัสสินค้า")}>
           <Input
             required
             value={form.sku}
             onChange={(e) => setForm({ ...form, sku: e.target.value })}
-            placeholder={__uiText("e.g. SKU-A")}
+            placeholder={__uiText("รหัสสินค้าที่ใช้ทดสอบ")}
           />
         </Field>
         <Field label={__uiText("Quantity")}>
@@ -60,7 +66,7 @@ export function ErpStock() {
             placeholder="0"
           />
         </Field>
-      </FormPanel>
+      </FormPanel>}
 
       <Panel>
         <PanelHead title={__uiText("Stock levels")} />
@@ -68,11 +74,11 @@ export function ErpStock() {
         {loading && !data ? (
           <Loading />
         ) : !data?.items.length ? (
-          <Empty>{__uiText("No stock rows yet.")}</Empty>
+          <Empty icon="inventory_2">{__uiText("ยังไม่มีสต็อกจำลอง กดปุ่ม “ตั้งสต็อกจำลอง” เพื่อเพิ่มรายการแรก")}</Empty>
         ) : (
           <Table>
             <THead>
-              <TH>{__uiText("SKU")}</TH>
+              <TH>{__uiText("รหัสสินค้า")}</TH>
               <TH right>{__uiText("Qty")}</TH>
             </THead>
             <TBody>

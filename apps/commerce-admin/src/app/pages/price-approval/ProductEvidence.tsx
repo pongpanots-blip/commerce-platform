@@ -81,7 +81,7 @@ export function ProductEvidence({ sku }: { sku: string }) {
                   <p>
                     {q.data.stock.status === "ambiguous_identity"
                       ? text(
-                          "SKU นี้ตรงกับสินค้ามากกว่าหนึ่งรายการ",
+                          "รหัสสินค้านี้ตรงกับสินค้ามากกว่าหนึ่งรายการ",
                           "This SKU matches multiple products.",
                         )
                       : q.data.stock.status === "organization_scope_unavailable"
@@ -112,11 +112,11 @@ export function ProductEvidence({ sku }: { sku: string }) {
                       <p className="text-sm">
                         {w.owner === "commerce"
                           ? text(
-                              "คลังดูแลโดย Commerce",
+                              "คลังของเรา",
                               "Commerce-managed warehouse",
                             )
                           : text(
-                              "คลังดูแลโดย ERP",
+                              "คลังจากระบบหลัก (ERP)",
                               "ERP-managed warehouse",
                             )}{" "}
                         ·{" "}

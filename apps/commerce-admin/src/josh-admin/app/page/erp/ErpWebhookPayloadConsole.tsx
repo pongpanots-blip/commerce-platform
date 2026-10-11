@@ -378,7 +378,7 @@ export default function ErpWebhookPayloadConsole() {
             >
               {__uiText("รีเซ็ตเป็น template")}</button>
             <Button
-              text={sending ? __uiText("กำลังยิง...") : __uiText("Send mock webhook →")}
+              text={sending ? __uiText("กำลังยิง...") : __uiText("ส่งข้อมูลทดสอบ")}
               onClick={send}
               disabled={sending}
             />

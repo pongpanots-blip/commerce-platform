@@ -1,5 +1,3 @@
-// ui-date-locale: display formatting only; stored dates and request values are unchanged
-import { getUiLocale as __dateLocale } from "@cp/ui";
 // ui-caption-migration: literal captions only
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useState } from "react";
@@ -62,9 +60,10 @@ import {
 } from "@cp/ui";
 const STATUS: Record<string, string> = {
   active: "เปิดขาย",
-  draft: "draft (ยังไม่เปิด)",
-  inactive: "ปิด",
+  draft: "ฉบับร่าง (ยังไม่เปิดขาย)",
+  inactive: "ปิดขาย",
 };
+const statusText = (s: string) => (STATUS[s] ? __uiText(STATUS[s]) : s);
 const show = (v: unknown) =>
   v == null || v === ""
     ? "—"
@@ -288,6 +287,13 @@ function ProductEditor({
   const [err, setErr] = useState("");
   const start = initial();
   const changed = Object.keys(v).filter((k) => v[k] !== start[k]);
+  const fieldLabel = (k: string) =>
+    k === "product_status"
+      ? __uiText("สถานะ")
+      : k === "category_id"
+        ? __uiText("หมวด")
+        : (EDIT_FIELDS.find((f) => f.key === k)?.label ?? k);
+  const changedLabels = changed.map(fieldLabel).join(", ");
 
   async function save() {
     const fields: Record<string, unknown> = {};
@@ -296,7 +302,7 @@ function ProductEditor({
       if (kind === "number") {
         const n = Number(v[k]);
         if (v[k].trim() === "" || !Number.isFinite(n) || n < 0) {
-          setErr(`${k}: ต้องเป็นตัวเลขไม่ติดลบ`);
+          setErr(__uiText("{0}: ต้องเป็นตัวเลขไม่ติดลบ", { "0": fieldLabel(k) }));
           return;
         }
         fields[k] = n;
@@ -305,11 +311,11 @@ function ProductEditor({
     if (
       !window.confirm(
         __uiText(
-          "บันทึก {0} ช่องของ {1}?\n\n{2}\n\n(josh บันทึกในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit · หน้าร้านเห็นทันที)",
+          "บันทึก {0} ช่องของ {1}?\n\n{2}\n\n(ร้านค้าออนไลน์บันทึกในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข · ลูกค้าเห็นทันที)",
           {
             "0": changed.length,
             "1": p.product_inventory_sku,
-            "2": changed.join(", "),
+            "2": changedLabels,
           },
         ),
       )
@@ -320,7 +326,7 @@ function ProductEditor({
     try {
       await joshActionsApi.updateProduct(p.product_inventory_id, fields);
       onClose();
-      onSaved(`บันทึก ${p.product_inventory_sku} แล้ว (${changed.join(", ")})`);
+      onSaved(__uiText("บันทึก {0} แล้ว ({1})", { "0": p.product_inventory_sku, "1": changedLabels }));
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
     } finally {
@@ -343,11 +349,11 @@ function ProductEditor({
       description={
         sources.fields
           ? text(
-              "แก้ช่องสินค้าอื่นตามสิทธิ์เดิม ข้อมูลที่ Commerce ดูแลและยังไม่บันทึกจะไม่ใช้ค่า Josh มาเติม · ชื่อ รายละเอียด ส่วนผสม และสารก่อภูมิแพ้แก้ที่งานแก้ข้อความสินค้า · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน",
-              "Edit other product fields with existing permissions. Missing commerce-owned values do not use copied Josh defaults. Names, descriptions, ingredients and allergens use the product content task; customer/contract prices use staff pricing.",
+              "แก้ช่องสินค้าอื่นตามสิทธิ์เดิม ช่องที่ระบบนี้ดูแลแต่ยังไม่ได้บันทึกจะไม่ใช้ค่าจากร้านค้าออนไลน์มาเติม · ชื่อ รายละเอียด ส่วนผสม และสารก่อภูมิแพ้แก้ที่งานแก้ข้อความสินค้า · ราคาเฉพาะลูกค้าและราคาสัญญาแก้ที่หน้าราคาเฉพาะลูกค้าและราคาสัญญา",
+              "Edit other product fields with your existing permissions. Fields this system keeps but has not saved yet are not filled from the online shop. Names, descriptions, ingredients and allergens are edited in the product content task; customer and contract prices on the customer and contract prices page.",
             )
           : __uiText(
-              "ช่องว่างไม่ลบค่าเดิม (josh ข้ามค่าว่าง) · ราคาลูกค้า/สัญญาแก้ที่หน้า ราคาพนักงาน",
+              "ช่องว่างไม่ลบค่าเดิม · ราคาเฉพาะลูกค้าและราคาสัญญาแก้ที่หน้าราคาเฉพาะลูกค้าและราคาสัญญา",
             )
       }
     >
@@ -356,9 +362,9 @@ function ProductEditor({
           value={v.product_status}
           onChange={(e) => setV({ ...v, product_status: e.target.value })}
         >
-          {Object.entries(STATUS).map(([k, label]) => (
+          {Object.keys(STATUS).map((k) => (
             <option key={k} value={k}>
-              {label}
+              {statusText(k)}
             </option>
           ))}
           {!(v.product_status in STATUS) && (
@@ -434,14 +440,15 @@ export function JoshProductDetail() {
     if (
       !window.confirm(
         __uiText(
-          "{0}ข้อมูลจาก ERP ของสินค้า {1}?\n\n{2} (josh ทำในนามของคุณ — josh บันทึกอีเมลคุณไว้ใน audit)",
+          "{0}ข้อมูลจากระบบขาย (ERP) ของสินค้า {1}?\n\n{2} (ร้านค้าออนไลน์บันทึกในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข)",
           {
-            "0": verb,
+            "0": __uiText(verb),
             "1": p.product_inventory_sku,
-            "2":
+            "2": __uiText(
               action === "approve"
-                ? "สินค้า draft จะขึ้นขาย และค่าที่ ERP ส่งมาจะใช้ทันที"
-                : "ค่าที่ ERP ส่งมาจะถูกทิ้ง สินค้าคงค่าเดิม",
+                ? "สินค้าฉบับร่างจะเปิดขาย และใช้ค่าที่ระบบขายส่งมาทันที"
+                : "ไม่ใช้ค่าที่ระบบขายส่งมา สินค้าคงค่าเดิม",
+            ),
           },
         ),
       )
@@ -469,12 +476,12 @@ export function JoshProductDetail() {
   return (
     <Page>
       <PageHeader
-        back={{ to: backTo, label: "สินค้า (josh)" }}
-        title={p ? p.product_inventory_sku : id}
+        back={{ to: backTo, label: "รายงานสินค้า" }}
+        title={<span className="font-mono">{p ? p.product_inventory_sku : id}</span>}
         badge={
           p && (
-            <Chip tone={p.product_status === "active" ? "ok" : "muted"}>
-              {STATUS[p.product_status] ?? p.product_status}
+            <Chip tone={p.product_status === "active" ? "ok" : "muted"} dot>
+              {statusText(p.product_status)}
             </Chip>
           )
         }
@@ -516,9 +523,9 @@ export function JoshProductDetail() {
       <ErrorText error={detail.error} onRetry={detail.reload} />
       <ErrorText error={content.error} onRetry={content.reload} />
       {msg && (
-        <div className="px-4 py-2 text-xs text-on-surface-variant bg-surface-container-low">
-          {typeof msg === "string" ? __uiText(msg) : msg}
-        </div>
+        <Alert tone="info" onClose={() => setMsg("")}>
+          {__uiText(msg)}
+        </Alert>
       )}
 
       {detail.loading && !p ? (
@@ -537,26 +544,29 @@ export function JoshProductDetail() {
             }}
           />
 
-          <Panel>
-            <div className="p-4 text-xs text-on-surface-variant">
-              {__uiText("ราคา: ขาย ")}
-              {fmt.baht(p.selling_unit_price)} {__uiText(" · สั่ง ")}
-              {fmt.baht(p.ordering_price)} {__uiText(" · ตั้ง ")}
-              {fmt.baht(p.original_price)} {__uiText(" · MOQ ")}
-              {show(p.moq)} {__uiText(" · supplier ")}
-              {show(p.sup_code)} {__uiText(" · เก็บ ")}
-              {show(p.storage_temperature)} {__uiText(" · ประเทศ ")}
-              {show(p.country_code_source)} {__uiText(" · VAT ")}
-              {show(p.vat_type)}
-            </div>
+          <Panel className="p-4">
+            <DetailSection title={__uiText("ราคาและข้อมูลสินค้า")} icon="sell">
+              <KeyValueGrid
+                items={[
+                  { label: __uiText("ราคาขาย"), value: fmt.baht(p.selling_unit_price) },
+                  { label: __uiText("ราคาสั่ง"), value: fmt.baht(p.ordering_price) },
+                  { label: __uiText("ราคาตั้ง"), value: fmt.baht(p.original_price) },
+                  { label: __uiText("สั่งขั้นต่ำ"), value: show(p.moq) },
+                  { label: __uiText("รหัสซัพพลายเออร์"), value: show(p.sup_code), mono: true },
+                  { label: __uiText("อุณหภูมิเก็บ"), value: show(p.storage_temperature) },
+                  { label: __uiText("ประเทศต้นทาง"), value: show(p.country_code_source), mono: true },
+                  { label: __uiText("ประเภท VAT"), value: show(p.vat_type), mono: true },
+                ]}
+              />
+            </DetailSection>
           </Panel>
 
           {content.loading && <Loading variant="detail" />}
           {!!content.data?.missing.length && (
             <Alert tone="warn">
               {text(
-                "ข้อมูลที่ Commerce ดูแลบางส่วนยังไม่มีแถวที่บันทึก ช่องที่ขาดจะไม่ใช้ค่า Josh มาเติมในแบบแก้",
-                "Some commerce-owned records are not recorded. Missing editing values are not filled from the Josh copy.",
+                "ข้อมูลบางส่วนที่ระบบนี้ดูแลยังไม่ได้บันทึก ช่องที่ขาดจะไม่ใช้ค่าจากร้านค้าออนไลน์มาเติมในแบบแก้",
+                "Some records this system keeps are not saved yet. Missing editing values are not filled from the online shop's copy.",
               )}
             </Alert>
           )}
@@ -583,36 +593,37 @@ export function JoshProductDetail() {
 
           {p.pendingChanges && p.pendingChanges.length > 0 && (
             <Panel>
-              <div className="space-y-3 p-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-on-surface-variant">
-                    {__uiText("ERP ส่งมาเมื่อ ")}
-                    {new Date(p.erp_pending_at!).toLocaleString(
-                      __dateLocale() === "th" ? "th-TH" : "en-GB",
-                    )}{" "}
-                    {__uiText(" — รออนุมัติ:")}
-                  </span>
-                  <Button
-                    size="sm"
-                    disabled={busy}
-                    onClick={() => decide("approve")}
-                  >
-                    {__uiText("อนุมัติ")}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy}
-                    onClick={() => decide("reject")}
-                  >
-                    {__uiText("ไม่อนุมัติ")}
-                  </Button>
-                </div>
+              <PanelHead
+                icon="pending_actions"
+                title={__uiText("ข้อมูลจากระบบขาย (ERP) รออนุมัติ")}
+                sub={__uiText("ส่งมาเมื่อ {0}", { "0": fmt.when(p.erp_pending_at) })}
+                actions={
+                  <>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={busy}
+                      onClick={() => decide("reject")}
+                    >
+                      {__uiText("ไม่อนุมัติ")}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      disabled={busy}
+                      onClick={() => decide("approve")}
+                    >
+                      {__uiText("อนุมัติ")}
+                    </Button>
+                  </>
+                }
+              />
+              <div className="p-4">
                 <Table>
                   <THead>
-                    <TH>{__uiText("ฟิลด์ ERP")}</TH>
-                    <TH>{__uiText("ตอนนี้")}</TH>
-                    <TH>{__uiText("ERP ส่งมา")}</TH>
+                    <TH>{__uiText("ช่องข้อมูล")}</TH>
+                    <TH>{__uiText("ค่าปัจจุบัน")}</TH>
+                    <TH>{__uiText("ค่าที่ระบบขายส่งมา")}</TH>
                   </THead>
                   <TBody>
                     {p.pendingChanges.map((c) => (
@@ -626,7 +637,7 @@ export function JoshProductDetail() {
                             show(c.pending)
                           )}
                           {c.changed && (
-                            <Chip tone="warn" className="ml-2">
+                            <Chip tone="warn" dot className="ml-2">
                               {__uiText("เปลี่ยน")}
                             </Chip>
                           )}
@@ -681,13 +692,13 @@ function ProductImages({
   const keep = images.filter((m) => !removed.includes(m.id)).length;
   const dirty = files.length > 0 || removed.length > 0;
   async function save() {
-    if (keep + files.length > 3) return setErr("รูปได้สูงสุด 3 รูป (josh)");
+    if (keep + files.length > 3) return setErr(__uiText("รูปได้สูงสุด 3 รูป"));
     if (
       !window.confirm(
-        __uiText("{0}{1}{2} ของ {3}? หน้าร้าน josh เห็นทันที", {
-          "0": files.length ? `เพิ่ม ${files.length} รูป` : "",
+        __uiText("{0}{1}{2} ของ {3}? ลูกค้าเห็นทันที", {
+          "0": files.length ? __uiText("เพิ่ม {0} รูป", { "0": files.length }) : "",
           "1": files.length && removed.length ? " · " : "",
-          "2": removed.length ? `ลบ ${removed.length} รูป` : "",
+          "2": removed.length ? __uiText("ลบ {0} รูป", { "0": removed.length }) : "",
           "3": p.product_inventory_sku,
         }),
       )
@@ -723,7 +734,7 @@ function ProductImages({
       }
       setRemoved([]);
       setFiles([]);
-      onSaved(`บันทึกรูปของ ${p.product_inventory_sku} แล้ว`);
+      onSaved(__uiText("บันทึกรูปของ {0} แล้ว", { "0": p.product_inventory_sku }));
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
     } finally {

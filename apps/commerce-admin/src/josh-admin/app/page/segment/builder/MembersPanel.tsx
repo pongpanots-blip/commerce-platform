@@ -4,14 +4,14 @@ import { Table, TableColumn } from '@josh/shared-ui-web';
 import React, { useCallback, useEffect, useState } from 'react';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Chip, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const PAGE_LIMIT = 20;
 
-const TIER_BADGE_CLASS: Record<string, string> = {
-  gold: 'bg-amber-50 text-amber-700',
-  platinum: 'bg-slate-100 text-slate-700',
-  silver: 'bg-gray-100 text-gray-600',
-  bronze: 'bg-orange-50 text-orange-700',
+const TIER_LABELS: Record<string, string> = {
+  get platinum() { return __uiText("แพลทินัม"); },
+  get gold() { return __uiText("โกลด์"); },
+  get silver() { return __uiText("ซิลเวอร์"); },
+  get bronze() { return __uiText("บรอนซ์"); },
 };
 
 function formatBaht(value: number): string {
@@ -68,16 +68,10 @@ export function MembersPanel({ segmentId }: Props) {
     { key: 'email', label: __uiText("อีเมล") },
     {
       key: 'tier',
-      label: __uiText("Tier"),
+      label: __uiText("ระดับสมาชิก"),
       render: (value: string | null) =>
         value ? (
-          <span
-            className={`rounded-full px-2 py-0.5 text-xs font-semibold capitalize ${
-              TIER_BADGE_CLASS[value] ?? 'bg-gray-100 text-gray-600'
-            }`}
-          >
-            {value}
-          </span>
+          <Chip>{TIER_LABELS[value] ?? value}</Chip>
         ) : (
           <span className="text-xs text-gray-400">—</span>
         ),
@@ -85,6 +79,8 @@ export function MembersPanel({ segmentId }: Props) {
     {
       key: 'lifetime_spend',
       label: __uiText("ยอดใช้จ่ายสะสม"),
+      align: 'right',
+      className: 'tabular-nums whitespace-nowrap',
       render: (value: number) => formatBaht(Number(value ?? 0)),
     },
   ];
@@ -102,6 +98,8 @@ export function MembersPanel({ segmentId }: Props) {
           currentPage={page}
           pageSize={PAGE_LIMIT}
           onPageChange={setPage}
+          emptyTitle={__uiText("ยังไม่มีลูกค้าที่ตรงเงื่อนไข")}
+          emptyDescription={__uiText("ลองปรับเงื่อนไขด้านบนแล้วบันทึกอีกครั้ง")}
         />
       )}
     </div>

@@ -1,12 +1,20 @@
 // ui-metadata-migration: static labels and UI notices only
 import { FormEvent, useState } from 'react';
-import { Button, Empty, ErrorText, Hint, Loading, Page, PageHeader, Panel, PanelHead, SearchInput, Select, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
+import { Button, Chip, Empty, ErrorText, Hint, Loading, Page, PageHeader, Panel, PanelHead, SearchInput, Select, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
 import { inventoryOverviewApi } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-const OWNER = { erp: 'ERP', commerce: 'commerce (คลังเรา)' } as const;
+const OWNER: Record<string, string> = { erp: 'ระบบหลัก (ERP)', commerce: 'คลังของเรา' };
+const SOURCE: Record<string, string> = { erp: 'ระบบหลัก (ERP)', commerce: 'ทีมงานในระบบนี้' };
+const REASON: Record<string, string> = {
+  RECEIVE: 'รับเข้า', COUNT: 'ตรวจนับ', DAMAGE: 'เสียหาย', RETURN: 'รับคืน', CORRECTION: 'แก้ไขยอด',
+  TRANSFER_OUT: 'โอนออก', TRANSFER_IN: 'โอนเข้า', ORDER: 'ตัดสต็อกจากออเดอร์', ORDER_CANCEL: 'คืนสต็อกจากออเดอร์ที่ยกเลิก',
+};
+const MOVE_STATUS: Record<string, string> = { stale: 'ข้อมูลเก่ากว่ายอดปัจจุบัน ไม่ได้ใช้', ignored: 'ไม่ได้ใช้ เพราะคลังนี้ปรับยอดที่อื่น' };
+const label = (map: Record<string, string>, code: string) => (map[code] ? __uiText(map[code]) : code);
+const reasonLabel = (reason: string) => label(REASON, reason.replace(/^ADJUST:/, ''));
 
 /** Stock by SKU and warehouse code, who owns each warehouse's stock, and the last ledger movement. */
 export function InventoryPerWarehouse() {
@@ -24,9 +32,9 @@ export function InventoryPerWarehouse() {
   return (
     <Page>
       <PageHeader
-        title={__uiText("Inventory per warehouse")}
-        subtitle={__uiText("สต็อกตาม SKU และคลัง · ERP = ยอดมาจาก ERP (ปรับใน ERP) · commerce = คลังของเรา (ปรับได้ใน commerce)")}
-        actions={<Button icon="refresh" onClick={data.reload}>{__uiText("Refresh")}</Button>}
+        title={__uiText("สต็อกแต่ละคลัง")}
+        subtitle={__uiText("ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง คลังจากระบบหลัก (ERP) ต้องปรับยอดในระบบหลัก ส่วนคลังของเราปรับได้ที่หน้ารับเข้า ปรับ และโอนสต็อก")}
+        actions={<Button icon="refresh" onClick={data.reload}>{__uiText("รีเฟรช")}</Button>}
       />
 
       <ErrorText error={data.error} />
@@ -36,9 +44,9 @@ export function InventoryPerWarehouse() {
           {data.data.warehouses.map((w) => (
             <StatTile
               key={w.code}
-              label={`${w.code} · ${OWNER[w.stockSource] ?? w.stockSource}`}
+              label={`${w.code} · ${label(OWNER, w.stockSource)}`}
               value={fmt.num(w.onHand)}
-              foot={__uiText("{0} · {1} SKU · จอง {2}",{'0':w.name,'1':fmt.num(w.skus),'2':fmt.num(w.reserved)})}
+              foot={__uiText("{0} · {1} รายการ · จอง {2}",{'0':w.name,'1':fmt.num(w.skus),'2':fmt.num(w.reserved)})}
               onClick={() => pick(warehouse === w.code ? '' : w.code)}
               selected={warehouse === w.code}
             />
@@ -59,7 +67,7 @@ export function InventoryPerWarehouse() {
             </Select>
           </div>
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-[11px] font-semibold text-on-surface-variant mb-1">{__uiText("ค้นหา SKU หรือชื่อสินค้า")}</label>
+            <label className="block text-[11px] font-semibold text-on-surface-variant mb-1">{__uiText("ค้นหารหัสหรือชื่อสินค้า")}</label>
             <SearchInput value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
           <Button type="submit">{__uiText("ค้นหา")}</Button>
@@ -68,12 +76,12 @@ export function InventoryPerWarehouse() {
         {data.loading && !data.data?.items.length ? (
           <Loading />
         ) : !data.data?.items.length ? (
-          <Empty>{__uiText("ไม่พบสต็อก")}</Empty>
+          <Empty>{__uiText("ไม่พบสต็อก ลองเลือกทุกคลังหรือค้นหาด้วยรหัสสินค้าอื่น")}</Empty>
         ) : (
           <>
             <Table>
               <THead>
-                <TH>{__uiText("SKU")}</TH>
+                <TH>{__uiText("รหัสสินค้า")}</TH>
                 <TH>{__uiText("สินค้า")}</TH>
                 <TH>{__uiText("คลัง")}</TH>
                 <TH right>{__uiText("คงเหลือ")}</TH>
@@ -89,11 +97,7 @@ export function InventoryPerWarehouse() {
                     <TD>
                       <span className="font-mono">{r.warehouseCode}</span>
                       <div className="text-[10px] font-medium mt-0.5">
-                        {r.stockSource === 'commerce' ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">{__uiText("✓ commerce")}</span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">{__uiText("ERP")}</span>
-                        )}
+                        <Chip tone={r.stockSource === 'commerce' ? 'ok' : 'muted'}>{label(OWNER, r.stockSource)}</Chip>
                       </div>
                     </TD>
                     <TD kind="num">{fmt.num(r.quantity)}</TD>
@@ -106,9 +110,9 @@ export function InventoryPerWarehouse() {
                         <>
                           <div className="font-mono">{fmt.when(r.lastChangedAt)}</div>
                           <div className="text-on-surface-variant">
-                            {r.lastSource}
-                            {r.lastReason && ` · ${r.lastReason}`}
-                            {r.lastStatus && r.lastStatus !== 'applied' && ` · ${r.lastStatus}`}
+                            {r.lastSource && label(SOURCE, r.lastSource)}
+                            {r.lastReason && ` · ${reasonLabel(r.lastReason)}`}
+                            {r.lastStatus && r.lastStatus !== 'applied' && ` · ${label(MOVE_STATUS, r.lastStatus)}`}
                           </div>
                         </>
                       ) : (

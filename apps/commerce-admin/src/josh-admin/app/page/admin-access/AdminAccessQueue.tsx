@@ -17,7 +17,7 @@ import { getAdminRole } from '../../lib/admin-auth';
 // Duplicated from apps/backend/src/app/admin-access/admin-access.constants.ts
 // so the UI cannot offer customer-only or seed-only roles in the approve flow.
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Alert, Button } from "@cp/ui";
 const ASSIGNABLE_ADMIN_ROLES = [
   'platform_admin',
   'cs',
@@ -31,6 +31,19 @@ const ASSIGNABLE_ADMIN_ROLES = [
 ] as const;
 
 type AssignableAdminRole = (typeof ASSIGNABLE_ADMIN_ROLES)[number];
+
+// Display only: the approve request still sends the raw role code.
+const ROLE_LABEL: Record<AssignableAdminRole, string> = {
+  platform_admin: 'ผู้ดูแลระบบสูงสุด',
+  cs: 'ฝ่ายบริการลูกค้า',
+  marketing: 'ฝ่ายการตลาด',
+  merchandising: 'ฝ่ายจัดการสินค้า',
+  dev: 'ทีมพัฒนาระบบ',
+  sale: 'ฝ่ายขาย (sale)',
+  sales: 'ฝ่ายขาย (sales)',
+  manager: 'ผู้จัดการ',
+  admin: 'ผู้ดูแลระบบ',
+};
 
 type AdminAccessListResponse = {
   data?: AdminAccessRequestItem[];
@@ -103,7 +116,7 @@ export default function AdminAccessQueue() {
 
   const handleApprove = async (request: AdminAccessRequestItem) => {
     const role = selectedRoles[request.id] ?? 'admin';
-    if (!window.confirm(__uiText("ยืนยันอนุมัติ {0} ด้วย role {1}?", {"0": request.email, "1": role}))) return;
+    if (!window.confirm(__uiText("ยืนยันอนุมัติ {0} ให้ได้สิทธิ์ {1}?", {"0": request.email, "1": __uiText(ROLE_LABEL[role])}))) return;
 
     try {
       setActionId(request.id);
@@ -118,7 +131,7 @@ export default function AdminAccessQueue() {
   };
 
   const handleReject = async (request: AdminAccessRequestItem) => {
-    const reason = window.prompt(`เหตุผลที่ปฏิเสธ ${request.email} (ไม่บังคับ)`) ?? undefined;
+    const reason = window.prompt(__uiText("เหตุผลที่ปฏิเสธ {0} (ไม่บังคับ)", {"0": request.email})) ?? undefined;
     if (reason === undefined) return;
     if (!window.confirm(__uiText("ยืนยันปฏิเสธคำขอของ {0}?", {"0": request.email}))) return;
 
@@ -162,7 +175,7 @@ export default function AdminAccessQueue() {
           return (
             <div className="flex flex-wrap items-center gap-2">
               <label htmlFor={`admin-access-role-${row.id}`} className="text-xs text-gray-500">
-                {__uiText("สิทธิ์ (Role)")}</label>
+                {__uiText("สิทธิ์")}</label>
               <div className="w-40">
                 <Select
                   id={`admin-access-role-${row.id}`}
@@ -177,25 +190,15 @@ export default function AdminAccessQueue() {
                 >
                   {ASSIGNABLE_ADMIN_ROLES.map((role) => (
                     <option key={role} value={role}>
-                      {role}
+                      {__uiText(ROLE_LABEL[role])}
                     </option>
                   ))}
                 </Select>
               </div>
-              <button
-                type="button"
-                className="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
-                disabled={busy}
-                onClick={() => void handleApprove(row)}
-              >
-                {__uiText("อนุมัติ")}</button>
-              <button
-                type="button"
-                className="rounded-lg border border-red-200 px-3 py-1 text-xs font-medium text-red-600 disabled:opacity-50"
-                disabled={busy}
-                onClick={() => void handleReject(row)}
-              >
-                {__uiText("ปฏิเสธ")}</button>
+              <Button size="sm" variant="primary" disabled={busy} onClick={() => void handleApprove(row)}>
+                {__uiText("อนุมัติ")}</Button>
+              <Button size="sm" variant="danger-ghost" disabled={busy} onClick={() => void handleReject(row)}>
+                {__uiText("ปฏิเสธ")}</Button>
             </div>
           );
         },
@@ -208,11 +211,11 @@ export default function AdminAccessQueue() {
     return (
       <div className="cp-management-page">
         <AdminListHeader
-          title={__uiText("คำขอ Admin")}
-          subtitle={__uiText("เฉพาะ platform_admin เท่านั้นที่เข้าถึงหน้านี้ได้")}
+          title={__uiText("คำขอใช้งานหลังร้าน")}
+          subtitle={__uiText("คำขอใช้งานหลังร้านของร้านค้าที่รออนุมัติ")}
         />
-        <div className="rounded-xl border border-red-100 bg-red-50 p-6 text-sm text-red-700">
-          {__uiText("คุณไม่มีสิทธิ์เข้าถึงหน้าคำขอ Admin")}</div>
+        <Alert tone="danger">
+          {__uiText("หน้านี้เปิดได้เฉพาะผู้ดูแลระบบสูงสุด หากต้องการใช้งาน โปรดติดต่อผู้ดูแลระบบ")}</Alert>
       </div>
     );
   }
@@ -220,25 +223,22 @@ export default function AdminAccessQueue() {
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
-        title={__uiText("คำขอ Admin")}
-        subtitle={__uiText("ตรวจสอบคำขอสมัครใช้งาน web-admin ที่รออนุมัติ")}
+        title={__uiText("คำขอใช้งานหลังร้าน")}
+        subtitle={__uiText("คำขอใช้งานหลังร้านของร้านค้าที่รออนุมัติ")}
       />
 
       {errorMessage ? (
-        <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700">
-          {errorMessage}
-        </div>
+        <Alert tone="danger">{__uiText(errorMessage)}</Alert>
       ) : null}
 
-      {loading ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
-          {__uiText("กำลังโหลดคำขอ Admin...")}</div>
-      ) : requests.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
-          {__uiText("ไม่มีคำขอ Admin ที่รออนุมัติ")}</div>
-      ) : (
-        <Table columns={columns} data={requests} idKey="id" />
-      )}
+      <Table
+        columns={columns}
+        data={requests}
+        idKey="id"
+        loading={loading}
+        emptyTitle="ไม่มีคำขอที่รออนุมัติ"
+        emptyDescription={__uiText("เมื่อมีคนขอใช้งานหลังร้าน คำขอจะแสดงที่นี่ให้อนุมัติหรือปฏิเสธ")}
+      />
     </div>
   );
 }

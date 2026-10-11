@@ -25,7 +25,7 @@ const CreateBotTemplate = () => {
 
   const handleSubmit = async () => {
     if (!form.name) {
-      alert(__uiText("กรุณากรอกชื่อ Template"));
+      alert(__uiText("กรุณากรอกชื่อข้อความสำเร็จรูป"));
       return false;
     }
     let schema: any;
@@ -66,9 +66,9 @@ const CreateBotTemplate = () => {
 
   return (
     <AdminInsertLayout
-      title={__uiText("เพิ่มรูปแบบคำตอบ")}
-      subtitle={__uiText("เขียนข้อความที่บอทใช้ตอบลูกค้า")}
-      saveLabel="บันทึกรูปแบบคำตอบ"
+      title={__uiText("เพิ่มข้อความสำเร็จรูป")}
+      subtitle={__uiText("เขียนข้อความหรือการ์ดที่แชตบอตใช้ตอบลูกค้า")}
+      saveLabel="บันทึกข้อความสำเร็จรูป"
       backPath={ADMIN_ROUTES.botTemplates}
       saving={saving}
       onSave={handleSubmit}

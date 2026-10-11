@@ -6,11 +6,11 @@ import { Table, TableColumn } from '@josh/shared-ui-web';
 import AdminListHeader from '../../components/AdminListHeader';
 import { useKycQueue } from './kyc-queue.hook';
 import { KYC_DOCUMENT_TYPES, KycQueueEntry } from './kyc.types';
-import { KycStatusBadge } from './KycStatusBadge';
+import { KycStatusBadge, customerTypeLabel } from './KycStatusBadge';
 import KycDocumentModal from './KycDocumentModal';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Button, Chip, Loading, Panel, Segmented, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type QueueTab = 'all' | 'pending' | 'approved' | 'rejected';
 
 const TABS: { key: QueueTab; label: string }[] = [
@@ -84,14 +84,8 @@ export default function KycQueue() {
       label: __uiText("ร้านค้า"),
       render: (_value, row) => (
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-gray-800">{row.companyName}</span>
-          <span
-            className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-bold ${
-              row.customerType === 'B2B' ? 'bg-cyan-50 text-cyan-700' : 'bg-indigo-50 text-indigo-700'
-            }`}
-          >
-            {row.customerType}
-          </span>
+          <span className="font-semibold text-on-surface">{row.companyName}</span>
+          <Chip statusCode={row.customerType}>{customerTypeLabel(row.customerType)}</Chip>
         </div>
       ),
     },
@@ -104,13 +98,13 @@ export default function KycQueue() {
             const doc = row.documents[docType.key];
             return (
               <div key={docType.key} className="flex items-center gap-2">
-                <span className="w-[78px] flex-none text-[11px] text-gray-400">
+                <span className="w-[78px] flex-none text-[11px] text-on-surface-variant">
                   {docType.thumbnailLabel}
                 </span>
                 <KycStatusBadge status={doc.status} />
                 {doc.status === 'rejected' && doc.rejectionReason && (
                   <span
-                    className="max-w-[220px] truncate text-[11px] text-gray-400"
+                    className="max-w-[220px] truncate text-[11px] text-on-surface-variant"
                     title={doc.rejectionReason}
                   >
                     {doc.rejectionReason}
@@ -127,7 +121,7 @@ export default function KycQueue() {
       label: __uiText("ส่งล่าสุด"),
       render: (_value, row) => {
         const { latestSubmitted } = docTimestamps(row);
-        return formatDate(latestSubmitted) ?? <span className="text-gray-300">—</span>;
+        return <span className="tabular-nums">{formatDate(latestSubmitted) ?? '—'}</span>;
       },
     },
     {
@@ -135,60 +129,51 @@ export default function KycQueue() {
       label: __uiText("ตัดสินล่าสุด"),
       render: (_value, row) => {
         const { latestDecided } = docTimestamps(row);
-        return formatDate(latestDecided) ?? <span className="text-gray-300">—</span>;
+        return <span className="tabular-nums">{formatDate(latestDecided) ?? '—'}</span>;
       },
     },
     {
       key: 'actions',
       label: __uiText("เอกสาร"),
       render: (_value, row) => (
-        <button
-          type="button"
-          className="text-xs font-semibold text-primary hover:underline"
-          onClick={() => setSelectedEntry(row)}
-        >
-          {__uiText("ดูเอกสาร")}</button>
+        <Button size="sm" icon="description" onClick={() => setSelectedEntry(row)}>
+          {__uiText("ดูเอกสาร")}</Button>
       ),
     },
   ];
 
   return (
     <div className="cp-management-page flex flex-col gap-4">
-      <AdminListHeader title={__uiText("KYC — ยืนยันตัวตน")} subtitle={__uiText("คิวคำขอยืนยันตัวตนของลูกค้าทั้งหมด")} />
+      <AdminListHeader title={__uiText("ตรวจสอบตัวตนลูกค้า")} subtitle={__uiText("เอกสารยืนยันตัวตนที่ลูกค้าส่งมา แยกตามสถานะการตรวจ")} />
 
-      <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-        {__uiText("หน้านี้เป็น ")}<strong>{__uiText("read-only ในเวอร์ชันแรก")}</strong> {__uiText(" — การอนุมัติ/ปฏิเสธคำขอจริงทำผ่านระบบ CS-CRM แยกต่างหาก แถวในตารางจึงไม่มีปุ่ม action นอกจาก &quot;ดูเอกสาร&quot;")}</div>
+      <Alert tone="info">
+        {__uiText("หน้านี้ใช้ดูเอกสารอย่างเดียว การอนุมัติหรือปฏิเสธทำในระบบบริการลูกค้า (CS-CRM)")}</Alert>
 
-      <div className="flex gap-1 border-b border-gray-200">
-        {TABS.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            className={`px-3.5 py-2 text-sm ${
-              activeTab === tab.key
-                ? 'border-b-2 border-primary font-semibold text-primary'
-                : 'border-b-2 border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label} <span className="text-gray-400">({tabCounts[tab.key] ?? 0})</span>
-          </button>
-        ))}
+      <div className="overflow-x-auto">
+        <Segmented
+          value={activeTab}
+          onChange={setActiveTab}
+          options={TABS.map((tab) => ({ value: tab.key, label: tab.label, count: tabCounts[tab.key] ?? 0 }))}
+        />
       </div>
 
       {loadError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{(typeof loadError === 'string' ? __uiText(loadError) : loadError)}</div>
+        <Alert tone="danger">{(typeof loadError === 'string' ? __uiText(loadError) : loadError)}</Alert>
       )}
 
-      {loading ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-400">
-          {__uiText("กำลังโหลดคิว KYC...")}</div>
-      ) : !loadError && filteredEntries.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-400">
-          {__uiText("ไม่พบรายการในหมวดนี้")}</div>
-      ) : (
-        <Table columns={columns} data={filteredEntries} idKey="id" />
-      )}
+      <Panel className="overflow-hidden">
+        {loading ? (
+          <Loading variant="table">{__uiText("กำลังโหลดรายการ...")}</Loading>
+        ) : (
+          <Table
+            columns={columns}
+            data={filteredEntries}
+            idKey="id"
+            emptyTitle={__uiText("ไม่พบรายการในหมวดนี้")}
+            emptyDescription={activeTab !== 'all' ? __uiText("ลองเลือกแท็บทั้งหมด") : undefined}
+          />
+        )}
+      </Panel>
 
       {selectedEntry && (
         <KycDocumentModal entry={selectedEntry} onClose={() => setSelectedEntry(null)} />

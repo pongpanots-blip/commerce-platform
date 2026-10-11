@@ -5,7 +5,7 @@ import { getUiLocale as __dateLocale } from '@cp/ui';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowLink, Button, Empty, ErrorText, Icon, Loading, PageHeader, Panel, PanelHead, SectionTitle,
+  ArrowLink, Button, Chip, Empty, ErrorText, Icon, Loading, PageHeader, Panel, PanelHead, SectionTitle,
   StatGrid, StatTile, StatusChip, TBody, TD, TH, THead, TR, Table, fmt, useNavigation,
 } from '@cp/ui';
 import { AdminStats, Integration, SyncJob, api, webhookApi } from '../../lib/api';
@@ -14,6 +14,7 @@ import { SECTIONS } from '../navigation';
 import { CommercePage as Page } from '../CommercePage';
 import { commerceText as text } from '../commerce-copy';
 import { WorkspaceMetric, WorkspaceLink } from '../WorkspaceParts';
+import { operationLabel } from './SyncJobs';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -68,13 +69,13 @@ export function Dashboard() {
         }
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {[['การพยายามชำระ', 'Payment attempts'], ['รับเงินเข้าบัญชี', 'Settlement'], ['คืนเงิน', 'Refund records'], ['ข้อพิพาท', 'Disputes']].map(([th, en]) => <WorkspaceMetric key={en} label={text(th, en)} reason={text('สัญญาภาพรวมนี้ไม่มีข้อมูลสำหรับสรุปดังกล่าว เปิดรายการที่เกี่ยวข้องเพื่อตรวจหลักฐาน', 'This overview contract has no summary for this domain. Inspect related records for evidence.')} />)}
+        {[['การพยายามชำระ', 'Payment attempts'], ['รับเงินเข้าบัญชี', 'Settlement'], ['คืนเงิน', 'Refund records'], ['ข้อพิพาท', 'Disputes']].map(([th, en]) => <WorkspaceMetric key={en} label={text(th, en)} reason={text('ภาพรวมนี้ยังไม่มีตัวเลขสรุปเรื่องนี้ เปิดรายการที่เกี่ยวข้องเพื่อดูรายละเอียด', 'This overview has no summary for this yet. Open the related records for details.')} />)}
       </div>
       <div className="grid gap-3 sm:grid-cols-2"><WorkspaceLink to="/j/payment-transactions">{text('ตรวจการพยายามชำระและข้อจำกัดของข้อมูลรับเงิน', 'Inspect payment attempts and settlement data gaps')}</WorkspaceLink><WorkspaceLink to="/j/refunds">{text('ตรวจรายการคืนสินค้าและคืนเงิน', 'Inspect return and refund records')}</WorkspaceLink></div>
       <section aria-label={__uiText("เลือกหมวดงาน")}>
         <div className="mb-3 flex items-center gap-2"><h2 className="font-semibold">{__uiText("เลือกหมวดงาน")}</h2><span className="text-xs text-on-surface-variant">{__uiText("ทุกเครื่องมือ จัดตามงานที่คุณทำ")}</span></div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {SECTIONS.map(section => ({ section, links: nav.find(group => group.group === section.title)?.links ?? [] })).filter(({ links }) => links.length > 0).map(({ section }) => <Link key={section.id} to={`/tasks/${section.id}`} className="group rounded-xl border border-secondary-container bg-white p-4 transition-colors hover:border-primary/50 hover:bg-primary-container/20 focus-visible:outline-2 focus-visible:outline-primary">
+          {SECTIONS.map(section => ({ section, links: nav.find(group => group.group === section.title)?.links ?? [] })).filter(({ links }) => links.length > 0).map(({ section }) => <Link key={section.id} to={`/tasks/${section.id}`} className="group rounded-xl border border-secondary-container bg-surface-container-lowest p-4 shadow-card transition-[color,background-color,border-color,box-shadow] hover:border-primary/50 hover:shadow-raised focus-visible:outline-2 focus-visible:outline-primary">
             <div className="flex items-center justify-between"><span className="flex size-9 items-center justify-center rounded-lg bg-surface-container-low text-primary"><Icon name={section.icon} size={21} /></span><Icon name="arrow_forward" size={17} className="text-outline group-hover:text-primary" /></div>
             <h3 className="mt-3 text-sm font-semibold">{__uiText(section.title)}</h3><p className="mt-1 text-xs leading-relaxed text-on-surface-variant">{__uiText(section.description)}</p>
           </Link>)}
@@ -110,7 +111,7 @@ export function Dashboard() {
                 value={fmt.num(s.webhooksFailed)}
                 foot={
                   <>
-                    <span className={s.webhooksFailed ? 'text-[#c2333f]' : 'text-[#157347]'}>{s.webhooksFailed ? __uiText("Needs replay or fix") : __uiText("No failures")}</span>
+                    <span className={s.webhooksFailed ? 'text-danger' : 'text-ok'}>{s.webhooksFailed ? __uiText("Needs replay or fix") : __uiText("No failures")}</span>
                     <ArrowLink to="/webhooks" tone={s.webhooksFailed ? 'danger' : 'muted'}>{__uiText("View")}</ArrowLink>
                   </>
                 }
@@ -123,7 +124,7 @@ export function Dashboard() {
                 value={fmt.num(s.outboxBacklog)}
                 foot={
                   <>
-                    <span className={s.outboxBacklog ? undefined : 'text-[#157347]'}>{s.outboxBacklog ? __uiText("Events waiting to publish") : __uiText("All channels normalized")}</span>
+                    <span className={s.outboxBacklog ? undefined : 'text-ok'}>{s.outboxBacklog ? __uiText("Events waiting to publish") : __uiText("All channels normalized")}</span>
                     <ArrowLink to="/subscriptions" tone={s.outboxBacklog ? 'warn' : 'muted'}>{__uiText("View")}</ArrowLink>
                   </>
                 }
@@ -140,7 +141,7 @@ export function Dashboard() {
                 label={__uiText("Integrations")}
                 value={fmt.num(s.integrations)}
                 foot={
-                  <span className={`inline-flex items-center gap-1 ${d.integrationsActive === s.integrations ? 'text-[#157347]' : 'text-[#b08900]'}`}>
+                  <span className={`inline-flex items-center gap-1 ${d.integrationsActive === s.integrations ? 'text-ok' : 'text-warn'}`}>
                     <span className="w-1.5 h-1.5 rounded-full bg-current" />
                     {d.integrationsActive === s.integrations ? __uiText("All connected") : __uiText("{0} of {1} active", {"0": d.integrationsActive, "1": s.integrations})}
                   </span>
@@ -185,7 +186,7 @@ export function Dashboard() {
                   <TD>
                     <span className="inline-flex items-center gap-2 font-medium">
                       <Icon name="sync_alt" size={16} className="text-outline" />
-                      {j.operation}
+                      {operationLabel(j.operation)}
                     </span>
                   </TD>
                   <TD kind="muted">{integrationName.get(j.integrationId) ?? j.integrationId.slice(0, 8)}</TD>
@@ -203,7 +204,7 @@ export function Dashboard() {
           <PanelHead
             title={
               <span className="inline-flex items-center gap-2">
-                {__uiText("Recent webhook failures")}{failures.length > 0 && <span className="w-2 h-2 rounded-full bg-rose-500" />}
+                {__uiText("Recent webhook failures")}{failures.length > 0 && <span className="w-2 h-2 rounded-full bg-danger" />}
               </span>
             }
             actions={<ArrowLink to="/erp/webhook-dead-letter">{__uiText("Open dead letter")}</ArrowLink>}
@@ -218,7 +219,7 @@ export function Dashboard() {
               {failures.map((f) => (
                 <li key={f.id} className="px-4 py-3 space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono text-[11px] font-semibold text-[#c2333f] bg-[#fdecee] border border-[#f5c2c7] rounded px-1.5 py-0.5">{f.eventType}</span>
+                    <Chip className="font-mono">{f.eventType}</Chip>
                     <span className="text-[11px] text-on-surface-variant whitespace-nowrap">
                       {host(f.targetUrl)} <span className="text-outline font-mono">{fmt.ago(f.createdAt)}</span>
                     </span>

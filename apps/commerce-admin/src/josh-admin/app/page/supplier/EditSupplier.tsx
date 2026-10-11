@@ -5,7 +5,7 @@ import AdminInsertLayout from '../../components/AdminInsertLayout';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 import { emptySupplier, SupplierFields, type SupplierFormValue } from './supplier-form';
 
-import { toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { ErrorText, Loading, toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 
 const EditSupplier = () => {
   __useUiLocale();
@@ -47,7 +47,7 @@ const EditSupplier = () => {
     try {
       const response = await updateSupplier(id, form);
       if (response.data?.status) {
-        toast('บันทึกผู้จัดจำหน่ายแล้ว', { label: 'เปิดรายการผู้จัดจำหน่าย', href: ADMIN_ROUTES.suppliers });
+        toast('บันทึกซัพพลายเออร์แล้ว', { label: 'เปิดรายการซัพพลายเออร์', href: ADMIN_ROUTES.suppliers });
         navigate(ADMIN_ROUTES.suppliers);
         return true;
       } else if (response.data?.message) {
@@ -62,19 +62,19 @@ const EditSupplier = () => {
     return false;
   };
 
-  if (loading) return <div className="cp-management-page text-sm text-gray-500">{__uiText('กำลังโหลด...')}</div>;
-  if (loadError) return <div className="cp-management-page text-sm text-red-500">{__uiText('ไม่พบผู้จัดจำหน่าย หรือโหลดข้อมูลไม่สำเร็จ')}</div>;
+  if (loading) return <div className="cp-management-page"><Loading variant="form" /></div>;
+  if (loadError) return <div className="cp-management-page"><ErrorText error={__uiText('ไม่พบซัพพลายเออร์ หรือโหลดข้อมูลไม่สำเร็จ')} /></div>;
 
   return (
     <AdminInsertLayout
-      title={__uiText('แก้ไขผู้จัดจำหน่าย')}
+      title={__uiText('แก้ไขซัพพลายเออร์')}
       subtitle={__uiText('แก้ชื่อหรือช่องทางติดต่อ แล้วกดบันทึก')}
-      saveLabel="บันทึกผู้จัดจำหน่าย"
+      saveLabel="บันทึกซัพพลายเออร์"
       backPath={ADMIN_ROUTES.suppliers}
       saving={saving}
       onSave={handleSubmit}
     >
-      <SupplierFields value={form} onChange={setForm} nameError={nameError ? 'กรอกชื่อผู้จัดจำหน่าย เช่น บริษัท ตัวอย่าง จำกัด' : undefined} />
+      <SupplierFields value={form} onChange={setForm} nameError={nameError ? 'กรอกชื่อซัพพลายเออร์ เช่น บริษัท ตัวอย่าง จำกัด' : undefined} />
     </AdminInsertLayout>
   );
 };

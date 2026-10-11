@@ -12,17 +12,17 @@ import { DateRangeInput, Input, Select, Table, TableColumn } from '@josh/shared-
 import React, { useCallback, useEffect, useState } from 'react';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Alert, Button, Chip, Empty, Loading, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS_LABELS: Record<PrivatePriceListItem['status'], string> = {
   get active(){return __uiText("ใช้งาน");},
   get scheduled(){return __uiText("รอเริ่ม");},
   get expired(){return __uiText("หมดอายุ");},
 };
 
-const STATUS_STYLES: Record<PrivatePriceListItem['status'], string> = {
-  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  scheduled: 'bg-amber-50 text-amber-700 border-amber-200',
-  expired: 'bg-gray-100 text-gray-600 border-gray-200',
+const STATUS_STYLES: Record<PrivatePriceListItem['status'], Tone> = {
+  active: 'ok',
+  scheduled: 'warn',
+  expired: 'muted',
 };
 
 type Props = {
@@ -151,17 +151,18 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
         />
       ),
     },
-    { key: 'sku', label: __uiText("SKU") },
+    { key: 'sku', label: __uiText("รหัสสินค้า"), render: (value) => <span className="font-mono text-[11px]">{value}</span> },
     { key: 'product_name', label: __uiText("ชื่อสินค้า") },
     {
       key: 'private_selling_price',
       label: __uiText("ราคาพิเศษ"),
+      align: 'right',
       render: (value, row) => (
         <button
           type="button"
-          className="font-semibold text-primary hover:underline"
+          className="font-semibold tabular-nums text-primary hover:underline"
           onClick={async () => {
-            const next = window.prompt('ราคาใหม่ (บาท)', String(value));
+            const next = window.prompt(__uiText('ราคาใหม่ (บาท)'), String(value));
             if (next == null) return;
             const parsed = Number(next);
             if (Number.isNaN(parsed)) return;
@@ -187,7 +188,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
             await updatePrivatePrice(row.id, { start_date: next });
             await load();
           }}
-          className="rounded-md border border-gray-200 px-2 py-1 text-xs text-gray-700"
+          className="rounded-md border border-secondary-container bg-surface-container-lowest px-2 py-1 text-xs text-on-surface"
         />
       ),
     },
@@ -206,7 +207,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
             });
             await load();
           }}
-          className="rounded-md border border-gray-200 px-2 py-1 text-xs text-gray-700"
+          className="rounded-md border border-secondary-container bg-surface-container-lowest px-2 py-1 text-xs text-on-surface"
         />
       ),
     },
@@ -214,41 +215,37 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
       key: 'status',
       label: __uiText("สถานะ"),
       render: (value: PrivatePriceListItem['status']) => (
-        <span
-          className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[value]}`}
-        >
-          {STATUS_LABELS[value]}
-        </span>
-      ),
+          <Chip tone={STATUS_STYLES[value] ?? 'muted'} statusCode={value} dot>{STATUS_LABELS[value] ?? value}</Chip>
+        ),
     },
     {
       key: 'id',
       label: '',
       render: (_, row) => (
-        <button
-          type="button"
-          className="text-xs text-red-600 hover:underline"
-          onClick={async () => {
+        <Button
+            size="sm"
+            variant="danger-ghost"
+            onClick={async () => {
             if (!window.confirm(__uiText("ลบราคาพิเศษนี้?"))) return;
             await deletePrivatePrice(row.id);
             await load();
           }}
         >
-          {__uiText("ลบ")}</button>
+          {__uiText("ลบ")}</Button>
       ),
     },
   ];
 
   return (
     <div className="grid gap-4">
-      <p className="text-sm text-gray-500">
-        {__uiText("ราคาพิเศษระดับบริษัท (Customer SKU) — เว้นสาขา = ใช้ทุกสาขาของบริษัทนี้")}</p>
+      <p className="text-sm text-on-surface-variant">
+        {__uiText("ราคาพิเศษของบริษัทนี้ ถ้าไม่เลือกสาขา ราคาจะใช้กับทุกสาขา")}</p>
 
-      {error && <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p>}
+      {error && <Alert tone="danger">{(typeof error === 'string' ? __uiText(error) : error)}</Alert>}
 
       <div className="flex flex-wrap items-end gap-3">
-        <label className="grid gap-1 text-xs text-gray-500">
-          {__uiText("นำเข้า CSV (SKU, price, start_date, end_date)")}<input
+        <label className="grid gap-1 text-xs text-on-surface-variant">
+          {__uiText("นำเข้าไฟล์ CSV (รหัสสินค้า ราคา วันเริ่ม วันสิ้นสุด)")}<input
             type="file"
             accept=".csv"
             disabled={importing}
@@ -261,22 +258,23 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           />
         </label>
         {selectedIds.length > 0 && (
-          <button
-            type="button"
-            onClick={() => void handleBulkDelete()}
-            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-          >
+          <Button
+          variant="danger-ghost"
+          icon="delete"
+          className="w-fit"
+          onClick={() => void handleBulkDelete()}
+        >
             {__uiText("ลบที่เลือก (")}{selectedIds.length})
-          </button>
+          </Button>
         )}
       </div>
 
       <form
         onSubmit={(e) => void handleCreate(e)}
-        className="grid gap-3 rounded-lg border border-gray-100 bg-gray-50 p-4 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_2fr_auto]"
+        className="grid gap-3 rounded-lg border border-secondary-container bg-surface-container-low p-4 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_2fr_auto]"
       >
         <Input
-          label={__uiText("รหัสสินค้า (SKU)")}
+          label={__uiText("รหัสสินค้า")}
           value={form.sku}
           onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))}
         />
@@ -291,7 +289,7 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           value={form.branch_id}
           onChange={(e) => setForm((f) => ({ ...f, branch_id: e.target.value }))}
         >
-          <option value="">{__uiText("ทุกสาขา (company-wide)")}</option>
+          <option value="">{__uiText("ทุกสาขา")}</option>
           {branches.map((b) => (
             <option key={b.id} value={b.id}>
               {b.name}
@@ -306,19 +304,21 @@ export function CompanySpecialPricingPanel({ companyId, branches = [] }: Props) 
           onEndDateChange={(v) => setForm((f) => ({ ...f, end_date: v }))}
           className="h-10"
         />
-        <button
+        <Button
           type="submit"
+          variant="primary"
+          icon="add"
           disabled={saving}
-          className="h-10 self-end rounded-lg bg-gray-900 px-4 text-sm font-medium text-white disabled:opacity-50"
+          className="self-end"
         >
           {saving ? __uiText("กำลังบันทึก...") : __uiText("เพิ่มราคา")}
-        </button>
+        </Button>
       </form>
 
       {loading ? (
-        <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
+        <Loading variant="table" />
       ) : rows.length === 0 ? (
-        <p className="text-sm text-gray-500">{__uiText("ยังไม่มีราคาพิเศษสำหรับบริษัทนี้")}</p>
+        <Empty icon="sell">{__uiText("ยังไม่มีราคาพิเศษสำหรับบริษัทนี้")}</Empty>
       ) : (
         <Table columns={columns} data={rows} idKey="id" />
       )}

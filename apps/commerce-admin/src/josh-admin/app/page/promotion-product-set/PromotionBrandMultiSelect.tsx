@@ -82,7 +82,7 @@ export function PromotionBrandMultiSelect({ selectedIds, onChange }: Props) {
       </button>
 
       {loadError && (
-        <p className="mt-1 text-xs text-red-600">
+        <p className="mt-1 text-xs text-danger">
           {__uiText("โหลดรายการแบรนด์ไม่สำเร็จ ลองรีเฟรชหน้านี้อีกครั้ง")}</p>
       )}
 
@@ -144,7 +144,7 @@ export function PromotionBrandMultiSelect({ selectedIds, onChange }: Props) {
                 <button
                   type="button"
                   onClick={() => removeChip(id)}
-                  className="ml-1 text-gray-400 hover:text-red-500"
+                  className="ml-1 text-gray-400 hover:text-alert"
                 >
                   ×
                 </button>

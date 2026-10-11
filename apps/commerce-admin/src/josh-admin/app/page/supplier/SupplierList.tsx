@@ -37,8 +37,8 @@ export default function SupplierList() {
   const handleDelete = async (row: any) => {
     if (
       await confirmAction({
-        title: uiText('ลบ Supplier'),
-        body: uiText('ยืนยันการลบ supplier นี้?') + '\n' + row.supplier_name,
+        title: uiText('ลบซัพพลายเออร์'),
+        body: uiText('ยืนยันการลบซัพพลายเออร์นี้?') + '\n' + row.supplier_name,
         confirmLabel: uiText('ลบ'),
         danger: true,
       })
@@ -46,7 +46,7 @@ export default function SupplierList() {
       remove.mutate(row.id || row.supplier_id);
   };
   const columns: TableColumn<any>[] = [
-    { key: 'supplier_name', label: uiText('ชื่อ Supplier') },
+    { key: 'supplier_name', label: uiText('ชื่อซัพพลายเออร์') },
     { key: 'contact_name', label: uiText('ผู้ติดต่อ') },
     { key: 'phone', label: uiText('เบอร์โทร') },
     { key: 'email', label: uiText('อีเมล') },
@@ -77,9 +77,9 @@ export default function SupplierList() {
   return (
     <div className="cp-management-page flex flex-col gap-5">
       <AdminListHeader
-        title={uiText('Suppliers')}
-        subtitle={uiText('จัดการผู้จัดจำหน่ายและข้อมูลติดต่อ')}
-        createLabel={uiText('เพิ่ม Supplier')}
+        title={uiText('ซัพพลายเออร์')}
+        subtitle={uiText('ซัพพลายเออร์ที่ส่งสินค้าให้ร้านและข้อมูลติดต่อ')}
+        createLabel={uiText('เพิ่มซัพพลายเออร์')}
         createPath={ADMIN_ROUTES.supplierCreate}
       >
         <Button
@@ -91,7 +91,7 @@ export default function SupplierList() {
           {uiText('รีเฟรช')}
         </Button>
       </AdminListHeader>
-      {remove.isError && <ErrorText error="ลบไม่สำเร็จ ลองอีกครั้ง" />}
+      {remove.isError && <ErrorText error={uiText('ลบไม่สำเร็จ ลองอีกครั้ง')} />}
       {isError ? (
         <div className="cp-list-error" role="alert">
           <span>{uiText('โหลดข้อมูลไม่สำเร็จ')}</span>
@@ -113,6 +113,8 @@ export default function SupplierList() {
           currentPage={Number(data?.meta?.page ?? page)}
           totalPages={Number(data?.meta?.totalPages ?? 1)}
           onPageChange={setPage}
+          emptyTitle={uiText('ยังไม่มีซัพพลายเออร์')}
+          emptyDescription={uiText('กด "เพิ่มซัพพลายเออร์" เพื่อเพิ่มรายแรก')}
         />
       )}
     </div>

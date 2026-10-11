@@ -88,8 +88,8 @@ export function CustomerDetail() {
                   { label: __uiText("รหัสลูกค้า"), value: c.code ?? '—', mono: true },
                   { label: __uiText("อีเมล"), value: c.email ?? '—' },
                   { label: __uiText("เบอร์โทร"), value: c.phone ?? '—' },
-                  { label: 'รหัสอ้างอิง', value: c.id, copy: true },
-                  { label: __uiText("จำนวนออเดอร์"), value: orders.data ? fmt.num(orders.data.total) : orders.error ? 'โหลดไม่สำเร็จ' : '…' },
+                  { label: __uiText("รหัสอ้างอิง"), value: c.id, copy: true },
+                  { label: __uiText("จำนวนออเดอร์"), value: orders.data ? fmt.num(orders.data.total) : orders.error ? __uiText("โหลดไม่สำเร็จ") : '…' },
                   { label: __uiText("มูลค่าออเดอร์ที่แสดง"), value: Object.entries(values).map(([currency, value]) => `${currency} ${fmt.num(value.toFixed(2))}`).join(' · ') || '—' },
                 ]}
               />

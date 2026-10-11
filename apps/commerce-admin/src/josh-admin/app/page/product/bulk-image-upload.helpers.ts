@@ -120,8 +120,8 @@ export function classifyStagedFiles(
 
 /** Thai label for every failure reason the backend (or client-side classification) can return. */
 export const FAIL_REASON_TH: Record<BulkUploadFailReason, string> = {
-  invalid_filename: 'อ่าน SKU จากชื่อไฟล์ไม่ได้ — เปลี่ยนชื่อเป็น sku_ลำดับ.jpg เช่น JG001_1.jpg',
-  sku_not_found: 'ไม่พบ SKU นี้ในระบบ — ตรวจสอบรหัสสินค้าแล้วเปลี่ยนชื่อไฟล์',
+  invalid_filename: 'อ่านรหัสสินค้าจากชื่อไฟล์ไม่ได้ — เปลี่ยนชื่อเป็น sku_ลำดับ.jpg เช่น JG001_1.jpg',
+  sku_not_found: 'ไม่พบรหัสสินค้านี้ในระบบ — ตรวจสอบรหัสสินค้าแล้วเปลี่ยนชื่อไฟล์',
   file_too_large: 'ไฟล์ใหญ่เกิน 5 MB — ย่อไฟล์แล้วลองใหม่',
   unsupported_type: 'ชนิดไฟล์ไม่รองรับ (รองรับเฉพาะ jpg, jpeg, png, gif, webp)',
   missing_sequence: 'โหมดแทนที่ต้องระบุลำดับรูปในชื่อไฟล์ — เปลี่ยนเป็น sku_ลำดับ.jpg เช่น JG001_1.jpg',

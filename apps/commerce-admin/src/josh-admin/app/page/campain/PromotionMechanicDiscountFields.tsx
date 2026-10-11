@@ -69,7 +69,7 @@ export default function PromotionMechanicDiscountFields({ form, onChange, errors
             min={0}
             step="0.01"
             unit="บาท"
-            hint={__uiText("ทุก SKU ในโปรได้ราคานี้ตั้งแต่ชิ้นแรก")}
+            hint={__uiText("ทุกสินค้าในโปรได้ราคานี้ตั้งแต่ชิ้นแรก")}
             disabled={disabled}
             value={form.specialPrice}
             error={errors.specialPrice}

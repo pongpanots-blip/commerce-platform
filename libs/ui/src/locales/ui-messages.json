@@ -203,6 +203,4918 @@
     "th": "จำลองข้อมูลระบบหลัก (ERP) ทดสอบชำระเงิน และเทียบผลระบบใหม่กับระบบเดิม",
     "en": "Simulate ERP data, test payments and compare the new system with the old one"
   },
+  "Processed": {
+    "th": "ประมวลผลแล้ว",
+    "en": "Processed"
+  },
+  "Sending": {
+    "th": "กำลังส่ง",
+    "en": "Sending"
+  },
+  "Valid": {
+    "th": "ถูกต้อง",
+    "en": "Valid"
+  },
+  "Invalid": {
+    "th": "ไม่ถูกต้อง",
+    "en": "Invalid"
+  },
+  "OK": {
+    "th": "ปกติ",
+    "en": "OK"
+  },
+  "Applied": {
+    "th": "นำไปใช้แล้ว",
+    "en": "Applied"
+  },
+  "Stale": {
+    "th": "ข้อมูลเก่า",
+    "en": "Stale"
+  },
+  "Ignored": {
+    "th": "ข้ามไป",
+    "en": "Ignored"
+  },
+  "Held": {
+    "th": "พักไว้",
+    "en": "Held"
+  },
+  "Pending payment": {
+    "th": "รอชำระเงิน",
+    "en": "Pending payment"
+  },
+  "Reserving": {
+    "th": "กำลังจอง",
+    "en": "Reserving"
+  },
+  "Reconcile": {
+    "th": "ตรวจกระทบยอด",
+    "en": "Reconcile"
+  },
+  "ระบบหลัก (ERP)": {
+    "th": "ระบบหลัก (ERP)",
+    "en": "Main system (ERP)"
+  },
+  "คลังของเรา": {
+    "th": "คลังของเรา",
+    "en": "Our warehouse"
+  },
+  "ทีมงานในระบบนี้": {
+    "th": "ทีมงานในระบบนี้",
+    "en": "Staff in this system"
+  },
+  "เสียหาย": {
+    "th": "เสียหาย",
+    "en": "Damaged"
+  },
+  "รับคืน": {
+    "th": "รับคืน",
+    "en": "Returned"
+  },
+  "แก้ไขยอด": {
+    "th": "แก้ไขยอด",
+    "en": "Correction"
+  },
+  "โอนออก": {
+    "th": "โอนออก",
+    "en": "Transfer out"
+  },
+  "โอนเข้า": {
+    "th": "โอนเข้า",
+    "en": "Transfer in"
+  },
+  "ตัดสต็อกจากออเดอร์": {
+    "th": "ตัดสต็อกจากออเดอร์",
+    "en": "Deducted for an order"
+  },
+  "คืนสต็อกจากออเดอร์ที่ยกเลิก": {
+    "th": "คืนสต็อกจากออเดอร์ที่ยกเลิก",
+    "en": "Returned from a cancelled order"
+  },
+  "ข้อมูลเก่ากว่ายอดปัจจุบัน ไม่ได้ใช้": {
+    "th": "ข้อมูลเก่ากว่ายอดปัจจุบัน ไม่ได้ใช้",
+    "en": "Older than the current quantity, not used"
+  },
+  "ไม่ได้ใช้ เพราะคลังนี้ปรับยอดที่อื่น": {
+    "th": "ไม่ได้ใช้ เพราะคลังนี้ปรับยอดที่อื่น",
+    "en": "Not used, this warehouse's stock is changed elsewhere"
+  },
+  "ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง คลังจากระบบหลัก (ERP) ต้องปรับยอดในระบบหลัก ส่วนคลังของเราปรับได้ที่หน้ารับเข้า ปรับ และโอนสต็อก": {
+    "th": "ยอดสต็อกของสินค้าแต่ละรายการในแต่ละคลัง คลังจากระบบหลัก (ERP) ต้องปรับยอดในระบบหลัก ส่วนคลังของเราปรับได้ที่หน้ารับเข้า ปรับ และโอนสต็อก",
+    "en": "Stock of each product in each warehouse. Warehouses from the main system (ERP) are changed there; our own warehouses are changed on the Receive, adjust and transfer stock page."
+  },
+  "{0} · {1} รายการ · จอง {2}": {
+    "th": "{0} · {1} รายการ · จอง {2}",
+    "en": "{0} · {1} products · reserved {2}"
+  },
+  "ค้นหารหัสหรือชื่อสินค้า": {
+    "th": "ค้นหารหัสหรือชื่อสินค้า",
+    "en": "Search product code or name"
+  },
+  "ไม่พบสต็อก ลองเลือกทุกคลังหรือค้นหาด้วยรหัสสินค้าอื่น": {
+    "th": "ไม่พบสต็อก ลองเลือกทุกคลังหรือค้นหาด้วยรหัสสินค้าอื่น",
+    "en": "No stock found. Try all warehouses or search for another product code."
+  },
+  "ไม่พบรหัสสินค้านี้ในผลค้นหาล่าสุด ตรวจรายการก่อนลองใหม่": {
+    "th": "ไม่พบรหัสสินค้านี้ในผลค้นหาล่าสุด ตรวจรายการก่อนลองใหม่",
+    "en": "This product code is not in the latest results. Check the list before trying again."
+  },
+  "ตรวจรหัสสินค้า คลัง และจำนวนให้ถูกต้องก่อนบันทึก": {
+    "th": "ตรวจรหัสสินค้า คลัง และจำนวนให้ถูกต้องก่อนบันทึก",
+    "en": "Check the product code, warehouse and quantity before saving"
+  },
+  "ระบบหลัก (ERP) เปลี่ยนหน่วย แพ็ก แบรนด์ VAT สถานะ หรือหมวดของสินค้าที่ขายอยู่ ตรวจแล้วอนุมัติที่นี่ ส่วนสินค้าใหม่อนุมัติที่หน้าสินค้า": {
+    "th": "ระบบหลัก (ERP) เปลี่ยนหน่วย แพ็ก แบรนด์ VAT สถานะ หรือหมวดของสินค้าที่ขายอยู่ ตรวจแล้วอนุมัติที่นี่ ส่วนสินค้าใหม่อนุมัติที่หน้าสินค้า",
+    "en": "When the main system (ERP) changes the unit, pack, brand, VAT, status or category of a product on sale, check and approve it here. New products are approved on the product page."
+  },
+  "ยังไม่ได้เปิดใช้หน้านี้ ตอนนี้ยังอนุมัติข้อมูลสินค้าในระบบร้านค้าเดิม": {
+    "th": "ยังไม่ได้เปิดใช้หน้านี้ ตอนนี้ยังอนุมัติข้อมูลสินค้าในระบบร้านค้าเดิม",
+    "en": "This page is not switched on yet. Product changes are still approved in the old shop system."
+  },
+  "ข้อมูลที่เปลี่ยน (ตอนนี้ → ใหม่)": {
+    "th": "ข้อมูลที่เปลี่ยน (ตอนนี้ → ใหม่)",
+    "en": "Changes (now → new)"
+  },
+  "ระบบหลักส่งมาเมื่อ": {
+    "th": "ระบบหลักส่งมาเมื่อ",
+    "en": "Sent by the main system"
+  },
+  "ส่งรอบสั่งซื้อของ {0} ให้ร้านค้าอีกครั้งแล้ว ({1} รอบ)": {
+    "th": "ส่งรอบสั่งซื้อของ {0} ให้ร้านค้าอีกครั้งแล้ว ({1} รอบ)",
+    "en": "Sent {0}'s order rounds to the shop again ({1} rounds)"
+  },
+  "รอบของสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับ ข้อมูลมาจากระบบหลัก (ERP) ร้านค้าใช้ตรวจตอนลูกค้าสั่งซื้อ": {
+    "th": "รอบของสินค้าสั่งล่วงหน้า วันส่ง และวันปิดรับ ข้อมูลมาจากระบบหลัก (ERP) ร้านค้าใช้ตรวจตอนลูกค้าสั่งซื้อ",
+    "en": "Rounds for pre-order products, delivery dates and closing dates. The data comes from the main system (ERP); the shop checks it when customers order."
+  },
+  "ยังไม่ได้เปิดใช้หน้านี้ ร้านค้ายังบันทึกรอบสั่งซื้อเอง หน้านี้จะว่างจนกว่าจะนำข้อมูลเข้าหรือเปิดใช้": {
+    "th": "ยังไม่ได้เปิดใช้หน้านี้ ร้านค้ายังบันทึกรอบสั่งซื้อเอง หน้านี้จะว่างจนกว่าจะนำข้อมูลเข้าหรือเปิดใช้",
+    "en": "This page is not switched on yet. The shop still keeps its own order rounds, so this page stays empty until data is imported or it is switched on."
+  },
+  "รหัสซัพพลายเออร์": {
+    "th": "รหัสซัพพลายเออร์",
+    "en": "Supplier code"
+  },
+  "ระบบหลักส่งล่าสุด": {
+    "th": "ระบบหลักส่งล่าสุด",
+    "en": "Last sent by the main system"
+  },
+  "ส่งให้ร้านค้าอีกครั้ง": {
+    "th": "ส่งให้ร้านค้าอีกครั้ง",
+    "en": "Send to the shop again"
+  },
+  "ไม่มีรอบสั่งซื้อ ลองค้นหาด้วยรหัสซัพพลายเออร์อื่น หรือรอระบบหลักส่งข้อมูลเข้ามา": {
+    "th": "ไม่มีรอบสั่งซื้อ ลองค้นหาด้วยรหัสซัพพลายเออร์อื่น หรือรอระบบหลักส่งข้อมูลเข้ามา",
+    "en": "No order rounds. Try another supplier code, or wait for the main system to send them."
+  },
+  "ยังไม่เปิด": {
+    "th": "ยังไม่เปิด",
+    "en": "Not open yet"
+  },
+  "ส่งจากสต็อกในคลัง": {
+    "th": "ส่งจากสต็อกในคลัง",
+    "en": "Ships from warehouse stock"
+  },
+  "สั่งเข้าหลังลูกค้าสั่งซื้อ": {
+    "th": "สั่งเข้าหลังลูกค้าสั่งซื้อ",
+    "en": "Ordered in after the customer orders"
+  },
+  "ส่งจากสต็อก หรือสั่งเข้าเมื่อหมด": {
+    "th": "ส่งจากสต็อก หรือสั่งเข้าเมื่อหมด",
+    "en": "Ships from stock, or ordered in when out"
+  },
+  "ยังไม่มีสต็อกที่บันทึกไว้ บันทึกรับเข้าได้ที่หน้ารับเข้า ปรับ และโอนสต็อก": {
+    "th": "ยังไม่มีสต็อกที่บันทึกไว้ บันทึกรับเข้าได้ที่หน้ารับเข้า ปรับ และโอนสต็อก",
+    "en": "No stock recorded yet. Record received stock on the Receive, adjust and transfer stock page."
+  },
+  "ค้นหาสินค้าทุกรายการตามรหัสสินค้า เปิดดูรายละเอียดและสต็อกแต่ละคลัง": {
+    "th": "ค้นหาสินค้าทุกรายการตามรหัสสินค้า เปิดดูรายละเอียดและสต็อกแต่ละคลัง",
+    "en": "Find any product by its code and open its details and stock per warehouse"
+  },
+  "ร้านค้าใช้แล้ว": {
+    "th": "ร้านค้าใช้แล้ว",
+    "en": "Live on the shop"
+  },
+  "บันทึกแล้ว แต่ร้านค้ายังไม่รับราคานี้: {0}": {
+    "th": "บันทึกแล้ว แต่ร้านค้ายังไม่รับราคานี้: {0}",
+    "en": "Saved, but the shop has not taken this price yet: {0}"
+  },
+  "แก้ไขแล้ว และร้านค้าใช้ราคานี้แล้ว": {
+    "th": "แก้ไขแล้ว และร้านค้าใช้ราคานี้แล้ว",
+    "en": "Updated, and the shop now uses this price"
+  },
+  "เพิ่มแล้ว และร้านค้าใช้ราคานี้แล้ว": {
+    "th": "เพิ่มแล้ว และร้านค้าใช้ราคานี้แล้ว",
+    "en": "Added, and the shop now uses this price"
+  },
+  "ราคาที่บันทึกที่นี่จะส่งไปใช้บนร้านค้าทันที ราคาที่ร้านค้าสร้างเอง เช่น ใบเสนอราคาหรือคำขอราคาจากลูกค้า ให้กดดึงราคาจากร้านค้า": {
+    "th": "ราคาที่บันทึกที่นี่จะส่งไปใช้บนร้านค้าทันที ราคาที่ร้านค้าสร้างเอง เช่น ใบเสนอราคาหรือคำขอราคาจากลูกค้า ให้กดดึงราคาจากร้านค้า",
+    "en": "Prices saved here go live on the shop straight away. For prices the shop created itself, such as quotes or customer price requests, press Pull prices from the shop."
+  },
+  "ดึงราคาจากร้านค้าแล้ว: ใหม่ {0} · ร้านค้าแก้ {1} · ร้านค้าลบ {2}": {
+    "th": "ดึงราคาจากร้านค้าแล้ว: ใหม่ {0} · ร้านค้าแก้ {1} · ร้านค้าลบ {2}",
+    "en": "Pulled prices from the shop: {0} new · {1} changed by the shop · {2} removed by the shop"
+  },
+  "ดึงราคาจากร้านค้า": {
+    "th": "ดึงราคาจากร้านค้า",
+    "en": "Pull prices from the shop"
+  },
+  "วันเริ่ม": {
+    "th": "วันเริ่ม",
+    "en": "Start date"
+  },
+  "วันสิ้นสุด": {
+    "th": "วันสิ้นสุด",
+    "en": "End date"
+  },
+  "ค้นหารหัสสินค้า": {
+    "th": "ค้นหารหัสสินค้า",
+    "en": "Search product code"
+  },
+  "ยังไม่มีราคา กด \"ดึงราคาจากร้านค้า\" เพื่อนำราคาปัจจุบันเข้ามาครั้งแรก หรือกด \"เพิ่มราคา\"": {
+    "th": "ยังไม่มีราคา กด \"ดึงราคาจากร้านค้า\" เพื่อนำราคาปัจจุบันเข้ามาครั้งแรก หรือกด \"เพิ่มราคา\"",
+    "en": "No prices yet. Press \"Pull prices from the shop\" to bring in the current prices, or press \"Add price\"."
+  },
+  "ลบราคา {0} {1}? ร้านค้าจะเลิกใช้ราคานี้ทันที": {
+    "th": "ลบราคา {0} {1}? ร้านค้าจะเลิกใช้ราคานี้ทันที",
+    "en": "Delete price {0} {1}? The shop stops using it straight away."
+  },
+  "ลบซัพพลายเออร์": {
+    "th": "ลบซัพพลายเออร์",
+    "en": "Delete supplier"
+  },
+  "ยืนยันการลบซัพพลายเออร์นี้?": {
+    "th": "ยืนยันการลบซัพพลายเออร์นี้?",
+    "en": "Delete this supplier?"
+  },
+  "ชื่อซัพพลายเออร์": {
+    "th": "ชื่อซัพพลายเออร์",
+    "en": "Supplier name"
+  },
+  "เพิ่มซัพพลายเออร์": {
+    "th": "เพิ่มซัพพลายเออร์",
+    "en": "Add supplier"
+  },
+  "ยังไม่มีซัพพลายเออร์": {
+    "th": "ยังไม่มีซัพพลายเออร์",
+    "en": "No suppliers yet"
+  },
+  "กด \"เพิ่มซัพพลายเออร์\" เพื่อเพิ่มรายแรก": {
+    "th": "กด \"เพิ่มซัพพลายเออร์\" เพื่อเพิ่มรายแรก",
+    "en": "Press \"Add supplier\" to add the first one"
+  },
+  "บันทึกซัพพลายเออร์แล้ว": {
+    "th": "บันทึกซัพพลายเออร์แล้ว",
+    "en": "Supplier saved"
+  },
+  "เปิดรายการซัพพลายเออร์": {
+    "th": "เปิดรายการซัพพลายเออร์",
+    "en": "Open supplier list"
+  },
+  "บันทึกซัพพลายเออร์": {
+    "th": "บันทึกซัพพลายเออร์",
+    "en": "Save supplier"
+  },
+  "กรอกชื่อซัพพลายเออร์ เช่น บริษัท ตัวอย่าง จำกัด": {
+    "th": "กรอกชื่อซัพพลายเออร์ เช่น บริษัท ตัวอย่าง จำกัด",
+    "en": "Enter the supplier name, e.g. Example Co., Ltd."
+  },
+  "ไม่พบซัพพลายเออร์ หรือโหลดข้อมูลไม่สำเร็จ": {
+    "th": "ไม่พบซัพพลายเออร์ หรือโหลดข้อมูลไม่สำเร็จ",
+    "en": "Supplier not found, or it could not be loaded"
+  },
+  "แก้ไขซัพพลายเออร์": {
+    "th": "แก้ไขซัพพลายเออร์",
+    "en": "Edit supplier"
+  },
+  "รหัสแบรนด์": {
+    "th": "รหัสแบรนด์",
+    "en": "Brand code"
+  },
+  "ทุกแบรนด์มีชื่อแล้ว ยกเลิกตัวกรองเพื่อดูทั้งหมด": {
+    "th": "ทุกแบรนด์มีชื่อแล้ว ยกเลิกตัวกรองเพื่อดูทั้งหมด",
+    "en": "Every brand has a name. Clear the filter to see all."
+  },
+  "ดูบนร้านค้า": {
+    "th": "ดูบนร้านค้า",
+    "en": "View on the shop"
+  },
+  "หมวดหน้าแรกทั้งหมด {0} หมวด · แสดงบนหน้าแรก {1} หมวด ลากเพื่อเรียงลำดับ": {
+    "th": "หมวดหน้าแรกทั้งหมด {0} หมวด · แสดงบนหน้าแรก {1} หมวด ลากเพื่อเรียงลำดับ",
+    "en": "{0} home page categories · {1} shown on the home page. Drag to reorder."
+  },
+  "กลุ่มบนสุด {0} กลุ่ม ลำดับของกลุ่มบนสุดตั้งไว้ในระบบ จัดที่นี่ไม่ได้": {
+    "th": "กลุ่มบนสุด {0} กลุ่ม ลำดับของกลุ่มบนสุดตั้งไว้ในระบบ จัดที่นี่ไม่ได้",
+    "en": "{0} top groups. Their order is set by the system and can't be changed here."
+  },
+  "หมวดหน้าแรก {0} หมวดใต้ {1} ลำดับของหมวดชั้นนี้จัดรวมกันที่หมวดหน้าแรก": {
+    "th": "หมวดหน้าแรก {0} หมวดใต้ {1} ลำดับของหมวดชั้นนี้จัดรวมกันที่หมวดหน้าแรก",
+    "en": "{0} home page categories under {1}. Their order is set together under Home page categories."
+  },
+  "หมวดย่อย {0} หมวด ลากเพื่อจัดลำดับ แล้วกดบันทึก": {
+    "th": "หมวดย่อย {0} หมวด ลากเพื่อจัดลำดับ แล้วกดบันทึก",
+    "en": "{0} subcategories. Drag to reorder, then save."
+  },
+  "จัดลำดับหมวดหมู่ เลือกหมวดที่แสดงบนหน้าแรกของร้าน และแก้ชื่อหรือรูป": {
+    "th": "จัดลำดับหมวดหมู่ เลือกหมวดที่แสดงบนหน้าแรกของร้าน และแก้ชื่อหรือรูป",
+    "en": "Order categories, choose which show on the shop home page, and edit names or images"
+  },
+  "เพิ่มหมวดหมู่": {
+    "th": "เพิ่มหมวดหมู่",
+    "en": "Add category"
+  },
+  "ค้นหาด้วยชื่อไทย ชื่ออังกฤษ หรือรหัสหมวด": {
+    "th": "ค้นหาด้วยชื่อไทย ชื่ออังกฤษ หรือรหัสหมวด",
+    "en": "Search by Thai name, English name or category code"
+  },
+  "ผลค้นหา {0} หมวด ล้างคำค้นเพื่อจัดลำดับหรือเลือกหมวดที่แสดงบนหน้าแรก": {
+    "th": "ผลค้นหา {0} หมวด ล้างคำค้นเพื่อจัดลำดับหรือเลือกหมวดที่แสดงบนหน้าแรก",
+    "en": "{0} categories found. Clear the search to reorder or choose home page categories."
+  },
+  "ชั้น {0}": {
+    "th": "ชั้น {0}",
+    "en": "Level {0}"
+  },
+  "หมวดหน้าแรก": {
+    "th": "หมวดหน้าแรก",
+    "en": "Home page categories"
+  },
+  "กลุ่มบนสุดทั้งหมด": {
+    "th": "กลุ่มบนสุดทั้งหมด",
+    "en": "All top groups"
+  },
+  "หน้าแรกซ่อนหมวดที่ยังไม่มีสินค้าเปิดขาย ติ๊กแล้วอาจยังไม่ขึ้นจนกว่าหมวดนั้นจะมีสินค้า": {
+    "th": "หน้าแรกซ่อนหมวดที่ยังไม่มีสินค้าเปิดขาย ติ๊กแล้วอาจยังไม่ขึ้นจนกว่าหมวดนั้นจะมีสินค้า",
+    "en": "The home page hides categories with no products on sale, so a ticked category may not show until it has products."
+  },
+  "ไปจัดลำดับที่หมวดหน้าแรก": {
+    "th": "ไปจัดลำดับที่หมวดหน้าแรก",
+    "en": "Reorder under Home page categories"
+  },
+  "ยังไม่มีหมวดหน้าแรก กด \"เพิ่มหมวดหมู่\" เพื่อเพิ่ม": {
+    "th": "ยังไม่มีหมวดหน้าแรก กด \"เพิ่มหมวดหมู่\" เพื่อเพิ่ม",
+    "en": "No home page categories yet. Press \"Add category\" to add one."
+  },
+  "หมวดนี้ไม่มีหมวดย่อย สินค้าผูกกับหมวดนี้โดยตรง": {
+    "th": "หมวดนี้ไม่มีหมวดย่อย สินค้าผูกกับหมวดนี้โดยตรง",
+    "en": "This category has no subcategories. Products link to it directly."
+  },
+  "ติ๊กแล้วหมวดนี้จะขึ้นบนแถวไอคอนหน้าแรกของร้าน": {
+    "th": "ติ๊กแล้วหมวดนี้จะขึ้นบนแถวไอคอนหน้าแรกของร้าน",
+    "en": "Tick to show this category in the shop home page icon row"
+  },
+  "แก้ชื่อ ไอคอน ลำดับ และการแสดงบนหน้าแรก ตำแหน่งของหมวดในโครงสร้างย้ายที่นี่ไม่ได้": {
+    "th": "แก้ชื่อ ไอคอน ลำดับ และการแสดงบนหน้าแรก ตำแหน่งของหมวดในโครงสร้างย้ายที่นี่ไม่ได้",
+    "en": "Edit the name, icon, order and home page display. The category's place in the structure can't be moved here."
+  },
+  "ตัวเลือกการเรียงเฉพาะหมวดนี้ (JSON)": {
+    "th": "ตัวเลือกการเรียงเฉพาะหมวดนี้ (JSON)",
+    "en": "Sort options for this category (JSON)"
+  },
+  "แถวไอคอนหน้าแรกแสดงเฉพาะหมวดหน้าแรก ติ๊กที่หมวดชั้นอื่นจะยังไม่มีผล": {
+    "th": "แถวไอคอนหน้าแรกแสดงเฉพาะหมวดหน้าแรก ติ๊กที่หมวดชั้นอื่นจะยังไม่มีผล",
+    "en": "The home page icon row only shows home page categories. Ticking other levels has no effect yet."
+  },
+  "เพิ่มหมวดหมู่สินค้า": {
+    "th": "เพิ่มหมวดหมู่สินค้า",
+    "en": "Add product category"
+  },
+  "แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด ช่องนี้จึงขึ้นเฉพาะตอนเพิ่มหมวดชั้นบนสุด": {
+    "th": "แถวไอคอนหน้าแรกแสดงเฉพาะหมวดชั้นบนสุด ช่องนี้จึงขึ้นเฉพาะตอนเพิ่มหมวดชั้นบนสุด",
+    "en": "The home page icon row only shows top-level categories, so this box only appears when adding a top-level category."
+  },
+  "ไม่กำหนด": {
+    "th": "ไม่กำหนด",
+    "en": "No end date"
+  },
+  "ยังไม่มีราคาพิเศษตามลูกค้าสำหรับสินค้านี้ เพิ่มได้ที่หน้าราคาเฉพาะลูกค้าและราคาสัญญา": {
+    "th": "ยังไม่มีราคาพิเศษตามลูกค้าสำหรับสินค้านี้ เพิ่มได้ที่หน้าราคาเฉพาะลูกค้าและราคาสัญญา",
+    "en": "No customer prices for this product yet. Add them on the Customer and contract prices page."
+  },
+  "ปฏิเสธข้อมูลใหม่จากระบบหลักแล้ว {0} รายการ": {
+    "th": "ปฏิเสธข้อมูลใหม่จากระบบหลักแล้ว {0} รายการ",
+    "en": "Rejected new main-system data for {0} products"
+  },
+  "ปฏิเสธข้อมูลใหม่จากระบบหลักไม่สำเร็จ": {
+    "th": "ปฏิเสธข้อมูลใหม่จากระบบหลักไม่สำเร็จ",
+    "en": "Could not reject the new main-system data"
+  },
+  "ปฏิเสธข้อมูลใหม่จากระบบหลักสำหรับ {0} รายการ?": {
+    "th": "ปฏิเสธข้อมูลใหม่จากระบบหลักสำหรับ {0} รายการ?",
+    "en": "Reject the new main-system data for {0} products?"
+  },
+  "ปฏิเสธข้อมูลใหม่จากระบบหลัก": {
+    "th": "ปฏิเสธข้อมูลใหม่จากระบบหลัก",
+    "en": "Reject new main-system data"
+  },
+  "รออนุมัติข้อมูลจากระบบหลัก": {
+    "th": "รออนุมัติข้อมูลจากระบบหลัก",
+    "en": "Main-system data waiting for approval"
+  },
+  "ระบบหลักเสนอ": {
+    "th": "ระบบหลักเสนอ",
+    "en": "Main system proposes"
+  },
+  "อนุมัติข้อมูลใหม่จากระบบหลัก": {
+    "th": "อนุมัติข้อมูลใหม่จากระบบหลัก",
+    "en": "Approve new main-system data"
+  },
+  "ปฏิเสธข้อมูลจากระบบหลักที่เลือก": {
+    "th": "ปฏิเสธข้อมูลจากระบบหลักที่เลือก",
+    "en": "Reject selected main-system data"
+  },
+  "ข้อมูลหลัก": {
+    "th": "ข้อมูลหลัก",
+    "en": "Main details"
+  },
+  "ลิงก์สินค้าสำหรับการตลาด": {
+    "th": "ลิงก์สินค้าสำหรับการตลาด",
+    "en": "Product link for marketing"
+  },
+  "ลิงก์เดียวใช้ได้ทุกเครื่อง มือถือจะเปิดแอปหรือร้านแอป ส่วนคอมพิวเตอร์จะเปิดหน้าสินค้าบนเว็บ ใช้กับโฆษณาได้เลย": {
+    "th": "ลิงก์เดียวใช้ได้ทุกเครื่อง มือถือจะเปิดแอปหรือร้านแอป ส่วนคอมพิวเตอร์จะเปิดหน้าสินค้าบนเว็บ ใช้กับโฆษณาได้เลย",
+    "en": "One link for every device: phones open the app or app store, computers open the product page on the web. Ready to use in ads."
+  },
+  "ราคาตามจำนวน (จากโปรโมชัน)": {
+    "th": "ราคาตามจำนวน (จากโปรโมชัน)",
+    "en": "Quantity prices (from a promotion)"
+  },
+  "แก้ไขได้ที่หน้าโปรโมชันเท่านั้น": {
+    "th": "แก้ไขได้ที่หน้าโปรโมชันเท่านั้น",
+    "en": "Edit these on the promotion page only"
+  },
+  "ชื่อและรายละเอียด": {
+    "th": "ชื่อและรายละเอียด",
+    "en": "Name and description"
+  },
+  "รายละเอียดภาษาไทย": {
+    "th": "รายละเอียดภาษาไทย",
+    "en": "Thai description"
+  },
+  "รายละเอียดภาษาอังกฤษ": {
+    "th": "รายละเอียดภาษาอังกฤษ",
+    "en": "English description"
+  },
+  "ส่วนประกอบและวันหมดอายุ": {
+    "th": "ส่วนประกอบและวันหมดอายุ",
+    "en": "Ingredients and expiry"
+  },
+  "ยังไม่มีข้อมูลโภชนาการ เพิ่มได้ที่หน้าแก้ไขสินค้า": {
+    "th": "ยังไม่มีข้อมูลโภชนาการ เพิ่มได้ที่หน้าแก้ไขสินค้า",
+    "en": "No nutrition facts yet. Add them on the edit product page."
+  },
+  "ยังไม่มีรูปภาพหรือวิดีโอ เพิ่มได้ที่หน้าแก้ไขสินค้า": {
+    "th": "ยังไม่มีรูปภาพหรือวิดีโอ เพิ่มได้ที่หน้าแก้ไขสินค้า",
+    "en": "No images or videos yet. Add them on the edit product page."
+  },
+  "ราคาตามจำนวนซื้อ": {
+    "th": "ราคาตามจำนวนซื้อ",
+    "en": "Quantity prices"
+  },
+  "ราคาตามจำนวน (เช่น ซื้อ 5 ชิ้นลด) ตั้งที่หน้าโปรโมชัน": {
+    "th": "ราคาตามจำนวน (เช่น ซื้อ 5 ชิ้นลด) ตั้งที่หน้าโปรโมชัน",
+    "en": "Quantity prices (e.g. a discount for 5 pieces) are set on the promotion page"
+  },
+  "ลบรูปนี้": {
+    "th": "ลบรูปนี้",
+    "en": "Remove this image"
+  },
+  "ยืนยันลบรูปเก่านี้ถาวร? การลบนี้ย้อนกลับไม่ได้": {
+    "th": "ยืนยันลบรูปเก่านี้ถาวร? การลบนี้ย้อนกลับไม่ได้",
+    "en": "Permanently delete this old image? This can't be undone."
+  },
+  "กรุณากรอกรหัสสินค้าและชื่อสินค้าทั้ง 2 ภาษา": {
+    "th": "กรุณากรอกรหัสสินค้าและชื่อสินค้าทั้ง 2 ภาษา",
+    "en": "Enter the product code and the product name in both languages"
+  },
+  "รหัสสินค้า *": {
+    "th": "รหัสสินค้า *",
+    "en": "Product code *"
+  },
+  "มาจากระบบหลัก (ERP) แก้ที่นี่ไม่ได้": {
+    "th": "มาจากระบบหลัก (ERP) แก้ที่นี่ไม่ได้",
+    "en": "Comes from the main system (ERP); can't be changed here"
+  },
+  "ราคาต่อหน่วยขายจากระบบหลัก ไม่ใช่ราคากล่องที่ลูกค้าจ่าย": {
+    "th": "ราคาต่อหน่วยขายจากระบบหลัก ไม่ใช่ราคากล่องที่ลูกค้าจ่าย",
+    "en": "Price per selling unit from the main system, not the box price the customer pays"
+  },
+  "ราคาที่ลูกค้าจ่ายจริง แก้ได้ที่ระบบหลัก (ERP) เท่านั้น": {
+    "th": "ราคาที่ลูกค้าจ่ายจริง แก้ได้ที่ระบบหลัก (ERP) เท่านั้น",
+    "en": "The price the customer actually pays; change it in the main system (ERP) only"
+  },
+  "ยังไม่มีราคาจากระบบหลัก และคำนวณจากขนาดแพ็กไม่ได้": {
+    "th": "ยังไม่มีราคาจากระบบหลัก และคำนวณจากขนาดแพ็กไม่ได้",
+    "en": "No price from the main system yet, and it can't be worked out from the pack size"
+  },
+  "จำนวนขั้นต่ำแต่ละขั้นต้องไม่ทับกัน เป็นราคาโปรของสินค้านี้ ไม่เปลี่ยนราคาขายปกติ (แก้ราคาปกติที่ช่อง “ราคาต่อหน่วยขาย”)": {
+    "th": "จำนวนขั้นต่ำแต่ละขั้นต้องไม่ทับกัน เป็นราคาโปรของสินค้านี้ ไม่เปลี่ยนราคาขายปกติ (แก้ราคาปกติที่ช่อง “ราคาต่อหน่วยขาย”)",
+    "en": "Minimum quantities must not overlap. These are promotion prices for this product and don't change the normal price (edit that in “Price per selling unit”)."
+  },
+  "ประเภทอาหาร": {
+    "th": "ประเภทอาหาร",
+    "en": "Cuisine"
+  },
+  "เลือกประเภทอาหารของสินค้านี้ บันทึกแล้วจะแทนที่ชุดเดิมทั้งหมด": {
+    "th": "เลือกประเภทอาหารของสินค้านี้ บันทึกแล้วจะแทนที่ชุดเดิมทั้งหมด",
+    "en": "Choose this product's cuisines. Saving replaces the whole previous set."
+  },
+  "ไม่พบรายการประเภทอาหาร": {
+    "th": "ไม่พบรายการประเภทอาหาร",
+    "en": "No cuisines found"
+  },
+  "ลบรูปนี้ถาวร": {
+    "th": "ลบรูปนี้ถาวร",
+    "en": "Delete this image permanently"
+  },
+  "กรุณาเลือกสินค้าอย่างน้อย 1 รายการ": {
+    "th": "กรุณาเลือกสินค้าอย่างน้อย 1 รายการ",
+    "en": "Choose at least 1 product"
+  },
+  "2. เลือกสินค้าที่จะแสดงวิดีโอ": {
+    "th": "2. เลือกสินค้าที่จะแสดงวิดีโอ",
+    "en": "2. Choose the products that show this video"
+  },
+  "เพิ่มรหัสสินค้าเอง": {
+    "th": "เพิ่มรหัสสินค้าเอง",
+    "en": "Add a product code yourself"
+  },
+  "พิมพ์รหัสสินค้าแล้วกดเพิ่ม": {
+    "th": "พิมพ์รหัสสินค้าแล้วกดเพิ่ม",
+    "en": "Type a product code, then press Add"
+  },
+  "เพิ่มรหัสสินค้า": {
+    "th": "เพิ่มรหัสสินค้า",
+    "en": "Add product code"
+  },
+  "ค้นหาสินค้าด้วยชื่อหรือรหัสสินค้า...": {
+    "th": "ค้นหาสินค้าด้วยชื่อหรือรหัสสินค้า...",
+    "en": "Search products by name or code..."
+  },
+  "ไม่พบสินค้า ลองค้นหาด้วยชื่อหรือรหัสอื่น": {
+    "th": "ไม่พบสินค้า ลองค้นหาด้วยชื่อหรือรหัสอื่น",
+    "en": "No products found. Try another name or code."
+  },
+  "ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับรหัสสินค้าจากชื่อไฟล์ แล้วแทนที่รูปตามลำดับที่ระบุในชื่อไฟล์ (รูปเดิมที่ลำดับนั้นถูกทับ)": {
+    "th": "ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับรหัสสินค้าจากชื่อไฟล์ แล้วแทนที่รูปตามลำดับที่ระบุในชื่อไฟล์ (รูปเดิมที่ลำดับนั้นถูกทับ)",
+    "en": "Drop several image files. Each file is matched to a product code from its name and replaces the image at the position in the file name (the old image at that position is overwritten)."
+  },
+  "ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับรหัสสินค้าจากชื่อไฟล์ แล้วเพิ่มต่อท้ายรูปเดิม (ไม่ลบหรือแทนที่รูปเดิม)": {
+    "th": "ลากรูปหลายไฟล์มาวาง ระบบจะจับคู่รูปกับรหัสสินค้าจากชื่อไฟล์ แล้วเพิ่มต่อท้ายรูปเดิม (ไม่ลบหรือแทนที่รูปเดิม)",
+    "en": "Drop several image files. Each file is matched to a product code from its name and added after the existing images (nothing is removed or replaced)."
+  },
+  "ลบรูปเก่าที่ถูกแทนที่ซ้ำจนกู้คืนไม่ได้แล้วออกถาวร แต่ละช่องรูปเก็บรูปก่อนหน้าไว้ 1 รูปเสมอ": {
+    "th": "ลบรูปเก่าที่ถูกแทนที่ซ้ำจนกู้คืนไม่ได้แล้วออกถาวร แต่ละช่องรูปเก็บรูปก่อนหน้าไว้ 1 รูปเสมอ",
+    "en": "Permanently delete old replaced images that can no longer be restored. Each image slot always keeps 1 previous image."
+  },
+  "ตรวจสอบว่ารหัสสินค้าในชื่อไฟล์ตรงกับรหัสในระบบ แล้วลองใหม่อีกครั้ง": {
+    "th": "ตรวจสอบว่ารหัสสินค้าในชื่อไฟล์ตรงกับรหัสในระบบ แล้วลองใหม่อีกครั้ง",
+    "en": "Check that the product code in the file name matches the code in the system, then try again"
+  },
+  "→ รหัสสินค้า ": {
+    "th": "→ รหัสสินค้า ",
+    "en": "→ product code "
+  },
+  "ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่รหัสสินค้าไม่ได้จะถูกข้ามและแจ้งให้ทราบ": {
+    "th": "ตัวพิมพ์ใหญ่/เล็กไม่มีผล · ไฟล์ที่จับคู่รหัสสินค้าไม่ได้จะถูกข้ามและแจ้งให้ทราบ",
+    "en": "Upper or lower case doesn't matter · files that can't be matched to a product code are skipped and listed"
+  },
+  "— ไม่พบรหัสสินค้า": {
+    "th": "— ไม่พบรหัสสินค้า",
+    "en": "— product code not found"
+  },
+  "ทุกไฟล์อ่านรหัสสินค้าไม่ได้ — ปัญหาน่าจะอยู่ที่ชื่อไฟล์": {
+    "th": "ทุกไฟล์อ่านรหัสสินค้าไม่ได้ — ปัญหาน่าจะอยู่ที่ชื่อไฟล์",
+    "en": "No file had a readable product code — the file names are probably the problem"
+  },
+  " → รหัสสินค้า": {
+    "th": " → รหัสสินค้า",
+    "en": " → product code"
+  },
+  "ทุกไฟล์ไม่พบรหัสสินค้าในระบบ": {
+    "th": "ทุกไฟล์ไม่พบรหัสสินค้าในระบบ",
+    "en": "None of the product codes were found in the system"
+  },
+  "ไฟล์อ่านรหัสสินค้าได้ปกติ แต่การอัปโหลดล้มเหลว อาจเกิดจากปัญหาเครือข่ายหรือเซิร์ฟเวอร์ชั่วคราว ลองกด “ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ” ด้านล่าง": {
+    "th": "ไฟล์อ่านรหัสสินค้าได้ปกติ แต่การอัปโหลดล้มเหลว อาจเกิดจากปัญหาเครือข่ายหรือเซิร์ฟเวอร์ชั่วคราว ลองกด “ลองอีกครั้งเฉพาะไฟล์ที่ไม่สำเร็จ” ด้านล่าง",
+    "en": "The product codes were read, but the upload failed, probably a temporary network or server problem. Press “Retry failed files only” below."
+  },
+  "อ่านรหัสสินค้าจากชื่อไฟล์ไม่ได้ — เปลี่ยนชื่อเป็น sku_ลำดับ.jpg เช่น JG001_1.jpg": {
+    "th": "อ่านรหัสสินค้าจากชื่อไฟล์ไม่ได้ — เปลี่ยนชื่อเป็น sku_ลำดับ.jpg เช่น JG001_1.jpg",
+    "en": "Can't read a product code from the file name — rename it to code_position.jpg, e.g. JG001_1.jpg"
+  },
+  "ไม่พบรหัสสินค้านี้ในระบบ — ตรวจสอบรหัสสินค้าแล้วเปลี่ยนชื่อไฟล์": {
+    "th": "ไม่พบรหัสสินค้านี้ในระบบ — ตรวจสอบรหัสสินค้าแล้วเปลี่ยนชื่อไฟล์",
+    "en": "This product code isn't in the system — check the code and rename the file"
+  },
+  "ไฟล์ใหญ่เกิน 5 MB — ย่อไฟล์แล้วลองใหม่": {
+    "th": "ไฟล์ใหญ่เกิน 5 MB — ย่อไฟล์แล้วลองใหม่",
+    "en": "File is larger than 5 MB — make it smaller and try again"
+  },
+  "ชนิดไฟล์ไม่รองรับ (รองรับเฉพาะ jpg, jpeg, png, gif, webp)": {
+    "th": "ชนิดไฟล์ไม่รองรับ (รองรับเฉพาะ jpg, jpeg, png, gif, webp)",
+    "en": "File type not supported (jpg, jpeg, png, gif, webp only)"
+  },
+  "โหมดแทนที่ต้องระบุลำดับรูปในชื่อไฟล์ — เปลี่ยนเป็น sku_ลำดับ.jpg เช่น JG001_1.jpg": {
+    "th": "โหมดแทนที่ต้องระบุลำดับรูปในชื่อไฟล์ — เปลี่ยนเป็น sku_ลำดับ.jpg เช่น JG001_1.jpg",
+    "en": "Replace mode needs the image position in the file name — rename to code_position.jpg, e.g. JG001_1.jpg"
+  },
+  "มีไฟล์อื่นในชุดนี้แทนที่รูปลำดับเดียวกันอยู่แล้ว — เก็บไว้ไฟล์เดียวต่อ 1 ลำดับ": {
+    "th": "มีไฟล์อื่นในชุดนี้แทนที่รูปลำดับเดียวกันอยู่แล้ว — เก็บไว้ไฟล์เดียวต่อ 1 ลำดับ",
+    "en": "Another file in this batch already replaces the same position — keep one file per position"
+  },
+  "อัปโหลดขัดข้อง — กด “ลองอีกครั้ง” ได้เลย": {
+    "th": "อัปโหลดขัดข้อง — กด “ลองอีกครั้ง” ได้เลย",
+    "en": "Upload failed — press “Try again”"
+  },
+  "เปิดรับ": {
+    "th": "เปิดรับ",
+    "en": "Open"
+  },
+  "ปิดรับแล้ว": {
+    "th": "ปิดรับแล้ว",
+    "en": "Closed"
+  },
+  "ประวัติข้อความแชตระหว่างลูกค้ากับทีมบริการลูกค้า ทีมยังตอบแชตในระบบบริการลูกค้าเหมือนเดิม": {
+    "th": "ประวัติข้อความแชตระหว่างลูกค้ากับทีมบริการลูกค้า ทีมยังตอบแชตในระบบบริการลูกค้าเหมือนเดิม",
+    "en": "Chat history between customers and the customer service team. The team still replies in the customer service system."
+  },
+  "ผู้ส่ง": {
+    "th": "ผู้ส่ง",
+    "en": "Sender"
+  },
+  "การส่ง": {
+    "th": "การส่ง",
+    "en": "Delivery"
+  },
+  "ลูกค้าส่งมา": {
+    "th": "ลูกค้าส่งมา",
+    "en": "From customer"
+  },
+  "ทีมงานตอบ": {
+    "th": "ทีมงานตอบ",
+    "en": "Team reply"
+  },
+  "ไม่มีข้อความของผู้เยี่ยมชมนี้ ลองล้างตัวกรอง": {
+    "th": "ไม่มีข้อความของผู้เยี่ยมชมนี้ ลองล้างตัวกรอง",
+    "en": "No messages from this visitor. Try clearing the filter."
+  },
+  "ยังไม่มีข้อความแชต เมื่อลูกค้าเริ่มแชตจะเห็นที่นี่": {
+    "th": "ยังไม่มีข้อความแชต เมื่อลูกค้าเริ่มแชตจะเห็นที่นี่",
+    "en": "No chat messages yet. They appear here once a customer starts a chat."
+  },
+  "ลูกค้าเป้าหมาย": {
+    "th": "ลูกค้าเป้าหมาย",
+    "en": "Prospect"
+  },
+  "ลูกค้าที่หยุดสั่ง": {
+    "th": "ลูกค้าที่หยุดสั่ง",
+    "en": "Inactive customer"
+  },
+  "ติดต่อแล้ว": {
+    "th": "ติดต่อแล้ว",
+    "en": "Contacted"
+  },
+  "นัดหมาย": {
+    "th": "นัดหมาย",
+    "en": "Appointment"
+  },
+  "เจรจา": {
+    "th": "เจรจา",
+    "en": "Negotiating"
+  },
+  "สนใจ": {
+    "th": "สนใจ",
+    "en": "Interested"
+  },
+  "เซ็นแล้ว": {
+    "th": "เซ็นแล้ว",
+    "en": "Signed"
+  },
+  "กลับมาสั่ง": {
+    "th": "กลับมาสั่ง",
+    "en": "Reactivated"
+  },
+  "สั่งซ้ำ": {
+    "th": "สั่งซ้ำ",
+    "en": "Ordering again"
+  },
+  "เสีย": {
+    "th": "เสีย",
+    "en": "Lost"
+  },
+  "เข้าร้าน": {
+    "th": "เข้าร้าน",
+    "en": "Store visit"
+  },
+  "โทรหาลูกค้าใหม่": {
+    "th": "โทรหาลูกค้าใหม่",
+    "en": "Cold call"
+  },
+  "ไลน์": {
+    "th": "ไลน์",
+    "en": "LINE"
+  },
+  "ประชุม": {
+    "th": "ประชุม",
+    "en": "Meeting"
+  },
+  "นำเสนอสินค้า": {
+    "th": "นำเสนอสินค้า",
+    "en": "Pitch"
+  },
+  "อบรม": {
+    "th": "อบรม",
+    "en": "Training"
+  },
+  "ส่งของขวัญ": {
+    "th": "ส่งของขวัญ",
+    "en": "Gift"
+  },
+  "ส่งของหรือเอกสาร": {
+    "th": "ส่งของหรือเอกสาร",
+    "en": "Delivery of goods or documents"
+  },
+  "ขอความเห็น": {
+    "th": "ขอความเห็น",
+    "en": "Feedback request"
+  },
+  "ลูกค้าที่หยุดสั่งหรือเริ่มห่าง และผลงานทีมขายเดือนนี้ ตัวเลขเดียวกับในแอปของพนักงานขาย": {
+    "th": "ลูกค้าที่หยุดสั่งหรือเริ่มห่าง และผลงานทีมขายเดือนนี้ ตัวเลขเดียวกับในแอปของพนักงานขาย",
+    "en": "Customers who stopped or slowed ordering, and the sales team's results this month. Same numbers as the sales app."
+  },
+  "ลูกค้าที่ต้องติดตาม": {
+    "th": "ลูกค้าที่ต้องติดตาม",
+    "en": "Customers to follow up"
+  },
+  "หยุดสั่ง {0} · เริ่มห่าง {1} · กลับมาแล้ว {2}": {
+    "th": "หยุดสั่ง {0} · เริ่มห่าง {1} · กลับมาแล้ว {2}",
+    "en": "Stopped {0} · Slowing {1} · Back {2}"
+  },
+  "ร้านที่พบจากการสำรวจตลาด {0}": {
+    "th": "ร้านที่พบจากการสำรวจตลาด {0}",
+    "en": "Stores found in market research {0}"
+  },
+  "กลุ่มที่เริ่มห่าง": {
+    "th": "กลุ่มที่เริ่มห่าง",
+    "en": "Slowing customers"
+  },
+  "รายได้กลุ่มหยุดสั่ง {0} × โอกาสกลับมา {1}%": {
+    "th": "รายได้กลุ่มหยุดสั่ง {0} × โอกาสกลับมา {1}%",
+    "en": "Inactive revenue {0} × return chance {1}%"
+  },
+  "ยอดขายเดือนนี้": {
+    "th": "ยอดขายเดือนนี้",
+    "en": "Sales this month"
+  },
+  "ยังไม่มีข้อมูลทีมขาย ลองกดรีเฟรชอีกครั้ง": {
+    "th": "ยังไม่มีข้อมูลทีมขาย ลองกดรีเฟรชอีกครั้ง",
+    "en": "No sales team data yet. Try refreshing."
+  },
+  "ขั้นการขาย": {
+    "th": "ขั้นการขาย",
+    "en": "Sales stage"
+  },
+  "อยู่ในขั้นนี้": {
+    "th": "อยู่ในขั้นนี้",
+    "en": "Time in stage"
+  },
+  "ไม่มีลีดค้าง ทีมติดตามครบแล้ว": {
+    "th": "ไม่มีลีดค้าง ทีมติดตามครบแล้ว",
+    "en": "No waiting leads. The team is up to date."
+  },
+  "สั่งของแทนลูกค้า ตรวจคำขอสินค้าตัวอย่าง และรวมบัญชีซ้ำ ระบบบันทึกอีเมลของคุณไว้ในประวัติทุกครั้ง": {
+    "th": "สั่งของแทนลูกค้า ตรวจคำขอสินค้าตัวอย่าง และรวมบัญชีซ้ำ ระบบบันทึกอีเมลของคุณไว้ในประวัติทุกครั้ง",
+    "en": "Order for a customer, review sample requests and merge duplicate accounts. Your email is recorded in the history every time."
+  },
+  "รหัสสินค้าหรือชื่อสินค้า": {
+    "th": "รหัสสินค้าหรือชื่อสินค้า",
+    "en": "Product code or name"
+  },
+  "รายละเอียดราคาที่คำนวณได้": {
+    "th": "รายละเอียดราคาที่คำนวณได้",
+    "en": "Calculated price details"
+  },
+  "ดูรหัสผู้ใช้ได้ในหน้ารายละเอียดลูกค้า ใช้ได้เฉพาะผู้ดูแลระบบ และย้อนกลับไม่ได้": {
+    "th": "ดูรหัสผู้ใช้ได้ในหน้ารายละเอียดลูกค้า ใช้ได้เฉพาะผู้ดูแลระบบ และย้อนกลับไม่ได้",
+    "en": "Find user IDs on the customer detail page. Administrators only. This cannot be undone."
+  },
+  "กรอกรหัสผู้ใช้ให้ครบตามรูปแบบ": {
+    "th": "กรอกรหัสผู้ใช้ให้ครบตามรูปแบบ",
+    "en": "Enter a complete user ID"
+  },
+  "ใส่รหัสผู้ใช้ของสองบัญชีที่ต่างกัน": {
+    "th": "ใส่รหัสผู้ใช้ของสองบัญชีที่ต่างกัน",
+    "en": "Enter the user IDs of two different accounts"
+  },
+  "เครดิตเทอม": {
+    "th": "เครดิตเทอม",
+    "en": "Credit terms"
+  },
+  "QR": {
+    "th": "QR",
+    "en": "QR"
+  },
+  "เก็บปลายทาง": {
+    "th": "เก็บปลายทาง",
+    "en": "Cash on delivery"
+  },
+  "ลิงก์ชำระเงิน": {
+    "th": "ลิงก์ชำระเงิน",
+    "en": "Payment link"
+  },
+  "เงินสดหรือเก็บเงินปลายทาง": {
+    "th": "เงินสดหรือเก็บเงินปลายทาง",
+    "en": "Cash or cash on delivery"
+  },
+  "แก้ไขและดูสาขา": {
+    "th": "แก้ไขและดูสาขา",
+    "en": "Edit and view branches"
+  },
+  "ข้อมูลบริษัท เครดิตเทอม วงเงิน และสิทธิ์สั่งซื้อของแต่ละบริษัท": {
+    "th": "ข้อมูลบริษัท เครดิตเทอม วงเงิน และสิทธิ์สั่งซื้อของแต่ละบริษัท",
+    "en": "Company details, credit terms, credit limit and ordering rights for each company"
+  },
+  "ยังไม่มีบริษัทลูกค้า": {
+    "th": "ยังไม่มีบริษัทลูกค้า",
+    "en": "No customer companies yet"
+  },
+  "ลองค้นด้วยชื่อหรือเลขทะเบียนอื่น": {
+    "th": "ลองค้นด้วยชื่อหรือเลขทะเบียนอื่น",
+    "en": "Try another name or registration number"
+  },
+  "กดเพิ่มบริษัทใหม่เพื่อเริ่มต้น": {
+    "th": "กดเพิ่มบริษัทใหม่เพื่อเริ่มต้น",
+    "en": "Add a new company to get started"
+  },
+  "ยังไม่มีผู้ดูแลในสาขานี้": {
+    "th": "ยังไม่มีผู้ดูแลในสาขานี้",
+    "en": "No branch admins yet"
+  },
+  "แก้ข้อมูลบริษัทด้านบน ส่วนผู้ใช้และที่อยู่จัดส่งแยกตามสาขาด้านล่าง": {
+    "th": "แก้ข้อมูลบริษัทด้านบน ส่วนผู้ใช้และที่อยู่จัดส่งแยกตามสาขาด้านล่าง",
+    "en": "Edit company details above. Users and delivery addresses are listed by branch below."
+  },
+  "ที่อยู่ตามทะเบียนบริษัท ไม่ใช่ที่อยู่จัดส่งของแต่ละสาขา": {
+    "th": "ที่อยู่ตามทะเบียนบริษัท ไม่ใช่ที่อยู่จัดส่งของแต่ละสาขา",
+    "en": "The registered company address, not a branch delivery address"
+  },
+  "ใช้ไปแล้ว": {
+    "th": "ใช้ไปแล้ว",
+    "en": "Used"
+  },
+  "สาขา ที่อยู่จัดส่ง และผู้ใช้": {
+    "th": "สาขา ที่อยู่จัดส่ง และผู้ใช้",
+    "en": "Branches, delivery addresses and users"
+  },
+  "แต่ละสาขามีที่อยู่จัดส่งของตัวเอง และแสดงเฉพาะผู้ดูแลสาขา": {
+    "th": "แต่ละสาขามีที่อยู่จัดส่งของตัวเอง และแสดงเฉพาะผู้ดูแลสาขา",
+    "en": "Each branch has its own delivery address and shows its branch admins only"
+  },
+  "ควรผูกสาขา": {
+    "th": "ควรผูกสาขา",
+    "en": "Needs a branch"
+  },
+  "ผู้ใช้เหล่านี้ยังไม่ได้กำหนดสาขาที่จัดส่ง ควรผูกกับสาขาเพื่อระบุที่อยู่จัดส่ง": {
+    "th": "ผู้ใช้เหล่านี้ยังไม่ได้กำหนดสาขาที่จัดส่ง ควรผูกกับสาขาเพื่อระบุที่อยู่จัดส่ง",
+    "en": "These users have no delivery branch yet. Link them to a branch to set a delivery address."
+  },
+  "ราคาใหม่ (บาท)": {
+    "th": "ราคาใหม่ (บาท)",
+    "en": "New price (THB)"
+  },
+  "ราคาพิเศษของบริษัทนี้ ถ้าไม่เลือกสาขา ราคาจะใช้กับทุกสาขา": {
+    "th": "ราคาพิเศษของบริษัทนี้ ถ้าไม่เลือกสาขา ราคาจะใช้กับทุกสาขา",
+    "en": "Special prices for this company. Without a branch, the price applies to every branch."
+  },
+  "นำเข้าไฟล์ CSV (รหัสสินค้า ราคา วันเริ่ม วันสิ้นสุด)": {
+    "th": "นำเข้าไฟล์ CSV (รหัสสินค้า ราคา วันเริ่ม วันสิ้นสุด)",
+    "en": "Import a CSV file (product code, price, start date, end date)"
+  },
+  "ทุกสาขา": {
+    "th": "ทุกสาขา",
+    "en": "All branches"
+  },
+  "ปฏิเสธแล้ว": {
+    "th": "ปฏิเสธแล้ว",
+    "en": "Rejected"
+  },
+  "ปฏิเสธคำขอราคาของ {0}?": {
+    "th": "ปฏิเสธคำขอราคาของ {0}?",
+    "en": "Reject the price request for {0}?"
+  },
+  "คำขอราคาพิเศษจากลูกค้า อนุมัติหรือปฏิเสธได้ที่นี่": {
+    "th": "คำขอราคาพิเศษจากลูกค้า อนุมัติหรือปฏิเสธได้ที่นี่",
+    "en": "Special price requests from customers. Approve or reject them here."
+  },
+  "ยังไม่มีคำขอราคา": {
+    "th": "ยังไม่มีคำขอราคา",
+    "en": "No price requests yet"
+  },
+  "เมื่อลูกค้าขอราคาพิเศษ คำขอจะขึ้นที่นี่": {
+    "th": "เมื่อลูกค้าขอราคาพิเศษ คำขอจะขึ้นที่นี่",
+    "en": "Requests appear here when a customer asks for a special price"
+  },
+  "ย่อหมวดย่อย": {
+    "th": "ย่อหมวดย่อย",
+    "en": "Collapse subcategories"
+  },
+  "ขยายหมวดย่อย": {
+    "th": "ขยายหมวดย่อย",
+    "en": "Expand subcategories"
+  },
+  "โหลดรายการหมวดไม่สำเร็จ": {
+    "th": "โหลดรายการหมวดไม่สำเร็จ",
+    "en": "Could not load the category list"
+  },
+  "บันทึกแล้ว {0} หมวด": {
+    "th": "บันทึกแล้ว {0} หมวด",
+    "en": "Saved {0} categories"
+  },
+  "เลือกหมวดสินค้าที่ลูกค้าย้ายไปส่งรอบอื่นได้ เพื่อให้ยอดถึงเกณฑ์ส่งฟรี": {
+    "th": "เลือกหมวดสินค้าที่ลูกค้าย้ายไปส่งรอบอื่นได้ เพื่อให้ยอดถึงเกณฑ์ส่งฟรี",
+    "en": "Choose the product categories customers may move to another delivery round to reach free delivery"
+  },
+  "สินค้าสั่งล่วงหน้าย้ายไม่ได้เสมอ และการเปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วหมวดย่อยทั้งหมดจะถูกเลือกด้วย (ช่องเป็นสีเทา) ถ้าต้องการแค่บางหมวดย่อย ให้ติ๊กเฉพาะหมวดย่อยโดยไม่ติ๊กหมวดแม่": {
+    "th": "สินค้าสั่งล่วงหน้าย้ายไม่ได้เสมอ และการเปลี่ยนวันส่งไม่ใช้รายการนี้ ติ๊กหมวดแม่แล้วหมวดย่อยทั้งหมดจะถูกเลือกด้วย (ช่องเป็นสีเทา) ถ้าต้องการแค่บางหมวดย่อย ให้ติ๊กเฉพาะหมวดย่อยโดยไม่ติ๊กหมวดแม่",
+    "en": "Pre-order products can never be moved, and changing the delivery date does not use this list. Ticking a parent category selects all of its subcategories (greyed out). To allow only some subcategories, tick just those without the parent."
+  },
+  "เครื่องมือบริการลูกค้า": {
+    "th": "เครื่องมือบริการลูกค้า",
+    "en": "Customer service tools"
+  },
+  "ช่องที่ปล่อยว่างจะไม่ถูกแก้ไข ระบบไม่บันทึกทับด้วยค่าว่าง": {
+    "th": "ช่องที่ปล่อยว่างจะไม่ถูกแก้ไข ระบบไม่บันทึกทับด้วยค่าว่าง",
+    "en": "Empty fields are left unchanged. Blank values never overwrite saved data."
+  },
+  "รหัสผู้ใช้ของพนักงานขาย": {
+    "th": "รหัสผู้ใช้ของพนักงานขาย",
+    "en": "Sales rep user ID"
+  },
+  "ย้ายออเดอร์และสาขาจากบัญชีที่ซ้ำเข้าบัญชีนี้ แล้วปิดอีเมลและเบอร์ของบัญชีที่ซ้ำ": {
+    "th": "ย้ายออเดอร์และสาขาจากบัญชีที่ซ้ำเข้าบัญชีนี้ แล้วปิดอีเมลและเบอร์ของบัญชีที่ซ้ำ",
+    "en": "Move orders and branches from the duplicate account into this one, then close the duplicate's email and phone"
+  },
+  "รหัสผู้ใช้ของบัญชีที่ซ้ำ *": {
+    "th": "รหัสผู้ใช้ของบัญชีที่ซ้ำ *",
+    "en": "Duplicate account user ID *"
+  },
+  "ใส่รหัสผู้ใช้ของบัญชีที่ซ้ำ": {
+    "th": "ใส่รหัสผู้ใช้ของบัญชีที่ซ้ำ",
+    "en": "Enter the duplicate account's user ID"
+  },
+  "สาขา ที่อยู่จัดส่ง และพิกัด": {
+    "th": "สาขา ที่อยู่จัดส่ง และพิกัด",
+    "en": "Branches, delivery addresses and coordinates"
+  },
+  "เอกสารยืนยันตัวตนที่ลูกค้าส่งมา แยกตามสถานะการตรวจ": {
+    "th": "เอกสารยืนยันตัวตนที่ลูกค้าส่งมา แยกตามสถานะการตรวจ",
+    "en": "Identity documents sent by customers, grouped by review status"
+  },
+  "หน้านี้ใช้ดูเอกสารอย่างเดียว การอนุมัติหรือปฏิเสธทำในระบบบริการลูกค้า (CS-CRM)": {
+    "th": "หน้านี้ใช้ดูเอกสารอย่างเดียว การอนุมัติหรือปฏิเสธทำในระบบบริการลูกค้า (CS-CRM)",
+    "en": "This page is view-only. Approve or reject in the customer service system (CS-CRM)."
+  },
+  "ลองเลือกแท็บทั้งหมด": {
+    "th": "ลองเลือกแท็บทั้งหมด",
+    "en": "Try the All tab"
+  },
+  "ลูกค้าธุรกิจ": {
+    "th": "ลูกค้าธุรกิจ",
+    "en": "Business customer"
+  },
+  "ลูกค้าทั่วไป": {
+    "th": "ลูกค้าทั่วไป",
+    "en": "Individual customer"
+  },
+  "ไม่มีไฟล์": {
+    "th": "ไม่มีไฟล์",
+    "en": "No file"
+  },
+  "ผู้ดูแลหลัก": {
+    "th": "ผู้ดูแลหลัก",
+    "en": "Main admin"
+  },
+  "รหัสเดิม: ": {
+    "th": "รหัสเดิม: ",
+    "en": "Old code: "
+  },
+  "ค้นหาบัญชีผู้ใช้ของลูกค้า ดูบริษัท สาขา และสถานะการสมัคร": {
+    "th": "ค้นหาบัญชีผู้ใช้ของลูกค้า ดูบริษัท สาขา และสถานะการสมัคร",
+    "en": "Find customer user accounts and see their company, branches and sign-up status"
+  },
+  "กำลังเตรียมไฟล์...": {
+    "th": "กำลังเตรียมไฟล์...",
+    "en": "Preparing file..."
+  },
+  "ดาวน์โหลดไฟล์ CSV": {
+    "th": "ดาวน์โหลดไฟล์ CSV",
+    "en": "Download CSV file"
+  },
+  "ชื่อ อีเมล รหัสลูกค้า เบอร์โทร หรือบริษัท": {
+    "th": "ชื่อ อีเมล รหัสลูกค้า เบอร์โทร หรือบริษัท",
+    "en": "Name, email, customer code, phone or company"
+  },
+  "ทุกกลุ่มลูกค้า": {
+    "th": "ทุกกลุ่มลูกค้า",
+    "en": "All customer groups"
+  },
+  "ล้างกลุ่มลูกค้า": {
+    "th": "ล้างกลุ่มลูกค้า",
+    "en": "Clear customer group"
+  },
+  "บริษัท: ": {
+    "th": "บริษัท: ",
+    "en": "Company: "
+  },
+  "ไม่พบผู้ใช้": {
+    "th": "ไม่พบผู้ใช้",
+    "en": "No users found"
+  },
+  "ลองเปลี่ยนคำค้นหรือล้างตัวกรอง": {
+    "th": "ลองเปลี่ยนคำค้นหรือล้างตัวกรอง",
+    "en": "Try another search or clear the filters"
+  },
+  "{0} ชิ้น": {
+    "th": "{0} ชิ้น",
+    "en": "{0} items"
+  },
+  "รายละเอียดผู้ใช้": {
+    "th": "รายละเอียดผู้ใช้",
+    "en": "User details"
+  },
+  "เส้นทางการใช้งาน": {
+    "th": "เส้นทางการใช้งาน",
+    "en": "Activity timeline"
+  },
+  "ไม่มีรหัสลูกค้า": {
+    "th": "ไม่มีรหัสลูกค้า",
+    "en": "No customer code"
+  },
+  "เปิดประวัติติดต่อ (Zendesk)": {
+    "th": "เปิดประวัติติดต่อ (Zendesk)",
+    "en": "Open contact history (Zendesk)"
+  },
+  "{0} สาขา": {
+    "th": "{0} สาขา",
+    "en": "{0} branches"
+  },
+  "สินค้าที่สั่งบ่อย 10 อันดับแรก": {
+    "th": "สินค้าที่สั่งบ่อย 10 อันดับแรก",
+    "en": "Top 10 ordered products"
+  },
+  "รหัสสินค้า ": {
+    "th": "รหัสสินค้า ",
+    "en": "Product code "
+  },
+  "ยอดสั่งซื้อ": {
+    "th": "ยอดสั่งซื้อ",
+    "en": "Order value"
+  },
+  "ยังไม่มีสาขา จึงยังกำหนดราคาสัญญาตามสาขาไม่ได้": {
+    "th": "ยังไม่มีสาขา จึงยังกำหนดราคาสัญญาตามสาขาไม่ได้",
+    "en": "No branches yet, so branch contract prices cannot be set"
+  },
+  "ราคาสัญญาของแต่ละสาขา ส่วนราคาพิเศษของบริษัทจัดการที่หน้าบริษัท": {
+    "th": "ราคาสัญญาของแต่ละสาขา ส่วนราคาพิเศษของบริษัทจัดการที่หน้าบริษัท",
+    "en": "Contract prices per branch. Company special prices are managed on the company page."
+  },
+  "รหัสระดับนี้ถูกใช้แล้ว กรุณาใช้รหัสอื่น": {
+    "th": "รหัสระดับนี้ถูกใช้แล้ว กรุณาใช้รหัสอื่น",
+    "en": "This level code is already used. Please use another."
+  },
+  "ยังไม่มีข้อมูลจำนวนลูกค้าในแต่ละระดับ": {
+    "th": "ยังไม่มีข้อมูลจำนวนลูกค้าในแต่ละระดับ",
+    "en": "No customer counts per level yet"
+  },
+  "ยังไม่มีระดับ": {
+    "th": "ยังไม่มีระดับ",
+    "en": "No level"
+  },
+  "โหลดข้อมูลระดับสมาชิกไม่สำเร็จ": {
+    "th": "โหลดข้อมูลระดับสมาชิกไม่สำเร็จ",
+    "en": "Could not load membership levels"
+  },
+  "บันทึก \"{0}\" สำเร็จ": {
+    "th": "บันทึก \"{0}\" สำเร็จ",
+    "en": "Saved \"{0}\""
+  },
+  "ยืนยันการลบระดับ \"{0}\"? ลูกค้าในระดับนี้จะไม่มีระดับสมาชิก": {
+    "th": "ยืนยันการลบระดับ \"{0}\"? ลูกค้าในระดับนี้จะไม่มีระดับสมาชิก",
+    "en": "Delete level \"{0}\"? Customers in this level will have no membership level."
+  },
+  "ลบ \"{0}\" สำเร็จ": {
+    "th": "ลบ \"{0}\" สำเร็จ",
+    "en": "Deleted \"{0}\""
+  },
+  "จัดลำดับไม่สำเร็จ": {
+    "th": "จัดลำดับไม่สำเร็จ",
+    "en": "Could not reorder"
+  },
+  "กรุณากรอกชื่อและรหัสระดับ": {
+    "th": "กรุณากรอกชื่อและรหัสระดับ",
+    "en": "Please enter a name and level code"
+  },
+  "เพิ่มระดับสมาชิกแล้ว": {
+    "th": "เพิ่มระดับสมาชิกแล้ว",
+    "en": "Membership level added"
+  },
+  "เพิ่มระดับสมาชิกไม่สำเร็จ": {
+    "th": "เพิ่มระดับสมาชิกไม่สำเร็จ",
+    "en": "Could not add the membership level"
+  },
+  "กำหนดระดับสมาชิกตามยอดซื้อสะสมของลูกค้า ใช้จัดกลุ่มลูกค้าและสิทธิประโยชน์": {
+    "th": "กำหนดระดับสมาชิกตามยอดซื้อสะสมของลูกค้า ใช้จัดกลุ่มลูกค้าและสิทธิประโยชน์",
+    "en": "Set membership levels by each customer's total spend, used for customer groups and benefits"
+  },
+  "เพิ่มระดับสมาชิก": {
+    "th": "เพิ่มระดับสมาชิก",
+    "en": "Add membership level"
+  },
+  "ชื่อระดับ": {
+    "th": "ชื่อระดับ",
+    "en": "Level name"
+  },
+  "รหัสระดับ (ภาษาอังกฤษ)": {
+    "th": "รหัสระดับ (ภาษาอังกฤษ)",
+    "en": "Level code (English)"
+  },
+  "ตัวพิมพ์เล็ก ไม่มีเว้นวรรค": {
+    "th": "ตัวพิมพ์เล็ก ไม่มีเว้นวรรค",
+    "en": "Lowercase, no spaces"
+  },
+  "เปิดใช้งานระดับนี้": {
+    "th": "เปิดใช้งานระดับนี้",
+    "en": "Turn this level on"
+  },
+  "รหัสระดับ": {
+    "th": "รหัสระดับ",
+    "en": "Level code"
+  },
+  "ยังไม่มีระดับสมาชิก กด \"เพิ่มระดับสมาชิก\" เพื่อสร้าง": {
+    "th": "ยังไม่มีระดับสมาชิก กด \"เพิ่มระดับสมาชิก\" เพื่อสร้าง",
+    "en": "No membership levels yet. Press \"Add membership level\" to create one."
+  },
+  "ชื่อระดับ: {0}": {
+    "th": "ชื่อระดับ: {0}",
+    "en": "Level name: {0}"
+  },
+  "รหัสระดับของ {0}": {
+    "th": "รหัสระดับของ {0}",
+    "en": "Level code of {0}"
+  },
+  "จำนวนลูกค้าในแต่ละระดับ": {
+    "th": "จำนวนลูกค้าในแต่ละระดับ",
+    "en": "Customers per level"
+  },
+  "ให้ AI ตอบ (ยังไม่รองรับ)": {
+    "th": "ให้ AI ตอบ (ยังไม่รองรับ)",
+    "en": "Let AI answer (not supported yet)"
+  },
+  "เปิดลิงก์": {
+    "th": "เปิดลิงก์",
+    "en": "Open a link"
+  },
+  "สั่งงาน": {
+    "th": "สั่งงาน",
+    "en": "Run an action"
+  },
+  "-- เลือกข้อมูลที่จะค้น --": {
+    "th": "-- เลือกข้อมูลที่จะค้น --",
+    "en": "-- Choose what to look up --"
+  },
+  "ตั้งค่าเองแบบละเอียด": {
+    "th": "ตั้งค่าเองแบบละเอียด",
+    "en": "Detailed setup"
+  },
+  " · ฿": {
+    "th": " · ฿",
+    "en": " · ฿"
+  },
+  " หนึ่งแถวต่อหนึ่งสินค้า": {
+    "th": " หนึ่งแถวต่อหนึ่งสินค้า",
+    "en": " One row per product"
+  },
+  "(ใช้วันที่ของแคมเปญ แก้ได้ที่หน้าแคมเปญ)": {
+    "th": "(ใช้วันที่ของแคมเปญ แก้ได้ที่หน้าแคมเปญ)",
+    "en": "(Uses the campaign dates. Change them on the campaign page.)"
+  },
+  "(ใช้วันที่ของแคมเปญ)": {
+    "th": "(ใช้วันที่ของแคมเปญ)",
+    "en": "(Uses the campaign dates)"
+  },
+  "workflow การตลาด": {
+    "th": "workflow การตลาด",
+    "en": "Marketing workflow"
+  },
+  "workflow ที่ใช้กลุ่มนี้จะหาลูกค้าจากกลุ่มนี้ไม่ได้อีก": {
+    "th": "workflow ที่ใช้กลุ่มนี้จะหาลูกค้าจากกลุ่มนี้ไม่ได้อีก",
+    "en": "Workflows that use this group will no longer find customers from it."
+  },
+  "กด \"เพิ่มกติกาส่วนลด\" เพื่อสร้างโปรแรก": {
+    "th": "กด \"เพิ่มกติกาส่วนลด\" เพื่อสร้างโปรแรก",
+    "en": "Click \"Add discount rule\" to create the first one."
+  },
+  "กด \"เพิ่มกลุ่มลูกค้า\" เพื่อสร้างกลุ่มแรก": {
+    "th": "กด \"เพิ่มกลุ่มลูกค้า\" เพื่อสร้างกลุ่มแรก",
+    "en": "Click \"Add customer group\" to create the first group."
+  },
+  "กด \"เพิ่มคูปอง\" เพื่อสร้างคูปองแรก": {
+    "th": "กด \"เพิ่มคูปอง\" เพื่อสร้างคูปองแรก",
+    "en": "Click \"Add coupon\" to create the first coupon."
+  },
+  "กด \"เพิ่มชุดสินค้า\" เพื่อสร้างชุดแรก": {
+    "th": "กด \"เพิ่มชุดสินค้า\" เพื่อสร้างชุดแรก",
+    "en": "Click \"Add product set\" to create the first set."
+  },
+  "กด \"เพิ่มหน้าโปรโมชัน\" เพื่อสร้างหน้าแรก": {
+    "th": "กด \"เพิ่มหน้าโปรโมชัน\" เพื่อสร้างหน้าแรก",
+    "en": "Click \"Add promotion page\" to create the first page."
+  },
+  "กด \"เพิ่มแคมเปญ\" เพื่อเริ่มแคมเปญแรก": {
+    "th": "กด \"เพิ่มแคมเปญ\" เพื่อเริ่มแคมเปญแรก",
+    "en": "Click \"Add campaign\" to start the first campaign."
+  },
+  "กด \"เพิ่มโจทย์\" แล้วกรอกหัวข้อที่อยากรู้": {
+    "th": "กด \"เพิ่มโจทย์\" แล้วกรอกหัวข้อที่อยากรู้",
+    "en": "Click \"Add question\" and enter what you want to find out."
+  },
+  "กด \"เพิ่มโปร\" เพื่อเพิ่มส่วนลดสินค้าในแคมเปญนี้": {
+    "th": "กด \"เพิ่มโปร\" เพื่อเพิ่มส่วนลดสินค้าในแคมเปญนี้",
+    "en": "Click \"Add promotion\" to add a product discount to this campaign."
+  },
+  "กรองรายการที่เลือก ด้วยชื่อหรือรหัสสินค้า": {
+    "th": "กรองรายการที่เลือก ด้วยชื่อหรือรหัสสินค้า",
+    "en": "Filter selected items by name or product code"
+  },
+  "กรุณาระบุชื่อชุดสินค้า": {
+    "th": "กรุณาระบุชื่อชุดสินค้า",
+    "en": "Enter a product set name"
+  },
+  "กลุ่มลูกค้าที่ล็อกรายชื่อตอนสร้าง ใช้กับคูปอง แบนเนอร์ และกรองรายชื่อลูกค้า": {
+    "th": "กลุ่มลูกค้าที่ล็อกรายชื่อตอนสร้าง ใช้กับคูปอง แบนเนอร์ และกรองรายชื่อลูกค้า",
+    "en": "Customer groups whose members are locked when saved. Use them for coupons, banners and customer lists."
+  },
+  "การติดต่อ": {
+    "th": "การติดต่อ",
+    "en": "Contact"
+  },
+  "ข้อมูลยังไม่พอสรุป": {
+    "th": "ข้อมูลยังไม่พอสรุป",
+    "en": "Not enough data to conclude"
+  },
+  "คำค้นที่หาสินค้าไม่เจอ": {
+    "th": "คำค้นที่หาสินค้าไม่เจอ",
+    "en": "Searches with no results"
+  },
+  "คำนวณใหม่ทุกครั้งที่ workflow ใช้ และใช้ได้เฉพาะ workflow ในระบบนี้": {
+    "th": "คำนวณใหม่ทุกครั้งที่ workflow ใช้ และใช้ได้เฉพาะ workflow ในระบบนี้",
+    "en": "Recalculated every time a workflow uses it. Only workflows in this system can use it."
+  },
+  "คืนเงิน/เครดิต": {
+    "th": "คืนเงิน/เครดิต",
+    "en": "Cashback / credit"
+  },
+  "คูปองที่ผูกกับแคมเปญนี้ ถ้าเลือกคูปองที่อยู่ในแคมเปญอื่น คูปองนั้นจะย้ายมาที่นี่": {
+    "th": "คูปองที่ผูกกับแคมเปญนี้ ถ้าเลือกคูปองที่อยู่ในแคมเปญอื่น คูปองนั้นจะย้ายมาที่นี่",
+    "en": "Coupons in this campaign. A coupon picked from another campaign moves here."
+  },
+  "ค้นหาชื่อชุดสินค้า": {
+    "th": "ค้นหาชื่อชุดสินค้า",
+    "en": "Search product set name"
+  },
+  "ค้นหาชื่อสินค้า หรือรหัสสินค้า...": {
+    "th": "ค้นหาชื่อสินค้า หรือรหัสสินค้า...",
+    "en": "Search product name or code..."
+  },
+  "ค้นหาชื่อหรือลิงก์": {
+    "th": "ค้นหาชื่อหรือลิงก์",
+    "en": "Search name or link"
+  },
+  "ค้นหาชื่อแคมเปญ": {
+    "th": "ค้นหาชื่อแคมเปญ",
+    "en": "Search campaign name"
+  },
+  "ค้นหาสินค้าเพื่อเพิ่มเข้าชุด": {
+    "th": "ค้นหาสินค้าเพื่อเพิ่มเข้าชุด",
+    "en": "Search products to add to the set"
+  },
+  "ค้นหาหรือเลือกสินค้าเข้าชุด": {
+    "th": "ค้นหาหรือเลือกสินค้าเข้าชุด",
+    "en": "Search or pick products for the set"
+  },
+  "ค้นหาและเลือกคูปองด้านล่าง แล้วกดเพิ่มเข้าแคมเปญ": {
+    "th": "ค้นหาและเลือกคูปองด้านล่าง แล้วกดเพิ่มเข้าแคมเปญ",
+    "en": "Search and pick a coupon below, then add it to the campaign."
+  },
+  "งานชวนลูกค้าเก่ากลับ": {
+    "th": "งานชวนลูกค้าเก่ากลับ",
+    "en": "Win-back tasks"
+  },
+  "จากข้อมูลแคมเปญด้านบน (ปุ่มของหน้าโปรอยู่ท้ายการ์ดนี้)": {
+    "th": "จากข้อมูลแคมเปญด้านบน (ปุ่มของหน้าโปรอยู่ท้ายการ์ดนี้)",
+    "en": "from the campaign details above (the page has its own button at the end of this card)"
+  },
+  "จำกัดจำนวน (ชิ้น)": {
+    "th": "จำกัดจำนวน (ชิ้น)",
+    "en": "Unit limit (pieces)"
+  },
+  "จำกัดจำนวนชิ้นที่ขายได้ในราคาโปร (นับรวมทุกสินค้าของโปรนี้) ครบแล้วราคาโปรหยุดเอง ลูกค้าจะเห็นราคาปกติ": {
+    "th": "จำกัดจำนวนชิ้นที่ขายได้ในราคาโปร (นับรวมทุกสินค้าของโปรนี้) ครบแล้วราคาโปรหยุดเอง ลูกค้าจะเห็นราคาปกติ",
+    "en": "Limit how many pieces sell at the promotion price (counted across all products in this promotion). Once reached, the promotion price stops and customers see the normal price."
+  },
+  "ฉบับที่": {
+    "th": "ฉบับที่",
+    "en": "Revision"
+  },
+  "ฉบับที่ ": {
+    "th": "ฉบับที่ ",
+    "en": "Revision "
+  },
+  "ชวนลูกค้าเก่ากลับมา": {
+    "th": "ชวนลูกค้าเก่ากลับมา",
+    "en": "Win back past customers"
+  },
+  "ชื่อ event": {
+    "th": "ชื่อ event",
+    "en": "Event name"
+  },
+  "ชื่อกลุ่มลูกค้า *": {
+    "th": "ชื่อกลุ่มลูกค้า *",
+    "en": "Customer group name *"
+  },
+  "ชุดสินค้าของโปร": {
+    "th": "ชุดสินค้าของโปร",
+    "en": "Promotion product sets"
+  },
+  "ซิลเวอร์": {
+    "th": "ซิลเวอร์",
+    "en": "Silver"
+  },
+  "ซื้อแล้ว": {
+    "th": "ซื้อแล้ว",
+    "en": "Purchased"
+  },
+  "ดาวน์โหลดไฟล์ตัวอย่าง (CSV)": {
+    "th": "ดาวน์โหลดไฟล์ตัวอย่าง (CSV)",
+    "en": "Download sample file (CSV)"
+  },
+  "ดูรายชื่อลูกค้า": {
+    "th": "ดูรายชื่อลูกค้า",
+    "en": "View customers"
+  },
+  "ตัวเลข": {
+    "th": "ตัวเลข",
+    "en": "Number"
+  },
+  "ตั้งค่าชุดสินค้า": {
+    "th": "ตั้งค่าชุดสินค้า",
+    "en": "Product set settings"
+  },
+  "ตั้งชื่อชุด แล้วเลือกหมวดหมู่ แบรนด์ หรือสินค้าที่อยู่ในชุดนี้": {
+    "th": "ตั้งชื่อชุด แล้วเลือกหมวดหมู่ แบรนด์ หรือสินค้าที่อยู่ในชุดนี้",
+    "en": "Name the set, then choose the categories, brands or products in it."
+  },
+  "ต้องการรายชื่อใหม่? สร้างกลุ่มลูกค้าใหม่": {
+    "th": "ต้องการรายชื่อใหม่? สร้างกลุ่มลูกค้าใหม่",
+    "en": "Need a new list? Create a new customer group."
+  },
+  "ต้องตรวจผลการสร้าง workflow": {
+    "th": "ต้องตรวจผลการสร้าง workflow",
+    "en": "Workflow creation needs checking"
+  },
+  "ถอดคูปองออกจากแคมเปญ?": {
+    "th": "ถอดคูปองออกจากแคมเปญ?",
+    "en": "Remove the coupon from the campaign?"
+  },
+  "ถอดออกจากแคมเปญ": {
+    "th": "ถอดออกจากแคมเปญ",
+    "en": "Remove from campaign"
+  },
+  "ทุกคนใช้ได้": {
+    "th": "ทุกคนใช้ได้",
+    "en": "Anyone can use"
+  },
+  "ทุกสินค้าในชุดที่เลือกได้ส่วนลดเดียวกัน ระบบเก็บรายการสินค้าไว้ตอนกดบันทึก": {
+    "th": "ทุกสินค้าในชุดที่เลือกได้ส่วนลดเดียวกัน ระบบเก็บรายการสินค้าไว้ตอนกดบันทึก",
+    "en": "Every product in the chosen sets gets the same discount. The product list is kept when you save."
+  },
+  "ทุกสินค้าในโปรได้ราคานี้ตั้งแต่ชิ้นแรก": {
+    "th": "ทุกสินค้าในโปรได้ราคานี้ตั้งแต่ชิ้นแรก",
+    "en": "Every product in the promotion gets this price from the first piece."
+  },
+  "บรอนซ์": {
+    "th": "บรอนซ์",
+    "en": "Bronze"
+  },
+  "บันทึกกลุ่มก่อน จึงจะดูรายชื่อลูกค้าได้ (ตอนนี้แสดงได้แค่จำนวนโดยประมาณด้านบน)": {
+    "th": "บันทึกกลุ่มก่อน จึงจะดูรายชื่อลูกค้าได้ (ตอนนี้แสดงได้แค่จำนวนโดยประมาณด้านบน)",
+    "en": "Save the group first to see its customers (for now only the estimated count above is shown)."
+  },
+  "บันทึกข้อมูลแคมเปญ": {
+    "th": "บันทึกข้อมูลแคมเปญ",
+    "en": "Save campaign details"
+  },
+  "ประวัติการแก้ไขและการตรวจ": {
+    "th": "ประวัติการแก้ไขและการตรวจ",
+    "en": "Edit and review history"
+  },
+  "ปิดแล้วสถานะรวมของแคมเปญเป็น “ปิดใช้งาน” แต่โปร หน้าโปร และคูปองแต่ละตัวยังเปิดอยู่ ปิดได้ที่หน้าของแต่ละอัน": {
+    "th": "ปิดแล้วสถานะรวมของแคมเปญเป็น “ปิดใช้งาน” แต่โปร หน้าโปร และคูปองแต่ละตัวยังเปิดอยู่ ปิดได้ที่หน้าของแต่ละอัน",
+    "en": "Turning it off marks the whole campaign “Inactive”, but each promotion, page and coupon stays on. Turn those off on their own pages."
+  },
+  "ปุ่มบันทึกด้านบนเก็บเฉพาะข้อมูลแคมเปญ คูปองบันทึกทันทีที่เพิ่มหรือถอด หน้าโปรมีปุ่มบันทึกของตัวเอง": {
+    "th": "ปุ่มบันทึกด้านบนเก็บเฉพาะข้อมูลแคมเปญ คูปองบันทึกทันทีที่เพิ่มหรือถอด หน้าโปรมีปุ่มบันทึกของตัวเอง",
+    "en": "Save stores only the campaign details. Coupons save as soon as you add or remove them, and the page has its own save button."
+  },
+  "ผลทดลองเป็นบวก": {
+    "th": "ผลทดลองเป็นบวก",
+    "en": "Positive result"
+  },
+  "ผลทดลองเป็นลบ": {
+    "th": "ผลทดลองเป็นลบ",
+    "en": "Negative result"
+  },
+  "ผูกหน้านี้กับแคมเปญ?": {
+    "th": "ผูกหน้านี้กับแคมเปญ?",
+    "en": "Link this page to the campaign?"
+  },
+  "ผูกแคมเปญ": {
+    "th": "ผูกแคมเปญ",
+    "en": "Link campaign"
+  },
+  "ผูกโปรเข้าแคมเปญเพื่อใช้วันที่เดียวกันทั้งงาน หรือไม่ผูกแล้วกำหนดวันที่เอง": {
+    "th": "ผูกโปรเข้าแคมเปญเพื่อใช้วันที่เดียวกันทั้งงาน หรือไม่ผูกแล้วกำหนดวันที่เอง",
+    "en": "Link the promotion to a campaign to share its dates, or leave it unlinked and set the dates yourself."
+  },
+  "พิมพ์ชื่อสินค้าหรือรหัสสินค้าเพื่อค้นหา": {
+    "th": "พิมพ์ชื่อสินค้าหรือรหัสสินค้าเพื่อค้นหา",
+    "en": "Type a product name or code to search"
+  },
+  "ยังสรุปผลเพิ่มไม่ได้": {
+    "th": "ยังสรุปผลเพิ่มไม่ได้",
+    "en": "Inconclusive so far"
+  },
+  "ยังใช้งานตามเดิมได้ แก้ชื่อ วันที่ สถานะ และแคมเปญได้โดยไม่ต้องเลือกชุดสินค้า แต่ถ้าเลือกชุดสินค้า ตอนบันทึกสินค้าและส่วนลดเดิมทั้งหมดจะถูกแทนที่ด้วยชุดที่เลือก": {
+    "th": "ยังใช้งานตามเดิมได้ แก้ชื่อ วันที่ สถานะ และแคมเปญได้โดยไม่ต้องเลือกชุดสินค้า แต่ถ้าเลือกชุดสินค้า ตอนบันทึกสินค้าและส่วนลดเดิมทั้งหมดจะถูกแทนที่ด้วยชุดที่เลือก",
+    "en": "It keeps working as before. You can edit the name, dates, status and campaign without choosing a product set, but if you choose one, saving replaces all the old products and discounts with the chosen set."
+  },
+  "ยังไม่มี event กด \"สร้าง event\" เพื่อประกาศ event แรก": {
+    "th": "ยังไม่มี event กด \"สร้าง event\" เพื่อประกาศ event แรก",
+    "en": "No events yet. Click \"Create event\" to declare the first one."
+  },
+  "ยังไม่มีกติกาส่วนลด": {
+    "th": "ยังไม่มีกติกาส่วนลด",
+    "en": "No discount rules yet"
+  },
+  "ยังไม่มีกลุ่ม กด \"เพิ่มกลุ่ม\" เพื่อตั้งเงื่อนไขแรก": {
+    "th": "ยังไม่มีกลุ่ม กด \"เพิ่มกลุ่ม\" เพื่อตั้งเงื่อนไขแรก",
+    "en": "No groups yet. Click \"Add group\" to set the first condition."
+  },
+  "ยังไม่มีกลุ่มลูกค้า": {
+    "th": "ยังไม่มีกลุ่มลูกค้า",
+    "en": "No customer groups yet"
+  },
+  "ยังไม่มีคูปอง": {
+    "th": "ยังไม่มีคูปอง",
+    "en": "No coupons yet"
+  },
+  "ยังไม่มีคูปองในแคมเปญนี้": {
+    "th": "ยังไม่มีคูปองในแคมเปญนี้",
+    "en": "No coupons in this campaign yet"
+  },
+  "ยังไม่มีชุดสินค้า": {
+    "th": "ยังไม่มีชุดสินค้า",
+    "en": "No product sets yet"
+  },
+  "ยังไม่มีลูกค้าที่ตรงเงื่อนไข": {
+    "th": "ยังไม่มีลูกค้าที่ตรงเงื่อนไข",
+    "en": "No customers match yet"
+  },
+  "ยังไม่มีหน้าโปรโมชัน": {
+    "th": "ยังไม่มีหน้าโปรโมชัน",
+    "en": "No promotion pages yet"
+  },
+  "ยังไม่มีโปรอัตโนมัติ": {
+    "th": "ยังไม่มีโปรอัตโนมัติ",
+    "en": "No automatic promotions yet"
+  },
+  "ยังไม่มีโอกาสที่มีหลักฐานเพียงพอ · สร้างแผนเอง หรือเริ่มจากงานวิจัยตลาด": {
+    "th": "ยังไม่มีโอกาสที่มีหลักฐานเพียงพอ · สร้างแผนเอง หรือเริ่มจากงานวิจัยตลาด",
+    "en": "No opportunities with enough evidence yet · create a plan yourself or start from market research"
+  },
+  "ยืนยันการลบกลุ่มลูกค้า \"{0}\"?": {
+    "th": "ยืนยันการลบกลุ่มลูกค้า \"{0}\"?",
+    "en": "Delete customer group \"{0}\"?"
+  },
+  "ยืนยันการลบชุดสินค้านี้?": {
+    "th": "ยืนยันการลบชุดสินค้านี้?",
+    "en": "Delete this product set?"
+  },
+  "ย้อนกลับหรือเปลี่ยนแคมเปญภายหลังไม่ได้": {
+    "th": "ย้อนกลับหรือเปลี่ยนแคมเปญภายหลังไม่ได้",
+    "en": "you cannot undo this or change the campaign later"
+  },
+  "รวมสินค้าไว้เป็นชุดที่ตั้งชื่อได้ ใช้กำหนดว่าคูปองหรือโปรใช้กับสินค้าไหน หรือไม่ใช้กับสินค้าไหน": {
+    "th": "รวมสินค้าไว้เป็นชุดที่ตั้งชื่อได้ ใช้กำหนดว่าคูปองหรือโปรใช้กับสินค้าไหน หรือไม่ใช้กับสินค้าไหน",
+    "en": "Named groups of products that decide which products a coupon or promotion covers or leaves out."
+  },
+  "รวมหลายเงื่อนไขด้วย “และ” หรือ “หรือ” โดยไม่ต้องเขียนโค้ด": {
+    "th": "รวมหลายเงื่อนไขด้วย “และ” หรือ “หรือ” โดยไม่ต้องเขียนโค้ด",
+    "en": "Combine conditions with “and” or “or” without writing code."
+  },
+  "รวมโปรอัตโนมัติ คูปอง และหน้าโปรของงานเดียวกันไว้ที่เดียว วันเริ่มและวันจบตั้งที่แคมเปญ": {
+    "th": "รวมโปรอัตโนมัติ คูปอง และหน้าโปรของงานเดียวกันไว้ที่เดียว วันเริ่มและวันจบตั้งที่แคมเปญ",
+    "en": "Keeps the automatic promotions, coupons and page of one event together. Start and end dates are set on the campaign."
+  },
+  "รหัสบริษัท": {
+    "th": "รหัสบริษัท",
+    "en": "Company code"
+  },
+  "รหัสสินค้า: ": {
+    "th": "รหัสสินค้า: ",
+    "en": "Product code: "
+  },
+  "รหัสสินค้าที่ใช้": {
+    "th": "รหัสสินค้าที่ใช้",
+    "en": "Product codes"
+  },
+  "รหัสส่วนลดที่ลูกค้าใช้ตอนสั่งซื้อ เปิดคูปองเพื่อดูผู้ได้รับสิทธิ์และส่งแจ้งเตือน": {
+    "th": "รหัสส่วนลดที่ลูกค้าใช้ตอนสั่งซื้อ เปิดคูปองเพื่อดูผู้ได้รับสิทธิ์และส่งแจ้งเตือน",
+    "en": "Discount codes customers use at checkout. Open a coupon to see who has it and send notifications."
+  },
+  "รหัสอ้างอิง{0}": {
+    "th": "รหัสอ้างอิง{0}",
+    "en": "Reference code{0}"
+  },
+  "ระบบจะไม่รับ event ชื่อนี้อีก ข้อมูลที่เก็บไว้แล้วยังอยู่": {
+    "th": "ระบบจะไม่รับ event ชื่อนี้อีก ข้อมูลที่เก็บไว้แล้วยังอยู่",
+    "en": "The system stops accepting this event. Data already collected stays."
+  },
+  "ระบบเก็บรายการสินค้าของแต่ละชุดไว้ตอนกดบันทึก แก้ชุดทีหลังจะไม่กระทบโปร จนกว่าจะเลือก “ใช้รายการล่าสุด”": {
+    "th": "ระบบเก็บรายการสินค้าของแต่ละชุดไว้ตอนกดบันทึก แก้ชุดทีหลังจะไม่กระทบโปร จนกว่าจะเลือก “ใช้รายการล่าสุด”",
+    "en": "Each set's product list is kept when you save. Later edits to a set do not affect the promotion until you choose “Use the latest list”."
+  },
+  "ระยะเวลา (ใช้วันที่ของแคมเปญ)": {
+    "th": "ระยะเวลา (ใช้วันที่ของแคมเปญ)",
+    "en": "Period (uses the campaign dates)"
+  },
+  "รายการสินค้า (ชุดสินค้า)": {
+    "th": "รายการสินค้า (ชุดสินค้า)",
+    "en": "Products (product sets)"
+  },
+  "ลบกติกาส่วนลดนี้?": {
+    "th": "ลบกติกาส่วนลดนี้?",
+    "en": "Delete this discount rule?"
+  },
+  "ลบกลุ่มนี้?": {
+    "th": "ลบกลุ่มนี้?",
+    "en": "Delete this group?"
+  },
+  "ลบแคมเปญ": {
+    "th": "ลบแคมเปญ",
+    "en": "Delete campaign"
+  },
+  "ลบแคมเปญนี้?": {
+    "th": "ลบแคมเปญนี้?",
+    "en": "Delete this campaign?"
+  },
+  "ลองค้นด้วยชื่ออื่น": {
+    "th": "ลองค้นด้วยชื่ออื่น",
+    "en": "Try another name."
+  },
+  "ลองปรับเงื่อนไขด้านบนแล้วบันทึกอีกครั้ง": {
+    "th": "ลองปรับเงื่อนไขด้านบนแล้วบันทึกอีกครั้ง",
+    "en": "Adjust the conditions above and save again."
+  },
+  "ลำดับขั้นของ workflow": {
+    "th": "ลำดับขั้นของ workflow",
+    "en": "Workflow funnel"
+  },
+  "ลิงก์การตลาด": {
+    "th": "ลิงก์การตลาด",
+    "en": "Marketing link"
+  },
+  "ลิงก์ของหน้า (slug)": {
+    "th": "ลิงก์ของหน้า (slug)",
+    "en": "Page link (slug)"
+  },
+  "ลิงก์เดียวใช้ได้ทุกเครื่อง มือถือเปิดแอปหรือร้านแอป คอมพิวเตอร์เปิดหน้าเว็บ ใช้ในโฆษณาได้เลย": {
+    "th": "ลิงก์เดียวใช้ได้ทุกเครื่อง มือถือเปิดแอปหรือร้านแอป คอมพิวเตอร์เปิดหน้าเว็บ ใช้ในโฆษณาได้เลย",
+    "en": "One link for every device: phones open the app or app store, computers open the web page. Ready to use in ads."
+  },
+  "ลิงก์เปิดในแอป (deeplink)": {
+    "th": "ลิงก์เปิดในแอป (deeplink)",
+    "en": "In-app link (deeplink)"
+  },
+  "วันที่ของหน้าจะเปลี่ยนเป็นวันที่ของแคมเปญ และ": {
+    "th": "วันที่ของหน้าจะเปลี่ยนเป็นวันที่ของแคมเปญ และ",
+    "en": "The page dates change to the campaign dates, and"
+  },
+  "วิธีเลือกลูกค้า": {
+    "th": "วิธีเลือกลูกค้า",
+    "en": "How customers are chosen"
+  },
+  "สรุปเงื่อนไข: ": {
+    "th": "สรุปเงื่อนไข: ",
+    "en": "Condition summary: "
+  },
+  "สร้างกลุ่มลูกค้าแบบหลายเงื่อนไข": {
+    "th": "สร้างกลุ่มลูกค้าแบบหลายเงื่อนไข",
+    "en": "Create a multi-condition customer group"
+  },
+  "สร้างร่าง workflow ไม่สำเร็จ": {
+    "th": "สร้างร่าง workflow ไม่สำเร็จ",
+    "en": "Workflow draft not created"
+  },
+  "สร้างเสร็จแล้วกลับมาเพิ่มเข้าแคมเปญที่นี่": {
+    "th": "สร้างเสร็จแล้วกลับมาเพิ่มเข้าแคมเปญที่นี่",
+    "en": "When it is created, come back and add it to the campaign here."
+  },
+  "สร้างแบบหลายเงื่อนไข": {
+    "th": "สร้างแบบหลายเงื่อนไข",
+    "en": "Create with multiple conditions"
+  },
+  "สร้างแผนการเติบโต": {
+    "th": "สร้างแผนการเติบโต",
+    "en": "Create growth plan"
+  },
+  "สร้างแผนแล้ว": {
+    "th": "สร้างแผนแล้ว",
+    "en": "Plan created"
+  },
+  "สินค้าของโปรนี้ ({0} รายการ)": {
+    "th": "สินค้าของโปรนี้ ({0} รายการ)",
+    "en": "Products in this promotion ({0} items)"
+  },
+  "สินค้าในชุดนี้ ({0} รายการ)": {
+    "th": "สินค้าในชุดนี้ ({0} รายการ)",
+    "en": "Products in this set ({0} items)"
+  },
+  "ส่งให้ตรวจแล้ว": {
+    "th": "ส่งให้ตรวจแล้ว",
+    "en": "Sent for review"
+  },
+  "ส่วนต่างอัตราการซื้อ": {
+    "th": "ส่วนต่างอัตราการซื้อ",
+    "en": "Purchase rate difference"
+  },
+  "ส่วนที่เหลือหลังหักต้นทุน": {
+    "th": "ส่วนที่เหลือหลังหักต้นทุน",
+    "en": "Contribution after costs"
+  },
+  "ส่วนลดของคูปองนี้กำหนดในส่วน “ประเภทและส่วนลด” ด้านล่าง เหมือนคูปองทั่วไป ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ": {
+    "th": "ส่วนลดของคูปองนี้กำหนดในส่วน “ประเภทและส่วนลด” ด้านล่าง เหมือนคูปองทั่วไป ส่วนด้านบนกำหนดแค่เงื่อนไขการได้รับคูปองอัตโนมัติ",
+    "en": "Set this coupon's discount in “Type and discount” below, like any coupon. The section above only sets when the coupon is given automatically."
+  },
+  "ส่วนลดทันที": {
+    "th": "ส่วนลดทันที",
+    "en": "Instant discount"
+  },
+  "ส่วนลดปัจจุบัน (แบบเดิม ตั้งทีละสินค้า แก้ตรงนี้ไม่ได้)": {
+    "th": "ส่วนลดปัจจุบัน (แบบเดิม ตั้งทีละสินค้า แก้ตรงนี้ไม่ได้)",
+    "en": "Current discount (old style, set per product, cannot be edited here)"
+  },
+  "ส่วนลดระดับสินค้า เช่น ซื้อครบลด หรือซื้อ X แถม Y สินค้ามาจากชุดสินค้า วันที่ตามแคมเปญ": {
+    "th": "ส่วนลดระดับสินค้า เช่น ซื้อครบลด หรือซื้อ X แถม Y สินค้ามาจากชุดสินค้า วันที่ตามแคมเปญ",
+    "en": "Product-level discounts such as spend-and-save or buy X get Y. Products come from product sets and dates follow the campaign."
+  },
+  "ส่วนลดระดับสินค้า ใช้วันที่ของแคมเปญ และสินค้าจากชุดสินค้าโปรโมชัน": {
+    "th": "ส่วนลดระดับสินค้า ใช้วันที่ของแคมเปญ และสินค้าจากชุดสินค้าโปรโมชัน",
+    "en": "Product-level discounts using the campaign dates and products from promotion product sets."
+  },
+  "หน้านี้สร้างก่อนมีแคมเปญและเปิดตลอด ผูกแล้วหน้าจะแสดงเฉพาะสินค้าของโปรอัตโนมัติและคูปองสาธารณะของแคมเปญนั้น (ไม่ใช่โปรเดิม) ใช้วันที่ของแคมเปญ และย้อนกลับไม่ได้ (ระบบจะถามยืนยันก่อนบันทึก)": {
+    "th": "หน้านี้สร้างก่อนมีแคมเปญและเปิดตลอด ผูกแล้วหน้าจะแสดงเฉพาะสินค้าของโปรอัตโนมัติและคูปองสาธารณะของแคมเปญนั้น (ไม่ใช่โปรเดิม) ใช้วันที่ของแคมเปญ และย้อนกลับไม่ได้ (ระบบจะถามยืนยันก่อนบันทึก)",
+    "en": "This page was made before campaigns existed and is always on. Once linked, it shows only that campaign's automatic-promotion products and public coupons (not the old promotion), uses the campaign dates, and cannot be undone (you will be asked to confirm before saving)."
+  },
+  "หน้ารวมแบนเนอร์ สินค้า และคูปองของแคมเปญ ลูกค้าเปิดได้ที่ {0}": {
+    "th": "หน้ารวมแบนเนอร์ สินค้า และคูปองของแคมเปญ ลูกค้าเปิดได้ที่ {0}",
+    "en": "Pages that bring together a campaign's banner, products and coupons. Customers open them at {0}"
+  },
+  "หน้าโปรใช้วันที่ของแคมเปญ หนึ่งแคมเปญมีได้หนึ่งหน้า": {
+    "th": "หน้าโปรใช้วันที่ของแคมเปญ หนึ่งแคมเปญมีได้หนึ่งหน้า",
+    "en": "The page uses the campaign dates. Each campaign can have one page."
+  },
+  "หลายเงื่อนไข": {
+    "th": "หลายเงื่อนไข",
+    "en": "Multiple conditions"
+  },
+  "หลายเงื่อนไข (และ/หรือ) แก้ไขในหน้าตั้งเงื่อนไข": {
+    "th": "หลายเงื่อนไข (และ/หรือ) แก้ไขในหน้าตั้งเงื่อนไข",
+    "en": "Multiple conditions (and/or). Edit them on the conditions page."
+  },
+  "อยากลดไม่เท่ากันในแต่ละสินค้า ให้สร้างโปรเพิ่มในแคมเปญเดียวกัน": {
+    "th": "อยากลดไม่เท่ากันในแต่ละสินค้า ให้สร้างโปรเพิ่มในแคมเปญเดียวกัน",
+    "en": "For different discounts per product, add more promotions to the same campaign."
+  },
+  "อัปเดตงานของทีมแล้ว": {
+    "th": "อัปเดตงานของทีมแล้ว",
+    "en": "Team tasks updated"
+  },
+  "อัปเดตสด": {
+    "th": "อัปเดตสด",
+    "en": "Live"
+  },
+  "อุปกรณ์ที่ผูกกับบัญชี": {
+    "th": "อุปกรณ์ที่ผูกกับบัญชี",
+    "en": "Device linked to an account"
+  },
+  "เก็บถาวร event นี้?": {
+    "th": "เก็บถาวร event นี้?",
+    "en": "Archive this event?"
+  },
+  "เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ ต้องการรายชื่อใหม่? สร้างกลุ่มลูกค้าใหม่": {
+    "th": "เงื่อนไขถูกล็อกไว้ตอนบันทึก แก้ไขไม่ได้ ต้องการรายชื่อใหม่? สร้างกลุ่มลูกค้าใหม่",
+    "en": "The conditions were locked when saved and cannot be edited. Need a new list? Create a new customer group."
+  },
+  "เงื่อนไขปัจจุบัน:": {
+    "th": "เงื่อนไขปัจจุบัน:",
+    "en": "Current conditions:"
+  },
+  "เฉพาะรายชื่อที่กำหนด": {
+    "th": "เฉพาะรายชื่อที่กำหนด",
+    "en": "Listed customers only"
+  },
+  "เทรนด์อาหารที่ลูกค้าธุรกิจสนใจ": {
+    "th": "เทรนด์อาหารที่ลูกค้าธุรกิจสนใจ",
+    "en": "Food trends business customers follow"
+  },
+  "เปิดงานชวนลูกค้าเก่ากลับของฝ่ายขาย": {
+    "th": "เปิดงานชวนลูกค้าเก่ากลับของฝ่ายขาย",
+    "en": "Open sales win-back tasks"
+  },
+  "เปิดงานวิจัยตลาด": {
+    "th": "เปิดงานวิจัยตลาด",
+    "en": "Open market research"
+  },
+  "เปิดบันทึกการรันและผู้เข้าร่วม": {
+    "th": "เปิดบันทึกการรันและผู้เข้าร่วม",
+    "en": "Open run logs and participants"
+  },
+  "เปิดใช้งานแคมเปญ": {
+    "th": "เปิดใช้งานแคมเปญ",
+    "en": "Campaign active"
+  },
+  "เพิ่มกติกาส่วนลด": {
+    "th": "เพิ่มกติกาส่วนลด",
+    "en": "Add discount rule"
+  },
+  "เพิ่มกลุ่ม": {
+    "th": "เพิ่มกลุ่ม",
+    "en": "Add group"
+  },
+  "เพิ่มกลุ่มลูกค้า": {
+    "th": "เพิ่มกลุ่มลูกค้า",
+    "en": "Add customer group"
+  },
+  "เพิ่มคูปองเข้าแคมเปญ": {
+    "th": "เพิ่มคูปองเข้าแคมเปญ",
+    "en": "Add coupon to campaign"
+  },
+  "เพิ่มชุดสินค้า": {
+    "th": "เพิ่มชุดสินค้า",
+    "en": "Add product set"
+  },
+  "เพิ่มชุดสินค้าโปรโมชัน": {
+    "th": "เพิ่มชุดสินค้าโปรโมชัน",
+    "en": "Add promotion product set"
+  },
+  "เพิ่มหน้าโปรโมชัน": {
+    "th": "เพิ่มหน้าโปรโมชัน",
+    "en": "Add promotion page"
+  },
+  "เพิ่มแคมเปญ": {
+    "th": "เพิ่มแคมเปญ",
+    "en": "Add campaign"
+  },
+  "เพิ่มโจทย์": {
+    "th": "เพิ่มโจทย์",
+    "en": "Add question"
+  },
+  "เริ่มสร้างร่าง workflow": {
+    "th": "เริ่มสร้างร่าง workflow",
+    "en": "Workflow draft started"
+  },
+  "เลือกชุดสินค้า": {
+    "th": "เลือกชุดสินค้า",
+    "en": "Choose product sets"
+  },
+  "เลือกหมวดหมู่ แล้วสินค้าทั้งหมดในหมวดจะถูกเพิ่มเข้าชุดเอง เอาออกได้โดยยกเลิกการเลือก": {
+    "th": "เลือกหมวดหมู่ แล้วสินค้าทั้งหมดในหมวดจะถูกเพิ่มเข้าชุดเอง เอาออกได้โดยยกเลิกการเลือก",
+    "en": "Pick a category and all its products join the set. Unpick it to remove them."
+  },
+  "เลือกแบรนด์ แล้วสินค้าทั้งหมดของแบรนด์จะถูกเพิ่มเข้าชุดเอง เอาออกได้โดยยกเลิกการเลือก": {
+    "th": "เลือกแบรนด์ แล้วสินค้าทั้งหมดของแบรนด์จะถูกเพิ่มเข้าชุดเอง เอาออกได้โดยยกเลิกการเลือก",
+    "en": "Pick a brand and all its products join the set. Unpick it to remove them."
+  },
+  "แก้วันที่แล้วบันทึก ระบบจะใช้วันที่ใหม่กับทุกโปร หน้าโปร และแบนเนอร์ในแคมเปญนี้": {
+    "th": "แก้วันที่แล้วบันทึก ระบบจะใช้วันที่ใหม่กับทุกโปร หน้าโปร และแบนเนอร์ในแคมเปญนี้",
+    "en": "When you change the dates and save, the new dates apply to every promotion, page and banner in this campaign."
+  },
+  "แก้ไขกลุ่มลูกค้า (หลายเงื่อนไข)": {
+    "th": "แก้ไขกลุ่มลูกค้า (หลายเงื่อนไข)",
+    "en": "Edit customer group (multiple conditions)"
+  },
+  "แก้ไขชุดสินค้าโปรโมชัน": {
+    "th": "แก้ไขชุดสินค้าโปรโมชัน",
+    "en": "Edit promotion product set"
+  },
+  "แก้ไขแผนแล้ว": {
+    "th": "แก้ไขแผนแล้ว",
+    "en": "Plan edited"
+  },
+  "แคมเปญ": {
+    "th": "แคมเปญ",
+    "en": "Campaign"
+  },
+  "แบนเนอร์ สินค้าของโปรอัตโนมัติ และคูปองสาธารณะที่ใช้งานอยู่ของแคมเปญ (รวมสินค้าที่คูปองจำกัดไว้)": {
+    "th": "แบนเนอร์ สินค้าของโปรอัตโนมัติ และคูปองสาธารณะที่ใช้งานอยู่ของแคมเปญ (รวมสินค้าที่คูปองจำกัดไว้)",
+    "en": "The banner, automatic-promotion products and active public coupons of the campaign (including products the coupons are limited to)"
+  },
+  "แบรนด์: ": {
+    "th": "แบรนด์: ",
+    "en": "Brand: "
+  },
+  "แผนการเติบโต": {
+    "th": "แผนการเติบโต",
+    "en": "Growth plans"
+  },
+  "แพลทินัม": {
+    "th": "แพลทินัม",
+    "en": "Platinum"
+  },
+  "แสดงเฉพาะแคมเปญที่ยังไม่มีหน้าโปร": {
+    "th": "แสดงเฉพาะแคมเปญที่ยังไม่มีหน้าโปร",
+    "en": "Shows only campaigns without a page"
+  },
+  "โกลด์": {
+    "th": "โกลด์",
+    "en": "Gold"
+  },
+  "โค้ดเฉพาะของแต่ละคน": {
+    "th": "โค้ดเฉพาะของแต่ละคน",
+    "en": "Personal code per customer"
+  },
+  "โปรนี้สร้างแบบเดิม เลือกชุดสินค้าเพื่อเปลี่ยนเป็นแบบใหม่": {
+    "th": "โปรนี้สร้างแบบเดิม เลือกชุดสินค้าเพื่อเปลี่ยนเป็นแบบใหม่",
+    "en": "This promotion uses the old style. Choose a product set to switch it to the new style."
+  },
+  "โปรประเภทนี้แก้ได้เฉพาะชื่อและสถานะ ส่วนลด วันที่ และชุดสินค้าแก้จากหน้านี้ไม่ได้": {
+    "th": "โปรประเภทนี้แก้ได้เฉพาะชื่อและสถานะ ส่วนลด วันที่ และชุดสินค้าแก้จากหน้านี้ไม่ได้",
+    "en": "Only the name and status of this kind of promotion can be edited. Discount, dates and product sets cannot be changed here."
+  },
+  "โปรอัตโนมัติ": {
+    "th": "โปรอัตโนมัติ",
+    "en": "Automatic promotions"
+  },
+  "โหลดรายการเงื่อนไขไม่ได้ ลองรีเฟรชหน้า หรือแจ้งทีมระบบ": {
+    "th": "โหลดรายการเงื่อนไขไม่ได้ ลองรีเฟรชหน้า หรือแจ้งทีมระบบ",
+    "en": "Could not load the condition list. Refresh the page or tell the systems team."
+  },
+  "โหลดแผนรอตรวจใหม่": {
+    "th": "โหลดแผนรอตรวจใหม่",
+    "en": "Reload plans awaiting review"
+  },
+  "ใช่/ไม่ใช่": {
+    "th": "ใช่/ไม่ใช่",
+    "en": "Yes/No"
+  },
+  "ไฟล์ CSV คอลัมน์เดียว หัวตาราง ": {
+    "th": "ไฟล์ CSV คอลัมน์เดียว หัวตาราง ",
+    "en": "A one-column CSV file with the header "
+  },
+  "ไม่พบชุดสินค้าที่ตรงกับคำค้น": {
+    "th": "ไม่พบชุดสินค้าที่ตรงกับคำค้น",
+    "en": "No product sets match your search"
+  },
+  "ไม่พบหน้าโปรโมชันที่ตรงกับคำค้น": {
+    "th": "ไม่พบหน้าโปรโมชันที่ตรงกับคำค้น",
+    "en": "No promotion pages match your search"
+  },
+  "ไม่พบแคมเปญ": {
+    "th": "ไม่พบแคมเปญ",
+    "en": "Campaign not found"
+  },
+  "ไม่พบแคมเปญของหน้านี้": {
+    "th": "ไม่พบแคมเปญของหน้านี้",
+    "en": "This page's campaign was not found"
+  },
+  "ไม่พบแคมเปญที่ตรงกับคำค้น": {
+    "th": "ไม่พบแคมเปญที่ตรงกับคำค้น",
+    "en": "No campaigns match your search"
+  },
+  "ไม่พบโปรที่ตรงกับคำค้น": {
+    "th": "ไม่พบโปรที่ตรงกับคำค้น",
+    "en": "No promotions match your search"
+  },
+  "ไม่ได้ยินยอม": {
+    "th": "ไม่ได้ยินยอม",
+    "en": "No consent"
+  },
+  "— ยังไม่ผูกแคมเปญ —": {
+    "th": "— ยังไม่ผูกแคมเปญ —",
+    "en": "— No campaign linked —"
+  },
+  "— เลือกแคมเปญ —": {
+    "th": "— เลือกแคมเปญ —",
+    "en": "— Choose a campaign —"
+  },
+  "“{0}” จะยังอยู่ในระบบ แต่ไม่อยู่ในแคมเปญนี้แล้ว": {
+    "th": "“{0}” จะยังอยู่ในระบบ แต่ไม่อยู่ในแคมเปญนี้แล้ว",
+    "en": "“{0}” stays in the system but is no longer part of this campaign."
+  },
+  "“{0}” ลบแล้วย้อนกลับไม่ได้": {
+    "th": "“{0}” ลบแล้วย้อนกลับไม่ได้",
+    "en": "“{0}” cannot be restored after deleting."
+  },
+  "“{0}” ลิงก์ที่แชร์ไปแล้วจะเปิดไม่ได้ และแบนเนอร์หน้าแรกของหน้านี้จะถูกลบด้วย": {
+    "th": "“{0}” ลิงก์ที่แชร์ไปแล้วจะเปิดไม่ได้ และแบนเนอร์หน้าแรกของหน้านี้จะถูกลบด้วย",
+    "en": "“{0}”: links already shared will stop working, and this page's home banner is deleted too."
+  },
+  "“{0}” หน้าโปร แบนเนอร์ และคูปองที่ผูกอยู่จะยังอยู่ แต่ไม่อยู่ในแคมเปญนี้แล้ว (ลบไม่ได้ถ้ายังมีโปรอัตโนมัติ)": {
+    "th": "“{0}” หน้าโปร แบนเนอร์ และคูปองที่ผูกอยู่จะยังอยู่ แต่ไม่อยู่ในแคมเปญนี้แล้ว (ลบไม่ได้ถ้ายังมีโปรอัตโนมัติ)",
+    "en": "“{0}”: its page, banners and coupons stay but leave this campaign (cannot delete while it still has automatic promotions)."
+  },
+  "” หน้านี้จะแสดงเฉพาะสินค้าของโปรอัตโนมัติและคูปองสาธารณะของแคมเปญนั้น (รวมสินค้าที่คูปองจำกัดไว้) สินค้าของโปรเดิมที่หน้านี้ใช้อยู่จะหายไป ถ้าโปรนั้นไม่ได้อยู่ในแคมเปญนี้": {
+    "th": "” หน้านี้จะแสดงเฉพาะสินค้าของโปรอัตโนมัติและคูปองสาธารณะของแคมเปญนั้น (รวมสินค้าที่คูปองจำกัดไว้) สินค้าของโปรเดิมที่หน้านี้ใช้อยู่จะหายไป ถ้าโปรนั้นไม่ได้อยู่ในแคมเปญนี้",
+    "en": "”, this page shows only that campaign's automatic-promotion products and public coupons (including products the coupons are limited to). Products from the page's old promotion disappear if that promotion is not in this campaign."
+  },
+  " (กลุ่มที่ไม่ส่ง เพื่อเทียบผล)": {
+    "th": " (กลุ่มที่ไม่ส่ง เพื่อเทียบผล)",
+    "en": " (no-message comparison group)"
+  },
+  " (ทดสอบ)": {
+    "th": " (ทดสอบ)",
+    "en": " (test)"
+  },
+  " คน": {
+    "th": " คน",
+    "en": " people"
+  },
+  "+ แม่แบบป๊อปอัป (มีปุ่มให้กด)": {
+    "th": "+ แม่แบบป๊อปอัป (มีปุ่มให้กด)",
+    "en": "+ Popup template (with a button)"
+  },
+  "+ แม่แบบอีเมล": {
+    "th": "+ แม่แบบอีเมล",
+    "en": "+ Email template"
+  },
+  "+ แม่แบบแจ้งเตือน": {
+    "th": "+ แม่แบบแจ้งเตือน",
+    "en": "+ Notification template"
+  },
+  "1 · ชื่อ": {
+    "th": "1 · ชื่อ",
+    "en": "1 · Name"
+  },
+  "3. ส่ง": {
+    "th": "3. ส่ง",
+    "en": "3. Send"
+  },
+  "30 วัน": {
+    "th": "30 วัน",
+    "en": "30 days"
+  },
+  "7 วัน": {
+    "th": "7 วัน",
+    "en": "7 days"
+  },
+  "{0} รายการถูกข้าม — เลือกสถานะ \"ข้าม\" เพื่อดูเหตุผล": {
+    "th": "{0} รายการถูกข้าม — เลือกสถานะ \"ข้าม\" เพื่อดูเหตุผล",
+    "en": "{0} entries were skipped — choose the \"Skipped\" status to see why"
+  },
+  "{0} แบบตามกลุ่มลูกค้า": {
+    "th": "{0} แบบตามกลุ่มลูกค้า",
+    "en": "{0} versions by customer group"
+  },
+  "กด \"สร้างลิงก์\" เพื่อสร้างลิงก์แรก": {
+    "th": "กด \"สร้างลิงก์\" เพื่อสร้างลิงก์แรก",
+    "en": "Press \"Create link\" to create your first link"
+  },
+  "กด \"เพิ่มกติกา\" เพื่อสอนแชตบอตให้เข้าใจคำถามแบบใหม่": {
+    "th": "กด \"เพิ่มกติกา\" เพื่อสอนแชตบอตให้เข้าใจคำถามแบบใหม่",
+    "en": "Press \"Add rule\" to teach the chatbot a new kind of question"
+  },
+  "กด \"เพิ่มข้อความสำเร็จรูป\" เพื่อสร้างข้อความหรือการ์ดให้แชตบอตใช้ตอบ": {
+    "th": "กด \"เพิ่มข้อความสำเร็จรูป\" เพื่อสร้างข้อความหรือการ์ดให้แชตบอตใช้ตอบ",
+    "en": "Press \"Add ready-made reply\" to create a message or card the chatbot can answer with"
+  },
+  "กด \"เพิ่มลำดับการตอบ\" เพื่อกำหนดว่าแชตบอตตอบอะไร": {
+    "th": "กด \"เพิ่มลำดับการตอบ\" เพื่อกำหนดว่าแชตบอตตอบอะไร",
+    "en": "Press \"Add reply flow\" to set what the chatbot answers"
+  },
+  "กดเปิดแล้ว": {
+    "th": "กดเปิดแล้ว",
+    "en": "Opened"
+  },
+  "กรุณากรอกชื่อข้อความสำเร็จรูป": {
+    "th": "กรุณากรอกชื่อข้อความสำเร็จรูป",
+    "en": "Please enter a name for the ready-made reply"
+  },
+  "กรุณากรอกชื่อและรูปแบบคำที่ใช้จับ": {
+    "th": "กรุณากรอกชื่อและรูปแบบคำที่ใช้จับ",
+    "en": "Please enter a name and the word pattern to match"
+  },
+  "กรุณากรอกปลายทางบนเว็บ": {
+    "th": "กรุณากรอกปลายทางบนเว็บ",
+    "en": "Please enter the web destination"
+  },
+  "กรุณากรอกรูปแบบคำที่ใช้จับ": {
+    "th": "กรุณากรอกรูปแบบคำที่ใช้จับ",
+    "en": "Please enter the word pattern to match"
+  },
+  "กลับไปหน้าแก้ข้อความอัตโนมัติ": {
+    "th": "กลับไปหน้าแก้ข้อความอัตโนมัติ",
+    "en": "Back to the automated message editor"
+  },
+  "กลุ่มลูกค้าที่ไม่ต้องการส่ง (ไม่บังคับ)": {
+    "th": "กลุ่มลูกค้าที่ไม่ต้องการส่ง (ไม่บังคับ)",
+    "en": "Customer groups to leave out (optional)"
+  },
+  "การส่งล่าสุด · ": {
+    "th": "การส่งล่าสุด · ",
+    "en": "Latest sends · "
+  },
+  "การใช้งาน": {
+    "th": "การใช้งาน",
+    "en": "Usage"
+  },
+  "การ์ด": {
+    "th": "การ์ด",
+    "en": "Card"
+  },
+  "การ์ดหลายใบ": {
+    "th": "การ์ดหลายใบ",
+    "en": "Card list"
+  },
+  "กำลังหาสินค้าที่ชื่อใกล้เคียง…": {
+    "th": "กำลังหาสินค้าที่ชื่อใกล้เคียง…",
+    "en": "Finding products with similar names…"
+  },
+  "กำลังโหลดแม่แบบ...": {
+    "th": "กำลังโหลดแม่แบบ...",
+    "en": "Loading templates..."
+  },
+  "กำหนดว่าแชตบอตตอบอะไรทีละขั้น เมื่อลูกค้าส่งข้อความหรือเปิดแชต": {
+    "th": "กำหนดว่าแชตบอตตอบอะไรทีละขั้น เมื่อลูกค้าส่งข้อความหรือเปิดแชต",
+    "en": "Set what the chatbot answers, step by step, when a customer sends a message or opens the chat"
+  },
+  "ขอคุยกับพนักงาน": {
+    "th": "ขอคุยกับพนักงาน",
+    "en": "Asks for a staff member"
+  },
+  "ขั้นตอนการตอบ": {
+    "th": "ขั้นตอนการตอบ",
+    "en": "Reply steps"
+  },
+  "ข้อความจัดรูปแบบ": {
+    "th": "ข้อความจัดรูปแบบ",
+    "en": "Formatted text"
+  },
+  "ข้อความที่ส่งถึงลูกค้าเองตามพฤติกรรม เปิด หยุด หรือแก้ได้ที่นี่ ระบบส่งจริงตามรอบและเก็บประวัติการแก้ไว้ให้": {
+    "th": "ข้อความที่ส่งถึงลูกค้าเองตามพฤติกรรม เปิด หยุด หรือแก้ได้ที่นี่ ระบบส่งจริงตามรอบและเก็บประวัติการแก้ไว้ให้",
+    "en": "Messages sent to customers automatically based on what they do. Turn them on, pause or edit them here; the system sends on its schedule and keeps the edit history"
+  },
+  "ข้อความอัตโนมัติชุดเดิม": {
+    "th": "ข้อความอัตโนมัติชุดเดิม",
+    "en": "Existing automated messages"
+  },
+  "ข้อความอัตโนมัติชุดใหม่": {
+    "th": "ข้อความอัตโนมัติชุดใหม่",
+    "en": "New automated messages"
+  },
+  "ข้อความอัตโนมัตินี้ไม่ได้เริ่มตามเวลา — จะมีประวัติก็ต่อเมื่อเคยตั้งให้ส่งตามเวลามาก่อน": {
+    "th": "ข้อความอัตโนมัตินี้ไม่ได้เริ่มตามเวลา — จะมีประวัติก็ต่อเมื่อเคยตั้งให้ส่งตามเวลามาก่อน",
+    "en": "This automated message does not start on a schedule — history only appears if it was set to send on a schedule before"
+  },
+  "ข้อความและการ์ดที่แชตบอตใช้ตอบลูกค้า": {
+    "th": "ข้อความและการ์ดที่แชตบอตใช้ตอบลูกค้า",
+    "en": "Messages and cards the chatbot uses to answer customers"
+  },
+  "ข้อมูลข้อความอัตโนมัติ (JSON)": {
+    "th": "ข้อมูลข้อความอัตโนมัติ (JSON)",
+    "en": "Automated message data (JSON)"
+  },
+  "ข้าม (นอกช่วงเวลาที่ตั้งไว้)": {
+    "th": "ข้าม (นอกช่วงเวลาที่ตั้งไว้)",
+    "en": "Skipped (outside the set time window)"
+  },
+  "ข้าม (ไม่มีลูกค้าเข้าเงื่อนไข)": {
+    "th": "ข้าม (ไม่มีลูกค้าเข้าเงื่อนไข)",
+    "en": "Skipped (no customers matched)"
+  },
+  "ข้าม (ไม่ได้เปิดใช้งาน)": {
+    "th": "ข้าม (ไม่ได้เปิดใช้งาน)",
+    "en": "Skipped (not turned on)"
+  },
+  "คนที่เข้ามา (ไม่นับซ้ำ)": {
+    "th": "คนที่เข้ามา (ไม่นับซ้ำ)",
+    "en": "Visitors (unique)"
+  },
+  "ครบทุกขั้นตอนแล้ว": {
+    "th": "ครบทุกขั้นตอนแล้ว",
+    "en": "Finished all steps"
+  },
+  "คลิก": {
+    "th": "คลิก",
+    "en": "Clicks"
+  },
+  "คลิกในแต่ละวัน": {
+    "th": "คลิกในแต่ละวัน",
+    "en": "Clicks per day"
+  },
+  "คำถามทั่วไป": {
+    "th": "คำถามทั่วไป",
+    "en": "General question"
+  },
+  "คำถามที่พบบ่อย": {
+    "th": "คำถามที่พบบ่อย",
+    "en": "Frequently asked questions"
+  },
+  "คำถามที่แชตบอตเข้าใจ": {
+    "th": "คำถามที่แชตบอตเข้าใจ",
+    "en": "Questions the chatbot understands"
+  },
+  "ค้นข้อมูลให้ลูกค้า": {
+    "th": "ค้นข้อมูลให้ลูกค้า",
+    "en": "Look up information for the customer"
+  },
+  "ค้นคำสั่งซื้อ": {
+    "th": "ค้นคำสั่งซื้อ",
+    "en": "Look up orders"
+  },
+  "ค้นสินค้า": {
+    "th": "ค้นสินค้า",
+    "en": "Search products"
+  },
+  "ค้นหาจากชื่อหรือท้ายลิงก์": {
+    "th": "ค้นหาจากชื่อหรือท้ายลิงก์",
+    "en": "Search by name or link ending"
+  },
+  "ค้นหาร้าน / บริษัท": {
+    "th": "ค้นหาร้าน / บริษัท",
+    "en": "Search shop / company"
+  },
+  "ค้นหาสินค้าที่เก็บมาจากเว็บคู่แข่ง ตรวจข้อมูล แล้วจับคู่กับสินค้าของเรา": {
+    "th": "ค้นหาสินค้าที่เก็บมาจากเว็บคู่แข่ง ตรวจข้อมูล แล้วจับคู่กับสินค้าของเรา",
+    "en": "Search products collected from competitor websites, check the details, then match them to our products"
+  },
+  "จะเห็นรายการหลังเปิดใช้งานและถึงเวลาที่ตั้งไว้": {
+    "th": "จะเห็นรายการหลังเปิดใช้งานและถึงเวลาที่ตั้งไว้",
+    "en": "Entries appear once it is turned on and the set time arrives"
+  },
+  "จับคู่กับสินค้าของเรา": {
+    "th": "จับคู่กับสินค้าของเรา",
+    "en": "Match to our product"
+  },
+  "จำนวนขั้นตอน": {
+    "th": "จำนวนขั้นตอน",
+    "en": "Steps"
+  },
+  "จำนวนคนกด คนที่เข้ามา และคนที่ซื้อ ในช่วงเวลาที่เลือก": {
+    "th": "จำนวนคนกด คนที่เข้ามา และคนที่ซื้อ ในช่วงเวลาที่เลือก",
+    "en": "Clicks, visitors and buyers in the selected period"
+  },
+  "จำนวนคลิก": {
+    "th": "จำนวนคลิก",
+    "en": "Clicks"
+  },
+  "จำนวนผู้รับ": {
+    "th": "จำนวนผู้รับ",
+    "en": "Recipients"
+  },
+  "ชื่อข้อความอัตโนมัติ": {
+    "th": "ชื่อข้อความอัตโนมัติ",
+    "en": "Automated message name"
+  },
+  "ชื่อลำดับการตอบ": {
+    "th": "ชื่อลำดับการตอบ",
+    "en": "Reply flow name"
+  },
+  "ชื่อสินค้า / รหัสสินค้า": {
+    "th": "ชื่อสินค้า / รหัสสินค้า",
+    "en": "Product name / product code"
+  },
+  "ชื่อเรื่อง": {
+    "th": "ชื่อเรื่อง",
+    "en": "Title"
+  },
+  "ดาวน์โหลด QR (PNG)": {
+    "th": "ดาวน์โหลด QR (PNG)",
+    "en": "Download QR (PNG)"
+  },
+  "ดาวน์โหลด QR (SVG)": {
+    "th": "ดาวน์โหลด QR (SVG)",
+    "en": "Download QR (SVG)"
+  },
+  "ดูคิวงานของระบบ ↗": {
+    "th": "ดูคิวงานของระบบ ↗",
+    "en": "View system job queue ↗"
+  },
+  "ดูตัวอย่าง": {
+    "th": "ดูตัวอย่าง",
+    "en": "Preview"
+  },
+  "ดูบันทึก": {
+    "th": "ดูบันทึก",
+    "en": "View log"
+  },
+  "ดูผลการส่ง": {
+    "th": "ดูผลการส่ง",
+    "en": "View send results"
+  },
+  "ดูหน้าเดิมซ้ำ ๆ": {
+    "th": "ดูหน้าเดิมซ้ำ ๆ",
+    "en": "Keeps viewing the same page"
+  },
+  "ตัวเลือกให้กด": {
+    "th": "ตัวเลือกให้กด",
+    "en": "Buttons to choose from"
+  },
+  "ตั้งชื่อ เลือกว่าเริ่มเมื่อไร แล้วจัดขั้นตอนการตอบด้านล่าง": {
+    "th": "ตั้งชื่อ เลือกว่าเริ่มเมื่อไร แล้วจัดขั้นตอนการตอบด้านล่าง",
+    "en": "Name it, choose when it starts, then arrange the reply steps below"
+  },
+  "ตั้งชื่อและเลือกว่าจะเริ่มส่งเมื่อไร ส่วนขั้นตอนการส่งแก้ต่อได้หลังสร้าง": {
+    "th": "ตั้งชื่อและเลือกว่าจะเริ่มส่งเมื่อไร ส่วนขั้นตอนการส่งแก้ต่อได้หลังสร้าง",
+    "en": "Name it and choose when sending starts; you can edit the sending steps after creating it"
+  },
+  "ตั้งท้ายลิงก์ เลือกหน้าปลายทาง แล้วนำลิงก์ไปใช้ได้ทุกที่": {
+    "th": "ตั้งท้ายลิงก์ เลือกหน้าปลายทาง แล้วนำลิงก์ไปใช้ได้ทุกที่",
+    "en": "Set the link ending, choose the destination page, then use the link anywhere"
+  },
+  "ตั้งเวลาส่ง": {
+    "th": "ตั้งเวลาส่ง",
+    "en": "Schedule send"
+  },
+  "ตั้งเวลาแล้ว": {
+    "th": "ตั้งเวลาแล้ว",
+    "en": "Scheduled"
+  },
+  "ตามรอบปกติ": {
+    "th": "ตามรอบปกติ",
+    "en": "Regular run"
+  },
+  "ตามเวลา": {
+    "th": "ตามเวลา",
+    "en": "On a schedule"
+  },
+  "ถามเรื่องคำสั่งซื้อ": {
+    "th": "ถามเรื่องคำสั่งซื้อ",
+    "en": "Asks about an order"
+  },
+  "ทำงานในระบบหลังบ้านเดิม แก้ด้วยหน้าจอแบบกราฟ": {
+    "th": "ทำงานในระบบหลังบ้านเดิม แก้ด้วยหน้าจอแบบกราฟ",
+    "en": "Runs in the existing back office; edit them in the graph editor"
+  },
+  "ทิ้งของไว้ในตะกร้า": {
+    "th": "ทิ้งของไว้ในตะกร้า",
+    "en": "Left items in the cart"
+  },
+  "ทุกแบบ": {
+    "th": "ทุกแบบ",
+    "en": "All"
+  },
+  "ท้ายลิงก์": {
+    "th": "ท้ายลิงก์",
+    "en": "Link ending"
+  },
+  "ท้ายลิงก์ใช้ได้แค่ a-z, 0-9 และ - เท่านั้น": {
+    "th": "ท้ายลิงก์ใช้ได้แค่ a-z, 0-9 และ - เท่านั้น",
+    "en": "The link ending can only use a-z, 0-9 and -"
+  },
+  "บอกคำที่ลูกค้าพิมพ์ แล้วเลือกว่าลูกค้าต้องการอะไร": {
+    "th": "บอกคำที่ลูกค้าพิมพ์ แล้วเลือกว่าลูกค้าต้องการอะไร",
+    "en": "Enter the words customers type, then choose what the customer wants"
+  },
+  "บันทึกการแก้ข้อความอัตโนมัตินี้? ระบบเก็บฉบับเดิมไว้ให้ย้อนกลับได้": {
+    "th": "บันทึกการแก้ข้อความอัตโนมัตินี้? ระบบเก็บฉบับเดิมไว้ให้ย้อนกลับได้",
+    "en": "Save the changes to this automated message? The previous version is kept so you can go back"
+  },
+  "บันทึกข้อความสำเร็จรูป": {
+    "th": "บันทึกข้อความสำเร็จรูป",
+    "en": "Save ready-made reply"
+  },
+  "บันทึกลำดับการตอบ": {
+    "th": "บันทึกลำดับการตอบ",
+    "en": "Save reply flow"
+  },
+  "บันทึกลำดับการตอบแล้ว": {
+    "th": "บันทึกลำดับการตอบแล้ว",
+    "en": "Reply flow saved"
+  },
+  "บันทึกแคมเปญแล้ว รหัส ": {
+    "th": "บันทึกแคมเปญแล้ว รหัส ",
+    "en": "Campaign saved, ID "
+  },
+  "บันทึกไม่สำเร็จ — ท้ายลิงก์อาจซ้ำกับลิงก์อื่น หรือรูปแบบลิงก์ไม่ถูกต้อง": {
+    "th": "บันทึกไม่สำเร็จ — ท้ายลิงก์อาจซ้ำกับลิงก์อื่น หรือรูปแบบลิงก์ไม่ถูกต้อง",
+    "en": "Could not save — the link ending may already be used, or a link is not valid"
+  },
+  "บันทึกไม่สำเร็จ: {0}": {
+    "th": "บันทึกไม่สำเร็จ: {0}",
+    "en": "Could not save: {0}"
+  },
+  "ประวัติการส่งตามเวลา": {
+    "th": "ประวัติการส่งตามเวลา",
+    "en": "Scheduled send history"
+  },
+  "ประวัติการส่งตามเวลา — {0}": {
+    "th": "ประวัติการส่งตามเวลา — {0}",
+    "en": "Scheduled send history — {0}"
+  },
+  "ประเทศ": {
+    "th": "ประเทศ",
+    "en": "Countries"
+  },
+  "ปลายทางบน Android": {
+    "th": "ปลายทางบน Android",
+    "en": "Android destination"
+  },
+  "ปลายทางบน iPhone / iPad": {
+    "th": "ปลายทางบน iPhone / iPad",
+    "en": "iPhone / iPad destination"
+  },
+  "ปลายทางบนเว็บ": {
+    "th": "ปลายทางบนเว็บ",
+    "en": "Web destination"
+  },
+  "ปิดลิงก์": {
+    "th": "ปิดลิงก์",
+    "en": "Turn off link"
+  },
+  "ปิดลิงก์ \"{0}\"? คนที่กดลิงก์นี้จะไปต่อไม่ได้": {
+    "th": "ปิดลิงก์ \"{0}\"? คนที่กดลิงก์นี้จะไปต่อไม่ได้",
+    "en": "Turn off link \"{0}\"? People who click it will not be taken anywhere"
+  },
+  "ป๊อปอัป": {
+    "th": "ป๊อปอัป",
+    "en": "Popup"
+  },
+  "ผลของลิงก์ {0}": {
+    "th": "ผลของลิงก์ {0}",
+    "en": "Results for link {0}"
+  },
+  "ผลของลิงก์ติดตามผล": {
+    "th": "ผลของลิงก์ติดตามผล",
+    "en": "Tracked link results"
+  },
+  "ผู้รับ = ผู้ใช้ที่เลือก + ร้านที่เลือก + กลุ่มลูกค้าที่เลือก แล้วตัดกลุ่มที่ไม่ต้องการส่งออกก่อน": {
+    "th": "ผู้รับ = ผู้ใช้ที่เลือก + ร้านที่เลือก + กลุ่มลูกค้าที่เลือก แล้วตัดกลุ่มที่ไม่ต้องการส่งออกก่อน",
+    "en": "Recipients = chosen users + chosen shops + chosen customer groups, minus the groups you leave out"
+  },
+  "พิมพ์ข้อความที่จะลองถามแชตบอต": {
+    "th": "พิมพ์ข้อความที่จะลองถามแชตบอต",
+    "en": "Type a message to try on the chatbot"
+  },
+  "ยังไม่ถึงเวลาเข้าซ้ำหลังรอบก่อน": {
+    "th": "ยังไม่ถึงเวลาเข้าซ้ำหลังรอบก่อน",
+    "en": "Too soon to join again after the last time"
+  },
+  "ยังไม่มีกติกา": {
+    "th": "ยังไม่มีกติกา",
+    "en": "No rules yet"
+  },
+  "ยังไม่มีขั้นตอน — เพิ่มขั้นตอนแรกเพื่อเริ่ม": {
+    "th": "ยังไม่มีขั้นตอน — เพิ่มขั้นตอนแรกเพื่อเริ่ม",
+    "en": "No steps yet — add the first step to start"
+  },
+  "ยังไม่มีข้อความสำเร็จรูป": {
+    "th": "ยังไม่มีข้อความสำเร็จรูป",
+    "en": "No ready-made replies yet"
+  },
+  "ยังไม่มีข้อความอัตโนมัติชุดเดิม": {
+    "th": "ยังไม่มีข้อความอัตโนมัติชุดเดิม",
+    "en": "No existing automated messages"
+  },
+  "ยังไม่มีข้อความอัตโนมัติชุดใหม่ — กด \"สร้างข้อความอัตโนมัติ\" เพื่อเริ่ม": {
+    "th": "ยังไม่มีข้อความอัตโนมัติชุดใหม่ — กด \"สร้างข้อความอัตโนมัติ\" เพื่อเริ่ม",
+    "en": "No new automated messages yet — press \"Create automated message\" to start"
+  },
+  "ยังไม่มีประวัติการส่ง": {
+    "th": "ยังไม่มีประวัติการส่ง",
+    "en": "No send history yet"
+  },
+  "ยังไม่มีประวัติการส่งตามเวลา": {
+    "th": "ยังไม่มีประวัติการส่งตามเวลา",
+    "en": "No scheduled send history yet"
+  },
+  "ยังไม่มีผู้ทดสอบ — เพิ่มได้ที่หน้าข้อความอัตโนมัติ": {
+    "th": "ยังไม่มีผู้ทดสอบ — เพิ่มได้ที่หน้าข้อความอัตโนมัติ",
+    "en": "No testers yet — add them on the Automated messages page"
+  },
+  "ยังไม่มีรายการที่ตรงคำค้น — ลองเปลี่ยนคำค้น หรือเพิ่มเว็บและเริ่มเก็บข้อมูล": {
+    "th": "ยังไม่มีรายการที่ตรงคำค้น — ลองเปลี่ยนคำค้น หรือเพิ่มเว็บและเริ่มเก็บข้อมูล",
+    "en": "Nothing matches your search — try other words, or add a website and start collecting"
+  },
+  "ยังไม่มีลำดับการตอบ": {
+    "th": "ยังไม่มีลำดับการตอบ",
+    "en": "No reply flows yet"
+  },
+  "ยังไม่มีลิงก์ติดตามผล": {
+    "th": "ยังไม่มีลิงก์ติดตามผล",
+    "en": "No tracked links yet"
+  },
+  "ยังไม่มีลูกค้าเข้าข้อความอัตโนมัตินี้": {
+    "th": "ยังไม่มีลูกค้าเข้าข้อความอัตโนมัตินี้",
+    "en": "No customers have joined this automated message yet"
+  },
+  "ยังไม่มีแคมเปญ — กด \"+ การแจ้งเตือนใหม่\" เพื่อเขียนข้อความแรก": {
+    "th": "ยังไม่มีแคมเปญ — กด \"+ การแจ้งเตือนใหม่\" เพื่อเขียนข้อความแรก",
+    "en": "No campaigns yet — press \"+ New notification\" to write your first message"
+  },
+  "ยังไม่มีแม่แบบ — กดปุ่มด้านบนเพื่อสร้างอันแรก": {
+    "th": "ยังไม่มีแม่แบบ — กดปุ่มด้านบนเพื่อสร้างอันแรก",
+    "en": "No templates yet — use a button above to create the first one"
+  },
+  "ยังไม่ยืนยันว่าราคารวม VAT — ยืนยันที่ “ตั้งค่าเว็บ” แล้วกด “เริ่มรอบใหม่” จึงจะใช้เทียบได้": {
+    "th": "ยังไม่ยืนยันว่าราคารวม VAT — ยืนยันที่ “ตั้งค่าเว็บ” แล้วกด “เริ่มรอบใหม่” จึงจะใช้เทียบได้",
+    "en": "Not yet confirmed that prices include VAT — confirm it in “Website settings”, then press “Start a new run” before comparing"
+  },
+  "รอบสำรอง": {
+    "th": "รอบสำรอง",
+    "en": "Backup run"
+  },
+  "ระบบจะเริ่มส่งข้อความให้ลูกค้าที่เข้าเงื่อนไขในรอบถัดไป": {
+    "th": "ระบบจะเริ่มส่งข้อความให้ลูกค้าที่เข้าเงื่อนไขในรอบถัดไป",
+    "en": "The system will start sending to matching customers on the next run"
+  },
+  "ระบบตรวจเงื่อนไขก่อนบันทึก และเก็บฉบับเดิมไว้ย้อนกลับได้": {
+    "th": "ระบบตรวจเงื่อนไขก่อนบันทึก และเก็บฉบับเดิมไว้ย้อนกลับได้",
+    "en": "The system checks the conditions before saving and keeps the previous version so you can go back"
+  },
+  "ราคาบนการ์ดไม่ชัดเจน (มีหลายราคา) ตรวจก่อนนำไปเทียบ": {
+    "th": "ราคาบนการ์ดไม่ชัดเจน (มีหลายราคา) ตรวจก่อนนำไปเทียบ",
+    "en": "The card price is unclear (several prices) — check it before comparing"
+  },
+  "ราคาเป็นบาท รวม VAT · สินค้าที่ไม่ระบุน้ำหนักให้ตรวจเอง": {
+    "th": "ราคาเป็นบาท รวม VAT · สินค้าที่ไม่ระบุน้ำหนักให้ตรวจเอง",
+    "en": "Prices are in baht including VAT · check products with no weight yourself"
+  },
+  "รูปแบบคำที่ใช้จับ": {
+    "th": "รูปแบบคำที่ใช้จับ",
+    "en": "Word pattern to match"
+  },
+  "ลบกติกานี้? แชตบอตจะไม่ใช้กติกานี้อีก": {
+    "th": "ลบกติกานี้? แชตบอตจะไม่ใช้กติกานี้อีก",
+    "en": "Delete this rule? The chatbot will stop using it"
+  },
+  "ลบข้อความสำเร็จรูปนี้? แชตบอตจะใช้ข้อความนี้ไม่ได้อีก": {
+    "th": "ลบข้อความสำเร็จรูปนี้? แชตบอตจะใช้ข้อความนี้ไม่ได้อีก",
+    "en": "Delete this ready-made reply? The chatbot will no longer be able to use it"
+  },
+  "ลบลำดับการตอบนี้? แชตบอตจะไม่ใช้ลำดับนี้อีก": {
+    "th": "ลบลำดับการตอบนี้? แชตบอตจะไม่ใช้ลำดับนี้อีก",
+    "en": "Delete this reply flow? The chatbot will stop using it"
+  },
+  "ลบแม่แบบ": {
+    "th": "ลบแม่แบบ",
+    "en": "Delete template"
+  },
+  "ลบแม่แบบ \"{0}\"? ขั้นตอนที่ใช้แม่แบบนี้จะส่งข้อความไม่ได้": {
+    "th": "ลบแม่แบบ \"{0}\"? ขั้นตอนที่ใช้แม่แบบนี้จะส่งข้อความไม่ได้",
+    "en": "Delete template \"{0}\"? Steps that use it will not be able to send"
+  },
+  "ลองค้นด้วยคำอื่น": {
+    "th": "ลองค้นด้วยคำอื่น",
+    "en": "Try other words"
+  },
+  "ลองถามแชตบอต": {
+    "th": "ลองถามแชตบอต",
+    "en": "Try the chatbot"
+  },
+  "ลองถามไม่สำเร็จ: {0}": {
+    "th": "ลองถามไม่สำเร็จ: {0}",
+    "en": "Chatbot test failed: {0}"
+  },
+  "ลองเลือก \"ทุกสถานะ\"": {
+    "th": "ลองเลือก \"ทุกสถานะ\"",
+    "en": "Try choosing \"All statuses\""
+  },
+  "ลองเลือก \"ทุกแบบ\"": {
+    "th": "ลองเลือก \"ทุกแบบ\"",
+    "en": "Try choosing \"All\""
+  },
+  "ลิงก์รูปภาพ": {
+    "th": "ลิงก์รูปภาพ",
+    "en": "Image link"
+  },
+  "ลิงก์สำรอง": {
+    "th": "ลิงก์สำรอง",
+    "en": "Backup link"
+  },
+  "ลิงก์สำหรับแต่ละช่องทาง และ QR": {
+    "th": "ลิงก์สำหรับแต่ละช่องทาง และ QR",
+    "en": "Links for each channel, and QR"
+  },
+  "ลิงก์เดียวใช้ได้ทุกที่ พาลูกค้าไปหน้าที่เลือกตามเครื่องที่ใช้ และนับคนกดให้": {
+    "th": "ลิงก์เดียวใช้ได้ทุกที่ พาลูกค้าไปหน้าที่เลือกตามเครื่องที่ใช้ และนับคนกดให้",
+    "en": "One link for everywhere: it takes customers to the chosen page for their device and counts the clicks"
+  },
+  "ลูกค้าจะถูกพาไปหน้าตามเครื่องที่ใช้ ถ้าไม่ได้ตั้งไว้จะไปปลายทางบนเว็บ": {
+    "th": "ลูกค้าจะถูกพาไปหน้าตามเครื่องที่ใช้ ถ้าไม่ได้ตั้งไว้จะไปปลายทางบนเว็บ",
+    "en": "Customers go to the page for their device; if none is set they go to the web destination"
+  },
+  "ลูกค้าจะเข้ามาเมื่อเปิดใช้งานและมีคนเข้าเงื่อนไข": {
+    "th": "ลูกค้าจะเข้ามาเมื่อเปิดใช้งานและมีคนเข้าเงื่อนไข",
+    "en": "Customers join once it is turned on and someone matches the conditions"
+  },
+  "ลูกค้าต้องการอะไร": {
+    "th": "ลูกค้าต้องการอะไร",
+    "en": "What the customer wants"
+  },
+  "ลูกค้าทำตามเป้าหมายแล้ว จึงออกจากข้อความอัตโนมัติ": {
+    "th": "ลูกค้าทำตามเป้าหมายแล้ว จึงออกจากข้อความอัตโนมัติ",
+    "en": "The customer reached the goal, so they left the automated message"
+  },
+  "ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่": {
+    "th": "ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่",
+    "en": "Customers part-way through will not get the next message until it is turned on again"
+  },
+  "ลูกค้าที่เข้า": {
+    "th": "ลูกค้าที่เข้า",
+    "en": "Customers joined"
+  },
+  "ลูกค้าที่เข้า / ทั้งหมด": {
+    "th": "ลูกค้าที่เข้า / ทั้งหมด",
+    "en": "Joined / matched"
+  },
+  "ลูกค้าที่เข้า 30 วัน": {
+    "th": "ลูกค้าที่เข้า 30 วัน",
+    "en": "Customers joined (30 days)"
+  },
+  "ลูกค้าที่เข้าข้อความอัตโนมัตินี้": {
+    "th": "ลูกค้าที่เข้าข้อความอัตโนมัตินี้",
+    "en": "Customers in this automated message"
+  },
+  "ลูกค้าที่เข้าเงื่อนไข": {
+    "th": "ลูกค้าที่เข้าเงื่อนไข",
+    "en": "Customers matched"
+  },
+  "ลูกค้าที่เข้าแล้ว": {
+    "th": "ลูกค้าที่เข้าแล้ว",
+    "en": "Customers joined"
+  },
+  "ลูกค้าแต่ละคนอยู่ขั้นไหนแล้ว และเหตุผลที่ถูกข้าม": {
+    "th": "ลูกค้าแต่ละคนอยู่ขั้นไหนแล้ว และเหตุผลที่ถูกข้าม",
+    "en": "Which step each customer is at, and why some were skipped"
+  },
+  "ลูกค้าในแต่ละสถานะ": {
+    "th": "ลูกค้าในแต่ละสถานะ",
+    "en": "Customers by status"
+  },
+  "วันหมดอายุ": {
+    "th": "วันหมดอายุ",
+    "en": "Expiry date"
+  },
+  "สร้างข้อความอัตโนมัติ": {
+    "th": "สร้างข้อความอัตโนมัติ",
+    "en": "Create automated message"
+  },
+  "สร้างด้วยการลากวางขั้นตอน แบ่งกลุ่มทดลองได้": {
+    "th": "สร้างด้วยการลากวางขั้นตอน แบ่งกลุ่มทดลองได้",
+    "en": "Built by dragging steps; can split customers into test groups"
+  },
+  "สร้างลิงก์ติดตามผล": {
+    "th": "สร้างลิงก์ติดตามผล",
+    "en": "Create tracked link"
+  },
+  "สินค้าของเราตัวไหนตรงกับสินค้านี้?": {
+    "th": "สินค้าของเราตัวไหนตรงกับสินค้านี้?",
+    "en": "Which of our products matches this one?"
+  },
+  "สินค้าของเราที่น่าจะตรงกับ {0}": {
+    "th": "สินค้าของเราที่น่าจะตรงกับ {0}",
+    "en": "Our products that likely match {0}"
+  },
+  "สิ่งที่แชตบอตทำ": {
+    "th": "สิ่งที่แชตบอตทำ",
+    "en": "What the chatbot does"
+  },
+  "ส่งต่อให้พนักงาน": {
+    "th": "ส่งต่อให้พนักงาน",
+    "en": "Hand over to staff"
+  },
+  "ส่งทดสอบถึงผู้ทดสอบ": {
+    "th": "ส่งทดสอบถึงผู้ทดสอบ",
+    "en": "Send a test to a tester"
+  },
+  "หยุดข้อความอัตโนมัติ": {
+    "th": "หยุดข้อความอัตโนมัติ",
+    "en": "Pause automated message"
+  },
+  "หยุดข้อความอัตโนมัตินี้ชั่วคราว? ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่": {
+    "th": "หยุดข้อความอัตโนมัตินี้ชั่วคราว? ลูกค้าที่ค้างอยู่จะไม่ได้ข้อความขั้นต่อไปจนกว่าจะเปิดใหม่",
+    "en": "Pause this automated message? Customers part-way through will not get the next message until it is turned on again"
+  },
+  "หยุดชั่วคราว": {
+    "th": "หยุดชั่วคราว",
+    "en": "Pause"
+  },
+  "หาสินค้า": {
+    "th": "หาสินค้า",
+    "en": "Looks for a product"
+  },
+  "อยู่ระหว่างขั้นตอน": {
+    "th": "อยู่ระหว่างขั้นตอน",
+    "en": "In progress"
+  },
+  "อยู่ในกลุ่มที่ไม่ส่งข้อความ เพื่อใช้เทียบผล": {
+    "th": "อยู่ในกลุ่มที่ไม่ส่งข้อความ เพื่อใช้เทียบผล",
+    "en": "In the no-message group used to compare results"
+  },
+  "อัตราการซื้อ": {
+    "th": "อัตราการซื้อ",
+    "en": "Purchase rate"
+  },
+  "เขียนข้อความหรือการ์ดที่แชตบอตใช้ตอบลูกค้า": {
+    "th": "เขียนข้อความหรือการ์ดที่แชตบอตใช้ตอบลูกค้า",
+    "en": "Write a message or card the chatbot uses to answer customers"
+  },
+  "เขียนข้อความแจ้งเตือน เลือกลูกค้าที่จะได้รับ แล้วส่งทันทีหรือตั้งเวลาส่ง": {
+    "th": "เขียนข้อความแจ้งเตือน เลือกลูกค้าที่จะได้รับ แล้วส่งทันทีหรือตั้งเวลาส่ง",
+    "en": "Write a notification, choose who gets it, then send now or schedule it"
+  },
+  "เข้าใช้งานในช่วงเวลาที่กำหนด": {
+    "th": "เข้าใช้งานในช่วงเวลาที่กำหนด",
+    "en": "Signs in during a set time window"
+  },
+  "เคยเข้าข้อความอัตโนมัตินี้แล้ว ยังไม่ถึงเวลาเข้าซ้ำ": {
+    "th": "เคยเข้าข้อความอัตโนมัตินี้แล้ว ยังไม่ถึงเวลาเข้าซ้ำ",
+    "en": "Already joined this automated message; too soon to join again"
+  },
+  "เบราว์เซอร์": {
+    "th": "เบราว์เซอร์",
+    "en": "Browsers"
+  },
+  "เปิดข้อความอัตโนมัติ": {
+    "th": "เปิดข้อความอัตโนมัติ",
+    "en": "Turn on automated message"
+  },
+  "เพิ่มกติกา": {
+    "th": "เพิ่มกติกา",
+    "en": "Add rule"
+  },
+  "เพิ่มกติกาให้แชตบอตเข้าใจคำถาม": {
+    "th": "เพิ่มกติกาให้แชตบอตเข้าใจคำถาม",
+    "en": "Add a rule so the chatbot understands a question"
+  },
+  "เพิ่มข้อความสำเร็จรูป": {
+    "th": "เพิ่มข้อความสำเร็จรูป",
+    "en": "Add ready-made reply"
+  },
+  "เพิ่มลำดับการตอบ": {
+    "th": "เพิ่มลำดับการตอบ",
+    "en": "Add reply flow"
+  },
+  "เมื่อลูกค้าส่งข้อความ": {
+    "th": "เมื่อลูกค้าส่งข้อความ",
+    "en": "When a customer sends a message"
+  },
+  "เมื่อลูกค้าเปิดแชต": {
+    "th": "เมื่อลูกค้าเปิดแชต",
+    "en": "When a customer opens the chat"
+  },
+  "เลือกผู้ทดสอบ": {
+    "th": "เลือกผู้ทดสอบ",
+    "en": "Choose a tester"
+  },
+  "เลือกว่าเริ่มเมื่อไร แชตบอตทำอะไร และตอบด้วยข้อความไหน": {
+    "th": "เลือกว่าเริ่มเมื่อไร แชตบอตทำอะไร และตอบด้วยข้อความไหน",
+    "en": "Choose when it starts, what the chatbot does, and which message it answers with"
+  },
+  "เลือกแคมเปญเพื่อดูผลการส่ง": {
+    "th": "เลือกแคมเปญเพื่อดูผลการส่ง",
+    "en": "Choose a campaign to see its send results"
+  },
+  "เวลาส่ง": {
+    "th": "เวลาส่ง",
+    "en": "Sent at"
+  },
+  "เว็บต้นทางไม่มีรหัสสินค้า": {
+    "th": "เว็บต้นทางไม่มีรหัสสินค้า",
+    "en": "The source website has no product code"
+  },
+  "เหตุผลที่ข้าม": {
+    "th": "เหตุผลที่ข้าม",
+    "en": "Why skipped"
+  },
+  "แก้ข้อความอัตโนมัติ": {
+    "th": "แก้ข้อความอัตโนมัติ",
+    "en": "Edit automated message"
+  },
+  "แก้ท้ายลิงก์หลังสร้างไม่ได้": {
+    "th": "แก้ท้ายลิงก์หลังสร้างไม่ได้",
+    "en": "The link ending cannot be changed after creating"
+  },
+  "แก้ลำดับการตอบ: ": {
+    "th": "แก้ลำดับการตอบ: ",
+    "en": "Edit reply flow: "
+  },
+  "แก้ลำดับการตอบของแชตบอต": {
+    "th": "แก้ลำดับการตอบของแชตบอต",
+    "en": "Edit chatbot reply flow"
+  },
+  "แก้ไขข้อความสำเร็จรูป": {
+    "th": "แก้ไขข้อความสำเร็จรูป",
+    "en": "Edit ready-made reply"
+  },
+  "แก้ไขลิงก์ติดตามผล": {
+    "th": "แก้ไขลิงก์ติดตามผล",
+    "en": "Edit tracked link"
+  },
+  "แคมเปญที่มีคนกดมากที่สุด": {
+    "th": "แคมเปญที่มีคนกดมากที่สุด",
+    "en": "Most-clicked campaigns"
+  },
+  "แจ้งเตือน + อีเมล": {
+    "th": "แจ้งเตือน + อีเมล",
+    "en": "Notification + email"
+  },
+  "แชตบอตตอบว่า: {0}": {
+    "th": "แชตบอตตอบว่า: {0}",
+    "en": "The chatbot replied: {0}"
+  },
+  "แต่ละรอบที่ถึงเวลาส่ง ส่งได้กี่คน หรือข้ามเพราะอะไร": {
+    "th": "แต่ละรอบที่ถึงเวลาส่ง ส่งได้กี่คน หรือข้ามเพราะอะไร",
+    "en": "For each scheduled run, how many were sent or why it was skipped"
+  },
+  "แนะนำสินค้า": {
+    "th": "แนะนำสินค้า",
+    "en": "Recommend products"
+  },
+  "แม่แบบข้อความแจ้งเตือน อีเมล และป๊อปอัป ที่ข้อความอัตโนมัติเลือกใช้ ใส่ชื่อลูกค้าหรือข้อมูลอื่นแทนได้": {
+    "th": "แม่แบบข้อความแจ้งเตือน อีเมล และป๊อปอัป ที่ข้อความอัตโนมัติเลือกใช้ ใส่ชื่อลูกค้าหรือข้อมูลอื่นแทนได้",
+    "en": "Notification, email and popup templates used by automated messages; they can fill in the customer's name and other details"
+  },
+  "แสดงหน้าแนะนำก่อนพาไปปลายทาง": {
+    "th": "แสดงหน้าแนะนำก่อนพาไปปลายทาง",
+    "en": "Show an intro page before the destination"
+  },
+  "โหลดประวัติการส่งตามเวลาไม่สำเร็จ": {
+    "th": "โหลดประวัติการส่งตามเวลาไม่สำเร็จ",
+    "en": "Could not load the scheduled send history"
+  },
+  "ใช้ a-z, 0-9 และ - เท่านั้น": {
+    "th": "ใช้ a-z, 0-9 และ - เท่านั้น",
+    "en": "Use only a-z, 0-9 and -"
+  },
+  "ใช้เมื่อเปิดปลายทางไม่ได้": {
+    "th": "ใช้เมื่อเปิดปลายทางไม่ได้",
+    "en": "Used when the destination cannot be opened"
+  },
+  "ให้ AI ตอบ": {
+    "th": "ให้ AI ตอบ",
+    "en": "Let AI answer"
+  },
+  "ไม่ผ่านเงื่อนไขกลุ่มลูกค้า": {
+    "th": "ไม่ผ่านเงื่อนไขกลุ่มลูกค้า",
+    "en": "Did not match the customer group conditions"
+  },
+  "ไม่พบลำดับการตอบนี้": {
+    "th": "ไม่พบลำดับการตอบนี้",
+    "en": "This reply flow was not found"
+  },
+  "ไม่พบลิงก์ที่ค้นหา": {
+    "th": "ไม่พบลิงก์ที่ค้นหา",
+    "en": "No links match your search"
+  },
+  "ไม่พบสินค้าที่ชื่อใกล้เคียง": {
+    "th": "ไม่พบสินค้าที่ชื่อใกล้เคียง",
+    "en": "No products with similar names"
+  },
+  "ไม่พบแม่แบบข้อความ": {
+    "th": "ไม่พบแม่แบบข้อความ",
+    "en": "Message template not found"
+  },
+  "ไม่มีช่องทางส่ง (อีเมล / แจ้งเตือน / LINE)": {
+    "th": "ไม่มีช่องทางส่ง (อีเมล / แจ้งเตือน / LINE)",
+    "en": "No way to send (email / notification / LINE)"
+  },
+  "ไม่มีตัวที่ตรง — กรอกรหัสสินค้าเอง": {
+    "th": "ไม่มีตัวที่ตรง — กรอกรหัสสินค้าเอง",
+    "en": "None match — enter the product code yourself"
+  },
+  "ไม่มีลำดับการตอบที่ตรงกับตัวกรอง": {
+    "th": "ไม่มีลำดับการตอบที่ตรงกับตัวกรอง",
+    "en": "No reply flows match the filter"
+  },
+  "ไม่มีลูกค้าในสถานะนี้": {
+    "th": "ไม่มีลูกค้าในสถานะนี้",
+    "en": "No customers with this status"
+  },
+  "← กลับไปรายการข้อความอัตโนมัติ": {
+    "th": "← กลับไปรายการข้อความอัตโนมัติ",
+    "en": "← Back to automated messages"
+  },
+  "· รหัสลูกค้า (ERP): {0}": {
+    "th": "· รหัสลูกค้า (ERP): {0}",
+    "en": "· Customer code (ERP): {0}"
+  },
+  "กลับรายการจัดส่ง": {
+    "th": "กลับรายการจัดส่ง",
+    "en": "Back to shipments"
+  },
+  "การจองสต็อก ({0})": {
+    "th": "การจองสต็อก ({0})",
+    "en": "Stock holds ({0})"
+  },
+  "การจัดส่งทั้งหมด": {
+    "th": "การจัดส่งทั้งหมด",
+    "en": "All shipments"
+  },
+  "การจัดหาสินค้า ({0})": {
+    "th": "การจัดหาสินค้า ({0})",
+    "en": "Sourcing ({0})"
+  },
+  "กำลังคืนเงิน": {
+    "th": "กำลังคืนเงิน",
+    "en": "Refund in progress"
+  },
+  "กำลังจองสต็อก": {
+    "th": "กำลังจองสต็อก",
+    "en": "Holding stock"
+  },
+  "กำลังตรวจสอบ": {
+    "th": "กำลังตรวจสอบ",
+    "en": "Under review"
+  },
+  "กำลังนำเข้า…": {
+    "th": "กำลังนำเข้า…",
+    "en": "Importing…"
+  },
+  "กำลังผูกใหม่…": {
+    "th": "กำลังผูกใหม่…",
+    "en": "Relinking…"
+  },
+  "กำลังโหลดการจัดส่ง…": {
+    "th": "กำลังโหลดการจัดส่ง…",
+    "en": "Loading shipments…"
+  },
+  "ขนส่ง": {
+    "th": "ขนส่ง",
+    "en": "Courier"
+  },
+  "ขอข้อมูลเพิ่มจากลูกค้า": {
+    "th": "ขอข้อมูลเพิ่มจากลูกค้า",
+    "en": "More info requested"
+  },
+  "คำขอคืนสินค้าและคืนเงินของลูกค้า ตรวจสอบ ตัดสินใจ และบันทึกผล": {
+    "th": "คำขอคืนสินค้าและคืนเงินของลูกค้า ตรวจสอบ ตัดสินใจ และบันทึกผล",
+    "en": "Customer return and refund requests: review, decide and record the outcome"
+  },
+  "คำสั่งซื้อ {0}": {
+    "th": "คำสั่งซื้อ {0}",
+    "en": "Order {0}"
+  },
+  "คืนเงินเข้าบัตร": {
+    "th": "คืนเงินเข้าบัตร",
+    "en": "Refund to card"
+  },
+  "คืนเงินไม่สำเร็จ": {
+    "th": "คืนเงินไม่สำเร็จ",
+    "en": "Refund failed"
+  },
+  "ค้นหาเลขที่จัดส่ง / เลขที่ออเดอร์ / ลูกค้า": {
+    "th": "ค้นหาเลขที่จัดส่ง / เลขที่ออเดอร์ / ลูกค้า",
+    "en": "Search shipment no. / order no. / customer"
+  },
+  "ค้นหาและเลือกบริษัทเพื่อดูเครดิตและใบแจ้งหนี้": {
+    "th": "ค้นหาและเลือกบริษัทเพื่อดูเครดิตและใบแจ้งหนี้",
+    "en": "Search for and pick a company to see its credit and invoices"
+  },
+  "จองไว้": {
+    "th": "จองไว้",
+    "en": "Held"
+  },
+  "ชื่อ / อีเมล / รหัสลูกค้า": {
+    "th": "ชื่อ / อีเมล / รหัสลูกค้า",
+    "en": "Name / email / customer code"
+  },
+  "ชื่อบริษัท เลขจดทะเบียน หรือรหัสลูกค้าในระบบหลัก (ERP)": {
+    "th": "ชื่อบริษัท เลขจดทะเบียน หรือรหัสลูกค้าในระบบหลัก (ERP)",
+    "en": "Company name, registration number or customer code (ERP)"
+  },
+  "ชุดรูป": {
+    "th": "ชุดรูป",
+    "en": "Image batch"
+  },
+  "ตรวจหลักฐาน อนุมัติ และโอนเงินคืนให้ลูกค้า": {
+    "th": "ตรวจหลักฐาน อนุมัติ และโอนเงินคืนให้ลูกค้า",
+    "en": "Check evidence, approve and transfer refunds to customers"
+  },
+  "ตั้งค่าสติกเกอร์": {
+    "th": "ตั้งค่าสติกเกอร์",
+    "en": "Sticker settings"
+  },
+  "ติดตามการจัดส่งแต่ละรอบ ดูเวลาที่ใช้ในแต่ละขั้น และเปิดคำสั่งซื้อที่เกี่ยวข้อง": {
+    "th": "ติดตามการจัดส่งแต่ละรอบ ดูเวลาที่ใช้ในแต่ละขั้น และเปิดคำสั่งซื้อที่เกี่ยวข้อง",
+    "en": "Track each shipment, see the time each step took and open its order"
+  },
+  "ติดสติกเกอร์ลงรูปหลายรูปพร้อมกัน รูปถูกประมวลผลในเบราว์เซอร์ของคุณ ไม่มีการอัปโหลดไฟล์": {
+    "th": "ติดสติกเกอร์ลงรูปหลายรูปพร้อมกัน รูปถูกประมวลผลในเบราว์เซอร์ของคุณ ไม่มีการอัปโหลดไฟล์",
+    "en": "Add stickers to many images at once. Images are processed in your browser; no files are uploaded."
+  },
+  "ที่มาของสินค้า": {
+    "th": "ที่มาของสินค้า",
+    "en": "Stock source"
+  },
+  "นำเข้าคำสั่งซื้อ": {
+    "th": "นำเข้าคำสั่งซื้อ",
+    "en": "Import orders"
+  },
+  "นำเข้าออเดอร์จากไฟล์ CSV และผูกลูกค้ากับออเดอร์ (สำหรับทีมงาน)": {
+    "th": "นำเข้าออเดอร์จากไฟล์ CSV และผูกลูกค้ากับออเดอร์ (สำหรับทีมงาน)",
+    "en": "Import orders from CSV files and link customers to orders (staff only)"
+  },
+  "นำเข้าออเดอร์และรายการสินค้า": {
+    "th": "นำเข้าออเดอร์และรายการสินค้า",
+    "en": "Import orders and order items"
+  },
+  "นำเข้าไฟล์": {
+    "th": "นำเข้าไฟล์",
+    "en": "Import files"
+  },
+  "บริษัทนี้ยังไม่มีใบแจ้งหนี้": {
+    "th": "บริษัทนี้ยังไม่มีใบแจ้งหนี้",
+    "en": "This company has no invoices yet"
+  },
+  "บันทึกว่าคืนเงินแล้ว": {
+    "th": "บันทึกว่าคืนเงินแล้ว",
+    "en": "Mark as refunded"
+  },
+  "ปฏิเสธคำขอคืนเงินนี้หรือไม่": {
+    "th": "ปฏิเสธคำขอคืนเงินนี้หรือไม่",
+    "en": "Reject this refund request?"
+  },
+  "ปฏิเสธใบสมัครเครดิตของ {0} หรือไม่": {
+    "th": "ปฏิเสธใบสมัครเครดิตของ {0} หรือไม่",
+    "en": "Reject the credit application from {0}?"
+  },
+  "ปล่อยการจอง": {
+    "th": "ปล่อยการจอง",
+    "en": "Release hold"
+  },
+  "ปล่อยการจองทุกรายการของออเดอร์นี้": {
+    "th": "ปล่อยการจองทุกรายการของออเดอร์นี้",
+    "en": "Release every stock hold on this order"
+  },
+  "ผลจาก KBank": {
+    "th": "ผลจาก KBank",
+    "en": "KBank result"
+  },
+  "ผูกลูกค้ากับออเดอร์ใหม่จากไฟล์": {
+    "th": "ผูกลูกค้ากับออเดอร์ใหม่จากไฟล์",
+    "en": "Relink customers to orders from a file"
+  },
+  "ผูกลูกค้าใหม่ทุกออเดอร์": {
+    "th": "ผูกลูกค้าใหม่ทุกออเดอร์",
+    "en": "Relink customers on every order"
+  },
+  "ผูกลูกค้าใหม่ทุกออเดอร์ตามรหัสลูกค้าที่บันทึกไว้ ยืนยันหรือไม่": {
+    "th": "ผูกลูกค้าใหม่ทุกออเดอร์ตามรหัสลูกค้าที่บันทึกไว้ ยืนยันหรือไม่",
+    "en": "Relink customers on every order using the saved customer codes?"
+  },
+  "ผูกใหม่จากไฟล์": {
+    "th": "ผูกใหม่จากไฟล์",
+    "en": "Relink from file"
+  },
+  "ผูกใหม่ทุกออเดอร์": {
+    "th": "ผูกใหม่ทุกออเดอร์",
+    "en": "Relink all orders"
+  },
+  "ผู้รับ": {
+    "th": "ผู้รับ",
+    "en": "Recipient"
+  },
+  "พิจารณาใบสมัครเครดิตเทอมของลูกค้า อนุมัติ ขอเอกสารเพิ่ม หรือปฏิเสธ": {
+    "th": "พิจารณาใบสมัครเครดิตเทอมของลูกค้า อนุมัติ ขอเอกสารเพิ่ม หรือปฏิเสธ",
+    "en": "Review customer credit term applications: approve, ask for documents or reject"
+  },
+  "มีของในสต็อก": {
+    "th": "มีของในสต็อก",
+    "en": "In stock"
+  },
+  "ยกเลิกรายการชำระ": {
+    "th": "ยกเลิกรายการชำระ",
+    "en": "Void payment"
+  },
+  "ยกเลิกในระบบหลัก (ERP)": {
+    "th": "ยกเลิกในระบบหลัก (ERP)",
+    "en": "Cancelled in ERP"
+  },
+  "ยอด (ก่อน VAT)": {
+    "th": "ยอด (ก่อน VAT)",
+    "en": "Amount (ex VAT)"
+  },
+  "ยอด (รวม VAT)": {
+    "th": "ยอด (รวม VAT)",
+    "en": "Amount (inc VAT)"
+  },
+  "ยอดขั้นต่ำสำหรับส่งฟรี (ก่อน VAT)": {
+    "th": "ยอดขั้นต่ำสำหรับส่งฟรี (ก่อน VAT)",
+    "en": "Free delivery threshold (ex VAT)"
+  },
+  "ยอดสั่งซื้อขั้นต่ำ": {
+    "th": "ยอดสั่งซื้อขั้นต่ำ",
+    "en": "Minimum order"
+  },
+  "ยอดออเดอร์ (ก่อน VAT)": {
+    "th": "ยอดออเดอร์ (ก่อน VAT)",
+    "en": "Order amount (ex VAT)"
+  },
+  "ยอดใบแจ้งหนี้ (ก่อน VAT)": {
+    "th": "ยอดใบแจ้งหนี้ (ก่อน VAT)",
+    "en": "Invoice amount (ex VAT)"
+  },
+  "ยังไม่มีการจองสต็อก ยืนยันออเดอร์เพื่อเริ่มจอง": {
+    "th": "ยังไม่มีการจองสต็อก ยืนยันออเดอร์เพื่อเริ่มจอง",
+    "en": "No stock holds yet. Confirm the order to start holding stock."
+  },
+  "ยังไม่มีการจองสต็อก รายการจะขึ้นเมื่อลูกค้าเริ่มชำระเงิน": {
+    "th": "ยังไม่มีการจองสต็อก รายการจะขึ้นเมื่อลูกค้าเริ่มชำระเงิน",
+    "en": "No stock holds yet. They appear when a customer starts paying."
+  },
+  "ยังไม่มีการจัดส่ง": {
+    "th": "ยังไม่มีการจัดส่ง",
+    "en": "No shipments yet"
+  },
+  "ยังไม่มีการจัดส่งของออเดอร์นี้": {
+    "th": "ยังไม่มีการจัดส่งของออเดอร์นี้",
+    "en": "This order has no shipments yet"
+  },
+  "ยังไม่มีการจัดหาสินค้า ยืนยันออเดอร์เพื่อเริ่ม": {
+    "th": "ยังไม่มีการจัดหาสินค้า ยืนยันออเดอร์เพื่อเริ่ม",
+    "en": "No sourcing yet. Confirm the order to start."
+  },
+  "ยังไม่มีการชำระเงิน": {
+    "th": "ยังไม่มีการชำระเงิน",
+    "en": "No payment yet"
+  },
+  "ยังไม่มีคำขอคืนเงิน": {
+    "th": "ยังไม่มีคำขอคืนเงิน",
+    "en": "No refund requests yet"
+  },
+  "ยังไม่มีคำสั่งซื้อ": {
+    "th": "ยังไม่มีคำสั่งซื้อ",
+    "en": "No orders yet"
+  },
+  "ยังไม่มีรอบเวลาจัดส่งที่เปิดใช้": {
+    "th": "ยังไม่มีรอบเวลาจัดส่งที่เปิดใช้",
+    "en": "No delivery time slots are active"
+  },
+  "ยังไม่มีเครดิตคืน": {
+    "th": "ยังไม่มีเครดิตคืน",
+    "en": "No credit backs yet"
+  },
+  "ยังไม่มีใบลดหนี้": {
+    "th": "ยังไม่มีใบลดหนี้",
+    "en": "No credit notes yet"
+  },
+  "ยังไม่มีใบสมัครเครดิต": {
+    "th": "ยังไม่มีใบสมัครเครดิต",
+    "en": "No credit applications yet"
+  },
+  "ยืนยันออเดอร์ บันทึกการชำระเงิน และดูการจองสต็อกของออเดอร์นี้": {
+    "th": "ยืนยันออเดอร์ บันทึกการชำระเงิน และดูการจองสต็อกของออเดอร์นี้",
+    "en": "Confirm the order, record payment and see this order's stock holds"
+  },
+  "รวม (สร้างจนจบ)": {
+    "th": "รวม (สร้างจนจบ)",
+    "en": "Total (created to finished)"
+  },
+  "รหัสใบสมัคร": {
+    "th": "รหัสใบสมัคร",
+    "en": "Application ID"
+  },
+  "รอดำเนินการ": {
+    "th": "รอดำเนินการ",
+    "en": "Pending"
+  },
+  "รอตัดสินใจ": {
+    "th": "รอตัดสินใจ",
+    "en": "Awaiting decision"
+  },
+  "รอบเวลาจัดส่งที่เปิดใช้ และเกณฑ์ยอดสั่งซื้อขั้นต่ำและส่งฟรี": {
+    "th": "รอบเวลาจัดส่งที่เปิดใช้ และเกณฑ์ยอดสั่งซื้อขั้นต่ำและส่งฟรี",
+    "en": "Active delivery time slots, plus minimum order and free delivery rules"
+  },
+  "รอผล": {
+    "th": "รอผล",
+    "en": "Awaiting result"
+  },
+  "รอลูกค้าเลือกวิธีคืน": {
+    "th": "รอลูกค้าเลือกวิธีคืน",
+    "en": "Waiting for customer to choose a method"
+  },
+  "ราคาต่อหน่วย": {
+    "th": "ราคาต่อหน่วย",
+    "en": "Unit price"
+  },
+  "รายการจองทั้งหมด": {
+    "th": "รายการจองทั้งหมด",
+    "en": "All stock holds"
+  },
+  "รายการสินค้า ({0})": {
+    "th": "รายการสินค้า ({0})",
+    "en": "Order items ({0})"
+  },
+  "ลองเปลี่ยนคำค้นหาหรือสถานะ": {
+    "th": "ลองเปลี่ยนคำค้นหาหรือสถานะ",
+    "en": "Try another search or status"
+  },
+  "ลองเปลี่ยนสถานะ ลูกค้า หรือช่วงวันที่": {
+    "th": "ลองเปลี่ยนสถานะ ลูกค้า หรือช่วงวันที่",
+    "en": "Try another status, customer or date range"
+  },
+  "ลองเปลี่ยนสถานะหรือช่วงวันที่": {
+    "th": "ลองเปลี่ยนสถานะหรือช่วงวันที่",
+    "en": "Try another status or date range"
+  },
+  "ลองเปิดแท็บอื่น หรือกดรีเฟรช": {
+    "th": "ลองเปิดแท็บอื่น หรือกดรีเฟรช",
+    "en": "Try another tab or refresh"
+  },
+  "ลองเลือกสถานะอื่น": {
+    "th": "ลองเลือกสถานะอื่น",
+    "en": "Try another status"
+  },
+  "ลองเลือกสถานะอื่น หรือกดสร้างคำขอคืนเงิน": {
+    "th": "ลองเลือกสถานะอื่น หรือกดสร้างคำขอคืนเงิน",
+    "en": "Try another status, or create a refund request"
+  },
+  "วันที่สัญญาส่ง": {
+    "th": "วันที่สัญญาส่ง",
+    "en": "Promised date"
+  },
+  "สถานะการจัดส่ง {0}": {
+    "th": "สถานะการจัดส่ง {0}",
+    "en": "Shipment status {0}"
+  },
+  "สั่งจากซัพพลายเออร์": {
+    "th": "สั่งจากซัพพลายเออร์",
+    "en": "Ordered from supplier"
+  },
+  "สินค้าที่จองไว้ทั้งหมดของออเดอร์นี้จะกลับเข้าสต็อก และอาจไม่มีของพอสำหรับออเดอร์นี้": {
+    "th": "สินค้าที่จองไว้ทั้งหมดของออเดอร์นี้จะกลับเข้าสต็อก และอาจไม่มีของพอสำหรับออเดอร์นี้",
+    "en": "Every item held for this order goes back into stock, and there may not be enough left for this order."
+  },
+  "ส่งต่อให้ตัดสินใจ": {
+    "th": "ส่งต่อให้ตัดสินใจ",
+    "en": "Send for decision"
+  },
+  "ส่งเข้าระบบหลัก (ERP)": {
+    "th": "ส่งเข้าระบบหลัก (ERP)",
+    "en": "Send to ERP"
+  },
+  "หมดเวลาจอง": {
+    "th": "หมดเวลาจอง",
+    "en": "Hold expires"
+  },
+  "หมดเวลาแล้ว": {
+    "th": "หมดเวลาแล้ว",
+    "en": "Expired"
+  },
+  "หมายเหตุทีมบริการลูกค้า": {
+    "th": "หมายเหตุทีมบริการลูกค้า",
+    "en": "Customer service note"
+  },
+  "หลักฐานการส่ง": {
+    "th": "หลักฐานการส่ง",
+    "en": "Proof of delivery"
+  },
+  "ออกของ": {
+    "th": "ออกของ",
+    "en": "Dispatched"
+  },
+  "ออกเมื่อ": {
+    "th": "ออกเมื่อ",
+    "en": "Issued"
+  },
+  "ออเดอร์นี้ยังไม่มีรายการสินค้า": {
+    "th": "ออเดอร์นี้ยังไม่มีรายการสินค้า",
+    "en": "This order has no items yet"
+  },
+  "อัปโหลดสติกเกอร์": {
+    "th": "อัปโหลดสติกเกอร์",
+    "en": "Upload sticker"
+  },
+  "อ่านรหัสลูกค้าจากไฟล์ออเดอร์ แล้วผูกบัญชีลูกค้าให้ใหม่": {
+    "th": "อ่านรหัสลูกค้าจากไฟล์ออเดอร์ แล้วผูกบัญชีลูกค้าให้ใหม่",
+    "en": "Read customer codes from the orders file and relink customer accounts"
+  },
+  "เกณฑ์การจัดส่ง": {
+    "th": "เกณฑ์การจัดส่ง",
+    "en": "Delivery rules"
+  },
+  "เครดิตคงเหลือ": {
+    "th": "เครดิตคงเหลือ",
+    "en": "Credit available"
+  },
+  "เครดิตที่คืนให้ลูกค้าจากส่วนต่างของใบแจ้งหนี้ ดูยอดคงเหลือและประวัติการใช้": {
+    "th": "เครดิตที่คืนให้ลูกค้าจากส่วนต่างของใบแจ้งหนี้ ดูยอดคงเหลือและประวัติการใช้",
+    "en": "Credit returned to customers from invoice differences; see balances and usage"
+  },
+  "เปิดคำสั่งซื้อ {0}": {
+    "th": "เปิดคำสั่งซื้อ {0}",
+    "en": "Open order {0}"
+  },
+  "เพิ่มสติกเกอร์": {
+    "th": "เพิ่มสติกเกอร์",
+    "en": "Add sticker"
+  },
+  "เลขที่การจัดส่ง": {
+    "th": "เลขที่การจัดส่ง",
+    "en": "Shipment no."
+  },
+  "เลขที่เครดิตคืน": {
+    "th": "เลขที่เครดิตคืน",
+    "en": "Credit back no."
+  },
+  "เลขที่เครดิตคืน / ใบแจ้งหนี้ / ออเดอร์": {
+    "th": "เลขที่เครดิตคืน / ใบแจ้งหนี้ / ออเดอร์",
+    "en": "Credit back no. / invoice / order"
+  },
+  "เลขที่ใบลดหนี้": {
+    "th": "เลขที่ใบลดหนี้",
+    "en": "Credit note no."
+  },
+  "เลขที่ใบลดหนี้ / เลขที่ออเดอร์": {
+    "th": "เลขที่ใบลดหนี้ / เลขที่ออเดอร์",
+    "en": "Credit note no. / order no."
+  },
+  "เลขที่ใบแจ้งหนี้": {
+    "th": "เลขที่ใบแจ้งหนี้",
+    "en": "Invoice no."
+  },
+  "เลขอ้างอิงระบบหลัก (ERP)": {
+    "th": "เลขอ้างอิงระบบหลัก (ERP)",
+    "en": "ERP reference"
+  },
+  "เวลาจัดส่งเฉลี่ย": {
+    "th": "เวลาจัดส่งเฉลี่ย",
+    "en": "Average delivery time"
+  },
+  "เวลาที่บันทึก": {
+    "th": "เวลาที่บันทึก",
+    "en": "Recorded at"
+  },
+  "เวลาที่ใช้ในแต่ละขั้น": {
+    "th": "เวลาที่ใช้ในแต่ละขั้น",
+    "en": "Time per step"
+  },
+  "เวลารวมเฉลี่ย (สร้างจนส่งถึง)": {
+    "th": "เวลารวมเฉลี่ย (สร้างจนส่งถึง)",
+    "en": "Average total time (created to delivered)"
+  },
+  "เวลารอส่งเฉลี่ย": {
+    "th": "เวลารอส่งเฉลี่ย",
+    "en": "Average wait to ship"
+  },
+  "เหตุผลที่ไม่สำเร็จ": {
+    "th": "เหตุผลที่ไม่สำเร็จ",
+    "en": "Failure reason"
+  },
+  "เหตุผลเคลม": {
+    "th": "เหตุผลเคลม",
+    "en": "Claim reason"
+  },
+  "เหลือ {0} นาที": {
+    "th": "เหลือ {0} นาที",
+    "en": "{0} min left"
+  },
+  "เหลือไม่ถึง 1 นาที": {
+    "th": "เหลือไม่ถึง 1 นาที",
+    "en": "Less than 1 min left"
+  },
+  "แก้ไขวงเงินเครดิต": {
+    "th": "แก้ไขวงเงินเครดิต",
+    "en": "Edit credit limit"
+  },
+  "โหลดรูปแล้ว {0} รูป อัปโหลดสติกเกอร์เพื่อทำต่อ": {
+    "th": "โหลดรูปแล้ว {0} รูป อัปโหลดสติกเกอร์เพื่อทำต่อ",
+    "en": "{0} images loaded. Upload a sticker to continue."
+  },
+  "ใช้หมดแล้ว": {
+    "th": "ใช้หมดแล้ว",
+    "en": "Used up"
+  },
+  "ใบลดหนี้ที่ออกจากการเคลมสินค้า ดูยอดคงเหลือและประวัติการใช้": {
+    "th": "ใบลดหนี้ที่ออกจากการเคลมสินค้า ดูยอดคงเหลือและประวัติการใช้",
+    "en": "Credit notes issued from product claims; see balances and usage"
+  },
+  "ไฟล์รายการสินค้า (CSV) *": {
+    "th": "ไฟล์รายการสินค้า (CSV) *",
+    "en": "Order items file (CSV) *"
+  },
+  "ไฟล์ออเดอร์ (CSV)": {
+    "th": "ไฟล์ออเดอร์ (CSV)",
+    "en": "Orders file (CSV)"
+  },
+  "ไฟล์ออเดอร์ (CSV) *": {
+    "th": "ไฟล์ออเดอร์ (CSV) *",
+    "en": "Orders file (CSV) *"
+  },
+  "ไม่ต้องอัปโหลดไฟล์ ใช้รหัสลูกค้าที่บันทึกไว้บนแต่ละออเดอร์": {
+    "th": "ไม่ต้องอัปโหลดไฟล์ ใช้รหัสลูกค้าที่บันทึกไว้บนแต่ละออเดอร์",
+    "en": "No file needed: uses the customer code saved on each order"
+  },
+  "ไม่ทราบผล": {
+    "th": "ไม่ทราบผล",
+    "en": "Unknown result"
+  },
+  "ไม่พบการจัดส่ง": {
+    "th": "ไม่พบการจัดส่ง",
+    "en": "Shipment not found"
+  },
+  "ไม่มีคำขอคืนเงินในแท็บนี้": {
+    "th": "ไม่มีคำขอคืนเงินในแท็บนี้",
+    "en": "No refund requests in this tab"
+  },
+  "ไม่มีรายการจองในสถานะนี้ ลองเลือกทุกสถานะ": {
+    "th": "ไม่มีรายการจองในสถานะนี้ ลองเลือกทุกสถานะ",
+    "en": "No stock holds in this status. Try all statuses."
+  },
+  "ไม่มีใบแจ้งหนี้เลยกำหนดชำระ": {
+    "th": "ไม่มีใบแจ้งหนี้เลยกำหนดชำระ",
+    "en": "No overdue invoices"
+  },
+  "รอเอกสารเพิ่ม": {
+    "th": "รอเอกสารเพิ่ม",
+    "en": "Waiting for more documents"
+  },
+  "ชำระไม่สำเร็จ": {
+    "th": "ชำระไม่สำเร็จ",
+    "en": "Payment failed"
+  },
+  "สถานะ: {0}": {
+    "th": "สถานะ: {0}",
+    "en": "Status: {0}"
+  },
+  "ค้นหา: {0}": {
+    "th": "ค้นหา: {0}",
+    "en": "Search: {0}"
+  },
+  "ช่วงเวลา: {0} – {1}": {
+    "th": "ช่วงเวลา: {0} – {1}",
+    "en": "Period: {0} – {1}"
+  },
+  "ดูอย่างเดียว": {
+    "th": "ดูอย่างเดียว",
+    "en": "View only"
+  },
+  "คำสั่งซื้อจากร้านค้าออนไลน์ และส่งเข้าระบบขาย Jagota (ERP) แล้วหรือยัง": {
+    "th": "คำสั่งซื้อจากร้านค้าออนไลน์ และส่งเข้าระบบขาย Jagota (ERP) แล้วหรือยัง",
+    "en": "Online shop orders and whether each has reached the Jagota sales system (ERP)"
+  },
+  "ดาวน์โหลด CSV": {
+    "th": "ดาวน์โหลด CSV",
+    "en": "Download CSV"
+  },
+  "ค้นหาเลขที่ออเดอร์ / รหัสลูกค้า / เลขใบสั่งซื้อ (PO) / บริษัท…": {
+    "th": "ค้นหาเลขที่ออเดอร์ / รหัสลูกค้า / เลขใบสั่งซื้อ (PO) / บริษัท…",
+    "en": "Search order number / customer code / PO number / company…"
+  },
+  "ส่งเข้า Jagota (ERP)": {
+    "th": "ส่งเข้า Jagota (ERP)",
+    "en": "Sent to Jagota (ERP)"
+  },
+  "ไม่มีเอกสาร": {
+    "th": "ไม่มีเอกสาร",
+    "en": "No documents"
+  },
+  "ผ่าน": {
+    "th": "ผ่าน",
+    "en": "Approved"
+  },
+  "ไม่ผ่าน": {
+    "th": "ไม่ผ่าน",
+    "en": "Rejected"
+  },
+  "บริษัท สาขา วงเงิน และเอกสารยืนยันตัวตน · ข้อมูลส่วนตัวถูกปิดบัง · ดูอย่างเดียว": {
+    "th": "บริษัท สาขา วงเงิน และเอกสารยืนยันตัวตน · ข้อมูลส่วนตัวถูกปิดบัง · ดูอย่างเดียว",
+    "en": "Companies, branches, credit and identity documents · personal data is masked · view only"
+  },
+  "กดเพื่อกรอง กดซ้ำเพื่อล้าง": {
+    "th": "กดเพื่อกรอง กดซ้ำเพื่อล้าง",
+    "en": "Click to filter, click again to clear"
+  },
+  "เรื่องที่ต้องดู": {
+    "th": "เรื่องที่ต้องดู",
+    "en": "Needs a look"
+  },
+  "เอกสารยืนยันตัวตนรอตรวจ": {
+    "th": "เอกสารยืนยันตัวตนรอตรวจ",
+    "en": "Identity documents to review"
+  },
+  "ยังไม่ส่งเอกสารยืนยันตัวตน": {
+    "th": "ยังไม่ส่งเอกสารยืนยันตัวตน",
+    "en": "Identity documents not sent"
+  },
+  "ไม่มีรหัสลูกค้าในระบบขาย (ERP)": {
+    "th": "ไม่มีรหัสลูกค้าในระบบขาย (ERP)",
+    "en": "No customer code in the sales system (ERP)"
+  },
+  "ชื่อบริษัท หรือรหัสลูกค้าในระบบขาย (ERP)": {
+    "th": "ชื่อบริษัท หรือรหัสลูกค้าในระบบขาย (ERP)",
+    "en": "Company name or sales system (ERP) customer code"
+  },
+  "ไม่พบบริษัทตามเงื่อนไขนี้ ลองค้นหาด้วยชื่อหรือรหัสอื่น หรือกดการ์ดเพื่อล้างตัวกรอง": {
+    "th": "ไม่พบบริษัทตามเงื่อนไขนี้ ลองค้นหาด้วยชื่อหรือรหัสอื่น หรือกดการ์ดเพื่อล้างตัวกรอง",
+    "en": "No companies match. Try another name or code, or click the card again to clear the filter"
+  },
+  "รหัสลูกค้า (ERP)": {
+    "th": "รหัสลูกค้า (ERP)",
+    "en": "Customer code (ERP)"
+  },
+  "เลือกสาขาเพื่อดูราคาต่อหน่วยที่ลูกค้าจ่ายวันนี้ แยกตามชั้นราคา และใบเสนอราคาจากระบบขาย (ERP) · ดูอย่างเดียว": {
+    "th": "เลือกสาขาเพื่อดูราคาต่อหน่วยที่ลูกค้าจ่ายวันนี้ แยกตามชั้นราคา และใบเสนอราคาจากระบบขาย (ERP) · ดูอย่างเดียว",
+    "en": "Pick a branch to see today's unit price layer by layer, plus quotations from the sales system (ERP) · view only"
+  },
+  "ไม่พบสาขา ลองค้นหาด้วยชื่อบริษัทหรือรหัสลูกค้าอื่น": {
+    "th": "ไม่พบสาขา ลองค้นหาด้วยชื่อบริษัทหรือรหัสลูกค้าอื่น",
+    "en": "No branches found. Try another company name or customer code"
+  },
+  "เว้นว่างเพื่อดูเฉพาะสินค้าที่มีราคาเฉพาะลูกค้า หรือพิมพ์รหัส / ชื่อสินค้า": {
+    "th": "เว้นว่างเพื่อดูเฉพาะสินค้าที่มีราคาเฉพาะลูกค้า หรือพิมพ์รหัส / ชื่อสินค้า",
+    "en": "Leave empty for products with customer prices only, or type a product code / name"
+  },
+  "มีโปรโมชัน": {
+    "th": "มีโปรโมชัน",
+    "en": "Has a promotion"
+  },
+  "คำนวณตอนลูกค้าสั่งซื้อ": {
+    "th": "คำนวณตอนลูกค้าสั่งซื้อ",
+    "en": "Worked out when the customer orders"
+  },
+  "ไม่มีราคาเฉพาะลูกค้าสำหรับสาขานี้ พิมพ์รหัสหรือชื่อสินค้าเพื่อดูสินค้าอื่น": {
+    "th": "ไม่มีราคาเฉพาะลูกค้าสำหรับสาขานี้ พิมพ์รหัสหรือชื่อสินค้าเพื่อดูสินค้าอื่น",
+    "en": "This branch has no customer prices. Type a product code or name to see other products"
+  },
+  "ใบเสนอราคาจากระบบขาย (ERP)": {
+    "th": "ใบเสนอราคาจากระบบขาย (ERP)",
+    "en": "Quotations from the sales system (ERP)"
+  },
+  "ยังไม่มีใบเสนอราคาสำหรับลูกค้านี้": {
+    "th": "ยังไม่มีใบเสนอราคาสำหรับลูกค้านี้",
+    "en": "No quotations for this customer yet"
+  },
+  "{0}: ต้องเป็นตัวเลขไม่ติดลบ": {
+    "th": "{0}: ต้องเป็นตัวเลขไม่ติดลบ",
+    "en": "{0}: must be a number of zero or more"
+  },
+  "บันทึก {0}: {1}?\n\nร้านค้าออนไลน์จะบันทึกจริงในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข": {
+    "th": "บันทึก {0}: {1}?\n\nร้านค้าออนไลน์จะบันทึกจริงในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข",
+    "en": "Save {0}: {1}?\n\nThe online shop saves this for real in your name and keeps your email in its change history"
+  },
+  "เอกสารยืนยันตัวตน: {0}": {
+    "th": "เอกสารยืนยันตัวตน: {0}",
+    "en": "Identity documents: {0}"
+  },
+  "วงเงิน {0} / {1}": {
+    "th": "วงเงิน {0} / {1}",
+    "en": "Credit {0} / {1}"
+  },
+  "ยอดที่ชำระแล้ว": {
+    "th": "ยอดที่ชำระแล้ว",
+    "en": "Paid amount"
+  },
+  "รหัสสาขา (ERP)": {
+    "th": "รหัสสาขา (ERP)",
+    "en": "Branch code (ERP)"
+  },
+  "ส่งเข้าระบบขาย (ERP)": {
+    "th": "ส่งเข้าระบบขาย (ERP)",
+    "en": "Sent to the sales system (ERP)"
+  },
+  "เอกสารยืนยันตัวตนและวงเงิน": {
+    "th": "เอกสารยืนยันตัวตนและวงเงิน",
+    "en": "Identity documents and credit"
+  },
+  "คำขอวงเงิน": {
+    "th": "คำขอวงเงิน",
+    "en": "Credit requests"
+  },
+  "ขอ {0} / {1} วัน": {
+    "th": "ขอ {0} / {1} วัน",
+    "en": "Asked {0} / {1} days"
+  },
+  "อนุมัติ {0}": {
+    "th": "อนุมัติ {0}",
+    "en": "Approved {0}"
+  },
+  "เลขใบสั่งซื้อ (PO)": {
+    "th": "เลขใบสั่งซื้อ (PO)",
+    "en": "PO number"
+  },
+  "ออกส่ง": {
+    "th": "ออกส่ง",
+    "en": "Out for delivery"
+  },
+  "รอ": {
+    "th": "รอ",
+    "en": "Waiting"
+  },
+  "ส่งเข้า Jagota": {
+    "th": "ส่งเข้า Jagota",
+    "en": "Sent to Jagota"
+  },
+  "ฉบับร่าง (ยังไม่เปิดขาย)": {
+    "th": "ฉบับร่าง (ยังไม่เปิดขาย)",
+    "en": "Draft (not on sale yet)"
+  },
+  "ปิดขาย": {
+    "th": "ปิดขาย",
+    "en": "Off sale"
+  },
+  "บันทึก {0} ช่องของ {1}?\n\n{2}\n\n(ร้านค้าออนไลน์บันทึกในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข · ลูกค้าเห็นทันที)": {
+    "th": "บันทึก {0} ช่องของ {1}?\n\n{2}\n\n(ร้านค้าออนไลน์บันทึกในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข · ลูกค้าเห็นทันที)",
+    "en": "Save {0} fields of {1}?\n\n{2}\n\n(The online shop saves this in your name and keeps your email in its change history · customers see it right away)"
+  },
+  "บันทึก {0} แล้ว ({1})": {
+    "th": "บันทึก {0} แล้ว ({1})",
+    "en": "Saved {0} ({1})"
+  },
+  "ช่องว่างไม่ลบค่าเดิม · ราคาเฉพาะลูกค้าและราคาสัญญาแก้ที่หน้าราคาเฉพาะลูกค้าและราคาสัญญา": {
+    "th": "ช่องว่างไม่ลบค่าเดิม · ราคาเฉพาะลูกค้าและราคาสัญญาแก้ที่หน้าราคาเฉพาะลูกค้าและราคาสัญญา",
+    "en": "Empty fields keep the current value · edit customer and contract prices on the customer and contract prices page"
+  },
+  "{0}ข้อมูลจากระบบขาย (ERP) ของสินค้า {1}?\n\n{2} (ร้านค้าออนไลน์บันทึกในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข)": {
+    "th": "{0}ข้อมูลจากระบบขาย (ERP) ของสินค้า {1}?\n\n{2} (ร้านค้าออนไลน์บันทึกในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข)",
+    "en": "{0} the sales system (ERP) data for product {1}?\n\n{2} (The online shop saves this in your name and keeps your email in its change history)"
+  },
+  "สินค้าฉบับร่างจะเปิดขาย และใช้ค่าที่ระบบขายส่งมาทันที": {
+    "th": "สินค้าฉบับร่างจะเปิดขาย และใช้ค่าที่ระบบขายส่งมาทันที",
+    "en": "Draft products go on sale and the sales system's values apply right away"
+  },
+  "ไม่ใช้ค่าที่ระบบขายส่งมา สินค้าคงค่าเดิม": {
+    "th": "ไม่ใช้ค่าที่ระบบขายส่งมา สินค้าคงค่าเดิม",
+    "en": "The sales system's values are dropped and the product keeps its current values"
+  },
+  "ราคาและข้อมูลสินค้า": {
+    "th": "ราคาและข้อมูลสินค้า",
+    "en": "Prices and product facts"
+  },
+  "สั่งขั้นต่ำ": {
+    "th": "สั่งขั้นต่ำ",
+    "en": "Minimum order"
+  },
+  "ประเทศต้นทาง": {
+    "th": "ประเทศต้นทาง",
+    "en": "Country of origin"
+  },
+  "ประเภท VAT": {
+    "th": "ประเภท VAT",
+    "en": "VAT type"
+  },
+  "ข้อมูลจากระบบขาย (ERP) รออนุมัติ": {
+    "th": "ข้อมูลจากระบบขาย (ERP) รออนุมัติ",
+    "en": "Sales system (ERP) data waiting for approval"
+  },
+  "ส่งมาเมื่อ {0}": {
+    "th": "ส่งมาเมื่อ {0}",
+    "en": "Sent {0}"
+  },
+  "ช่องข้อมูล": {
+    "th": "ช่องข้อมูล",
+    "en": "Field"
+  },
+  "ค่าปัจจุบัน": {
+    "th": "ค่าปัจจุบัน",
+    "en": "Current value"
+  },
+  "ค่าที่ระบบขายส่งมา": {
+    "th": "ค่าที่ระบบขายส่งมา",
+    "en": "Value from the sales system"
+  },
+  "รูปได้สูงสุด 3 รูป": {
+    "th": "รูปได้สูงสุด 3 รูป",
+    "en": "Up to 3 images"
+  },
+  "{0}{1}{2} ของ {3}? ลูกค้าเห็นทันที": {
+    "th": "{0}{1}{2} ของ {3}? ลูกค้าเห็นทันที",
+    "en": "{0}{1}{2} for {3}? Customers see it right away"
+  },
+  "เพิ่ม {0} รูป": {
+    "th": "เพิ่ม {0} รูป",
+    "en": "Add {0} images"
+  },
+  "ลบ {0} รูป": {
+    "th": "ลบ {0} รูป",
+    "en": "Remove {0} images"
+  },
+  "บันทึกรูปของ {0} แล้ว": {
+    "th": "บันทึกรูปของ {0} แล้ว",
+    "en": "Saved images for {0}"
+  },
+  "รออนุมัติข้อมูลจากระบบขาย (ERP)": {
+    "th": "รออนุมัติข้อมูลจากระบบขาย (ERP)",
+    "en": "Sales system (ERP) data to approve"
+  },
+  "ไม่มีราคาขาย": {
+    "th": "ไม่มีราคาขาย",
+    "en": "No selling price"
+  },
+  "สินค้าหมด": {
+    "th": "สินค้าหมด",
+    "en": "Out of stock"
+  },
+  "ใกล้หมด": {
+    "th": "ใกล้หมด",
+    "en": "Low stock"
+  },
+  "เปิดขาย": {
+    "th": "เปิดขาย",
+    "en": "On sale"
+  },
+  "{0}ข้อมูลจากระบบขาย (ERP) ของสินค้า {1} รายการ?\n\n{2} (ร้านค้าออนไลน์บันทึกในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข)": {
+    "th": "{0}ข้อมูลจากระบบขาย (ERP) ของสินค้า {1} รายการ?\n\n{2} (ร้านค้าออนไลน์บันทึกในนามของคุณ และเก็บอีเมลของคุณไว้ในประวัติการแก้ไข)",
+    "en": "{0} the sales system (ERP) data for {1} products?\n\n{2} (The online shop saves this in your name and keeps your email in its change history)"
+  },
+  "สินค้าบนร้านค้าออนไลน์ ราคา สต็อก และสถานะ · อนุมัติข้อมูลที่ระบบขาย (ERP) ส่งมาได้ที่นี่ ส่วนการแก้ข้อมูลอื่นและรูปทำที่หน้าสินค้าบนร้านค้า": {
+    "th": "สินค้าบนร้านค้าออนไลน์ ราคา สต็อก และสถานะ · อนุมัติข้อมูลที่ระบบขาย (ERP) ส่งมาได้ที่นี่ ส่วนการแก้ข้อมูลอื่นและรูปทำที่หน้าสินค้าบนร้านค้า",
+    "en": "Online shop products, prices, stock and status · approve sales system (ERP) data here; edit other details and images on the shop's product pages"
+  },
+  "รหัสหรือชื่อสินค้า": {
+    "th": "รหัสหรือชื่อสินค้า",
+    "en": "Product code or name"
+  },
+  "สินค้าสั่งจอง": {
+    "th": "สินค้าสั่งจอง",
+    "en": "Pre-order products"
+  },
+  "ข้อมูลจาก ERP รออนุมัติ": {
+    "th": "ข้อมูลจาก ERP รออนุมัติ",
+    "en": "ERP data waiting for approval"
+  },
+  "ไม่พบสินค้าตามตัวกรองนี้ ลองเปลี่ยนคำค้นหรือล้างตัวกรอง": {
+    "th": "ไม่พบสินค้าตามตัวกรองนี้ ลองเปลี่ยนคำค้นหรือล้างตัวกรอง",
+    "en": "No products match these filters. Try other words or clear the filters"
+  },
+  "ลูกค้าแต่ละรายสั่งสินค้าสั่งจองกี่รายการ และรับของได้กี่วันต่อสัปดาห์": {
+    "th": "ลูกค้าแต่ละรายสั่งสินค้าสั่งจองกี่รายการ และรับของได้กี่วันต่อสัปดาห์",
+    "en": "How many pre-order products each customer orders, and how many days a week they can receive goods"
+  },
+  "สินค้าที่สั่ง (รายการ)": {
+    "th": "สินค้าที่สั่ง (รายการ)",
+    "en": "Products ordered"
+  },
+  "สินค้าสั่งจอง (รายการ)": {
+    "th": "สินค้าสั่งจอง (รายการ)",
+    "en": "Pre-order products"
+  },
+  "สินค้าสั่งจองที่มีรอบเปิด": {
+    "th": "สินค้าสั่งจองที่มีรอบเปิด",
+    "en": "Pre-order products with an open round"
+  },
+  "ไม่พบลูกค้าตามเงื่อนไขนี้ ลองล้างรหัสลูกค้าหรือลดจำนวนวันส่ง": {
+    "th": "ไม่พบลูกค้าตามเงื่อนไขนี้ ลองล้างรหัสลูกค้าหรือลดจำนวนวันส่ง",
+    "en": "No customers match. Try clearing the customer code or lowering the delivery days"
+  },
+  " ออเดอร์ · ดูได้ที่หน้าคำสั่งซื้อ": {
+    "th": " ออเดอร์ · ดูได้ที่หน้าคำสั่งซื้อ",
+    "en": " orders · see the orders page"
+  },
+  "ยังไม่มีข้อมูลคืนเงินในระบบ": {
+    "th": "ยังไม่มีข้อมูลคืนเงินในระบบ",
+    "en": "No refund data in the system yet"
+  },
+  "ยอดขายรายเดือน": {
+    "th": "ยอดขายรายเดือน",
+    "en": "Monthly sales"
+  },
+  "ยอดขายรายวัน": {
+    "th": "ยอดขายรายวัน",
+    "en": "Daily sales"
+  },
+  "เริ่มชำระเงิน": {
+    "th": "เริ่มชำระเงิน",
+    "en": "Started checkout"
+  },
+  "เว็บไซต์": {
+    "th": "เว็บไซต์",
+    "en": "Website"
+  },
+  "แอป iOS": {
+    "th": "แอป iOS",
+    "en": "iOS app"
+  },
+  "แอป Android": {
+    "th": "แอป Android",
+    "en": "Android app"
+  },
+  "คนเข้าชม การค้นหา และขั้นตอนก่อนซื้อบนร้านค้าออนไลน์": {
+    "th": "คนเข้าชม การค้นหา และขั้นตอนก่อนซื้อบนร้านค้าออนไลน์",
+    "en": "Visitors, searches and the steps before buying on the online shop"
+  },
+  "ครั้งที่เข้าชม": {
+    "th": "ครั้งที่เข้าชม",
+    "en": "Visits"
+  },
+  "ผู้เข้าชม": {
+    "th": "ผู้เข้าชม",
+    "en": "Visitors"
+  },
+  "ล็อกอินแล้ว": {
+    "th": "ล็อกอินแล้ว",
+    "en": "Logged in"
+  },
+  "ขั้นตอนก่อนซื้อ (นับครั้งที่เข้าชม)": {
+    "th": "ขั้นตอนก่อนซื้อ (นับครั้งที่เข้าชม)",
+    "en": "Steps before buying (by visit)"
+  },
+  "ครั้งที่เข้าชมรายวัน": {
+    "th": "ครั้งที่เข้าชมรายวัน",
+    "en": "Visits per day"
+  },
+  "แยกตามช่องทาง": {
+    "th": "แยกตามช่องทาง",
+    "en": "By channel"
+  },
+  "ส่งข้อมูลถึงร้านค้าสำเร็จ": {
+    "th": "ส่งข้อมูลถึงร้านค้าสำเร็จ",
+    "en": "Data delivered to the shop"
+  },
+  "ส่งข้อมูลถึงร้านค้าไม่สำเร็จ (เลิกลองส่งแล้ว)": {
+    "th": "ส่งข้อมูลถึงร้านค้าไม่สำเร็จ (เลิกลองส่งแล้ว)",
+    "en": "Data not delivered to the shop (gave up retrying)"
+  },
+  "ข้อมูลที่ระบบขาย (ERP) ส่งเข้ามาทั้งหมด": {
+    "th": "ข้อมูลที่ระบบขาย (ERP) ส่งเข้ามาทั้งหมด",
+    "en": "All data received from the sales system (ERP)"
+  },
+  "ข้อมูลจากระบบขาย (ERP) ที่รับเข้าไม่สำเร็จ": {
+    "th": "ข้อมูลจากระบบขาย (ERP) ที่รับเข้าไม่สำเร็จ",
+    "en": "Sales system (ERP) data that failed to load"
+  },
+  "ข้อความอัตโนมัติที่ส่งไม่สำเร็จ": {
+    "th": "ข้อความอัตโนมัติที่ส่งไม่สำเร็จ",
+    "en": "Automated messages that failed"
+  },
+  "การแจ้งเตือนถึงลูกค้าที่ส่งไม่สำเร็จ": {
+    "th": "การแจ้งเตือนถึงลูกค้าที่ส่งไม่สำเร็จ",
+    "en": "Customer notifications that failed"
+  },
+  "ตอนนี้มีปัญหาอะไรที่กระทบการขาย และช่วงนี้มีอะไรทำงานไม่สำเร็จบ้าง": {
+    "th": "ตอนนี้มีปัญหาอะไรที่กระทบการขาย และช่วงนี้มีอะไรทำงานไม่สำเร็จบ้าง",
+    "en": "What is hurting sales right now, and what failed in this period"
+  },
+  "ส่งข้อมูลถึงร้านค้าทันเวลา ไม่มีงานค้าง": {
+    "th": "ส่งข้อมูลถึงร้านค้าทันเวลา ไม่มีงานค้าง",
+    "en": "Data reaches the shop on time, nothing is stuck"
+  },
+  "การรับส่งข้อมูลระหว่างระบบ": {
+    "th": "การรับส่งข้อมูลระหว่างระบบ",
+    "en": "Data between systems"
+  },
+  "ร้านค้าออนไลน์": {
+    "th": "ร้านค้าออนไลน์",
+    "en": "Online shop"
+  },
+  "สาเหตุที่ส่งออเดอร์ไป Jagota ไม่สำเร็จ": {
+    "th": "สาเหตุที่ส่งออเดอร์ไป Jagota ไม่สำเร็จ",
+    "en": "Why orders failed to reach Jagota"
+  },
+  "ราคาเฉพาะบริษัท": {
+    "th": "ราคาเฉพาะบริษัท",
+    "en": "Company price"
+  },
+  "ราคาสัญญาสาขา": {
+    "th": "ราคาสัญญาสาขา",
+    "en": "Branch contract price"
+  },
+  "ราคาพิเศษสาขา": {
+    "th": "ราคาพิเศษสาขา",
+    "en": "Branch special price"
+  },
+  "โจทย์วิจัยการตลาด": {
+    "th": "โจทย์วิจัยการตลาด",
+    "en": "Marketing research topics"
+  },
+  "รายงานวิจัยการตลาด": {
+    "th": "รายงานวิจัยการตลาด",
+    "en": "Marketing research report"
+  },
+  "สรุปข้อมูลจากระบบหลัก (ERP)": {
+    "th": "สรุปข้อมูลจากระบบหลัก (ERP)",
+    "en": "Main system (ERP) intake summary"
+  },
+  "เหตุการณ์ที่ส่งไม่สำเร็จ": {
+    "th": "เหตุการณ์ที่ส่งไม่สำเร็จ",
+    "en": "Failed event deliveries"
+  },
+  "สร้างโจทย์วิจัยการตลาด": {
+    "th": "สร้างโจทย์วิจัยการตลาด",
+    "en": "Create a marketing research topic"
+  },
+  "สั่งรันวิจัยการตลาด": {
+    "th": "สั่งรันวิจัยการตลาด",
+    "en": "Run marketing research"
+  },
+  "ส่งเหตุการณ์ซ้ำ": {
+    "th": "ส่งเหตุการณ์ซ้ำ",
+    "en": "Resend an event"
+  },
+  "นำข้อมูลระบบหลัก (ERP) มาลงใหม่": {
+    "th": "นำข้อมูลระบบหลัก (ERP) มาลงใหม่",
+    "en": "Re-apply main system (ERP) data"
+  },
+  "รายการตั้งค่าการตลาด": {
+    "th": "รายการตั้งค่าการตลาด",
+    "en": "Marketing setups"
+  },
+  "ดูช่องที่ต้องกรอก": {
+    "th": "ดูช่องที่ต้องกรอก",
+    "en": "See required fields"
+  },
+  "สร้างหรือแก้การตั้งค่าการตลาด": {
+    "th": "สร้างหรือแก้การตั้งค่าการตลาด",
+    "en": "Create or edit a marketing setup"
+  },
+  "บันทึกแผนการเติบโต": {
+    "th": "บันทึกแผนการเติบโต",
+    "en": "Save a growth plan"
+  },
+  "แก้งานในแผนการเติบโต": {
+    "th": "แก้งานในแผนการเติบโต",
+    "en": "Edit tasks in a growth plan"
+  },
+  "ส่งตรวจ อนุมัติ หรือส่งออกแผนการเติบโต": {
+    "th": "ส่งตรวจ อนุมัติ หรือส่งออกแผนการเติบโต",
+    "en": "Submit, approve or export a growth plan"
+  },
+  "ยกเลิกการเชื่อมต่อ {0} ของ {1}? ผู้ช่วย AI จะใช้ข้อมูลต่อไม่ได้ทันที ถ้าจะใช้อีกต้องเข้าสู่ระบบใหม่": {
+    "th": "ยกเลิกการเชื่อมต่อ {0} ของ {1}? ผู้ช่วย AI จะใช้ข้อมูลต่อไม่ได้ทันที ถ้าจะใช้อีกต้องเข้าสู่ระบบใหม่",
+    "en": "Disconnect {0} for {1}? The AI assistant loses access immediately and must sign in again to use it."
+  },
+  "ยกเลิกสิทธิ์แล้ว {0} รายการ": {
+    "th": "ยกเลิกสิทธิ์แล้ว {0} รายการ",
+    "en": "Revoked {0} access grants"
+  },
+  "ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของเราได้": {
+    "th": "ให้ Claude หรือ ChatGPT อ่านและสรุปข้อมูลของเราได้",
+    "en": "Let Claude or ChatGPT read and summarise our data"
+  },
+  "ลิงก์สำหรับเชื่อมต่อ": {
+    "th": "ลิงก์สำหรับเชื่อมต่อ",
+    "en": "Connection link"
+  },
+  "การเชื่อมต่อผู้ช่วย AI ยังไม่เปิดบนเซิร์ฟเวอร์นี้ ให้ทีมระบบตั้งค่า MCP_PUBLIC_URL (ดู docs/mcp.md)": {
+    "th": "การเชื่อมต่อผู้ช่วย AI ยังไม่เปิดบนเซิร์ฟเวอร์นี้ ให้ทีมระบบตั้งค่า MCP_PUBLIC_URL (ดู docs/mcp.md)",
+    "en": "AI assistant connections are not enabled on this server. Ask the systems team to set MCP_PUBLIC_URL (see docs/mcp.md)."
+  },
+  "ยังไม่มีผู้ช่วย AI เชื่อมต่อ ทำตามขั้นตอนการเชื่อมต่อด้านบนเพื่อเริ่มใช้": {
+    "th": "ยังไม่มีผู้ช่วย AI เชื่อมต่อ ทำตามขั้นตอนการเชื่อมต่อด้านบนเพื่อเริ่มใช้",
+    "en": "No AI assistant is connected yet. Follow the connection steps above to start."
+  },
+  "เปิดดูในหลังร้าน": {
+    "th": "เปิดดูในหลังร้าน",
+    "en": "Open in the back office"
+  },
+  "และอีก {0} ช่อง": {
+    "th": "และอีก {0} ช่อง",
+    "en": "and {0} more fields"
+  },
+  "{0} · ผู้ดูแลระบบตั้งรหัสผ่านนี้ให้ เปลี่ยนเป็นรหัสของคุณเองก่อนใช้งาน": {
+    "th": "{0} · ผู้ดูแลระบบตั้งรหัสผ่านนี้ให้ เปลี่ยนเป็นรหัสของคุณเองก่อนใช้งาน",
+    "en": "{0} · An admin set this password. Change it to your own before you continue."
+  },
+  "ส่งในนามระบบหลัก (ERP)": {
+    "th": "ส่งในนามระบบหลัก (ERP)",
+    "en": "Send as the main system (ERP)"
+  },
+  "ยังไม่เริ่ม": {
+    "th": "ยังไม่เริ่ม",
+    "en": "Not started"
+  },
+  "ส่งในนามร้านค้า": {
+    "th": "ส่งในนามร้านค้า",
+    "en": "Send as the shop"
+  },
+  "เวลาที่ใช้ (มิลลิวินาที)": {
+    "th": "เวลาที่ใช้ (มิลลิวินาที)",
+    "en": "Duration (ms)"
+  },
+  "ตั้งสต็อกจำลอง": {
+    "th": "ตั้งสต็อกจำลอง",
+    "en": "Set test stock"
+  },
+  "รหัสสินค้าที่ใช้ทดสอบ": {
+    "th": "รหัสสินค้าที่ใช้ทดสอบ",
+    "en": "Product code to test with"
+  },
+  "ยังไม่มีสต็อกจำลอง กดปุ่ม “ตั้งสต็อกจำลอง” เพื่อเพิ่มรายการแรก": {
+    "th": "ยังไม่มีสต็อกจำลอง กดปุ่ม “ตั้งสต็อกจำลอง” เพื่อเพิ่มรายการแรก",
+    "en": "No test stock yet. Click “Set test stock” to add the first one."
+  },
+  "จำนวนสั่งขั้นต่ำ": {
+    "th": "จำนวนสั่งขั้นต่ำ",
+    "en": "Minimum order quantity"
+  },
+  "ใบสั่งขาย": {
+    "th": "ใบสั่งขาย",
+    "en": "Sales order"
+  },
+  "รับแล้ว รอนำไปใช้": {
+    "th": "รับแล้ว รอนำไปใช้",
+    "en": "Received, waiting to apply"
+  },
+  "นำไปใช้แล้ว": {
+    "th": "นำไปใช้แล้ว",
+    "en": "Applied"
+  },
+  "ข้ามไป": {
+    "th": "ข้ามไป",
+    "en": "Skipped"
+  },
+  "ข้อมูลเก่ากว่าที่มีอยู่": {
+    "th": "ข้อมูลเก่ากว่าที่มีอยู่",
+    "en": "Older than current data"
+  },
+  "ไม่นำไปใช้": {
+    "th": "ไม่นำไปใช้",
+    "en": "Not applied"
+  },
+  "รายการที่ได้รับ": {
+    "th": "รายการที่ได้รับ",
+    "en": "Received records"
+  },
+  "ไม่มีข้อมูลที่ตรงกับตัวกรอง ลองเปลี่ยนประเภทข้อมูลหรือสถานะ": {
+    "th": "ไม่มีข้อมูลที่ตรงกับตัวกรอง ลองเปลี่ยนประเภทข้อมูลหรือสถานะ",
+    "en": "Nothing matches these filters. Try another data type or status."
+  },
+  "ยังไม่มีข้อมูลจากระบบหลัก (ERP) ข้อมูลจะแสดงที่นี่เมื่อระบบหลักส่งเข้ามา": {
+    "th": "ยังไม่มีข้อมูลจากระบบหลัก (ERP) ข้อมูลจะแสดงที่นี่เมื่อระบบหลักส่งเข้ามา",
+    "en": "No data from the main system (ERP) yet. It shows here when the main system sends it."
+  },
+  "ลิงก์รับข้อมูล": {
+    "th": "ลิงก์รับข้อมูล",
+    "en": "Receiving link"
+  },
+  "ตรวจเพิ่ม {0} รายการ": {
+    "th": "ตรวจเพิ่ม {0} รายการ",
+    "en": "Checked {0} more records"
+  },
+  "ร้านค้ายังส่งออเดอร์ไป Jagota เหมือนเดิม ระบบใหม่สร้างคำขอของออเดอร์เดียวกันแล้วเทียบกับที่ร้านค้าส่งจริงทีละช่อง ส่วนนี้ไม่ส่งอะไรไปที่ระบบหลัก": {
+    "th": "ร้านค้ายังส่งออเดอร์ไป Jagota เหมือนเดิม ระบบใหม่สร้างคำขอของออเดอร์เดียวกันแล้วเทียบกับที่ร้านค้าส่งจริงทีละช่อง ส่วนนี้ไม่ส่งอะไรไปที่ระบบหลัก",
+    "en": "The shop still sends orders to Jagota as before. The new system builds the request for the same order and compares it field by field with what the shop sent. This part sends nothing to the main system."
+  },
+  "ผลการเทียบ {0} วัน": {
+    "th": "ผลการเทียบ {0} วัน",
+    "en": "Comparison over {0} days"
+  },
+  "ระบบใหม่สร้างไม่ได้": {
+    "th": "ระบบใหม่สร้างไม่ได้",
+    "en": "New system could not build"
+  },
+  "เลขออเดอร์หรือการจัดส่ง": {
+    "th": "เลขออเดอร์หรือการจัดส่ง",
+    "en": "Order or shipment number"
+  },
+  "ร้านค้าส่งเมื่อ": {
+    "th": "ร้านค้าส่งเมื่อ",
+    "en": "Shop sent at"
+  },
+  "ผลที่ร้านค้าได้": {
+    "th": "ผลที่ร้านค้าได้",
+    "en": "Shop's result"
+  },
+  "ตรวจซ้ำแล้ว: ตรง": {
+    "th": "ตรวจซ้ำแล้ว: ตรง",
+    "en": "Rechecked: matches"
+  },
+  "ตรวจซ้ำแล้ว: ยังไม่ตรง": {
+    "th": "ตรวจซ้ำแล้ว: ยังไม่ตรง",
+    "en": "Rechecked: still different"
+  },
+  "ร้านค้าส่ง": {
+    "th": "ร้านค้าส่ง",
+    "en": "Shop sent"
+  },
+  "ระบบใหม่จะส่ง": {
+    "th": "ระบบใหม่จะส่ง",
+    "en": "New system would send"
+  },
+  "ร้านค้าส่งไป Jagota": {
+    "th": "ร้านค้าส่งไป Jagota",
+    "en": "Shop sent to Jagota"
+  },
+  "ส่งจริงผ่านระบบใหม่": {
+    "th": "ส่งจริงผ่านระบบใหม่",
+    "en": "Sent through the new system"
+  },
+  "ร้านค้าจะลองส่งใหม่เอง": {
+    "th": "ร้านค้าจะลองส่งใหม่เอง",
+    "en": "The shop retries on its own"
+  },
+  "ยังไม่มีออเดอร์ที่ส่งผ่านระบบใหม่ รายการจะแสดงเมื่อเปิดให้สาขาส่งผ่านระบบใหม่": {
+    "th": "ยังไม่มีออเดอร์ที่ส่งผ่านระบบใหม่ รายการจะแสดงเมื่อเปิดให้สาขาส่งผ่านระบบใหม่",
+    "en": "No orders sent through the new system yet. They show here once a branch is switched to the new system."
+  },
+  "เลขเอกสาร": {
+    "th": "เลขเอกสาร",
+    "en": "Document number"
+  },
+  "เวลาที่ใช้": {
+    "th": "เวลาที่ใช้",
+    "en": "Duration"
+  },
+  "ประวัติการส่งเข้าระบบหลัก (ERP) ที่คัดลอกจากร้านค้า": {
+    "th": "ประวัติการส่งเข้าระบบหลัก (ERP) ที่คัดลอกจากร้านค้า",
+    "en": "Main system (ERP) send history copied from the shop"
+  },
+  "ดึงจากร้านค้าตอนนี้": {
+    "th": "ดึงจากร้านค้าตอนนี้",
+    "en": "Pull from the shop now"
+  },
+  "ค้นหาเลขออเดอร์หรือเลขเอกสารระบบหลัก": {
+    "th": "ค้นหาเลขออเดอร์หรือเลขเอกสารระบบหลัก",
+    "en": "Search order number or main system document number"
+  },
+  "เลขออเดอร์หรือเลขเอกสาร": {
+    "th": "เลขออเดอร์หรือเลขเอกสาร",
+    "en": "Order or document number"
+  },
+  "ยังไม่ได้ดึงประวัติจากร้านค้า กด “ดึงจากร้านค้าตอนนี้” เพื่อเริ่ม": {
+    "th": "ยังไม่ได้ดึงประวัติจากร้านค้า กด “ดึงจากร้านค้าตอนนี้” เพื่อเริ่ม",
+    "en": "History has not been pulled from the shop yet. Click “Pull from the shop now” to start."
+  },
+  "วิธีเรียก": {
+    "th": "วิธีเรียก",
+    "en": "Method"
+  },
+  "เรียงตาม": {
+    "th": "เรียงตาม",
+    "en": "Sort by"
+  },
+  "สำเร็จ (2xx)": {
+    "th": "สำเร็จ (2xx)",
+    "en": "Succeeded (2xx)"
+  },
+  "คำขอไม่ถูกต้อง (4xx)": {
+    "th": "คำขอไม่ถูกต้อง (4xx)",
+    "en": "Bad request (4xx)"
+  },
+  "ระบบขัดข้อง (5xx)": {
+    "th": "ระบบขัดข้อง (5xx)",
+    "en": "Server error (5xx)"
+  },
+  "ภายในระบบร้านค้า": {
+    "th": "ภายในระบบร้านค้า",
+    "en": "Inside the shop system"
+  },
+  "ล่าสุดก่อน": {
+    "th": "ล่าสุดก่อน",
+    "en": "Newest first"
+  },
+  "ช้าที่สุดก่อน": {
+    "th": "ช้าที่สุดก่อน",
+    "en": "Slowest first"
+  },
+  "ค้นในที่อยู่ที่เรียกหรือข้อความ": {
+    "th": "ค้นในที่อยู่ที่เรียกหรือข้อความ",
+    "en": "Search the called address or message"
+  },
+  "อ่านอย่างเดียว แสดง 24 ชั่วโมงล่าสุด ย้อนได้สูงสุด 7 วัน การเรียกจากระบบหลัก (ERP) ดูที่หน้า “บันทึกการเรียกระบบหลัก (ERP)”": {
+    "th": "อ่านอย่างเดียว แสดง 24 ชั่วโมงล่าสุด ย้อนได้สูงสุด 7 วัน การเรียกจากระบบหลัก (ERP) ดูที่หน้า “บันทึกการเรียกระบบหลัก (ERP)”",
+    "en": "Read only. Shows the last 24 hours, up to 7 days back. For calls from the main system (ERP), see “Main system (ERP) call log”."
+  },
+  "เวลาเฉลี่ย (มิลลิวินาที)": {
+    "th": "เวลาเฉลี่ย (มิลลิวินาที)",
+    "en": "Average time (ms)"
+  },
+  "ไม่มีบันทึกในช่วงนี้ ลองเปลี่ยนตัวกรอง": {
+    "th": "ไม่มีบันทึกในช่วงนี้ ลองเปลี่ยนตัวกรอง",
+    "en": "No records in this period. Try other filters."
+  },
+  "ข้อมูลสินค้าหลายรายการ": {
+    "th": "ข้อมูลสินค้าหลายรายการ",
+    "en": "Product data (many at once)"
+  },
+  "ใบเสนอราคา": {
+    "th": "ใบเสนอราคา",
+    "en": "Quotations"
+  },
+  "สถานะใบเสนอราคา": {
+    "th": "สถานะใบเสนอราคา",
+    "en": "Quotation status"
+  },
+  "รอบการสั่งซื้อ": {
+    "th": "รอบการสั่งซื้อ",
+    "en": "Order periods"
+  },
+  "ค่าเริ่มต้นแสดง 24 ชั่วโมงล่าสุด ค้นได้ครั้งละไม่เกิน 7 วัน และระบบร้านค้าเก็บบันทึกไว้ 14 วัน": {
+    "th": "ค่าเริ่มต้นแสดง 24 ชั่วโมงล่าสุด ค้นได้ครั้งละไม่เกิน 7 วัน และระบบร้านค้าเก็บบันทึกไว้ 14 วัน",
+    "en": "Shows the last 24 hours by default. You can search up to 7 days at a time, and the shop system keeps records for 14 days."
+  },
+  "ผลการค้นหา": {
+    "th": "ผลการค้นหา",
+    "en": "Results"
+  },
+  "ไม่มีรายการในช่วงนี้ ลองขยายช่วงเวลาหรือล้างคำค้นหา": {
+    "th": "ไม่มีรายการในช่วงนี้ ลองขยายช่วงเวลาหรือล้างคำค้นหา",
+    "en": "Nothing in this period. Try a wider date range or clear the search."
+  },
+  "{0}\n\nระบบร้านค้าจะปรับตามภายในไม่กี่วินาที": {
+    "th": "{0}\n\nระบบร้านค้าจะปรับตามภายในไม่กี่วินาที",
+    "en": "{0}\n\nThe shop system applies this within a few seconds."
+  },
+  "เปลี่ยนสิทธิ์ในร้านค้าของ {0} เป็น {1}?": {
+    "th": "เปลี่ยนสิทธิ์ในร้านค้าของ {0} เป็น {1}?",
+    "en": "Change {0}'s shop role to {1}?"
+  },
+  "ปิดบัญชีร้านค้าของ {0}?": {
+    "th": "ปิดบัญชีร้านค้าของ {0}?",
+    "en": "Turn off {0}'s shop account?"
+  },
+  "เปิดบัญชีร้านค้าของ {0}?": {
+    "th": "เปิดบัญชีร้านค้าของ {0}?",
+    "en": "Turn on {0}'s shop account?"
+  },
+  "ให้ {0} ออกจากระบบร้านค้าทุกเครื่อง?": {
+    "th": "ให้ {0} ออกจากระบบร้านค้าทุกเครื่อง?",
+    "en": "Sign {0} out of the shop system on every device?"
+  },
+  "ตอนนี้ระบบร้านค้ายังดูแลบัญชีทีมงานเอง จึงแก้จากหน้านี้ไม่ได้ อนุมัติคำขอใช้งานใหม่ได้ที่หน้า “คำขอใช้งานหลังร้าน”": {
+    "th": "ตอนนี้ระบบร้านค้ายังดูแลบัญชีทีมงานเอง จึงแก้จากหน้านี้ไม่ได้ อนุมัติคำขอใช้งานใหม่ได้ที่หน้า “คำขอใช้งานหลังร้าน”",
+    "en": "The shop system still manages staff accounts, so they can't be changed here. Approve new access requests on “Back-office access requests”."
+  },
+  "ทีมงานในร้านค้า": {
+    "th": "ทีมงานในร้านค้า",
+    "en": "Shop staff"
+  },
+  "สิทธิ์ในร้านค้า": {
+    "th": "สิทธิ์ในร้านค้า",
+    "en": "Shop role"
+  },
+  "รอระบบร้านค้า": {
+    "th": "รอระบบร้านค้า",
+    "en": "Waiting for the shop system"
+  },
+  "สิทธิ์ในร้านค้าของ {0}": {
+    "th": "สิทธิ์ในร้านค้าของ {0}",
+    "en": "Shop role for {0}"
+  },
+  "ยังไม่มีข้อมูลทีมงานที่คัดลอกจากระบบร้านค้า ให้ผู้ดูแลระบบสั่งคัดลอกข้อมูลทีมงานก่อน แล้วกดรีเฟรช": {
+    "th": "ยังไม่มีข้อมูลทีมงานที่คัดลอกจากระบบร้านค้า ให้ผู้ดูแลระบบสั่งคัดลอกข้อมูลทีมงานก่อน แล้วกดรีเฟรช",
+    "en": "No staff data copied from the shop system yet. Ask an admin to copy the staff data, then refresh."
+  },
+  "ตรวจเพิ่ม {0} บรรทัด": {
+    "th": "ตรวจเพิ่ม {0} บรรทัด",
+    "en": "Checked {0} more lines"
+  },
+  "ระบบใหม่คำนวณราคาของทุกบรรทัดในออเดอร์ใหม่ตามบริษัท สาขา จำนวน และเวลาที่สั่ง แล้วเทียบกับราคาที่ร้านค้าเก็บจริง หน้านี้เทียบอย่างเดียว ไม่แก้ราคาในร้านค้า": {
+    "th": "ระบบใหม่คำนวณราคาของทุกบรรทัดในออเดอร์ใหม่ตามบริษัท สาขา จำนวน และเวลาที่สั่ง แล้วเทียบกับราคาที่ร้านค้าเก็บจริง หน้านี้เทียบอย่างเดียว ไม่แก้ราคาในร้านค้า",
+    "en": "The new system prices every line of new orders by company, branch, quantity and order time, then compares it with what the shop charged. This page only compares; it never changes shop prices."
+  },
+  "ระบบใหม่คำนวณไม่ได้": {
+    "th": "ระบบใหม่คำนวณไม่ได้",
+    "en": "New system could not price"
+  },
+  "ร้านค้าใช้ {0} แต่ระบบใหม่ใช้ {1} ({2} บรรทัด)": {
+    "th": "ร้านค้าใช้ {0} แต่ระบบใหม่ใช้ {1} ({2} บรรทัด)",
+    "en": "Shop used {0} but the new system used {1} ({2} lines)"
+  },
+  "ราคาร้านค้า": {
+    "th": "ราคาร้านค้า",
+    "en": "Shop price"
+  },
+  "ราคาที่คำนวณใหม่": {
+    "th": "ราคาที่คำนวณใหม่",
+    "en": "Recalculated price"
+  },
+  "ไม่ตรง: {0}": {
+    "th": "ไม่ตรง: {0}",
+    "en": "Different: {0}"
+  },
+  "คำนวณไม่ได้": {
+    "th": "คำนวณไม่ได้",
+    "en": "Could not calculate"
+  },
+  "รันโจทย์วิจัยการตลาดที่ถึงคิว": {
+    "th": "รันโจทย์วิจัยการตลาดที่ถึงคิว",
+    "en": "Run marketing research topics that are due"
+  },
+  "งานทั้งหมด": {
+    "th": "งานทั้งหมด",
+    "en": "All tasks"
+  },
+  "ลบปลายทาง {0}": {
+    "th": "ลบปลายทาง {0}",
+    "en": "Delete destination {0}"
+  },
+  "ระบบจะหยุดส่งเหตุการณ์ไปยังปลายทางนี้ และลบออกจากรายการ ย้อนกลับไม่ได้": {
+    "th": "ระบบจะหยุดส่งเหตุการณ์ไปยังปลายทางนี้ และลบออกจากรายการ ย้อนกลับไม่ได้",
+    "en": "Events stop going to this destination and it is removed from the list. This can't be undone."
+  },
+  "ปิดปลายทาง {0}": {
+    "th": "ปิดปลายทาง {0}",
+    "en": "Turn off destination {0}"
+  },
+  "ระบบจะหยุดส่งเหตุการณ์ไปยังปลายทางนี้จนกว่าจะเปิดอีกครั้ง": {
+    "th": "ระบบจะหยุดส่งเหตุการณ์ไปยังปลายทางนี้จนกว่าจะเปิดอีกครั้ง",
+    "en": "Events stop going to this destination until you turn it on again."
+  },
+  "เพิ่มปลายทาง": {
+    "th": "เพิ่มปลายทาง",
+    "en": "Add destination"
+  },
+  "ยังไม่มีปลายทาง กดปุ่ม “เพิ่มปลายทาง” เพื่อเริ่มส่งเหตุการณ์ออกไป": {
+    "th": "ยังไม่มีปลายทาง กดปุ่ม “เพิ่มปลายทาง” เพื่อเริ่มส่งเหตุการณ์ออกไป",
+    "en": "No destinations yet. Click “Add destination” to start sending events out."
+  },
+  "มีรายการใหม่แทนแล้ว": {
+    "th": "มีรายการใหม่แทนแล้ว",
+    "en": "Replaced by a newer delivery"
+  },
+  "ซิงก์ลูกค้า": {
+    "th": "ซิงก์ลูกค้า",
+    "en": "Sync customers"
+  },
+  "ซิงก์สินค้า": {
+    "th": "ซิงก์สินค้า",
+    "en": "Sync products"
+  },
+  "ซิงก์สต็อก": {
+    "th": "ซิงก์สต็อก",
+    "en": "Sync stock"
+  },
+  "ซิงก์ราคา": {
+    "th": "ซิงก์ราคา",
+    "en": "Sync prices"
+  },
+  "เริ่มซิงก์ข้อมูล": {
+    "th": "เริ่มซิงก์ข้อมูล",
+    "en": "Start a sync"
+  },
+  "ยังไม่มีงานซิงก์ กดปุ่ม “เริ่มซิงก์ข้อมูล” เพื่อเริ่มงานแรก": {
+    "th": "ยังไม่มีงานซิงก์ กดปุ่ม “เริ่มซิงก์ข้อมูล” เพื่อเริ่มงานแรก",
+    "en": "No sync jobs yet. Click “Start a sync” to run the first one."
+  },
+  "สั่งส่งใหม่แล้ว ระบบจะส่งอีกครั้งในไม่ช้า": {
+    "th": "สั่งส่งใหม่แล้ว ระบบจะส่งอีกครั้งในไม่ช้า",
+    "en": "Resend queued. The system will send it again shortly."
+  },
+  "ไม่มีรายการที่ส่งไม่สำเร็จ": {
+    "th": "ไม่มีรายการที่ส่งไม่สำเร็จ",
+    "en": "No failed deliveries"
+  },
+  "รอประมวลผล": {
+    "th": "รอประมวลผล",
+    "en": "Waiting to process"
+  },
+  "ประมวลผลแล้ว": {
+    "th": "ประมวลผลแล้ว",
+    "en": "Processed"
+  },
+  "ยังไม่มีเหตุการณ์ขาเข้า เหตุการณ์จะแสดงที่นี่เมื่อระบบภายนอกส่งเข้ามา": {
+    "th": "ยังไม่มีเหตุการณ์ขาเข้า เหตุการณ์จะแสดงที่นี่เมื่อระบบภายนอกส่งเข้ามา",
+    "en": "No incoming events yet. They show here when an outside system sends them."
+  },
+  "ลายเซ็นถูกต้อง": {
+    "th": "ลายเซ็นถูกต้อง",
+    "en": "Signature valid"
+  },
+  "ลายเซ็นไม่ถูกต้อง": {
+    "th": "ลายเซ็นไม่ถูกต้อง",
+    "en": "Signature invalid"
+  },
+  "ผู้ดูแลระบบสูงสุด": {
+    "th": "ผู้ดูแลระบบสูงสุด",
+    "en": "Platform admin"
+  },
+  "ฝ่ายบริการลูกค้า": {
+    "th": "ฝ่ายบริการลูกค้า",
+    "en": "Customer service"
+  },
+  "ฝ่ายการตลาด": {
+    "th": "ฝ่ายการตลาด",
+    "en": "Marketing"
+  },
+  "ฝ่ายจัดการสินค้า": {
+    "th": "ฝ่ายจัดการสินค้า",
+    "en": "Merchandising"
+  },
+  "ทีมพัฒนาระบบ": {
+    "th": "ทีมพัฒนาระบบ",
+    "en": "Developer"
+  },
+  "ฝ่ายขาย (sale)": {
+    "th": "ฝ่ายขาย (sale)",
+    "en": "Sales (sale)"
+  },
+  "ฝ่ายขาย (sales)": {
+    "th": "ฝ่ายขาย (sales)",
+    "en": "Sales (sales)"
+  },
+  "ผู้จัดการ": {
+    "th": "ผู้จัดการ",
+    "en": "Manager"
+  },
+  "ผู้ดูแลระบบ": {
+    "th": "ผู้ดูแลระบบ",
+    "en": "Admin"
+  },
+  "ยืนยันอนุมัติ {0} ให้ได้สิทธิ์ {1}?": {
+    "th": "ยืนยันอนุมัติ {0} ให้ได้สิทธิ์ {1}?",
+    "en": "Approve {0} with {1} access?"
+  },
+  "เหตุผลที่ปฏิเสธ {0} (ไม่บังคับ)": {
+    "th": "เหตุผลที่ปฏิเสธ {0} (ไม่บังคับ)",
+    "en": "Reason for rejecting {0} (optional)"
+  },
+  "หน้านี้เปิดได้เฉพาะผู้ดูแลระบบสูงสุด หากต้องการใช้งาน โปรดติดต่อผู้ดูแลระบบ": {
+    "th": "หน้านี้เปิดได้เฉพาะผู้ดูแลระบบสูงสุด หากต้องการใช้งาน โปรดติดต่อผู้ดูแลระบบ",
+    "en": "Only platform admins can open this page. Contact an admin if you need access."
+  },
+  "ไม่มีคำขอที่รออนุมัติ": {
+    "th": "ไม่มีคำขอที่รออนุมัติ",
+    "en": "No requests waiting for approval"
+  },
+  "เมื่อมีคนขอใช้งานหลังร้าน คำขอจะแสดงที่นี่ให้อนุมัติหรือปฏิเสธ": {
+    "th": "เมื่อมีคนขอใช้งานหลังร้าน คำขอจะแสดงที่นี่ให้อนุมัติหรือปฏิเสธ",
+    "en": "When someone asks for back-office access, the request shows here to approve or reject."
+  },
+  "ยังไม่เข้าสู่ระบบ": {
+    "th": "ยังไม่เข้าสู่ระบบ",
+    "en": "Not signed in"
+  },
+  "เข้าสู่ระบบแล้ว": {
+    "th": "เข้าสู่ระบบแล้ว",
+    "en": "Signed in"
+  },
+  "จำนวนการเข้าใช้งาน": {
+    "th": "จำนวนการเข้าใช้งาน",
+    "en": "Visits"
+  },
+  "ไปต่อจากขั้นก่อนหน้า": {
+    "th": "ไปต่อจากขั้นก่อนหน้า",
+    "en": "Continued from previous step"
+  },
+  "ยังไม่มีข้อมูลในช่วงที่เลือก": {
+    "th": "ยังไม่มีข้อมูลในช่วงที่เลือก",
+    "en": "No data for the selected period"
+  },
+  "ลองเลือกช่วงวันที่ที่ยาวขึ้น หรือเปลี่ยนกลุ่มลูกค้าและช่องทาง": {
+    "th": "ลองเลือกช่วงวันที่ที่ยาวขึ้น หรือเปลี่ยนกลุ่มลูกค้าและช่องทาง",
+    "en": "Try a longer date range, or change the customer group and channel."
+  },
+  "การเข้าใช้งานที่มีการเข้าสู่ระบบ:": {
+    "th": "การเข้าใช้งานที่มีการเข้าสู่ระบบ:",
+    "en": "Visits with a sign-in:"
+  },
+  "จากดูสินค้าจนสั่งซื้อสำเร็จ:": {
+    "th": "จากดูสินค้าจนสั่งซื้อสำเร็จ:",
+    "en": "From viewing a product to a completed order:"
+  },
+  "ยังไม่มีลูกค้าในช่วงหรือตัวกรองที่เลือก ลองเลือกช่วงวันที่ที่ยาวขึ้น": {
+    "th": "ยังไม่มีลูกค้าในช่วงหรือตัวกรองที่เลือก ลองเลือกช่วงวันที่ที่ยาวขึ้น",
+    "en": "No customers for the selected period or filters. Try a longer date range."
+  },
+  "กำลังแสดง": {
+    "th": "กำลังแสดง",
+    "en": "Showing"
+  },
+  "ลูกค้าปิดแล้ว": {
+    "th": "ลูกค้าปิดแล้ว",
+    "en": "Closed by customer"
+  },
+  "เปิดข้อเสนออีกครั้งไม่สำเร็จ": {
+    "th": "เปิดข้อเสนออีกครั้งไม่สำเร็จ",
+    "en": "Could not show the offer again"
+  },
+  "รหัสอุปกรณ์จากร้านค้า": {
+    "th": "รหัสอุปกรณ์จากร้านค้า",
+    "en": "Device ID from the shop"
+  },
+  "รหัสอุปกรณ์ที่ร้านค้าส่งมา": {
+    "th": "รหัสอุปกรณ์ที่ร้านค้าส่งมา",
+    "en": "Device ID sent by the shop"
+  },
+  "รหัสผู้ใช้ (ไม่บังคับ)": {
+    "th": "รหัสผู้ใช้ (ไม่บังคับ)",
+    "en": "User ID (optional)"
+  },
+  "รหัสผู้ใช้ของลูกค้า": {
+    "th": "รหัสผู้ใช้ของลูกค้า",
+    "en": "Customer's user ID"
+  },
+  "ตรวจ": {
+    "th": "ตรวจ",
+    "en": "Check"
+  },
+  "ผู้ใช้ที่ผูกกับอุปกรณ์นี้": {
+    "th": "ผู้ใช้ที่ผูกกับอุปกรณ์นี้",
+    "en": "User linked to this device"
+  },
+  "ยังไม่ผูกกับผู้ใช้": {
+    "th": "ยังไม่ผูกกับผู้ใช้",
+    "en": "Not linked to a user yet"
+  },
+  "ผู้ใช้ที่ใช้ตรวจ": {
+    "th": "ผู้ใช้ที่ใช้ตรวจ",
+    "en": "User checked"
+  },
+  "ข้อเสนอที่ร้านค้าจะแสดง ({0})": {
+    "th": "ข้อเสนอที่ร้านค้าจะแสดง ({0})",
+    "en": "Offers the shop will show ({0})"
+  },
+  "ร้านค้าจะไม่แสดงข้อเสนอ ส่วนใหญ่เพราะลูกค้าปิดข้อเสนอทั้งหมดแล้ว หรืออุปกรณ์ยังไม่ผูกกับผู้ใช้": {
+    "th": "ร้านค้าจะไม่แสดงข้อเสนอ ส่วนใหญ่เพราะลูกค้าปิดข้อเสนอทั้งหมดแล้ว หรืออุปกรณ์ยังไม่ผูกกับผู้ใช้",
+    "en": "The shop will not show an offer, usually because the customer closed every offer or the device is not linked to a user yet."
+  },
+  "(ไม่มีหัวข้อ)": {
+    "th": "(ไม่มีหัวข้อ)",
+    "en": "(No title)"
+  },
+  "ไม่พบข้อเสนอของอุปกรณ์หรือผู้ใช้นี้": {
+    "th": "ไม่พบข้อเสนอของอุปกรณ์หรือผู้ใช้นี้",
+    "en": "No offers found for this device or user"
+  },
+  "ตรวจรหัสอีกครั้ง หรือลองใส่รหัสผู้ใช้แทน": {
+    "th": "ตรวจรหัสอีกครั้ง หรือลองใส่รหัสผู้ใช้แทน",
+    "en": "Check the ID again, or try the user ID instead."
+  },
+  "แสดงข้อเสนออีกครั้ง": {
+    "th": "แสดงข้อเสนออีกครั้ง",
+    "en": "Show offer again"
+  },
+  "คิวตั้งเวลา": {
+    "th": "คิวตั้งเวลา",
+    "en": "Scheduled queue"
+  },
+  "รอบตรวจตามเวลา": {
+    "th": "รอบตรวจตามเวลา",
+    "en": "Timed check"
+  },
+  "ลูกค้าที่เข้าร่วม": {
+    "th": "ลูกค้าที่เข้าร่วม",
+    "en": "Customers joined"
+  },
+  "รวมการลองส่งซ้ำอัตโนมัติ": {
+    "th": "รวมการลองส่งซ้ำอัตโนมัติ",
+    "en": "Includes automatic retries"
+  },
+  "(ลองส่ง {0} ครั้ง)": {
+    "th": "(ลองส่ง {0} ครั้ง)",
+    "en": "({0} attempts)"
+  },
+  "ใช้ยอดสูงสุดของแต่ละวันแล้วรวมกัน ไม่นับรอบซ้ำ": {
+    "th": "ใช้ยอดสูงสุดของแต่ละวันแล้วรวมกัน ไม่นับรอบซ้ำ",
+    "en": "Highest count of each day, added up; repeat runs are not counted"
+  },
+  "ดูคิวในระบบเบื้องหลัง ↗": {
+    "th": "ดูคิวในระบบเบื้องหลัง ↗",
+    "en": "View background queue ↗"
+  },
+  "แบ่งตาม": {
+    "th": "แบ่งตาม",
+    "en": "Group by"
+  },
+  "ลองส่ง {0} ครั้ง (รวมการลองซ้ำอัตโนมัติ)": {
+    "th": "ลองส่ง {0} ครั้ง (รวมการลองซ้ำอัตโนมัติ)",
+    "en": "{0} attempts (includes automatic retries)"
+  },
+  "นับครั้งเดียวต่อรอบต่อวัน": {
+    "th": "นับครั้งเดียวต่อรอบต่อวัน",
+    "en": "Counted once per run per day"
+  },
+  "ส่งสำเร็จ (ครั้งที่ลอง)": {
+    "th": "ส่งสำเร็จ (ครั้งที่ลอง)",
+    "en": "Sent (attempts)"
+  },
+  "ลูกค้าที่เข้าร่วมรวม": {
+    "th": "ลูกค้าที่เข้าร่วมรวม",
+    "en": "Total customers joined"
+  },
+  "ลูกค้าที่เข้าสู่ข้อความอัตโนมัติ": {
+    "th": "ลูกค้าที่เข้าสู่ข้อความอัตโนมัติ",
+    "en": "Customers who entered an automated message"
+  },
+  "ใช้ยอดสูงสุดของแต่ละวันแล้วรวมกัน": {
+    "th": "ใช้ยอดสูงสุดของแต่ละวันแล้วรวมกัน",
+    "en": "Highest count of each day, added up"
+  },
+  "ช่วงนี้มีลูกค้าเข้าร่วมมากที่สุด:": {
+    "th": "ช่วงนี้มีลูกค้าเข้าร่วมมากที่สุด:",
+    "en": "Most customers joined in this period:"
+  },
+  "ลูกค้าเข้าร่วม {0} คน จาก {1} รอบ": {
+    "th": "ลูกค้าเข้าร่วม {0} คน จาก {1} รอบ",
+    "en": "{0} customers joined from {1} runs"
+  },
+  "ลูกค้าที่เข้าร่วมตามช่วงเวลา": {
+    "th": "ลูกค้าที่เข้าร่วมตามช่วงเวลา",
+    "en": "Customers joined over time"
+  },
+  "ข้อความอัตโนมัติที่มีลูกค้าเข้าร่วมมากที่สุด": {
+    "th": "ข้อความอัตโนมัติที่มีลูกค้าเข้าร่วมมากที่สุด",
+    "en": "Automated messages with the most customers"
+  },
+  "ยังไม่มีการส่งในช่วงนี้": {
+    "th": "ยังไม่มีการส่งในช่วงนี้",
+    "en": "Nothing sent in this period"
+  },
+  "ลองเลือกช่วงเวลาที่ยาวขึ้น": {
+    "th": "ลองเลือกช่วงเวลาที่ยาวขึ้น",
+    "en": "Try a longer period."
+  },
+  "การส่งล่าสุด": {
+    "th": "การส่งล่าสุด",
+    "en": "Latest sends"
+  },
+  "จำกัดจำนวนข้อความต่อวัน": {
+    "th": "จำกัดจำนวนข้อความต่อวัน",
+    "en": "Daily message limit"
+  },
+  "นับรวมข้อความและข้อเสนอจากข้อความอัตโนมัติทุกชุดที่ลูกค้า 1 คนได้รับใน 1 วัน": {
+    "th": "นับรวมข้อความและข้อเสนอจากข้อความอัตโนมัติทุกชุดที่ลูกค้า 1 คนได้รับใน 1 วัน",
+    "en": "Counts messages and offers from every automated message that one customer gets in one day"
+  },
+  "เปิดใช้การจำกัดจำนวนข้อความต่อวัน": {
+    "th": "เปิดใช้การจำกัดจำนวนข้อความต่อวัน",
+    "en": "Turn on the daily message limit"
+  },
+  "คำแทนเมื่อไม่มีข้อมูลลูกค้า": {
+    "th": "คำแทนเมื่อไม่มีข้อมูลลูกค้า",
+    "en": "Fill-in words for missing customer data"
+  },
+  "คำที่ใส่แทนช่องข้อมูลในข้อความ เมื่อลูกค้ายังไม่ได้ให้ข้อมูลนั้น เช่น ยังไม่สมัครสมาชิกหรือไม่มีข้อมูลบริษัท": {
+    "th": "คำที่ใส่แทนช่องข้อมูลในข้อความ เมื่อลูกค้ายังไม่ได้ให้ข้อมูลนั้น เช่น ยังไม่สมัครสมาชิกหรือไม่มีข้อมูลบริษัท",
+    "en": "Words used in place of a data field in a message when the customer has not given it, for example not signed up or no company details"
+  },
+  "แจ้งเตือนบนมือถือ": {
+    "th": "แจ้งเตือนบนมือถือ",
+    "en": "Mobile notification"
+  },
+  "ชวนลูกค้าเก่ากลับมาซื้อ": {
+    "th": "ชวนลูกค้าเก่ากลับมาซื้อ",
+    "en": "Bring back past customers"
+  },
+  "ปิดการแจ้งเตือน \"{0}\" ?": {
+    "th": "ปิดการแจ้งเตือน \"{0}\" ?",
+    "en": "Turn off \"{0}\"?"
+  },
+  "เป็นการแจ้งเตือนเรื่องคำสั่งซื้อของลูกค้า ปิดแล้วลูกค้าจะไม่รู้ความคืบหน้าของคำสั่งซื้อที่จ่ายเงินไปแล้ว": {
+    "th": "เป็นการแจ้งเตือนเรื่องคำสั่งซื้อของลูกค้า ปิดแล้วลูกค้าจะไม่รู้ความคืบหน้าของคำสั่งซื้อที่จ่ายเงินไปแล้ว",
+    "en": "This notification is about customers' orders. If you turn it off, customers won't know the progress of orders they have already paid for."
+  },
+  "ปิดแล้วลูกค้าทุกคนจะไม่ได้รับการแจ้งเตือนประเภทนี้ จนกว่าจะเปิดอีกครั้ง": {
+    "th": "ปิดแล้วลูกค้าทุกคนจะไม่ได้รับการแจ้งเตือนประเภทนี้ จนกว่าจะเปิดอีกครั้ง",
+    "en": "No customer will receive this type of notification until you turn it back on."
+  },
+  "ปิดการแจ้งเตือน": {
+    "th": "ปิดการแจ้งเตือน",
+    "en": "Turn off"
+  },
+  "ยังไม่มีประเภทการแจ้งเตือน — ลองโหลดหน้านี้ใหม่อีกครั้ง": {
+    "th": "ยังไม่มีประเภทการแจ้งเตือน — ลองโหลดหน้านี้ใหม่อีกครั้ง",
+    "en": "No notification types yet — try reloading this page"
+  },
+  "เปิดการแจ้งเตือน": {
+    "th": "เปิดการแจ้งเตือน",
+    "en": "Turn on"
+  },
+  "ไม่พบข้อมูล หรือรหัสผู้ใช้ไม่ถูกต้อง": {
+    "th": "ไม่พบข้อมูล หรือรหัสผู้ใช้ไม่ถูกต้อง",
+    "en": "No data found, or the user ID is wrong"
+  },
+  "ใส่รหัสผู้ใช้แล้วกดค้นหา เพื่อดูประวัติการแจ้งเตือนของลูกค้าคนนั้น": {
+    "th": "ใส่รหัสผู้ใช้แล้วกดค้นหา เพื่อดูประวัติการแจ้งเตือนของลูกค้าคนนั้น",
+    "en": "Enter a user ID and press Search to see that customer's notification history"
+  },
+  "ยังไม่มีการแจ้งเตือนถึงผู้ใช้นี้": {
+    "th": "ยังไม่มีการแจ้งเตือนถึงผู้ใช้นี้",
+    "en": "No notifications sent to this user yet"
+  },
+  "ตรวจรหัสผู้ใช้อีกครั้ง หรือลองค้นหาลูกค้าคนอื่น": {
+    "th": "ตรวจรหัสผู้ใช้อีกครั้ง หรือลองค้นหาลูกค้าคนอื่น",
+    "en": "Check the user ID, or search for another customer"
+  },
+  "รายการส่งทีละรายการ": {
+    "th": "รายการส่งทีละรายการ",
+    "en": "Each delivery"
+  },
+  "ยังไม่มีข้อมูลการส่งในช่วงนี้": {
+    "th": "ยังไม่มีข้อมูลการส่งในช่วงนี้",
+    "en": "No deliveries in this period"
+  },
+  "ลองเลือกช่วงวันที่หรือตัวกรองอื่น ระบบเก็บข้อมูลการส่งย้อนหลัง 90 วัน": {
+    "th": "ลองเลือกช่วงวันที่หรือตัวกรองอื่น ระบบเก็บข้อมูลการส่งย้อนหลัง 90 วัน",
+    "en": "Try another date range or filter. Deliveries are kept for 90 days."
+  },
+  "ไม่พบรายการส่งในเงื่อนไขนี้": {
+    "th": "ไม่พบรายการส่งในเงื่อนไขนี้",
+    "en": "No deliveries match these filters"
+  },
+  "ลองเปลี่ยนตัวกรอง ระบบเก็บรายการส่งย้อนหลัง 90 วัน นับจากวันที่เริ่มเก็บ": {
+    "th": "ลองเปลี่ยนตัวกรอง ระบบเก็บรายการส่งย้อนหลัง 90 วัน นับจากวันที่เริ่มเก็บ",
+    "en": "Try other filters. Deliveries are kept for 90 days from when recording started."
+  },
+  "แจ้งเตือนการตลาด": {
+    "th": "แจ้งเตือนการตลาด",
+    "en": "Marketing reminder"
+  },
+  "ยังแจ้งเตือนอยู่": {
+    "th": "ยังแจ้งเตือนอยู่",
+    "en": "Still notifying"
+  },
+  "สั่งซื้อแล้ว": {
+    "th": "สั่งซื้อแล้ว",
+    "en": "Ordered"
+  },
+  "ครั้งเฉลี่ยก่อนสั่งซื้อ · สั่งซื้อแล้ว {0} ครั้ง": {
+    "th": "ครั้งเฉลี่ยก่อนสั่งซื้อ · สั่งซื้อแล้ว {0} ครั้ง",
+    "en": "average notifications before ordering · {0} orders"
+  },
+  "ไม่สามารถโหลดผลการแจ้งเตือนสินค้าได้": {
+    "th": "ไม่สามารถโหลดผลการแจ้งเตือนสินค้าได้",
+    "en": "Couldn't load product notification results"
+  },
+  "คำสั่งซื้อที่เกิดขึ้น": {
+    "th": "คำสั่งซื้อที่เกิดขึ้น",
+    "en": "Resulting order"
+  },
+  "ยังไม่มีการสั่งซื้อจากการแจ้งเตือนในตัวกรองนี้": {
+    "th": "ยังไม่มีการสั่งซื้อจากการแจ้งเตือนในตัวกรองนี้",
+    "en": "No orders from notifications for these filters yet"
+  },
+  "ไม่พบผลการแจ้งเตือนสินค้า": {
+    "th": "ไม่พบผลการแจ้งเตือนสินค้า",
+    "en": "No product notification results"
+  },
+  "ลองล้างหรือเปลี่ยนตัวกรอง แล้วกดกรองข้อมูลอีกครั้ง": {
+    "th": "ลองล้างหรือเปลี่ยนตัวกรอง แล้วกดกรองข้อมูลอีกครั้ง",
+    "en": "Clear or change the filters, then press Filter again"
+  },
+  "กรอก INV_BOOK": {
+    "th": "กรอก INV_BOOK",
+    "en": "Enter INV_BOOK"
+  },
+  "กรอก INV_NO": {
+    "th": "กรอก INV_NO",
+    "en": "Enter INV_NO"
+  },
+  "สถานะคำสั่งซื้อ / ใบแจ้งหนี้": {
+    "th": "สถานะคำสั่งซื้อ / ใบแจ้งหนี้",
+    "en": "Order / invoice status"
+  },
+  "จากรายการจัดส่งจริง": {
+    "th": "จากรายการจัดส่งจริง",
+    "en": "from a real shipment"
+  },
+  "ข้อมูลอื่น ๆ": {
+    "th": "ข้อมูลอื่น ๆ",
+    "en": "Other data"
+  },
+  "ใบเสนอราคา · สินค้า · สต๊อก · ลูกค้า": {
+    "th": "ใบเสนอราคา · สินค้า · สต๊อก · ลูกค้า",
+    "en": "quotations · products · stock · customers"
+  },
+  "หาคำสั่งซื้อ": {
+    "th": "หาคำสั่งซื้อ",
+    "en": "Find an order"
+  },
+  "เลขที่คำสั่งซื้อ เช่น JOSH-2026-04417": {
+    "th": "เลขที่คำสั่งซื้อ เช่น JOSH-2026-04417",
+    "en": "Order number, e.g. JOSH-2026-04417"
+  },
+  "ไม่พบคำสั่งซื้อ — ลองค้นด้วยเลขที่คำสั่งซื้ออื่น": {
+    "th": "ไม่พบคำสั่งซื้อ — ลองค้นด้วยเลขที่คำสั่งซื้ออื่น",
+    "en": "No order found — try another order number"
+  },
+  "รายการจัดส่งใน ": {
+    "th": "รายการจัดส่งใน ",
+    "en": "Shipments in "
+  },
+  "คำสั่งซื้อนี้ยังไม่มีรายการจัดส่ง": {
+    "th": "คำสั่งซื้อนี้ยังไม่มีรายการจัดส่ง",
+    "en": "This order has no shipments yet"
+  },
+  "รายการจัดส่ง": {
+    "th": "รายการจัดส่ง",
+    "en": "Shipment"
+  },
+  "สถานะการจัดส่ง": {
+    "th": "สถานะการจัดส่ง",
+    "en": "Shipment status"
+  },
+  "สถานะคำสั่งซื้อ": {
+    "th": "สถานะคำสั่งซื้อ",
+    "en": "Order status"
+  },
+  "สถานะซิงก์ระบบหลัก (ERP)": {
+    "th": "สถานะซิงก์ระบบหลัก (ERP)",
+    "en": "Main system (ERP) sync status"
+  },
+  "ข้อมูลเชื่อมคำสั่งซื้อกับระบบหลัก": {
+    "th": "ข้อมูลเชื่อมคำสั่งซื้อกับระบบหลัก",
+    "en": "Order link to the main system"
+  },
+  "ไม่มี (จับคู่ไม่เจอ)": {
+    "th": "ไม่มี (จับคู่ไม่เจอ)",
+    "en": "None (no match found)"
+  },
+  "เลือกคำสั่งซื้อ แล้วเลือกรายการจัดส่งก่อน": {
+    "th": "เลือกคำสั่งซื้อ แล้วเลือกรายการจัดส่งก่อน",
+    "en": "Pick an order, then pick a shipment first"
+  },
+  "สถานะขนส่ง": {
+    "th": "สถานะขนส่ง",
+    "en": "Delivery status"
+  },
+  "สถานะที่จะส่ง": {
+    "th": "สถานะที่จะส่ง",
+    "en": "Status to send"
+  },
+  "ส่งข้อมูลทดสอบ": {
+    "th": "ส่งข้อมูลทดสอบ",
+    "en": "Send test data"
+  },
+  "สินค้าในรายการจัดส่งนี้ — ตั้งจำนวนที่ออกใบแจ้งหนี้จริง": {
+    "th": "สินค้าในรายการจัดส่งนี้ — ตั้งจำนวนที่ออกใบแจ้งหนี้จริง",
+    "en": "Products in this shipment — set the quantity actually invoiced"
+  },
+  "จำนวนในใบแจ้งหนี้": {
+    "th": "จำนวนในใบแจ้งหนี้",
+    "en": "Invoiced quantity"
+  },
+  "สถานะขนส่ง (3PL)": {
+    "th": "สถานะขนส่ง (3PL)",
+    "en": "Delivery status (3PL)"
+  },
+  "ยังไม่ทดสอบ": {
+    "th": "ยังไม่ทดสอบ",
+    "en": "Not tested"
+  },
+  "ไม่เกี่ยวข้อง": {
+    "th": "ไม่เกี่ยวข้อง",
+    "en": "Not applicable"
+  },
+  "อนุมัติล่วงหน้า (Pre-Authorized)": {
+    "th": "อนุมัติล่วงหน้า (Pre-Authorized)",
+    "en": "Pre-authorized (Pre-Authorized)"
+  },
+  "ห้ามถือว่าจ่ายแล้ว — แค่อนุมัติวงเงิน ยังไม่ตัดเงินจริง": {
+    "th": "ห้ามถือว่าจ่ายแล้ว — แค่อนุมัติวงเงิน ยังไม่ตัดเงินจริง",
+    "en": "Don't treat as paid — the amount is only held, not charged yet"
+  },
+  "ถูกปฏิเสธ (Declined)": {
+    "th": "ถูกปฏิเสธ (Declined)",
+    "en": "Declined (Declined)"
+  },
+  "ยกเลิกรายการ (Voided)": {
+    "th": "ยกเลิกรายการ (Voided)",
+    "en": "Voided (Voided)"
+  },
+  "ต้องเลือกแถวก่อน — จะส่งยอด = ยอดแถวนั้น + {0}": {
+    "th": "ต้องเลือกแถวก่อน — จะส่งยอด = ยอดแถวนั้น + {0}",
+    "en": "Pick a row first — sends amount = that row's amount + {0}"
+  },
+  "กำลังรัน...": {
+    "th": "กำลังรัน...",
+    "en": "Running..."
+  },
+  "รันเสร็จแล้ว — ดูสถานะแถวทดสอบด้านบนเพื่อยืนยันผล": {
+    "th": "รันเสร็จแล้ว — ดูสถานะแถวทดสอบด้านบนเพื่อยืนยันผล",
+    "en": "Done — check the test rows above to confirm the result"
+  },
+  "กระทบยอดไม่สำเร็จ": {
+    "th": "กระทบยอดไม่สำเร็จ",
+    "en": "Reconciliation failed"
+  },
+  "เลือกแถวนี้ไปใช้จำลองการแจ้งผล": {
+    "th": "เลือกแถวนี้ไปใช้จำลองการแจ้งผล",
+    "en": "Use this row to simulate a payment result"
+  },
+  "ย้อนเวลา": {
+    "th": "ย้อนเวลา",
+    "en": "Backdate"
+  },
+  "บังคับเป็นกำลังดำเนินการ": {
+    "th": "บังคับเป็นกำลังดำเนินการ",
+    "en": "Force processing"
+  },
+  "จำลองแจ้งผลสำเร็จ": {
+    "th": "จำลองแจ้งผลสำเร็จ",
+    "en": "Simulate success"
+  },
+  "รหัส": {
+    "th": "รหัส",
+    "en": "Code"
+  },
+  "ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ ยังไม่ทดสอบ หรือ ไม่เกี่ยวข้อง จนกว่าจะไล่ได้จริง": {
+    "th": "ไล่ไม่ได้ในรอบ 1 — เลือกได้แค่ ยังไม่ทดสอบ หรือ ไม่เกี่ยวข้อง จนกว่าจะไล่ได้จริง",
+    "en": "Can't be tested in round 1 — only Not tested or Not applicable can be chosen until it can really be tested"
+  },
+  "เลือกได้แค่ ยังไม่ทดสอบ / ไม่เกี่ยวข้อง": {
+    "th": "เลือกได้แค่ ยังไม่ทดสอบ / ไม่เกี่ยวข้อง",
+    "en": "Only Not tested / Not applicable"
+  },
+  "1. รายการทดสอบ": {
+    "th": "1. รายการทดสอบ",
+    "en": "1. Test transactions"
+  },
+  "รหัสอ้างอิง (ไม่บังคับ)": {
+    "th": "รหัสอ้างอิง (ไม่บังคับ)",
+    "en": "Reference (optional)"
+  },
+  "ยังไม่มีรายการทดสอบ": {
+    "th": "ยังไม่มีรายการทดสอบ",
+    "en": "No test transactions yet"
+  },
+  "กรอกจำนวนเงินด้านบน แล้วกดสร้างรายการทดสอบ": {
+    "th": "กรอกจำนวนเงินด้านบน แล้วกดสร้างรายการทดสอบ",
+    "en": "Enter an amount above, then press Create test transaction"
+  },
+  "2. จำลองการแจ้งผลจากธนาคาร": {
+    "th": "2. จำลองการแจ้งผลจากธนาคาร",
+    "en": "2. Simulate the bank's payment result"
+  },
+  "ส่งข้อมูลชุดเดิมซ้ำอีกครั้ง (แจ้งผลซ้ำ)": {
+    "th": "ส่งข้อมูลชุดเดิมซ้ำอีกครั้ง (แจ้งผลซ้ำ)",
+    "en": "Send the same data again (repeat result)"
+  },
+  "ส่งซ้ำค่าเดิม": {
+    "th": "ส่งซ้ำค่าเดิม",
+    "en": "Resend same values"
+  },
+  "ตัดบัตร (charge)": {
+    "th": "ตัดบัตร (charge)",
+    "en": "Card charge (charge)"
+  },
+  "QR (qr)": {
+    "th": "QR (qr)",
+    "en": "QR (qr)"
+  },
+  "checksum ผิด (bad-checksum)": {
+    "th": "checksum ผิด (bad-checksum)",
+    "en": "Wrong checksum (bad-checksum)"
+  },
+  "ไม่มี checksum (no-checksum)": {
+    "th": "ไม่มี checksum (no-checksum)",
+    "en": "No checksum (no-checksum)"
+  },
+  "ไม่มีรหัสอ้างอิง (no-reference)": {
+    "th": "ไม่มีรหัสอ้างอิง (no-reference)",
+    "en": "No reference (no-reference)"
+  },
+  "livemode เป็นข้อความ (string-livemode)": {
+    "th": "livemode เป็นข้อความ (string-livemode)",
+    "en": "livemode as text (string-livemode)"
+  },
+  "ส่งการแจ้งผลจำลอง": {
+    "th": "ส่งการแจ้งผลจำลอง",
+    "en": "Send simulated result"
+  },
+  "คัดลอก JSON": {
+    "th": "คัดลอก JSON",
+    "en": "Copy JSON"
+  },
+  "3. รายการตรวจรับรอง": {
+    "th": "3. รายการตรวจรับรอง",
+    "en": "3. Certification checklist"
+  },
+  "กระทบยอดตอนนี้": {
+    "th": "กระทบยอดตอนนี้",
+    "en": "Reconcile now"
+  },
+  "กดทดสอบเพื่อให้ Jagota ถือว่ารายการ QR นั้นจ่ายเงินแล้ว ใช้ได้เฉพาะระบบทดสอบเท่านั้น ถ้าต่อกับระบบจริง ผลจะไม่สำเร็จเสมอ": {
+    "th": "กดทดสอบเพื่อให้ Jagota ถือว่ารายการ QR นั้นจ่ายเงินแล้ว ใช้ได้เฉพาะระบบทดสอบเท่านั้น ถ้าต่อกับระบบจริง ผลจะไม่สำเร็จเสมอ",
+    "en": "Press Test to make Jagota treat that QR as paid. Works on the test system only; against the live system it always fails."
+  },
+  "ยังไม่มี QR ที่รอจ่าย — สร้างคำสั่งซื้อที่จ่ายด้วย QR ก่อน หรือกรอกรหัสอ้างอิงเองด้านล่าง": {
+    "th": "ยังไม่มี QR ที่รอจ่าย — สร้างคำสั่งซื้อที่จ่ายด้วย QR ก่อน หรือกรอกรหัสอ้างอิงเองด้านล่าง",
+    "en": "No unpaid QR yet — create an order paid by QR first, or enter a reference below"
+  },
+  "รหัสอ้างอิง (REF_TOKEN)": {
+    "th": "รหัสอ้างอิง (REF_TOKEN)",
+    "en": "Reference (REF_TOKEN)"
+  },
+  "รหัสคำสั่งซื้อ": {
+    "th": "รหัสคำสั่งซื้อ",
+    "en": "Order ID"
+  },
+  "ทดสอบจ่ายเงิน": {
+    "th": "ทดสอบจ่ายเงิน",
+    "en": "Test payment"
+  },
+  "หรือกรอกรหัสอ้างอิง (REF_TOKEN) เอง": {
+    "th": "หรือกรอกรหัสอ้างอิง (REF_TOKEN) เอง",
+    "en": "Or enter a reference (REF_TOKEN) yourself"
+  },
+  "ผิดพลาด": {
+    "th": "ผิดพลาด",
+    "en": "Error"
+  },
+  "รายการนี้ถูกตั้งเป็นจ่ายเงินแล้ว": {
+    "th": "รายการนี้ถูกตั้งเป็นจ่ายเงินแล้ว",
+    "en": "This item is now marked as paid"
+  },
+  "ตรวจว่ารหัสอ้างอิงถูกต้อง และระบบต่อกับระบบทดสอบอยู่": {
+    "th": "ตรวจว่ารหัสอ้างอิงถูกต้อง และระบบต่อกับระบบทดสอบอยู่",
+    "en": "Check the reference is correct and the system points to the test system"
+  },
   "ภาพรวม": {
     "th": "ภาพรวม",
     "en": "Overview"

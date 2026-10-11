@@ -18,7 +18,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { Button as CpButton, Chip, KeyValueGrid, type Tone, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 
 /** Queue tabs → josh statuses (the list API filters one status at a time; multi-status tabs merge). */
 const TABS: { key: string; label: () => string; statuses: (RefundRequestStatus | undefined)[] }[] = [
@@ -48,6 +48,50 @@ const CASH_REASON_LABEL: Record<string, () => string> = {
   prefer_not_to_say: () => __uiText('ไม่ระบุ'),
   other: () => __uiText('อื่น ๆ'),
 };
+
+const STATUS_LABEL: Record<string, () => string> = {
+  awaiting_method: () => __uiText('รอลูกค้าเลือกวิธีคืน'),
+  under_review: () => __uiText('รอตรวจ'),
+  changes_requested: () => __uiText('ขอข้อมูลเพิ่มจากลูกค้า'),
+  processing: () => __uiText('กำลังคืนเงิน'),
+  awaiting_transfer: () => __uiText('รอโอน'),
+  completed: () => __uiText('คืนเงินแล้ว'),
+  rejected: () => __uiText('ปฏิเสธแล้ว'),
+  failed: () => __uiText('คืนเงินไม่สำเร็จ'),
+  cancelled: () => __uiText('ยกเลิก'),
+};
+
+const STATUS_TONE: Record<string, Tone> = {
+  awaiting_method: 'warn',
+  under_review: 'warn',
+  changes_requested: 'warn',
+  processing: 'info',
+  awaiting_transfer: 'info',
+  completed: 'ok',
+  rejected: 'danger',
+  failed: 'danger',
+  cancelled: 'muted',
+};
+
+const GATEWAY_ACTION_LABEL: Record<string, () => string> = {
+  void: () => __uiText('ยกเลิกรายการชำระ'),
+  refund: () => __uiText('คืนเงินเข้าบัตร'),
+};
+
+const GATEWAY_STATUS_LABEL: Record<string, () => string> = {
+  pending: () => __uiText('รอผล'),
+  success: () => __uiText('สำเร็จ'),
+  failed: () => __uiText('ไม่สำเร็จ'),
+  unknown: () => __uiText('ไม่ทราบผล'),
+};
+
+function RefundStatusChip({ status }: { status: string }) {
+  return (
+    <Chip tone={STATUS_TONE[status] ?? 'muted'} statusCode={status} dot>
+      {STATUS_LABEL[status]?.() ?? status}
+    </Chip>
+  );
+}
 
 /** josh STUCK_PAYOUT_MS — a card payout still pending this long after approval may be resolved by hand. */
 const STUCK_PAYOUT_MS = 10 * 60_000;
@@ -132,20 +176,20 @@ export default function RefundRequestsAdmin() {
   };
 
   const columns: TableColumn<RefundRequestRow>[] = [
-    { key: 'refundNumber', label: __uiText('เลขคำขอ') },
-    { key: 'orderNumber', label: __uiText('ออเดอร์'), render: (v) => (v as string | null) ?? '—' },
+    { key: 'refundNumber', label: __uiText('เลขคำขอ'), render: (v) => <span className="font-mono">{String(v)}</span> },
+    { key: 'orderNumber', label: __uiText('ออเดอร์'), render: (v) => (v ? <span className="font-mono">{String(v)}</span> : '—') },
     { key: 'source', label: __uiText('ประเภท'), render: (v) => SOURCE_LABEL[String(v)]?.() ?? String(v) },
     { key: 'method', label: __uiText('วิธีคืน'), render: (v) => (v ? METHOD_LABEL[String(v)]?.() ?? String(v) : '—') },
-    { key: 'amountIncVat', label: __uiText('ยอด (inc VAT)'), render: (v) => money(Number(v)) },
-    { key: 'status', label: __uiText('สถานะ') },
+    { key: 'amountIncVat', label: __uiText('ยอด (รวม VAT)'), align: 'right', render: (v) => <span className="tabular-nums">{money(Number(v))}</span> },
+    { key: 'status', label: __uiText('สถานะ'), render: (v) => <RefundStatusChip status={String(v)} /> },
     { key: 'createdAt', label: __uiText('แจ้งเมื่อ'), render: (v) => when(v as string | null) },
     {
       key: 'refundRequestId',
       label: '',
       render: (id) => (
-        <button type="button" className="text-xs text-blue-600 hover:underline" onClick={() => void openDetail(String(id))}>
+        <CpButton size="sm" variant="ghost" onClick={() => void openDetail(String(id))}>
           {__uiText('ดู')}
-        </button>
+        </CpButton>
       ),
     },
   ];
@@ -161,13 +205,15 @@ export default function RefundRequestsAdmin() {
   const btn = 'rounded-lg px-3 py-1.5 text-sm font-medium disabled:opacity-50';
 
   return (
-    <div className="cp-management-page">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
         title={__uiText('คำขอคืนเงิน')}
-        subtitle={__uiText('ตรวจหลักฐาน อนุมัติ และโอนคืนเงินลูกค้า (flow ใหม่)')}
-      />
+        subtitle={__uiText('ตรวจหลักฐาน อนุมัติ และโอนเงินคืนให้ลูกค้า')}
+      >
+        <CpButton icon="refresh" onClick={() => void load()}>{__uiText('รีเฟรช')}</CpButton>
+      </AdminListHeader>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         {TABS.map((t) => (
           <button
             key={t.key}
@@ -178,22 +224,31 @@ export default function RefundRequestsAdmin() {
             {t.label()}
           </button>
         ))}
-        <button type="button" className={`${btn} border border-gray-200 bg-white`} onClick={() => void load()}>
-          {__uiText('รีเฟรช')}
-        </button>
       </div>
 
-      <Table columns={columns} data={rows} idKey="refundRequestId" currentPage={1} totalPages={1} onPageChange={() => undefined} />
-      {loading ? <p className="mt-2 text-sm text-gray-500">{__uiText('กำลังโหลด...')}</p> : null}
+      <Table
+        columns={columns}
+        data={rows}
+        idKey="refundRequestId"
+        currentPage={1}
+        totalPages={1}
+        onPageChange={() => undefined}
+        loading={loading}
+        emptyTitle={__uiText('ไม่มีคำขอคืนเงินในแท็บนี้')}
+        emptyDescription={__uiText('ลองเปิดแท็บอื่น หรือกดรีเฟรช')}
+      />
 
       {d && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-5 shadow-xl">
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-gray-800">{d.refundNumber}</h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="font-mono text-lg font-semibold text-gray-800">{d.refundNumber}</h2>
+                  <RefundStatusChip status={d.status} />
+                </div>
                 <p className="text-sm text-gray-500">
-                  {SOURCE_LABEL[d.source]?.()} · {__uiText('ออเดอร์')} {d.orderNumber ?? d.orderId} · {d.status}
+                  {SOURCE_LABEL[d.source]?.()} · {__uiText('ออเดอร์')} <span className="font-mono">{d.orderNumber ?? d.orderId}</span>
                 </p>
               </div>
               <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick={() => setDetail(null)}>
@@ -202,14 +257,17 @@ export default function RefundRequestsAdmin() {
             </div>
 
             <div className="space-y-4 text-sm text-gray-700">
-              <section className="grid grid-cols-2 gap-2">
-                <p>{__uiText('ยอดคืน')}: <b>{money(d.amountIncVat)}</b></p>
-                <p>{__uiText('วิธีคืน')}: {d.method ? METHOD_LABEL[d.method]?.() : __uiText('ลูกค้ายังไม่เลือก')}</p>
-                <p>{__uiText('เงินสด')}: {money(d.cashAmountIncVat)}</p>
-                <p>{__uiText('เครดิต')}: {money(d.creditAmountIncVat)}</p>
-                <p>{__uiText('คืนไปที่')}: {d.refundTo ?? '—'}</p>
-                <p>{__uiText('แจ้งเมื่อ')}: {when(d.createdAt)}</p>
-              </section>
+              <KeyValueGrid
+                cols={3}
+                items={[
+                  { label: 'ยอดคืน', value: <b className="tabular-nums">{money(d.amountIncVat)}</b> },
+                  { label: 'วิธีคืน', value: d.method ? METHOD_LABEL[d.method]?.() : __uiText('ลูกค้ายังไม่เลือก') },
+                  { label: 'แจ้งเมื่อ', value: when(d.createdAt) },
+                  { label: 'เงินสด', value: money(d.cashAmountIncVat) },
+                  { label: 'เครดิต', value: money(d.creditAmountIncVat) },
+                  { label: 'คืนไปที่', value: d.refundTo },
+                ]}
+              />
 
               {d.source === 'return' && (
                 <section>
@@ -269,7 +327,7 @@ export default function RefundRequestsAdmin() {
 
               {d.gatewayStatus && (
                 <p>
-                  KBank: {d.gatewayAction ?? '—'} · {d.gatewayStatus}
+                  {__uiText('ผลจาก KBank')}: {d.gatewayAction ? GATEWAY_ACTION_LABEL[d.gatewayAction]?.() ?? d.gatewayAction : '—'} · {GATEWAY_STATUS_LABEL[d.gatewayStatus]?.() ?? d.gatewayStatus}
                 </p>
               )}
               {d.transferredAt && (

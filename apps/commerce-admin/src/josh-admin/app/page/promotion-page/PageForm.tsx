@@ -347,7 +347,7 @@ export function PageFormFields({
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
-                label={__uiText("Slug (URL ของหน้า)")}
+                label={__uiText("ลิงก์ของหน้า (slug)")}
                 required
                 value={form.slug}
                 disabled={isEdit}
@@ -391,19 +391,19 @@ export function PageFormFields({
         )}
 
         {section(
-          'Campaign',
-          'หน้าโปรใช้วันที่ของ campaign — 1 campaign มีได้ 1 หน้า',
+          __uiText("แคมเปญ"),
+          __uiText("หน้าโปรใช้วันที่ของแคมเปญ หนึ่งแคมเปญมีได้หนึ่งหน้า"),
           canPickCampaign ? (
             <>
               <div className="sm:w-1/2 sm:pr-2">
                 <Select
-                  label={__uiText("Campaign")}
+                  label={__uiText("แคมเปญ")}
                   data={[
                     {
                       value: '',
                       label: isEdit
-                        ? '— ยังไม่ผูก Campaign —'
-                        : '— เลือก Campaign —',
+                        ? __uiText("— ยังไม่ผูกแคมเปญ —")
+                        : __uiText("— เลือกแคมเปญ —"),
                     },
                     ...pickable.map((item) => ({
                       value: item.id,
@@ -414,8 +414,8 @@ export function PageFormFields({
                   error={errors.campaign}
                   hint={
                     isEdit
-                      ? __uiText("หน้านี้สร้างก่อนมี Campaign และเปิดตลอด — ผูกแล้วหน้าจะแสดงสินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign นั้นเท่านั้น (ไม่ใช่ mechanic เดิม) วันที่ใช้ของ campaign และย้อนกลับจากหน้า admin ไม่ได้ (ระบบจะถามยืนยันก่อนบันทึก)")
-                      : __uiText("แสดงเฉพาะ Campaign ที่ยังไม่มีหน้าโปร")
+                      ? __uiText("หน้านี้สร้างก่อนมีแคมเปญและเปิดตลอด ผูกแล้วหน้าจะแสดงเฉพาะสินค้าของโปรอัตโนมัติและคูปองสาธารณะของแคมเปญนั้น (ไม่ใช่โปรเดิม) ใช้วันที่ของแคมเปญ และย้อนกลับไม่ได้ (ระบบจะถามยืนยันก่อนบันทึก)")
+                      : __uiText("แสดงเฉพาะแคมเปญที่ยังไม่มีหน้าโปร")
                   }
                   onChange={(event) =>
                     patch({ campaignId: event.target.value })
@@ -425,12 +425,12 @@ export function PageFormFields({
               {campaign && (
                 <p className="text-xs text-ink-muted">
                   {formatBangkokRange(campaign.start_at, campaign.end_at, 'th')}{' '}
-                  {__uiText("(ใช้วันที่ของ campaign)")}</p>
+                  {__uiText("(ใช้วันที่ของแคมเปญ)")}</p>
               )}
             </>
           ) : (
             <div>
-              <p className="mb-1 text-sm text-ink-secondary">{__uiText("Campaign")}</p>
+              <p className="mb-1 text-sm text-ink-secondary">{__uiText("แคมเปญ")}</p>
               {campaign ? (
                 <>
                   {isEdit && !campaignLocked ? (
@@ -449,11 +449,11 @@ export function PageFormFields({
                       campaign.end_at,
                       'th',
                     )}{' '}
-                    {__uiText("(ใช้วันที่ของ campaign — แก้ที่ Campaign)")}</p>
+                    {__uiText("(ใช้วันที่ของแคมเปญ แก้ได้ที่หน้าแคมเปญ)")}</p>
                 </>
               ) : (
                 <p className="text-sm text-ink-muted">
-                  {__uiText("ไม่พบ Campaign ของหน้านี้")}</p>
+                  {__uiText("ไม่พบแคมเปญของหน้านี้")}</p>
               )}
             </div>
           ),
@@ -476,7 +476,7 @@ export function PageFormFields({
           <>
             <div className="flex items-start gap-2">
               <Input
-                label={__uiText("Mobile deeplink")}
+                label={__uiText("ลิงก์เปิดในแอป (deeplink)")}
                 value={form.deeplink}
                 error={errors.deeplink}
                 aria-invalid={!!errors.deeplink}
@@ -547,18 +547,18 @@ export function PageFormFields({
 
       <CouponConfirmDialog
         open={state.attachPending}
-        title={__uiText("ผูกหน้านี้กับ Campaign?")}
+        title={__uiText("ผูกหน้านี้กับแคมเปญ?")}
         body={
           <>
             <p>
-              {__uiText("หลังผูกกับ “")}{campaign?.name ?? ''}{__uiText("” หน้านี้จะแสดงสินค้าของโปรอัตโนมัติ + คูปองสาธารณะของ campaign นั้นเท่านั้น (รวมสินค้าที่คูปองจำกัดไว้) — สินค้าของโปร (mechanic) เดิมที่หน้านี้ใช้อยู่จะหายไป ถ้าโปรนั้นไม่ได้อยู่ใน campaign นี้")}</p>
+              {__uiText("หลังผูกกับ “")}{campaign?.name ?? ''}{__uiText("” หน้านี้จะแสดงเฉพาะสินค้าของโปรอัตโนมัติและคูปองสาธารณะของแคมเปญนั้น (รวมสินค้าที่คูปองจำกัดไว้) สินค้าของโปรเดิมที่หน้านี้ใช้อยู่จะหายไป ถ้าโปรนั้นไม่ได้อยู่ในแคมเปญนี้")}</p>
             <p className="mt-2">
-              {__uiText("วันที่ของหน้าจะถูกแทนที่ด้วยวันที่ของ campaign และ")}{' '}
-              <strong>{__uiText("ย้อนกลับหรือเปลี่ยน campaign จากหน้า admin ไม่ได้")}</strong>
+              {__uiText("วันที่ของหน้าจะเปลี่ยนเป็นวันที่ของแคมเปญ และ")}{' '}
+              <strong>{__uiText("ย้อนกลับหรือเปลี่ยนแคมเปญภายหลังไม่ได้")}</strong>
             </p>
           </>
         }
-        confirmLabel="ผูก Campaign"
+        confirmLabel={__uiText("ผูกแคมเปญ")}
         tone="danger"
         onCancel={state.cancelAttach}
         onConfirm={state.confirmAttach}
@@ -597,11 +597,8 @@ export default function PageForm({
     <div className="flex flex-col gap-5">
       <CouponFormErrorBanner error={state.saveError} />
       {state.saved && (
-        <div
-          role="status"
-          className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700"
-        >
-          {__uiText("บันทึกแล้ว")}</div>
+        <p role="status" className="text-sm font-medium text-ok">
+          {__uiText("บันทึกแล้ว")}</p>
       )}
       <PageFormFields
         state={state}

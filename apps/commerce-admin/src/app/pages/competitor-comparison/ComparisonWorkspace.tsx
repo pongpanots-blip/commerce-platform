@@ -730,7 +730,7 @@ function ComparisonMatrix({
                             "สถานะและเหตุผล",
                             "ตรวจข้อมูล",
                           ].map((th, i) => (
-                            <th key={th} scope="col" className="text-left p-3">
+                            <th key={th} scope="col" className={`p-3 ${i === 1 || i === 2 ? "text-right" : "text-left"}`}>
                               {text(
                                 th,
                                 [
@@ -753,7 +753,7 @@ function ComparisonMatrix({
                               <p>{new URL(r.url).hostname}</p>
                               <p>{String(r.observation.productName)}</p>
                             </td>
-                            <td className="p-3">
+                            <td className="p-3 text-right tabular-nums">
                               <p>
                                 {String(r.observation.priceIncVat ?? "—")}{" "}
                                 {String(r.observation.currency ?? "—")}
@@ -763,7 +763,7 @@ function ComparisonMatrix({
                                 {comparisonDate(r.observation.observedAt)}
                               </p>
                             </td>
-                            <td className="p-3">
+                            <td className="p-3 text-right tabular-nums">
                               {r.pricePerBaseIncVat
                                 ? `${r.pricePerBaseIncVat} THB / ${r.unit}`
                                 : "—"}

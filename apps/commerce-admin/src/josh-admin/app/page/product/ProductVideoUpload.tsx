@@ -68,7 +68,7 @@ const ProductVideoUpload = () => {
       return false;
     }
     if (selectedSkus.length === 0) {
-      alert(__uiText("กรุณาเลือก SKU อย่างน้อย 1 รายการ"));
+      alert(__uiText("กรุณาเลือกสินค้าอย่างน้อย 1 รายการ"));
       return false;
     }
 
@@ -117,7 +117,7 @@ const ProductVideoUpload = () => {
               <button
                 type="button"
                 onClick={() => setVideoFile(null)}
-                className="text-xs text-red-500 hover:underline"
+                className="text-xs text-danger hover:underline"
               >
                 {__uiText("ลบ")}</button>
             </div>
@@ -143,15 +143,15 @@ const ProductVideoUpload = () => {
       </div>
 
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700">{__uiText("2. เลือก SKU เป้าหมาย")}</h3>
+        <h3 className="text-sm font-semibold text-gray-700">{__uiText("2. เลือกสินค้าที่จะแสดงวิดีโอ")}</h3>
         <div className="flex items-end gap-2">
           <Input
-            label={__uiText("เพิ่มรหัสสินค้า (SKU) ด้วยตนเอง")}
+            label={__uiText("เพิ่มรหัสสินค้าเอง")}
             value={manualSku}
             onChange={(e) => setManualSku(e.target.value)}
-            placeholder={__uiText("พิมพ์ SKU แล้วกดเพิ่ม")}
+            placeholder={__uiText("พิมพ์รหัสสินค้าแล้วกดเพิ่ม")}
           />
-          <Button text={__uiText("เพิ่ม SKU")} onClick={addManualSku} />
+          <Button text={__uiText("เพิ่มรหัสสินค้า")} onClick={addManualSku} />
         </div>
 
         {selectedSkus.length > 0 && (
@@ -179,7 +179,7 @@ const ProductVideoUpload = () => {
               id={searchInputId}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={__uiText("ค้นหาสินค้าด้วยชื่อหรือ SKU...")}
+              placeholder={__uiText("ค้นหาสินค้าด้วยชื่อหรือรหัสสินค้า...")}
               className="pl-9"
             />
           </div>
@@ -187,7 +187,7 @@ const ProductVideoUpload = () => {
 
         <div className="border rounded-xl divide-y max-h-72 overflow-y-auto">
           {searchResults.length === 0 ? (
-            <p className="p-4 text-sm text-gray-400">{__uiText("ไม่พบสินค้า")}</p>
+            <p className="p-4 text-sm text-gray-400">{__uiText("ไม่พบสินค้า ลองค้นหาด้วยชื่อหรือรหัสอื่น")}</p>
           ) : (
             searchResults.map((product) => {
               const sku = product.product_inventory_sku;

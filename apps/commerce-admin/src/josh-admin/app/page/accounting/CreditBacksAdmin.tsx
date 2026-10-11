@@ -12,13 +12,21 @@ import React, { useCallback, useEffect, useState } from 'react';
 import AdminListHeader from '../../components/AdminListHeader';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { Button, Chip, KeyValueGrid, Modal, type Tone, uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 const STATUS_OPTIONS = [
   { value: '', get label(){return __uiText("ทุกสถานะ");} },
-  { value: 'active', get label(){return __uiText("active");} },
-  { value: 'exhausted', get label(){return __uiText("exhausted");} },
-  { value: 'cancelled', get label(){return __uiText("cancelled");} },
+  { value: 'active', get label(){return __uiText("ใช้ได้");} },
+  { value: 'exhausted', get label(){return __uiText("ใช้หมดแล้ว");} },
+  { value: 'cancelled', get label(){return __uiText("ยกเลิก");} },
 ] as const;
+
+const STATUS_TONES: Record<string, Tone> = { active: 'ok', exhausted: 'muted', cancelled: 'danger' };
+
+/** The label comes from josh (statusLabel); the tone follows the raw status. */
+function CbStatusChip({ row }: { row: CreditBackListItem }) {
+  const label = row.statusLabel || STATUS_OPTIONS.find((o) => o.value && o.value === row.cbStatus)?.label || row.cbStatus;
+  return <Chip tone={STATUS_TONES[row.cbStatus] ?? 'muted'} statusCode={row.cbStatus} dot>{label}</Chip>;
+}
 
 function money(n: number) {
   return `฿${Number(n).toLocaleString('th-TH', { maximumFractionDigits: 2 })}`;
@@ -77,27 +85,30 @@ export default function CreditBacksAdmin() {
   };
 
   const columns: TableColumn<CreditBackListItem>[] = [
-    { key: 'cbNumber', label: __uiText("CB #") },
+    { key: 'cbNumber', label: __uiText("เลขที่เครดิตคืน"), render: (v) => <span className="font-mono">{String(v)}</span> },
     {
       key: 'invoiceNumber',
-      label: __uiText("Invoice"),
+      label: __uiText("เลขที่ใบแจ้งหนี้"),
+      render: (v) => <span className="font-mono">{String(v)}</span>,
     },
     {
       key: 'issuedFromOrderNumber',
-      label: __uiText("Order"),
-      render: (v) => (v as string | null) ?? '—',
+      label: __uiText("เลขที่ออเดอร์"),
+      render: (v) => (v ? <span className="font-mono">{String(v)}</span> : '—'),
     },
     {
       key: 'totalAmountExVat',
-      label: __uiText("ยอด (ex VAT)"),
+      label: __uiText("ยอด (ก่อน VAT)"),
+      align: 'right',
       render: (v) => money(Number(v)),
     },
     {
       key: 'remainingAmountExVat',
       label: __uiText("คงเหลือ"),
+      align: 'right',
       render: (v) => money(Number(v)),
     },
-    { key: 'cbStatus', label: __uiText("สถานะ"), render: (v, row) => row.statusLabel ?? String(v) },
+    { key: 'cbStatus', label: __uiText("สถานะ"), render: (_v, row) => <CbStatusChip row={row} /> },
     {
       key: 'createdAt',
       label: __uiText("สร้างเมื่อ"),
@@ -107,24 +118,22 @@ export default function CreditBacksAdmin() {
       key: 'cbId',
       label: '',
       render: (id) => (
-        <button
-          type="button"
-          className="text-xs text-blue-600 hover:underline"
-          onClick={() => void openDetail(String(id))}
-        >
-          {__uiText("ดู")}</button>
+        <Button size="sm" variant="ghost" onClick={() => void openDetail(String(id))}>
+          {__uiText("ดู")}</Button>
       ),
     },
   ];
 
   return (
-    <div className="cp-management-page">
+    <div className="cp-management-page flex flex-col gap-4">
       <AdminListHeader
-        title={__uiText("Credit Backs")}
-        subtitle={__uiText("เครดิตคืนจากส่วนต่าง invoice — view=admin")}
-      />
+        title={__uiText("คืนเครดิตให้ลูกค้า")}
+        subtitle={__uiText("เครดิตที่คืนให้ลูกค้าจากส่วนต่างของใบแจ้งหนี้ ดูยอดคงเหลือและประวัติการใช้")}
+      >
+        <Button icon="refresh" onClick={() => void load()}>{__uiText("รีเฟรช")}</Button>
+      </AdminListHeader>
 
-      <div className="mb-4 flex flex-wrap items-end gap-3">
+      <div className="flex flex-wrap items-end gap-3">
         <div className="min-w-[200px] flex-1">
           <Input
             label={__uiText("ค้นหาเครดิตคืน")}
@@ -133,7 +142,7 @@ export default function CreditBacksAdmin() {
               setPage(1);
               setSearch(e.target.value);
             }}
-            placeholder={__uiText("ค้นหา CB # / invoice / order #")}
+            placeholder={__uiText("เลขที่เครดิตคืน / ใบแจ้งหนี้ / ออเดอร์")}
           />
         </div>
         <div className="w-48">
@@ -152,12 +161,6 @@ export default function CreditBacksAdmin() {
             ))}
           </Select>
         </div>
-        <button
-          type="button"
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm hover:bg-gray-50"
-          onClick={() => void load()}
-        >
-          {__uiText("รีเฟรช")}</button>
       </div>
 
       <Table
@@ -167,71 +170,57 @@ export default function CreditBacksAdmin() {
         currentPage={page}
         totalPages={totalPages}
         onPageChange={setPage}
+        loading={loading}
+        emptyTitle={__uiText("ยังไม่มีเครดิตคืน")}
+        emptyDescription={__uiText("ลองเปลี่ยนคำค้นหาหรือสถานะ")}
       />
-      {loading ? (
-        <p className="mt-2 text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
-      ) : null}
 
       {(detail || detailLoading) && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-          <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-xl">
-            <div className="mb-3 flex items-start justify-between gap-3">
-              <h2 className="text-lg font-semibold text-gray-800">
-                {detail?.cbNumber ?? __uiText("กำลังโหลด...")}
-              </h2>
-              <button
-                type="button"
-                className="text-sm text-gray-500 hover:text-gray-800"
-                onClick={() => setDetail(null)}
-              >
-                {__uiText("ปิด")}</button>
-            </div>
-            {detailLoading && !detail ? (
-              <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
-            ) : detail ? (
-              <div className="space-y-3 text-sm text-gray-700">
-                <p>{__uiText("Invoice: ")}{detail.invoiceNumber}</p>
-                <p>
-                  {__uiText("Order: ")}{detail.issuedFromOrderNumber ?? detail.issuedFromOrderId}
-                </p>
-                <p>
-                  {__uiText("Shop / สาขา: ")}{detail.shopName ?? '—'} /{' '}
-                  {detail.branchName ?? '—'}
-                </p>
-                <p>{__uiText("ออกเมื่อ: ")}{detail.issuedDateLabel ?? '—'}</p>
-                <p>
-                  {__uiText("Order / Invoice amount: ")}{money(detail.orderAmountExVat)} /{' '}
-                  {money(detail.invoiceAmountExVat)}
-                </p>
-                <p>
-                  {__uiText("ยอด / คงเหลือ: ")}{money(detail.totalAmountExVat)} /{' '}
-                  {money(detail.remainingAmountExVat)}
-                </p>
-                <p>
-                  {__uiText("สถานะ: ")}{detail.statusLabel} ({detail.applicationStatus})
-                </p>
-                <p>{__uiText("เหตุผล: ")}{detail.reason}</p>
-                <div>
-                  <p className="mb-1 font-medium text-gray-800">{__uiText("ประวัติการใช้")}</p>
-                  {detail.usages.length === 0 ? (
-                    <p className="text-gray-400">{__uiText("ยังไม่เคยใช้")}</p>
-                  ) : (
-                    <ul className="divide-y divide-gray-50">
-                      {detail.usages.map((u) => (
-                        <li key={u.id} className="flex justify-between py-1.5">
-                          <span>
-                            {u.appliedToOrderNumber ?? u.appliedToOrderId}
-                          </span>
-                          <span>{money(u.amountUsedExVat)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
+        <Modal
+          title={detail ? <span className="font-mono">{detail.cbNumber}</span> : __uiText("กำลังโหลด...")}
+          onClose={() => setDetail(null)}
+          width={560}
+        >
+          {detailLoading && !detail ? (
+            <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
+          ) : detail ? (
+            <div className="space-y-4 text-sm">
+              <KeyValueGrid
+                cols={2}
+                items={[
+                  { label: "เลขที่ใบแจ้งหนี้", value: detail.invoiceNumber, mono: true },
+                  { label: "เลขที่ออเดอร์", value: detail.issuedFromOrderNumber ?? detail.issuedFromOrderId, mono: true },
+                  { label: "ร้าน", value: detail.shopName },
+                  { label: "สาขา", value: detail.branchName },
+                  { label: "ออกเมื่อ", value: detail.issuedDateLabel },
+                  { label: "สถานะ", value: <CbStatusChip row={detail} /> },
+                  { label: "ยอดออเดอร์ (ก่อน VAT)", value: money(detail.orderAmountExVat) },
+                  { label: "ยอดใบแจ้งหนี้ (ก่อน VAT)", value: money(detail.invoiceAmountExVat) },
+                  { label: "ยอด (ก่อน VAT)", value: money(detail.totalAmountExVat) },
+                  { label: "คงเหลือ", value: money(detail.remainingAmountExVat) },
+                  { label: "เหตุผล", value: detail.reason, wide: true },
+                ]}
+              />
+              <div>
+                <p className="mb-1 font-medium text-on-surface">{__uiText("ประวัติการใช้")}</p>
+                {detail.usages.length === 0 ? (
+                  <p className="text-gray-400">{__uiText("ยังไม่เคยใช้")}</p>
+                ) : (
+                  <ul className="divide-y divide-gray-50">
+                    {detail.usages.map((u) => (
+                      <li key={u.id} className="flex justify-between py-1.5">
+                        <span className="font-mono">
+                          {u.appliedToOrderNumber ?? u.appliedToOrderId}
+                        </span>
+                        <span className="tabular-nums">{money(u.amountUsedExVat)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-            ) : null}
-          </div>
-        </div>
+            </div>
+          ) : null}
+        </Modal>
       )}
     </div>
   );

@@ -4,9 +4,7 @@ import {
   relinkOrderUsersCsv,
 } from '@josh/shared-api';
 import React, { useState } from 'react';
-import { Button, Icon } from '@cp/ui';
-import { Link } from 'react-router-dom';
-import AdminListHeader from '../../components/AdminListHeader';
+import { Alert, Button, Icon, PageHeader, Panel, PanelHead } from '@cp/ui';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -95,7 +93,7 @@ export default function OrderImport() {
   const runRelinkAll = async () => {
     if (
       !window.confirm(
-        __uiText("Relink ทุก order ตาม customer_code ที่เก็บไว้แล้ว — ยืนยัน?"),
+        __uiText("ผูกลูกค้าใหม่ทุกออเดอร์ตามรหัสลูกค้าที่บันทึกไว้ ยืนยันหรือไม่"),
       )
     ) {
       return;
@@ -120,82 +118,73 @@ export default function OrderImport() {
 
   return (
     <div className="cp-management-page space-y-5">
-      <AdminListHeader
-        title={__uiText("Order Import")}
-        subtitle={__uiText("นำเข้า CSV / เชื่อม user กับออเดอร์ (staff only)")}
-      >
-        <Link
-          to={ADMIN_ROUTES.orders}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-        >
-          {__uiText("← All Orders")}</Link>
-      </AdminListHeader>
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.orders, label: "กลับรายการออเดอร์" }}
+        title={__uiText("นำเข้าคำสั่งซื้อ")}
+        subtitle={__uiText("นำเข้าออเดอร์จากไฟล์ CSV และผูกลูกค้ากับออเดอร์ (สำหรับทีมงาน)")}
+      />
 
       <div className="grid max-w-4xl gap-5">
-        <section className="rounded-xl border border-gray-200 bg-white p-4 md:p-6">
-          <h2 className="mb-3 text-sm font-semibold text-gray-800">
-            {__uiText("Import orders + items")}</h2>
-          <p className="mb-3 text-xs text-gray-500">
-            {__uiText("อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน")}</p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <FileField label={__uiText("Orders CSV *")} onChange={setOrdersFile} />
-            <FileField label={__uiText("Items CSV *")} onChange={setItemsFile} />
+        <Panel>
+          <PanelHead title={__uiText("นำเข้าออเดอร์และรายการสินค้า")} icon="upload_file" />
+          <div className="p-5">
+            <p className="mb-3 text-xs text-on-surface-variant">
+              {__uiText("อัปโหลดไฟล์ orders.csv และ items.csv พร้อมกัน")}</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <FileField label={__uiText("ไฟล์ออเดอร์ (CSV) *")} onChange={setOrdersFile} />
+              <FileField label={__uiText("ไฟล์รายการสินค้า (CSV) *")} onChange={setItemsFile} />
+            </div>
+            <Button
+              variant="primary"
+              icon="cloud_upload"
+              disabled={busy !== null || !ordersFile || !itemsFile}
+              className="mt-5"
+              onClick={() => void runImport()}
+            >
+              {busy === 'import' ? __uiText("กำลังนำเข้า…") : __uiText("นำเข้าไฟล์")}
+            </Button>
           </div>
-          <Button
-            variant="primary"
-            icon="cloud_upload"
-            disabled={busy !== null || !ordersFile || !itemsFile}
-            className="mt-5"
-            onClick={() => void runImport()}
-          >
-            {busy === 'import' ? __uiText("กำลัง import...") : __uiText("Import CSV")}
-          </Button>
-        </section>
+        </Panel>
 
-        <details className="rounded-xl border border-gray-200 bg-white p-4 md:p-6">
-          <summary className="cursor-pointer text-sm font-semibold text-gray-800">{__uiText('เครื่องมือเชื่อมลูกค้ากับออเดอร์')}</summary>
+        <details className="rounded-xl border border-secondary-container bg-surface-container-lowest p-4 shadow-card md:p-6">
+          <summary className="cursor-pointer text-sm font-semibold text-on-surface">{__uiText('เครื่องมือเชื่อมลูกค้ากับออเดอร์')}</summary>
           <div className="mt-4 grid gap-5 sm:grid-cols-2">
-        <section className="rounded-xl border border-gray-100 p-4">
-          <h2 className="mb-3 text-sm font-semibold text-gray-800">
-            {__uiText("Relink users จาก CSV")}</h2>
-          <p className="mb-3 text-xs text-gray-500">
-            {__uiText("อ่าน customer code จากไฟล์ orders แล้วผูก user ใหม่")}</p>
-          <FileField label={__uiText("Orders CSV")} onChange={setRelinkFile} />
-          <button
-            type="button"
+        <section className="rounded-xl border border-secondary-container p-4">
+          <h3 className="mb-3 text-sm font-semibold text-on-surface">
+            {__uiText("ผูกลูกค้ากับออเดอร์ใหม่จากไฟล์")}</h3>
+          <p className="mb-3 text-xs text-on-surface-variant">
+            {__uiText("อ่านรหัสลูกค้าจากไฟล์ออเดอร์ แล้วผูกบัญชีลูกค้าให้ใหม่")}</p>
+          <FileField label={__uiText("ไฟล์ออเดอร์ (CSV)")} onChange={setRelinkFile} />
+          <Button
             disabled={busy !== null || !relinkFile}
-            className="mt-4 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-50"
+            className="mt-4"
             onClick={() => void runRelinkCsv()}
           >
-            {busy === 'relink' ? __uiText("กำลัง relink...") : __uiText("Relink from CSV")}
-          </button>
+            {busy === 'relink' ? __uiText("กำลังผูกใหม่…") : __uiText("ผูกใหม่จากไฟล์")}
+          </Button>
         </section>
-        <section className="rounded-xl border border-gray-100 p-4">
-          <h2 className="mb-3 text-sm font-semibold text-gray-800">
-            {__uiText("Relink all (จาก customer_code ใน DB)")}</h2>
-          <p className="mb-3 text-xs text-gray-500">
-            {__uiText("ไม่ต้องอัปโหลดไฟล์ — ใช้ customer_code ที่บันทึกไว้บน order")}</p>
-          <button
-            type="button"
+        <section className="rounded-xl border border-secondary-container p-4">
+          <h3 className="mb-3 text-sm font-semibold text-on-surface">
+            {__uiText("ผูกลูกค้าใหม่ทุกออเดอร์")}</h3>
+          <p className="mb-3 text-xs text-on-surface-variant">
+            {__uiText("ไม่ต้องอัปโหลดไฟล์ ใช้รหัสลูกค้าที่บันทึกไว้บนแต่ละออเดอร์")}</p>
+          <Button
             disabled={busy !== null}
-            className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-900 hover:bg-amber-100 disabled:opacity-50"
             onClick={() => void runRelinkAll()}
           >
-            {busy === 'relink-all' ? __uiText("กำลัง relink...") : __uiText("Relink all orders")}
-          </button>
+            {busy === 'relink-all' ? __uiText("กำลังผูกใหม่…") : __uiText("ผูกใหม่ทุกออเดอร์")}
+          </Button>
         </section>
           </div>
         </details>
 
         {error ? (
-          <p className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-700">
-            {__uiText(error)}
-          </p>
+          <Alert tone="danger">{__uiText(error)}</Alert>
         ) : null}
         {result ? (
-          <pre className="overflow-x-auto rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-xs text-emerald-900 whitespace-pre-wrap">
-            {__uiText(result)}
-          </pre>
+          <Alert tone="ok">
+            <pre className="overflow-x-auto text-xs whitespace-pre-wrap">{__uiText(result)}</pre>
+          </Alert>
         ) : null}
       </div>
     </div>

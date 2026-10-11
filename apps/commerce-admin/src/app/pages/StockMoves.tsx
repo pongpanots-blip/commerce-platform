@@ -63,7 +63,7 @@ function StockTask({ tab }: { tab: Tab }) {
     const readings = await Promise.all(codes.map(code => inventoryOverviewApi.get(code, form.sku.trim(), 1)));
     return readings.map((data, index) => {
       const item = data.items.find(row => row.sku === form.sku.trim() && row.warehouseCode === codes[index]);
-      return item ? `${item.sku} · ${item.warehouseCode}: ${item.quantity} (${__uiText('จองแล้ว')}: ${item.reserved}) · ${item.lastStatus ?? '—'}` : __uiText('ไม่พบ SKU นี้ในผลค้นหาล่าสุด ตรวจรายการก่อนลองใหม่');
+      return item ? `${item.sku} · ${item.warehouseCode}: ${item.quantity} (${__uiText('จองแล้ว')}: ${item.reserved}) · ${item.lastStatus ?? '—'}` : __uiText('ไม่พบรหัสสินค้านี้ในผลค้นหาล่าสุด ตรวจรายการก่อนลองใหม่');
     }).join(' · ');
   }
   async function submit(_data: FormData, signal: AbortSignal) {
@@ -131,7 +131,7 @@ function StockTask({ tab }: { tab: Tab }) {
           <TaskInput name="note" label={__uiText("หมายเหตุ")} help={__uiText("ระบุเอกสารหรือรายละเอียดเพิ่มเติม (ไม่บังคับ)")} value={form.note} onChange={set('note')} maxLength={200} />
           </fieldset>
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-secondary-container bg-surface-container-low/40 px-4 py-4 md:px-5">
-            <p className="text-xs text-on-surface-variant">{__uiText("ตรวจ SKU คลัง และจำนวนให้ถูกต้องก่อนบันทึก")}</p>
+            <p className="text-xs text-on-surface-variant">{__uiText("ตรวจรหัสสินค้า คลัง และจำนวนให้ถูกต้องก่อนบันทึก")}</p>
             <StockSubmit label={`${__uiText('บันทึก')} ${task.title}`} />
           </div>
         </TaskForm>

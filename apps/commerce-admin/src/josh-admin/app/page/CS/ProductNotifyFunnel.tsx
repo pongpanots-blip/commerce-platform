@@ -14,18 +14,37 @@ import AdminListHeader from '../../components/AdminListHeader';
 import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, Button, Chip, StatTile, type Tone } from "@cp/ui";
+
+/** ป้ายสำหรับแสดงผล — ค่าที่ส่งไป API ยังเป็นรหัสเดิม */
+const CHANNEL_LABEL: Record<string, string> = {
+  get back_in_stock(){return __uiText("สินค้ากลับมามีสต๊อก");},
+  get marketing_remind(){return __uiText("แจ้งเตือนการตลาด");},
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  get active(){return __uiText("ยังแจ้งเตือนอยู่");},
+  get converted(){return __uiText("สั่งซื้อแล้ว");},
+  get cancelled(){return __uiText("ยกเลิก");},
+};
+
+const STATUS_TONE: Record<string, Tone> = {
+  active: 'info',
+  converted: 'ok',
+  cancelled: 'muted',
+};
+
 const CHANNEL_OPTIONS = [
   { value: '', get label(){return __uiText("ทุกช่องทาง");} },
-  { value: 'back_in_stock', get label(){return __uiText("Back in stock");} },
-  { value: 'marketing_remind', get label(){return __uiText("Marketing remind");} },
+  { value: 'back_in_stock', get label(){return CHANNEL_LABEL.back_in_stock;} },
+  { value: 'marketing_remind', get label(){return CHANNEL_LABEL.marketing_remind;} },
 ] as const;
 
 const STATUS_OPTIONS = [
   { value: '', get label(){return __uiText("ทุกสถานะ");} },
-  { value: 'active', get label(){return __uiText("Active");} },
-  { value: 'converted', get label(){return __uiText("Converted");} },
-  { value: 'cancelled', get label(){return __uiText("Cancelled");} },
+  { value: 'active', get label(){return STATUS_LABEL.active;} },
+  { value: 'converted', get label(){return STATUS_LABEL.converted;} },
+  { value: 'cancelled', get label(){return STATUS_LABEL.cancelled;} },
 ] as const;
 
 function formatDate(value: string | null): string {
@@ -39,12 +58,11 @@ function formatDate(value: string | null): string {
 function AggregateTile({ aggregate }: { aggregate: ProductNotifyFunnelAggregate }) {
   __useUiLocale();
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-5">
-      <p className="text-xs font-semibold text-gray-500">{aggregate.channel_type}</p>
-      <p className="mt-1 text-2xl font-semibold">{aggregate.avg_notify_count.toFixed(1)}</p>
-      <p className="mt-1 text-xs text-gray-500">
-        {__uiText("ครั้งเฉลี่ยก่อนสั่งซื้อ · ")}{aggregate.converted_count} {__uiText(" conversions")}</p>
-    </div>
+    <StatTile
+      label={CHANNEL_LABEL[aggregate.channel_type] ?? aggregate.channel_type}
+      value={aggregate.avg_notify_count.toFixed(1)}
+      foot={__uiText("ครั้งเฉลี่ยก่อนสั่งซื้อ · สั่งซื้อแล้ว {0} ครั้ง", {"0": aggregate.converted_count.toLocaleString()})}
+    />
   );
 }
 
@@ -84,7 +102,7 @@ export default function ProductNotifyFunnelPage() {
       setRows([]);
       setAggregates([]);
       setNextCursor(null);
-      setError(__uiMessage("ไม่สามารถโหลดข้อมูล Product Notify Funnel ได้"));
+      setError(__uiMessage("ไม่สามารถโหลดผลการแจ้งเตือนสินค้าได้"));
     } finally {
       setLoading(false);
     }
@@ -129,36 +147,39 @@ export default function ProductNotifyFunnelPage() {
     },
     {
       key: 'product_inventory_id',
-      label: __uiText("SKU / Inventory"),
+      label: __uiText("รหัสสินค้า"),
       render: (value: string) => <span className="font-mono text-xs">{value}</span>,
     },
-    { key: 'channel_type', label: __uiText("ช่องทาง") },
-    { key: 'notify_count', label: __uiText("จำนวนแจ้ง") },
+    {
+      key: 'channel_type',
+      label: __uiText("ช่องทาง"),
+      render: (value: string) => CHANNEL_LABEL[value] ?? value,
+    },
+    {
+      key: 'notify_count',
+      label: __uiText("จำนวนแจ้ง"),
+      align: 'right',
+      render: (value: number) => <span className="tabular-nums">{value.toLocaleString()}</span>,
+    },
     {
       key: 'status',
       label: __uiText("สถานะ"),
       render: (value: ProductNotifyFunnel['status']) => (
-        <span
-          className={`rounded-full px-2 py-1 text-xs font-semibold ${
-            value === 'converted'
-              ? 'bg-green-50 text-green-700'
-              : value === 'active'
-                ? 'bg-blue-50 text-blue-700'
-                : 'bg-gray-100 text-gray-600'
-          }`}
-        >
-          {value}
-        </span>
+        <Chip tone={STATUS_TONE[value] ?? 'muted'} statusCode={value} dot>
+          {STATUS_LABEL[value] ?? value}
+        </Chip>
       ),
     },
     {
       key: 'last_notified_at',
       label: __uiText("แจ้งล่าสุด"),
-      render: (value: string | null) => formatDate(value),
+      render: (value: string | null) => (
+        <span className="whitespace-nowrap tabular-nums">{formatDate(value)}</span>
+      ),
     },
     {
       key: 'converted_order_id',
-      label: __uiText("คำสั่งซื้อที่ convert"),
+      label: __uiText("คำสั่งซื้อที่เกิดขึ้น"),
       render: (value: string | null) =>
         value ? <span className="font-mono text-xs">{value}</span> : '—',
     },
@@ -167,8 +188,8 @@ export default function ProductNotifyFunnelPage() {
   return (
     <div className="cp-management-page">
       <AdminListHeader
-        title={__uiText("Product Notify Funnel")}
-        subtitle={__uiText("จำนวนครั้งที่แจ้งเตือนก่อนลูกค้าสั่งซื้อ แยกตามช่องทาง (อ่านอย่างเดียว)")}
+        title={__uiText("ผลการแจ้งเตือนสินค้า")}
+        subtitle={__uiText("ผลของการแจ้งเตือนสินค้า ตั้งแต่ส่งจนถึงสั่งซื้อ")}
       />
 
       <div className="mb-4 grid gap-2 md:grid-cols-2 lg:grid-cols-5">
@@ -238,7 +259,7 @@ export default function ProductNotifyFunnelPage() {
             <AggregateTile key={aggregate.channel_type} aggregate={aggregate} />
           ))
         ) : (
-          <p className="text-sm text-gray-400">{__uiText("ยังไม่มี conversion สำหรับตัวกรองนี้")}</p>
+          <p className="text-sm text-gray-400">{__uiText("ยังไม่มีการสั่งซื้อจากการแจ้งเตือนในตัวกรองนี้")}</p>
         )}
       </div>
 
@@ -246,23 +267,18 @@ export default function ProductNotifyFunnelPage() {
         <p className="text-sm text-gray-500">{__uiText("กำลังโหลด...")}</p>
       ) : (
         <>
-          <Table columns={columns} data={rows} idKey="id" />
-          {!rows.length && <p className="mt-3 text-sm text-gray-400">{__uiText("ไม่พบข้อมูล funnel")}</p>}
+          <Table
+            columns={columns}
+            data={rows}
+            idKey="id"
+            emptyTitle={__uiText("ไม่พบผลการแจ้งเตือนสินค้า")}
+            emptyDescription={__uiText("ลองล้างหรือเปลี่ยนตัวกรอง แล้วกดกรองข้อมูลอีกครั้ง")}
+          />
           <div className="mt-4 flex items-center justify-end gap-2 text-sm">
-            <button
-              type="button"
-              disabled={cursorStack.length === 0}
-              className="rounded border px-3 py-1 disabled:opacity-40"
-              onClick={handlePrevious}
-            >
-              {__uiText("ก่อนหน้า")}</button>
-            <button
-              type="button"
-              disabled={!nextCursor}
-              className="rounded border px-3 py-1 disabled:opacity-40"
-              onClick={handleNext}
-            >
-              {__uiText("ถัดไป")}</button>
+            <Button size="sm" disabled={cursorStack.length === 0} onClick={handlePrevious}>
+              {__uiText("ก่อนหน้า")}</Button>
+            <Button size="sm" disabled={!nextCursor} onClick={handleNext}>
+              {__uiText("ถัดไป")}</Button>
           </div>
         </>
       )}

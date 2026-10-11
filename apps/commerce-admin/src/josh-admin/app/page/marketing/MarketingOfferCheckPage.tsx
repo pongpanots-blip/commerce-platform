@@ -1,8 +1,8 @@
 // ui-date-locale: display formatting only; stored dates and request values are unchanged
-import { TableViewport } from '@cp/ui';
+import { Alert, Button, Chip, FormField, Input, KeyValueGrid, PageHeader, Panel, TableEmpty, TableViewport, type Tone } from '@cp/ui';
 import { getUiLocale as __dateLocale } from '@cp/ui';
 // ui-metadata-migration: static labels and UI notices only
-import { FormEvent, useId, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   inspectMarketingOffers,
@@ -13,13 +13,10 @@ import { ADMIN_ROUTES } from '../../config/admin-routes';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
-const INPUT_CLASS =
-  'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none';
-
-const STATUS_CLASS: Record<string, string> = {
-  active: 'text-green-600 font-semibold',
-  dismissed: 'text-amber-600',
-  expired: 'text-gray-400',
+const OFFER_STATUS: Record<string, { label: string; tone: Tone }> = {
+  active: { label: 'กำลังแสดง', tone: 'ok' },
+  dismissed: { label: 'ลูกค้าปิดแล้ว', tone: 'warn' },
+  expired: { label: 'หมดอายุ', tone: 'muted' },
 };
 
 /**
@@ -37,8 +34,6 @@ export default function MarketingOfferCheckPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [result, setResult] = useState<MarketingOfferInspectResult | null>(null);
-  const individualIdInputId = useId();
-  const userIdInputId = useId();
 
   const runInspect = async (event?: FormEvent) => {
     event?.preventDefault();
@@ -72,7 +67,7 @@ export default function MarketingOfferCheckPage() {
       await runInspect();
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : 'reactivate ไม่สำเร็จ';
+        err instanceof Error ? err.message : __uiText("เปิดข้อเสนออีกครั้งไม่สำเร็จ");
       setError(message);
     } finally {
       setBusyId(null);
@@ -81,110 +76,109 @@ export default function MarketingOfferCheckPage() {
 
   return (
     <div className="cp-management-page flex flex-col gap-5">
-      <div>
-        <Link to={ADMIN_ROUTES.marketingWorkflows} className="text-xs text-primary hover:underline">
-          {__uiText("&larr; Marketing Workflows")}</Link>
-        <h1 className="mt-1 text-2xl font-bold text-gray-900">{__uiText("Offer Check")}</h1>
-        <p className="mt-1 max-w-2xl text-sm text-gray-500">
-          {__uiText("เช็กว่า device มีลิงก์ user หรือยัง, offer ถูก dismiss ไปหรือยัง, และ shop จะเห็นอะไรจาก")}{' '}
-          <code className="text-xs">{__uiText("GET /marketing-offers/active")}</code>
-        </p>
-      </div>
+      <PageHeader
+        back={{ to: ADMIN_ROUTES.marketingWorkflows, label: 'ข้อความอัตโนมัติ' }}
+        title={__uiText("ตรวจข้อเสนอ")}
+        subtitle={__uiText("ตรวจว่าอุปกรณ์หรือผู้ใช้จะเห็นข้อเสนอใดบนร้านค้า")}
+      />
 
-      <form
-        onSubmit={(event) => void runInspect(event)}
-        className="flex flex-wrap items-end gap-3 rounded-lg border border-gray-200 bg-white p-4"
-      >
-        <div className="min-w-[240px] flex-1">
-          <label htmlFor={individualIdInputId} className="mb-1 block text-xs font-medium text-gray-500">
-            {__uiText("รหัสอุปกรณ์ (individual_id) จาก shop")}</label>
-          <input
-            id={individualIdInputId}
-            className={INPUT_CLASS}
+      <Panel as="form" onSubmit={(event) => void runInspect(event)} className="flex flex-wrap items-end gap-3 p-4">
+        <FormField label={__uiText("รหัสอุปกรณ์จากร้านค้า")} className="min-w-[240px] flex-1">
+          <Input
+            className="font-mono"
             value={individualId}
             onChange={(event) => setIndividualId(event.target.value)}
-            placeholder={__uiText("จาก getDeviceId() / URL ?individual_id=")}
+            placeholder={__uiText("รหัสอุปกรณ์ที่ร้านค้าส่งมา")}
           />
-        </div>
-        <div className="min-w-[240px] flex-1">
-          <label htmlFor={userIdInputId} className="mb-1 block text-xs font-medium text-gray-500">
-            {__uiText("รหัสผู้ใช้ (user_id) — ไม่บังคับ")}</label>
-          <input
-            id={userIdInputId}
-            className={INPUT_CLASS}
+        </FormField>
+        <FormField label={__uiText("รหัสผู้ใช้ (ไม่บังคับ)")} className="min-w-[240px] flex-1">
+          <Input
+            className="font-mono"
             value={userId}
             onChange={(event) => setUserId(event.target.value)}
-            placeholder={__uiText("UUID ของ user")}
+            placeholder={__uiText("รหัสผู้ใช้ของลูกค้า")}
           />
-        </div>
-        <button
+        </FormField>
+        <Button
           type="submit"
+          variant="primary"
           disabled={loading || (!individualId.trim() && !userId.trim())}
-          className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
         >
-          {loading ? __uiText("กำลังเช็ก…") : __uiText("เช็ก")}
-        </button>
-      </form>
+          {loading ? __uiText("กำลังตรวจ…") : __uiText("ตรวจ")}
+        </Button>
+      </Panel>
 
-      {error ? <p className="text-sm text-red-600">{(typeof error === 'string' ? __uiText(error) : error)}</p> : null}
+      {error ? <Alert tone="danger">{(typeof error === 'string' ? __uiText(error) : error)}</Alert> : null}
 
       {result ? (
         <div className="flex flex-col gap-4">
-          <div className="grid gap-3 rounded-lg border border-gray-200 bg-white p-4 text-sm sm:grid-cols-2">
+          <Panel className="space-y-4 p-4">
+            <KeyValueGrid
+              cols={2}
+              items={[
+                {
+                  label: __uiText("ผู้ใช้ที่ผูกกับอุปกรณ์นี้"),
+                  value: result.device_linked_user_id ?? __uiText("ยังไม่ผูกกับผู้ใช้"),
+                  mono: Boolean(result.device_linked_user_id),
+                },
+                {
+                  label: __uiText("ผู้ใช้ที่ใช้ตรวจ"),
+                  value: result.resolved_user_id,
+                  mono: true,
+                },
+              ]}
+            />
             <div>
-              <p className="text-xs font-medium text-gray-500">{__uiText("device_linked_user_id")}</p>
-              <p className="mt-0.5 break-all font-mono text-xs text-gray-800">
-                {result.device_linked_user_id ?? __uiText("— (ยังไม่ลิงก์)")}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-500">{__uiText("resolved_user_id")}</p>
-              <p className="mt-0.5 break-all font-mono text-xs text-gray-800">
-                {result.resolved_user_id ?? '—'}
-              </p>
-            </div>
-            <div className="sm:col-span-2">
               <p className="text-xs font-medium text-gray-500">
-                {__uiText("active_for_shop (")}{result.active_for_shop.length}{__uiText(") — สิ่งที่ popup จะเห็น")}</p>
+                {__uiText("ข้อเสนอที่ร้านค้าจะแสดง ({0})", {"0": result.active_for_shop.length.toLocaleString()})}</p>
               {result.active_for_shop.length === 0 ? (
-                <p className="mt-1 text-amber-600">
-                  {__uiText("ว่าง = shop ไม่เด้ง (มักเพราะทุก offer เป็น dismissed หรือยังไม่ลิงก์ user)")}</p>
+                <p className="mt-1 text-sm text-warn">
+                  {__uiText("ร้านค้าจะไม่แสดงข้อเสนอ ส่วนใหญ่เพราะลูกค้าปิดข้อเสนอทั้งหมดแล้ว หรืออุปกรณ์ยังไม่ผูกกับผู้ใช้")}</p>
               ) : (
-                <ul className="mt-1 list-inside list-disc text-gray-800">
+                <ul className="mt-1 list-inside list-disc text-sm text-gray-800">
                   {result.active_for_shop.map((offer) => (
                     <li key={offer.id}>
-                      <span className="font-medium">{offer.title || __uiText("(ไม่มี title)")}</span>{' '}
+                      <span className="font-medium">{offer.title || __uiText("(ไม่มีหัวข้อ)")}</span>{' '}
                       <span className="font-mono text-xs text-gray-400">{offer.id}</span>
                     </li>
                   ))}
                 </ul>
               )}
             </div>
-          </div>
+          </Panel>
 
           <TableViewport className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
             <table className="cp-data-table min-w-full text-left text-sm">
               <thead className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
                 <tr>
-                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Status")}</th>
-                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Title")}</th>
-                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Workflow")}</th>
-                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Created")}</th>
-                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("Updated")}</th>
-                  <th className="px-3 py-2 font-medium" scope="col" />
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("สถานะ")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("หัวข้อ")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("ข้อความอัตโนมัติ")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("สร้างเมื่อ")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col">{__uiText("แก้ไขล่าสุด")}</th>
+                  <th className="px-3 py-2 font-medium" scope="col"><span className="sr-only">{__uiText("จัดการ")}</span></th>
                 </tr>
               </thead>
               <tbody>
                 {result.offers.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-3 py-6 text-center text-gray-400">
-                      {__uiText("ไม่พบ offer สำหรับ device/user นี้")}</td>
+                    <td colSpan={6}>
+                      <TableEmpty title="ไม่พบข้อเสนอของอุปกรณ์หรือผู้ใช้นี้">
+                        {__uiText("ตรวจรหัสอีกครั้ง หรือลองใส่รหัสผู้ใช้แทน")}
+                      </TableEmpty>
+                    </td>
                   </tr>
                 ) : (
-                  result.offers.map((offer) => (
+                  result.offers.map((offer) => {
+                    const status = OFFER_STATUS[offer.status];
+                    return (
                     <tr key={offer.id} className="border-b border-gray-50">
-                      <td className={`px-3 py-2 text-xs ${STATUS_CLASS[offer.status] ?? ''}`}>
-                        {offer.status}
+                      <td className="px-3 py-2">
+                        {status ? (
+                          <Chip tone={status.tone} statusCode={offer.status} dot>{__uiText(status.label)}</Chip>
+                        ) : (
+                          <Chip>{offer.status}</Chip>
+                        )}
                       </td>
                       <td className="px-3 py-2">
                         <div className="font-medium text-gray-900">
@@ -212,18 +206,18 @@ export default function MarketingOfferCheckPage() {
                       </td>
                       <td className="px-3 py-2 text-right">
                         {offer.status !== 'active' ? (
-                          <button
-                            type="button"
+                          <Button
+                            size="sm"
                             disabled={busyId === offer.id}
                             onClick={() => void handleReactivate(offer.id)}
-                            className="rounded border border-gray-200 px-2 py-1 text-xs text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                           >
-                            {busyId === offer.id ? '…' : __uiText("Reactivate")}
-                          </button>
+                            {busyId === offer.id ? '…' : __uiText("แสดงข้อเสนออีกครั้ง")}
+                          </Button>
                         ) : null}
                       </td>
                     </tr>
-                  ))
+                    );
+                  })
                 )}
               </tbody>
             </table>

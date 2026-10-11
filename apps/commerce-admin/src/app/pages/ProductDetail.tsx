@@ -12,6 +12,7 @@ import { useAsync } from '../hooks';
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
 type Form = { sku: string; name: string; description: string };
+const FULFILLMENT: Record<string, string> = { on_hand: 'ส่งจากสต็อกในคลัง', to_order: 'สั่งเข้าหลังลูกค้าสั่งซื้อ', both: 'ส่งจากสต็อก หรือสั่งเข้าเมื่อหมด' };
 const toForm = (p: Product): Form => ({ sku: p.sku, name: p.name, description: p.description ?? '' });
 
 /** One commerce product: facts, edit (PATCH /products/:id) and stock per warehouse. */
@@ -58,7 +59,7 @@ export function ProductDetail() {
   return (
     <Page>
       <PageHeader
-        back={{ to: '/products', label: 'แคตตาล็อกแพลตฟอร์ม' }}
+        back={{ to: '/products', label: 'ค้นหาสินค้าตามรหัส' }}
         title={p?.name ?? __uiText("รายละเอียดสินค้า")}
         badge={p && <StatusChip status={p.status} />}
         subtitle={p && <span className="font-mono">{p.sku}</span>}
@@ -90,8 +91,8 @@ export function ProductDetail() {
             <Panel className="p-4">
               <KeyValueGrid
                 items={[
-                  { label: 'รหัสสินค้า', value: p.sku, copy: true },
-                  { label: __uiText("รูปแบบจัดส่ง"), value: p.fulfillmentMode ?? '—' },
+                  { label: __uiText('รหัสสินค้า'), value: p.sku, mono: true, copy: true },
+                  { label: __uiText("รูปแบบจัดส่ง"), value: p.fulfillmentMode ? (FULFILLMENT[p.fulfillmentMode] ? __uiText(FULFILLMENT[p.fulfillmentMode]) : p.fulfillmentMode) : '—' },
                   { label: __uiText("ระยะเวลาเตรียมสินค้า"), value: p.leadTimeDays !== null && p.leadTimeDays !== undefined ? __uiText('{0} วัน', {'0': p.leadTimeDays}) : '—' },
                   { label: __uiText("อัปเดตล่าสุด"), value: p.updatedAt ? fmt.when(p.updatedAt) : '—' },
                   { label: __uiText("รายละเอียด"), value: p.description || '—', wide: true },
@@ -125,14 +126,14 @@ export function ProductDetail() {
                         <TD>{warehouse ? <Stack2 top={warehouse.name} bottom={warehouse.code} /> : <span className="font-mono">{l.warehouseId}</span>}</TD>
                         <TD kind="num">{fmt.num(l.quantity)}</TD>
                         <TD kind="num">{fmt.num(l.reserved)}</TD>
-                        <TD kind="num" className={available <= 0 ? 'text-[#c2333f] font-semibold' : undefined}>{fmt.num(available)}</TD>
+                        <TD kind="num" className={available <= 0 ? 'text-danger font-semibold' : undefined}>{fmt.num(available)}</TD>
                       </TR>
                     );
                   })}
                 </TBody>
               </Table>
             ) : (
-              <Empty icon="warehouse">{__uiText("ยังไม่มีสต็อกที่บันทึกไว้")}</Empty>
+              <Empty icon="warehouse">{__uiText("ยังไม่มีสต็อกที่บันทึกไว้ บันทึกรับเข้าได้ที่หน้ารับเข้า ปรับ และโอนสต็อก")}</Empty>
             )}
           </Panel>
         </>

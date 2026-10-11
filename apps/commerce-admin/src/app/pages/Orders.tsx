@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Pager, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt, RowLink, Icon } from '@cp/ui';
+  Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Pager, Select, TBody, TD, TH, THead, TR, Table, fmt, RowLink, Icon } from '@cp/ui';
 import { api, Customer, Product, OrderRow, Paginated, session } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { OrderStatusChip } from './order-status';
 import { CurrentPageFilters, useCurrentPageFilter } from '../components/CurrentPageFilters';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -169,7 +170,7 @@ export function Orders() {
                 {filter.visible.map((o) => (
                   <TR key={o.id} onClick={() => navigate(`/orders/${o.id}`)}>
                     <TD><RowLink to={`/orders/${o.id}`}>{o.code ?? o.id.slice(0, 8) + '…'}</RowLink></TD>
-                    <TD><StatusChip status={o.status} /></TD>
+                    <TD><OrderStatusChip status={o.status} /></TD>
                     <TD kind="money">{fmt.baht(o.total)}</TD>
                     <TD kind="time">{fmt.when(o.createdAt)}</TD>
                     <TD kind="actions">

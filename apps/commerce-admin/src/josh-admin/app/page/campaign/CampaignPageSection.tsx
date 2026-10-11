@@ -120,10 +120,10 @@ export default function CampaignPageSection({
     >
       <div>
         <h2 id={headingId} className="text-base font-bold text-ink">
-          {__uiText("หน้าโปร (Page)")}</h2>
+          {__uiText("หน้าโปร")}</h2>
         <p className="mt-1 text-xs text-ink-secondary">
-          {__uiText("แบนเนอร์ + สินค้าของโปรอัตโนมัติ + คูปองสาธารณะที่ใช้งานอยู่ของ Campaign (และสินค้าที่คูปองจำกัดไว้) —")}{' '}
-          <strong>{__uiText("บันทึกแยก")}</strong>{__uiText("จากข้อมูล Campaign ด้านบน (ปุ่มของหน้าโปรอยู่ท้ายการ์ดนี้)")}</p>
+          {__uiText("แบนเนอร์ สินค้าของโปรอัตโนมัติ และคูปองสาธารณะที่ใช้งานอยู่ของแคมเปญ (รวมสินค้าที่คูปองจำกัดไว้)")}{' '}
+          <strong>{__uiText("บันทึกแยก")}</strong>{__uiText("จากข้อมูลแคมเปญด้านบน (ปุ่มของหน้าโปรอยู่ท้ายการ์ดนี้)")}</p>
       </div>
       {pageContentNotices(campaign).map((notice) => (
         <p
@@ -131,7 +131,7 @@ export default function CampaignPageSection({
           role="status"
           className={
             notice.tone === 'warning'
-              ? 'rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800'
+              ? 'rounded-lg border border-warn/20 bg-warn-container px-3 py-2 text-xs text-warn'
               : 'text-xs text-ink-muted'
           }
         >

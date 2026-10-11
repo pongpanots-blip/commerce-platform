@@ -149,7 +149,7 @@ const CreateSegment = () => {
                 slug: event.target.value.toLowerCase().replace(/\s+/g, '-'),
               });
             }}
-            placeholder={__uiText("kebab-case เช่น vip-customers")}
+            placeholder={__uiText("เช่น vip-customers")}
           />
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input

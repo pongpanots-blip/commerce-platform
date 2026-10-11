@@ -38,11 +38,11 @@ export const EditBotWorkflow: React.FC = () => {
     setIsSaving(true);
     try {
       await botClient.updateWorkflow(id, workflow);
-      alert(__uiText("Workflow saved!"));
+      alert(__uiText("บันทึกลำดับการตอบแล้ว"));
       return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      alert(__uiText("Error saving workflow: {0}", {"0": message}));
+      alert(__uiText("บันทึกไม่สำเร็จ: {0}", {"0": message}));
       return false;
     } finally {
       setIsSaving(false);
@@ -51,38 +51,39 @@ export const EditBotWorkflow: React.FC = () => {
 
   const handleTest = async () => {
     if (!id || !workflow) return;
-    const message = prompt(__uiText('Enter test message:'));
+    const message = prompt(__uiText('พิมพ์ข้อความที่จะลองถามแชตบอต'));
     if (!message) return;
 
     try {
       const result = await botClient.testFlow(id, message);
-      alert(__uiText("Test result: {0}", {"0": JSON.stringify(result, null, 2)}));
+      alert(__uiText("แชตบอตตอบว่า: {0}", {"0": JSON.stringify(result, null, 2)}));
     } catch (error) {
       const errMessage = error instanceof Error ? error.message : String(error);
-      alert(__uiText("Error testing flow: {0}", {"0": errMessage}));
+      alert(__uiText("ลองถามไม่สำเร็จ: {0}", {"0": errMessage}));
     }
   };
 
   if (isError || (!isLoading && !data && !workflow)) {
-    return <LoadError title={__uiText('แก้ไขเวิร์กโฟลว์บอต')} error={error ?? __uiMessage('ไม่พบเวิร์กโฟลว์บอตนี้')} onRetry={() => { void refetch(); }} />;
+    return <LoadError title={__uiText('แก้ลำดับการตอบของแชตบอต')} error={error ?? __uiMessage('ไม่พบลำดับการตอบนี้')} onRetry={() => { void refetch(); }} />;
   }
 
   if (isLoading || !workflow) {
-    return <div className={styles.loading}>{__uiText("Loading...")}</div>;
+    return <div className={styles.loading}>{__uiText("กำลังโหลด...")}</div>;
   }
 
   return (
     <AdminInsertLayout
-      title={`${__uiText("Edit Workflow: ")}${workflow.name}`}
-      saveLabel="Save"
+      title={`${__uiText("แก้ลำดับการตอบ: ")}${workflow.name}`}
+      subtitle={__uiText("ตั้งชื่อ เลือกว่าเริ่มเมื่อไร แล้วจัดขั้นตอนการตอบด้านล่าง")}
+      saveLabel="บันทึกลำดับการตอบ"
       saving={isSaving}
       onSave={handleSave}
       backPath={ADMIN_ROUTES.botWorkflows}
-      headerActions={<Button variant="secondary" onClick={handleTest} disabled={isSaving}>{__uiText("Test Flow")}</Button>}
+      headerActions={<Button variant="secondary" onClick={handleTest} disabled={isSaving}>{__uiText("ลองถามแชตบอต")}</Button>}
     >
       <div className={styles.settings}>
         <div className={styles.settingRow}>
-          <label htmlFor="workflow-name">{__uiText("ชื่อ Workflow")}</label>
+          <label htmlFor="workflow-name">{__uiText("ชื่อลำดับการตอบ")}</label>
           <input
             id="workflow-name"
             type="text"
@@ -92,7 +93,7 @@ export const EditBotWorkflow: React.FC = () => {
         </div>
 
         <div className={styles.settingRow}>
-          <label htmlFor="workflow-trigger-event">{__uiText("เริ่มทำงานเมื่อ (Trigger Event)")}</label>
+          <label htmlFor="workflow-trigger-event">{__uiText("เริ่มเมื่อ")}</label>
           <Select
             id="workflow-trigger-event"
             value={workflow.triggerEvent || 'message'}
@@ -103,13 +104,13 @@ export const EditBotWorkflow: React.FC = () => {
               })
             }
           >
-            <option value="message">{__uiText("มีข้อความเข้ามา (Message)")}</option>
-            <option value="chat_open">{__uiText("เปิดหน้าแชท (Chat Open)")}</option>
+            <option value="message">{__uiText("เมื่อลูกค้าส่งข้อความ")}</option>
+            <option value="chat_open">{__uiText("เมื่อลูกค้าเปิดแชต")}</option>
           </Select>
         </div>
 
         <div className={styles.settingRow}>
-          <label htmlFor="workflow-active">{__uiText("เปิดใช้งาน (Active)")}</label>
+          <label htmlFor="workflow-active">{__uiText("เปิดใช้งาน")}</label>
           <input
             id="workflow-active"
             type="checkbox"
@@ -119,11 +120,11 @@ export const EditBotWorkflow: React.FC = () => {
         </div>
       </div>
 
-      <h2 className={styles.sectionTitle}>{__uiText("Flow Design")}</h2>
+      <h2 className={styles.sectionTitle}>{__uiText("ขั้นตอนการตอบ")}</h2>
       {workflow.steps && workflow.steps.length > 0 ? (
         <BotFlowEditor workflow={workflow} onWorkflowChange={setWorkflow} />
       ) : (
-        <div className={styles.empty}>{__uiText("No steps yet. Add one to get started.")}</div>
+        <div className={styles.empty}>{__uiText("ยังไม่มีขั้นตอน — เพิ่มขั้นตอนแรกเพื่อเริ่ม")}</div>
       )}
     </AdminInsertLayout>
   );

@@ -208,11 +208,8 @@ function MechanicEditor({ id }: { id?: string }) {
     >
       <CouponFormErrorBanner error={saveError} />
       {saved && (
-        <div
-          role="status"
-          className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700"
-        >
-          {__uiText("บันทึกแล้ว")}</div>
+        <p role="status" className="text-sm font-medium text-ok">
+          {__uiText("บันทึกแล้ว")}</p>
       )}
 
       <Section title={__uiText("ข้อมูลโปร")}>
@@ -263,17 +260,17 @@ function MechanicEditor({ id }: { id?: string }) {
       </Section>
 
       {basicsOnly ? (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-          {__uiText("โปรประเภทนี้แก้ได้เฉพาะชื่อ/สถานะ — ส่วนลด วันที่ และ Product set แก้จากหน้านี้ไม่ได้")}</p>
+        <p className="rounded-lg border border-warn/20 bg-warn-container p-3 text-sm text-warn">
+          {__uiText("โปรประเภทนี้แก้ได้เฉพาะชื่อและสถานะ ส่วนลด วันที่ และชุดสินค้าแก้จากหน้านี้ไม่ได้")}</p>
       ) : (
         <>
           <Section
-            title={__uiText("Campaign")}
-            description={__uiText("ผูกโปรเข้า Campaign เพื่อใช้วันที่เดียวกันทั้งงาน — ไม่ผูกก็ได้แล้วกำหนดวันที่เอง")}
+            title={__uiText("แคมเปญ")}
+            description={__uiText("ผูกโปรเข้าแคมเปญเพื่อใช้วันที่เดียวกันทั้งงาน หรือไม่ผูกแล้วกำหนดวันที่เอง")}
           >
             <div className="sm:w-1/2 sm:pr-2">
               <Select
-                label={__uiText("Campaign")}
+                label={__uiText("แคมเปญ")}
                 data={[
                   NO_CAMPAIGN,
                   ...campaigns.map((item) => ({ value: item.id, label: item.name })),
@@ -284,7 +281,7 @@ function MechanicEditor({ id }: { id?: string }) {
             </div>
             {campaign ? (
               <div>
-                <p className="mb-1 text-sm text-ink-secondary">{__uiText("ระยะเวลา (ใช้วันที่ของ campaign)")}</p>
+                <p className="mb-1 text-sm text-ink-secondary">{__uiText("ระยะเวลา (ใช้วันที่ของแคมเปญ)")}</p>
                 <p className="text-sm text-ink">
                   {formatBangkokRange(campaign.start_at, campaign.end_at, 'th')}
                 </p>
@@ -315,16 +312,16 @@ function MechanicEditor({ id }: { id?: string }) {
 
           <Section
             title={__uiText("ส่วนลด")}
-            description={__uiText("อยากลดไม่เท่ากันในแต่ละสินค้า ให้สร้างโปรเพิ่มใน campaign เดียวกัน")}
+            description={__uiText("อยากลดไม่เท่ากันในแต่ละสินค้า ให้สร้างโปรเพิ่มในแคมเปญเดียวกัน")}
           >
             {legacy && (
               <div className="rounded-lg bg-gray-50 p-3 text-sm">
-                <p className="text-xs text-gray-500">{__uiText("ส่วนลดปัจจุบัน (แบบเดิม — ตั้งต่อ SKU, แก้ตรงนี้ไม่ได้)")}</p>
+                <p className="text-xs text-gray-500">{__uiText("ส่วนลดปัจจุบัน (แบบเดิม ตั้งทีละสินค้า แก้ตรงนี้ไม่ได้)")}</p>
                 <p className="font-medium text-ink">{legacyDiscount}</p>
               </div>
             )}
             {locked && (
-              <p id={lockHintId} className="text-xs text-amber-700">
+              <p id={lockHintId} className="text-xs text-warn">
                 {PICK_SET_FIRST}
               </p>
             )}
@@ -338,11 +335,11 @@ function MechanicEditor({ id }: { id?: string }) {
 
           <Section
             title={__uiText("จำกัดจำนวน (Flash sale)")}
-            description={__uiText("จำกัดจำนวนชิ้นที่ขายได้ในราคาโปร (นับรวมทุก SKU ของโปรนี้) — ครบแล้วราคาโปรหยุดใช้เอง ลูกค้าเห็นราคาปกติ")}
+            description={__uiText("จำกัดจำนวนชิ้นที่ขายได้ในราคาโปร (นับรวมทุกสินค้าของโปรนี้) ครบแล้วราคาโปรหยุดเอง ลูกค้าจะเห็นราคาปกติ")}
           >
             <div className="sm:w-1/2 sm:pr-2">
               <Input
-                label={__uiText("จำกัดจำนวน (ชิ้น) (Unit cap)")}
+                label={__uiText("จำกัดจำนวน (ชิ้น)")}
                 type="number"
                 min={1}
                 max={MAX_UNIT_CAP}
@@ -367,7 +364,7 @@ function MechanicEditor({ id }: { id?: string }) {
           </Section>
 
           <Section
-            title={__uiText("กลุ่มลูกค้า (Audience)")}
+            title={__uiText("กลุ่มลูกค้า")}
             description={__uiText("เลือกได้ว่าโปรนี้ใช้กับทุกคน หรือเฉพาะบางบริษัท — คนที่ไม่เข้าเงื่อนไขจะไม่เห็นโปรนี้เลย (ไม่มีราคาโปร ป้าย หรือขั้นบันได)")}
           >
             <div role="group" aria-label={__uiText("กลุ่มลูกค้าของโปร")}>
@@ -382,12 +379,12 @@ function MechanicEditor({ id }: { id?: string }) {
           </Section>
 
           <Section
-            title={__uiText("รายการสินค้า (Product set)")}
-            description={__uiText("ระบบคัดลอกรายการ SKU ของแต่ละชุดไว้ตอนกดบันทึก — แก้ชุดทีหลังไม่กระทบโปร จนกว่าจะเลือก “ใช้รายการล่าสุด”")}
+            title={__uiText("รายการสินค้า (ชุดสินค้า)")}
+            description={__uiText("ระบบเก็บรายการสินค้าของแต่ละชุดไว้ตอนกดบันทึก แก้ชุดทีหลังจะไม่กระทบโปร จนกว่าจะเลือก “ใช้รายการล่าสุด”")}
           >
             <div
               role="group"
-              aria-label={__uiText("Product set ของโปร")}
+              aria-label={__uiText("ชุดสินค้าของโปร")}
               aria-describedby={errors.sets ? setsErrorId : undefined}
             >
               <PromotionMechanicProductSets
@@ -408,8 +405,8 @@ function MechanicEditor({ id }: { id?: string }) {
 
       {isEdit && id && (
         <Section
-          title={__uiText("ลิงก์ Marketing")}
-          description={__uiText("ลิงก์เดียว — มือถือเด้งเข้าแอป/สโตร์ ส่วน desktop เปิดหน้าเว็บ เอาไปยิง ads ได้เลย")}
+          title={__uiText("ลิงก์การตลาด")}
+          description={__uiText("ลิงก์เดียวใช้ได้ทุกเครื่อง มือถือเปิดแอปหรือร้านแอป คอมพิวเตอร์เปิดหน้าเว็บ ใช้ในโฆษณาได้เลย")}
         >
           <MarketingLinkField type="promotion" id={id} buttonLabel="สร้างลิงก์" />
           <SmartLinkField type="promotion" id={id} buttonLabel="สร้าง (self-host)" />

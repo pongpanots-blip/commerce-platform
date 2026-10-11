@@ -4,7 +4,7 @@ import { getUiLocale as __dateLocale } from '@cp/ui';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { GrowthPlanPage, GrowthWorkspace as WorkspaceData } from '@cp/growth';
-import { Alert, ArrowLink, Button, ButtonLink, Chip, Empty, Field, Icon, Input, Page, PageHeader, Panel, PanelHead, RowLink, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, TitleBadge, fmt } from '@cp/ui';
+import { Alert, ArrowLink, Button, ButtonLink, Chip, Empty, Field, Icon, Input, Page, PageHeader, Panel, PanelHead, RowLink, StatGrid, StatTile, Table, TBody, TD, TH, THead, TR, fmt } from '@cp/ui';
 import { api, session } from '../../../lib/api';
 import { useAsync } from '../../hooks';
 import { Evidence, LoadState, PlanStatus, Readiness, templateLabels } from './shared';
@@ -20,9 +20,9 @@ export function GrowthWorkspace() {
   const data = state.data;
   const readOnly = session.claims()?.role === 'business_analyst';
   return <Page>
-    <PageHeader crumbs={[__uiText("Marketing"), __uiText("Growth")]} title={__uiText("Growth Workspace")} badge={<TitleBadge icon="insights">{__uiText("ข้อมูล → แผน → ตรวจ → ผลลัพธ์")}</TitleBadge>}
+    <PageHeader title={__uiText("วางแผนการเติบโต")}
       subtitle={__uiText("เลือกโอกาสที่มีหลักฐาน แล้วเตรียมแผนให้ทีมตรวจและลงมือทำ")}
-      actions={<><Button onClick={state.reload} icon="refresh">{__uiText("Refresh")}</Button>{!readOnly && <ButtonLink to="/marketing/growth/plans" icon="calendar_month">{__uiText("แผนและปฏิทิน")}</ButtonLink>}{!readOnly && <ButtonLink to="/marketing/growth/plans/new" variant="primary" icon="add">{__uiText("สร้างแผน")}</ButtonLink>}</>} />
+      actions={<><Button onClick={state.reload} icon="refresh">{__uiText("โหลดใหม่")}</Button>{!readOnly && <ButtonLink to="/marketing/growth/plans" icon="calendar_month">{__uiText("แผนและปฏิทิน")}</ButtonLink>}{!readOnly && <ButtonLink to="/marketing/growth/plans/new" variant="primary" icon="add">{__uiText("สร้างแผน")}</ButtonLink>}</>} />
     <LoadState state={state} />
     {!state.loading && !state.error && data && <>
       <div className="flex flex-wrap gap-2 items-center text-xs text-on-surface-variant">
@@ -33,8 +33,8 @@ export function GrowthWorkspace() {
       <StatGrid>{data.metrics.map((metric) => <StatTile key={metric.key} label={__uiText(metric.label)}
         value={metric.value === null ? __uiText('ยังไม่มีข้อมูล') : metric.unit === 'THB' ? fmt.baht(metric.value) : `${fmt.num(metric.value)}${metric.unit === 'percent' ? '%' : metric.unit === 'hours' ? __uiText(' ชม.') : ''}`}
         foot={__uiText(metric.note)} icon={metric.unit === 'THB' ? 'payments' : 'monitoring'} />)}</StatGrid>
-      <Panel><PanelHead title={__uiText("โอกาสที่ควรตรวจวันนี้")} icon="lightbulb" sub={__uiText("{0} รายการ",{'0':data.opportunities.length})} actions={<ArrowLink to="/marketing/research">{__uiText("เปิด Research")}</ArrowLink>} />
-        {!data.opportunities.length ? <Empty icon="lightbulb">{__uiText("ยังไม่มีโอกาสที่มีหลักฐานเพียงพอ · สร้างแผนเองหรือเริ่มจาก Research")}</Empty> : <div className="grid gap-3 p-4 md:grid-cols-2">
+      <Panel><PanelHead title={__uiText("โอกาสที่ควรตรวจวันนี้")} icon="lightbulb" sub={__uiText("{0} รายการ",{'0':data.opportunities.length})} actions={<ArrowLink to="/marketing/research">{__uiText("เปิดงานวิจัยตลาด")}</ArrowLink>} />
+        {!data.opportunities.length ? <Empty icon="lightbulb">{__uiText("ยังไม่มีโอกาสที่มีหลักฐานเพียงพอ · สร้างแผนเอง หรือเริ่มจากงานวิจัยตลาด")}</Empty> : <div className="grid gap-3 p-4 md:grid-cols-2">
           {data.opportunities.map((opportunity) => <article key={opportunity.id} className="rounded-lg border border-secondary-container p-4 min-w-0 space-y-3">
             <div className="flex items-center gap-2"><Icon name="trending_up" className="text-primary" /><Chip tone={opportunity.priority === 'high' ? 'primary' : 'muted'}>{opportunity.priority === 'high' ? __uiText("ตรวจเป็นลำดับแรก") : __uiText("โอกาสเพิ่มเติม")}</Chip><Chip>{templateLabels[opportunity.template]}</Chip></div>
             <h2 className="text-sm font-semibold">{opportunity.title}</h2><p className="text-xs text-on-surface-variant">{opportunity.reason}</p>
@@ -51,7 +51,7 @@ export function GrowthWorkspace() {
     <Panel><PanelHead title={__uiText("แผนที่รอตรวจ")} icon="rate_review"
       badge={reviewQueue.data && !reviewQueue.loading && !reviewQueue.error ? <Chip tone="warn">{fmt.num(reviewQueue.data.totalCount)} {__uiText(" แผน")}</Chip> : undefined}
       sub={reviewQueue.data && !reviewQueue.loading && !reviewQueue.error ? __uiText("แสดง {0} จาก {1} แผน · เรียงตามการแก้ไขล่าสุด",{'0':fmt.num(reviewQueue.data.items.length),'1':fmt.num(reviewQueue.data.totalCount)}) : undefined}
-      actions={<><Button size="sm" icon="refresh" onClick={reviewQueue.reload}>{__uiText("Refresh แผนรอตรวจ")}</Button><ArrowLink to="/marketing/growth/plans?status=review">{__uiText("เปิดแผนรอตรวจทั้งหมด")}</ArrowLink></>} />
+      actions={<><Button size="sm" icon="refresh" onClick={reviewQueue.reload}>{__uiText("โหลดแผนรอตรวจใหม่")}</Button><ArrowLink to="/marketing/growth/plans?status=review">{__uiText("เปิดแผนรอตรวจทั้งหมด")}</ArrowLink></>} />
       {(reviewQueue.loading || reviewQueue.error) && <div className="p-4"><LoadState state={reviewQueue} /></div>}
       {!reviewQueue.loading && !reviewQueue.error && reviewQueue.data && (!reviewQueue.data.items.length ? <Empty icon="rate_review">{__uiText("ยังไม่มีแผนที่รอตรวจ")}</Empty> :
         <Table><THead><TH>{__uiText("แผน")}</TH><TH>{__uiText("เจ้าของงาน")}</TH><TH>{__uiText("กำหนดวัน (ไทย)")}</TH><TH>{__uiText("สถานะ")}</TH></THead><TBody>{reviewQueue.data.items.map((item) => <TR key={item.id}>
@@ -63,8 +63,8 @@ export function GrowthWorkspace() {
       <Panel><PanelHead title={__uiText("ส่งต่องานให้ทีมขาย")} icon="support_agent" />
         <div className="p-4 space-y-4"><p className="text-xs text-on-surface-variant">{__uiText("ตรวจประวัติของบริษัทก่อนวางแผนการติดต่อ หรือต่อจากคิว Winback เดิม")}</p>
           <form className="flex flex-wrap items-end gap-2" onSubmit={(event) => { event.preventDefault(); if (companyId.trim()) navigate(`/marketing/growth/companies/${encodeURIComponent(companyId.trim())}`); }}>
-            <Field label={__uiText("Company ID")}><Input required value={companyId} onChange={(event) => setCompanyId(event.target.value)} placeholder={__uiText("รหัสบริษัทจากรายงานลูกค้า")} /></Field><Button type="submit" icon="history">{__uiText("ดูประวัติ")}</Button>
-          </form><ArrowLink to="/reports/winback">{__uiText("เปิดงาน Winback ของฝ่ายขาย")}</ArrowLink>
+            <Field label={__uiText("รหัสบริษัท")}><Input required value={companyId} onChange={(event) => setCompanyId(event.target.value)} placeholder={__uiText("รหัสบริษัทจากรายงานลูกค้า")} /></Field><Button type="submit" icon="history">{__uiText("ดูประวัติ")}</Button>
+          </form><ArrowLink to="/reports/winback">{__uiText("เปิดงานชวนลูกค้าเก่ากลับของฝ่ายขาย")}</ArrowLink>
         </div>
       </Panel>
     </div>

@@ -11,6 +11,198 @@
     "th": "ปลายทางที่รับเหตุการณ์จากระบบของเรา เพิ่ม เปิด ปิด หรือลบได้",
     "en": "Destinations that receive events from our system; add, enable, disable or delete them"
   },
+  "สินค้าบนร้านค้าและสินค้าทุกรายการตามรหัสสินค้า": {
+    "th": "สินค้าบนร้านค้าและสินค้าทุกรายการตามรหัสสินค้า",
+    "en": "Products on the store and every product by product code"
+  },
+  "รูปและวิดีโอสินค้า": {
+    "th": "รูปและวิดีโอสินค้า",
+    "en": "Product photos & videos"
+  },
+  "อัปโหลดรูปและวิดีโอให้สินค้า": {
+    "th": "อัปโหลดรูปและวิดีโอให้สินค้า",
+    "en": "Upload photos and videos for products"
+  },
+  "ซัพพลายเออร์และรอบสั่งซื้อ": {
+    "th": "ซัพพลายเออร์และรอบสั่งซื้อ",
+    "en": "Suppliers & order periods"
+  },
+  "ซัพพลายเออร์ ข้อมูลติดต่อ และรอบสั่งซื้อสินค้าสั่งล่วงหน้า": {
+    "th": "ซัพพลายเออร์ ข้อมูลติดต่อ และรอบสั่งซื้อสินค้าสั่งล่วงหน้า",
+    "en": "Suppliers, their contacts and pre-order periods"
+  },
+  "ราคาและข้อมูลสินค้าที่รออนุมัติ": {
+    "th": "ราคาและข้อมูลสินค้าที่รออนุมัติ",
+    "en": "Prices & product changes to approve"
+  },
+  "ราคาขาย ราคาเฉพาะลูกค้า และข้อมูลสินค้าที่เปลี่ยนรออนุมัติ": {
+    "th": "ราคาขาย ราคาเฉพาะลูกค้า และข้อมูลสินค้าที่เปลี่ยนรออนุมัติ",
+    "en": "Selling prices, customer-specific prices and product changes awaiting approval"
+  },
+  "รับเข้า ปรับ โอน และยอดสต็อกแต่ละคลัง": {
+    "th": "รับเข้า ปรับ โอน และยอดสต็อกแต่ละคลัง",
+    "en": "Receive, adjust and transfer stock, and stock per warehouse"
+  },
+  "คำสั่งซื้อ การจองสต็อก การตรวจ และพิมพ์สติกเกอร์": {
+    "th": "คำสั่งซื้อ การจองสต็อก การตรวจ และพิมพ์สติกเกอร์",
+    "en": "Orders, stock reservations, order review and box stickers"
+  },
+  "การจัดส่ง": {
+    "th": "การจัดส่ง",
+    "en": "Shipping"
+  },
+  "สถานะการจัดส่งและตารางรอบส่ง": {
+    "th": "สถานะการจัดส่งและตารางรอบส่ง",
+    "en": "Shipment status and the delivery schedule"
+  },
+  "วางบิลและเครดิต": {
+    "th": "วางบิลและเครดิต",
+    "en": "Billing & credit"
+  },
+  "ใบแจ้งหนี้ เครดิตเทอม ใบลดหนี้ และการคืนเครดิต": {
+    "th": "ใบแจ้งหนี้ เครดิตเทอม ใบลดหนี้ และการคืนเครดิต",
+    "en": "Invoices, credit terms, credit notes and credit back"
+  },
+  "ข้อมูลบริษัทลูกค้า เครดิต สิทธิ์สั่งซื้อ และข้อมูลติดต่อ": {
+    "th": "ข้อมูลบริษัทลูกค้า เครดิต สิทธิ์สั่งซื้อ และข้อมูลติดต่อ",
+    "en": "Customer companies, credit, ordering rights and contacts"
+  },
+  "ผู้ใช้และการยืนยันตัวตน": {
+    "th": "ผู้ใช้และการยืนยันตัวตน",
+    "en": "Users & identity checks"
+  },
+  "บัญชีผู้ใช้ของลูกค้าและเอกสารยืนยันตัวตน": {
+    "th": "บัญชีผู้ใช้ของลูกค้าและเอกสารยืนยันตัวตน",
+    "en": "Customer user accounts and identity documents"
+  },
+  "สั่งแทนลูกค้า สินค้าตัวอย่าง คำขอราคา และการย้ายของในตะกร้า": {
+    "th": "สั่งแทนลูกค้า สินค้าตัวอย่าง คำขอราคา และการย้ายของในตะกร้า",
+    "en": "Orders on behalf of customers, samples, price requests and cart moves"
+  },
+  "ลูกค้าที่หยุดสั่ง โอกาสขาย ลีด และพนักงานขายที่ดูแล": {
+    "th": "ลูกค้าที่หยุดสั่ง โอกาสขาย ลีด และพนักงานขายที่ดูแล",
+    "en": "Customers who stopped ordering, opportunities, leads and assigned sales reps"
+  },
+  "วางแผนและวิจัยตลาด": {
+    "th": "วางแผนและวิจัยตลาด",
+    "en": "Planning & market research"
+  },
+  "วางแผนการเติบโต แผนงาน ผู้ช่วยวิเคราะห์ งานวิจัย และความพร้อมแคมเปญ": {
+    "th": "วางแผนการเติบโต แผนงาน ผู้ช่วยวิเคราะห์ งานวิจัย และความพร้อมแคมเปญ",
+    "en": "Growth planning, plans, the analyst assistant, research and campaign readiness"
+  },
+  "โปรโมชันและคูปอง": {
+    "th": "โปรโมชันและคูปอง",
+    "en": "Promotions & coupons"
+  },
+  "แคมเปญ คูปอง กติกาส่วนลด ชุดสินค้า และหน้าโปรโมชัน": {
+    "th": "แคมเปญ คูปอง กติกาส่วนลด ชุดสินค้า และหน้าโปรโมชัน",
+    "en": "Campaigns, coupons, discount rules, product sets and promotion pages"
+  },
+  "กลุ่มลูกค้าสำหรับแคมเปญ กลุ่มตาม event และ event ที่ระบบรับ": {
+    "th": "กลุ่มลูกค้าสำหรับแคมเปญ กลุ่มตาม event และ event ที่ระบบรับ",
+    "en": "Campaign segments, event-based segments and received events"
+  },
+  "ข้อความถึงลูกค้า": {
+    "th": "ข้อความถึงลูกค้า",
+    "en": "Customer messages"
+  },
+  "ข้อความอัตโนมัติ การแจ้งเตือน แม่แบบข้อความ และอีเมลต้อนรับลีด": {
+    "th": "ข้อความอัตโนมัติ การแจ้งเตือน แม่แบบข้อความ และอีเมลต้อนรับลีด",
+    "en": "Automated messages, notifications, message templates and the lead welcome email"
+  },
+  "ราคาคู่แข่ง": {
+    "th": "ราคาคู่แข่ง",
+    "en": "Competitor prices"
+  },
+  "เทียบราคากับคู่แข่ง สินค้าจากเว็บคู่แข่ง และวางแผนแพ็กและราคา": {
+    "th": "เทียบราคากับคู่แข่ง สินค้าจากเว็บคู่แข่ง และวางแผนแพ็กและราคา",
+    "en": "Compare with competitors, competitor products and pack & price planning"
+  },
+  "แชตบอต": {
+    "th": "แชตบอต",
+    "en": "Chatbot"
+  },
+  "คำถามที่แชตบอตเข้าใจ ลำดับการตอบ และข้อความสำเร็จรูป": {
+    "th": "คำถามที่แชตบอตเข้าใจ ลำดับการตอบ และข้อความสำเร็จรูป",
+    "en": "Questions the chatbot understands, reply flows and ready-made messages"
+  },
+  "ยอดขายและออเดอร์": {
+    "th": "ยอดขายและออเดอร์",
+    "en": "Sales & orders"
+  },
+  "ยอดขาย ออเดอร์ กลุ่มลูกค้าเป้าหมาย และงานติดตามสั่งซ้ำ": {
+    "th": "ยอดขาย ออเดอร์ กลุ่มลูกค้าเป้าหมาย และงานติดตามสั่งซ้ำ",
+    "en": "Sales, orders, target customer groups and reorder follow-up"
+  },
+  "รายงานสินค้าและราคา": {
+    "th": "รายงานสินค้าและราคา",
+    "en": "Product & price reports"
+  },
+  "สินค้าขายดี สถานะสินค้า และราคาที่ลูกค้าเห็น": {
+    "th": "สินค้าขายดี สถานะสินค้า และราคาที่ลูกค้าเห็น",
+    "en": "Best sellers, product status and the prices customers see"
+  },
+  "รายงานลูกค้า": {
+    "th": "รายงานลูกค้า",
+    "en": "Customer reports"
+  },
+  "ลูกค้าและบริษัท ยอดซื้อ และพฤติกรรมการสั่งซื้อ": {
+    "th": "ลูกค้าและบริษัท ยอดซื้อ และพฤติกรรมการสั่งซื้อ",
+    "en": "Customers and companies, spend and ordering behaviour"
+  },
+  "การเงินและเป้ากำไร": {
+    "th": "การเงินและเป้ากำไร",
+    "en": "Finance & profit goals"
+  },
+  "ฐานการเงิน ยอดที่บันทึก และเป้ากำไรกับต้นทุน": {
+    "th": "ฐานการเงิน ยอดที่บันทึก และเป้ากำไรกับต้นทุน",
+    "en": "Financial coverage, recorded totals and profit and cost goals"
+  },
+  "บัญชีทีมงาน บัญชีหลังร้าน และคำขอใช้งานหลังร้าน": {
+    "th": "บัญชีทีมงาน บัญชีหลังร้าน และคำขอใช้งานหลังร้าน",
+    "en": "Staff accounts, store back-office accounts and back-office access requests"
+  },
+  "การเชื่อมต่อระบบ": {
+    "th": "การเชื่อมต่อระบบ",
+    "en": "System connections"
+  },
+  "ระบบที่เชื่อมต่อ เหตุการณ์ขาเข้าและขาออก รายการส่งไม่สำเร็จ และผู้ช่วย AI": {
+    "th": "ระบบที่เชื่อมต่อ เหตุการณ์ขาเข้าและขาออก รายการส่งไม่สำเร็จ และผู้ช่วย AI",
+    "en": "Connected systems, incoming and outgoing events, failed deliveries and AI assistants"
+  },
+  "งานเบื้องหลังและบันทึก": {
+    "th": "งานเบื้องหลังและบันทึก",
+    "en": "Background jobs & logs"
+  },
+  "งานซิงก์ งานตามเวลา และบันทึกข้อมูลระหว่างระบบ": {
+    "th": "งานซิงก์ งานตามเวลา และบันทึกข้อมูลระหว่างระบบ",
+    "en": "Sync jobs, scheduled tasks and logs between systems"
+  },
+  "การแจ้งเตือน": {
+    "th": "การแจ้งเตือน",
+    "en": "Notifications"
+  },
+  "ประเภทการแจ้งเตือน ประวัติ สถิติการส่ง และผลการแจ้งเตือนสินค้า": {
+    "th": "ประเภทการแจ้งเตือน ประวัติ สถิติการส่ง และผลการแจ้งเตือนสินค้า",
+    "en": "Notification types, history, delivery stats and product alert results"
+  },
+  "ตั้งค่าและตรวจระบบการตลาด": {
+    "th": "ตั้งค่าและตรวจระบบการตลาด",
+    "en": "Marketing settings & checks"
+  },
+  "ค่ากลางของข้อความอัตโนมัติ คิวงาน การตรวจข้อเสนอ และเส้นทางของลูกค้า": {
+    "th": "ค่ากลางของข้อความอัตโนมัติ คิวงาน การตรวจข้อเสนอ และเส้นทางของลูกค้า",
+    "en": "Shared settings for automated messages, the queue, offer checks and the customer journey"
+  },
+  "เครื่องมือทดสอบและเทียบระบบ": {
+    "th": "เครื่องมือทดสอบและเทียบระบบ",
+    "en": "Test & comparison tools"
+  },
+  "จำลองข้อมูลระบบหลัก (ERP) ทดสอบชำระเงิน และเทียบผลระบบใหม่กับระบบเดิม": {
+    "th": "จำลองข้อมูลระบบหลัก (ERP) ทดสอบชำระเงิน และเทียบผลระบบใหม่กับระบบเดิม",
+    "en": "Simulate ERP data, test payments and compare the new system with the old one"
+  },
   "ภาพรวม": {
     "th": "ภาพรวม",
     "en": "Overview"

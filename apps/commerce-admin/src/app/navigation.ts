@@ -154,6 +154,46 @@ const NAV: Record<SectionId, NavEntry[]> = {
   ],
 };
 
+export interface FeatureGroup { id: string; label: string; description: string; routes: readonly string[] }
+
+/**
+ * Pages that do one job together, shown as one feature: one card on the section's task index and a tab strip
+ * on top of each member page (FeatureTabs). Routes, permissions and menu search are unchanged; a role sees only
+ * the members it may open. Routes in the same group stay in the same section; the first route is the feature's home.
+ */
+export const FEATURE_GROUPS: readonly FeatureGroup[] = [
+  { id: 'products', label: 'สินค้า', description: 'สินค้าบนร้านค้าและสินค้าทุกรายการตามรหัสสินค้า', routes: ['/j/allproducts', '/products'] },
+  { id: 'product-media', label: 'รูปและวิดีโอสินค้า', description: 'อัปโหลดรูปและวิดีโอให้สินค้า', routes: ['/j/product/bulk-image-upload', '/j/product/video-upload'] },
+  { id: 'suppliers', label: 'ซัพพลายเออร์และรอบสั่งซื้อ', description: 'ซัพพลายเออร์ ข้อมูลติดต่อ และรอบสั่งซื้อสินค้าสั่งล่วงหน้า', routes: ['/j/suppliers', '/order-periods'] },
+  { id: 'prices', label: 'ราคาและข้อมูลสินค้าที่รออนุมัติ', description: 'ราคาขาย ราคาเฉพาะลูกค้า และข้อมูลสินค้าที่เปลี่ยนรออนุมัติ', routes: ['/product-prices', '/prices/staff', '/product-master-queue'] },
+  { id: 'stock', label: 'สต็อก', description: 'รับเข้า ปรับ โอน และยอดสต็อกแต่ละคลัง', routes: ['/stock-moves', '/erp/inventory-warehouse'] },
+  { id: 'orders', label: 'คำสั่งซื้อ', description: 'คำสั่งซื้อ การจองสต็อก การตรวจ และพิมพ์สติกเกอร์', routes: ['/j/order', '/orders', '/reservations', '/review/orders', '/j/batch-sticker'] },
+  { id: 'shipping', label: 'การจัดส่ง', description: 'สถานะการจัดส่งและตารางรอบส่ง', routes: ['/j/shipments', '/j/cs/delivery-schedule'] },
+  { id: 'billing', label: 'วางบิลและเครดิต', description: 'ใบแจ้งหนี้ เครดิตเทอม ใบลดหนี้ และการคืนเครดิต', routes: ['/j/billing', '/j/credit-terms', '/j/credit-notes', '/j/credit-backs'] },
+  { id: 'companies', label: 'บริษัทลูกค้า', description: 'ข้อมูลบริษัทลูกค้า เครดิต สิทธิ์สั่งซื้อ และข้อมูลติดต่อ', routes: ['/j/company', '/customers'] },
+  { id: 'users', label: 'ผู้ใช้และการยืนยันตัวตน', description: 'บัญชีผู้ใช้ของลูกค้าและเอกสารยืนยันตัวตน', routes: ['/j/allusers', '/j/kyc'] },
+  { id: 'service', label: 'งานบริการลูกค้า', description: 'สั่งแทนลูกค้า สินค้าตัวอย่าง คำขอราคา และการย้ายของในตะกร้า', routes: ['/cs', '/j/price-requests', '/j/cs/cart-move-categories'] },
+  { id: 'winback', label: 'ติดตามลูกค้าเก่า', description: 'ลูกค้าที่หยุดสั่ง โอกาสขาย ลีด และพนักงานขายที่ดูแล', routes: ['/reports/winback', '/reports/winback/opportunities', '/reports/winback/my', '/cs/sales-assignment'] },
+  { id: 'growth', label: 'วางแผนและวิจัยตลาด', description: 'วางแผนการเติบโต แผนงาน ผู้ช่วยวิเคราะห์ งานวิจัย และความพร้อมแคมเปญ', routes: ['/marketing/growth', '/marketing/growth/plans', '/planning/marketing-readiness', '/marketing/analyst', '/marketing/research', '/marketing/restaurants'] },
+  { id: 'promotions', label: 'โปรโมชันและคูปอง', description: 'แคมเปญ คูปอง กติกาส่วนลด ชุดสินค้า และหน้าโปรโมชัน', routes: ['/j/promotions/campaigns', '/j/coupons', '/j/promotions-mechanic', '/j/promotion-product-sets', '/j/promotion-pages', '/planning/promotions'] },
+  { id: 'audiences', label: 'กลุ่มลูกค้า', description: 'กลุ่มลูกค้าสำหรับแคมเปญ กลุ่มตาม event และ event ที่ระบบรับ', routes: ['/j/segments', '/marketing/dynamic-segments', '/marketing/events'] },
+  { id: 'messages', label: 'ข้อความถึงลูกค้า', description: 'ข้อความอัตโนมัติ การแจ้งเตือน แม่แบบข้อความ และอีเมลต้อนรับลีด', routes: ['/marketing/workflows', '/j/marketing/push-campaigns', '/j/marketing/notify-templates', '/j/marketing/welcome-lead-email'] },
+  { id: 'competitors', label: 'ราคาคู่แข่ง', description: 'เทียบราคากับคู่แข่ง สินค้าจากเว็บคู่แข่ง และวางแผนแพ็กและราคา', routes: ['/j/marketing/competitor-prices', '/j/marketing/scraped-catalog', '/planning/pack-prices'] },
+  { id: 'chatbot', label: 'แชตบอต', description: 'คำถามที่แชตบอตเข้าใจ ลำดับการตอบ และข้อความสำเร็จรูป', routes: ['/j/bot/intent-rules', '/j/bot/workflows', '/j/bot/templates'] },
+  { id: 'sales-reports', label: 'ยอดขายและออเดอร์', description: 'ยอดขาย ออเดอร์ กลุ่มลูกค้าเป้าหมาย และงานติดตามสั่งซ้ำ', routes: ['/reports/sales', '/reports/orders', '/reports/order-targetgroup', '/planning/sales-work'] },
+  { id: 'catalog-reports', label: 'รายงานสินค้าและราคา', description: 'สินค้าขายดี สถานะสินค้า และราคาที่ลูกค้าเห็น', routes: ['/reports/products', '/reports/prices'] },
+  { id: 'customer-reports', label: 'รายงานลูกค้า', description: 'ลูกค้าและบริษัท ยอดซื้อ และพฤติกรรมการสั่งซื้อ', routes: ['/reports/customers', '/analysis/customer-behavior'] },
+  { id: 'finance', label: 'การเงินและเป้ากำไร', description: 'ฐานการเงิน ยอดที่บันทึก และเป้ากำไรกับต้นทุน', routes: ['/analysis/financial', '/planning/profit-goals'] },
+  { id: 'team', label: 'ทีมงานและสิทธิ์', description: 'บัญชีทีมงาน บัญชีหลังร้าน และคำขอใช้งานหลังร้าน', routes: ['/settings/staff', '/settings/josh-staff', '/j/admin-access'] },
+  { id: 'connections', label: 'การเชื่อมต่อระบบ', description: 'ระบบที่เชื่อมต่อ เหตุการณ์ขาเข้าและขาออก รายการส่งไม่สำเร็จ และผู้ช่วย AI', routes: ['/integrations', '/webhooks', '/subscriptions', '/erp/webhook-dead-letter', '/ai/connectors'] },
+  { id: 'system-logs', label: 'งานเบื้องหลังและบันทึก', description: 'งานซิงก์ งานตามเวลา และบันทึกข้อมูลระหว่างระบบ', routes: ['/sync-jobs', '/scheduled-tasks', '/erp/inbound-log', '/josh-api-logs', '/erp/josh-logs'] },
+  { id: 'notifications', label: 'การแจ้งเตือน', description: 'ประเภทการแจ้งเตือน ประวัติ สถิติการส่ง และผลการแจ้งเตือนสินค้า', routes: ['/j/cs/notification-catalog', '/j/cs/notification-log', '/j/cs/notification-stats', '/j/cs/product-notify-funnel'] },
+  { id: 'marketing-ops', label: 'ตั้งค่าและตรวจระบบการตลาด', description: 'ค่ากลางของข้อความอัตโนมัติ คิวงาน การตรวจข้อเสนอ และเส้นทางของลูกค้า', routes: ['/j/marketing/settings', '/j/marketing/queue', '/j/marketing/offers-check', '/j/marketing/journey-funnel', '/j/marketing/scraping-sources'] },
+  { id: 'test-tools', label: 'เครื่องมือทดสอบและเทียบระบบ', description: 'จำลองข้อมูลระบบหลัก (ERP) ทดสอบชำระเงิน และเทียบผลระบบใหม่กับระบบเดิม', routes: ['/erp/simulator', '/j/erp/webhook-simulator', '/erp-stock', '/j/kbank/testing-console', '/j/jagota/payment-testing', '/erp/jagota-shadow', '/reports/price-shadow'] },
+];
+
+export const featureGroupOf = (to: string) => FEATURE_GROUPS.find((g) => g.routes.includes(to));
+
 /** Every role's landing: big shortcuts to its main tasks (pages/RoleHome.tsx); no API calls, so it cannot 403. */
 export const HOME: NavItem = { to: '/home', label: 'หน้าแรก', end: true, icon: 'dashboard', description: 'งานหลักของคุณในที่เดียว เลือกงานที่ต้องการทำวันนี้' };
 export const DASHBOARD: NavItem = { to: '/', label: 'แดชบอร์ด', end: true, icon: 'space_dashboard', description: 'งานที่ต้องติดตามและสถานะระบบวันนี้ในหน้าเดียว' };

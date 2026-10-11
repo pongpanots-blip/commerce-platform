@@ -19,3 +19,11 @@ Kept on purpose: `/products` vs `/j/allproducts` (commerce vs josh store), shado
 
 Verify: `npx vitest run src` in apps/commerce-admin → 881 pass; fails: task-navigation.spec "does not grant inaccessible indexes"
 (pre-existing on 3e0133a) and an app.spec timeout under load (passes alone). `vite build` ok.
+
+## Part 2 · feature groups (same day)
+
+`FEATURE_GROUPS` (navigation.ts): 28 groups of pages that do one job. A section's task index shows one card per
+group with a link to each member (admin: 109 cards → 41), and every member page gets the same tab strip on top
+(`FeatureTabs`, rendered once in CommerceWorkspace; not on the Welcome Lead Email page). Routes, permissions and
+⌘K search unchanged; a role sees only members it may open. Checked in the browser at 1400px and 375px.
+Spec: `app/feature-groups.spec.tsx`.

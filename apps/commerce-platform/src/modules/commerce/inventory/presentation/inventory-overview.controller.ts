@@ -3,6 +3,8 @@ import { DataSource } from 'typeorm';
 import { StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 
 const PAGE_SIZE = 50;
+const catalogName = (lang: 'th' | 'en') =>
+  `(SELECT t->>'product_name' FROM jsonb_array_elements(c.translations) t WHERE t->>'language_code' = '${lang}' LIMIT 1)`;
 
 /**
  * Read model for the "Inventory per warehouse" admin page: stock by SKU and
@@ -32,12 +34,15 @@ export class InventoryOverviewController {
     let where = 'l.deleted_at IS NULL';
     if (warehouse) { params.push(warehouse); where += ` AND w.code = $${params.length}`; }
     const q = search.trim().slice(0, 100).replace(/[%_]/g, '');
-    if (q) { params.push(`%${q}%`); where += ` AND (p.sku ILIKE $${params.length} OR p.name ILIKE $${params.length})`; }
-    const joins = 'FROM inventory_levels l JOIN products p ON p.id = l.product_id JOIN warehouses w ON w.id = l.warehouse_id';
+    if (q) { params.push(`%${q}%`); where += ` AND (p.sku ILIKE $${params.length} OR p.name ILIKE $${params.length} OR cp.name ILIKE $${params.length})`; }
+    // ERP-seeded products carry the code as their name: show the shop's Thai (else English) name from the catalogue copy.
+    const joins = `FROM inventory_levels l JOIN products p ON p.id = l.product_id JOIN warehouses w ON w.id = l.warehouse_id
+       LEFT JOIN LATERAL (SELECT COALESCE(${catalogName('th')}, ${catalogName('en')}) AS name FROM josh_catalog_products c
+         WHERE c.sku = p.sku AND c.removed_at IS NULL LIMIT 1) cp ON true`;
 
     const [{ total }] = await this.db.query(`SELECT count(*)::int AS total ${joins} WHERE ${where}`, params);
     const items = await this.db.query(
-      `SELECT l.id, p.sku, p.name, w.code AS "warehouseCode", w.stock_source AS "stockSource",
+      `SELECT l.id, p.sku, COALESCE(cp.name, p.name) AS name, w.code AS "warehouseCode", w.stock_source AS "stockSource",
               l.quantity::float AS quantity, l.reserved::float AS reserved, (l.quantity - l.reserved)::float AS available, l.updated_at AS "updatedAt",
               m.source AS "lastSource", m.reason AS "lastReason", m.status AS "lastStatus", m.occurred_at AS "lastChangedAt"
        ${joins}

@@ -31,12 +31,14 @@ type NavEntry = Omit<NavItem, 'icon' | 'badge'> & {
   description: string;
   /** A different label for some roles (e.g. a rep's own sales: "My sales"). */
   roleLabels?: Readonly<Record<string, string>>;
+  /** Left out of the menu for a role that can open this other page, which covers the same job. */
+  hiddenIfCanSee?: string;
 };
 
 const NAV: Record<SectionId, NavEntry[]> = {
   catalog: [
-    { to: '/j/allproducts', label: 'สินค้าบนร้านค้า', activeFor: ['/j/product'], description: 'ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า' },
-    { to: '/products', label: 'ค้นหาสินค้าตามรหัส', description: 'ค้นหาสินค้าทุกรายการตามรหัสสินค้า และดูสต็อกแต่ละคลัง' },
+    { to: '/j/allproducts', label: 'สินค้าบนร้านค้า', activeFor: ['/j/product', '/products'], description: 'ค้นหา แก้ไข และเพิ่มสินค้าที่ขายบนร้านค้า' },
+    { to: '/products', label: 'ค้นหาสินค้าตามรหัส', hiddenIfCanSee: '/j/allproducts', description: 'ค้นหาสินค้าทุกรายการตามรหัสสินค้า และดูสต็อกแต่ละคลัง' },
     { to: '/j/categories', label: 'จัดการหมวดหมู่', description: 'จัดโครงสร้าง ลำดับ และรูปของหมวดหมู่บนร้านค้า' },
     { to: '/j/brands', label: 'แบรนด์', description: 'รายชื่อแบรนด์และโลโก้ที่ใช้กับสินค้า' },
     { to: '/j/product/bulk-image-upload', label: 'อัปโหลดรูปสินค้า', end: true, description: 'อัปโหลดรูปให้สินค้าหลายรายการพร้อมกัน' },
@@ -162,11 +164,10 @@ export interface FeatureGroup { id: string; label: string; description: string; 
  * the members it may open. Routes in the same group stay in the same section; the first route is the feature's home.
  */
 export const FEATURE_GROUPS: readonly FeatureGroup[] = [
-  { id: 'products', label: 'สินค้า', description: 'สินค้าบนร้านค้าและสินค้าทุกรายการตามรหัสสินค้า', routes: ['/j/allproducts', '/products'] },
+  { id: 'products', label: 'สินค้าและราคา', description: 'ค้นหาสินค้าด้วยชื่อหรือรหัส ราคาขาย ราคาเฉพาะลูกค้า และข้อมูลสินค้าที่รออนุมัติ', routes: ['/j/allproducts', '/products', '/product-prices', '/prices/staff', '/product-master-queue'] },
   { id: 'product-media', label: 'รูปและวิดีโอสินค้า', description: 'อัปโหลดรูปและวิดีโอให้สินค้า', routes: ['/j/product/bulk-image-upload', '/j/product/video-upload'] },
   { id: 'suppliers', label: 'ซัพพลายเออร์และรอบสั่งซื้อ', description: 'ซัพพลายเออร์ ข้อมูลติดต่อ และรอบสั่งซื้อสินค้าสั่งล่วงหน้า', routes: ['/j/suppliers', '/order-periods'] },
-  { id: 'prices', label: 'ราคาและข้อมูลสินค้าที่รออนุมัติ', description: 'ราคาขาย ราคาเฉพาะลูกค้า และข้อมูลสินค้าที่เปลี่ยนรออนุมัติ', routes: ['/product-prices', '/prices/staff', '/product-master-queue'] },
-  { id: 'stock', label: 'สต็อก', description: 'รับเข้า ปรับ โอน และยอดสต็อกแต่ละคลัง', routes: ['/stock-moves', '/erp/inventory-warehouse'] },
+  { id: 'stock', label: 'สต็อก', description: 'ยอดสต็อกแต่ละคลัง และการรับเข้า ปรับ โอน', routes: ['/erp/inventory-warehouse', '/stock-moves'] },
   { id: 'orders', label: 'คำสั่งซื้อ', description: 'คำสั่งซื้อ การจองสต็อก การตรวจ และพิมพ์สติกเกอร์', routes: ['/j/order', '/orders', '/reservations', '/review/orders', '/j/batch-sticker'] },
   { id: 'shipping', label: 'การจัดส่ง', description: 'สถานะการจัดส่งและตารางรอบส่ง', routes: ['/j/shipments', '/j/cs/delivery-schedule'] },
   { id: 'billing', label: 'วางบิลและเครดิต', description: 'ใบแจ้งหนี้ เครดิตเทอม ใบลดหนี้ และการคืนเครดิต', routes: ['/j/billing', '/j/credit-terms', '/j/credit-notes', '/j/credit-backs'] },
@@ -457,7 +458,8 @@ export function navFor(roleRaw?: string): NavGroup[] {
   const role = normalizeRole(roleRaw);
   const groups = SECTIONS.flatMap((section): NavGroup[] => {
     const links = NAV_ENTRIES.filter((item) => item.section === section.id).filter((item) => canSee(role, item.to))
-      .map(({ roleLabels, ...item }): NavItem => ({ ...item, label: roleLabels?.[role] ?? item.label }));
+      .filter((item) => !item.hiddenIfCanSee || !canSee(role, item.hiddenIfCanSee))
+      .map(({ roleLabels, hiddenIfCanSee: _hidden, ...item }): NavItem => ({ ...item, label: roleLabels?.[role] ?? item.label }));
     if (!links.length) return [];
     // Apply disclosure after permissions: a smaller role still sees its own useful tasks first.
     const onlyMore = links.every(item => item.more);
@@ -498,7 +500,6 @@ export const ROLE_SHORTCUTS: Readonly<Record<string, readonly Shortcut[]>> = {
     { to: '/settings/staff', icon: 'group' },
   ],
   merchandising: [
-    { to: '/products', icon: 'inventory_2' },
     { to: '/j/allproducts', icon: 'storefront' },
     { to: '/product-prices', icon: 'sell' },
     { to: '/product-master-queue', icon: 'fact_check' },
@@ -509,7 +510,6 @@ export const ROLE_SHORTCUTS: Readonly<Record<string, readonly Shortcut[]>> = {
     { to: '/j/product/bulk-image-upload', icon: 'photo_library' },
     { to: '/j/allproducts', icon: 'storefront' },
     { to: '/j/brands', icon: 'star' },
-    { to: '/products', icon: 'inventory_2' },
   ],
   marketing: [
     { to: '/marketing/growth', icon: 'trending_up' },

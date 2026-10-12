@@ -82,6 +82,8 @@ export default function AllProduct() {
     text: string;
   } | null>(null);
   const search = filter.trim().length >= 4 ? filter.trim() : '';
+  // A product code (letters + digits, no spaces) is matched exactly by code; anything else searches names.
+  const isCode = /^[A-Za-z0-9][A-Za-z0-9._-]{3,}$/.test(search) && /\d/.test(search);
   const resetSelection = () => {
     setSelectedIds([]);
     setAllDrafts(false);
@@ -97,7 +99,7 @@ export default function AllProduct() {
       const response = await getAdminProducts({
         page,
         limit: LIMIT,
-        search,
+        ...(isCode ? { skus: search } : { search }),
         status,
       });
       const payload = response.data;
@@ -444,7 +446,7 @@ export default function AllProduct() {
                 id="catalog-search"
                 type="search"
                 value={filter}
-                placeholder={uiText('ค้นหาด้วยชื่อสินค้า')}
+                placeholder={uiText('ค้นหาด้วยชื่อสินค้าหรือรหัสสินค้า')}
                 onChange={(event) => {
                   setFilter(event.target.value);
                   resetView();

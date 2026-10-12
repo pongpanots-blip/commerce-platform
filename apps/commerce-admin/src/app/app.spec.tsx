@@ -111,6 +111,6 @@ describe('commerce-admin sign-in gate', () => {
     expect(calls.sort()).toEqual(['/reports/products/summary', '/reports/products?page=1&limit=12'].sort());
     expect(container.querySelector('main h1')?.textContent).toBe('สินค้า ราคา และสต็อก');
     const cards = [...container.querySelectorAll('main section[aria-label="วันนี้ต้องการทำอะไร"] a')].map((a) => a.getAttribute('href'));
-    expect(cards).toEqual(['/products', '/j/allproducts', '/product-prices', '/product-master-queue', '/stock-moves', '/j/categories']);
+    expect(cards).toEqual(['/j/allproducts', '/product-prices', '/product-master-queue', '/stock-moves', '/j/categories']);
   });
 });

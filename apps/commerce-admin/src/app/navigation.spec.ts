@@ -4,7 +4,7 @@ import { matchPath } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { currentNavItem } from '@cp/ui';
 import messages from '../../../../libs/ui/src/locales/ui-messages.json';
-import { DASHBOARD, HOME, NAV_ENTRIES, ROLE_ACCESS, ROLE_SHORTCUTS, SECTIONS, WORKSPACE_SECTION, navFor, shortcutsFor, workspaceTarget } from './navigation';
+import { DASHBOARD, HOME, NAV_ENTRIES, ROLE_ACCESS, ROLE_SHORTCUTS, SECTIONS, canSee, WORKSPACE_SECTION, navFor, shortcutsFor, workspaceTarget } from './navigation';
 import { LEGACY_ITEMS, LEGACY_WORKSPACES, legacyMapping, legacyNavFor } from './navigation.legacy';
 import { isRouteAllowed, landingFor } from '../lib/landing';
 import { homeForRole, ROLE_HOME } from '../lib/role-home';
@@ -28,7 +28,8 @@ describe('sidebar per role', () => {
   it('Home first for every role (admin: Home + Dashboard); admin sees every destination', () => {
     expect(navFor('admin')[0].links).toEqual([HOME, DASHBOARD]);
     for (const role of NON_ADMIN) expect(navFor(role)[0].links, role).toEqual([HOME]);
-    expect(linksOf('admin').slice(2).sort()).toEqual(NAV_ENTRIES.map((e) => e.to).sort());
+    // Entries covered by another page the role can open (hiddenIfCanSee) are left out; admin can open everything.
+    expect(linksOf('admin').slice(2).sort()).toEqual(NAV_ENTRIES.filter((e) => !e.hiddenIfCanSee).map((e) => e.to).sort());
   });
 
   it('a few task sections, all of them shown to admin', () => {
@@ -71,7 +72,10 @@ describe('sidebar per role', () => {
       expect(admin).not.toContain(alias);
       expect(admin).toContain(featureHome(alias));
     }
-    for (const path of ['/products', '/j/allproducts', '/reports/products', '/orders', '/j/order', '/reports/orders', '/customers', '/j/company', '/reports/customers']) expect(admin).toContain(path);
+    // One product list: the shop list searches by name or code, so /products is only listed for roles without it (sale).
+    expect(admin).not.toContain('/products');
+    expect(linksOf('sale')).toContain('/products');
+    for (const path of ['/j/allproducts', '/reports/products', '/orders', '/j/order', '/reports/orders', '/customers', '/j/company', '/reports/customers']) expect(admin).toContain(path);
     expect(admin.length).toBeLessThan(119);
   });
 
@@ -112,8 +116,9 @@ describe('old menu → new menu', () => {
     for (const role of NON_ADMIN) {
       const before = legacyNavFor(role).flatMap((g) => g.links.map((l) => l.to)).filter((to) => !to.startsWith('/workspaces/'));
       const narrowed = role === 'marketing' ? ['/j/marketing/journey-funnel'] : [];
+      const merged = canSee(role, '/j/allproducts') ? ['/products'] : []; // folded into the shop product list
       const reviewedAdditions = role === 'merchandising' ? ['/j/marketing/competitor-prices'] : role === 'business_analyst' ? ['/analysis/customer-behavior'] : [];
-      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual([...new Set([...before.filter((to) => !narrowed.includes(to)).map(featureHome), ...reviewedAdditions])].sort());
+      expect(linksOf(role).filter((to) => to !== HOME.to).sort(), role).toEqual([...new Set([...before.filter((to) => !narrowed.includes(to) && !merged.includes(to)).map(featureHome), ...reviewedAdditions])].sort());
     }
   });
 
@@ -168,7 +173,7 @@ describe('routes', () => {
     ['/marketing/growth/results/w1', '/marketing/growth'],
     ['/marketing/growth/plans/new', '/marketing/growth/plans'],
     ['/reports/orders/A-1', '/reports/orders'],
-    ['/products/42', '/products'],
+    ['/products/42', '/j/allproducts'],
     ['/josh/coupons', '/j/coupons'],
     ['/josh/credit_terms', '/j/credit-terms'],
     ['/j/cs/sample-requests', '/cs'],

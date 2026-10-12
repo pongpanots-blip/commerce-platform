@@ -106,6 +106,60 @@ function receipt(p = packet(), status: "committed" | "failed" = "committed") {
     })),
   });
 }
+function overview() {
+  return {
+    rows: [
+      {
+        sku: "SYNTHETIC-SKU",
+        name: "Synthetic salmon",
+        category: "Seafood",
+        ourPricePerKgIncVat: 500,
+        cheapest: {
+          pairId: "00000000-0000-4000-8000-000000000011",
+          sourceName: "Synthetic Mart",
+          competitorName: "Salmon 1 kg",
+          sourceUrl: "https://example.test/salmon",
+          pricePerKgIncVat: 450,
+          packPriceIncVat: 450,
+          weightKg: 1,
+          observedAt: "2026-10-01T00:00:00.000Z",
+          summary: "",
+        },
+        cheapestMember: null,
+        differencePerKgIncVat: -50,
+        differencePercent: -11.11,
+        position: "we_pricier",
+        verdict: "",
+        sites: ["Synthetic Mart"],
+        readyPairs: 1,
+        pendingPairs: 0,
+        pairs: [],
+      },
+      {
+        sku: "UNPAIRED-SKU",
+        name: "Unpaired tuna",
+        category: "Seafood",
+        ourPricePerKgIncVat: null,
+        cheapest: null,
+        cheapestMember: null,
+        differencePerKgIncVat: null,
+        differencePercent: null,
+        position: "unmatched",
+        verdict: "",
+        sites: [],
+        readyPairs: 0,
+        pendingPairs: 0,
+        pairs: [],
+      },
+    ],
+    total: 2,
+    page: 1,
+    pageSize: 50,
+    sites: ["Synthetic Mart"],
+    categories: ["Seafood"],
+    totals: { skus: 2, weCheaper: 0, wePricier: 1, same: 0, noData: 0, unmatched: 1 },
+  };
+}
 function Location() {
   const p = useLocation(),
     navigate = useNavigate();
@@ -207,15 +261,18 @@ beforeEach(() => {
     if (url.endsWith("/history"))
       return { pairId: workspace().rows[0].id, items: [], hasMore: false };
     if (url.endsWith("/sources")) return [];
-    return {
-      message: "",
-      data: {
-        rows: [],
-        categories: [],
-        total: 0,
-        counts: { total: 0, reviewed: 0 },
-      },
-    };
+    if (url.includes("/overview")) return { message: "", data: overview() };
+    if (url.startsWith("/competitor-prices/review?"))
+      return {
+        message: "",
+        data: {
+          rows: [{ sku: "QUEUE-1", name: "Queued product" }],
+          categories: [{ name: "Seafood", total: 3, reviewed: 1 }],
+          total: 1,
+          counts: { total: 3, reviewed: 1 },
+        },
+      };
+    throw Error("Unexpected read " + url);
   });
   vi.mocked(api.post).mockImplementation(async (_url, p) => {
     saved = receipt(p as ComparisonPacket);
@@ -886,4 +943,53 @@ it("MER reads handoff evidence without gaining a pack or promotion draft link", 
   ).toBeNull();
   expect(container.querySelector('a[href^="/planning/promotions"]')).toBeNull();
   expect(api.post).not.toHaveBeenCalled();
+});
+it("home lists our price against the cheapest store and the tiles filter by position", async () => {
+  await render(home);
+  expect(vi.mocked(api.get)).toHaveBeenCalledWith(
+    "/competitor-prices/overview?search=&page=1&category=&site=",
+  );
+  expect(content()).toContain("Synthetic salmon");
+  expect(content()).toContain("฿500.00");
+  const store = container.querySelector<HTMLAnchorElement>(
+    'a[href="https://example.test/salmon"]',
+  )!;
+  expect(store.textContent).toBe("Synthetic Mart");
+  expect(store.rel).toBe("noreferrer");
+  expect(content()).toContain("฿450.00/kg");
+  expect(content()).toContain("11.11% dearer");
+  expect(container.querySelector(`a[href="${base}"]`)).toBeTruthy();
+  expect(
+    container.querySelector(`a[href="${home}/products/UNPAIRED-SKU/match"]`),
+  ).toBeTruthy();
+  expect(content()).not.toContain("Our product SKU");
+  const tile = () =>
+    [...container.querySelectorAll("button")].find((b) =>
+      b.textContent?.startsWith("We cost more"),
+    )!;
+  await act(async () => tile().click());
+  expect(container.querySelector("output")!.textContent).toContain(
+    "position=we_pricier",
+  );
+  expect(tile().getAttribute("aria-pressed")).toBe("true");
+  expect(vi.mocked(api.get)).toHaveBeenLastCalledWith(
+    "/competitor-prices/overview?search=&page=1&position=we_pricier&category=&site=",
+  );
+  await act(async () => tile().click());
+  expect(container.querySelector("output")!.textContent).toContain(
+    "position=all",
+  );
+});
+it("old overview link opens the home table", async () => {
+  await render(home + "/overview?search=salmon");
+  expect(container.querySelector("output")!.textContent).toBe(home + "?search=salmon");
+});
+it("the home links to the category matching queue", async () => {
+  await render(home);
+  expect(container.querySelector(`a[href="${home}/matching"]`)).not.toBeNull();
+});
+it("the category matching queue is its own page with a match link per product", async () => {
+  await render(home + "/matching");
+  expect(container.textContent).toContain("Queued product");
+  expect(container.querySelector(`a[href$="/match"]`)).not.toBeNull();
 });

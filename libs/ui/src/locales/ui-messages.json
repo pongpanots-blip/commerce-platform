@@ -6327,6 +6327,34 @@
     "th": "ส่งตามเวลาที่ตั้ง เช่น ทุกวัน 18:00 ให้กลุ่มเป้าหมายที่เลือก (ไม่เลือก = ทุกคน)",
     "en": "Sends at a set time, such as daily at 18:00, to the chosen audience (none chosen = everyone)"
   },
+  "สินค้าและราคา": {
+    "th": "สินค้าและราคา",
+    "en": "Products & prices"
+  },
+  "ค้นหาสินค้าด้วยชื่อหรือรหัส ราคาขาย ราคาเฉพาะลูกค้า และข้อมูลสินค้าที่รออนุมัติ": {
+    "th": "ค้นหาสินค้าด้วยชื่อหรือรหัส ราคาขาย ราคาเฉพาะลูกค้า และข้อมูลสินค้าที่รออนุมัติ",
+    "en": "Find products by name or code, selling prices, customer prices and product changes awaiting approval"
+  },
+  "ยอดสต็อกแต่ละคลัง และการรับเข้า ปรับ โอน": {
+    "th": "ยอดสต็อกแต่ละคลัง และการรับเข้า ปรับ โอน",
+    "en": "Stock in each warehouse, and receiving, adjusting and transferring stock"
+  },
+  "ยังไม่มีคลังที่บันทึกสต็อกในระบบนี้ได้": {
+    "th": "ยังไม่มีคลังที่บันทึกสต็อกในระบบนี้ได้",
+    "en": "No warehouse can record stock in this system yet"
+  },
+  "ทุกคลังรับยอดสต็อกจากระบบหลัก (ERP) ให้รับเข้า ปรับ หรือโอนใน ERP แล้วยอดจะซิงก์มาเอง หน้านี้จะใช้ได้เมื่อมีคลังที่ระบบนี้ดูแลเอง": {
+    "th": "ทุกคลังรับยอดสต็อกจากระบบหลัก (ERP) ให้รับเข้า ปรับ หรือโอนใน ERP แล้วยอดจะซิงก์มาเอง หน้านี้จะใช้ได้เมื่อมีคลังที่ระบบนี้ดูแลเอง",
+    "en": "Every warehouse takes its stock from the main system (ERP). Receive, adjust or transfer in the ERP and the stock syncs here. This page works once a warehouse is run by this system."
+  },
+  "ดูสต็อกแต่ละคลัง": {
+    "th": "ดูสต็อกแต่ละคลัง",
+    "en": "See stock per warehouse"
+  },
+  "ค้นหาด้วยชื่อสินค้าหรือรหัสสินค้า": {
+    "th": "ค้นหาด้วยชื่อสินค้าหรือรหัสสินค้า",
+    "en": "Search by product name or code"
+  },
   "ภาพรวม": {
     "th": "ภาพรวม",
     "en": "Overview"

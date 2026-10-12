@@ -21,7 +21,7 @@ review. Nothing below has been run against prod. Every command is copy-paste; se
 - Commerce flags: Ops platform → `action=status`. Need `WINBACK_OWNER=commerce` and `COMMERCE_OWNS_SALES_REPS=true` (the backfill refuses otherwise),
   `WINBACK_ACCEPT_JOSH_JWT` unset or `true` (keeps josh-mode installs working), and `RESTAURANTS_SOURCE=copies` or a configured replica (else restaurant-place → 503).
   ```sh
-  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref master -f action=status
+  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref main -f action=status
   ```
 - Josh `prod.yml` already pins `WINBACK_VIA_COMMERCE=true` and `WINBACK_OWNED_BY_COMMERCE=true`. Nothing to change there.
 - Staff accounts (read-only gap check 2026-10-08): 2 josh sales staff (1 `sale`, 1 `manager`), **both** have active commerce accounts
@@ -31,8 +31,8 @@ review. Nothing below has been run against prod. Every command is copy-paste; se
 
 1. **commerce restaurant-place PR**: merge → normal commerce deploy (tag/workflow as usual). It's additive with no migration.
    Check: `GET /api/winback/restaurant-place?limit=1` with a sale token → 200; with a cs token → 403.
-2. **commerce runbook PR (this one)**: merge to master → normal commerce **platform deploy**. Merging puts both backfill scripts where the Ops platform
-   workflow reads them (`--ref master`); the deploy ships the CLI's `--expect-links/--expect-rows` guard that the apply wrapper passes. Against an
+2. **commerce runbook PR (this one)**: merge to main → normal commerce **platform deploy**. Merging puts both backfill scripts where the Ops platform
+   workflow reads them (`--ref main`); the deploy ships the CLI's `--expect-links/--expect-rows` guard that the apply wrapper passes. Against an
    older image the CLI rejects those flags before connecting, so the apply refuses (exit 1) and writes nothing. No migration.
 3. **Webjosh nginx PR**: merge → cut `nginx-v<x.y.z>` → deploy nginx with the gate **off** (the rendered config is byte-identical to today's).
 4. **Enable the proxy**: add `COMMERCE_STAFF_PROXY=true` to the josh web host `.env` (`EC2_WEB_DEPLOY_DIR`) and rerun **Prod** with the same nginx tag and
@@ -66,13 +66,13 @@ direct DB session from the operator, and no JWT minting**. The workflow only sup
 
 - **Dry run** (read-only, repeatable-read transaction; ids and counts only):
   ```sh
-  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref master -f action=script -f script=winback-staff-backfill-dry
+  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref main -f action=script -f script=winback-staff-backfill-dry
   gh run watch -R pongpanots-blip/commerce-platform "$(gh run list -R pongpanots-blip/commerce-platform --workflow ops-platform.yml -L1 --json databaseId -q '.[0].databaseId')"
   ```
   Expect `counts.links = 2`, rows (sum of `rowsChanged`) `= 37`, `ambiguous = 0`. Review `unmatched` and `ineligible`.
 - **Real run** (maintenance window of about 15 min; ask reps to pause app writes):
   ```sh
-  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref master -f action=script -f script=winback-staff-backfill-apply -f args='apply links=2 rows=37'
+  gh workflow run ops-platform.yml -R pongpanots-blip/commerce-platform --ref main -f action=script -f script=winback-staff-backfill-apply -f args='apply links=2 rows=37'
   ```
   What the wrapper actually guarantees (pinned to the reviewed plan; `ops/scripts/winback-staff-backfill-apply.test.cjs`):
   - `args` must be exactly `apply links=2 rows=37`. **Any other value exits 2 and the CLI is never started** (no dry run, no apply).
@@ -86,7 +86,7 @@ direct DB session from the operator, and no JWT minting**. The workflow only sup
   - Last, a second dry run must plan **0 links / 0 rows**. This check is post-commit: it can fail the run but **cannot undo** the apply, and
     there is no automatic undo of a committed backfill (the app rollback in §2 doesn't revert it either).
   Wait 60 s for identity caches before reopening the app. Josh-mode installs keep working afterwards.
-  (Before the runbook PR is merged, use `--ref feat/saleactivity-commerce-cutover` instead of `--ref master`.)
+  (Before the runbook PR is merged, use `--ref feat/saleactivity-commerce-cutover` instead of `--ref main`.)
 
 ## 4. Smoke checks (read-only apart from the sign-in itself)
 

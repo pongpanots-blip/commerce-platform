@@ -37,13 +37,18 @@ npm run migration:run
 npm run migration:revert
 ```
 
+## Branching
+
+Trunk-based on `main`, same as `Webjosh` and `search-ai-josh`: branch `feat/<slug>`,
+`fix/<slug>` or `chore/<slug>` off `origin/main`, PR back into `main`. `master` is retired.
+
 ## Deploy (ECR → EC2)
 
 Same pattern as the `josh` monorepo: build+push images to ECR via GitHub Actions, then a
 self-hosted runner on a dedicated EC2 instance pulls and restarts via `docker compose`.
 Workflow: [.github/workflows/deploy-ecr.yml](.github/workflows/deploy-ecr.yml). Runs on tag
 push (`v1.2.3` = all 3 services, `platform-v1.2.3`/`admin-v1.2.3`/`portal-v1.2.3` = single
-service) or manual dispatch.
+service) or manual dispatch (`gh workflow run deploy-ecr.yml --ref main ...`). Cut tags from `main`.
 
 **One-time setup (not yet done — separate infra from `josh`, needs your own AWS access):**
 

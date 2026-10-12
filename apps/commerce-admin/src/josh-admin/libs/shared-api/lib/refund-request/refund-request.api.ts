@@ -90,3 +90,48 @@ export function markRefundTransferred(id: string, input: { amount: number; trans
   form.append('slip', input.slip);
   return apiClient.post<ActionResult>(`${BASE}/${id}/transfer`, form);
 }
+
+/** Banks a bank-transfer refund can go to (josh `refund_banks`) — finance adds, edits, deactivates. Never deleted. */
+export type RefundBankAdmin = {
+  code: string;
+  nameTh: string;
+  nameEn: string;
+  accountDigits: number[];
+  logoUrl: string | null;
+  sortOrder: number;
+  isActive: boolean;
+};
+
+export type RefundBankInput = {
+  /** Create only — fixed afterwards. */
+  code?: string;
+  nameTh?: string;
+  nameEn?: string;
+  accountDigits?: number[];
+  sortOrder?: number;
+  isActive?: boolean;
+  removeLogo?: boolean;
+  logo?: File | null;
+};
+
+type RefundLang = 'th' | 'en';
+const BANKS = '/admin/refund-banks';
+
+function bankForm(input: RefundBankInput) {
+  const form = new FormData();
+  for (const [k, v] of Object.entries(input)) {
+    if (v === undefined || v === null || k === 'logo') continue;
+    form.append(k, Array.isArray(v) ? v.join(',') : String(v));
+  }
+  if (input.logo) form.append('logo', input.logo);
+  return form;
+}
+
+export const listRefundBanks = (lang: RefundLang = 'th') =>
+  apiClient.get<ApiSuccess<RefundBankAdmin[]>>(BANKS, { params: { lang } });
+
+export const createRefundBank = (input: RefundBankInput, lang: RefundLang = 'th') =>
+  apiClient.post<ApiSuccess<RefundBankAdmin>>(BANKS, bankForm(input), { params: { lang } });
+
+export const updateRefundBank = (code: string, input: RefundBankInput, lang: RefundLang = 'th') =>
+  apiClient.patch<ApiSuccess<RefundBankAdmin>>(`${BANKS}/${encodeURIComponent(code)}`, bankForm(input), { params: { lang } });

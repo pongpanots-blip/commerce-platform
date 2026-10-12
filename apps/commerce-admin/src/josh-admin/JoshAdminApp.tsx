@@ -51,6 +51,7 @@ const CreateCompanyAdmin = lazy(() => import('./app/page/CS/CreateCompanyAdmin')
 const CompanyEdit = lazy(() => import('./app/page/company/CompanyEdit'));
 const RefundsAdmin = lazy(() => import('./app/page/CS/RefundsAdmin'));
 const RefundRequestsAdmin = lazy(() => import('./app/page/CS/RefundRequestsAdmin'));
+const RefundBanksAdmin = lazy(() => import('./app/page/CS/RefundBanksAdmin'));
 const SegmentList = lazy(() => import('./app/page/segment/SegmentList'));
 const CreateSegment = lazy(() => import('./app/page/segment/CreateSegment'));
 const EditSegment = lazy(() => import('./app/page/segment/EditSegment'));
@@ -151,6 +152,7 @@ export function JoshAdminApp() {
             <Route path="company/edit/:id" element={<CompanyEdit />} />
             <Route path="refunds" element={<RefundsAdmin />} />
             <Route path="refund-requests" element={<RefundRequestsAdmin />} />
+            <Route path="refund-banks" element={<RefundBanksAdmin />} />
             <Route path="segments" element={<SegmentList />} />
             <Route path="segments/create" element={<CreateSegment />} />
             <Route path="segments/edit/:id" element={<EditSegment />} />

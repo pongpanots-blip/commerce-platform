@@ -114,6 +114,16 @@ describe('JoshAdminCallController', () => {
     await expect(c.call({ method: 'DELETE', path: `/admin/refund-requests/${U}` }, req('admin'))).rejects.toBeInstanceOf(ForbiddenException);
   });
 
+  it('refund banks (list / add / edit + logo): admin only, no delete', async () => {
+    const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
+    const c = new JoshAdminCallController(josh as never, {} as never);
+    for (const [method, path] of [['GET', '/admin/refund-banks'], ['POST', '/admin/refund-banks'], ['PATCH', '/admin/refund-banks/UOB']]) {
+      await expect(c.call({ method, path }, req('cs'))).rejects.toThrow('admin only');
+      await expect(c.call({ method, path }, req('admin'))).resolves.toBeDefined();
+    }
+    await expect(c.call({ method: 'DELETE', path: '/admin/refund-banks/UOB' }, req('admin'))).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
   it('cs reaches exactly the calls its pages make', async () => {
     const josh = { run: jest.fn(async () => ({ status: 200, data: {} })) };
     const c = new JoshAdminCallController(josh as never, {} as never);

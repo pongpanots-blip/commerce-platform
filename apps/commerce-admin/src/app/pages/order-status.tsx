@@ -15,7 +15,11 @@ const STATUS: Record<string, string> = {
   failed: 'ไม่สำเร็จ',
   reconcile: 'รอตรวจสอบ',
   cancelled: 'ยกเลิก',
+  shipped: 'จัดส่งแล้ว',
+  delivered: 'ส่งถึงแล้ว',
 };
+/** Order header statuses offered by the orders list filter. */
+export const ORDER_STATUSES = ['draft', 'reserving', 'pending_payment', 'paid', 'confirmed', 'shipped', 'delivered', 'expired', 'failed', 'cancelled'];
 const TONE: Record<string, Tone> = { held: 'info', reserved: 'info', reconcile: 'warn', released: 'muted' };
 const MODE: Record<string, string> = { on_hand: 'มีของในสต็อก', to_order: 'สั่งจากซัพพลายเออร์' };
 const SOURCE: Record<string, string> = { erp: 'ระบบหลัก (ERP)' };

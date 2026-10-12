@@ -11,6 +11,9 @@ import {
  * e.g. emitting events — by overriding `create`/`update`.
  */
 export abstract class BaseCrudService<T extends { id: string }> {
+  /** Columns the list endpoint's `search` matches against. Empty = search is ignored. */
+  protected readonly searchFields: string[] = [];
+
   protected constructor(protected readonly repo: IRepository<T>) {}
 
   create(dto: Partial<T>): Promise<T> {
@@ -19,6 +22,17 @@ export abstract class BaseCrudService<T extends { id: string }> {
 
   findMany(params: FindManyParams): Promise<Paginated<T>> {
     return this.repo.findMany(params);
+  }
+
+  /** Admin list: newest first, optionally narrowed by a free-text search over `searchFields`. */
+  list(query: { page?: number; pageSize?: number; search?: string }): Promise<Paginated<T>> {
+    const term = query.search?.trim();
+    return this.repo.findMany({
+      page: query.page,
+      pageSize: query.pageSize,
+      order: { createdAt: 'DESC', id: 'DESC' },
+      search: term ? { term, fields: this.searchFields } : undefined,
+    });
   }
 
   async findOne(id: string): Promise<T> {

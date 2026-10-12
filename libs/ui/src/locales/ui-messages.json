@@ -6556,7 +6556,7 @@
     "en": "Simulated ERP inventory — set stock levels for the on_hand fulfillment mode."
   },
   "View all jobs": {
-    "th": "View all jobs",
+    "th": "ดูงานทั้งหมด",
     "en": "View all jobs"
   },
   "กำลังทดสอบ...": {
@@ -7140,7 +7140,7 @@
     "en": "Tasks Needing Care"
   },
   "Webhooks pending": {
-    "th": "Webhooks รอดำเนินการ",
+    "th": "เหตุการณ์ขาเข้ารอดำเนินการ",
     "en": "Webhooks pending"
   },
   "Queue is empty": {
@@ -7152,11 +7152,11 @@
     "en": "View"
   },
   "Inbound webhooks failed": {
-    "th": "Inbound webhooks ล้มเหลว",
+    "th": "เหตุการณ์ขาเข้าที่ล้มเหลว",
     "en": "Inbound webhooks failed"
   },
   "Needs replay or fix": {
-    "th": "ต้อง Replay หรือแก้ไข",
+    "th": "ต้องส่งซ้ำหรือแก้ไข",
     "en": "Needs replay or fix"
   },
   "No failures": {
@@ -7164,11 +7164,11 @@
     "en": "No failures"
   },
   "Outbox backlog": {
-    "th": "Outbox ค้างส่ง",
+    "th": "เหตุการณ์ขาออกค้างส่ง",
     "en": "Outbox backlog"
   },
   "Events waiting to publish": {
-    "th": "Events รอตีพิมพ์",
+    "th": "เหตุการณ์รอส่งออก",
     "en": "Events waiting to publish"
   },
   "All channels normalized": {
@@ -7184,7 +7184,7 @@
     "en": "All connected"
   },
   "Sync jobs (24h)": {
-    "th": "งาน Sync (24 ชม.)",
+    "th": "งานซิงก์ (24 ชม.)",
     "en": "Sync jobs (24h)"
   },
   "Inventory levels": {
@@ -7204,7 +7204,7 @@
     "en": "Job"
   },
   "Platform": {
-    "th": "Platform",
+    "th": "ระบบที่เชื่อมต่อ",
     "en": "Platform"
   },
   "Status": {
@@ -7224,11 +7224,11 @@
     "en": "No sync jobs yet"
   },
   "Recent webhook failures": {
-    "th": "Webhook ล้มเหลวล่าสุด",
+    "th": "การส่งเหตุการณ์ที่ล้มเหลวล่าสุด",
     "en": "Recent webhook failures"
   },
   "Open dead letter": {
-    "th": "เปิด Dead Letter",
+    "th": "เปิดรายการส่งไม่สำเร็จ",
     "en": "Open dead letter"
   },
   "No failed deliveries": {
@@ -32818,5 +32818,77 @@
   "โลโก้ (png / jpg / webp ไม่เกิน 2 MB)": {
     "th": "โลโก้ (png / jpg / webp ไม่เกิน 2 MB)",
     "en": "Logo (png / jpg / webp, up to 2 MB)"
+  },
+  "ค้นหาลูกค้า": {
+    "th": "ค้นหาลูกค้า",
+    "en": "Search customers"
+  },
+  "ค้นหาออเดอร์": {
+    "th": "ค้นหาออเดอร์",
+    "en": "Search orders"
+  },
+  "ชื่อ รหัสลูกค้า อีเมล หรือเบอร์โทร…": {
+    "th": "ชื่อ รหัสลูกค้า อีเมล หรือเบอร์โทร…",
+    "en": "Name, customer code, email or phone…"
+  },
+  "ค้นหาสินค้าทุกรายการด้วยรหัสหรือชื่อ เปิดดูรายละเอียดและสต็อกแต่ละคลัง": {
+    "th": "ค้นหาสินค้าทุกรายการด้วยรหัสหรือชื่อ เปิดดูรายละเอียดและสต็อกแต่ละคลัง",
+    "en": "Search every product by code or name, then open its details and stock per warehouse"
+  },
+  "พบ {0} รายการที่ตรงกับ “{1}”": {
+    "th": "พบ {0} รายการที่ตรงกับ “{1}”",
+    "en": "{0} records match “{1}”"
+  },
+  "ไม่พบรายการที่ตรงกับ “{0}”": {
+    "th": "ไม่พบรายการที่ตรงกับ “{0}”",
+    "en": "Nothing matches “{0}”"
+  },
+  "ลองคำอื่น หรือล้างคำค้นหาเพื่อดูรายการทั้งหมด": {
+    "th": "ลองคำอื่น หรือล้างคำค้นหาเพื่อดูรายการทั้งหมด",
+    "en": "Try another word, or clear the search to see everything"
+  },
+  "เลขออเดอร์ ชื่อลูกค้า หรือรหัสลูกค้า…": {
+    "th": "เลขออเดอร์ ชื่อลูกค้า หรือรหัสลูกค้า…",
+    "en": "Order number, customer name or customer code…"
+  },
+  "ไม่พบออเดอร์ที่ตรงกับเงื่อนไข ลองคำอื่นหรือเลือกทุกสถานะ": {
+    "th": "ไม่พบออเดอร์ที่ตรงกับเงื่อนไข ลองคำอื่นหรือเลือกทุกสถานะ",
+    "en": "No orders match. Try another word or choose all statuses"
+  },
+  "กรอก{0}ก่อนบันทึก": {
+    "th": "กรอก{0}ก่อนบันทึก",
+    "en": "Fill in {0} before saving"
+  },
+  "ข้อมูลส่วนนี้ยังไม่พร้อมบนเซิร์ฟเวอร์นี้ ลองใหม่จะไม่หาย แจ้งทีมเทคนิคพร้อมข้อความนี้: {0}": {
+    "th": "ข้อมูลส่วนนี้ยังไม่พร้อมบนเซิร์ฟเวอร์นี้ ลองใหม่จะไม่หาย แจ้งทีมเทคนิคพร้อมข้อความนี้: {0}",
+    "en": "This data is not available on this server, so retrying will not help. Send this message to the tech team: {0}"
+  },
+  "{0} “{1}”": {
+    "th": "{0} “{1}”",
+    "en": "{0} “{1}”"
+  },
+  "ค้นหาในรายการทั้งหมด": {
+    "th": "ค้นหาในรายการทั้งหมด",
+    "en": "Search the whole list"
+  },
+  "ชื่อเมนู หรือรหัสสินค้า เลขออเดอร์ ชื่อลูกค้า": {
+    "th": "ชื่อเมนู หรือรหัสสินค้า เลขออเดอร์ ชื่อลูกค้า",
+    "en": "A menu name, or a product code, order number or customer name"
+  },
+  "ราคาขายต่อหน่วย": {
+    "th": "ราคาขายต่อหน่วย",
+    "en": "Selling price per unit"
+  },
+  "ราคาสั่งซื้อ": {
+    "th": "ราคาสั่งซื้อ",
+    "en": "Ordering price"
+  },
+  "ยังไม่มีราคา": {
+    "th": "ยังไม่มีราคา",
+    "en": "No price yet"
+  },
+  "โหลดราคาไม่ได้": {
+    "th": "โหลดราคาไม่ได้",
+    "en": "Could not load the price"
   }
 }

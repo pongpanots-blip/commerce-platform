@@ -5,8 +5,8 @@ import {
   Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, Span, Stack2,
   StatusChip, TBody, TD, TH, THead, TR, Table, Textarea, fmt,
 } from '@cp/ui';
-import { productFields } from './catalog-fields';
-import { api, InventoryLevel, Paginated, Product, productsApi, stockApi, session } from '../../lib/api';
+import { productFields, missingRequired } from './catalog-fields';
+import { api, InventoryLevel, Paginated, Product, productPricesApi, productsApi, stockApi, session } from '../../lib/api';
 import { useAsync } from '../hooks';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -23,6 +23,9 @@ export function ProductDetail() {
   const product = useAsync<Product>(() => productsApi.get(id), [id]);
   const inventory = useAsync(() => api.get<Paginated<InventoryLevel>>(`/inventory?productId=${encodeURIComponent(id)}&pageSize=100`), [id]);
   const warehouses = useAsync(() => canEdit ? stockApi.warehouses() : Promise.resolve([]), []);
+  const sku = product.data?.sku;
+  // Prices are a merchandising API; other roles see the product without them.
+  const price = useAsync(async () => canEdit && sku ? (await productPricesApi.list(sku, 1, 20)).items.find(row => row.sku === sku) ?? null : null, [sku]);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<Form>({ sku: '', name: '', description: '' });
   const [busy, setBusy] = useState(false);
@@ -32,6 +35,8 @@ export function ProductDetail() {
   useEffect(() => { if (p) setForm(toForm(p)); }, [p]);
 
   async function save() {
+    const missing = missingRequired(productFields, form);
+    if (missing) { setError(missing); return; }
     if (!window.confirm(__uiText("บันทึกการแก้ไขสินค้า {0}?", {"0": p?.sku}))) return;
     setBusy(true);
     setError(null);
@@ -95,6 +100,11 @@ export function ProductDetail() {
                   { label: __uiText("รูปแบบจัดส่ง"), value: p.fulfillmentMode ? (FULFILLMENT[p.fulfillmentMode] ? __uiText(FULFILLMENT[p.fulfillmentMode]) : p.fulfillmentMode) : '—' },
                   { label: __uiText("ระยะเวลาเตรียมสินค้า"), value: p.leadTimeDays !== null && p.leadTimeDays !== undefined ? __uiText('{0} วัน', {'0': p.leadTimeDays}) : '—' },
                   { label: __uiText("อัปเดตล่าสุด"), value: p.updatedAt ? fmt.when(p.updatedAt) : '—' },
+                  ...(canEdit ? [
+                    { label: __uiText("ราคาขายต่อหน่วย"), value: price.loading ? '…' : price.error ? __uiText("โหลดราคาไม่ได้") : price.data?.selling_unit_price != null ? fmt.baht(price.data.selling_unit_price) : __uiText("ยังไม่มีราคา") },
+                    { label: __uiText("ราคาสั่งซื้อ"), value: price.loading ? '…' : price.data?.ordering_price != null ? fmt.baht(price.data.ordering_price) : '—' },
+                    { label: __uiText("สั่งขั้นต่ำ"), value: price.loading ? '…' : price.data?.moq != null ? fmt.num(price.data.moq) : '—' },
+                  ] : []),
                   { label: __uiText("รายละเอียด"), value: p.description || '—', wide: true },
                 ]}
               />
@@ -123,7 +133,7 @@ export function ProductDetail() {
                     const warehouse = warehouses.data?.find(item => item.id === l.warehouseId);
                     return (
                       <TR key={l.id}>
-                        <TD>{warehouse ? <Stack2 top={warehouse.name} bottom={warehouse.code} /> : <span className="font-mono">{l.warehouseId}</span>}</TD>
+                        <TD>{warehouse ? <Stack2 top={warehouse.name} bottom={warehouse.code !== warehouse.name ? warehouse.code : undefined} /> : <span className="font-mono">{l.warehouseId}</span>}</TD>
                         <TD kind="num">{fmt.num(l.quantity)}</TD>
                         <TD kind="num">{fmt.num(l.reserved)}</TD>
                         <TD kind="num" className={available <= 0 ? 'text-danger font-semibold' : undefined}>{fmt.num(available)}</TD>

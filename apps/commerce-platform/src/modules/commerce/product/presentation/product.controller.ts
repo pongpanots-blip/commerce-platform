@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
-import { PaginationQueryDto } from '../../../../shared-kernel/application/pagination.dto';
+import { ListQueryDto } from '../../../../shared-kernel/application/pagination.dto';
 import { BaseCrudController } from '../../../../shared-kernel/presentation/base-crud.controller';
 import { StaffRoles } from '../../../../shared-kernel/presentation/auth.decorators';
 import { Product } from '../infrastructure/product.entity';
@@ -17,7 +17,7 @@ export class ProductController extends BaseCrudController<Product>() {
 
   @Get()
   @StaffRoles('merchandising', 'graphic', 'sale')
-  override list(@Query() query: PaginationQueryDto) {
+  override list(@Query() query: ListQueryDto) {
     return super.list(query);
   }
 

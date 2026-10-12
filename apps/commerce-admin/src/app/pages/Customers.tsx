@@ -24,8 +24,8 @@ export function Customers() {
       fields={customerFields}
       createLabel={__uiText("เพิ่มลูกค้า")}
       saveLabel={__uiText("บันทึกลูกค้า")}
-      searchText={row => `${row.name} ${row.code ?? ''} ${row.email ?? ''} ${row.phone ?? ''}`}
-      searchPlaceholder="ชื่อ รหัสลูกค้า อีเมล หรือเบอร์โทร…"
+      searchLabel={__uiText("ค้นหาลูกค้า")}
+      searchPlaceholder={__uiText("ชื่อ รหัสลูกค้า อีเมล หรือเบอร์โทร…")}
     />
   );
 }

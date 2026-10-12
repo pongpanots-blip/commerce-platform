@@ -15,3 +15,9 @@ export const customerFields: Field[] = [
   { name: 'email', get label() { return __uiText('อีเมล'); }, type: 'email', placeholder: 'orders@example.com', get hint() { return __uiText('ไม่บังคับ ใช้ส่งเอกสาร'); } },
   { name: 'phone', get label() { return __uiText('เบอร์โทร'); }, type: 'tel', placeholder: '0812345678', get hint() { return __uiText('ไม่บังคับ ใส่ตัวเลขโดยไม่ต้องมีขีด'); } },
 ];
+
+/** The detail editors' required-field check: names the first blank required field, or null when complete. */
+export function missingRequired(fields: Field[], form: Record<string, string>): string | null {
+  const blank = fields.find(f => f.required && !form[f.name]?.trim());
+  return blank ? __uiText('กรอก{0}ก่อนบันทึก', { 0: blank.label }) : null;
+}

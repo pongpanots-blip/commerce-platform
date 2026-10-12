@@ -5,7 +5,7 @@ import {
   Alert, Button, Empty, ErrorText, Field, FormPanel, Input, KeyValueGrid, Loading, Modal, Page, PageHeader, Panel, PanelHead, RowLink,
   StatusChip, TBody, TD, TH, THead, TR, Table, fmt,
 } from '@cp/ui';
-import { customerFields } from './catalog-fields';
+import { customerFields, missingRequired } from './catalog-fields';
 import { api, customersApi, Customer, OrderRow, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 
@@ -30,6 +30,8 @@ export function CustomerDetail() {
   useEffect(() => { if (c) setForm(toForm(c)); }, [c]);
 
   async function save() {
+    const missing = missingRequired(customerFields, form);
+    if (missing) { setError(missing); return; }
     if (!window.confirm(__uiText("บันทึกการแก้ไขลูกค้า {0}?", {"0": c?.name}))) return;
     setBusy(true);
     setError(null);

@@ -15,6 +15,8 @@ export interface FindManyParams {
   pageSize?: number;
   where?: Record<string, unknown>;
   order?: Record<string, 'ASC' | 'DESC'>;
+  /** Case-insensitive substring match: a row matches when any of `fields` contains `term`. */
+  search?: { term: string; fields: string[] };
 }
 
 export interface IRepository<T> {

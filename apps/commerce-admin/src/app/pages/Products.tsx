@@ -17,14 +17,14 @@ export function Products() {
   return (
     <ResourcePage<Product>
       title={__uiText("ค้นหาสินค้าตามรหัส")}
-      subtitle={__uiText("ค้นหาสินค้าทุกรายการตามรหัสสินค้า เปิดดูรายละเอียดและสต็อกแต่ละคลัง")}
+      subtitle={__uiText("ค้นหาสินค้าทุกรายการด้วยรหัสหรือชื่อ เปิดดูรายละเอียดและสต็อกแต่ละคลัง")}
       endpoint="/products"
       columns={columns}
       fields={productFields}
       createLabel={__uiText("เพิ่มสินค้า")}
       saveLabel={__uiText("บันทึกสินค้า")}
       readOnly={['sale', 'graphic'].includes(session.claims()?.role ?? '')}
-      searchText={row => `${row.sku} ${row.name}`}
+      searchLabel={__uiText("ค้นหาสินค้า")}
       searchPlaceholder={__uiText("ค้นหารหัสหรือชื่อสินค้า…")}
     />
   );

@@ -2,7 +2,8 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, expect, it } from 'vitest';
-import { useAsync, useMutation, type AsyncState } from './hooks';
+import { loadErrorText, useAsync, useMutation, type AsyncState } from './hooks';
+import { hasUiText } from '@cp/ui';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 let root: Root;
@@ -87,4 +88,12 @@ it('does not report mutation success to an unmounted flow', async () => {
   await act(async () => root.render(null));
   await act(async () => request.resolve('saved elsewhere'));
   await expect(result).resolves.toEqual({ ok: false });
+});
+
+it('explains a 503 as "not available here" with the server reason, and keeps other errors as-is', () => {
+  const unavailable = loadErrorText(Object.assign(new Error('JOSH_DATABASE_URL not set'), { status: 503 }));
+  expect(unavailable).toContain('JOSH_DATABASE_URL not set');
+  expect(unavailable).toContain('ลองใหม่จะไม่หาย');
+  expect(hasUiText(unavailable)).toBe(true);
+  expect(loadErrorText(Object.assign(new Error('boom'), { status: 500 }))).toBe('boom');
 });

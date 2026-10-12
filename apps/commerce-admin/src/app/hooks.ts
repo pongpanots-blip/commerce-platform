@@ -1,4 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { formatUiMessage } from '@cp/ui';
+
+/**
+ * A 503 means this server has no source for the data (not configured), so "try again" will not help:
+ * say that, with the server's reason inline, instead of the generic retry message.
+ */
+export function loadErrorText(e: unknown): string {
+  const message = e instanceof Error ? e.message : String(e);
+  return (e as { status?: number })?.status === 503
+    ? formatUiMessage('ข้อมูลส่วนนี้ยังไม่พร้อมบนเซิร์ฟเวอร์นี้ ลองใหม่จะไม่หาย แจ้งทีมเทคนิคพร้อมข้อความนี้: {0}', { 0: message })
+    : message;
+}
 
 export interface AsyncState<T> {
   data: T | null;
@@ -21,7 +33,7 @@ export function useAsync<T>(loader: () => Promise<T>, deps: unknown[] = []): Asy
     // Also catch synchronous loader errors. Ignore superseded and unmounted requests.
     Promise.resolve().then(loader)
       .then((d) => { if (request === generation.current) setData(d); })
-      .catch((e) => { if (request === generation.current) setError(e instanceof Error ? e.message : String(e)); })
+      .catch((e) => { if (request === generation.current) setError(loadErrorText(e)); })
       .finally(() => { if (request === generation.current) setLoading(false); });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);

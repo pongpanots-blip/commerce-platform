@@ -1,7 +1,8 @@
-import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
 export class CreateCustomerDto {
   @IsString()
+  @Matches(/\S/, { message: 'name must not be blank' })
   @MaxLength(191)
   name: string;
 

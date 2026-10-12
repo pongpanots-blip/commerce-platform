@@ -2,7 +2,7 @@ import { SalesAssignment } from './pages/SalesAssignment';
 import { MyWinback } from './pages/MyWinback';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { CommandMenu, ErrorText, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, currentNavItem, useUiLocale } from '@cp/ui';
+import { CommandMenu, type CommandSearch, ErrorText, IconButton, LanguageSelector, Loading, Sidebar, StatusDot, TopBar, currentNavItem, useUiLocale } from '@cp/ui';
 import { navFor } from './navigation';
 import { FeatureActions } from './FeatureActions';
 import { TaskRoute } from './TaskRoute';
@@ -13,7 +13,7 @@ import { TaskSection } from './pages/TaskSection';
 import PaymentWorkspace from './pages/PaymentWorkspace';
 import { AdminStats, api, logout, reportsApi, restoreSession, session, staffApi, STAFF_ROLE_LABEL, StaffRole } from '../lib/api';
 import { initialAuthState } from '../lib/auth';
-import { landingFor, loginPathFor, redirectParam, resolvePostLoginPath } from '../lib/landing';
+import { isRouteAllowed, landingFor, loginPathFor, redirectParam, resolvePostLoginPath } from '../lib/landing';
 import { useAsync } from './hooks';
 import { Login } from './pages/Login';
 import { StaffAccounts } from './pages/StaffAccounts';
@@ -84,6 +84,14 @@ const GoalPlanningWorkspace = lazy(() => import('./pages/financial-goals/GoalPla
 const PackPlanningWorkspace = lazy(() => import('./pages/pack-price/PackPlanningWorkspace'));
 const ProductContentWorkspace = lazy(() => import('./pages/product-content-editor/ProductContentWorkspace'));
 
+/** ⌘K "find X in …" shortcuts for the lists this role may open; each list reads `?q=` as its search. */
+const RECORD_SEARCHES: (CommandSearch & { path: string })[] = [
+  { path: '/products', label: 'ค้นหาสินค้า', to: q => `/products?q=${encodeURIComponent(q)}` },
+  { path: '/orders', label: 'ค้นหาออเดอร์', to: q => `/orders?q=${encodeURIComponent(q)}` },
+  { path: '/customers', label: 'ค้นหาลูกค้า', to: q => `/customers?q=${encodeURIComponent(q)}` },
+];
+const recordSearches = (role: string | null | undefined) => RECORD_SEARCHES.filter(search => isRouteAllowed(role, search.path));
+
 /** Route context and a single page-search entry point across every category. */
 function AdminTopBar({ role }: { role?: string }) {
   __useUiLocale();
@@ -109,7 +117,7 @@ function AdminTopBar({ role }: { role?: string }) {
       <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("ตอนนี้อยู่ที่")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "หน้าหลัก")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
       {role === 'admin' && <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>}
     </div>}
-    right={<><FeatureActions role={role} /><LanguageSelector /><CommandMenu />{role === 'admin' && <IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />}<IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
+    right={<><FeatureActions role={role} /><LanguageSelector /><CommandMenu searches={recordSearches(role)} />{role === 'admin' && <IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />}<IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
   />;
 }
 

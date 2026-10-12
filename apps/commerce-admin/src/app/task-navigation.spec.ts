@@ -31,7 +31,8 @@ describe('canonical task indexes', () => {
   it('does not grant inaccessible indexes or expand feature permissions', () => {
     expect(isRouteAllowed('cs', '/tasks/catalog')).toBe(false);
     expect(isRouteAllowed('sale', '/tasks/advanced')).toBe(false);
-    expect(isRouteAllowed('merchandising', '/j/marketing/competitor-prices')).toBe(false);
+    expect(isRouteAllowed('merchandising', '/j/marketing/competitor-prices')).toBe(true); // reviewed MER grant (eb9c34d)
+    expect(isRouteAllowed('merchandising', '/j/marketing/scraped-catalog')).toBe(false);
     expect(isRouteAllowed('cs', '/j/payment-transactions/attempt-1')).toBe(false);
     expect(isRouteAllowed('cs', '/cs/accounts/merge')).toBe(false);
     expect(isRouteAllowed('graphic', '/j/product/create')).toBe(false);

@@ -3,7 +3,6 @@ import { DataSource } from "typeorm";
 import { OutboxMessage } from "../../../shared-kernel/infrastructure/outbox.entity";
 import { EventEmitterBus } from "../../../shared-kernel/infrastructure/event-emitter.bus";
 import { JoshCustomers } from "../connector/josh/josh-customers";
-import { JoshReplica } from "../connector/josh/josh-replica";
 import { AssignmentWorkspaceService } from "./assignment-workspace.service";
 import { SalesRepsService } from "./sales-reps.service";
 export const assignmentFixtureIds = {
@@ -103,7 +102,7 @@ export async function assignmentFixture(db: DataSource, schema: string) {
   const companies = new JoshCustomers({
     configured: true,
     query: (sql: string, params: unknown[]) => db.query(sql, params),
-  } as unknown as JoshReplica);
+  } as unknown as ConstructorParameters<typeof JoshCustomers>[0]);
   const events = new EventEmitterBus(db.getRepository(OutboxMessage));
   return {
     companies,

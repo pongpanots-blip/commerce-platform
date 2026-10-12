@@ -117,7 +117,8 @@ it("native ownership provides one content task link and never submits the six co
     "allergens",
   ])
     expect(payload.has(field)).toBe(false);
-  expect(payload.get("selling_unit_price")).toBe("10");
+  // Josh no longer stores a per-selling-unit rate: the form neither shows nor posts it.
+  expect(payload.has("selling_unit_price")).toBe(false);
   expect(payload.get("expiration_info")).toBe("12 months");
 });
 it("retains all six existing full-form content fields when Josh owns them", async () => {

@@ -14,7 +14,7 @@ import { PackDraftsService } from './pack-drafts.service';
 const url = process.env.PACK_PLANNING_TEST_DATABASE_URL;
 (url ? describe : describe.skip)('pack drafts in existing infrastructure (owned synthetic PostgreSQL)', () => {
   let db: DataSource, packs: PackDraftsService, promotions: PromotionDraftsService, inputs: PackInputsService, pair: Record<string, unknown>, draftId: string, firstRequest: string;
-  const product = { id: '00000000-0000-4000-8000-000000000001', sku: 'SYNTHETIC-SKU', status: 'active', sellingUnit: 'PK', packSize: '1 KG', packagingType: 'fixed', vatType: '7%', sellingUnitPrice: '107.00', translations: [], brandName: null, weightPerUnit: '1 KG', joshUpdatedAt: new Date(), syncedAt: new Date() } as unknown as JoshCatalogProduct;
+  const product = { id: '00000000-0000-4000-8000-000000000001', sku: 'SYNTHETIC-SKU', status: 'active', sellingUnit: 'PK', packSize: '1 KG', packagingType: 'fixed', vatType: '7%', orderingPrice: '107.00', translations: [], brandName: null, weightPerUnit: '1 KG', joshUpdatedAt: new Date(), syncedAt: new Date() } as unknown as JoshCatalogProduct;
   const promotionScenario = { name: 'Synthetic isolated promotion', line: { sku: product.sku, quantity: 1, unit: 'PK', quantityKind: 'count' }, proposedValue: null, minimumGrossMarginPercent: null };
   beforeAll(async () => {
     const parsed = new URL(url!); if (parsed.hostname !== '127.0.0.1' || parsed.pathname !== '/commerce_preview_test' || parsed.port !== process.env.PACK_FIXTURE_PORT || process.env.PACK_FIXTURE_OWNED !== 'commerce-pack-price-20261009') throw Error('Explicit owned localhost synthetic fixture only');

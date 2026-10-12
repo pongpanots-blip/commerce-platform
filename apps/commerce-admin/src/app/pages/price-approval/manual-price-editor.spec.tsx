@@ -255,14 +255,16 @@ it("opens canonical inspect and edit URLs through the existing price workspace",
   expect(content()).not.toContain("Saved price edit");
   await link(manualPriceEditUrl(item.sku));
   expect(path).toBe(manualPriceEditUrl(item.sku));
-  expect(container.querySelectorAll("select[name$='-mode']")).toHaveLength(3);
+  expect(container.querySelectorAll("select[name$='-mode']")).toHaveLength(2);
+  // Josh prices off ERP PRICE only: the per-selling-unit rate is display-only, never editable.
+  expect(container.querySelector("select[name='sellingUnitPrice-mode']")).toBeNull();
   expect(writes()).toHaveLength(0);
 });
 it("edit→review→persist keeps zero/clear/omitted semantics and guards duplicate clicks", async () => {
   await render(manualPriceEditUrl(item.sku));
-  await choose("sellingUnitPrice", "set");
-  await fill("sellingUnitPrice", "0");
-  await choose("orderingPrice", "clear");
+  await choose("orderingPrice", "set");
+  await fill("orderingPrice", "0");
+  await choose("moq", "clear");
   expect(content()).toContain("Local edit — not submitted");
   await click("Review price edit");
   expect(path).toBe(manualPriceReviewUrl(item.sku));
@@ -283,7 +285,7 @@ it("edit→review→persist keeps zero/clear/omitted semantics and guards duplic
   expect(writes()[0][1]).toMatchObject({
     sku: item.sku,
     version: item.version,
-    patch: { sellingUnitPrice: 0, orderingPrice: null },
+    patch: { orderingPrice: 0, moq: null },
   });
   expect(content()).not.toContain("Saved price edit for 1 SKU");
   expect(content()).toContain("Waiting for a confirmed outcome");
@@ -299,13 +301,13 @@ it("edit→review→persist keeps zero/clear/omitted semantics and guards duplic
 });
 it("back and forward restore draft fields but require confirmation again", async () => {
   await render(manualPriceEditUrl(item.sku));
-  await choose("sellingUnitPrice", "set");
-  await fill("sellingUnitPrice", "12.50");
+  await choose("orderingPrice", "set");
+  await fill("orderingPrice", "12.50");
   await click("Review price edit");
   await confirm();
   await act(async () => navigate(-1));
   expect(
-    container.querySelector<HTMLInputElement>('input[name="sellingUnitPrice"]')
+    container.querySelector<HTMLInputElement>('input[name="orderingPrice"]')
       ?.value,
   ).toBe("12.50");
   await act(async () => navigate(1));
@@ -321,13 +323,13 @@ it("an unchanged edit cannot reach preview and invalid fields are labeled and fo
   await click("Review price edit");
   expect(content()).toContain("Choose at least one field");
   expect(api.post).not.toHaveBeenCalled();
-  await choose("sellingUnitPrice", "set");
-  await fill("sellingUnitPrice", "12.345");
+  await choose("orderingPrice", "set");
+  await fill("orderingPrice", "12.345");
   await click("Review price edit");
   const invalid = container.querySelector<HTMLInputElement>(
     '[aria-invalid="true"]',
   )!;
-  expect(invalid.name).toBe("sellingUnitPrice");
+  expect(invalid.name).toBe("orderingPrice");
   expect(document.activeElement).toBe(invalid);
   expect(invalid.getAttribute("aria-describedby")).toContain("-error");
   expect(api.post).not.toHaveBeenCalled();
@@ -552,8 +554,8 @@ it("unavailable recovery storage fails before action dispatch and leaves the rev
 it("edit preparation reports unavailable storage without navigating or requesting a preview", async () => {
   await render(manualPriceEditUrl(item.sku));
   vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {});
-  await choose("sellingUnitPrice", "set");
-  await fill("sellingUnitPrice", "12.50");
+  await choose("orderingPrice", "set");
+  await fill("orderingPrice", "12.50");
   await click("Review price edit");
   expect(path).toBe(manualPriceEditUrl(item.sku));
   expect(content()).toContain(

@@ -44,7 +44,7 @@ const product = {
   ingredients: "Copied ingredients",
   allergens: "Copied allergens",
   buying_price: 999,
-  selling_unit_price: 321,
+  selling_price: 321,
   original_price: 456,
   brand_name: "Copied brand",
   selling_unit: "Copied unit",
@@ -177,7 +177,7 @@ it("uses one canonical six-field task and preserves other legacy fields with nat
   expect(values).not.toContain("999");
   expect(values).not.toContain("888");
   expect(values).toContain("0");
-  expect(values).toContain("321"); // Existing independently scoped price editing remains available.
+  expect(values).not.toContain("321"); // selling_price is ERP PRICE: shown, never an editable field.
   expect(values).toContain("456");
 });
 it("treats genuine missing native rows as known unrecorded values, preserving unrelated legacy workflows", async () => {
@@ -192,7 +192,7 @@ it("treats genuine missing native rows as known unrecorded values, preserving un
     ...container.querySelectorAll<HTMLInputElement>("form input"),
   ].map((node) => node.value);
   expect(values).not.toContain("999");
-  expect(values).toContain("321");
+  expect(values).not.toContain("321");
 });
 it("retains Josh defaults for unrelated domains that remain unowned", async () => {
   vi.mocked(productPricesApi.ownership).mockResolvedValue({
@@ -208,7 +208,7 @@ it("retains Josh defaults for unrelated domains that remain unowned", async () =
   ].map((node) => node.value);
   expect(values).toContain("Copied brand");
   expect(values).toContain("999");
-  expect(values).toContain("321");
+  expect(values).not.toContain("321");
   expect(productContentsApi.get).not.toHaveBeenCalled();
   expect(productMastersApi.get).not.toHaveBeenCalled();
   expect(orderingApi.logistics).not.toHaveBeenCalled();

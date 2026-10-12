@@ -5,7 +5,7 @@ import { JoshCatalogProduct } from '../connector/josh/josh-catalog-product.entit
 import { fixtureScenario } from './pack-fixtures';
 
 describe('pack input reuse of recorded catalog and competitor evidence', () => {
-  const product = { id: '00000000-0000-4000-8000-000000000001', sku: 'SYNTHETIC-SKU', status: 'active', sellingUnit: 'PK', packSize: '1 KG', packagingType: 'fixed', vatType: '7%', sellingUnitPrice: '107.00', translations: [], brandName: null, weightPerUnit: '1 KG', joshUpdatedAt: new Date('2026-10-09T11:00:00Z'), syncedAt: new Date('2026-10-09T11:00:00Z') } as unknown as JoshCatalogProduct;
+  const product = { id: '00000000-0000-4000-8000-000000000001', sku: 'SYNTHETIC-SKU', status: 'active', sellingUnit: 'PK', packSize: '1 KG', packagingType: 'fixed', vatType: '7%', orderingPrice: '107.00', translations: [], brandName: null, weightPerUnit: '1 KG', joshUpdatedAt: new Date('2026-10-09T11:00:00Z'), syncedAt: new Date('2026-10-09T11:00:00Z') } as unknown as JoshCatalogProduct;
   let pairs: Record<string, unknown>[], products: { find: jest.Mock; findOneBy: jest.Mock }, sync: { configured: boolean; syncSku: jest.Mock }, service: PackInputsService;
   beforeEach(() => {
     products = { find: jest.fn(async () => [product]), findOneBy: jest.fn() }; sync = { configured: true, syncSku: jest.fn() };

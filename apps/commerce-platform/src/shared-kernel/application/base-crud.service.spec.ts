@@ -8,6 +8,7 @@ interface Widget {
 }
 
 class WidgetService extends BaseCrudService<Widget> {
+  protected override readonly searchFields = ['name'];
   constructor(repo: IRepository<Widget>) {
     super(repo);
   }
@@ -49,5 +50,22 @@ describe('BaseCrudService', () => {
     );
     await expect(svc.remove('x')).rejects.toThrow(NotFoundException);
     expect(softDelete).not.toHaveBeenCalled();
+  });
+
+  it('list sorts newest first and searches the service search fields', async () => {
+    const findMany = jest.fn();
+    await new WidgetService(mockRepo({ findMany })).list({ page: 1, search: '  salmon ' });
+    expect(findMany).toHaveBeenCalledWith({
+      page: 1,
+      pageSize: undefined,
+      order: { createdAt: 'DESC', id: 'DESC' },
+      search: { term: 'salmon', fields: ['name'] },
+    });
+  });
+
+  it('list ignores a blank search', async () => {
+    const findMany = jest.fn();
+    await new WidgetService(mockRepo({ findMany })).list({ search: '   ' });
+    expect(findMany).toHaveBeenCalledWith(expect.objectContaining({ search: undefined }));
   });
 });

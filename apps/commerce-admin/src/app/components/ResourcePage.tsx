@@ -5,7 +5,7 @@ import { Alert, Button, ButtonLink, EmptyState, ErrorText, Hint, TaskPanelForm, 
 import { api, Paginated } from '../../lib/api';
 import { useAsync } from '../hooks';
 import { InterruptedAction, requireSaved, taskMessages, useActionDraft, writeFailure } from '../task-forms';
-import { CurrentPageFilters, useCurrentPageFilter } from './CurrentPageFilters';
+import { ListSearch, useListSearch, usePageFor } from './ListSearch';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -33,15 +33,17 @@ interface Props<T> {
   createLabel: string;
   saveLabel?: string;
   readOnly?: boolean;
-  searchText: (row: T) => string;
+  /** Label of the search box; the API matches it against the resource's own search fields. */
+  searchLabel: string;
   searchPlaceholder: string;
 }
 
 export function ResourcePage<T extends { id: string; status: string }>(props: Props<T>) {
   __useUiLocale();
   const { title, subtitle, endpoint, columns, fields, createLabel, saveLabel = createLabel, readOnly } = props;
-  const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const search = useListSearch();
+  const [page, setPage] = usePageFor(`${search.applied}|${pageSize}`);
   const location = useLocation();
   const navigate = useNavigate();
   const creating = location.pathname === `${endpoint}/new`;
@@ -52,8 +54,8 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
   const close = () => { if (!draft.pending) navigate(`${endpoint}${location.search}${location.hash}`); };
   const [created, setCreated] = useState<string | null>(null);
   const { data, loading, error, reload } = useAsync(
-    () => api.get<Paginated<T>>(`${endpoint}?page=${page}&pageSize=${pageSize}`),
-    [page, pageSize, endpoint],
+    () => api.get<Paginated<T>>(`${endpoint}?${new URLSearchParams({ page: String(page), pageSize: String(pageSize), ...(search.applied && { search: search.applied }) })}`),
+    [page, pageSize, endpoint, search.applied],
   );
 
   function validate() {
@@ -88,7 +90,6 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
   }
 
   const total = data?.total ?? 0;
-  const filter = useCurrentPageFilter(data?.items ?? [], props.searchText, row => row.status);
 
   return (
     <Page>
@@ -113,12 +114,14 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
       </Modal>}
 
       <Panel>
-        <PanelHead title={__uiText("รายการทั้งหมด")} sub={__uiText("{0} รายการ",{'0':total.toLocaleString()})} actions={<label className="flex items-center gap-2 whitespace-nowrap text-xs text-on-surface-variant">{__uiText("ต่อหน้า")}<Select aria-label={__uiText("จำนวนรายการต่อหน้า")} value={pageSize} onChange={event => { setPageSize(Number(event.target.value)); setPage(1); }} className="w-20">{[10, 20, 50].map(size => <option key={size} value={size}>{size}</option>)}</Select></label>} />
-        <CurrentPageFilters filter={filter} placeholder={props.searchPlaceholder} loading={loading} />
+        <PanelHead title={__uiText("รายการทั้งหมด")} sub={__uiText("{0} รายการ",{'0':total.toLocaleString()})} actions={<label className="flex items-center gap-2 whitespace-nowrap text-xs text-on-surface-variant">{__uiText("ต่อหน้า")}<Select aria-label={__uiText("จำนวนรายการต่อหน้า")} value={pageSize} onChange={event => setPageSize(Number(event.target.value))} className="w-20">{[10, 20, 50].map(size => <option key={size} value={size}>{size}</option>)}</Select></label>} />
+        <ListSearch search={search} label={props.searchLabel} placeholder={props.searchPlaceholder} total={data ? total : null} loading={loading} />
         <ErrorText error={error} onRetry={reload} />
         {loading && !data ? (
           <Loading variant="table" />
-        ) : error && !data ? null : !data?.items.length ? (
+        ) : error && !data ? null : !data?.items.length && search.applied ? (
+          <EmptyState icon="search_off" title={__uiText('ไม่พบรายการที่ตรงกับ “{0}”', { 0: search.applied })} description={__uiText('ลองคำอื่น หรือล้างคำค้นหาเพื่อดูรายการทั้งหมด')} action={<Button icon="filter_alt_off" onClick={search.clear}>{__uiText('ล้างคำค้นหา')}</Button>} />
+        ) : !data?.items.length ? (
           <EmptyState
             title={__uiText('ยังไม่มีรายการ')}
             description={readOnly ? __uiText('เมื่อมีข้อมูล รายการจะแสดงที่นี่') : __uiText('เริ่มด้วยการเพิ่มรายการแรก')}
@@ -126,14 +129,14 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
           />
         ) : (
           <>
-            {filter.visible.length ? <Table scrollLabel={__uiText("รายการทั้งหมด")}>
+            <Table scrollLabel={__uiText("รายการทั้งหมด")}>
               <THead>
                 {columns.map((c) => (
                   <TH key={c.label}>{c.label}</TH>
                 ))}
               </THead>
               <TBody>
-                {filter.visible.map((row) => (
+                {data.items.map((row) => (
                   <TR key={row.id}>
                     {columns.map((c) => (
                       <TD key={c.label}>{c.render(row)}</TD>
@@ -141,7 +144,7 @@ export function ResourcePage<T extends { id: string; status: string }>(props: Pr
                   </TR>
                 ))}
               </TBody>
-            </Table> : <EmptyState icon="search_off" title={__uiText('ไม่พบรายการในหน้านี้')} description={__uiText('ล้างตัวกรองเพื่อดูรายการทั้งหมดในหน้านี้ หรือเปิดหน้าถัดไป')} action={<Button icon="filter_alt_off" onClick={filter.clear}>{__uiText('ล้างตัวกรอง')}</Button>} />}
+            </Table>
             <Pager page={page} pageSize={pageSize} total={total} onPage={setPage} />
           </>
         )}

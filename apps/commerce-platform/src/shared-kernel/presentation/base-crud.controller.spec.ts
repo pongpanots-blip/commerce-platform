@@ -17,6 +17,7 @@ function mockService(): jest.Mocked<BaseCrudService<Widget>> {
   return {
     create: jest.fn(),
     findMany: jest.fn(),
+    list: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
@@ -24,10 +25,10 @@ function mockService(): jest.Mocked<BaseCrudService<Widget>> {
 }
 
 describe('BaseCrudController', () => {
-  it('list forwards pagination query to the service', () => {
+  it('list forwards pagination and search to the service', () => {
     const svc = mockService();
-    new WidgetController(svc).list({ page: 2, pageSize: 5 });
-    expect(svc.findMany).toHaveBeenCalledWith({ page: 2, pageSize: 5 });
+    new WidgetController(svc).list({ page: 2, pageSize: 5, search: 'abc' });
+    expect(svc.list).toHaveBeenCalledWith({ page: 2, pageSize: 5, search: 'abc' });
   });
 
   it('get / create / update / remove delegate to the service', () => {

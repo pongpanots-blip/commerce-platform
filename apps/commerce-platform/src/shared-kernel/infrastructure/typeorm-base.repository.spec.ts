@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { TypeOrmBaseRepository } from './typeorm-base.repository';
 
 interface Row {
@@ -55,5 +55,16 @@ describe('TypeOrmBaseRepository', () => {
     const repo = new RowRepo(inner);
     await repo.softDelete('9');
     expect(inner.softDelete).toHaveBeenCalledWith('9');
+  });
+
+  it('findMany ORs the search over each field, keeping the base where and escaping wildcards', async () => {
+    const inner = mockRepo({ findAndCount: jest.fn().mockResolvedValue([[], 0]) });
+    await new RowRepo(inner).findMany({ where: { status: 'active' }, search: { term: '50%_off', fields: ['sku', 'name'] } });
+    expect(inner.findAndCount).toHaveBeenCalledWith(expect.objectContaining({
+      where: [
+        { status: 'active', sku: ILike('%50\\%\\_off%') },
+        { status: 'active', name: ILike('%50\\%\\_off%') },
+      ],
+    }));
   });
 });

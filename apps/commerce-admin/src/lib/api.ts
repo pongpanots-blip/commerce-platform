@@ -183,6 +183,8 @@ export interface AdminStats {
 export interface OrderRow {
   id: string; customerId: string; code: string | null; status: string;
   currency: string; total: string; idempotencyKey: string | null; createdAt: string;
+  /** Only on GET /orders (list). */
+  customerName?: string | null; customerCode?: string | null;
 }
 export interface OrderLineRow {
   id: string; orderId: string; productId: string; qty: string; unitPrice: string; lineTotal: string;

@@ -19,11 +19,7 @@ export class OrderController extends BaseCrudController<Order>() {
   @Get()
   @StaffRoles('business_analyst')
   override list(@Query() query: OrderListQueryDto) {
-    return this.service.findMany({
-      page: query.page,
-      pageSize: query.pageSize,
-      where: query.customerId ? { customerId: query.customerId } : undefined,
-    });
+    return this.service.listForAdmin(query);
   }
 
   @Post()

@@ -5,8 +5,8 @@ import {
   Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Panel, PanelHead, Pager, Select, TBody, TD, TH, THead, TR, Table, fmt, RowLink, Icon } from '@cp/ui';
 import { api, Customer, Product, OrderRow, Paginated, session } from '../../lib/api';
 import { useAsync } from '../hooks';
-import { OrderStatusChip } from './order-status';
-import { CurrentPageFilters, useCurrentPageFilter } from '../components/CurrentPageFilters';
+import { OrderStatusChip, ORDER_STATUSES, orderStatusLabel } from './order-status';
+import { ListSearch, useListSearch, usePageFor } from '../components/ListSearch';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -22,15 +22,17 @@ const emptyLine: LineForm = { productId: '', qty: '1', unitPrice: '' };
 export function Orders() {
   __useUiLocale();
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
   const pageSize = 20;
+  const search = useListSearch();
+  const [status, setStatus] = useState('');
+  const [page, setPage] = usePageFor(`${search.applied}|${status}`);
   const [creating, setCreating] = useState(false);
   const [manualCustomer, setManualCustomer] = useState(false);
   const customers = useAsync(() => creating ? api.get<Paginated<Customer>>('/customers?page=1&pageSize=100') : Promise.resolve(null), [creating]);
   const products = useAsync(() => creating ? api.get<Paginated<Product>>('/products?page=1&pageSize=100') : Promise.resolve(null), [creating]);
   const { data, loading, error, reload } = useAsync(
-    () => api.get<Paginated<OrderRow>>(`/orders?page=${page}&pageSize=${pageSize}`),
-    [page],
+    () => api.get<Paginated<OrderRow>>(`/orders?${new URLSearchParams({ page: String(page), pageSize: String(pageSize), ...(search.applied && { search: search.applied }), ...(status && { status }) })}`),
+    [page, search.applied, status],
   );
 
   const [customerId, setCustomerId] = useState('');
@@ -86,7 +88,6 @@ export function Orders() {
 
   const total = data?.total ?? 0;
   const readOnly = session.claims()?.role === 'business_analyst';
-  const filter = useCurrentPageFilter(data?.items ?? [], row => `${row.code ?? ''} ${row.id}`, row => row.status);
 
   return (
     <Page>
@@ -150,26 +151,37 @@ export function Orders() {
 
       <Panel>
         <PanelHead title={__uiText("ออเดอร์ทั้งหมด")} sub={__uiText("{0} รายการ",{'0':total.toLocaleString()})} />
-        <CurrentPageFilters filter={filter} placeholder={__uiText("ค้นหารหัสออเดอร์ในหน้านี้…")} loading={loading} />
+        <ListSearch search={search} label={__uiText("ค้นหาออเดอร์")} placeholder={__uiText("เลขออเดอร์ ชื่อลูกค้า หรือรหัสลูกค้า…")} total={data ? total : null} loading={loading}>
+          <Field label={__uiText("สถานะ")} className="w-full sm:w-48">
+            <Select value={status} onChange={event => setStatus(event.target.value)}>
+              <option value="">{__uiText("ทุกสถานะ")}</option>
+              {ORDER_STATUSES.map(code => <option key={code} value={code}>{orderStatusLabel(code)}</option>)}
+            </Select>
+          </Field>
+        </ListSearch>
         <ErrorText error={error} />
         {loading && !data ? (
           <Loading />
         ) : error && !data ? null : !data?.items.length ? (
-          <Empty>{__uiText(readOnly ? "ยังไม่มีออเดอร์" : "ยังไม่มีออเดอร์ เริ่มต้นด้วยปุ่ม “สร้างออเดอร์” ด้านบน")}</Empty>
+          search.applied || status
+            ? <Empty icon="search_off">{__uiText("ไม่พบออเดอร์ที่ตรงกับเงื่อนไข ลองคำอื่นหรือเลือกทุกสถานะ")}</Empty>
+            : <Empty>{__uiText(readOnly ? "ยังไม่มีออเดอร์" : "ยังไม่มีออเดอร์ เริ่มต้นด้วยปุ่ม “สร้างออเดอร์” ด้านบน")}</Empty>
         ) : (
           <>
-            {filter.visible.length ? <Table>
+            <Table>
               <THead>
-                <TH>{__uiText("รหัสออเดอร์")}</TH>
+                <TH>{__uiText("เลขออเดอร์")}</TH>
+                <TH>{__uiText("ลูกค้า")}</TH>
                 <TH>{__uiText("สถานะ")}</TH>
                 <TH right>{__uiText("ยอดรวม")}</TH>
                 <TH>{__uiText("วันที่สร้าง")}</TH>
                 <TH right>{__uiText("รายละเอียด")}</TH>
               </THead>
               <TBody>
-                {filter.visible.map((o) => (
+                {data.items.map((o) => (
                   <TR key={o.id} onClick={() => navigate(`/orders/${o.id}`)}>
-                    <TD><RowLink to={`/orders/${o.id}`}>{o.code ?? o.id.slice(0, 8) + '…'}</RowLink></TD>
+                    <TD><RowLink to={`/orders/${o.id}`}>{o.code ?? `#${o.id.slice(0, 8)}`}</RowLink></TD>
+                    <TD>{o.customerName ?? '—'}{o.customerCode && <span className="block text-xs text-on-surface-variant">{o.customerCode}</span>}</TD>
                     <TD><OrderStatusChip status={o.status} /></TD>
                     <TD kind="money">{fmt.baht(o.total)}</TD>
                     <TD kind="time">{fmt.when(o.createdAt)}</TD>
@@ -179,7 +191,7 @@ export function Orders() {
                   </TR>
                 ))}
               </TBody>
-            </Table> : <Empty icon="search_off">{__uiText("ไม่พบรายการในหน้านี้ ล้างตัวกรองหรือเปิดหน้าถัดไป")}</Empty>}
+            </Table>
             <Pager page={page} pageSize={pageSize} total={total} onPage={setPage} />
           </>
         )}

@@ -1,4 +1,4 @@
-import { Repository, ObjectLiteral } from 'typeorm';
+import { ILike, Repository, ObjectLiteral } from 'typeorm';
 import {
   IRepository,
   FindManyParams,
@@ -7,6 +7,9 @@ import {
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
+
+/** Escape LIKE wildcards so a search for `50%` matches the literal text. */
+export const escapeLike = (term: string) => term.replace(/[\\%_]/g, (c) => `\\${c}`);
 
 /**
  * Generic TypeORM-backed implementation of the repository port. Concrete
@@ -24,8 +27,12 @@ export abstract class TypeOrmBaseRepository<T extends ObjectLiteral>
   async findMany(params: FindManyParams): Promise<Paginated<T>> {
     const page = params.page && params.page > 0 ? params.page : 1;
     const pageSize = Math.min(params.pageSize ?? DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
+    const { search } = params;
+    const where = search?.fields.length
+      ? search.fields.map((field) => ({ ...params.where, [field]: ILike(`%${escapeLike(search.term)}%`) }))
+      : params.where;
     const [items, total] = await this.repo.findAndCount({
-      where: params.where as never,
+      where: where as never,
       order: params.order as never,
       skip: (page - 1) * pageSize,
       take: pageSize,

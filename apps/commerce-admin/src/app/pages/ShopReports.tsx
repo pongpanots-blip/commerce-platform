@@ -166,7 +166,7 @@ export function SalesReport() {
             )}
           </Panel>
         </>
-      ) : (
+      ) : error ? null : (
         <Empty>{__uiText("เลือกวันที่ให้ครบ")}</Empty>
       )}
     </Page>
@@ -284,7 +284,7 @@ export function TrafficReport() {
             )}
           </Panel>
         </>
-      ) : (
+      ) : error ? null : (
         <Empty>{__uiText("เลือกวันที่ให้ครบ")}</Empty>
       )}
     </Page>
@@ -395,7 +395,7 @@ export function HealthReportPage() {
             )}
           </Panel>
         </>
-      ) : (
+      ) : error ? null : (
         <Empty>{__uiText("เลือกวันที่ให้ครบ")}</Empty>
       )}
     </Page>

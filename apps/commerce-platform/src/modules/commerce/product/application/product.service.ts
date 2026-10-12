@@ -18,6 +18,8 @@ function isUniqueViolation(error: unknown): boolean {
 /** Product CRUD. Duplicate SKU -> 409; update emits product.updated. */
 @Injectable()
 export class ProductService extends BaseCrudService<Product> {
+  protected override readonly searchFields = ['sku', 'name'];
+
   constructor(
     repo: ProductRepository,
     private readonly dataSource: DataSource,

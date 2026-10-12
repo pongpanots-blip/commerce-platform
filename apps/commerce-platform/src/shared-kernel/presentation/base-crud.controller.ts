@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { BaseCrudService } from '../application/base-crud.service';
-import { PaginationQueryDto } from '../application/pagination.dto';
+import { ListQueryDto } from '../application/pagination.dto';
 
 /**
  * Factory producing a base REST controller bound to a {@link BaseCrudService}.
@@ -26,8 +26,8 @@ export function BaseCrudController<T extends { id: string }>() {
     protected service!: BaseCrudService<T>;
 
     @Get()
-    list(@Query() query: PaginationQueryDto) {
-      return this.service.findMany({ page: query.page, pageSize: query.pageSize });
+    list(@Query() query: ListQueryDto) {
+      return this.service.list(query);
     }
 
     @Get(':id')

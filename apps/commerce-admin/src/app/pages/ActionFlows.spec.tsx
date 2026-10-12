@@ -113,7 +113,7 @@ it('transfer persists one unchanged contract with both confirmed warehouse recei
   await render(<StockMoves />, '/stock-moves/transfer'); await submit();
   expect(stockApi.transfer).toHaveBeenCalledWith({ sku: 'SKU-1', fromWarehouseCode: 'A', toWarehouseCode: 'B', quantity: 2, note: 'note' }); expect(text()).toContain('8'); expect(text()).toContain('4');
 });
-const resource = <ResourcePage<{id:string;status:string}> title="Products" subtitle="Records" endpoint="/products" fields={[{ name: 'sku', label: 'SKU', required: true }, { name: 'name', label: 'Name', required: true }, { name:'description', label:'Description', type:'textarea' }]} columns={[]} createLabel="Add product" searchText={() => ''} searchPlaceholder="Search" />;
+const resource = <ResourcePage<{id:string;status:string}> title="Products" subtitle="Records" endpoint="/products" fields={[{ name: 'sku', label: 'SKU', required: true }, { name: 'name', label: 'Name', required: true }, { name:'description', label:'Description', type:'textarea' }]} columns={[]} createLabel="Add product" searchLabel="Search" searchPlaceholder="Search" />;
 it('resource action URL validates inline, omits optional blanks, locks clicks and navigates after an actual id', async () => {
   const write = deferred<{id:string;status:string}>(); vi.mocked(api.post).mockReturnValueOnce(write.promise);
   await render(resource, '/products/new'); await submit(); expect(api.post).not.toHaveBeenCalled(); expect(document.activeElement?.getAttribute('name')).toBe('sku');

@@ -33,7 +33,7 @@ export { TaskInput, TaskSelect, TaskTextarea, TaskMasterDataSelect, TaskForm, Ta
 export type { TaskInputProps, TaskSelectProps, TaskTextareaProps, TaskFormProps, TaskFormMessages, TaskFieldErrors, TaskSubmitResult } from './task-form';
 
 // ui-copy-migration: only literal UI copy and notification templates
-import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText } from "./i18n";
+import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale, getUiLocale, hasUiText, uiTextAllLocales } from "./i18n";
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ');
 
 // ---------------------------------------------------------------- icons
@@ -879,7 +879,8 @@ export function RowLink({ to, state, mono = true, children }: { to: string; stat
       to={to}
       state={state}
       onClick={(e) => e.stopPropagation()}
-      className={cx('text-primary hover:underline', mono ? 'font-mono font-semibold' : 'font-medium')}
+      // 44px tap height on touch layouts; desktop rows keep their compact link.
+      className={cx('inline-flex min-h-11 items-center text-primary hover:underline md:min-h-0', mono ? 'font-mono font-semibold' : 'font-medium')}
     >
       {children}
     </Link>
@@ -1128,8 +1129,14 @@ export function currentNavItem(nav: NavGroup[], pathname: string): { group: NavG
   return best;
 }
 
-/** Keyboard-accessible page search. Searches the permitted navigation, never business data. */
-export function CommandMenu() {
+/** A palette shortcut that opens a list filtered by what was typed, e.g. "search products for X". */
+export type CommandSearch = { label: string; to: (query: string) => string };
+
+/**
+ * Keyboard-accessible page search over the permitted navigation (labels match in Thai and English).
+ * `searches` add "find X in <list>" shortcuts; the palette itself never loads business data.
+ */
+export function CommandMenu({ searches = [] }: { searches?: CommandSearch[] }) {
   __useUiLocale();
   const nav = useNavigation();
   const navigate = useNavigate();
@@ -1141,8 +1148,11 @@ export function CommandMenu() {
   const opener = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const resultsId = useId();
-  const results = nav.flatMap(group => group.links.map(link => ({ ...link, group: group.group })))
-    .filter(link => `${link.label} ${link.group ?? ''} ${__uiText(link.label)} ${link.group ? __uiText(link.group) : ''} ${link.description ? __uiText(link.description) : ''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
+  const term = query.trim();
+  const pages: { to: string; label: string; group?: string; description?: string }[] = nav.flatMap(group => group.links.map(link => ({ ...link, group: group.group })))
+    .filter(link => [link.label, link.group, link.description].map(text => (text ? uiTextAllLocales(text) : '')).join(' ').toLocaleLowerCase().includes(term.toLocaleLowerCase()));
+  const finds = term ? searches.map(search => ({ to: search.to(term), label: __uiText('{0} “{1}”', { 0: __uiText(search.label), 1: term }), group: undefined, description: undefined, find: true })) : [];
+  const results = [...pages, ...finds];
   const close = () => setOpen(false);
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
@@ -1165,7 +1175,7 @@ export function CommandMenu() {
     </button>
     <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); close(); }} onClick={event => { if (event.target === event.currentTarget) close(); }} className="cp-command-dialog w-[calc(100%-2rem)] max-w-xl rounded-2xl border border-secondary-container bg-white p-0 shadow-2xl backdrop:bg-inverse-surface/40">
       <div className="flex items-center justify-between px-5 pt-4"><h2 id={titleId} className="font-semibold">{__uiText("ไปยังหน้าที่ต้องการ")}</h2><IconButton icon="close" title={__uiText("ปิดการค้นหา")} onClick={close} /></div>
-      <div className="px-5 pb-4 pt-3"><input ref={input} type="search" role="combobox" aria-label={__uiText("ค้นหาเมนูทั้งหมด")} aria-expanded={open} aria-controls={resultsId} aria-autocomplete="list" aria-activedescendant={results[selected] ? `${resultsId}-${selected}` : undefined} placeholder={__uiText("เช่น สินค้า ออเดอร์ หรือคิวงาน")} className={inputCls} value={query}
+      <div className="px-5 pb-4 pt-3"><input ref={input} type="search" role="combobox" aria-label={__uiText("ค้นหาเมนูทั้งหมด")} aria-expanded={open} aria-controls={resultsId} aria-autocomplete="list" aria-activedescendant={results[selected] ? `${resultsId}-${selected}` : undefined} placeholder={__uiText(searches.length ? "ชื่อเมนู หรือรหัสสินค้า เลขออเดอร์ ชื่อลูกค้า" : "เช่น สินค้า ออเดอร์ หรือคิวงาน")} className={inputCls} value={query}
         onChange={event => { setQuery(event.target.value); setSelected(0); }} onKeyDown={event => {
           if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); setSelected(value => results.length ? (value + (event.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length : 0); }
           if (event.key === 'Enter') { event.preventDefault(); visit(selected); }
@@ -1173,7 +1183,7 @@ export function CommandMenu() {
       <div id={resultsId} role="listbox" aria-label={__uiText("ผลการค้นหาเมนู")} className="max-h-[55vh] overflow-y-auto border-t border-secondary-container p-2">
         {results.length ? results.map((item, index) => <div key={item.to} id={`${resultsId}-${index}`} role="option" aria-selected={selected === index} className={cx('rounded-lg', selected === index && 'bg-primary-container/50')}>
           <button type="button" tabIndex={-1} onClick={() => visit(index)} className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left">
-            <span><span className="block text-sm font-medium">{__uiText(item.label)}</span><span className="mt-0.5 block text-xs text-on-surface-variant">{item.group ? __uiText(item.group) : __uiText("หน้าหลัก")}{item.description ? ` · ${__uiText(item.description)}` : ''}</span></span><Icon name="arrow_forward" className="text-outline" />
+            <span><span className="block text-sm font-medium">{'find' in item ? item.label : __uiText(item.label)}</span><span className="mt-0.5 block text-xs text-on-surface-variant">{'find' in item ? __uiText("ค้นหาในรายการทั้งหมด") : item.group ? __uiText(item.group) : __uiText("หน้าหลัก")}{item.description ? ` · ${__uiText(item.description)}` : ''}</span></span><Icon name={'find' in item ? 'search' : 'arrow_forward'} className="text-outline" />
           </button>
         </div>) : <Empty icon="search_off">{__uiText("ไม่พบเมนู ลองค้นหาด้วยคำอื่น")}</Empty>}
       </div>
@@ -1215,7 +1225,7 @@ export function Sidebar({
   const q = query.trim().toLowerCase();
   const activeDestination = currentNavItem(nav, pathname)?.link.to;
   const isCurrent = (l: NavItem) => l.to === activeDestination;
-  const matches = (group: string | undefined, l: NavItem) => `${group ?? ''} ${__uiText(group ?? '')} ${l.label} ${__uiText(l.label)} ${l.description ? __uiText(l.description) : ''}`.toLowerCase().includes(q);
+  const matches = (group: string | undefined, l: NavItem) => [group, l.label, l.description].map(text => (text ? uiTextAllLocales(text) : '')).join(' ').toLowerCase().includes(q);
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>
     cx(
@@ -1441,7 +1451,7 @@ export const fmt = {
     return new Intl.RelativeTimeFormat(getUiLocale() === 'th' ? 'th-TH' : 'en-GB', { numeric: 'always' }).format(value as number, unit as Intl.RelativeTimeFormatUnit);
   },
 };
-export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText } from './i18n';
+export { LanguageSelector, UiSentence, getUiLocale, setUiLocale, uiText, formatUiMessage, useUiLocale, hasUiText, uiTextAllLocales } from './i18n';
 export { TaskPageFrame } from './TaskPageFrame';
 export { HelpText, EmptyState, FilterBar, Stepper, HowTo, RouteHowTo, PageHelpLink, enablePageGuides, confirmAction, useConfirm, ConfirmDialog, ConfirmHost, toast, ToastHost, PageChrome, fieldExample, fieldHint } from './usability';
 export { TableViewport, TableEmpty, PaginationControls, downloadCsv } from './data-table';

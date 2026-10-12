@@ -14,6 +14,8 @@ import { CustomerUpdated } from '../domain/events/customer-updated.event';
  */
 @Injectable()
 export class CustomerService extends BaseCrudService<Customer> {
+  protected override readonly searchFields = ['name', 'code', 'email', 'phone'];
+
   constructor(
     repo: CustomerRepository,
     private readonly dataSource: DataSource,

@@ -45,6 +45,12 @@ export function uiText(source: string, params?: Record<string, unknown>) {
   return translate(source, params);
 }
 
+/** UI copy in every locale, so search matches a Thai label typed in English and vice versa. */
+export function uiTextAllLocales(source: string) {
+  const entry = catalogue[source] ?? catalogue[source.replace(/\s+/g, ' ').trim()];
+  return entry ? `${entry.th} ${entry.en}` : source;
+}
+
 export function hasUiText(source: string) {
   const template = notificationTemplates.get(source)?.source ?? source;
   return Boolean(catalogue[template] ?? catalogue[template.replace(/\s+/g, ' ').trim()]);

@@ -13,7 +13,7 @@ import { useAsync } from '../hooks';
 import { SECTIONS } from '../navigation';
 import { CommercePage as Page } from '../CommercePage';
 import { commerceText as text } from '../commerce-copy';
-import { WorkspaceMetric, WorkspaceLink } from '../WorkspaceParts';
+import { WorkspaceLink } from '../WorkspaceParts';
 import { operationLabel } from './SyncJobs';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -68,9 +68,6 @@ export function Dashboard() {
           </>
         }
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {[['การพยายามชำระ', 'Payment attempts'], ['รับเงินเข้าบัญชี', 'Settlement'], ['คืนเงิน', 'Refund records'], ['ข้อพิพาท', 'Disputes']].map(([th, en]) => <WorkspaceMetric key={en} label={text(th, en)} reason={text('ภาพรวมนี้ยังไม่มีตัวเลขสรุปเรื่องนี้ เปิดรายการที่เกี่ยวข้องเพื่อดูรายละเอียด', 'This overview has no summary for this yet. Open the related records for details.')} />)}
-      </div>
       <div className="grid gap-3 sm:grid-cols-2"><WorkspaceLink to="/j/payment-transactions">{text('ตรวจการพยายามชำระและข้อจำกัดของข้อมูลรับเงิน', 'Inspect payment attempts and settlement data gaps')}</WorkspaceLink><WorkspaceLink to="/j/refunds">{text('ตรวจรายการคืนสินค้าและคืนเงิน', 'Inspect return and refund records')}</WorkspaceLink></div>
       <section aria-label={__uiText("เลือกหมวดงาน")}>
         <div className="mb-3 flex items-center gap-2"><h2 className="font-semibold">{__uiText("เลือกหมวดงาน")}</h2><span className="text-xs text-on-surface-variant">{__uiText("ทุกเครื่องมือ จัดตามงานที่คุณทำ")}</span></div>
@@ -191,7 +188,7 @@ export function Dashboard() {
                   </TD>
                   <TD kind="muted">{integrationName.get(j.integrationId) ?? j.integrationId.slice(0, 8)}</TD>
                   <TD><StatusChip status={j.status} /></TD>
-                  <TD kind="time">{new Date(j.createdAt).toLocaleTimeString((__dateLocale() === 'th' ? "th-TH" : 'en-GB'), { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</TD>
+                  <TD kind="time">{fmt.when(j.createdAt)}</TD>
                   <TD kind="num">{duration(j)}</TD>
                 </TR>
               ))}

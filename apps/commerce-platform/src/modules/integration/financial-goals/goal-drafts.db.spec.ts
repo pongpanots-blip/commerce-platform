@@ -66,6 +66,6 @@ const url = process.env.GOAL_PLANNING_TEST_DATABASE_URL;
   it('paginates this owner/kind only, preserving prior Pack and original operational data', async () => {
     const s = await scenario(); for (let n = 0; n < 21; n++) await goals.create({ requestId: randomUUID(), scenario: s }, 'goal-paging-fixture-actor');
     const page = await goals.list('goal-paging-fixture-actor'); expect(page.items).toHaveLength(20); expect(page.next).not.toBeNull(); expect((await goals.list('goal-paging-fixture-actor', page.next!)).items).toHaveLength(1); expect(await packs.list('goal-paging-fixture-actor')).toEqual({ items: [], next: null });
-    expect((await packs.list('goal-fixture-actor')).items).toHaveLength(1); expect((await db.query('SELECT selling_unit_price::text price FROM josh_catalog_products'))[0].price).toBe('107.00'); expect((await db.query('SELECT rules FROM product_promotion_rules'))[0].rules).toEqual([]);
+    expect((await packs.list('goal-fixture-actor')).items).toHaveLength(1); expect((await db.query('SELECT ordering_price::text price FROM josh_catalog_products'))[0].price).toBe('107.00'); expect((await db.query('SELECT rules FROM product_promotion_rules'))[0].rules).toEqual([]);
   });
 });

@@ -39,7 +39,7 @@ const url = process.env.SCRAPING_TEST_DATABASE_URL;
     review = app.get(CompetitorReviewService);
     await db.query(`DELETE FROM scraping_sources WHERE origin = 'https://grid.example.com'`);
     await db.query(`DELETE FROM josh_catalog_products WHERE id = $1`, [chicken]);
-    await db.query(`INSERT INTO josh_catalog_products (id, sku, status, selling_unit_price, selling_unit, vat_type, storage_temperature, translations, josh_updated_at, image_url, category_name_th)
+    await db.query(`INSERT INTO josh_catalog_products (id, sku, status, ordering_price, selling_unit, vat_type, storage_temperature, translations, josh_updated_at, image_url, category_name_th)
       VALUES ($1, 'TEST-CHK', 'active', 89, 'KG', '0%', 'Frozen', '[{"language_code":"th","product_name":"น่องติดสะโพกไก่ แช่แข็ง"}]', now(), 'https://img.example.com/chk.jpg', 'ทดสอบกริด')`, [chicken]);
   });
   afterAll(async () => {

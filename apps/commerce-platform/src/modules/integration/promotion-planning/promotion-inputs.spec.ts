@@ -8,9 +8,9 @@ describe('server promotion observations', () => {
     previous = flags.map(key => process.env[key]); flags.forEach(key => delete process.env[key]); query.mockReset();
     query.mockImplementation(async (sql: string, params: unknown[]) => {
       expect(sql).toMatch(/^SELECT /); expect(params).toEqual(['SKU']);
-      if (sql.includes('FROM josh_catalog_products')) return [{ id: 'catalog-id', sku: 'SKU', selling_unit: 'PC', packaging_type: 'fixed', pack_size: '1 PC', vat_type: '7%', selling_unit_price: '107.00', source_version: '5', synced_at: '2026-10-01T00:00:00Z', buying_price: '50', customer_secret: 'never project' }];
+      if (sql.includes('FROM josh_catalog_products')) return [{ id: 'catalog-id', sku: 'SKU', selling_unit: 'PC', packaging_type: 'fixed', pack_size: '1 PC', vat_type: '7%', selling_price: '107.00', source_version: '5', synced_at: '2026-10-01T00:00:00Z', buying_price: '50', customer_secret: 'never project' }];
       if (sql.includes('FROM product_promotion_rules')) return [{ rules: [], shadow_rules: [], version: '3', shadow_version: '5', lock: null, lock_version: '5' }];
-      if (sql.includes('FROM product_prices')) return [{ selling_unit_price: null, updated_at: '2026-10-09T00:00:00Z' }];
+      if (sql.includes('FROM product_prices')) return [{ ordering_price: null, updated_at: '2026-10-09T00:00:00Z' }];
       if (sql.includes('FROM product_masters')) return [{ fields: { selling_unit: 'KG', packaging_type: 'approx', vat_type: '0%' }, updated_at: '2026-10-09T00:00:00Z' }];
       throw new Error('Unexpected source');
     }); service = new PromotionInputsService({ query } as never);
@@ -39,7 +39,7 @@ describe('server promotion observations', () => {
   it('handles missing rows and source failures without returning query secrets or fabricated emptiness', async () => {
     query.mockResolvedValueOnce([]); await expect(service.inputs('SKU')).rejects.toThrow('not found');
     query.mockRejectedValueOnce(new Error('postgres credential SQL')); await expect(service.inputs('SKU')).rejects.toThrow('Catalog observations are unavailable');
-    query.mockImplementationOnce(async () => [{ id: 'catalog-id', selling_unit: 'PC', packaging_type: 'fixed', vat_type: null, selling_unit_price: '10.00' }]);
+    query.mockImplementationOnce(async () => [{ id: 'catalog-id', selling_unit: 'PC', packaging_type: 'fixed', vat_type: null, selling_price: '10.00' }]);
     const result = await service.preview(scenario); expect(result.preview.amounts?.grossProfitMinor).toBeNull(); expect(result.inputs.price.vatRateBasisPoints).toBeNull();
   });
   it('rejects unsupported count quantity, unit mismatch, approximate basis and caller-injected cost', async () => {

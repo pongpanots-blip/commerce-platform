@@ -254,7 +254,7 @@ export class CommercialSourcesService {
         // Exact SKU identity; catalog UUID aliases are not a second planning subject.
         if (p.product_inventory_sku !== id)
           throw new BadRequestException("Choose the exact catalog SKU");
-        const price = decimal(p.selling_unit_price, 2),
+        const price = decimal(p.selling_price, 2),
           stock =
             typeof p.product_inventory_quantity === "number" &&
             Number.isFinite(p.product_inventory_quantity)

@@ -6,6 +6,7 @@ import { ownsPrices } from '../../commerce/product-prices/product-prices.service
 import { ownsProductMaster } from '../../commerce/product-masters/product-masters.service';
 import { ownsPromotions } from '../../commerce/product-promotion-rules/product-promotion-rules.service';
 import { rehearsePromotion } from '../commerce-previews/promotion-rehearsal';
+import { resolveSellUnit, roundMoney } from '../../../shared-kernel/helpers/pack-order-price.helper';
 import { promotionScenarioSchema } from './promotion-planning.schema';
 type Row = Record<string, unknown>;
 const text = (v: unknown) => typeof v === 'string' && v.trim() ? v.trim() : null;
@@ -28,13 +29,13 @@ export class PromotionInputsService {
     if (typeof rawSku !== 'string' || !rawSku.trim() || rawSku.length > 100 || /[\x00-\x1f\x7f]/.test(rawSku)) throw new BadRequestException('Invalid SKU');
     const sku = rawSku.trim(), unavailable = ['authoritative_effective_cost', 'stock_selling_unit_mapping', 'source_freshness', 'promotion_capacity', 'customer_contract_price_context'];
     let rows: Row[];
-    try { rows = await this.db.query(`SELECT id::text, sku, selling_unit, packaging_type, pack_size, vat_type,
-      selling_unit_price::text, source_version::text, synced_at FROM josh_catalog_products WHERE sku=$1 AND removed_at IS NULL LIMIT 2`, [sku]); }
+    try { rows = await this.db.query(`SELECT id::text, sku, selling_unit, order_taking_unit, packaging_type, pack_size, units_per_box, weight_per_unit, vat_type,
+      ordering_price::text AS selling_price, source_version::text, synced_at FROM josh_catalog_products WHERE sku=$1 AND removed_at IS NULL LIMIT 2`, [sku]); }
     catch { throw new ServiceUnavailableException('Catalog observations are unavailable'); }
     if (!rows.length) throw new NotFoundException('SKU not found in the catalog copy');
     if (rows.length !== 1) throw new ConflictException('SKU identity is ambiguous');
     const c = rows[0];
-    let metadata = c, metadataAsOf = date(c.synced_at), price = c.selling_unit_price, priceAsOf = date(c.synced_at);
+    let metadata = c, metadataAsOf = date(c.synced_at), price = c.selling_price, priceAsOf = date(c.synced_at);
     if (ownsProductMaster()) {
       try {
         const [m]: Row[] = await this.db.query('SELECT fields, updated_at FROM product_masters WHERE product_inventory_sku=$1', [sku]);
@@ -45,7 +46,8 @@ export class PromotionInputsService {
       } catch { metadata = {}; metadataAsOf = null; unavailable.push('owned_product_metadata'); }
     }
     if (ownsPrices()) {
-      try { const [p]: Row[] = await this.db.query('SELECT selling_unit_price::text, updated_at FROM product_prices WHERE product_inventory_sku=$1', [sku]); price = p?.selling_unit_price; priceAsOf = date(p?.updated_at); }
+      // ERP PRICE per order unit → josh's sell-unit total (selling_price), the same way josh applies it; the per-selling-unit rate is not a price.
+      try { const [p]: Row[] = await this.db.query('SELECT ordering_price::text, updated_at FROM product_prices WHERE product_inventory_sku=$1', [sku]); price = p?.ordering_price == null ? null : roundMoney(Number(p.ordering_price) * resolveSellUnit({ ...c, ...metadata }).factor).toFixed(2); priceAsOf = date(p?.updated_at); }
       catch { price = null; priceAsOf = null; unavailable.push('owned_selling_price'); }
     }
     let existingRules: PromotionInputs['existingRules'] = { source: ownsPromotions() ? 'commerce' : 'josh_shadow', rules: null, mechanicAssigned: null, version: null, sourceAsOf: null };

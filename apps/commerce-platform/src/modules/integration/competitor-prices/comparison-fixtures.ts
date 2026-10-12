@@ -95,7 +95,7 @@ export async function comparisonFixture(db: DataSource, schema: string) {
   ]) {
     const id = randomUUID();
     await db.query(
-      `INSERT INTO josh_catalog_products(id,sku,status,selling_unit_price,selling_unit,vat_type,translations,josh_updated_at,category_name_th)
+      `INSERT INTO josh_catalog_products(id,sku,status,ordering_price,selling_unit,vat_type,translations,josh_updated_at,category_name_th)
       VALUES($1,$2,'active',$3,$4,'7%',$5,now(),'Synthetic comparison')`,
       [
         id,

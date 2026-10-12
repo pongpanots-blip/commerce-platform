@@ -248,7 +248,7 @@ describe("source-backed commercial planning", () => {
     async (flag) => {
       const f = sourceFixture();
       if (flag === "inactive") f.product.product_status = "inactive";
-      if (flag === "missing-price") f.product.selling_unit_price = 0;
+      if (flag === "missing-price") f.product.selling_price = 0;
       if (flag === "missing-image") f.product.image_count = 0;
       if (flag === "missing-category") f.product.category_id = null as never;
       if (flag === "empty-stock" || flag === "backorder") {

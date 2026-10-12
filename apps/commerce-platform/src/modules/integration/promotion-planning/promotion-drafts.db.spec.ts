@@ -13,9 +13,9 @@ const scenario = { name: 'Local proposal', line: { sku: 'SKU', quantity: 2, unit
     const parsed = new URL(url!); if (parsed.hostname !== '127.0.0.1' || parsed.pathname !== '/commerce_preview_test') throw new Error('Use the explicitly created local scratch database only');
     db = await new DataSource({ type: 'postgres', url, synchronize: false, extra: { max: 4 } }).initialize();
     await migration.up(db.createQueryRunner());
-    await db.query('CREATE TABLE josh_catalog_products(id uuid, sku text, selling_unit text, packaging_type text, pack_size text, vat_type text, selling_unit_price numeric(12,2), source_version bigint, synced_at timestamptz, removed_at timestamptz)');
+    await db.query('CREATE TABLE josh_catalog_products(id uuid, sku text, selling_unit text, packaging_type text, pack_size text, vat_type text, ordering_price numeric(12,2), source_version bigint, synced_at timestamptz, removed_at timestamptz, order_taking_unit text, units_per_box text, weight_per_unit text)');
     await db.query('CREATE TABLE product_promotion_rules(sku text, rules jsonb, shadow_rules jsonb, version bigint, shadow_version bigint, lock jsonb, lock_version bigint)');
-    await db.query(`INSERT INTO josh_catalog_products VALUES($1,'SKU','PC','fixed','1 PC','7%',107,5,now(),NULL)`, [randomUUID()]);
+    await db.query(`INSERT INTO josh_catalog_products VALUES($1,'SKU','PC','fixed','1 PC','7%',107,5,now(),NULL,NULL,NULL,NULL)`, [randomUUID()]);
     await db.query(`INSERT INTO product_promotion_rules VALUES('SKU','[]','[]',1,1,NULL,1)`);
     service = new PromotionDraftsService(db, new PromotionInputsService(db));
   });
@@ -59,7 +59,7 @@ const scenario = { name: 'Local proposal', line: { sku: 'SKU', quantity: 2, unit
     await expect(service.create({ requestId: randomUUID(), scenario: { ...scenario, actorId: 'actor-b' } }, 'actor-a')).rejects.toThrow();
     for (let n = 0; n < 21; n++) await service.create({ requestId: randomUUID(), scenario }, 'paging-actor');
     const page = await service.list('paging-actor'); expect(page.items).toHaveLength(20); expect(page.next).not.toBeNull(); expect((await service.list('paging-actor', page.next!)).items).toHaveLength(1);
-    expect((await db.query(`SELECT selling_unit_price::text price FROM josh_catalog_products WHERE sku='SKU'`))[0].price).toBe('107.00');
+    expect((await db.query(`SELECT ordering_price::text price FROM josh_catalog_products WHERE sku='SKU'`))[0].price).toBe('107.00');
     expect((await db.query(`SELECT rules FROM product_promotion_rules WHERE sku='SKU'`))[0].rules).toEqual([]);
   });
 });

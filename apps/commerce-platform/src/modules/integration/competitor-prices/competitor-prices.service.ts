@@ -238,7 +238,7 @@ export function productView(product: InventoryShape) {
     // Additive planning evidence; the original fields and price semantics stay unchanged.
     weightPerUnit: product.weight_per_unit, unitsPerBox: product.units_per_box,
     packagingType: product.packaging_type, vatType: product.vat_type,
-    originalPriceIncVat: product.selling_unit_price == null ? null : String(product.selling_unit_price),
+    originalPriceIncVat: product.selling_price == null ? null : String(product.selling_price),
   };
 }
 

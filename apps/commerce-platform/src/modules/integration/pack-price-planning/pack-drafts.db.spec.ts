@@ -23,7 +23,7 @@ const url = process.env.PACK_PLANNING_TEST_DATABASE_URL;
     await db.query(`CREATE SCHEMA "${schema}"`);
     // Existing migration only in a fresh owned test namespace. Earlier fixture rows stay untouched.
     await new CommercePromotionDrafts1796200000000().up(db.createQueryRunner());
-    await db.query('CREATE TABLE josh_catalog_products(id uuid, sku text, selling_unit text, packaging_type text, pack_size text, vat_type text, selling_unit_price numeric(12,2), source_version bigint, synced_at timestamptz, removed_at timestamptz)');
+    await db.query('CREATE TABLE josh_catalog_products(id uuid, sku text, selling_unit text, packaging_type text, pack_size text, vat_type text, ordering_price numeric(12,2), source_version bigint, synced_at timestamptz, removed_at timestamptz)');
     await db.query('CREATE TABLE product_promotion_rules(sku text,rules jsonb,shadow_rules jsonb,version bigint,shadow_version bigint,lock jsonb,lock_version bigint)');
     await db.query("INSERT INTO josh_catalog_products VALUES($1,$2,'PK','fixed','1 KG','7%',107,1,now(),NULL)", [product.id, product.sku]);
     await db.query("INSERT INTO product_promotion_rules VALUES($1,'[]','[]',1,1,NULL,1)", [product.sku]);
@@ -79,6 +79,6 @@ const url = process.env.PACK_PLANNING_TEST_DATABASE_URL;
   it('paginates only this kind/owner and retains the original operational price and promotion rules', async () => {
     const value = await scenario(); for (let n = 0; n < 21; n++) await packs.create({ requestId: randomUUID(), scenario: value }, 'pack-paging-fixture-actor');
     const page = await packs.list('pack-paging-fixture-actor'); expect(page.items).toHaveLength(20); expect(page.next).not.toBeNull(); expect((await packs.list('pack-paging-fixture-actor', page.next!)).items).toHaveLength(1);
-    expect(await promotions.list('pack-paging-fixture-actor')).toEqual({ items: [], next: null }); expect((await db.query('SELECT selling_unit_price::text price FROM josh_catalog_products'))[0].price).toBe('107.00'); expect((await db.query('SELECT rules FROM product_promotion_rules'))[0].rules).toEqual([]);
+    expect(await promotions.list('pack-paging-fixture-actor')).toEqual({ items: [], next: null }); expect((await db.query('SELECT ordering_price::text price FROM josh_catalog_products'))[0].price).toBe('107.00'); expect((await db.query('SELECT rules FROM product_promotion_rules'))[0].rules).toEqual([]);
   });
 });

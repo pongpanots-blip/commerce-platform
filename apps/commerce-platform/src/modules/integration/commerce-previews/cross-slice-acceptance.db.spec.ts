@@ -81,7 +81,7 @@ const url = process.env.ACCEPTANCE_TEST_DATABASE_URL;
       protectedPublic = await publicSnapshot();
       f = await comparisonFixture(db, schema);
       await db.query(
-        `INSERT INTO josh_catalog_products(id,sku,status,selling_unit_price,selling_unit,vat_type,packaging_type,pack_size,translations,josh_updated_at)
+        `INSERT INTO josh_catalog_products(id,sku,status,ordering_price,selling_unit,vat_type,packaging_type,pack_size,translations,josh_updated_at)
          VALUES($1,'SYNTHETIC-SKU','active',107,'PK','7%','fixed','1 KG','[]',now())`,
         [randomUUID()],
       );
@@ -325,7 +325,7 @@ const url = process.env.ACCEPTANCE_TEST_DATABASE_URL;
       expect(
         (
           await db.query(
-            "SELECT selling_unit_price::text price FROM josh_catalog_products WHERE sku=$1",
+            "SELECT ordering_price::text price FROM josh_catalog_products WHERE sku=$1",
             ["SYNTHETIC-SKU"],
           )
         )[0].price,

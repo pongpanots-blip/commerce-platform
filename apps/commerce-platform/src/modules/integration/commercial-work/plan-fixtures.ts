@@ -60,7 +60,7 @@ export function sourceFixture() {
     product_inventory_sku: "SYNTHETIC-SKU",
     name_en: "Synthetic product",
     product_status: "active",
-    selling_unit_price: 107,
+    selling_price: 107,
     product_inventory_quantity: 9,
     selling_unit: "PK",
     image_count: 2,

@@ -35,12 +35,14 @@ const REPLICA_READERS: Record<string, string> = {
   'modules/integration/winback/winback-reports.controller.ts': 'A (S5) — WINBACK_REPORTS_SOURCE=copies on prod',
   'modules/integration/growth/growth-data.service.ts': 'A — GROWTH_SOURCE=copies on prod',
   'modules/integration/growth/growth.service.ts': 'A — GROWTH_SOURCE=copies on prod',
+  'modules/integration/financial-analysis/financial-reader.service.ts': 'A — SALES_SOURCE=copies on prod',
   // B — copiers / cutover checkers
   'modules/integration/connector/josh/pricing/price-shadow.ts': 'B — 4a switched + shadow week',
   'modules/integration/connector/josh/pricing/staff-prices.ts': 'B — 4a switched (import); SKU lookup reads the copy',
   'modules/integration/connector/josh/jagota/jagota-shadow.ts': 'B — ERP gateway cutover',
   'modules/integration/connector/josh/jagota/jagota-sync-history.ts': 'B — jagota_sync snapshot trusted (S5-11)',
   'modules/integration/connector/josh/orders/josh-order-copy.ts': 'B — order.snapshot trusted',
+  'modules/integration/commerce-previews/commerce-previews.service.ts': 'B — josh-vs-copy order check; order.snapshot trusted',
   'modules/integration/connector/josh/josh-catalog-sync.service.ts': 'B — cron ON by default; ops turns it off first',
   'modules/integration/winback/winback-mirror.ts': 'B — WINBACK_OWNER=commerce on prod',
   // C — cutover CLIs (also read JOSH_DATABASE_URL themselves)

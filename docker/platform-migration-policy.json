@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "7bb86dd80022ad7d27d5c7ad1a8715bd091b6b9c",
-  "imageTag": "7bb86dd",
+  "sourceCommit": "6ece4a1e5d613817a568ee58e1b64ab1d77e4d50",
+  "imageTag": "6ece4a1",
   "migrations": [
     "InitialSchema1784105337942",
     "AddIntegrationSlug1784108912731",
@@ -84,14 +84,18 @@
       "6790132",
       "396e8d6",
       "5d258a7",
-      "670393d"
+      "670393d",
+      "7bb86dd"
     ],
     "admin": [
       "396e8d6",
       "5d258a7",
       "670393d",
       "3e0133a",
-      "7bb86dd"
+      "7bb86dd",
+      "3c6ae38",
+      "bb498c3",
+      "fdb8539"
     ],
     "portal": [
       "020066e"

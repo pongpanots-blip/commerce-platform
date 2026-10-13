@@ -1,10 +1,11 @@
 // ui-copy-migration: only literal UI copy and notification templates
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Button, Input, Loading, Modal, Page, PageHeader, Segmented, Select, StatusChip, Textarea, toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
+import { Alert, Button, ErrorText, Field, FormPanel, Input, Loading, Modal, Page, PageHeader, Segmented, Select, StatusChip, Textarea, toast, uiText as __uiText, useUiLocale as __useUiLocale } from '@cp/ui';
 import type { DynamicSegment, EventDefinition, SegmentOption, TriggerType, WebhookSecretItem, Workflow, WorkflowInput, WorkflowIssue, WorkflowMeta, WorkflowStep } from '@cp/marketing-workflow';
 import { dynamicSegmentsApi, eventsApi, flowsApi, marketingTestersApi, type MarketingTester } from '../../../lib/api';
-import { useAsync } from '../../hooks';
+import { useAsync, useMutation } from '../../hooks';
+import { commerceText as text } from '../../commerce-copy';
 import { getCoupons } from '../workflow-editor/josh/extra.api';
 import { FlowCanvas } from './FlowCanvas';
 import { FlowResults } from './FlowResults';
@@ -23,19 +24,29 @@ const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 /** The activate / test-run 422 body is `{ statusCode, path, error: { message, issues } }`; `request()` exposes `error` as `details`. */
 const issuesOf = (e: unknown): WorkflowIssue[] | null => (e as { details?: { issues?: WorkflowIssue[] } })?.details?.issues ?? null;
 
-/** `/marketing/flows/new` creates a draft and redirects; `/marketing/flows/:id` is the journey editor. */
+/** Opening the create page is read-only; a named draft is created only on explicit submission. */
 export function FlowEditorPage() {
   __useUiLocale();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    if (id) return;
-    flowsApi.create({ ...BLANK, name: __uiText('Workflow ใหม่') }).then((w) => navigate(`/marketing/flows/${w.id}`, { replace: true }))
-      .catch((e) => setError(message(e)));
-  }, [id, navigate]);
-  if (error) return <Page><Alert tone="danger">{error}</Alert></Page>;
-  return id ? <Editor id={id} /> : <Loading />;
+  const [name, setName] = useState('');
+  const create = useMutation();
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
+    const result = await create.run(async () => {
+      if (!name.trim()) throw new Error(text('กรุณากรอกชื่อ Workflow', 'Enter a workflow name.'));
+      const draft = await flowsApi.create({ ...BLANK, name: name.trim() });
+      if (!draft?.id) throw new Error(text('ยังยืนยันการสร้างร่างไม่ได้ กรุณาตรวจรายการ Workflow ก่อนลองใหม่', 'Draft creation could not be confirmed. Check the workflow list before retrying.'));
+      return draft;
+    });
+    if (result.ok) navigate(`/marketing/flows/${result.value.id}`, { replace: true });
+  }
+  return id ? <Editor id={id} /> : <Page>
+    <PageHeader title={text('สร้าง Workflow', 'Create workflow')} subtitle={text('ตั้งชื่อร่างก่อนเปิดตัวแก้ไข ระบบจะยังไม่ส่งข้อความหรือเปิดใช้งาน', 'Name a draft before opening the editor. It will not send messages or activate the workflow.')} />
+    <FormPanel title={text('ร่าง Workflow ใหม่', 'New workflow draft')} onSubmit={submit} onCancel={() => navigate('/marketing/workflows')} busy={create.busy} error={create.error} submitLabel={text('สร้างร่างและเปิดตัวแก้ไข', 'Create draft and open editor')}>
+      <Field label={__uiText('ชื่อ')}><Input required value={name} onChange={event => setName(event.target.value)} /></Field>
+    </FormPanel>
+  </Page>;
 }
 
 function Editor({ id }: { id: string }) {
@@ -94,8 +105,8 @@ function Editor({ id }: { id: string }) {
   const save = () => run(() => flowsApi.update(id, input), __uiText('บันทึกแล้ว'));
   const activate = () => run(async () => { if (dirty) await flowsApi.update(id, input); return flowsApi.activate(id); }, __uiText('เปิดใช้แล้ว'));
 
-  if (error && !wf) return <Page><Alert tone="danger">{error}</Alert></Page>;
-  if (!wf || !meta) return <Loading />;
+  if (error && !wf) return <Page><PageHeader title={text('แก้ไข Workflow', 'Edit workflow')} back={{ to: '/marketing/workflows', label: text('รายการ Workflow', 'Workflow list') }} /><ErrorText error={error} onRetry={() => { setError(null); load().catch(e => setError(message(e))); }} /></Page>;
+  if (!wf || !meta) return <Page><PageHeader title={text('แก้ไข Workflow', 'Edit workflow')} /><Loading variant="detail" /></Page>;
   const issuesByStep = Object.fromEntries(issues.map((i) => [i.stepId ?? TRIGGER, i.message]));
   const trig = describeTrigger(input.triggerType, input.triggerConfig);
 

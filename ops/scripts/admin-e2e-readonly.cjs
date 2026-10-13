@@ -20,5 +20,6 @@ async function main() {
     hasNextCursor: !!payload?.nextCursor,
     error: response.ok ? null : String(body?.error?.message ?? body?.message ?? 'Read failed').slice(0, 500),
   }, null, 2));
+  if (!response.ok || !Array.isArray(payload?.items)) throw new Error('Default notification feed contract is unavailable; stop before deploying the UI.');
 }
 main().catch(error => { console.error(error.message); process.exitCode = 1; });

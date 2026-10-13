@@ -4,6 +4,7 @@ import { getUiLocale as __dateLocale } from '@cp/ui';
 import { Fragment, useState } from 'react';
 import { apiLogsApi } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { commerceText as text } from '../commerce-copy';
 import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, Pager, ErrorText, Empty, Loading, CodeBlock, Chip, Field, Hint, Input, Select, fmt, StackedBars, DetailSection, Button } from '@cp/ui';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -53,12 +54,16 @@ export function JoshApiLogs() {
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Hint>{__uiText("อ่านอย่างเดียว แสดง 24 ชั่วโมงล่าสุด ย้อนได้สูงสุด 7 วัน การเรียกจากระบบหลัก (ERP) ดูที่หน้า “บันทึกการเรียกระบบหลัก (ERP)”")}</Hint>
-            <Button variant="primary" type="submit">{__uiText("ค้นหา")}</Button>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="secondary" onClick={() => { setDraft(''); setF({ status: 'all', source: 'all', method: 'all', sort: 'newest', q: '', page: '1' }); setOpen(null); }}>{text('ล้างตัวกรอง', 'Clear filters')}</Button>
+              <Button variant="primary" type="submit">{__uiText("ค้นหา")}</Button>
+            </div>
           </div>
         </form>
       </Panel>
 
       <ErrorText error={stats.error || list.error} />
+      {list.loading && !list.data && <Loading variant="table" />}
 
       {s && (
         <div className="grid md:grid-cols-3 gap-4">

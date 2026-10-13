@@ -94,7 +94,7 @@ const recordSearches = (role: string | null | undefined) => RECORD_SEARCHES.filt
 
 /** Route context and a single page-search entry point across every category. */
 function AdminTopBar({ role }: { role?: string }) {
-  __useUiLocale();
+  const locale = __useUiLocale();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [pageHeading, setPageHeading] = useState('');
@@ -115,7 +115,7 @@ function AdminTopBar({ role }: { role?: string }) {
   return <TopBar
     left={<div className="flex flex-wrap items-center gap-3">
       <div><p className="text-[10px] uppercase tracking-widest text-outline">{__uiText("ตอนนี้อยู่ที่")}</p><p className="mt-0.5 text-sm font-semibold text-on-surface">{__uiText(current?.group.group ?? "หน้าหลัก")}<span className="hidden lg:inline font-normal text-on-surface-variant"> / {current ? __uiText(current.link.label) : pageHeading || __uiText("รายละเอียด")}</span></p></div>
-      {role === 'admin' && <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>}
+      {role === 'admin' && <span className="hidden xl:inline-flex"><StatusDot tone={health.error ? 'muted' : health.data ? problems ? 'danger' : 'ok' : 'muted'}>{health.error ? __uiText("ยังตรวจสอบระบบไม่ได้") : health.data ? problems ? locale === 'en' && problems === 1 ? '1 item needs attention' : __uiText("{0} รายการต้องตรวจสอบ", {"0": problems}) : __uiText("ระบบปกติ") : __uiText("กำลังตรวจสอบระบบ")}</StatusDot></span>}
     </div>}
     right={<><FeatureActions role={role} /><LanguageSelector /><CommandMenu searches={recordSearches(role)} />{role === 'admin' && <IconButton icon="notifications" title={__uiText("ตรวจสอบรายการส่งไม่สำเร็จ")} dot={(stats.data?.webhooksFailed ?? 0) > 0} onClick={() => navigate('/erp/webhook-dead-letter')} />}<IconButton icon="menu_book" title={__uiText("คู่มือ API")} onClick={() => window.open(`${docsBase.replace(/\/$/, '')}/docs`, '_blank', 'noopener')} /></>}
   />;

@@ -577,8 +577,8 @@ export default function WelcomeLeadEmailPage() {
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr,660px]">
-        <div className="space-y-6">
+      <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr),minmax(0,660px)]">
+        <div className="min-w-0 space-y-6">
           <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-gray-900">{__uiText("รูปภาพ")}</h2>
@@ -586,7 +586,7 @@ export default function WelcomeLeadEmailPage() {
                 <span className="text-xs text-gray-400">{__uiText("อัปเดตล่าสุด: ")}{assets.updatedAt}</span>
               ) : null}
             </div>
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid min-w-0 gap-4 md:grid-cols-3 [&>div]:min-w-0 [&_button]:whitespace-normal">
               {IMAGE_ASSET_CONFIG.map(({ kind, label, hint, checkered }) => (
                 <ImageAssetCard
                   key={kind}
@@ -755,11 +755,11 @@ export default function WelcomeLeadEmailPage() {
           </button>
         </div>
 
-        <div className="lg:sticky lg:top-6 lg:self-start">
+        <div className="min-w-0 xl:sticky xl:top-6 xl:self-start">
           <section className="space-y-3 rounded-xl border border-gray-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-gray-900">{__uiText("Preview")}</h2>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {(['th', 'en'] as const).map((locale) => (
                   <button
                     key={locale}
@@ -797,7 +797,7 @@ export default function WelcomeLeadEmailPage() {
             </button>
             {previewError && <p className="text-xs text-red-500">{(typeof (previewError) === 'string' ? __uiText(previewError) : previewError)}</p>}
             <p className="text-xs font-medium text-gray-700">{__uiText("หัวเรื่อง: ")}{previewSubject || '—'}</p>
-            <div style={{ overflowX: 'auto' }}>
+            <div className="min-w-0 max-w-full overflow-x-auto" tabIndex={0} role="region" aria-label={__uiText('Preview')}>
               <iframe
                 title={__uiText("welcome-lead-email-preview")}
                 sandbox=""

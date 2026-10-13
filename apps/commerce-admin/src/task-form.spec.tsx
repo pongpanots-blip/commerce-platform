@@ -143,10 +143,10 @@ it('handles a validation exception as a form error and unlocks the next attempt'
   await save(); expect(submit).toHaveBeenCalledOnce();
 });
 
-it('leaves existing Stitch Input and Select markup and defaults unchanged', async () => {
+it('keeps shared Input and Select markup with responsive touch targets', async () => {
   await act(async () => root.render(<><Input aria-label="legacy input" /><Select aria-label="legacy select"><option>Option</option></Select></>));
   expect(container.children).toHaveLength(2); expect(container.children[0].tagName).toBe('INPUT'); expect(container.children[1].tagName).toBe('SELECT');
-  expect(container.querySelector('input')?.className).toContain('min-h-10'); expect(container.querySelector('input')?.className).not.toContain('min-h-11'); expect(container.querySelector('label')).toBeNull();
+  expect(container.querySelector('input')?.className).toContain('sm:min-h-10'); expect(container.querySelector('input')?.className).toContain('min-h-11'); expect(container.querySelector('label')).toBeNull();
 });
 
 it('validates unnamed required shared controls by id and focuses them', async () => {

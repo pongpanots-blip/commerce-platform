@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { api, WebhookEvent } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { commerceText as text } from '../commerce-copy';
 import { Page, PageHeader, Panel, PanelHead, Table, THead, TH, TBody, TR, TD, ExpandRow, ExpandToggle, ErrorText, Empty, Loading, CodeBlock, Chip, StatusChip, Tone, fmt, DetailSection, Button } from '@cp/ui';
 
 // ui-copy-migration: only literal UI copy and notification templates
@@ -16,12 +17,17 @@ export function Webhooks() {
   const { data, loading, error, reload } = useAsync(() => api.get<WebhookEvent[]>('/webhooks'));
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [replayError, setReplayError] = useState<string | null>(null);
 
   async function replay(id: string) {
+    if (busy || !window.confirm(text('ประมวลผลเหตุการณ์นี้อีกครั้ง? ระบบอาจเปลี่ยนข้อมูลตามเหตุการณ์นี้', 'Process this event again? This may change data associated with the event.'))) return;
     setBusy(id);
+    setReplayError(null);
     try {
       await api.post(`/webhooks/replay/${id}`, {});
       reload();
+    } catch (err) {
+      setReplayError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(null);
     }
@@ -34,7 +40,8 @@ export function Webhooks() {
       <Panel>
         <PanelHead title={__uiText("Recent events")} />
         <ErrorText error={error} />
-        {loading ? <Loading /> : !data?.length ? (
+        <ErrorText error={replayError} />
+        {loading ? <Loading /> : error && !data ? null : !data?.length ? (
           <Empty>{__uiText("ยังไม่มีเหตุการณ์ขาเข้า เหตุการณ์จะแสดงที่นี่เมื่อระบบภายนอกส่งเข้ามา")}</Empty>
         ) : (
           <Table>
@@ -50,7 +57,7 @@ export function Webhooks() {
                     <TD>{w.signatureValid ? <Chip tone="ok" dot>{__uiText("ลายเซ็นถูกต้อง")}</Chip> : <Chip tone="danger" dot>{__uiText("ลายเซ็นไม่ถูกต้อง")}</Chip>}</TD>
                     <TD>{EVENT_STATUS[w.status] ? <Chip tone={EVENT_STATUS[w.status][0]} dot>{__uiText(EVENT_STATUS[w.status][1])}</Chip> : <StatusChip status={w.status} />}</TD>
                     <TD kind="num">{w.attempts}</TD>
-                    <TD kind="actions"><ExpandToggle open={expandedId === w.id} onClick={() => setExpandedId(cur => cur === w.id ? null : w.id)} /> <Button size="sm" disabled={busy === w.id || !w.signatureValid} onClick={() => replay(w.id)}>{busy === w.id ? '…' : __uiText("Replay")}</Button></TD>
+                    <TD kind="actions"><ExpandToggle open={expandedId === w.id} onClick={() => setExpandedId(cur => cur === w.id ? null : w.id)} /> <Button size="sm" disabled={busy !== null || !w.signatureValid} onClick={() => replay(w.id)}>{busy === w.id ? '…' : __uiText("Replay")}</Button></TD>
                   </TR>
                   {expandedId === w.id && (
                     <ExpandRow colSpan={6}>

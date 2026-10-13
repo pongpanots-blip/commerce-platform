@@ -250,7 +250,7 @@ function Flow({ nodes }: { nodes: { name: string; state: NodeState; detail: Reac
   return (
     <div className="flex flex-wrap items-stretch gap-2 mb-4 bg-surface-container-low p-4 rounded-lg border border-secondary-container">
       {nodes.map((n, i) => (
-        <div key={n.name} className="flex items-center gap-2 flex-1 min-w-fit">
+        <div key={n.name} className="flex min-w-0 basis-full items-center gap-2 sm:flex-1 sm:basis-64">
           {i > 0 && (
             <Icon
               name="arrow_forward"
@@ -258,7 +258,7 @@ function Flow({ nodes }: { nodes: { name: string; state: NodeState; detail: Reac
               className={n.state === 'ok' ? 'text-ok' : 'text-outline'}
             />
           )}
-          <div className={`flex-1 min-w-fit border-2 rounded-lg bg-surface-container-lowest p-3 ${borderColor[n.state]}`}>
+          <div className={`min-w-0 flex-1 break-words border-2 rounded-lg bg-surface-container-lowest p-3 ${borderColor[n.state]}`}>
             <div className="flex items-center justify-between gap-2 font-semibold text-sm mb-1">
               {n.name}
               <Chip tone={stateChip[n.state][0]} dot>{__uiText(stateChip[n.state][1])}</Chip>

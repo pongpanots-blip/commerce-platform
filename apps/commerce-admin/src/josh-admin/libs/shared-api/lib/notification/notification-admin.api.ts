@@ -55,14 +55,14 @@ export type ProductNotifyFunnelQuery = {
   limit?: number;
 };
 
-/** GET /admin/notifications?userId=&cursor=&limit= — read-only support log (Task 11). */
+/** Read-only recent notifications, optionally narrowed to one user. */
 export const getAdminNotifications = async (params: {
-  userId: string;
+  userId?: string;
   cursor?: string;
   limit?: number;
-}) => {
+} = {}) => {
   const searchParams = new URLSearchParams();
-  searchParams.set('userId', params.userId);
+  if (params.userId?.trim()) searchParams.set('userId', params.userId.trim());
   if (params.cursor) searchParams.set('cursor', params.cursor);
   if (params.limit) searchParams.set('limit', String(params.limit));
   return apiClient.get(`/admin/notifications?${searchParams.toString()}`);

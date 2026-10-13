@@ -6,14 +6,15 @@
   "counts": {
     "records": 232,
     "runtimeRoutePatterns": 204,
-    "browserRouteRecords": 188,
+    "browserRouteRecords": 206,
     "uniqueSourceFiles": 329,
     "classifications": {
       "protected-render-source-reviewed-unchanged": 190,
       "behavior-changed-family-tested": 23,
       "unreviewed-visual-provenance": 6,
       "unreviewed-or-routing-container": 13
-    }
+    },
+    "concreteModuleHubs": 7
   },
   "records": [
     {
@@ -2617,17 +2618,6 @@
     },
     {
       "app": "admin",
-      "path": "/tasks/:sectionId",
-      "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx",
-      "component": "TaskSection",
-      "boundary": false,
-      "redirect": false,
-      "redirectTo": null,
-      "kind": "route-family",
-      "family": "/tasks/:sectionId"
-    },
-    {
-      "app": "admin",
       "path": "/settings/staff",
       "source": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx",
       "component": "StaffAccounts",
@@ -4649,6 +4639,216 @@
       "redirectTo": null,
       "kind": "page-or-concrete-action",
       "family": "สินค้าและสต็อก"
+    },
+    {
+      "app": "admin",
+      "path": "/tasks/catalog",
+      "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx",
+      "component": "TaskSection",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/tasks/:sectionId"
+    },
+    {
+      "app": "admin",
+      "path": "/tasks/orders",
+      "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx",
+      "component": "TaskSection",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/tasks/:sectionId"
+    },
+    {
+      "app": "admin",
+      "path": "/tasks/customers",
+      "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx",
+      "component": "TaskSection",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/tasks/:sectionId"
+    },
+    {
+      "app": "admin",
+      "path": "/tasks/marketing",
+      "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx",
+      "component": "TaskSection",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/tasks/:sectionId"
+    },
+    {
+      "app": "admin",
+      "path": "/tasks/reports",
+      "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx",
+      "component": "TaskSection",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/tasks/:sectionId"
+    },
+    {
+      "app": "admin",
+      "path": "/tasks/settings",
+      "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx",
+      "component": "TaskSection",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/tasks/:sectionId"
+    },
+    {
+      "app": "admin",
+      "path": "/tasks/advanced",
+      "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx",
+      "component": "TaskSection",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/tasks/:sectionId"
+    },
+    {
+      "app": "admin",
+      "path": "/planning/sales-work",
+      "source": "apps/commerce-admin/src/app/pages/commercial-work/CommercialPlanningWorkspace.tsx",
+      "component": "SalesWorkWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/planning/sales-work"
+    },
+    {
+      "app": "admin",
+      "path": "/planning/marketing-readiness",
+      "source": "apps/commerce-admin/src/app/pages/commercial-work/CommercialPlanningWorkspace.tsx",
+      "component": "MarketingReadinessWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/planning/marketing-readiness"
+    },
+    {
+      "app": "admin",
+      "path": "/analysis/financial",
+      "source": "apps/commerce-admin/src/app/pages/financial-analysis/FinancialAnalysisWorkspace.tsx",
+      "component": "FinancialAnalysisWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/analysis/financial",
+      "expectedPath": "/analysis/financial/period"
+    },
+    {
+      "app": "admin",
+      "path": "/planning/profit-goals",
+      "source": "apps/commerce-admin/src/app/pages/financial-goals/GoalPlanningWorkspace.tsx",
+      "component": "GoalPlanningWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/planning/profit-goals"
+    },
+    {
+      "app": "admin",
+      "path": "/planning/pack-prices",
+      "source": "apps/commerce-admin/src/app/pages/pack-price/PackPlanningWorkspace.tsx",
+      "component": "PackPlanningWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/planning/pack-prices"
+    },
+    {
+      "app": "admin",
+      "path": "/planning/promotions",
+      "source": "apps/commerce-admin/src/app/pages/planning/PromotionWorkspace.tsx",
+      "component": "PromotionWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/planning/promotions"
+    },
+    {
+      "app": "admin",
+      "path": "/review/orders",
+      "source": "apps/commerce-admin/src/app/pages/planning/OrderReviewWorkspace.tsx",
+      "component": "OrderReviewWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/review/orders"
+    },
+    {
+      "app": "admin",
+      "path": "/analysis/customer-behavior",
+      "source": "apps/commerce-admin/src/app/pages/guided-analysis/GuidedAnalysisWorkspace.tsx",
+      "component": "GuidedAnalysisWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/analysis/customer-behavior"
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/:id/content",
+      "source": "apps/commerce-admin/src/app/pages/product-content-editor/ProductContentWorkspace.tsx",
+      "component": "ProductContentWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/j/product"
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/:id/content/edit",
+      "source": "apps/commerce-admin/src/app/pages/product-content-editor/ProductContentWorkspace.tsx",
+      "component": "ProductContentWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/j/product"
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/:id/content/review",
+      "source": "apps/commerce-admin/src/app/pages/product-content-editor/ProductContentWorkspace.tsx",
+      "component": "ProductContentWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/j/product"
+    },
+    {
+      "app": "admin",
+      "path": "/j/product/:id/content/requests/:requestId",
+      "source": "apps/commerce-admin/src/app/pages/product-content-editor/ProductContentWorkspace.tsx",
+      "component": "ProductContentWorkspace",
+      "boundary": false,
+      "redirect": false,
+      "redirectTo": null,
+      "kind": "concrete-route-review",
+      "family": "/j/product"
     }
   ],
   "files": [

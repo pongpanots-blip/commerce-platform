@@ -29,7 +29,7 @@ const TaskFormContext = createContext<FieldState>({ errors: {}, busy: false, app
 export function useTaskFormState() { return useContext(TaskFormContext); }
 const controlClass = 'w-full min-w-0 min-h-11 rounded-lg border border-secondary-container bg-surface-container-lowest px-3 py-2 text-sm leading-[22px] text-on-surface placeholder:text-outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 disabled:opacity-60 disabled:cursor-not-allowed aria-invalid:border-error';
 // Matches the existing shared Input/Select classes; no theme or legacy default changes.
-const stitchControlClass = 'w-full min-h-10 px-3 py-2 bg-surface-container-lowest text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-[13px] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors disabled:opacity-60';
+const stitchControlClass = 'w-full min-h-11 px-3 py-2 bg-surface-container-lowest text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-[13px] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors disabled:opacity-60 sm:min-h-10';
 const cx = (...parts: (string | undefined | false)[]) => parts.filter(Boolean).join(' ');
 
 interface FieldProps {

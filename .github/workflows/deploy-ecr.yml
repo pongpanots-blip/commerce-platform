@@ -160,7 +160,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: docker
+          sparse-checkout: |
+            docker
+            ops
+      - name: Verify default notification feed before admin deployment
+        if: contains(fromJson(needs.resolve.outputs.services), 'admin')
+        env:
+          DEPLOY_DIR: ${{ secrets.EC2_DEPLOY_DIR }}
+          OPS_STAFF_EMAIL: ops-cutover@joshapp.io
+          OPS_STAFF_PASSWORD: ${{ secrets.COMMERCE_OPS_STAFF_PASSWORD }}
+        run: |
+          set -euo pipefail
+          umask 077
+          F="$RUNNER_TEMP/admin-readcheck.env"
+          trap 'rm -f "$F"' EXIT
+          printf 'OPS_STAFF_EMAIL=%s\nOPS_STAFF_PASSWORD=%s\n' "$OPS_STAFF_EMAIL" "$OPS_STAFF_PASSWORD" > "$F"
+          C=$(docker compose -f "$DEPLOY_DIR/docker/docker-compose.prod.yml" ps -q platform)
+          test -n "$C"
+          docker exec -i -w /app --env-file "$F" "$C" node - < ops/scripts/admin-e2e-readonly.cjs
       - name: Verify existing target and rollback images
         if: inputs.skip_cleanup == true
         env:

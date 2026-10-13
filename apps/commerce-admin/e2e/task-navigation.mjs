@@ -226,16 +226,16 @@ try {
     await page.locator('main select').nth(1).selectOption('user-1'); await page.locator('main select').nth(2).selectOption('branch-1');
     await page.locator('main').getByRole('searchbox').nth(1).fill('Flour'); await page.getByRole('button', { name: 'Search products', exact: true }).click();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await page.getByRole('button', { name: 'Calculate Price (josh)', exact: true }).click();
-    await page.getByRole('button', { name: 'Place Order', exact: true }).waitFor();
+    await page.getByRole('button', { name: dictionary['คิดราคา'].en, exact: true }).click();
+    await page.getByRole('button', { name: dictionary['สั่งซื้อ'].en, exact: true }).waitFor();
     state.orderGate = gate(); page.on('dialog', dialog => dialog.accept());
-    await page.getByRole('button', { name: 'Place Order', exact: true }).click();
+    await page.getByRole('button', { name: dictionary['สั่งซื้อ'].en, exact: true }).click();
     await page.waitForFunction(() => document.querySelector('fieldset')?.disabled);
     await page.locator('form').last().evaluate(form => { form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); });
     assert.equal(state.writes.length, 1); assert.equal(state.writes[0].body.user_id, 'user-1');
     assert.deepEqual(state.writes[0].body.items, [{ product_inventory_id: 'product-1', quantity: 1 }]);
-    assert.equal(await page.getByText('Order created', { exact: false }).count(), 0);
-    state.orderGate.release(); await page.getByText('Order created', { exact: false }).waitFor();
+    assert.equal(await page.getByText(dictionary['สร้างคำสั่งซื้อแล้ว'].en, { exact: false }).count(), 0);
+    state.orderGate.release(); await page.getByText(dictionary['สร้างคำสั่งซื้อแล้ว'].en, { exact: false }).waitFor();
     checks.push('On-behalf order: customer/branch selection, quote, unchanged payload, locked checkout and success after response');
     await context.close();
   }
@@ -255,7 +255,7 @@ try {
     await page.getByText('You do not have permission for this task', { exact: true }).waitFor();
     assert.equal(await page.locator('form').count(), 0); await context.close();
     const admin = await open('admin', 'en', '/josh/coupons');
-    await admin.page.locator('aside a[href="/j/coupons"][aria-current="page"]').waitFor();
+    await admin.page.locator('aside a[href="/tasks/marketing"][aria-current="page"]').waitFor();
     await admin.page.locator('summary').filter({hasText:'Other actions'}).click(); await admin.page.locator('details[open] nav a[href="/j/coupons"]').waitFor();
     checks.push('Direct admin-only task denied to CS; saved-record alias highlights canonical coupons');
     await admin.context.close();

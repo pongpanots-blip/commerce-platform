@@ -1,0 +1,6 @@
+{
+  "source": "apps/commerce-admin/e2e/table-redesign-review.mjs",
+  "sourceSha256": "99df0697f1ba899818616f996281549b07732558b8b1e8b11db7f81ffb971073",
+  "runner": "apps/commerce-admin/e2e/comprehensive-page-review.mjs",
+  "fixtureMode": "All APIs and external requests intercepted; unavailable API contracts are error states, not successful data claims"
+}

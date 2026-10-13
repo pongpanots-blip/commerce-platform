@@ -15,20 +15,19 @@ try {
   assert.ok(process.env.PROD_E2E_EMAIL && process.env.PROD_E2E_PASSWORD, 'Production E2E staff secret is not configured');
   for (const locale of ['th', 'en']) for (const width of [1440, 390]) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
-    const login = await context.request.post(`${base}/api/admin/auth/login`, { data: { email: process.env.PROD_E2E_EMAIL, password: process.env.PROD_E2E_PASSWORD } });
-    const session = await login.json();
-    assert.ok(login.ok() && session.accessToken, `Staff sign-in failed: HTTP ${login.status()}`);
-    await context.addInitScript(({ locale, session }) => {
+    await context.addInitScript(({ locale }) => {
       if (window !== window.top) return;
-      if (!sessionStorage.getItem('prod-qa-started')) {
-        sessionStorage.setItem('cp_admin_token', session.accessToken);
-        if (session.refreshToken) sessionStorage.setItem('cp_admin_refresh', session.refreshToken);
-        sessionStorage.setItem('prod-qa-started', 'yes');
-      }
       localStorage.setItem('cp_ui_locale', locale);
-    }, { locale, session });
+    }, { locale });
     const page = await context.newPage();
     page.setDefaultTimeout(10000);
+    await page.goto(base + '/login', { waitUntil: 'domcontentloaded' });
+    await page.getByLabel(/^(อีเมล|Email)$/).fill(process.env.PROD_E2E_EMAIL);
+    await page.getByLabel(/^(รหัสผ่าน|Password)$/).fill(process.env.PROD_E2E_PASSWORD);
+    await page.getByRole('button', { name: /^(เข้าสู่ระบบ|Sign in)$/, exact: true }).click();
+    await page.locator('main').waitFor({ timeout: 30000 });
+    const accessToken = await page.evaluate(() => sessionStorage.getItem('cp_admin_token'));
+    assert.ok(accessToken, 'No authenticated staff session after browser sign-in');
     page.on('pageerror', error => result.errors.push({ locale, width, route: new URL(page.url()).pathname, message: error.message.slice(0, 250) }));
     // A relay POST carrying GET is a read. Every business write is stopped before reaching the server.
     await context.route('**/api/**', async route => {
@@ -40,8 +39,8 @@ try {
       return route.abort('blockedbyclient');
     });
     if (!result.notificationContract) {
-      const response = await context.request.post(`${base}/api/josh/admin-call`, { headers: { authorization: `Bearer ${session.accessToken}` }, data: { method: 'GET', path: '/admin/notifications', query: { limit: '20' } } });
-      const body = await response.json();
+      const response = await context.request.post(`${base}/api/josh/admin-call`, { headers: { authorization: `Bearer ${accessToken}` }, data: { method: 'GET', path: '/admin/notifications', query: { limit: '20' } } });
+      const body = await response.json().catch(() => ({ message: `Non-JSON notification response: HTTP ${response.status()}` }));
       result.notificationContract = { status: response.status(), keys: Object.keys(body ?? {}), itemCount: Array.isArray(body?.data?.items) ? body.data.items.length : null, hasNextCursor: !!body?.data?.nextCursor, error: response.ok() ? null : String(body?.error?.message ?? body?.message ?? 'Read failed').slice(0, 300) };
     }
     const discoveries = new Set();

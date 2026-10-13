@@ -1,0 +1,30 @@
+{
+  "apiMode": "Local intercepted fixtures",
+  "checks": [
+    "th/1440: default recent feed, cursor next/previous, Enter, trimmed/blank filter, clear, single refresh, distinct error",
+    "th/1440: sync search/status/clear, failure reason, visible load errors",
+    "th/1440: API log filters recover using clear",
+    "th/1440: workflow creation is explicit, rejects blank name, prevents duplicate writes",
+    "th/1440: replay confirmation cancel, rejected replay feedback and recovery",
+    "th/1440: task links, header icons and document layout",
+    "th/390: default recent feed, cursor next/previous, Enter, trimmed/blank filter, clear, single refresh, distinct error",
+    "th/390: sync search/status/clear, failure reason, visible load errors",
+    "th/390: API log filters recover using clear",
+    "th/390: workflow creation is explicit, rejects blank name, prevents duplicate writes",
+    "th/390: replay confirmation cancel, rejected replay feedback and recovery",
+    "th/390: task links, header icons and document layout",
+    "en/1440: default recent feed, cursor next/previous, Enter, trimmed/blank filter, clear, single refresh, distinct error",
+    "en/1440: sync search/status/clear, failure reason, visible load errors",
+    "en/1440: API log filters recover using clear",
+    "en/1440: workflow creation is explicit, rejects blank name, prevents duplicate writes",
+    "en/1440: replay confirmation cancel, rejected replay feedback and recovery",
+    "en/1440: task links, header icons and document layout",
+    "en/390: default recent feed, cursor next/previous, Enter, trimmed/blank filter, clear, single refresh, distinct error",
+    "en/390: sync search/status/clear, failure reason, visible load errors",
+    "en/390: API log filters recover using clear",
+    "en/390: workflow creation is explicit, rejects blank name, prevents duplicate writes",
+    "en/390: replay confirmation cancel, rejected replay feedback and recovery",
+    "en/390: task links, header icons and document layout"
+  ],
+  "errors": []
+}

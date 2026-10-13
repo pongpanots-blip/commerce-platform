@@ -13,7 +13,7 @@ on:
     inputs:
       action:
         type: choice
-        options: [status, apply-flags, subscription, script, create-ops-staff]
+        options: [status, apply-flags, subscription, script, create-ops-staff, browser-e2e]
         default: status
       add:
         description: 'subscription: event types to add (comma separated)'
@@ -46,14 +46,35 @@ env:
 
 jobs:
   run:
-    runs-on: [self-hosted, linux, commerce-platform]
+    runs-on: ${{ inputs.action == 'browser-e2e' && 'ubuntu-latest' || fromJSON('["self-hosted", "linux", "commerce-platform"]') }}
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        if: inputs.action == 'browser-e2e'
         with:
-          sparse-checkout: ops
+          node-version: 22
+          cache: npm
+
+      - name: Read-only production browser E2E
+        if: inputs.action == 'browser-e2e'
+        env:
+          PROD_E2E_EMAIL: ops-cutover@joshapp.io
+          PROD_E2E_PASSWORD: ${{ secrets.COMMERCE_OPS_STAFF_PASSWORD }}
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+          node apps/commerce-admin/e2e/production-readonly.mjs
+
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.action == 'browser-e2e'
+        with:
+          name: admin-production-e2e
+          path: .e2e-out/production-readonly/results.json
 
       - name: Platform container
+        if: inputs.action != 'browser-e2e'
         id: c
         run: |
           set -euo pipefail
@@ -63,6 +84,7 @@ jobs:
           echo "id=$C" >> "$GITHUB_OUTPUT"
 
       - name: Env file (masked)
+        if: inputs.action != 'browser-e2e'
         env:
           RO_PW: ${{ secrets.JOSH_RO_PG_PASSWORD }}
           STAFF_PW: ${{ secrets.COMMERCE_OPS_STAFF_PASSWORD }}

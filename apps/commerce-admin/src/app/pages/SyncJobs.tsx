@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Button, Empty, ErrorText, Field, FormPanel, Loading, Page, PageHeader, Panel, PanelHead, Select, StatusChip, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
+import { Button, Empty, ErrorText, Field, FormPanel, Input, Loading, Page, PageHeader, Panel, PanelHead, Select, StatusChip, statusLabel, TBody, TD, TH, THead, TR, Table, fmt } from '@cp/ui';
 import { api, Integration, SyncJob } from '../../lib/api';
 import { useAsync } from '../hooks';
+import { commerceText as text } from '../commerce-copy';
 
 // ui-copy-migration: only literal UI copy and notification templates
 import { uiText as __uiText, formatUiMessage as __uiMessage, useUiLocale as __useUiLocale } from "@cp/ui";
@@ -24,6 +25,12 @@ export function SyncJobs() {
   const [busy, setBusy] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('');
+  const term = search.trim().toLocaleLowerCase();
+  const filtered = (jobs.data ?? []).filter(job => (!status || job.status === status) &&
+    [job.id, job.integrationId, job.operation, operationLabel(job.operation), job.error ?? '', JSON.stringify(job.result ?? '')]
+      .some(value => value.toLocaleLowerCase().includes(term)));
 
   async function trigger(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +53,7 @@ export function SyncJobs() {
         title={__uiText("งานซิงก์ข้อมูล")}
         subtitle={__uiText("งานซิงก์ข้อมูลกับระบบภายนอกและผลลัพธ์")}
         actions={<>
-          <Button icon="refresh" variant="secondary" onClick={jobs.reload}>{__uiText("Refresh")}</Button>
+          <Button icon="refresh" variant="secondary" onClick={jobs.reload} disabled={jobs.loading}>{__uiText("Refresh")}</Button>
           <Button icon="add" variant="primary" onClick={() => setShowForm(true)} disabled={showForm}>{__uiText("เริ่มซิงก์ข้อมูล")}</Button>
         </>}
       />
@@ -61,8 +68,9 @@ export function SyncJobs() {
         onSubmit={trigger}
         onCancel={() => setShowForm(false)}
       >
+        <ErrorText error={integrations.error} onRetry={integrations.reload} />
         <Field label={__uiText("Integration")}>
-          <Select required value={integrationId} onChange={(e) => setIntegrationId(e.target.value)}>
+          <Select required disabled={integrations.loading || !!integrations.error} value={integrationId} onChange={(e) => setIntegrationId(e.target.value)}>
             <option value="">{__uiText("Select…")}</option>
             {integrations.data?.map((i) => (
               <option key={i.id} value={i.id}>{i.name} ({i.type})</option>
@@ -80,10 +88,25 @@ export function SyncJobs() {
 
       <Panel>
         <PanelHead title={__uiText("Job history")} />
+        <div className="flex flex-wrap items-end gap-3 px-5 py-3">
+          <Field label={text('ค้นหางานซิงก์', 'Find sync jobs')} className="min-w-0 w-full sm:w-80">
+            <Input type="search" value={search} onChange={event => setSearch(event.target.value)} placeholder={text('ค้นหารหัสงาน ชนิดงาน หรือผลลัพธ์', 'Search job ID, operation or result')} />
+          </Field>
+          <Field label={__uiText('Status')}>
+            <Select value={status} onChange={event => setStatus(event.target.value)}>
+              <option value="">{__uiText('ทั้งหมด')}</option>
+              {['pending', 'running', 'completed', 'failed'].map(value => <option key={value} value={value}>{statusLabel(value)}</option>)}
+            </Select>
+          </Field>
+          {(search || status) && <Button variant="secondary" onClick={() => { setSearch(''); setStatus(''); }}>{text('ล้างตัวกรอง', 'Clear filters')}</Button>}
+        </div>
+        <ErrorText error={jobs.error} onRetry={jobs.reload} />
         {jobs.loading && !jobs.data ? (
           <Loading />
-        ) : !jobs.data?.length ? (
+        ) : jobs.error && !jobs.data ? null : !jobs.data?.length ? (
           <Empty icon="sync">{__uiText("ยังไม่มีงานซิงก์ กดปุ่ม “เริ่มซิงก์ข้อมูล” เพื่อเริ่มงานแรก")}</Empty>
+        ) : !filtered.length ? (
+          <Empty icon="search_off">{text('ไม่พบงานที่ตรงกับตัวกรอง ลองล้างตัวกรอง', 'No jobs match these filters. Try clearing the filters.')}</Empty>
         ) : (
           <Table>
             <THead>
@@ -93,12 +116,12 @@ export function SyncJobs() {
               <TH>{__uiText("Result")}</TH>
             </THead>
             <TBody>
-              {jobs.data.map((j) => (
+              {filtered.map((j) => (
                 <TR key={j.id}>
                   <TD kind="time">{fmt.when(j.createdAt)}</TD>
                   <TD>{operationLabel(j.operation)}</TD>
                   <TD><StatusChip status={j.status} /></TD>
-                  <TD kind="mono">{j.result ? JSON.stringify(j.result) : '—'}</TD>
+                  <TD kind="mono">{j.error ? <span className="text-danger">{j.error}</span> : j.result != null ? JSON.stringify(j.result) : '—'}</TD>
                 </TR>
               ))}
             </TBody>

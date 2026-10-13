@@ -1,0 +1,8646 @@
+[
+  {
+    "route": "/",
+    "module": "other",
+    "title": {
+      "th": "แดชบอร์ด",
+      "en": "Dashboard"
+    },
+    "fields": [
+      {
+        "th": "การเชื่อมต่อระบบ",
+        "en": "Integration"
+      },
+      {
+        "th": "การดำเนินการ",
+        "en": "Operation"
+      },
+      {
+        "th": "ค้นหางานซิงก์",
+        "en": "Find sync jobs"
+      },
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรชข้อมูล",
+        "en": "Refresh data"
+      },
+      {
+        "th": "ตรวจการพยายามชำระและข้อจำกัดของข้อมูลรับเงิน",
+        "en": "Inspect payment attempts and settlement data gaps"
+      },
+      {
+        "th": "ตรวจรายการคืนสินค้าและคืนเงิน",
+        "en": "Inspect return and refund records"
+      },
+      {
+        "th": "ดู",
+        "en": "View"
+      },
+      {
+        "th": "ดูงานทั้งหมด",
+        "en": "View all jobs"
+      },
+      {
+        "th": "เปิดรายการส่งไม่สำเร็จ",
+        "en": "Open dead letter"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เริ่มซิงก์ข้อมูล",
+        "en": "Start a sync"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Dashboard.tsx"
+  },
+  {
+    "route": "/home",
+    "module": "other",
+    "title": {
+      "th": "หน้าแรกและงานหลักของคุณ",
+      "en": "Home and your main tasks"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ทบทวนข้อมูลสินค้าที่เปลี่ยน",
+        "en": "Review changed attributes"
+      },
+      {
+        "th": "ทบทวนราคาภายใน",
+        "en": "Review internal prices"
+      },
+      {
+        "th": "ตรวจยอดตามคลัง",
+        "en": "Inspect stock by warehouse"
+      },
+      {
+        "th": "เปิดรายงานยอดขายและรายละเอียด",
+        "en": "Open sales report and breakdown"
+      },
+      {
+        "th": "ตรวจออเดอร์ในขอบเขตของฉัน",
+        "en": "Inspect orders in my scope"
+      },
+      {
+        "th": "ดูและมอบหมายผู้ดูแลลูกค้า",
+        "en": "View and assign customer coverage"
+      },
+      {
+        "th": "ตรวจการจัดส่ง",
+        "en": "Inspect shipments"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "cs",
+      "sale",
+      "sales_manager",
+      "business_analyst",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/RoleHome.tsx"
+  },
+  {
+    "route": "/today",
+    "module": "other",
+    "title": {
+      "th": "งานที่ทบทวนวันนี้",
+      "en": "Today work inbox"
+    },
+    "fields": [
+      {
+        "th": "ประเภทหลักฐาน",
+        "en": "Evidence group"
+      },
+      {
+        "th": "ข้อมูลผู้ดูแล",
+        "en": "Assignment evidence"
+      },
+      {
+        "th": "ค้นหาในผลอ่านนี้",
+        "en": "Search this read"
+      },
+      {
+        "th": "รหัสออเดอร์",
+        "en": "Order UUID"
+      }
+    ],
+    "actions": [
+      {
+        "th": "อ่านข้อมูลใหม่",
+        "en": "Refresh evidence"
+      },
+      {
+        "th": "ดูภาพรวมตามบทบาท",
+        "en": "Open role overview"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      },
+      {
+        "th": "อ่านออเดอร์นี้",
+        "en": "Read this order"
+      },
+      {
+        "th": "ล้างตัวกรองงาน",
+        "en": "Clear work filters"
+      },
+      {
+        "th": "ดูผลอ่านเพิ่ม",
+        "en": "Show more from this read"
+      },
+      {
+        "th": "ลองอ่านแหล่งข้อมูลใหม่",
+        "en": "Retry sources"
+      },
+      {
+        "th": "ลองอีกครั้ง",
+        "en": "Try again"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "cs",
+      "sale",
+      "sales_manager",
+      "business_analyst",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/today/TodayInbox.tsx"
+  },
+  {
+    "route": "/settings/staff",
+    "module": "settings",
+    "title": {
+      "th": "บัญชีทีมงาน",
+      "en": "Staff accounts"
+    },
+    "fields": [
+      {
+        "th": "อีเมล",
+        "en": "Email"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "สิทธิ์",
+        "en": "Permissions"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เพิ่มบัญชี",
+        "en": "Add account"
+      },
+      {
+        "th": "สร้างบัญชี",
+        "en": "Create account"
+      },
+      {
+        "th": "รีเซ็ตรหัสผ่าน",
+        "en": "Reset password"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx"
+  },
+  {
+    "route": "/settings/staff/new",
+    "module": "settings",
+    "title": {
+      "th": "บัญชีทีมงาน",
+      "en": "Staff accounts"
+    },
+    "fields": [
+      {
+        "th": "อีเมล",
+        "en": "Email"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "สิทธิ์",
+        "en": "Permissions"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เพิ่มบัญชี",
+        "en": "Add account"
+      },
+      {
+        "th": "สร้างบัญชี",
+        "en": "Create account"
+      },
+      {
+        "th": "รีเซ็ตรหัสผ่าน",
+        "en": "Reset password"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/StaffAccounts.tsx"
+  },
+  {
+    "route": "/settings/josh-staff",
+    "module": "settings",
+    "title": {
+      "th": "บัญชีทีมงานร้านค้า",
+      "en": "Store staff accounts"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ออกจากระบบทุกเครื่อง",
+        "en": "Sign out from all devices"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshStaff.tsx"
+  },
+  {
+    "route": "/account/password",
+    "module": "settings",
+    "title": {
+      "th": "เปลี่ยนรหัสผ่าน",
+      "en": "Change Password"
+    },
+    "fields": [
+      {
+        "th": "รหัสผ่านปัจจุบัน",
+        "en": "Current password"
+      },
+      {
+        "th": "รหัสผ่านใหม่",
+        "en": "New password"
+      },
+      {
+        "th": "รหัสผ่านใหม่อีกครั้ง",
+        "en": "Confirm new password"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ออกจากระบบ",
+        "en": "Logout"
+      },
+      {
+        "th": "เปลี่ยนรหัสผ่าน",
+        "en": "Change Password"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "cs",
+      "sale",
+      "sales_manager",
+      "business_analyst",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ChangePassword.tsx"
+  },
+  {
+    "route": "/reports/orders",
+    "module": "reports",
+    "title": {
+      "th": "รายงานราคาขาย",
+      "en": "Selling price reports"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาสาขา",
+        "en": "Search Branch"
+      },
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดาวน์โหลด CSV",
+        "en": "Download CSV"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ค้นหาสาขา",
+        "en": "Search Branch"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "แสดง",
+        "en": "Show"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sale",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx"
+  },
+  {
+    "route": "/reports/orders/:id",
+    "module": "reports",
+    "title": {
+      "th": "รายงานราคาขาย",
+      "en": "Selling price reports"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาสาขา",
+        "en": "Search Branch"
+      },
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดาวน์โหลด CSV",
+        "en": "Download CSV"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ค้นหาสาขา",
+        "en": "Search Branch"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "แสดง",
+        "en": "Show"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sale",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshOrderDetail.tsx"
+  },
+  {
+    "route": "/josh-api-logs",
+    "module": "advanced",
+    "title": {
+      "th": "บันทึกการเรียกใช้ระบบร้านค้า",
+      "en": "Store API log"
+    },
+    "fields": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshApiLogs.tsx"
+  },
+  {
+    "route": "/reports/price-shadow",
+    "module": "advanced",
+    "title": {
+      "th": "เทียบราคาที่คำนวณใหม่",
+      "en": "Compare recalculated prices"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ตรวจซ้ำ",
+        "en": "Re-check"
+      },
+      {
+        "th": "ก่อนหน้า",
+        "en": "Previous"
+      },
+      {
+        "th": "ถัดไป",
+        "en": "Next"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/PriceShadow.tsx"
+  },
+  {
+    "route": "/prices/staff",
+    "module": "catalog",
+    "title": {
+      "th": "ราคาเฉพาะลูกค้าและราคาสัญญา",
+      "en": "Customer & contract prices"
+    },
+    "fields": [
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      },
+      {
+        "th": "ราคา (บาท)",
+        "en": "Price (THB)"
+      },
+      {
+        "th": "วันเริ่ม",
+        "en": "Start date"
+      },
+      {
+        "th": "วันสิ้นสุด",
+        "en": "End date"
+      },
+      {
+        "th": "เลขสัญญา",
+        "en": "Contract No."
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดึงราคาจากร้านค้า",
+        "en": "Pull prices from the shop"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เพิ่มราคา",
+        "en": "Add Price"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้าง",
+        "en": "Clear"
+      },
+      {
+        "th": "›",
+        "en": "›"
+      },
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "ส่งซ้ำ",
+        "en": "Retry"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/StaffPrices.tsx"
+  },
+  {
+    "route": "/reports/customers",
+    "module": "reports",
+    "title": {
+      "th": "รายงานราคาขาย",
+      "en": "Selling price reports"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาสาขา",
+        "en": "Search Branch"
+      },
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดาวน์โหลด CSV",
+        "en": "Download CSV"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ค้นหาสาขา",
+        "en": "Search Branch"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "แสดง",
+        "en": "Show"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sale",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx"
+  },
+  {
+    "route": "/reports/customers/:id",
+    "module": "reports",
+    "title": {
+      "th": "รายงานลูกค้าและบริษัท",
+      "en": "Customer & Company Report"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แก้",
+        "en": "Edit"
+      },
+      {
+        "th": "แก้เทอม",
+        "en": "Edit term"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "จัดการราคา",
+        "en": "Manage prices"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sale",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshCustomerDetail.tsx"
+  },
+  {
+    "route": "/reports/prices",
+    "module": "reports",
+    "title": {
+      "th": "รายงานราคาขาย",
+      "en": "Selling price reports"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาสาขา",
+        "en": "Search Branch"
+      },
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดาวน์โหลด CSV",
+        "en": "Download CSV"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ค้นหาสาขา",
+        "en": "Search Branch"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "แสดง",
+        "en": "Show"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sale",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshCommerce.tsx"
+  },
+  {
+    "route": "/reports/products",
+    "module": "reports",
+    "title": {
+      "th": "รายงานสินค้า",
+      "en": "Product reports"
+    },
+    "fields": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "สินค้าสั่งจอง",
+        "en": "Pre-order products"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้าง",
+        "en": "Clear"
+      },
+      {
+        "th": "อนุมัติที่เลือก ({0})",
+        "en": "Approve selected ({0})"
+      },
+      {
+        "th": "ไม่อนุมัติที่เลือก",
+        "en": "Reject selected"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshProducts.tsx"
+  },
+  {
+    "route": "/reports/products/:id",
+    "module": "reports",
+    "title": {
+      "th": "รายงานสินค้า",
+      "en": "Product reports"
+    },
+    "fields": [
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "เพิ่มรูป",
+        "en": "Add Image"
+      }
+    ],
+    "actions": [
+      {
+        "th": "บันทึก{0}",
+        "en": "Save{0}"
+      },
+      {
+        "th": "แก้ข้อความสินค้า",
+        "en": "Edit product content"
+      },
+      {
+        "th": "แก้ข้อมูลสินค้าอื่น",
+        "en": "Edit other product fields"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshProductDetail.tsx"
+  },
+  {
+    "route": "/reports/sales",
+    "module": "reports",
+    "title": {
+      "th": "การเข้าชมร้านค้า",
+      "en": "Shop visits"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sale",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ShopReports.tsx"
+  },
+  {
+    "route": "/reports/traffic",
+    "module": "reports",
+    "title": {
+      "th": "การเข้าชมร้านค้า",
+      "en": "Shop visits"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ShopReports.tsx"
+  },
+  {
+    "route": "/reports/health",
+    "module": "reports",
+    "title": {
+      "th": "การเข้าชมร้านค้า",
+      "en": "Shop visits"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ShopReports.tsx"
+  },
+  {
+    "route": "/reports/winback",
+    "module": "customers",
+    "title": {
+      "th": "ติดตามลูกค้าเก่า",
+      "en": "Customer win-back"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Winback.tsx"
+  },
+  {
+    "route": "/reports/order-targetgroup",
+    "module": "reports",
+    "title": {
+      "th": "สำรวจร้านอาหาร",
+      "en": "Explore Restaurants"
+    },
+    "fields": [
+      {
+        "th": "ชื่อร้าน",
+        "en": "Restaurant Name"
+      },
+      {
+        "th": "เขต / อำเภอ",
+        "en": "District / Area"
+      },
+      {
+        "th": "ประเภทร้าน",
+        "en": "Restaurant Type"
+      },
+      {
+        "th": "คะแนนขั้นต่ำ",
+        "en": "Minimum Rating"
+      },
+      {
+        "th": "รีวิวขั้นต่ำ",
+        "en": "Minimum Reviews"
+      },
+      {
+        "th": "ช่วงที่คนเยอะวันนี้",
+        "en": "Peak hours today"
+      },
+      {
+        "th": "ช่วงราคา",
+        "en": "Price range"
+      },
+      {
+        "th": "รหัสลูกค้า",
+        "en": "Customer ID"
+      },
+      {
+        "th": "ส่งได้อย่างน้อย (วัน/สัปดาห์)",
+        "en": "Min Delivery Days/Week"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ค้นหาร้าน",
+        "en": "Search Outlet"
+      },
+      {
+        "th": "ใช้ตัวกรอง",
+        "en": "Apply Filters"
+      },
+      {
+        "th": "ล้างตัวกรอง (",
+        "en": "Clear filters ("
+      },
+      {
+        "th": ")",
+        "en": ")"
+      },
+      {
+        "th": "ลองอีกครั้ง",
+        "en": "Try again"
+      },
+      {
+        "th": "ดูร้านทั้งหมด",
+        "en": "View all outlets"
+      },
+      {
+        "th": "ลองโหลดรายละเอียดอีกครั้ง",
+        "en": "Try reloading details"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx"
+  },
+  {
+    "route": "/marketing/workflows",
+    "module": "marketing",
+    "title": {
+      "th": "ข้อความอัตโนมัติ",
+      "en": "Automated messages"
+    },
+    "fields": [
+      {
+        "th": "ข้อมูลข้อความอัตโนมัติ (JSON)",
+        "en": "Automated message data (JSON)"
+      },
+      {
+        "th": "อีเมลบัญชีทดสอบ",
+        "en": "Test account email"
+      }
+    ],
+    "actions": [
+      {
+        "th": "สร้างข้อความอัตโนมัติ",
+        "en": "Create automated message"
+      },
+      {
+        "th": "กราฟ",
+        "en": "Chart"
+      },
+      {
+        "th": "แก้ JSON",
+        "en": "Edit JSON"
+      },
+      {
+        "th": "เปิด",
+        "en": "Active"
+      },
+      {
+        "th": "เพิ่มผู้รับทดสอบ",
+        "en": "Add test recipient"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/MarketingWorkflows.tsx"
+  },
+  {
+    "route": "/marketing/analyst",
+    "module": "marketing",
+    "title": {
+      "th": "ผู้ช่วยวิเคราะห์การตลาด",
+      "en": "Marketing analysis assistant"
+    },
+    "fields": [
+      {
+        "th": "คำถาม",
+        "en": "Question"
+      },
+      {
+        "th": "พื้นที่",
+        "en": "Region"
+      },
+      {
+        "th": "ช่วงข้อมูล",
+        "en": "Data Range"
+      },
+      {
+        "th": "เปิดรายงาน",
+        "en": "Open Report"
+      }
+    ],
+    "actions": [
+      {
+        "th": "แผนการเติบโต",
+        "en": "Growth plans"
+      },
+      {
+        "th": "ตรวจความพร้อม",
+        "en": "Check Readiness"
+      },
+      {
+        "th": "โหลดรายงานล่าสุด",
+        "en": "Load latest reports"
+      },
+      {
+        "th": "ลองใหม่",
+        "en": "Retry"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/MarketingAnalyst.tsx"
+  },
+  {
+    "route": "/marketing/growth",
+    "module": "marketing",
+    "title": {
+      "th": "วางแผนการเติบโต",
+      "en": "Plan growth"
+    },
+    "fields": [
+      {
+        "th": "รหัสบริษัท",
+        "en": "Company code"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "แผนและปฏิทิน",
+        "en": "Plans and calendar"
+      },
+      {
+        "th": "สร้างแผน",
+        "en": "Create plan"
+      },
+      {
+        "th": "เปิดงานวิจัยตลาด",
+        "en": "Open market research"
+      },
+      {
+        "th": "ร่างแผนจากโอกาสนี้",
+        "en": "Draft plan from this opportunity"
+      },
+      {
+        "th": "ตรวจข้อมูลต้นทาง",
+        "en": "Verify source data"
+      },
+      {
+        "th": "โหลดแผนรอตรวจใหม่",
+        "en": "Reload plans awaiting review"
+      },
+      {
+        "th": "เปิดแผนรอตรวจทั้งหมด",
+        "en": "Open all pending audit plans"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/growth/Workspace.tsx"
+  },
+  {
+    "route": "/marketing/growth/plans",
+    "module": "marketing",
+    "title": {
+      "th": "แผนและปฏิทิน",
+      "en": "Plans and calendar"
+    },
+    "fields": [
+      {
+        "th": "ค้นแผน",
+        "en": "Search plans"
+      },
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      },
+      {
+        "th": "เดือน",
+        "en": "Month"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "สร้างแผน",
+        "en": "Create plan"
+      },
+      {
+        "th": "ลองใหม่",
+        "en": "Retry"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/growth/Plans.tsx"
+  },
+  {
+    "route": "/marketing/growth/plans/new",
+    "module": "marketing",
+    "title": {
+      "th": "รายละเอียดแผน",
+      "en": "Plan Details"
+    },
+    "fields": [
+      {
+        "th": "Workflow UUID ที่ตรวจพบ",
+        "en": "Detected workflow UUID"
+      },
+      {
+        "th": "ชื่อแผน",
+        "en": "Plan Name"
+      },
+      {
+        "th": "ประเภทแผน",
+        "en": "Plan Type"
+      },
+      {
+        "th": "เป้าหมายและข้อเสนอที่ต้องตรวจ",
+        "en": "Objective & Offer for Review"
+      },
+      {
+        "th": "เจ้าของแผน (อีเมล)",
+        "en": "Plan Owner (Email)"
+      },
+      {
+        "th": "วันที่วางแผนทำงาน",
+        "en": "Planned execution date"
+      },
+      {
+        "th": "งบสูงสุดของแผน (บาท)",
+        "en": "Max Plan Budget (THB)"
+      },
+      {
+        "th": "อัตรา contribution ขั้นต่ำ (%)",
+        "en": "Min Contribution Rate (%)"
+      },
+      {
+        "th": "กลุ่มลูกค้า",
+        "en": "Customer segment"
+      },
+      {
+        "th": "กลุ่มที่ไม่รวม",
+        "en": "Groups to leave out"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เปิดร่าง workflow",
+        "en": "Open draft workflow"
+      },
+      {
+        "th": "ดูผล",
+        "en": "View Results"
+      },
+      {
+        "th": "โหลดเวอร์ชันล่าสุด",
+        "en": "Load Latest Version"
+      },
+      {
+        "th": "ส่งตรวจ",
+        "en": "Submit for Review"
+      },
+      {
+        "th": "อนุมัติ revision ",
+        "en": "อนุมัติ revision "
+      },
+      {
+        "th": "ตรวจรายการ workflow",
+        "en": "Inspect workflow items"
+      },
+      {
+        "th": "ตรวจและเชื่อมร่าง",
+        "en": "Verify & Connect Draft"
+      },
+      {
+        "th": "ตรวจ Segments",
+        "en": "Check Segments"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/growth/Plan.tsx"
+  },
+  {
+    "route": "/marketing/growth/plans/:id",
+    "module": "marketing",
+    "title": {
+      "th": "รายละเอียดแผน",
+      "en": "Plan Details"
+    },
+    "fields": [
+      {
+        "th": "Workflow UUID ที่ตรวจพบ",
+        "en": "Detected workflow UUID"
+      },
+      {
+        "th": "ชื่อแผน",
+        "en": "Plan Name"
+      },
+      {
+        "th": "ประเภทแผน",
+        "en": "Plan Type"
+      },
+      {
+        "th": "เป้าหมายและข้อเสนอที่ต้องตรวจ",
+        "en": "Objective & Offer for Review"
+      },
+      {
+        "th": "เจ้าของแผน (อีเมล)",
+        "en": "Plan Owner (Email)"
+      },
+      {
+        "th": "วันที่วางแผนทำงาน",
+        "en": "Planned execution date"
+      },
+      {
+        "th": "งบสูงสุดของแผน (บาท)",
+        "en": "Max Plan Budget (THB)"
+      },
+      {
+        "th": "อัตรา contribution ขั้นต่ำ (%)",
+        "en": "Min Contribution Rate (%)"
+      },
+      {
+        "th": "กลุ่มลูกค้า",
+        "en": "Customer segment"
+      },
+      {
+        "th": "กลุ่มที่ไม่รวม",
+        "en": "Groups to leave out"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เปิดร่าง workflow",
+        "en": "Open draft workflow"
+      },
+      {
+        "th": "ดูผล",
+        "en": "View Results"
+      },
+      {
+        "th": "โหลดเวอร์ชันล่าสุด",
+        "en": "Load Latest Version"
+      },
+      {
+        "th": "ส่งตรวจ",
+        "en": "Submit for Review"
+      },
+      {
+        "th": "อนุมัติ revision ",
+        "en": "อนุมัติ revision "
+      },
+      {
+        "th": "ตรวจรายการ workflow",
+        "en": "Inspect workflow items"
+      },
+      {
+        "th": "ตรวจและเชื่อมร่าง",
+        "en": "Verify & Connect Draft"
+      },
+      {
+        "th": "ตรวจ Segments",
+        "en": "Check Segments"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/growth/Plan.tsx"
+  },
+  {
+    "route": "/marketing/growth/results/:workflowId",
+    "module": "marketing",
+    "title": {
+      "th": "วางแผนการเติบโต",
+      "en": "Plan growth"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "เปิด workflow",
+        "en": "Open Workflow"
+      },
+      {
+        "th": "เปิดบันทึกการรันและผู้เข้าร่วม",
+        "en": "Open run logs and participants"
+      },
+      {
+        "th": "เตรียมแผนการทดลองถัดไป",
+        "en": "Prepare Next Experiment Plan"
+      },
+      {
+        "th": "งานชวนลูกค้าเก่ากลับ",
+        "en": "Win-back tasks"
+      },
+      {
+        "th": "เปิดรายการ",
+        "en": "Open Item"
+      },
+      {
+        "th": "ลองใหม่",
+        "en": "Retry"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/growth/Results.tsx"
+  },
+  {
+    "route": "/marketing/growth/companies/:companyId",
+    "module": "marketing",
+    "title": {
+      "th": "วางแผนการเติบโต",
+      "en": "Plan growth"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "เปิด workflow",
+        "en": "Open Workflow"
+      },
+      {
+        "th": "เปิดบันทึกการรันและผู้เข้าร่วม",
+        "en": "Open run logs and participants"
+      },
+      {
+        "th": "เตรียมแผนการทดลองถัดไป",
+        "en": "Prepare Next Experiment Plan"
+      },
+      {
+        "th": "งานชวนลูกค้าเก่ากลับ",
+        "en": "Win-back tasks"
+      },
+      {
+        "th": "เปิดรายการ",
+        "en": "Open Item"
+      },
+      {
+        "th": "ลองใหม่",
+        "en": "Retry"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/growth/Results.tsx"
+  },
+  {
+    "route": "/marketing/flows/new",
+    "module": "other",
+    "title": {
+      "th": "สร้าง Workflow",
+      "en": "Create workflow"
+    },
+    "fields": [
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      }
+    ],
+    "actions": [
+      {
+        "th": "สร้างร่างและเปิดตัวแก้ไข",
+        "en": "Create draft and open editor"
+      },
+      {
+        "th": "บันทึก",
+        "en": "Save"
+      },
+      {
+        "th": "รันทดสอบ",
+        "en": "Run Test"
+      },
+      {
+        "th": "ประวัติ",
+        "en": "History"
+      },
+      {
+        "th": "หยุดชั่วคราว",
+        "en": "Pause"
+      },
+      {
+        "th": "เปิดใช้งาน",
+        "en": "Active"
+      },
+      {
+        "th": "จัดเรียงอัตโนมัติ",
+        "en": "Auto layout"
+      },
+      {
+        "th": "ปิด",
+        "en": "Close"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/marketing-workflow/index.tsx"
+  },
+  {
+    "route": "/marketing/flows/:id",
+    "module": "other",
+    "title": {
+      "th": "สร้าง Workflow",
+      "en": "Create workflow"
+    },
+    "fields": [
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      }
+    ],
+    "actions": [
+      {
+        "th": "สร้างร่างและเปิดตัวแก้ไข",
+        "en": "Create draft and open editor"
+      },
+      {
+        "th": "บันทึก",
+        "en": "Save"
+      },
+      {
+        "th": "รันทดสอบ",
+        "en": "Run Test"
+      },
+      {
+        "th": "ประวัติ",
+        "en": "History"
+      },
+      {
+        "th": "หยุดชั่วคราว",
+        "en": "Pause"
+      },
+      {
+        "th": "เปิดใช้งาน",
+        "en": "Active"
+      },
+      {
+        "th": "จัดเรียงอัตโนมัติ",
+        "en": "Auto layout"
+      },
+      {
+        "th": "ปิด",
+        "en": "Close"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/marketing-workflow/index.tsx"
+  },
+  {
+    "route": "/marketing/events",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าตาม event",
+      "en": "Event-based segments"
+    },
+    "fields": [
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      },
+      {
+        "th": "เงื่อนไข",
+        "en": "Condition"
+      },
+      {
+        "th": "ชื่อ (a-z 0-9 _)",
+        "en": "Name (a-z 0-9 _)"
+      },
+      {
+        "th": "แสดงเป็น",
+        "en": "Display name"
+      },
+      {
+        "th": "หลักฐาน",
+        "en": "Evidence / Proof"
+      },
+      {
+        "th": "Attribute",
+        "en": "Attribute"
+      },
+      {
+        "th": "อุปกรณ์",
+        "en": "Devices"
+      },
+      {
+        "th": "ผู้ใช้",
+        "en": "User"
+      },
+      {
+        "th": "ชื่อ event",
+        "en": "Event name"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เพิ่มกลุ่ม",
+        "en": "Add group"
+      },
+      {
+        "th": "นับลูกค้าตอนนี้",
+        "en": "Count customers now"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "บันทึก",
+        "en": "Save"
+      },
+      {
+        "th": "สร้าง event",
+        "en": "Create event"
+      },
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "เพิ่ม attribute",
+        "en": "Add attribute"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/marketing-events/index.tsx"
+  },
+  {
+    "route": "/marketing/dynamic-segments",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าตาม event",
+      "en": "Event-based segments"
+    },
+    "fields": [
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      },
+      {
+        "th": "เงื่อนไข",
+        "en": "Condition"
+      },
+      {
+        "th": "ชื่อ (a-z 0-9 _)",
+        "en": "Name (a-z 0-9 _)"
+      },
+      {
+        "th": "แสดงเป็น",
+        "en": "Display name"
+      },
+      {
+        "th": "หลักฐาน",
+        "en": "Evidence / Proof"
+      },
+      {
+        "th": "Attribute",
+        "en": "Attribute"
+      },
+      {
+        "th": "อุปกรณ์",
+        "en": "Devices"
+      },
+      {
+        "th": "ผู้ใช้",
+        "en": "User"
+      },
+      {
+        "th": "ชื่อ event",
+        "en": "Event name"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เพิ่มกลุ่ม",
+        "en": "Add group"
+      },
+      {
+        "th": "นับลูกค้าตอนนี้",
+        "en": "Count customers now"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "บันทึก",
+        "en": "Save"
+      },
+      {
+        "th": "สร้าง event",
+        "en": "Create event"
+      },
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "เพิ่ม attribute",
+        "en": "Add attribute"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/marketing-events/index.tsx"
+  },
+  {
+    "route": "/marketing/dynamic-segments/:id",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าตาม event",
+      "en": "Event-based segments"
+    },
+    "fields": [
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      },
+      {
+        "th": "เงื่อนไข",
+        "en": "Condition"
+      },
+      {
+        "th": "ชื่อ (a-z 0-9 _)",
+        "en": "Name (a-z 0-9 _)"
+      },
+      {
+        "th": "แสดงเป็น",
+        "en": "Display name"
+      },
+      {
+        "th": "หลักฐาน",
+        "en": "Evidence / Proof"
+      },
+      {
+        "th": "Attribute",
+        "en": "Attribute"
+      },
+      {
+        "th": "อุปกรณ์",
+        "en": "Devices"
+      },
+      {
+        "th": "ผู้ใช้",
+        "en": "User"
+      },
+      {
+        "th": "ชื่อ event",
+        "en": "Event name"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เพิ่มกลุ่ม",
+        "en": "Add group"
+      },
+      {
+        "th": "นับลูกค้าตอนนี้",
+        "en": "Count customers now"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "บันทึก",
+        "en": "Save"
+      },
+      {
+        "th": "สร้าง event",
+        "en": "Create event"
+      },
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "เพิ่ม attribute",
+        "en": "Add attribute"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/marketing-events/index.tsx"
+  },
+  {
+    "route": "/marketing/workflows/new",
+    "module": "marketing",
+    "title": {
+      "th": "สร้างข้อความอัตโนมัติ",
+      "en": "Create automated message"
+    },
+    "fields": [
+      {
+        "th": "สถานะการลงทะเบียน",
+        "en": "Registration Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ตั้งช่วงเวลาเฉพาะ",
+        "en": "Custom Date Range"
+      },
+      {
+        "th": "ตลอดเวลา",
+        "en": "Always"
+      },
+      {
+        "th": "← กลับไปรายการข้อความอัตโนมัติ",
+        "en": "← Back to automated messages"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "แก้เงื่อนไขเริ่มต้น",
+        "en": "Edit default terms"
+      },
+      {
+        "th": "สถิติ",
+        "en": "Analytics"
+      },
+      {
+        "th": "ผลลัพธ์",
+        "en": "Results"
+      },
+      {
+        "th": "ประวัติ",
+        "en": "History"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx"
+  },
+  {
+    "route": "/marketing/workflows/:id/edit",
+    "module": "marketing",
+    "title": {
+      "th": "สร้างข้อความอัตโนมัติ",
+      "en": "Create automated message"
+    },
+    "fields": [
+      {
+        "th": "สถานะการลงทะเบียน",
+        "en": "Registration Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ตั้งช่วงเวลาเฉพาะ",
+        "en": "Custom Date Range"
+      },
+      {
+        "th": "ตลอดเวลา",
+        "en": "Always"
+      },
+      {
+        "th": "← กลับไปรายการข้อความอัตโนมัติ",
+        "en": "← Back to automated messages"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "แก้เงื่อนไขเริ่มต้น",
+        "en": "Edit default terms"
+      },
+      {
+        "th": "สถิติ",
+        "en": "Analytics"
+      },
+      {
+        "th": "ผลลัพธ์",
+        "en": "Results"
+      },
+      {
+        "th": "ประวัติ",
+        "en": "History"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx"
+  },
+  {
+    "route": "/marketing/workflows/:id/enrollments",
+    "module": "marketing",
+    "title": {
+      "th": "สร้างข้อความอัตโนมัติ",
+      "en": "Create automated message"
+    },
+    "fields": [
+      {
+        "th": "สถานะการลงทะเบียน",
+        "en": "Registration Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ตั้งช่วงเวลาเฉพาะ",
+        "en": "Custom Date Range"
+      },
+      {
+        "th": "ตลอดเวลา",
+        "en": "Always"
+      },
+      {
+        "th": "← กลับไปรายการข้อความอัตโนมัติ",
+        "en": "← Back to automated messages"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "แก้เงื่อนไขเริ่มต้น",
+        "en": "Edit default terms"
+      },
+      {
+        "th": "สถิติ",
+        "en": "Analytics"
+      },
+      {
+        "th": "ผลลัพธ์",
+        "en": "Results"
+      },
+      {
+        "th": "ประวัติ",
+        "en": "History"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx"
+  },
+  {
+    "route": "/marketing/workflows/:id/scheduled-runs",
+    "module": "marketing",
+    "title": {
+      "th": "สร้างข้อความอัตโนมัติ",
+      "en": "Create automated message"
+    },
+    "fields": [
+      {
+        "th": "สถานะการลงทะเบียน",
+        "en": "Registration Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ตั้งช่วงเวลาเฉพาะ",
+        "en": "Custom Date Range"
+      },
+      {
+        "th": "ตลอดเวลา",
+        "en": "Always"
+      },
+      {
+        "th": "← กลับไปรายการข้อความอัตโนมัติ",
+        "en": "← Back to automated messages"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "แก้เงื่อนไขเริ่มต้น",
+        "en": "Edit default terms"
+      },
+      {
+        "th": "สถิติ",
+        "en": "Analytics"
+      },
+      {
+        "th": "ผลลัพธ์",
+        "en": "Results"
+      },
+      {
+        "th": "ประวัติ",
+        "en": "History"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/workflow-editor/index.tsx"
+  },
+  {
+    "route": "/j/payment-transactions",
+    "module": "orders",
+    "title": {
+      "th": "รายการชำระเงิน",
+      "en": "Payment records"
+    },
+    "fields": [
+      {
+        "th": "สถานะการพยายามชำระ",
+        "en": "Attempt state"
+      },
+      {
+        "th": "ช่องทาง",
+        "en": "Channel"
+      },
+      {
+        "th": "ผู้ให้บริการ",
+        "en": "Provider"
+      },
+      {
+        "th": "รับเงินเข้าบัญชี / คิวตรวจ",
+        "en": "Settlement / review queue"
+      },
+      {
+        "th": "วันที่เริ่มต้นของแหล่งข้อมูล",
+        "en": "Source start date"
+      },
+      {
+        "th": "วันที่สิ้นสุดของแหล่งข้อมูล",
+        "en": "Source end date"
+      },
+      {
+        "th": "ค้นหาออเดอร์ / ข้อมูลอ้างอิง",
+        "en": "Find order / reference"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดอีกครั้ง",
+        "en": "Refresh"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      },
+      {
+        "th": "ก่อนหน้า",
+        "en": "Previous"
+      },
+      {
+        "th": "ถัดไป",
+        "en": "Next"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/PaymentWorkspace.tsx"
+  },
+  {
+    "route": "/j/payment-transactions/:transactionId",
+    "module": "orders",
+    "title": {
+      "th": "รายการชำระเงิน",
+      "en": "Payment records"
+    },
+    "fields": [
+      {
+        "th": "สถานะการพยายามชำระ",
+        "en": "Attempt state"
+      },
+      {
+        "th": "ช่องทาง",
+        "en": "Channel"
+      },
+      {
+        "th": "ผู้ให้บริการ",
+        "en": "Provider"
+      },
+      {
+        "th": "รับเงินเข้าบัญชี / คิวตรวจ",
+        "en": "Settlement / review queue"
+      },
+      {
+        "th": "วันที่เริ่มต้นของแหล่งข้อมูล",
+        "en": "Source start date"
+      },
+      {
+        "th": "วันที่สิ้นสุดของแหล่งข้อมูล",
+        "en": "Source end date"
+      },
+      {
+        "th": "ค้นหาออเดอร์ / ข้อมูลอ้างอิง",
+        "en": "Find order / reference"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดอีกครั้ง",
+        "en": "Refresh"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      },
+      {
+        "th": "ก่อนหน้า",
+        "en": "Previous"
+      },
+      {
+        "th": "ถัดไป",
+        "en": "Next"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/PaymentWorkspace.tsx"
+  },
+  {
+    "route": "/cs/orders/new",
+    "module": "customers",
+    "title": {
+      "th": "งานบริการลูกค้า",
+      "en": "Customer service"
+    },
+    "fields": [
+      {
+        "th": "บริษัท",
+        "en": "Company"
+      },
+      {
+        "th": "ผู้ใช้",
+        "en": "User"
+      },
+      {
+        "th": "สาขาที่ส่ง",
+        "en": "Delivery Branch"
+      },
+      {
+        "th": "ชำระด้วย",
+        "en": "Payment Method"
+      },
+      {
+        "th": "คูปอง",
+        "en": "Coupon"
+      },
+      {
+        "th": "วันส่ง (ว่าง = ตามรอบ)",
+        "en": "Delivery Date (Empty = regular schedule)"
+      },
+      {
+        "th": "หมายเหตุ",
+        "en": "Note"
+      },
+      {
+        "th": "บัญชีหลัก (เก็บไว้)",
+        "en": "Primary Account (Retain)"
+      },
+      {
+        "th": "บัญชีซ้ำ (รวมเข้า)",
+        "en": "Duplicate accounts (merge)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ค้นหาสินค้า",
+        "en": "Search products"
+      },
+      {
+        "th": "เพิ่ม",
+        "en": "Add"
+      },
+      {
+        "th": "เอาออก",
+        "en": "Remove"
+      },
+      {
+        "th": "คิดราคา",
+        "en": "Calculate price"
+      },
+      {
+        "th": "สั่งซื้อ",
+        "en": "Place Order"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "กลับหน้ารายการ",
+        "en": "Back to list"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/CsDesk.tsx"
+  },
+  {
+    "route": "/cs/samples",
+    "module": "customers",
+    "title": {
+      "th": "งานบริการลูกค้า",
+      "en": "Customer service"
+    },
+    "fields": [
+      {
+        "th": "บริษัท",
+        "en": "Company"
+      },
+      {
+        "th": "ผู้ใช้",
+        "en": "User"
+      },
+      {
+        "th": "สาขาที่ส่ง",
+        "en": "Delivery Branch"
+      },
+      {
+        "th": "ชำระด้วย",
+        "en": "Payment Method"
+      },
+      {
+        "th": "คูปอง",
+        "en": "Coupon"
+      },
+      {
+        "th": "วันส่ง (ว่าง = ตามรอบ)",
+        "en": "Delivery Date (Empty = regular schedule)"
+      },
+      {
+        "th": "หมายเหตุ",
+        "en": "Note"
+      },
+      {
+        "th": "บัญชีหลัก (เก็บไว้)",
+        "en": "Primary Account (Retain)"
+      },
+      {
+        "th": "บัญชีซ้ำ (รวมเข้า)",
+        "en": "Duplicate accounts (merge)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ค้นหาสินค้า",
+        "en": "Search products"
+      },
+      {
+        "th": "เพิ่ม",
+        "en": "Add"
+      },
+      {
+        "th": "เอาออก",
+        "en": "Remove"
+      },
+      {
+        "th": "คิดราคา",
+        "en": "Calculate price"
+      },
+      {
+        "th": "สั่งซื้อ",
+        "en": "Place Order"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "กลับหน้ารายการ",
+        "en": "Back to list"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/CsDesk.tsx"
+  },
+  {
+    "route": "/cs/samples/:id/:decision",
+    "module": "customers",
+    "title": {
+      "th": "งานบริการลูกค้า",
+      "en": "Customer service"
+    },
+    "fields": [
+      {
+        "th": "บริษัท",
+        "en": "Company"
+      },
+      {
+        "th": "ผู้ใช้",
+        "en": "User"
+      },
+      {
+        "th": "สาขาที่ส่ง",
+        "en": "Delivery Branch"
+      },
+      {
+        "th": "ชำระด้วย",
+        "en": "Payment Method"
+      },
+      {
+        "th": "คูปอง",
+        "en": "Coupon"
+      },
+      {
+        "th": "วันส่ง (ว่าง = ตามรอบ)",
+        "en": "Delivery Date (Empty = regular schedule)"
+      },
+      {
+        "th": "หมายเหตุ",
+        "en": "Note"
+      },
+      {
+        "th": "บัญชีหลัก (เก็บไว้)",
+        "en": "Primary Account (Retain)"
+      },
+      {
+        "th": "บัญชีซ้ำ (รวมเข้า)",
+        "en": "Duplicate accounts (merge)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ค้นหาสินค้า",
+        "en": "Search products"
+      },
+      {
+        "th": "เพิ่ม",
+        "en": "Add"
+      },
+      {
+        "th": "เอาออก",
+        "en": "Remove"
+      },
+      {
+        "th": "คิดราคา",
+        "en": "Calculate price"
+      },
+      {
+        "th": "สั่งซื้อ",
+        "en": "Place Order"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "กลับหน้ารายการ",
+        "en": "Back to list"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/CsDesk.tsx"
+  },
+  {
+    "route": "/cs/accounts/merge",
+    "module": "customers",
+    "title": {
+      "th": "งานบริการลูกค้า",
+      "en": "Customer service"
+    },
+    "fields": [
+      {
+        "th": "บริษัท",
+        "en": "Company"
+      },
+      {
+        "th": "ผู้ใช้",
+        "en": "User"
+      },
+      {
+        "th": "สาขาที่ส่ง",
+        "en": "Delivery Branch"
+      },
+      {
+        "th": "ชำระด้วย",
+        "en": "Payment Method"
+      },
+      {
+        "th": "คูปอง",
+        "en": "Coupon"
+      },
+      {
+        "th": "วันส่ง (ว่าง = ตามรอบ)",
+        "en": "Delivery Date (Empty = regular schedule)"
+      },
+      {
+        "th": "หมายเหตุ",
+        "en": "Note"
+      },
+      {
+        "th": "บัญชีหลัก (เก็บไว้)",
+        "en": "Primary Account (Retain)"
+      },
+      {
+        "th": "บัญชีซ้ำ (รวมเข้า)",
+        "en": "Duplicate accounts (merge)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ค้นหาสินค้า",
+        "en": "Search products"
+      },
+      {
+        "th": "เพิ่ม",
+        "en": "Add"
+      },
+      {
+        "th": "เอาออก",
+        "en": "Remove"
+      },
+      {
+        "th": "คิดราคา",
+        "en": "Calculate price"
+      },
+      {
+        "th": "สั่งซื้อ",
+        "en": "Place Order"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "กลับหน้ารายการ",
+        "en": "Back to list"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/CsDesk.tsx"
+  },
+  {
+    "route": "/livechat",
+    "module": "customers",
+    "title": {
+      "th": "แชตกับลูกค้า",
+      "en": "Customer chat"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Livechat.tsx"
+  },
+  {
+    "route": "/marketing/restaurants",
+    "module": "marketing",
+    "title": {
+      "th": "สำรวจร้านอาหาร",
+      "en": "Explore Restaurants"
+    },
+    "fields": [
+      {
+        "th": "ชื่อร้าน",
+        "en": "Restaurant Name"
+      },
+      {
+        "th": "เขต / อำเภอ",
+        "en": "District / Area"
+      },
+      {
+        "th": "ประเภทร้าน",
+        "en": "Restaurant Type"
+      },
+      {
+        "th": "คะแนนขั้นต่ำ",
+        "en": "Minimum Rating"
+      },
+      {
+        "th": "รีวิวขั้นต่ำ",
+        "en": "Minimum Reviews"
+      },
+      {
+        "th": "ช่วงที่คนเยอะวันนี้",
+        "en": "Peak hours today"
+      },
+      {
+        "th": "ช่วงราคา",
+        "en": "Price range"
+      },
+      {
+        "th": "รหัสลูกค้า",
+        "en": "Customer ID"
+      },
+      {
+        "th": "ส่งได้อย่างน้อย (วัน/สัปดาห์)",
+        "en": "Min Delivery Days/Week"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ค้นหาร้าน",
+        "en": "Search Outlet"
+      },
+      {
+        "th": "ใช้ตัวกรอง",
+        "en": "Apply Filters"
+      },
+      {
+        "th": "ล้างตัวกรอง (",
+        "en": "Clear filters ("
+      },
+      {
+        "th": ")",
+        "en": ")"
+      },
+      {
+        "th": "ลองอีกครั้ง",
+        "en": "Try again"
+      },
+      {
+        "th": "ดูร้านทั้งหมด",
+        "en": "View all outlets"
+      },
+      {
+        "th": "ลองโหลดรายละเอียดอีกครั้ง",
+        "en": "Try reloading details"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/MarketExplorer.tsx"
+  },
+  {
+    "route": "/marketing/research",
+    "module": "marketing",
+    "title": {
+      "th": "งานวิจัยตลาด",
+      "en": "Market research"
+    },
+    "fields": [
+      {
+        "th": "หัวข้อ",
+        "en": "Topic"
+      },
+      {
+        "th": "ประเภท",
+        "en": "Type"
+      },
+      {
+        "th": "พื้นที่",
+        "en": "Region"
+      },
+      {
+        "th": "ย้อนหลัง",
+        "en": "Historical"
+      },
+      {
+        "th": "กลุ่มลูกค้า",
+        "en": "Customer segment"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ก่อนหน้า",
+        "en": "Previous"
+      },
+      {
+        "th": "ถัดไป",
+        "en": "Next"
+      },
+      {
+        "th": "เริ่มตั้งโจทย์",
+        "en": "Start a topic"
+      },
+      {
+        "th": "รันตอนนี้",
+        "en": "Run Now"
+      },
+      {
+        "th": "เพิ่มแหล่งฟรี",
+        "en": "Add free source"
+      },
+      {
+        "th": "เก็บโจทย์",
+        "en": "Move to history"
+      },
+      {
+        "th": "ร่างแผน Growth จากหลักฐานนี้",
+        "en": "Draft Growth plan from this evidence"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/MarketingResearch.tsx"
+  },
+  {
+    "route": "/ai/connectors",
+    "module": "advanced",
+    "title": {
+      "th": "เชื่อมต่อผู้ช่วย AI",
+      "en": "AI assistant connections"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/AiConnectors.tsx"
+  },
+  {
+    "route": "/settings/activity-log",
+    "module": "settings",
+    "title": {
+      "th": "ประวัติการเปลี่ยนแปลง",
+      "en": "Change history"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ผู้ทำ",
+        "en": "Done by"
+      },
+      {
+        "th": ":",
+        "en": ":"
+      },
+      {
+        "th": "รหัสรายการ",
+        "en": "Record ID"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/AuditLogs.tsx"
+  },
+  {
+    "route": "/scheduled-tasks",
+    "module": "advanced",
+    "title": {
+      "th": "งานอัตโนมัติตามเวลา",
+      "en": "Scheduled tasks"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ScheduledTasks.tsx"
+  },
+  {
+    "route": "/erp/josh-logs",
+    "module": "advanced",
+    "title": {
+      "th": "บันทึกการเรียกระบบหลัก (ERP)",
+      "en": "Store ERP call log"
+    },
+    "fields": [
+      {
+        "th": "ประเภทข้อมูล",
+        "en": "Record type"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "ตั้งแต่",
+        "en": "From"
+      },
+      {
+        "th": "ถึง",
+        "en": "To"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshErpLogs.tsx"
+  },
+  {
+    "route": "/erp/inbound-log",
+    "module": "advanced",
+    "title": {
+      "th": "บันทึกข้อมูลจากระบบหลัก (ERP)",
+      "en": "ERP incoming data log"
+    },
+    "fields": [
+      {
+        "th": "ประเภทข้อมูล",
+        "en": "Record type"
+      },
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/InboundLog.tsx"
+  },
+  {
+    "route": "/erp/webhook-dead-letter",
+    "module": "advanced",
+    "title": {
+      "th": "รายการส่งไม่สำเร็จ",
+      "en": "Failed deliveries"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/WebhookDeadLetter.tsx"
+  },
+  {
+    "route": "/erp/inventory-warehouse",
+    "module": "catalog",
+    "title": {
+      "th": "สต็อกแต่ละคลัง",
+      "en": "Stock by warehouse"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ก่อนหน้า",
+        "en": "Previous"
+      },
+      {
+        "th": "ถัดไป",
+        "en": "Next"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising",
+      "sale",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/InventoryPerWarehouse.tsx"
+  },
+  {
+    "route": "/erp/jagota-shadow",
+    "module": "advanced",
+    "title": {
+      "th": "ทดลองส่งออเดอร์เข้าระบบหลัก (ERP)",
+      "en": "Trial: send orders to ERP"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ตรวจซ้ำ",
+        "en": "Re-check"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ก่อนหน้า",
+        "en": "Previous"
+      },
+      {
+        "th": "ถัดไป",
+        "en": "Next"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JagotaShadow.tsx"
+  },
+  {
+    "route": "/erp/simulator",
+    "module": "advanced",
+    "title": {
+      "th": "ทดสอบเชื่อมต่อระบบหลัก (ERP)",
+      "en": "Test ERP connections"
+    },
+    "fields": [
+      {
+        "th": "ชื่อลูกค้า",
+        "en": "Customer name"
+      },
+      {
+        "th": "อีเมล",
+        "en": "Email"
+      },
+      {
+        "th": "เบอร์",
+        "en": "Phone"
+      },
+      {
+        "th": "หลังสั่งซื้อ josh แจ้งว่า",
+        "en": "After ordering, Josh reports"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเซ็ตเป็น template",
+        "en": "Reset to template"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "เพิ่ม",
+        "en": "Add"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ErpSimulator.tsx"
+  },
+  {
+    "route": "/integrations",
+    "module": "advanced",
+    "title": {
+      "th": "ระบบที่เชื่อมต่อ",
+      "en": "Connected systems"
+    },
+    "fields": [
+      {
+        "th": "ชื่อการเชื่อมต่อ",
+        "en": "Connection name"
+      },
+      {
+        "th": "ประเภทตัวเชื่อมต่อ",
+        "en": "Connector type"
+      },
+      {
+        "th": "Slug ของเว็บฮุก",
+        "en": "Webhook slug"
+      },
+      {
+        "th": "Secret สำหรับตรวจลายเซ็น",
+        "en": "Signing secret"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เพิ่มการเชื่อมต่อ",
+        "en": "Add connection"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Integrations.tsx"
+  },
+  {
+    "route": "/integrations/new",
+    "module": "advanced",
+    "title": {
+      "th": "ระบบที่เชื่อมต่อ",
+      "en": "Connected systems"
+    },
+    "fields": [
+      {
+        "th": "ชื่อการเชื่อมต่อ",
+        "en": "Connection name"
+      },
+      {
+        "th": "ประเภทตัวเชื่อมต่อ",
+        "en": "Connector type"
+      },
+      {
+        "th": "Slug ของเว็บฮุก",
+        "en": "Webhook slug"
+      },
+      {
+        "th": "Secret สำหรับตรวจลายเซ็น",
+        "en": "Signing secret"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เพิ่มการเชื่อมต่อ",
+        "en": "Add connection"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Integrations.tsx"
+  },
+  {
+    "route": "/webhooks",
+    "module": "advanced",
+    "title": {
+      "th": "เหตุการณ์ขาเข้า",
+      "en": "Incoming events"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Webhooks.tsx"
+  },
+  {
+    "route": "/subscriptions",
+    "module": "advanced",
+    "title": {
+      "th": "การส่งเหตุการณ์ขาออก",
+      "en": "Outgoing event delivery"
+    },
+    "fields": [
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "URL ปลายทาง",
+        "en": "Target URL"
+      },
+      {
+        "th": "Secret สำหรับตรวจลายเซ็น",
+        "en": "Signing secret"
+      },
+      {
+        "th": "รายละเอียด",
+        "en": "Description"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เพิ่มปลายทาง",
+        "en": "Add destination"
+      },
+      {
+        "th": "สร้างการสมัครรับข้อมูล",
+        "en": "Create subscription"
+      },
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Subscriptions.tsx"
+  },
+  {
+    "route": "/sync-jobs",
+    "module": "advanced",
+    "title": {
+      "th": "งานซิงก์ข้อมูล",
+      "en": "Sync jobs"
+    },
+    "fields": [
+      {
+        "th": "การเชื่อมต่อระบบ",
+        "en": "Integration"
+      },
+      {
+        "th": "การดำเนินการ",
+        "en": "Operation"
+      },
+      {
+        "th": "ค้นหางานซิงก์",
+        "en": "Find sync jobs"
+      },
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เริ่มซิงก์ข้อมูล",
+        "en": "Start a sync"
+      },
+      {
+        "th": "เริ่มซิงก์",
+        "en": "Run sync"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/SyncJobs.tsx"
+  },
+  {
+    "route": "/customers",
+    "module": "customers",
+    "title": {
+      "th": "ข้อมูลติดต่อลูกค้า",
+      "en": "Customer contacts"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Customers.tsx"
+  },
+  {
+    "route": "/customers/new",
+    "module": "customers",
+    "title": {
+      "th": "ข้อมูลติดต่อลูกค้า",
+      "en": "Customer contacts"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Customers.tsx"
+  },
+  {
+    "route": "/customers/:id",
+    "module": "customers",
+    "title": {
+      "th": "ข้อมูลติดต่อลูกค้า",
+      "en": "Customer contacts"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "แก้ไขลูกค้า",
+        "en": "Edit customer"
+      },
+      {
+        "th": "บันทึกลูกค้า",
+        "en": "Save customer"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/CustomerDetail.tsx"
+  },
+  {
+    "route": "/products",
+    "module": "catalog",
+    "title": {
+      "th": "สินค้าบนร้านค้า",
+      "en": "Shop products"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "merchandising",
+      "sale",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Products.tsx"
+  },
+  {
+    "route": "/products/new",
+    "module": "catalog",
+    "title": {
+      "th": "สินค้าบนร้านค้า",
+      "en": "Shop products"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Products.tsx"
+  },
+  {
+    "route": "/products/:id",
+    "module": "catalog",
+    "title": {
+      "th": "สินค้าบนร้านค้า",
+      "en": "Shop products"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "แก้ไขสินค้า",
+        "en": "Edit Product"
+      },
+      {
+        "th": "บันทึกสินค้า",
+        "en": "Save product"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising",
+      "sale",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ProductDetail.tsx"
+  },
+  {
+    "route": "/product-master-queue",
+    "module": "catalog",
+    "title": {
+      "th": "อนุมัติข้อมูลสินค้าที่เปลี่ยน",
+      "en": "Approve product data changes"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "อนุมัติ ",
+        "en": "อนุมัติ "
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ProductMasterQueue.tsx"
+  },
+  {
+    "route": "/order-periods",
+    "module": "catalog",
+    "title": {
+      "th": "รอบสั่งซื้อจากซัพพลายเออร์",
+      "en": "Supplier order periods"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ส่งให้ร้านค้าอีกครั้ง",
+        "en": "Send to the shop again"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/SupplierOrderPeriods.tsx"
+  },
+  {
+    "route": "/orders",
+    "module": "orders",
+    "title": {
+      "th": "ออเดอร์แพลตฟอร์ม",
+      "en": "Platform Orders"
+    },
+    "fields": [
+      {
+        "th": "ลูกค้า",
+        "en": "Customers"
+      },
+      {
+        "th": "รหัสลูกค้า",
+        "en": "Customer ID"
+      },
+      {
+        "th": "สินค้า {0}",
+        "en": "Product {0}"
+      },
+      {
+        "th": "จำนวน {0}",
+        "en": "Quantity {0}"
+      },
+      {
+        "th": "ราคาต่อหน่วย {0}",
+        "en": "Unit price {0}"
+      },
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "สร้างออเดอร์",
+        "en": "Create Order"
+      },
+      {
+        "th": "เพิ่มรายการสินค้า",
+        "en": "Add Product Line"
+      }
+    ],
+    "roles": [
+      "admin",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Orders.tsx"
+  },
+  {
+    "route": "/orders/:id",
+    "module": "orders",
+    "title": {
+      "th": "ชำระเงินและการจองของออเดอร์",
+      "en": "Order payments & stock holds"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "…",
+        "en": "…"
+      }
+    ],
+    "roles": [
+      "admin",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/OrderDetail.tsx"
+  },
+  {
+    "route": "/reservations",
+    "module": "orders",
+    "title": {
+      "th": "การจองสต็อกตอนชำระเงิน",
+      "en": "Stock holds at checkout"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "…",
+        "en": "…"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/Reservations.tsx"
+  },
+  {
+    "route": "/erp-stock",
+    "module": "advanced",
+    "title": {
+      "th": "สต็อกจำลองสำหรับทดสอบ",
+      "en": "Test stock levels"
+    },
+    "fields": [
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      },
+      {
+        "th": "จำนวน",
+        "en": "Quantity"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ตั้งสต็อกจำลอง",
+        "en": "Set test stock"
+      },
+      {
+        "th": "กำหนดสต็อก",
+        "en": "Set stock"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ErpStock.tsx"
+  },
+  {
+    "route": "/j/batch-sticker",
+    "module": "orders",
+    "title": {
+      "th": "พิมพ์สติกเกอร์",
+      "en": "Print stickers"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "อัปโหลดสติกเกอร์",
+        "en": "Upload sticker"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/batch-sticker/BatchSticker.tsx"
+  },
+  {
+    "route": "/j/marketing/queue",
+    "module": "advanced",
+    "title": {
+      "th": "คิวงานการตลาด",
+      "en": "Marketing queue"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingQueueDashboard.tsx"
+  },
+  {
+    "route": "/j/marketing/journey-funnel",
+    "module": "advanced",
+    "title": {
+      "th": "เส้นทางของลูกค้า",
+      "en": "Customer journey funnel"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingJourneyFunnel.tsx"
+  },
+  {
+    "route": "/j/marketing/notify-templates",
+    "module": "marketing",
+    "title": {
+      "th": "แม่แบบข้อความ",
+      "en": "Message templates"
+    },
+    "fields": [
+      {
+        "th": "รูปภาพ (EN)",
+        "en": "Image (EN)"
+      },
+      {
+        "th": "รูปภาพ (ไม่บังคับ)",
+        "en": "Image (Optional)"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingNotifyTemplates.tsx"
+  },
+  {
+    "route": "/j/marketing/settings",
+    "module": "advanced",
+    "title": {
+      "th": "ตั้งค่าการตลาด",
+      "en": "Marketing settings"
+    },
+    "fields": [
+      {
+        "th": "จำนวนข้อความสูงสุดต่อคนต่อวัน",
+        "en": "Maximum messages per user per day"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingSettingsPage.tsx"
+  },
+  {
+    "route": "/j/marketing/scraping-sources",
+    "module": "advanced",
+    "title": {
+      "th": "ตั้งค่าเว็บคู่แข่งที่เก็บข้อมูล",
+      "en": "Competitor sites to collect"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "ข้อมูลจากเว็บ",
+        "en": "Web Data"
+      },
+      {
+        "th": "เทียบราคาคู่แข่ง",
+        "en": "Compare competitor prices"
+      },
+      {
+        "th": "ตั้งค่าเว็บ",
+        "en": "Web Settings"
+      },
+      {
+        "th": "ตั้งค่าเองแบบละเอียด",
+        "en": "Detailed setup"
+      },
+      {
+        "th": "ดูรายการ",
+        "en": "View list"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapingSourcesPage.tsx"
+  },
+  {
+    "route": "/j/marketing/scraped-catalog",
+    "module": "marketing",
+    "title": {
+      "th": "สินค้าจากเว็บคู่แข่ง",
+      "en": "Competitor products"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "ตั้งค่า / เริ่มเก็บเว็บ",
+        "en": "Settings / Start web collection"
+      },
+      {
+        "th": "ดูเทียบราคา",
+        "en": "Compare Pricing"
+      },
+      {
+        "th": "ไม่มีตัวที่ตรง — กรอกรหัสสินค้าเอง",
+        "en": "None match — enter the product code yourself"
+      },
+      {
+        "th": "ข้อมูลจากเว็บ",
+        "en": "Web Data"
+      },
+      {
+        "th": "เทียบราคาคู่แข่ง",
+        "en": "Compare competitor prices"
+      },
+      {
+        "th": "ตั้งค่าเว็บ",
+        "en": "Web Settings"
+      },
+      {
+        "th": "ตั้งค่าเองแบบละเอียด",
+        "en": "Detailed setup"
+      },
+      {
+        "th": "ดูรายการ",
+        "en": "View list"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/ScrapedCatalogPage.tsx"
+  },
+  {
+    "route": "/j/marketing/welcome-lead-email",
+    "module": "marketing",
+    "title": {
+      "th": "อีเมลต้อนรับลีด",
+      "en": "Lead welcome email"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "← การตั้งค่าการตลาด",
+        "en": "← Marketing Settings"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/WelcomeLeadEmailPage.tsx"
+  },
+  {
+    "route": "/j/marketing/offers-check",
+    "module": "advanced",
+    "title": {
+      "th": "ตรวจข้อเสนอ",
+      "en": "Review offers"
+    },
+    "fields": [
+      {
+        "th": "รหัสอุปกรณ์จากร้านค้า",
+        "en": "Device ID from the shop"
+      },
+      {
+        "th": "รหัสผู้ใช้ (ไม่บังคับ)",
+        "en": "User ID (optional)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "…",
+        "en": "…"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/MarketingOfferCheckPage.tsx"
+  },
+  {
+    "route": "/j/smart-links",
+    "module": "marketing",
+    "title": {
+      "th": "ลิงก์ติดตามผล",
+      "en": "Tracked links"
+    },
+    "fields": [
+      {
+        "th": "",
+        "en": ""
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดูผล",
+        "en": "View Results"
+      },
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "ปิดลิงก์",
+        "en": "Turn off link"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinksPage.tsx"
+  },
+  {
+    "route": "/j/smart-links/create",
+    "module": "marketing",
+    "title": {
+      "th": "ลิงก์ติดตามผล",
+      "en": "Tracked links"
+    },
+    "fields": [
+      {
+        "th": "ท้ายลิงก์",
+        "en": "Link ending"
+      },
+      {
+        "th": "ชื่อเรื่อง",
+        "en": "Title"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      },
+      {
+        "th": "ลิงก์รูปภาพ",
+        "en": "Image link"
+      },
+      {
+        "th": "ปลายทางบนเว็บ",
+        "en": "Web destination"
+      },
+      {
+        "th": "ปลายทางบน iPhone / iPad",
+        "en": "iPhone / iPad destination"
+      },
+      {
+        "th": "ปลายทางบน Android",
+        "en": "Android destination"
+      },
+      {
+        "th": "ลิงก์สำรอง",
+        "en": "Backup link"
+      },
+      {
+        "th": "วันหมดอายุ",
+        "en": "Expiry date"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkEdit.tsx"
+  },
+  {
+    "route": "/j/smart-links/analytics",
+    "module": "marketing",
+    "title": {
+      "th": "ลิงก์ติดตามผล",
+      "en": "Tracked links"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx"
+  },
+  {
+    "route": "/j/smart-links/analytics/:id",
+    "module": "marketing",
+    "title": {
+      "th": "ลิงก์ติดตามผล",
+      "en": "Tracked links"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkAnalyticsPage.tsx"
+  },
+  {
+    "route": "/j/smart-links/edit/:id",
+    "module": "marketing",
+    "title": {
+      "th": "ลิงก์ติดตามผล",
+      "en": "Tracked links"
+    },
+    "fields": [
+      {
+        "th": "ท้ายลิงก์",
+        "en": "Link ending"
+      },
+      {
+        "th": "ชื่อเรื่อง",
+        "en": "Title"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      },
+      {
+        "th": "ลิงก์รูปภาพ",
+        "en": "Image link"
+      },
+      {
+        "th": "ปลายทางบนเว็บ",
+        "en": "Web destination"
+      },
+      {
+        "th": "ปลายทางบน iPhone / iPad",
+        "en": "iPhone / iPad destination"
+      },
+      {
+        "th": "ปลายทางบน Android",
+        "en": "Android destination"
+      },
+      {
+        "th": "ลิงก์สำรอง",
+        "en": "Backup link"
+      },
+      {
+        "th": "วันหมดอายุ",
+        "en": "Expiry date"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/SmartLinkEdit.tsx"
+  },
+  {
+    "route": "/j/order",
+    "module": "orders",
+    "title": {
+      "th": "คำสั่งซื้อ",
+      "en": "Orders"
+    },
+    "fields": [
+      {
+        "th": "สถานะออเดอร์",
+        "en": "Order Status"
+      },
+      {
+        "th": "ช่วงวันที่สั่งซื้อ",
+        "en": "Order Date Range"
+      }
+    ],
+    "actions": [
+      {
+        "th": "นำเข้าออเดอร์",
+        "en": "Order Import"
+      },
+      {
+        "th": "รายการชำระเงิน",
+        "en": "Payments"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/Order.tsx"
+  },
+  {
+    "route": "/j/order/import",
+    "module": "orders",
+    "title": {
+      "th": "นำเข้าคำสั่งซื้อ",
+      "en": "Import orders"
+    },
+    "fields": [
+      {
+        "th": "ไฟล์ออเดอร์ (CSV) *",
+        "en": "Orders file (CSV) *"
+      },
+      {
+        "th": "ไฟล์รายการสินค้า (CSV) *",
+        "en": "Order items file (CSV) *"
+      },
+      {
+        "th": "ไฟล์ออเดอร์ (CSV)",
+        "en": "Orders file (CSV)"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/orders/OrderImport.tsx"
+  },
+  {
+    "route": "/j/order/:ordersId",
+    "module": "orders",
+    "title": {
+      "th": "ไม่พบคำสั่งซื้อ",
+      "en": "No orders found"
+    },
+    "fields": [
+      {
+        "th": "สถานะออเดอร์",
+        "en": "Order Status"
+      },
+      {
+        "th": "เหตุผลการคืนเงิน *",
+        "en": "Refund Reason *"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/OrderDetail.tsx"
+  },
+  {
+    "route": "/j/shipments",
+    "module": "orders",
+    "title": {
+      "th": "การจัดส่งสินค้า",
+      "en": "Shipments"
+    },
+    "fields": [
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      },
+      {
+        "th": "ค้นหาเลขที่จัดส่ง / เลขที่ออเดอร์ / ลูกค้า",
+        "en": "Search shipment no. / order no. / customer"
+      },
+      {
+        "th": "เลือกลูกค้า",
+        "en": "Select customer"
+      },
+      {
+        "th": "ช่วงวันที่สร้าง",
+        "en": "Creation date range"
+      }
+    ],
+    "actions": [
+      {
+        "th": "คำสั่งซื้อ",
+        "en": "Orders"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/orders/Shipments.tsx"
+  },
+  {
+    "route": "/j/shipments/:shipmentId",
+    "module": "orders",
+    "title": {
+      "th": "ไม่พบการจัดส่ง",
+      "en": "Shipment not found"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "เปิดคำสั่งซื้อ {0}",
+        "en": "Open order {0}"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/orders/ShipmentDetail.tsx"
+  },
+  {
+    "route": "/j/allusers",
+    "module": "customers",
+    "title": {
+      "th": "ผู้ใช้ของลูกค้า",
+      "en": "Customer users"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาผู้ใช้",
+        "en": "Search users"
+      },
+      {
+        "th": "กลุ่มลูกค้า",
+        "en": "Customer segment"
+      },
+      {
+        "th": "สถานะสมัคร",
+        "en": "Registration status"
+      }
+    ],
+    "actions": [
+      {
+        "th": " สาขา",
+        "en": " สาขา"
+      },
+      {
+        "th": "ดูรายละเอียด",
+        "en": "View details"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้าง",
+        "en": "Clear"
+      },
+      {
+        "th": "ล้างกลุ่มลูกค้า",
+        "en": "Clear customer group"
+      },
+      {
+        "th": "ปิด",
+        "en": "Close"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/user/Alluser.tsx"
+  },
+  {
+    "route": "/j/allusers/:userId",
+    "module": "customers",
+    "title": {
+      "th": "รายละเอียดผู้ใช้",
+      "en": "User details"
+    },
+    "fields": [
+      {
+        "th": "สาขา",
+        "en": "Branch"
+      },
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      },
+      {
+        "th": "ราคาสัญญา (บาท)",
+        "en": "Contract price (THB)"
+      },
+      {
+        "th": "เลขที่สัญญา (ถ้ามี)",
+        "en": "Contract No. (Optional)"
+      },
+      {
+        "th": "ช่วงวันที่มีผล",
+        "en": "Effective Period"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "นามสกุล",
+        "en": "Last Name"
+      },
+      {
+        "th": "อีเมล",
+        "en": "Email"
+      },
+      {
+        "th": "เบอร์โทร",
+        "en": "Phone number"
+      },
+      {
+        "th": "รหัสผู้ใช้ของพนักงานขาย",
+        "en": "Sales rep user ID"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดูออเดอร์",
+        "en": "View Orders"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "ไปที่บริษัท",
+        "en": "Go to company"
+      },
+      {
+        "th": "ลบที่เลือก (",
+        "en": "Delete selected ("
+      },
+      {
+        "th": ")",
+        "en": ")"
+      },
+      {
+        "th": "บันทึก",
+        "en": "Save"
+      },
+      {
+        "th": "รวมเข้าบัญชีนี้",
+        "en": "Merge into this account"
+      },
+      {
+        "th": "บันทึกสาขานี้",
+        "en": "Save Branch"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/user/UserDetail.tsx"
+  },
+  {
+    "route": "/j/membership-tiers",
+    "module": "customers",
+    "title": {
+      "th": "ระดับสมาชิก",
+      "en": "Membership tiers"
+    },
+    "fields": [
+      {
+        "th": "ชื่อระดับ",
+        "en": "Level name"
+      },
+      {
+        "th": "รหัสระดับ (ภาษาอังกฤษ)",
+        "en": "Level code (English)"
+      },
+      {
+        "th": "สี",
+        "en": "Color"
+      },
+      {
+        "th": "ยอดใช้จ่ายสะสมขั้นต่ำ (บาท)",
+        "en": "Minimum Lifetime Spend (THB)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เพิ่มระดับสมาชิก",
+        "en": "Add membership level"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/membership-tier/MembershipTierConfig.tsx"
+  },
+  {
+    "route": "/j/brands",
+    "module": "catalog",
+    "title": {
+      "th": "แบรนด์",
+      "en": "Brands"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "บันทึก",
+        "en": "Save"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ลองใหม่",
+        "en": "Retry"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/brand/BrandList.tsx"
+  },
+  {
+    "route": "/j/categories",
+    "module": "catalog",
+    "title": {
+      "th": "หมวดหมู่",
+      "en": "Categories"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/category/CategoryList.tsx"
+  },
+  {
+    "route": "/j/categories/create",
+    "module": "catalog",
+    "title": {
+      "th": "หมวดหมู่",
+      "en": "Categories"
+    },
+    "fields": [
+      {
+        "th": "หมวดที่อยู่เหนือกว่า",
+        "en": "Parent category"
+      },
+      {
+        "th": "ชื่อภาษาอังกฤษ",
+        "en": "an English name"
+      },
+      {
+        "th": "ชื่อภาษาไทย",
+        "en": "Thai name"
+      },
+      {
+        "th": "ไอคอน / รูปหมวดหมู่",
+        "en": "Category icon"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/category/CreateCategory.tsx"
+  },
+  {
+    "route": "/j/categories/edit/:id",
+    "module": "catalog",
+    "title": {
+      "th": "หมวดหมู่",
+      "en": "Categories"
+    },
+    "fields": [
+      {
+        "th": "ชื่อภาษาอังกฤษ",
+        "en": "an English name"
+      },
+      {
+        "th": "ชื่อภาษาไทย",
+        "en": "Thai name"
+      },
+      {
+        "th": "ไอคอน / รูปหมวดหมู่",
+        "en": "Category icon"
+      },
+      {
+        "th": "ลำดับที่แสดง",
+        "en": "Display order"
+      },
+      {
+        "th": "การเรียงสินค้าเริ่มต้น",
+        "en": "Default product order"
+      },
+      {
+        "th": "ตัวเลือกการเรียงเฉพาะหมวดนี้ (JSON)",
+        "en": "Sort options for this category (JSON)"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/category/EditCategory.tsx"
+  },
+  {
+    "route": "/j/kbank/testing-console",
+    "module": "advanced",
+    "title": {
+      "th": "ทดสอบชำระเงิน KBank",
+      "en": "Test KBank payments"
+    },
+    "fields": [
+      {
+        "th": "จำนวนเงิน",
+        "en": "Amount"
+      },
+      {
+        "th": "รหัสอ้างอิง (ไม่บังคับ)",
+        "en": "Reference (optional)"
+      },
+      {
+        "th": "จำนวนเงิน (QR order)",
+        "en": "Amount (QR order)"
+      },
+      {
+        "th": "รหัสอ้างอิง",
+        "en": "Reference code"
+      },
+      {
+        "th": "สถานะธุรกรรม (transaction_state)",
+        "en": "Transaction State (transaction_state)"
+      },
+      {
+        "th": "สถานะ (status)",
+        "en": "Status (status)"
+      },
+      {
+        "th": "จำนวนเงิน (ไม่บังคับ)",
+        "en": "Amount (optional)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ย้อนเวลา",
+        "en": "Backdate"
+      },
+      {
+        "th": "บังคับเป็นกำลังดำเนินการ",
+        "en": "Force processing"
+      },
+      {
+        "th": "จำลองแจ้งผลสำเร็จ",
+        "en": "Simulate success"
+      },
+      {
+        "th": "สร้างรายการทดสอบ",
+        "en": "Create test item"
+      },
+      {
+        "th": "คัดลอก JSON",
+        "en": "Copy JSON"
+      },
+      {
+        "th": "กระทบยอดตอนนี้",
+        "en": "Reconcile now"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/kbank/KbankTestingConsole.tsx"
+  },
+  {
+    "route": "/j/credit-notes",
+    "module": "orders",
+    "title": {
+      "th": "ใบลดหนี้",
+      "en": "Credit notes"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาใบลดหนี้",
+        "en": "Search Credit Notes"
+      },
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดู",
+        "en": "View"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditNotesAdmin.tsx"
+  },
+  {
+    "route": "/j/credit-backs",
+    "module": "orders",
+    "title": {
+      "th": "คืนเครดิตให้ลูกค้า",
+      "en": "Credit refunds"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาเครดิตคืน",
+        "en": "Search refund credits"
+      },
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดู",
+        "en": "View"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/accounting/CreditBacksAdmin.tsx"
+  },
+  {
+    "route": "/j/credit-terms",
+    "module": "orders",
+    "title": {
+      "th": "ใบสมัครเครดิต",
+      "en": "Credit applications"
+    },
+    "fields": [
+      {
+        "th": "กรองตามสถานะ",
+        "en": "Filter by status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ขอเอกสารใหม่",
+        "en": "Request New Docs"
+      },
+      {
+        "th": "ปฏิเสธ",
+        "en": "Reject"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/CreditTermsAdmin.tsx"
+  },
+  {
+    "route": "/j/kyc",
+    "module": "customers",
+    "title": {
+      "th": "ตรวจสอบตัวตนลูกค้า",
+      "en": "Verify customer identity"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "ดูเอกสาร",
+        "en": "View documents"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/kyc/KycQueue.tsx"
+  },
+  {
+    "route": "/j/promotion-pages",
+    "module": "marketing",
+    "title": {
+      "th": "หน้าโปรโมชัน",
+      "en": "Promotion pages"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาชื่อหรือลิงก์",
+        "en": "Search name or link"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageLibrary.tsx"
+  },
+  {
+    "route": "/j/promotion-pages/create",
+    "module": "marketing",
+    "title": {
+      "th": "หน้าโปรโมชัน",
+      "en": "Promotion pages"
+    },
+    "fields": [
+      {
+        "th": "ลิงก์ของหน้า (slug)",
+        "en": "Page link (slug)"
+      },
+      {
+        "th": "ชื่อหน้า",
+        "en": "Page Name"
+      },
+      {
+        "th": "แคมเปญ",
+        "en": "Campaign"
+      },
+      {
+        "th": "ลิงก์เปิดในแอป (deeplink)",
+        "en": "In-app link (deeplink)"
+      },
+      {
+        "th": "แสดงแบนเนอร์บนหน้าแรก",
+        "en": "Display banner on home page"
+      },
+      {
+        "th": "ลำดับบนหน้าแรก",
+        "en": "Homepage display order"
+      },
+      {
+        "th": "เปิดใช้งาน",
+        "en": "Active"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageEditorPage.tsx"
+  },
+  {
+    "route": "/j/promotion-pages/:id/edit",
+    "module": "marketing",
+    "title": {
+      "th": "หน้าโปรโมชัน",
+      "en": "Promotion pages"
+    },
+    "fields": [
+      {
+        "th": "ลิงก์ของหน้า (slug)",
+        "en": "Page link (slug)"
+      },
+      {
+        "th": "ชื่อหน้า",
+        "en": "Page Name"
+      },
+      {
+        "th": "แคมเปญ",
+        "en": "Campaign"
+      },
+      {
+        "th": "ลิงก์เปิดในแอป (deeplink)",
+        "en": "In-app link (deeplink)"
+      },
+      {
+        "th": "แสดงแบนเนอร์บนหน้าแรก",
+        "en": "Display banner on home page"
+      },
+      {
+        "th": "ลำดับบนหน้าแรก",
+        "en": "Homepage display order"
+      },
+      {
+        "th": "เปิดใช้งาน",
+        "en": "Active"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-page/PromotionPageEditorPage.tsx"
+  },
+  {
+    "route": "/j/bot/intent-rules",
+    "module": "marketing",
+    "title": {
+      "th": "คำถามที่แชตบอตเข้าใจ",
+      "en": "Questions the chatbot understands"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/BotIntentRules.tsx"
+  },
+  {
+    "route": "/j/bot/intent-rules/create",
+    "module": "marketing",
+    "title": {
+      "th": "แชตบอต: เข้าใจคำถาม",
+      "en": "Chatbot: question rules"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotIntentRule.tsx"
+  },
+  {
+    "route": "/j/bot/intent-rules/edit/:id",
+    "module": "marketing",
+    "title": {
+      "th": "แชตบอต: เข้าใจคำถาม",
+      "en": "Chatbot: question rules"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotIntentRule.tsx"
+  },
+  {
+    "route": "/j/bot/workflows",
+    "module": "marketing",
+    "title": {
+      "th": "ลำดับการตอบของแชตบอต",
+      "en": "The chatbot reply flows"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/BotWorkflows.tsx"
+  },
+  {
+    "route": "/j/bot/workflows/create",
+    "module": "marketing",
+    "title": {
+      "th": "แชตบอต: ลำดับการตอบ",
+      "en": "Chatbot: reply flows"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotWorkflow.tsx"
+  },
+  {
+    "route": "/j/bot/workflows/edit/:id",
+    "module": "marketing",
+    "title": {
+      "th": "แชตบอต: ลำดับการตอบ",
+      "en": "Chatbot: reply flows"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "ลองถามแชตบอต",
+        "en": "Try the chatbot"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotWorkflow.tsx"
+  },
+  {
+    "route": "/j/bot/templates",
+    "module": "marketing",
+    "title": {
+      "th": "ข้อความสำเร็จรูปของแชตบอต",
+      "en": "Ready-made chatbot replies"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/BotTemplates.tsx"
+  },
+  {
+    "route": "/j/bot/templates/create",
+    "module": "marketing",
+    "title": {
+      "th": "แชตบอต: ข้อความสำเร็จรูป",
+      "en": "Chatbot: ready replies"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/CreateBotTemplate.tsx"
+  },
+  {
+    "route": "/j/bot/templates/edit/:id",
+    "module": "marketing",
+    "title": {
+      "th": "แชตบอต: ข้อความสำเร็จรูป",
+      "en": "Chatbot: ready replies"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/bot/EditBotTemplate.tsx"
+  },
+  {
+    "route": "/j/marketing/push-campaigns",
+    "module": "marketing",
+    "title": {
+      "th": "ส่งแจ้งเตือนถึงลูกค้า",
+      "en": "Push notifications"
+    },
+    "fields": [
+      {
+        "th": "ชื่อแคมเปญ",
+        "en": "Campaign name"
+      },
+      {
+        "th": "หัวข้อ *",
+        "en": "Title *"
+      },
+      {
+        "th": "ข้อความ *",
+        "en": "Message *"
+      },
+      {
+        "th": "หัวข้อภาษาอังกฤษ",
+        "en": "Title EN"
+      },
+      {
+        "th": "ข้อความภาษาอังกฤษ",
+        "en": "Message EN"
+      },
+      {
+        "th": "ลิงก์รูปภาพ",
+        "en": "Image link"
+      },
+      {
+        "th": "URL เปิดหน้า / ลิงก์เข้าแอป",
+        "en": "Launch URL / deep link"
+      },
+      {
+        "th": "URL เว็บ",
+        "en": "Web URL"
+      },
+      {
+        "th": "หัวข้อ B",
+        "en": "Title B"
+      },
+      {
+        "th": "ข้อความ B",
+        "en": "Message B"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/PushCampaignsPage.tsx"
+  },
+  {
+    "route": "/j/company",
+    "module": "customers",
+    "title": {
+      "th": "บริษัทลูกค้า",
+      "en": "Customer companies"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาบริษัท",
+        "en": "Search Company"
+      }
+    ],
+    "actions": [
+      {
+        "th": "แก้ไขและดูสาขา",
+        "en": "Edit and view branches"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/company/Company.tsx"
+  },
+  {
+    "route": "/j/company/create",
+    "module": "customers",
+    "title": {
+      "th": "บริษัทลูกค้า",
+      "en": "Customer companies"
+    },
+    "fields": [
+      {
+        "th": "ชื่อบริษัท",
+        "en": "Company Name"
+      },
+      {
+        "th": "เลขทะเบียน",
+        "en": "Registration / Tax ID"
+      },
+      {
+        "th": "เบอร์โทร",
+        "en": "Phone number"
+      },
+      {
+        "th": "ที่อยู่",
+        "en": "Address"
+      },
+      {
+        "th": "วงเงินเครดิต",
+        "en": "Credit Limit"
+      },
+      {
+        "th": "จำนวนวันเครดิต",
+        "en": "Credit days"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/CreateCompanyAdmin.tsx"
+  },
+  {
+    "route": "/j/company/edit/:id",
+    "module": "customers",
+    "title": {
+      "th": "แก้ไขบริษัท",
+      "en": "Edit company"
+    },
+    "fields": [
+      {
+        "th": "ชื่อบริษัท",
+        "en": "Company Name"
+      },
+      {
+        "th": "เลขทะเบียนนิติบุคคล",
+        "en": "Corporate Registration Number"
+      },
+      {
+        "th": "เบอร์โทรบริษัท",
+        "en": "Company phone number"
+      },
+      {
+        "th": "ที่อยู่บริษัท (สำนักงานใหญ่)",
+        "en": "Company address (head office)"
+      },
+      {
+        "th": "วงเงินเครดิตสูงสุด (บาท)",
+        "en": "Maximum credit limit (THB)"
+      },
+      {
+        "th": "เครดิตเทอม (วัน)",
+        "en": "Credit Term (Days)"
+      },
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      },
+      {
+        "th": "ราคาพิเศษ (บาท)",
+        "en": "Special Price (THB)"
+      },
+      {
+        "th": "สาขา",
+        "en": "Branch"
+      },
+      {
+        "th": "ช่วงวันที่มีผล",
+        "en": "Effective Period"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดูโปรไฟล์",
+        "en": "View Profile"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "ลบที่เลือก (",
+        "en": "Delete selected ("
+      },
+      {
+        "th": ")",
+        "en": ")"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/company/CompanyEdit.tsx"
+  },
+  {
+    "route": "/j/refunds",
+    "module": "orders",
+    "title": {
+      "th": "คืนสินค้าและคืนเงิน",
+      "en": "Returns and refunds"
+    },
+    "fields": [
+      {
+        "th": "สถานะ",
+        "en": "Status"
+      },
+      {
+        "th": "รหัสออเดอร์ (Order ID) *",
+        "en": "Order ID *"
+      },
+      {
+        "th": "เหตุผลการคืนเงิน *",
+        "en": "Refund Reason *"
+      }
+    ],
+    "actions": [
+      {
+        "th": "…",
+        "en": "…"
+      },
+      {
+        "th": "ส่งต่อให้ตัดสินใจ",
+        "en": "Send for decision"
+      },
+      {
+        "th": "ปฏิเสธ",
+        "en": "Reject"
+      },
+      {
+        "th": "บันทึกว่าคืนเงินแล้ว",
+        "en": "Mark as refunded"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "สร้างคำขอคืนเงิน",
+        "en": "Create Refund Request"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundsAdmin.tsx"
+  },
+  {
+    "route": "/j/refund-requests",
+    "module": "orders",
+    "title": {
+      "th": "คำขอคืนเงิน",
+      "en": "Refund requests"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "ดู",
+        "en": "View"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundRequestsAdmin.tsx"
+  },
+  {
+    "route": "/j/refund-banks",
+    "module": "orders",
+    "title": {
+      "th": "ธนาคารสำหรับคืนเงิน",
+      "en": "Refund banks"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เพิ่มธนาคาร",
+        "en": "Add bank"
+      },
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      },
+      {
+        "th": "บันทึก",
+        "en": "Save"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/RefundBanksAdmin.tsx"
+  },
+  {
+    "route": "/j/segments",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าสำหรับแคมเปญ",
+      "en": "Customer segments"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentList.tsx"
+  },
+  {
+    "route": "/j/segments/create",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าสำหรับแคมเปญ",
+      "en": "Customer segments"
+    },
+    "fields": [
+      {
+        "th": "ชื่อกลุ่มลูกค้า",
+        "en": "Customer group name"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      },
+      {
+        "th": "รหัสอ้างอิง",
+        "en": "Reference code"
+      },
+      {
+        "th": "เงื่อนไข",
+        "en": "Condition"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/segment/CreateSegment.tsx"
+  },
+  {
+    "route": "/j/segments/edit/:id",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าสำหรับแคมเปญ",
+      "en": "Customer segments"
+    },
+    "fields": [
+      {
+        "th": "ชื่อกลุ่มลูกค้า",
+        "en": "Customer group name"
+      },
+      {
+        "th": "คำอธิบาย (ไม่บังคับ)",
+        "en": "Description (Optional)"
+      },
+      {
+        "th": "รหัสอ้างอิง",
+        "en": "Reference code"
+      },
+      {
+        "th": "บทบาทผู้ใช้ (Role) คั่นด้วยคอมมา",
+        "en": "User Roles (comma-separated)"
+      },
+      {
+        "th": "ประเภทลูกค้า (custype) คั่นด้วยคอมมา",
+        "en": "Customer types (custype) comma separated"
+      },
+      {
+        "th": "จำนวนออเดอร์ขั้นต่ำ",
+        "en": "Minimum order quantity"
+      },
+      {
+        "th": "ภายในกี่วันย้อนหลัง (ไม่บังคับ)",
+        "en": "Look back how many days (optional)"
+      },
+      {
+        "th": "ไม่สั่งซื้อเกิน (วัน)",
+        "en": "Inactivity Period Exceeds (Days)"
+      },
+      {
+        "th": "นับว่า \"เพิ่งเข้าครั้งแรก\" ภายใน (ชั่วโมง)",
+        "en": "Consider \"First time\" within (hrs)"
+      },
+      {
+        "th": "มูลค่ารวมขั้นต่ำ (บาท)",
+        "en": "Minimum Total Amount (THB)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ดูรายชื่อลูกค้า",
+        "en": "View customers"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/segment/EditSegment.tsx"
+  },
+  {
+    "route": "/j/segments/builder",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าสำหรับแคมเปญ",
+      "en": "Customer segments"
+    },
+    "fields": [
+      {
+        "th": "รหัสอ้างอิง{0}",
+        "en": "Reference code{0}"
+      },
+      {
+        "th": "ชื่อกลุ่มลูกค้า *",
+        "en": "Customer group name *"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx"
+  },
+  {
+    "route": "/j/segments/builder/:id",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าสำหรับแคมเปญ",
+      "en": "Customer segments"
+    },
+    "fields": [
+      {
+        "th": "รหัสอ้างอิง{0}",
+        "en": "Reference code{0}"
+      },
+      {
+        "th": "ชื่อกลุ่มลูกค้า *",
+        "en": "Customer group name *"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/segment/SegmentBuilder.tsx"
+  },
+  {
+    "route": "/j/cs/delivery-schedule",
+    "module": "orders",
+    "title": {
+      "th": "ตารางรอบส่ง",
+      "en": "Delivery schedules"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/DeliveryScheduleAdmin.tsx"
+  },
+  {
+    "route": "/j/cs/cart-move-categories",
+    "module": "customers",
+    "title": {
+      "th": "หมวดที่ย้ายของในตะกร้าได้",
+      "en": "Categories movable in cart"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "cs"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/CartMoveCategoriesAdmin.tsx"
+  },
+  {
+    "route": "/j/allproducts",
+    "module": "catalog",
+    "title": {
+      "th": "สินค้าบนร้านค้า",
+      "en": "Shop products"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แก้ไขเนื้อหาสินค้า",
+        "en": "Edit product content"
+      },
+      {
+        "th": "ดูรายละเอียด",
+        "en": "View details"
+      },
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "เพิ่มสินค้า",
+        "en": "Add product"
+      },
+      {
+        "th": "อัปโหลดรูปสินค้า",
+        "en": "Upload product images"
+      },
+      {
+        "th": "อนุมัติที่เลือก ({0})",
+        "en": "Approve selected ({0})"
+      },
+      {
+        "th": "ปฏิเสธข้อมูลจากระบบหลักที่เลือก",
+        "en": "Reject selected main-system data"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/product/AllProduct.tsx"
+  },
+  {
+    "route": "/j/product/create",
+    "module": "catalog",
+    "title": {
+      "th": "เพิ่มสินค้า",
+      "en": "Add product"
+    },
+    "fields": [
+      {
+        "th": "รหัสสินค้า",
+        "en": "Product code"
+      },
+      {
+        "th": "ราคาขาย",
+        "en": "Retail Price"
+      },
+      {
+        "th": "หน่วยขาย",
+        "en": "Sales Unit"
+      },
+      {
+        "th": "จำนวนในคลังเริ่มต้น",
+        "en": "Starting quantity in stock"
+      },
+      {
+        "th": "ชื่อสินค้าภาษาไทย",
+        "en": "Thai product name"
+      },
+      {
+        "th": "คำอธิบายภาษาไทย",
+        "en": "Thai description"
+      },
+      {
+        "th": "ชื่อสินค้าภาษาอังกฤษ",
+        "en": "English product name"
+      },
+      {
+        "th": "คำอธิบายภาษาอังกฤษ",
+        "en": "English description"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/product/CreateProduct.tsx"
+  },
+  {
+    "route": "/j/product/video-upload",
+    "module": "catalog",
+    "title": {
+      "th": "อัปโหลดวิดีโอสินค้า",
+      "en": "Upload product videos"
+    },
+    "fields": [
+      {
+        "th": "เพิ่มรหัสสินค้าเอง",
+        "en": "Add a product code yourself"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/product/ProductVideoUpload.tsx"
+  },
+  {
+    "route": "/j/product/bulk-image-upload",
+    "module": "catalog",
+    "title": {
+      "th": "อัปโหลดรูปสินค้า",
+      "en": "Upload product images"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/product/BulkImageUploadPage.tsx"
+  },
+  {
+    "route": "/j/product/edit/:id",
+    "module": "catalog",
+    "title": {
+      "th": "สินค้าบนร้านค้า",
+      "en": "Shop products"
+    },
+    "fields": [
+      {
+        "th": "รหัสสินค้า *",
+        "en": "Product code *"
+      },
+      {
+        "th": "จำนวนสต็อก",
+        "en": "Stock Quantity"
+      },
+      {
+        "th": "ชื่อแบรนด์",
+        "en": "Brand Name"
+      },
+      {
+        "th": "ผู้ผลิต/บรรจุ (Marketed By)",
+        "en": "Marketed By / Manufacturer"
+      },
+      {
+        "th": "อุณหภูมิเก็บรักษา",
+        "en": "Storage Temperature"
+      },
+      {
+        "th": "ราคาต่อหน่วยขาย (฿) *",
+        "en": "Selling Unit Price (฿) *"
+      },
+      {
+        "th": "ราคากล่อง / หน่วยสั่ง (฿)",
+        "en": "Crate / Order Unit Price (฿)"
+      },
+      {
+        "th": "หน่วยขาย",
+        "en": "Sales Unit"
+      },
+      {
+        "th": "ชื่อสินค้า (ภาษาไทย) *",
+        "en": "Product Name (Thai) *"
+      },
+      {
+        "th": "รายละเอียดสินค้า (ภาษาไทย)",
+        "en": "Product Description (Thai)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "แก้ไขเนื้อหาสินค้า",
+        "en": "Edit product content"
+      },
+      {
+        "th": "แก้ที่โปรโมชัน “",
+        "en": "Edit at promotion “"
+      },
+      {
+        "th": "”",
+        "en": "”"
+      },
+      {
+        "th": "ดูเงื่อนไขในหน้าโปร",
+        "en": "View terms in promo page"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/product/EditProduct.tsx"
+  },
+  {
+    "route": "/j/product/:id",
+    "module": "catalog",
+    "title": {
+      "th": "สินค้าบนร้านค้า",
+      "en": "Shop products"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แก้ไขสินค้า",
+        "en": "Edit Product"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/product/ProductDetail.tsx"
+  },
+  {
+    "route": "/j/suppliers",
+    "module": "catalog",
+    "title": {
+      "th": "ซัพพลายเออร์",
+      "en": "Suppliers"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แก้ไข",
+        "en": "Edit"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ลองใหม่",
+        "en": "Retry"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/supplier/SupplierList.tsx"
+  },
+  {
+    "route": "/j/supplier/create",
+    "module": "catalog",
+    "title": {
+      "th": "ซัพพลายเออร์",
+      "en": "Suppliers"
+    },
+    "fields": [
+      {
+        "th": "ชื่อซัพพลายเออร์",
+        "en": "Supplier name"
+      },
+      {
+        "th": "ชื่อผู้ติดต่อ",
+        "en": "Contact person"
+      },
+      {
+        "th": "เบอร์โทร",
+        "en": "Phone number"
+      },
+      {
+        "th": "อีเมล",
+        "en": "Email"
+      },
+      {
+        "th": "ที่อยู่",
+        "en": "Address"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/supplier/CreateSupplier.tsx"
+  },
+  {
+    "route": "/j/supplier/edit/:id",
+    "module": "catalog",
+    "title": {
+      "th": "ซัพพลายเออร์",
+      "en": "Suppliers"
+    },
+    "fields": [
+      {
+        "th": "ชื่อซัพพลายเออร์",
+        "en": "Supplier name"
+      },
+      {
+        "th": "ชื่อผู้ติดต่อ",
+        "en": "Contact person"
+      },
+      {
+        "th": "เบอร์โทร",
+        "en": "Phone number"
+      },
+      {
+        "th": "อีเมล",
+        "en": "Email"
+      },
+      {
+        "th": "ที่อยู่",
+        "en": "Address"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/supplier/EditSupplier.tsx"
+  },
+  {
+    "route": "/j/price-requests",
+    "module": "customers",
+    "title": {
+      "th": "คำขอราคา",
+      "en": "Price requests"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ปฏิเสธ",
+        "en": "Reject"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/PriceRequestsAdmin.tsx"
+  },
+  {
+    "route": "/j/coupons",
+    "module": "marketing",
+    "title": {
+      "th": "คูปองส่วนลด",
+      "en": "Coupons"
+    },
+    "fields": [
+      {
+        "th": "รหัสคูปองใหม่",
+        "en": "New Coupon Code"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponList.tsx"
+  },
+  {
+    "route": "/j/coupon/create",
+    "module": "marketing",
+    "title": {
+      "th": "คูปองส่วนลด",
+      "en": "Coupons"
+    },
+    "fields": [
+      {
+        "th": "รูปแบบคูปอง",
+        "en": "Coupon Type"
+      },
+      {
+        "th": "ส่วนลดสูงสุด (บาท)",
+        "en": "Max Discount (THB)"
+      },
+      {
+        "th": "จำกัดทั้งระบบ (ครั้ง)",
+        "en": "System-wide limit (uses)"
+      },
+      {
+        "th": "จำกัดต่อผู้ใช้/สาขา (ครั้ง)",
+        "en": "Limit per user/branch (times)"
+      },
+      {
+        "th": "หน่วงใช้ได้ (วัน)",
+        "en": "Usage delay (days)"
+      },
+      {
+        "th": "ได้รับสูงสุดต่อคน (ครั้ง)",
+        "en": "Max allocation per person (times)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เปิดหน้ารายละเอียดคูปองนี้ (ยังปิดใช้งานอยู่)",
+        "en": "Open coupon detail page (currently inactive)"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/coupon/CreateCoupon.tsx"
+  },
+  {
+    "route": "/j/coupon/:id",
+    "module": "marketing",
+    "title": {
+      "th": "คูปองส่วนลด",
+      "en": "Coupons"
+    },
+    "fields": [
+      {
+        "th": "หน่วงใช้ได้ (วัน)",
+        "en": "Usage delay (days)"
+      },
+      {
+        "th": "ได้รับสูงสุดต่อคน (ครั้ง)",
+        "en": "Max allocation per person (times)"
+      },
+      {
+        "th": "ส่วนลดสูงสุด (บาท)",
+        "en": "Max Discount (THB)"
+      },
+      {
+        "th": "จำกัดทั้งระบบ (ครั้ง)",
+        "en": "System-wide limit (uses)"
+      },
+      {
+        "th": "จำกัดต่อผู้ใช้/สาขา (ครั้ง)",
+        "en": "Limit per user/branch (times)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ลองอีกครั้ง",
+        "en": "Try again"
+      },
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ยกเลิกการเชื่อม Chain",
+        "en": "Unlink Chain connection"
+      },
+      {
+        "th": "แก้ไข segment ขั้นสูง",
+        "en": "Edit advanced segment"
+      },
+      {
+        "th": "สร้างรายชื่อจากกลุ่ม",
+        "en": "Generate list from group"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/coupon/CouponDetail.tsx"
+  },
+  {
+    "route": "/j/promotion-product-sets",
+    "module": "marketing",
+    "title": {
+      "th": "ชุดสินค้าโปรโมชัน",
+      "en": "Promotion product sets"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetList.tsx"
+  },
+  {
+    "route": "/j/promotion-product-sets/create",
+    "module": "marketing",
+    "title": {
+      "th": "ชุดสินค้าโปรโมชัน",
+      "en": "Promotion product sets"
+    },
+    "fields": [
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetForm.tsx"
+  },
+  {
+    "route": "/j/promotion-product-sets/:id/edit",
+    "module": "marketing",
+    "title": {
+      "th": "ชุดสินค้าโปรโมชัน",
+      "en": "Promotion product sets"
+    },
+    "fields": [
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "คำอธิบาย",
+        "en": "Description"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ยกเลิก",
+        "en": "Cancel"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/promotion-product-set/PromotionProductSetForm.tsx"
+  },
+  {
+    "route": "/j/promotions-mechanic",
+    "module": "marketing",
+    "title": {
+      "th": "กติกาส่วนลด",
+      "en": "Discount rules"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาชื่อโปร",
+        "en": "Search promotion name"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/campain/PromotionMechanic.tsx"
+  },
+  {
+    "route": "/j/promotions-mechanic/create",
+    "module": "marketing",
+    "title": {
+      "th": "กติกาส่วนลด",
+      "en": "Discount rules"
+    },
+    "fields": [
+      {
+        "th": "ชื่อโปร",
+        "en": "Promotion Name"
+      },
+      {
+        "th": "ข้อความป้าย (ไทย)",
+        "en": "Badge text (Thai)"
+      },
+      {
+        "th": "ข้อความป้าย (English)",
+        "en": "Badge text (English)"
+      },
+      {
+        "th": "แคมเปญ",
+        "en": "Campaign"
+      },
+      {
+        "th": "จำกัดจำนวน (ชิ้น)",
+        "en": "Unit limit (pieces)"
+      },
+      {
+        "th": "ส่วนลดสูงสุด (บาท)",
+        "en": "Max Discount (THB)"
+      },
+      {
+        "th": "จำกัดทั้งระบบ (ครั้ง)",
+        "en": "System-wide limit (uses)"
+      },
+      {
+        "th": "จำกัดต่อผู้ใช้/สาขา (ครั้ง)",
+        "en": "Limit per user/branch (times)"
+      },
+      {
+        "th": "ค้นหาบริษัท",
+        "en": "Search Company"
+      },
+      {
+        "th": "รูปแบบส่วนลด",
+        "en": "Discount type"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/campain/MechanicEditorPage.tsx"
+  },
+  {
+    "route": "/j/promotions-mechanic/:id/edit",
+    "module": "marketing",
+    "title": {
+      "th": "กติกาส่วนลด",
+      "en": "Discount rules"
+    },
+    "fields": [
+      {
+        "th": "ชื่อโปร",
+        "en": "Promotion Name"
+      },
+      {
+        "th": "ข้อความป้าย (ไทย)",
+        "en": "Badge text (Thai)"
+      },
+      {
+        "th": "ข้อความป้าย (English)",
+        "en": "Badge text (English)"
+      },
+      {
+        "th": "แคมเปญ",
+        "en": "Campaign"
+      },
+      {
+        "th": "จำกัดจำนวน (ชิ้น)",
+        "en": "Unit limit (pieces)"
+      },
+      {
+        "th": "ส่วนลดสูงสุด (บาท)",
+        "en": "Max Discount (THB)"
+      },
+      {
+        "th": "จำกัดทั้งระบบ (ครั้ง)",
+        "en": "System-wide limit (uses)"
+      },
+      {
+        "th": "จำกัดต่อผู้ใช้/สาขา (ครั้ง)",
+        "en": "Limit per user/branch (times)"
+      },
+      {
+        "th": "ค้นหาบริษัท",
+        "en": "Search Company"
+      },
+      {
+        "th": "รูปแบบส่วนลด",
+        "en": "Discount type"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/campain/MechanicEditorPage.tsx"
+  },
+  {
+    "route": "/j/promotions/campaigns",
+    "module": "marketing",
+    "title": {
+      "th": "แคมเปญโปรโมชัน",
+      "en": "Promotion campaigns"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาชื่อแคมเปญ",
+        "en": "Search campaign name"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignList.tsx"
+  },
+  {
+    "route": "/j/promotions/campaigns/create",
+    "module": "marketing",
+    "title": {
+      "th": "แคมเปญโปรโมชัน",
+      "en": "Promotion campaigns"
+    },
+    "fields": [
+      {
+        "th": "ชื่อแคมเปญ",
+        "en": "Campaign name"
+      },
+      {
+        "th": "ส่วนลดสูงสุด (บาท)",
+        "en": "Max Discount (THB)"
+      },
+      {
+        "th": "จำกัดทั้งระบบ (ครั้ง)",
+        "en": "System-wide limit (uses)"
+      },
+      {
+        "th": "จำกัดต่อผู้ใช้/สาขา (ครั้ง)",
+        "en": "Limit per user/branch (times)"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/campaign/CreateCampaign.tsx"
+  },
+  {
+    "route": "/j/promotions/campaigns/:id",
+    "module": "marketing",
+    "title": {
+      "th": "แคมเปญโปรโมชัน",
+      "en": "Promotion campaigns"
+    },
+    "fields": [
+      {
+        "th": "ชื่อแคมเปญ",
+        "en": "Campaign name"
+      },
+      {
+        "th": "เปิดใช้งานแคมเปญ",
+        "en": "Campaign active"
+      },
+      {
+        "th": "ส่วนลดสูงสุด (บาท)",
+        "en": "Max Discount (THB)"
+      },
+      {
+        "th": "จำกัดทั้งระบบ (ครั้ง)",
+        "en": "System-wide limit (uses)"
+      },
+      {
+        "th": "จำกัดต่อผู้ใช้/สาขา (ครั้ง)",
+        "en": "Limit per user/branch (times)"
+      },
+      {
+        "th": "ค้นหาคูปอง (รหัสหรือชื่อ)",
+        "en": "Search coupons by code or name"
+      },
+      {
+        "th": "เลือกคูปอง",
+        "en": "Select coupon"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เพิ่มโปร",
+        "en": "Add Promotion"
+      },
+      {
+        "th": "สร้างคูปองใหม่",
+        "en": "Create New Coupon"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/campaign/CampaignDetail.tsx"
+  },
+  {
+    "route": "/j/cs/notification-log",
+    "module": "advanced",
+    "title": {
+      "th": "ประวัติการแจ้งเตือน",
+      "en": "Notification history"
+    },
+    "fields": [
+      {
+        "th": "รหัสผู้ใช้ (User ID)",
+        "en": "User ID"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      },
+      {
+        "th": "รีเฟรช",
+        "en": "Refresh"
+      },
+      {
+        "th": "ก่อนหน้า",
+        "en": "Previous"
+      },
+      {
+        "th": "ถัดไป",
+        "en": "Next"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationLog.tsx"
+  },
+  {
+    "route": "/j/cs/notification-stats",
+    "module": "advanced",
+    "title": {
+      "th": "สถิติการส่งแจ้งเตือน",
+      "en": "Notification delivery stats"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "…",
+        "en": "…"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationDeliveryStats.tsx"
+  },
+  {
+    "route": "/j/cs/notification-catalog",
+    "module": "advanced",
+    "title": {
+      "th": "ประเภทการแจ้งเตือนทั้งหมด",
+      "en": "Notification types"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "แม่แบบข้อความ",
+        "en": "Message templates"
+      },
+      {
+        "th": "สถิติการส่งแจ้งเตือน",
+        "en": "Notification delivery stats"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/NotificationCatalog.tsx"
+  },
+  {
+    "route": "/j/cs/product-notify-funnel",
+    "module": "advanced",
+    "title": {
+      "th": "ผลการแจ้งเตือนสินค้า",
+      "en": "Product alert results"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "ก่อนหน้า",
+        "en": "Previous"
+      },
+      {
+        "th": "ถัดไป",
+        "en": "Next"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/ProductNotifyFunnel.tsx"
+  },
+  {
+    "route": "/j/jagota/payment-testing",
+    "module": "advanced",
+    "title": {
+      "th": "ทดสอบชำระเงิน Jagota",
+      "en": "Test Jagota payments"
+    },
+    "fields": [
+      {
+        "th": "รหัสอ้างอิง (REF_TOKEN)",
+        "en": "Reference (REF_TOKEN)"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/jagota/JagotaPaymentTesting.tsx"
+  },
+  {
+    "route": "/j/erp/webhook-simulator",
+    "module": "advanced",
+    "title": {
+      "th": "ทดสอบส่งข้อมูลระบบหลักไปร้านค้า",
+      "en": "Test ERP events to the store"
+    },
+    "fields": [
+      {
+        "th": "DOC_BOOK",
+        "en": "DOC_BOOK"
+      },
+      {
+        "th": "DOC_NO",
+        "en": "DOC_NO"
+      },
+      {
+        "th": "INV_BOOK",
+        "en": "INV_BOOK"
+      },
+      {
+        "th": "INV_NO",
+        "en": "INV_NO"
+      },
+      {
+        "th": "คนขับ",
+        "en": "Driver"
+      },
+      {
+        "th": "เบอร์คนขับ",
+        "en": "Driver Contact"
+      },
+      {
+        "th": "ทะเบียนรถ",
+        "en": "Vehicle Plate"
+      }
+    ],
+    "actions": [],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/erp/ErpWebhookSimulator.tsx"
+  },
+  {
+    "route": "/j/billing",
+    "module": "orders",
+    "title": {
+      "th": "วางบิล",
+      "en": "Billing"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาบริษัท",
+        "en": "Search Company"
+      },
+      {
+        "th": "สถานะใบแจ้งหนี้",
+        "en": "Invoice Status"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ลองใหม่",
+        "en": "Retry"
+      },
+      {
+        "th": "แก้ไขวงเงินเครดิต",
+        "en": "Edit credit limit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/CS/Billing.tsx"
+  },
+  {
+    "route": "/j/admin-access",
+    "module": "settings",
+    "title": {
+      "th": "คำขอใช้งานหลังร้าน",
+      "en": "Back-office access requests"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ปฏิเสธ",
+        "en": "Reject"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/admin-access/AdminAccessQueue.tsx"
+  },
+  {
+    "route": "/product-prices",
+    "module": "catalog",
+    "title": {
+      "th": "ราคาสินค้า",
+      "en": "Product Prices"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/ProductPrices.tsx"
+  },
+  {
+    "route": "/j/marketing/competitor-prices",
+    "module": "marketing",
+    "title": {
+      "th": "เทียบราคาคู่แข่ง",
+      "en": "Compare competitor prices"
+    },
+    "fields": [],
+    "actions": [],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/josh-admin/app/page/marketing/CompetitorPricesPage.tsx"
+  },
+  {
+    "route": "/josh/suppliers",
+    "module": "catalog",
+    "title": {
+      "th": "ซัพพลายเออร์",
+      "en": "Suppliers"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/credit_terms",
+    "module": "orders",
+    "title": {
+      "th": "ใบสมัครเครดิต",
+      "en": "Credit applications"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/shipments",
+    "module": "orders",
+    "title": {
+      "th": "การจัดส่งสินค้า",
+      "en": "Shipments"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/payments",
+    "module": "orders",
+    "title": {
+      "th": "รายการชำระเงิน",
+      "en": "Payments"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/credit_notes",
+    "module": "orders",
+    "title": {
+      "th": "ใบลดหนี้",
+      "en": "Credit notes"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/credit_backs",
+    "module": "orders",
+    "title": {
+      "th": "คืนเครดิตให้ลูกค้า",
+      "en": "Credit refunds"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/invoices",
+    "module": "orders",
+    "title": {
+      "th": "วางบิล",
+      "en": "Billing"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/kyc",
+    "module": "customers",
+    "title": {
+      "th": "ตรวจสอบตัวตนลูกค้า",
+      "en": "Verify customer identity"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/admin_access",
+    "module": "settings",
+    "title": {
+      "th": "คำขอใช้งานหลังร้าน",
+      "en": "Back-office access requests"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/coupons",
+    "module": "marketing",
+    "title": {
+      "th": "คูปองส่วนลด",
+      "en": "Coupons"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/campaigns",
+    "module": "marketing",
+    "title": {
+      "th": "แคมเปญโปรโมชัน",
+      "en": "Promotion campaigns"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/segments",
+    "module": "marketing",
+    "title": {
+      "th": "กลุ่มลูกค้าสำหรับแคมเปญ",
+      "en": "Customer segments"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/josh/internal_docs",
+    "module": "settings",
+    "title": {
+      "th": "เอกสารภายใน",
+      "en": "Internal documents"
+    },
+    "fields": [
+      {
+        "th": "ให้สิทธิ์",
+        "en": "Grant Permission"
+      },
+      {
+        "th": "เหตุผลที่ไม่อนุมัติ",
+        "en": "Rejection reason"
+      },
+      {
+        "th": "ผล",
+        "en": "Result"
+      },
+      {
+        "th": "วงเงินที่อนุมัติ",
+        "en": "Approved Credit Limit"
+      },
+      {
+        "th": "เครดิต (วัน)",
+        "en": "Credit (Days)"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุบัญชี",
+        "en": "Account note"
+      },
+      {
+        "th": "หมวด",
+        "en": "Category"
+      },
+      {
+        "th": "ชื่อ",
+        "en": "Name"
+      },
+      {
+        "th": "ไฟล์ .md",
+        "en": ".md file"
+      }
+    ],
+    "actions": [
+      {
+        "th": "โหลดใหม่",
+        "en": "Reload"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear Filters"
+      },
+      {
+        "th": "ลบ",
+        "en": "Delete"
+      },
+      {
+        "th": "พิจารณา",
+        "en": "Review"
+      },
+      {
+        "th": "อนุมัติ",
+        "en": "Approve"
+      },
+      {
+        "th": "ไม่อนุมัติ",
+        "en": "Reject"
+      },
+      {
+        "th": "แก้",
+        "en": "Edit"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/JoshBackoffice.tsx"
+  },
+  {
+    "route": "/cs/sales-assignment",
+    "module": "customers",
+    "title": {
+      "th": "มอบหมายผู้ดูแลลูกค้า",
+      "en": "Assign customer coverage"
+    },
+    "fields": [
+      {
+        "th": "ค้นหาชื่อบริษัทหรือรหัส",
+        "en": "Find company by name or code"
+      },
+      {
+        "th": "ผู้ดูแลใหม่",
+        "en": "New owner"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ตรวจผลการบันทึก",
+        "en": "Check save outcome"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": " ",
+        "en": " "
+      },
+      {
+        "th": "บริษัท",
+        "en": "companies"
+      },
+      {
+        "th": "กลับไปเลือกบริษัท",
+        "en": "Choose companies"
+      },
+      {
+        "th": "ค้นหา",
+        "en": "Search"
+      },
+      {
+        "th": "ลองอ่านบริษัทอีกครั้ง",
+        "en": "Retry companies"
+      },
+      {
+        "th": "นำออก",
+        "en": "Remove"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sales_manager"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/SalesAssignment.tsx"
+  },
+  {
+    "route": "/reports/winback/opportunities",
+    "module": "customers",
+    "title": {
+      "th": "โอกาสของทีม",
+      "en": "Team opportunities"
+    },
+    "fields": [
+      {
+        "th": "ชื่อร้านหรือคำค้น",
+        "en": "Store name or search text"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ทบทวนโอกาส",
+        "en": "Review opportunities"
+      },
+      {
+        "th": "ทบทวนลีด",
+        "en": "Review leads"
+      },
+      {
+        "th": "กลับหน้ารายการ",
+        "en": "Open the list"
+      },
+      {
+        "th": "กลับหน้ารายการเดิม",
+        "en": "Back to this list"
+      },
+      {
+        "th": "ค้นหารายการ",
+        "en": "Search records"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      },
+      {
+        "th": "เปิดรายการเดิม",
+        "en": "Open this list"
+      },
+      {
+        "th": "กลับหน้าแรกและล้างคำค้น",
+        "en": "First page and clear search"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/MyWinback.tsx"
+  },
+  {
+    "route": "/reports/winback/my",
+    "module": "customers",
+    "title": {
+      "th": "โอกาสและลีดของฉัน",
+      "en": "My opportunities and leads"
+    },
+    "fields": [
+      {
+        "th": "ชื่อร้านหรือคำค้น",
+        "en": "Store name or search text"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ทบทวนโอกาส",
+        "en": "Review opportunities"
+      },
+      {
+        "th": "ทบทวนลีด",
+        "en": "Review leads"
+      },
+      {
+        "th": "กลับหน้ารายการ",
+        "en": "Open the list"
+      },
+      {
+        "th": "กลับหน้ารายการเดิม",
+        "en": "Back to this list"
+      },
+      {
+        "th": "ค้นหารายการ",
+        "en": "Search records"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      },
+      {
+        "th": "เปิดรายการเดิม",
+        "en": "Open this list"
+      },
+      {
+        "th": "กลับหน้าแรกและล้างคำค้น",
+        "en": "First page and clear search"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sale"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/MyWinback.tsx"
+  },
+  {
+    "route": "/stock-moves/receive",
+    "module": "catalog",
+    "title": {
+      "th": "ความเคลื่อนไหวสต็อก",
+      "en": "Stock Movements"
+    },
+    "fields": [
+      {
+        "th": "สินค้า",
+        "en": "Product"
+      },
+      {
+        "th": "ไปคลัง",
+        "en": "To Warehouse"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุ",
+        "en": "Note"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรชคลัง",
+        "en": "Refresh Warehouses"
+      },
+      {
+        "th": "ดูสต็อกแต่ละคลัง",
+        "en": "See stock per warehouse"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/StockMoves.tsx"
+  },
+  {
+    "route": "/stock-moves/count",
+    "module": "catalog",
+    "title": {
+      "th": "ความเคลื่อนไหวสต็อก",
+      "en": "Stock Movements"
+    },
+    "fields": [
+      {
+        "th": "สินค้า",
+        "en": "Product"
+      },
+      {
+        "th": "ไปคลัง",
+        "en": "To Warehouse"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุ",
+        "en": "Note"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรชคลัง",
+        "en": "Refresh Warehouses"
+      },
+      {
+        "th": "ดูสต็อกแต่ละคลัง",
+        "en": "See stock per warehouse"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/StockMoves.tsx"
+  },
+  {
+    "route": "/stock-moves/adjust",
+    "module": "catalog",
+    "title": {
+      "th": "ความเคลื่อนไหวสต็อก",
+      "en": "Stock Movements"
+    },
+    "fields": [
+      {
+        "th": "สินค้า",
+        "en": "Product"
+      },
+      {
+        "th": "ไปคลัง",
+        "en": "To Warehouse"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุ",
+        "en": "Note"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรชคลัง",
+        "en": "Refresh Warehouses"
+      },
+      {
+        "th": "ดูสต็อกแต่ละคลัง",
+        "en": "See stock per warehouse"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/StockMoves.tsx"
+  },
+  {
+    "route": "/stock-moves/transfer",
+    "module": "catalog",
+    "title": {
+      "th": "ความเคลื่อนไหวสต็อก",
+      "en": "Stock Movements"
+    },
+    "fields": [
+      {
+        "th": "สินค้า",
+        "en": "Product"
+      },
+      {
+        "th": "ไปคลัง",
+        "en": "To Warehouse"
+      },
+      {
+        "th": "เหตุผล",
+        "en": "Reason"
+      },
+      {
+        "th": "หมายเหตุ",
+        "en": "Note"
+      }
+    ],
+    "actions": [
+      {
+        "th": "รีเฟรชคลัง",
+        "en": "Refresh Warehouses"
+      },
+      {
+        "th": "ดูสต็อกแต่ละคลัง",
+        "en": "See stock per warehouse"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/StockMoves.tsx"
+  },
+  {
+    "route": "/tasks/catalog",
+    "module": "other",
+    "title": {
+      "th": "สินค้าและสต็อก",
+      "en": "Products & Stock"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "หน้าหลัก",
+        "en": "Home"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "sale",
+      "business_analyst",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx"
+  },
+  {
+    "route": "/tasks/orders",
+    "module": "other",
+    "title": {
+      "th": "ออเดอร์และการชำระเงิน",
+      "en": "Orders & Payments"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "หน้าหลัก",
+        "en": "Home"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx"
+  },
+  {
+    "route": "/tasks/customers",
+    "module": "other",
+    "title": {
+      "th": "ลูกค้าและบริการ",
+      "en": "Customers & Service"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "หน้าหลัก",
+        "en": "Home"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      }
+    ],
+    "roles": [
+      "admin",
+      "cs",
+      "sale",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx"
+  },
+  {
+    "route": "/tasks/marketing",
+    "module": "other",
+    "title": {
+      "th": "การตลาด",
+      "en": "Marketing"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "หน้าหลัก",
+        "en": "Home"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx"
+  },
+  {
+    "route": "/tasks/reports",
+    "module": "other",
+    "title": {
+      "th": "รายงานและข้อมูล",
+      "en": "Reports & Data"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "หน้าหลัก",
+        "en": "Home"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "sale",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx"
+  },
+  {
+    "route": "/tasks/settings",
+    "module": "other",
+    "title": {
+      "th": "ตั้งค่าและทีมงาน",
+      "en": "Settings & Staff"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "หน้าหลัก",
+        "en": "Home"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "merchandising",
+      "cs",
+      "sale",
+      "sales_manager",
+      "business_analyst",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx"
+  },
+  {
+    "route": "/tasks/advanced",
+    "module": "other",
+    "title": {
+      "th": "ตั้งค่าเพิ่มเติม (ใช้ไม่บ่อย)",
+      "en": "More settings (rarely used)"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "หน้าหลัก",
+        "en": "Home"
+      },
+      {
+        "th": "ล้างตัวกรอง",
+        "en": "Clear filters"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/TaskSection.tsx"
+  },
+  {
+    "route": "/planning/sales-work",
+    "module": "other",
+    "title": {
+      "th": "วางแผนงานเพื่อทบทวน",
+      "en": "Plan work for review"
+    },
+    "fields": [
+      {
+        "th": "งานที่ต้องการทบทวน",
+        "en": "Work to review"
+      },
+      {
+        "th": "ออเดอร์เดิมในหน้าที่อ่านได้ (สำหรับร่างสั่งซ้ำ)",
+        "en": "Historical order on this page (for reorder drafts)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "กลับไปร่างงานเพื่อทบทวน",
+        "en": "Open work drafts"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "ตรวจผลบันทึก",
+        "en": "Check save result"
+      },
+      {
+        "th": "อ่านใหม่",
+        "en": "Refresh"
+      },
+      {
+        "th": "เริ่มวางแผนงานเพื่อทบทวน",
+        "en": "Start a private work plan"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "Open the first page"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "First page"
+      },
+      {
+        "th": "รายการถัดไป",
+        "en": "Next page"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sale",
+      "sales_manager"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/commercial-work/CommercialPlanningWorkspace.tsx"
+  },
+  {
+    "route": "/planning/marketing-readiness",
+    "module": "other",
+    "title": {
+      "th": "วางแผนงานเพื่อทบทวน",
+      "en": "Plan work for review"
+    },
+    "fields": [
+      {
+        "th": "งานที่ต้องการทบทวน",
+        "en": "Work to review"
+      },
+      {
+        "th": "ออเดอร์เดิมในหน้าที่อ่านได้ (สำหรับร่างสั่งซ้ำ)",
+        "en": "Historical order on this page (for reorder drafts)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "กลับไปร่างงานเพื่อทบทวน",
+        "en": "Open work drafts"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "ตรวจผลบันทึก",
+        "en": "Check save result"
+      },
+      {
+        "th": "อ่านใหม่",
+        "en": "Refresh"
+      },
+      {
+        "th": "เริ่มวางแผนงานเพื่อทบทวน",
+        "en": "Start a private work plan"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "Open the first page"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "First page"
+      },
+      {
+        "th": "รายการถัดไป",
+        "en": "Next page"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/commercial-work/CommercialPlanningWorkspace.tsx"
+  },
+  {
+    "route": "/analysis/financial",
+    "module": "other",
+    "title": {
+      "th": "ตรวจฐานข้อมูลการเงินก่อนเทียบผล",
+      "en": "Review financial coverage before comparing"
+    },
+    "fields": [
+      {
+        "th": "เดือนที่ทบทวน",
+        "en": "Review month"
+      },
+      {
+        "th": "เดือนอ้างอิง",
+        "en": "Reference month"
+      },
+      {
+        "th": "เขตเวลาของเดือนทั้งสอง",
+        "en": "Timezone for both months"
+      },
+      {
+        "th": "ร่างเป้าส่วนตัวที่ต้องการดูประกอบ (เลือกกรอก)",
+        "en": "My private goal draft for context (optional)"
+      }
+    ],
+    "actions": [
+      {
+        "th": "เลือกช่วงที่จะทบทวน",
+        "en": "Choose review periods"
+      },
+      {
+        "th": "กลับไปตรวจความครบถ้วน",
+        "en": "Back to source coverage"
+      },
+      {
+        "th": ".",
+        "en": "."
+      },
+      {
+        "th": " ",
+        "en": " "
+      },
+      {
+        "th": "อ่านช่วงที่เลือกและตรวจความครบถ้วน",
+        "en": "Read selected periods and review coverage"
+      },
+      {
+        "th": "ทบทวนร่างเป้ากำไรและต้นทุนเดิม",
+        "en": "Review existing profit and cost goal drafts"
+      },
+      {
+        "th": "อ่านหลักฐานใหม่",
+        "en": "Refresh financial evidence"
+      },
+      {
+        "th": "ตรวจแถวที่อ่านได้และเหตุของข้อมูลขาด",
+        "en": "Inspect returned records and coverage reasons"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/financial-analysis/FinancialAnalysisWorkspace.tsx"
+  },
+  {
+    "route": "/planning/profit-goals",
+    "module": "other",
+    "title": {
+      "th": "วางแผนเป้ากำไรและต้นทุน",
+      "en": "Plan profit and cost goals"
+    },
+    "fields": [
+      {
+        "th": "เดือนที่วางแผน (นับตามเวลาสากล UTC)",
+        "en": "Planning month (UTC)"
+      },
+      {
+        "th": "เป้าที่ต้องการทบทวน",
+        "en": "Goal to review"
+      }
+    ],
+    "actions": [
+      {
+        "th": "กลับไปร่างเป้ากำไรและต้นทุน",
+        "en": "Open goal planning drafts"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "ตรวจผลบันทึก",
+        "en": "Check save result"
+      },
+      {
+        "th": "เริ่มวางแผนเป้ากำไรและต้นทุน",
+        "en": "Start a profit and cost plan"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "Open the first page"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "First page"
+      },
+      {
+        "th": "รายการถัดไป",
+        "en": "Next page"
+      },
+      {
+        "th": "อ่านใหม่",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin",
+      "sales_manager",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/financial-goals/GoalPlanningWorkspace.tsx"
+  },
+  {
+    "route": "/planning/pack-prices",
+    "module": "other",
+    "title": {
+      "th": "วางแผนแพ็กและราคาขาย",
+      "en": "Plan packs and sale prices"
+    },
+    "fields": [
+      {
+        "th": "รหัสสินค้าของเรา",
+        "en": "Our product SKU"
+      },
+      {
+        "th": "ชื่อร่างเพื่อทบทวน",
+        "en": "Draft name for review"
+      },
+      {
+        "th": "หน่วยขนาด",
+        "en": "Pack unit"
+      }
+    ],
+    "actions": [
+      {
+        "th": "กลับไปร่างแพ็กและราคา",
+        "en": "Open pack planning drafts"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "ตรวจผลบันทึก",
+        "en": "Check save result"
+      },
+      {
+        "th": "เริ่มวางแผนแพ็กและราคา",
+        "en": "Start a pack and price plan"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "Open the first page"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "First page"
+      },
+      {
+        "th": "รายการถัดไป",
+        "en": "Next page"
+      },
+      {
+        "th": "อ่านใหม่",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin",
+      "marketing",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/pack-price/PackPlanningWorkspace.tsx"
+  },
+  {
+    "route": "/planning/promotions",
+    "module": "other",
+    "title": {
+      "th": "ทดลองโปรโมชัน",
+      "en": "Plan a promotion"
+    },
+    "fields": [
+      {
+        "th": "วิธีนับจำนวน",
+        "en": "Quantity basis"
+      },
+      {
+        "th": "รูปแบบส่วนลด",
+        "en": "Offer type"
+      }
+    ],
+    "actions": [
+      {
+        "th": "กลับไปร่างโปรโมชัน",
+        "en": "Back to promotion drafts"
+      },
+      {
+        "th": "·",
+        "en": "·"
+      },
+      {
+        "th": "ตรวจผลบันทึก",
+        "en": "Check save result"
+      },
+      {
+        "th": "ทดลองโปรโมชันใหม่",
+        "en": "Plan a new promotion"
+      },
+      {
+        "th": "กลับหน้าแรก",
+        "en": "Open the first page"
+      },
+      {
+        "th": "กลับหน้ารายการแรก",
+        "en": "First page"
+      },
+      {
+        "th": "รายการถัดไป",
+        "en": "Next page"
+      },
+      {
+        "th": "โหลดอีกครั้ง",
+        "en": "Refresh"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/planning/PromotionWorkspace.tsx"
+  },
+  {
+    "route": "/review/orders",
+    "module": "other",
+    "title": {
+      "th": "ตรวจออเดอร์",
+      "en": "Review an order"
+    },
+    "fields": [
+      {
+        "th": "รหัสออเดอร์",
+        "en": "Order UUID"
+      },
+      {
+        "th": "รอผลส่งเกินกี่นาทีจึงให้ตรวจ",
+        "en": "Minutes before reviewing a pending send"
+      }
+    ],
+    "actions": [
+      {
+        "th": "ค้นหาออเดอร์",
+        "en": "Find an order"
+      },
+      {
+        "th": "อ่านหลักฐานออเดอร์",
+        "en": "Read order evidence"
+      },
+      {
+        "th": "อ่านหลักฐานใหม่",
+        "en": "Refresh evidence"
+      },
+      {
+        "th": "เปิดรายละเอียดออเดอร์เพื่อตรวจต่อ",
+        "en": "Open order details for review"
+      },
+      {
+        "th": "ลองอีกครั้ง",
+        "en": "Try again"
+      }
+    ],
+    "roles": [
+      "admin"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/planning/OrderReviewWorkspace.tsx"
+  },
+  {
+    "route": "/analysis/customer-behavior",
+    "module": "reports",
+    "title": {
+      "th": "ตรวจเกณฑ์วิเคราะห์",
+      "en": "Check analysis criteria"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "เลือกเรื่องที่ต้องการตรวจใหม่",
+        "en": "Choose an analysis template"
+      },
+      {
+        "th": "ลองอีกครั้ง",
+        "en": "Try again"
+      },
+      {
+        "th": "ตั้งเกณฑ์และตรวจ",
+        "en": "Set criteria and review"
+      },
+      {
+        "th": "เลือกคำถามอื่น",
+        "en": "Choose another question"
+      },
+      {
+        "th": "แก้เกณฑ์",
+        "en": "Edit criteria"
+      },
+      {
+        "th": "ตัวอย่างเกณฑ์",
+        "en": "Criteria preview"
+      },
+      {
+        "th": "ตรวจแหล่งและหลักฐาน",
+        "en": "Sources and evidence"
+      }
+    ],
+    "roles": [
+      "admin",
+      "business_analyst"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/guided-analysis/GuidedAnalysisWorkspace.tsx"
+  },
+  {
+    "route": "/j/product/:id/content",
+    "module": "catalog",
+    "title": {
+      "th": "ตรวจข้อความสินค้า",
+      "en": "Inspect product content"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "เปิดหน้าแก้สินค้าบนร้านค้า",
+        "en": "Edit this Josh-owned product"
+      },
+      {
+        "th": "แก้ข้อความที่ตรวจแล้ว",
+        "en": "Edit inspected content"
+      },
+      {
+        "th": "กลับไปตรวจข้อความ",
+        "en": "Back to content inspection"
+      },
+      {
+        "th": "เริ่มใหม่จากเนื้อหาปัจจุบัน",
+        "en": "Start again from current content"
+      },
+      {
+        "th": "ทบทวนข้อความก่อนบันทึก",
+        "en": "Review content edit"
+      },
+      {
+        "th": "กลับไปแก้ข้อความที่เลือก",
+        "en": "Back to selected content edit"
+      },
+      {
+        "th": "ตรวจเนื้อหาปัจจุบันของสินค้านี้",
+        "en": "Inspect this product’s current content"
+      },
+      {
+        "th": "กลับไปตรวจข้อความสินค้า",
+        "en": "Back to content inspection"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/product-content-editor/ProductContentWorkspace.tsx"
+  },
+  {
+    "route": "/j/product/:id/content/edit",
+    "module": "catalog",
+    "title": {
+      "th": "ตรวจข้อความสินค้า",
+      "en": "Inspect product content"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "เปิดหน้าแก้สินค้าบนร้านค้า",
+        "en": "Edit this Josh-owned product"
+      },
+      {
+        "th": "แก้ข้อความที่ตรวจแล้ว",
+        "en": "Edit inspected content"
+      },
+      {
+        "th": "กลับไปตรวจข้อความ",
+        "en": "Back to content inspection"
+      },
+      {
+        "th": "เริ่มใหม่จากเนื้อหาปัจจุบัน",
+        "en": "Start again from current content"
+      },
+      {
+        "th": "ทบทวนข้อความก่อนบันทึก",
+        "en": "Review content edit"
+      },
+      {
+        "th": "กลับไปแก้ข้อความที่เลือก",
+        "en": "Back to selected content edit"
+      },
+      {
+        "th": "ตรวจเนื้อหาปัจจุบันของสินค้านี้",
+        "en": "Inspect this product’s current content"
+      },
+      {
+        "th": "กลับไปตรวจข้อความสินค้า",
+        "en": "Back to content inspection"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/product-content-editor/ProductContentWorkspace.tsx"
+  },
+  {
+    "route": "/j/product/:id/content/review",
+    "module": "catalog",
+    "title": {
+      "th": "ตรวจข้อความสินค้า",
+      "en": "Inspect product content"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "เปิดหน้าแก้สินค้าบนร้านค้า",
+        "en": "Edit this Josh-owned product"
+      },
+      {
+        "th": "แก้ข้อความที่ตรวจแล้ว",
+        "en": "Edit inspected content"
+      },
+      {
+        "th": "กลับไปตรวจข้อความ",
+        "en": "Back to content inspection"
+      },
+      {
+        "th": "เริ่มใหม่จากเนื้อหาปัจจุบัน",
+        "en": "Start again from current content"
+      },
+      {
+        "th": "ทบทวนข้อความก่อนบันทึก",
+        "en": "Review content edit"
+      },
+      {
+        "th": "กลับไปแก้ข้อความที่เลือก",
+        "en": "Back to selected content edit"
+      },
+      {
+        "th": "ตรวจเนื้อหาปัจจุบันของสินค้านี้",
+        "en": "Inspect this product’s current content"
+      },
+      {
+        "th": "กลับไปตรวจข้อความสินค้า",
+        "en": "Back to content inspection"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/product-content-editor/ProductContentWorkspace.tsx"
+  },
+  {
+    "route": "/j/product/:id/content/requests/:requestId",
+    "module": "catalog",
+    "title": {
+      "th": "ตรวจข้อความสินค้า",
+      "en": "Inspect product content"
+    },
+    "fields": [],
+    "actions": [
+      {
+        "th": "เปิดหน้าแก้สินค้าบนร้านค้า",
+        "en": "Edit this Josh-owned product"
+      },
+      {
+        "th": "แก้ข้อความที่ตรวจแล้ว",
+        "en": "Edit inspected content"
+      },
+      {
+        "th": "กลับไปตรวจข้อความ",
+        "en": "Back to content inspection"
+      },
+      {
+        "th": "เริ่มใหม่จากเนื้อหาปัจจุบัน",
+        "en": "Start again from current content"
+      },
+      {
+        "th": "ทบทวนข้อความก่อนบันทึก",
+        "en": "Review content edit"
+      },
+      {
+        "th": "กลับไปแก้ข้อความที่เลือก",
+        "en": "Back to selected content edit"
+      },
+      {
+        "th": "ตรวจเนื้อหาปัจจุบันของสินค้านี้",
+        "en": "Inspect this product’s current content"
+      },
+      {
+        "th": "กลับไปตรวจข้อความสินค้า",
+        "en": "Back to content inspection"
+      }
+    ],
+    "roles": [
+      "admin",
+      "merchandising",
+      "graphic"
+    ],
+    "source": "apps/commerce-admin/src/app/pages/product-content-editor/ProductContentWorkspace.tsx"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "runId": "9c1eac9f-7fb3-48e0-92f9-32a8aa8e5370",
+  "duration": 277,
+  "steps": 58,
+  "mode": "User-provided authenticated profile; read-only",
+  "scope": "Module hubs and main feature routes; detailed coverage gaps remain",
+  "issues": [
+    "Small action targets",
+    "Singular attention grammar",
+    "Loading/empty state usability",
+    "Date/calendar presentation inconsistency observed; not changed without further validation"
+  ],
+  "gaps": [
+    "Record-dependent details were not all visited",
+    "Charts/filters and write workflows were not fully exercised",
+    "Mobile was not available in the remote browser"
+  ],
+  "note": "The remote narrative contains broad pass claims that are not used as evidence of all-page acceptance. Local route inventory and browser receipts are the authoritative page-coverage record."
+}

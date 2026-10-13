@@ -167,7 +167,7 @@ export function Button({
       className={cx(
         'inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap',
         'focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1',
-        size === 'sm' ? 'min-h-8 px-2.5 py-1 text-xs' : 'min-h-10 px-3.5 py-2 text-[13px]',
+        size === 'sm' ? 'min-h-11 min-w-11 px-3 py-2 text-xs sm:min-h-8 sm:min-w-0 sm:px-2.5 sm:py-1' : 'min-h-11 px-3.5 py-2 text-[13px] sm:min-h-10',
         BTN[variant],
         className,
       )}
@@ -184,7 +184,7 @@ export function ButtonLink({ to, variant = 'secondary', icon, children, classNam
   return (
     <Link
       to={to}
-      className={cx('inline-flex min-h-10 items-center gap-2 rounded-lg font-medium transition-colors px-3.5 py-2 text-[13px] whitespace-nowrap', BTN[variant], className)}
+      className={cx('inline-flex min-h-11 items-center gap-2 rounded-lg font-medium transition-colors px-3.5 py-2 text-[13px] whitespace-nowrap sm:min-h-10', BTN[variant], className)}
     >
       {icon && <Icon name={icon} size={16} />}
       {children}
@@ -203,7 +203,7 @@ export function ArrowLink({ to, children, tone = 'primary' }: { to: string; chil
 }
 
 export const inputCls =
-  'w-full min-h-10 px-3 py-2 bg-surface-container-lowest text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-[13px] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors disabled:opacity-60';
+  'w-full min-h-11 px-3 py-2 bg-surface-container-lowest text-on-surface placeholder:text-outline border border-secondary-container rounded-lg text-[13px] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-colors disabled:opacity-60 sm:min-h-10';
 
 export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cx(inputCls, className)} {...rest} />;
@@ -1376,7 +1376,7 @@ export function TopBar({ left, right }: { left?: ReactNode; right?: ReactNode })
 /** Icon-only top bar button. */
 export function IconButton({ icon, title, onClick, dot }: { icon: string; title: string; onClick?: () => void; dot?: boolean }) {
   return (
-    <button type="button" title={title} aria-label={title} onClick={onClick} className="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors relative">
+    <button type="button" title={title} aria-label={title} onClick={onClick} className="inline-flex min-h-11 min-w-11 items-center justify-center p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors relative focus-visible:outline-2 focus-visible:outline-primary sm:min-h-9 sm:min-w-9 sm:p-1.5">
       <Icon name={icon} size={18} />
       {dot && <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-rose-500 rounded-full" />}
     </button>

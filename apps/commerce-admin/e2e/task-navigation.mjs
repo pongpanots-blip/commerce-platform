@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 // All APIs are intercepted fixtures. No credentials, remote writes or database access.
 import assert from 'node:assert/strict';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const base = process.env.ADMIN_URL ?? 'http://127.0.0.1:4403';
 assert.ok(['localhost', '127.0.0.1'].includes(new URL(base).hostname), 'Local preview required');
-const output = 'docs/reviews/admin-task-navigation/current-app-browser';
+const output = process.env.TASK_NAVIGATION_OUT ?? 'docs/reviews/admin-task-navigation/current-app-browser';
 mkdirSync(output, { recursive: true });
 const sampleId = '00000000-0000-4000-8000-000000000001';
 const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
 const checks = [], errors = [], screenshots = [];
+const dictionary = JSON.parse(readFileSync('libs/ui/src/locales/ui-messages.json', 'utf8'));
 let activePage;
 const roles = ['admin', 'marketing', 'merchandising', 'cs', 'sales_manager', 'business_analyst', 'graphic', 'sale'];
 const aliases = ['/josh/kyc', '/josh/credit_terms', '/josh/admin_access', '/josh/shipments', '/josh/payments', '/josh/credit_notes', '/josh/credit_backs', '/josh/invoices', '/josh/coupons', '/josh/campaigns', '/josh/segments', '/josh/suppliers', '/j/cs/sample-requests', '/j/product/create', '/j/order/import'];
@@ -129,11 +130,17 @@ try {
     await expand(page);
     for (const alias of aliases) assert.equal(await page.locator(`aside a[href="${alias}"]`).count(), 0, `${role} canonicalizes ${alias}`);
     if (role === 'cs' || role === 'admin') {
-      await page.locator('aside a[href="/cs"]').focus(); await page.keyboard.press('Enter');
+      await page.locator('aside a[href="/tasks/customers"]').focus(); await page.keyboard.press('Enter');
+      await page.locator('main a[href="/cs"]').first().click();
       await page.locator('main [role="tab"]').filter({hasText: locale === 'th' ? 'คำขอสินค้าตัวอย่าง' : 'Sample Requests'}).waitFor();
       assert.equal(await page.locator('main [role="tab"]').filter({hasText: locale === 'th' ? 'รวมบัญชีซ้ำ' : 'Merge'}).count(), role === 'admin' ? 1 : 0);
     }
-    assert.equal(await page.locator('aside a[href="/josh/internal_docs"]').count(), role === 'admin' ? 1 : 0);
+    await page.keyboard.press('Control+k');
+    await page.locator('dialog[open] input[role="combobox"]').fill('internal');
+    const documents = page.locator('dialog[open] [role="option"]').filter({ hasText: dictionary['เอกสารภายใน'][locale] });
+    if (role === 'admin') await documents.waitFor();
+    assert.equal(await documents.count(), role === 'admin' ? 1 : 0);
+    await page.keyboard.press('Escape');
     await checkOverflow(page); checks.push(`${role} ${locale}: canonical menu, role tasks, keyboard and layout`);
     await context.close();
   }
@@ -207,7 +214,7 @@ try {
     await checkOverflow(page);const region=page.locator('main [role=region]').first();await region.focus();assert.equal(await region.evaluate(el=>document.activeElement===el),true);await region.press('ArrowRight');await screenshot(page, 'samples-phone-th');
     const menu = page.locator('aside button[aria-controls]').first(); await menu.click();
     assert.equal(await menu.getAttribute('aria-expanded'), 'true');
-    await page.locator('aside a[href="/home"]').click(); await page.locator('main h1').waitFor();
+    await page.locator('aside a[href="/today"]').click(); await page.locator('main h1').waitFor();
     assert.equal(await menu.getAttribute('aria-expanded'), 'false');
     checks.push('Thai phone: scroll containment, mobile menu opens and closes after navigation');
     await context.close();
@@ -219,16 +226,16 @@ try {
     await page.locator('main select').nth(1).selectOption('user-1'); await page.locator('main select').nth(2).selectOption('branch-1');
     await page.locator('main').getByRole('searchbox').nth(1).fill('Flour'); await page.getByRole('button', { name: 'Search products', exact: true }).click();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await page.getByRole('button', { name: 'Calculate Price (josh)', exact: true }).click();
-    await page.getByRole('button', { name: 'Place Order', exact: true }).waitFor();
+    await page.getByRole('button', { name: dictionary['คิดราคา'].en, exact: true }).click();
+    await page.getByRole('button', { name: dictionary['สั่งซื้อ'].en, exact: true }).waitFor();
     state.orderGate = gate(); page.on('dialog', dialog => dialog.accept());
-    await page.getByRole('button', { name: 'Place Order', exact: true }).click();
+    await page.getByRole('button', { name: dictionary['สั่งซื้อ'].en, exact: true }).click();
     await page.waitForFunction(() => document.querySelector('fieldset')?.disabled);
     await page.locator('form').last().evaluate(form => { form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); });
     assert.equal(state.writes.length, 1); assert.equal(state.writes[0].body.user_id, 'user-1');
     assert.deepEqual(state.writes[0].body.items, [{ product_inventory_id: 'product-1', quantity: 1 }]);
-    assert.equal(await page.getByText('Order created', { exact: false }).count(), 0);
-    state.orderGate.release(); await page.getByText('Order created', { exact: false }).waitFor();
+    assert.equal(await page.getByText(dictionary['สร้างคำสั่งซื้อแล้ว'].en, { exact: false }).count(), 0);
+    state.orderGate.release(); await page.getByText(dictionary['สร้างคำสั่งซื้อแล้ว'].en, { exact: false }).waitFor();
     checks.push('On-behalf order: customer/branch selection, quote, unchanged payload, locked checkout and success after response');
     await context.close();
   }
@@ -248,7 +255,7 @@ try {
     await page.getByText('You do not have permission for this task', { exact: true }).waitFor();
     assert.equal(await page.locator('form').count(), 0); await context.close();
     const admin = await open('admin', 'en', '/josh/coupons');
-    await admin.page.locator('aside a[href="/j/coupons"][aria-current="page"]').waitFor();
+    await admin.page.locator('aside a[href="/tasks/marketing"][aria-current="page"]').waitFor();
     await admin.page.locator('summary').filter({hasText:'Other actions'}).click(); await admin.page.locator('details[open] nav a[href="/j/coupons"]').waitFor();
     checks.push('Direct admin-only task denied to CS; saved-record alias highlights canonical coupons');
     await admin.context.close();

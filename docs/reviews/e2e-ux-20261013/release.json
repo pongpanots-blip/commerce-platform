@@ -1,0 +1,11 @@
+{
+  "status": "BLOCKED — not deployed / ยังไม่ได้ deploy",
+  "applicationCommit": "f0e8f1e68d517015f8999d9952bb4e0c92add9d6",
+  "previousAdminImageTag": "217bc28",
+  "deploymentAttempt": "https://github.com/pongpanots-blip/commerce-platform/actions/runs/38432393535",
+  "defaultBranchBuildAttempt": "https://github.com/pongpanots-blip/commerce-platform/actions/runs/38433090028",
+  "reason": "AWS OIDC role assumption denied: sts:AssumeRoleWithWebIdentity",
+  "productionBrowserAutomation": "Cloudflare HTTP 403 from GitHub-hosted Chromium",
+  "notificationDefaultFeed": "UI fixture-tested; origin API contract still requires confirmation",
+  "postDeployE2E": "Not run because deploy did not execute"
+}

@@ -1,0 +1,26 @@
+{
+  "pageViews": 824,
+  "adminScreenEntries": 202,
+  "languages": [
+    "th",
+    "en"
+  ],
+  "viewports": [
+    "desktop",
+    "phone"
+  ],
+  "browserErrors": 0,
+  "layoutIssues": 0,
+  "fixtureOnlyUnavailablePaths": 175,
+  "unitTests": {
+    "passed": 907,
+    "failed": 0
+  },
+  "workflowGroups": 24,
+  "typecheck": "passed",
+  "productionAutomatedCoverage": "Blocked by Cloudflare HTTP 403; remote manual module review has explicit gaps",
+  "defaultNotificationAPI": "Needs read-only deployment preflight; not assumed compatible",
+  "deployment": "Blocked: AWS denied sts:AssumeRoleWithWebIdentity for both feature and master workflow runs",
+  "taskFlowScenarios": 46,
+  "productionRunner": "Read-only origin check queued; job 38432974934 has not started"
+}

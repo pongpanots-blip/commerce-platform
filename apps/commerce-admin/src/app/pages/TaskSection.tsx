@@ -37,12 +37,12 @@ export function TaskSection({ role }: { role?: string }) {
     }} />
     <section aria-label={uiText(section.title)} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {cards.map(card => <div key={card.key} className="relative min-w-0 rounded-xl border border-secondary-container bg-white p-5 hover:border-primary focus-within:border-primary">
-        <Link to={card.to} className="flex items-start justify-between gap-3 rounded focus-visible:outline-2 focus-visible:outline-primary">
+        <Link to={card.to} className="flex min-h-11 items-center justify-between gap-3 rounded focus-visible:outline-2 focus-visible:outline-primary sm:min-h-0">
           <h2 className="font-semibold text-on-surface">{uiText(card.label)}</h2><Icon name="arrow_forward" size={19} className="shrink-0 text-primary" />
         </Link>
         <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">{uiText(card.description)}</p>
         {card.members.length > 0 && <ul aria-label={uiText(card.label)} className="mt-3 flex flex-wrap gap-1.5">
-          {card.members.map(member => <li key={member.to}><Link to={member.to} className="inline-flex min-h-8 items-center rounded-full border border-secondary-container px-2.5 text-xs font-medium text-on-surface-variant hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary">{uiText(member.label)}</Link></li>)}
+          {card.members.map(member => <li key={member.to}><Link to={member.to} className="inline-flex min-h-11 items-center rounded-full border border-secondary-container px-3 py-2 text-sm font-medium text-on-surface-variant hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary sm:min-h-9 sm:text-xs">{uiText(member.label)}</Link></li>)}
         </ul>}
       </div>)}
     </section>

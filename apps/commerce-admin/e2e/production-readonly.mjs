@@ -21,9 +21,10 @@ try {
     }, { locale });
     const page = await context.newPage();
     page.setDefaultTimeout(10000);
-    await page.goto(base + '/login', { waitUntil: 'domcontentloaded' });
-    await page.getByLabel(/^(อีเมล|Email)$/).fill(process.env.PROD_E2E_EMAIL);
-    await page.getByLabel(/^(รหัสผ่าน|Password)$/).fill(process.env.PROD_E2E_PASSWORD);
+    const loginPage = await page.goto(base + '/login', { waitUntil: 'domcontentloaded' });
+    result.loginPage = { status: loginPage?.status(), title: await page.title() };
+    await page.locator('input[type="email"]').fill(process.env.PROD_E2E_EMAIL);
+    await page.locator('input[type="password"]').fill(process.env.PROD_E2E_PASSWORD);
     await page.getByRole('button', { name: /^(เข้าสู่ระบบ|Sign in)$/, exact: true }).click();
     await page.locator('main').waitFor({ timeout: 30000 });
     const accessToken = await page.evaluate(() => sessionStorage.getItem('cp_admin_token'));
@@ -80,6 +81,6 @@ try {
 } finally {
   result.finishedAt = new Date().toISOString();
   writeFileSync(`${output}/results.json`, JSON.stringify(result, null, 2));
-  console.log(JSON.stringify({ visits: result.visits.length, browserErrors: result.errors.length, blockedWrites: result.blockedWrites.length, notificationContract: result.notificationContract, failure: result.failure }));
+  console.log(JSON.stringify({ visits: result.visits.length, browserErrors: result.errors.length, blockedWrites: result.blockedWrites.length, loginPage: result.loginPage, notificationContract: result.notificationContract, failure: result.failure }));
   await browser.close();
 }
